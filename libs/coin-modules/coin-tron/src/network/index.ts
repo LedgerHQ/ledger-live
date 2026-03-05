@@ -387,23 +387,14 @@ export async function getLastBlock(): Promise<Block> {
   return toBlock(data);
 }
 
-export async function getBlock(blockNumber: number): Promise<Block> {
-  const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
-  const ret = toBlock(data);
-  if (!ret.height) {
-    ret.height = blockNumber;
-  }
-  return ret;
-}
-
-export async function getBlockWithTransactions(
+export async function getBlock(
   blockNumber: number,
+  detail = false,
 ): Promise<BlockWithTransactionsAPI> {
-  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true });
+  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail });
 }
 
-function toBlock(data: any): Block {
-  // some old blocks doesn't have a timestamp
+export function toBlock(data: BlockWithTransactionsAPI): Block {
   const timestamp = data.block_header.raw_data.timestamp;
   const ret: Block = {
     height: data.block_header.raw_data.number,
