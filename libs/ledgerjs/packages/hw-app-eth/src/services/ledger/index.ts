@@ -200,9 +200,10 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
   rawTxHex,
   loadConfig,
   resolutionConfig,
+  parseTx = parseTransaction,
 ) => {
   const rawTx = Buffer.from(rawTxHex, "hex");
-  const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+  const parsedTransaction = parseTx(`0x${rawTx.toString("hex")}`);
   const chainIdUint32 = getChainIdAsUint32(parsedTransaction.chainId);
   const { domains } = resolutionConfig;
 
@@ -270,4 +271,5 @@ export default {
   resolveTransaction,
   signDomainResolution,
   signAddressResolution,
+  parseTransaction,
 } as LedgerEthTransactionService;

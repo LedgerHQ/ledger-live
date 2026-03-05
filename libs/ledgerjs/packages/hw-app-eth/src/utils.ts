@@ -16,6 +16,8 @@ export {
   DAPP_SELECTORS,
 };
 
+export const RLP = rlp;
+
 export const padHexString = (str: string) => {
   return str.length % 2 ? "0" + str : str;
 };

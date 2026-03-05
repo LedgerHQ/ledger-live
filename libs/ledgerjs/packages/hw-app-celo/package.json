@@ -32,6 +32,8 @@
     "@celo/utils": "^8.0.3",
     "@celo/wallet-base": "^8.0.0",
     "@celo/wallet-ledger": "^8.0.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/keccak256": "^5.7.0",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",

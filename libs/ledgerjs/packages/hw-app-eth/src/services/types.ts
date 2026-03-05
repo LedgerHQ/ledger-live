@@ -3,6 +3,7 @@ import {
   signAddressResolution,
   signDomainResolution,
 } from "@ledgerhq/domain-service/signers/index";
+import { parse as parseTransaction } from "@ethersproject/transactions";
 
 export type LedgerEthTransactionResolution = {
   // device serialized data that contains ERC20 data (hex format)
@@ -65,7 +66,9 @@ export type LedgerEthTransactionService = {
     rawTxHex: string,
     loadConfig: LoadConfig,
     resolutionConfig: ResolutionConfig,
+    parseTx?: typeof parseTransaction,
   ) => Promise<LedgerEthTransactionResolution>;
   signDomainResolution: typeof signDomainResolution;
   signAddressResolution: typeof signAddressResolution;
+  parseTransaction: typeof parseTransaction;
 };
