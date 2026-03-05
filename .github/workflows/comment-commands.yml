@@ -51,7 +51,7 @@ jobs:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const isManual = context.eventName === 'workflow_dispatch';
-            const { owner, repo } = context.repo();
+            const { owner, repo } = context.repo;
 
             let command, commentId, login, issueNumber;
             if (isManual) {
