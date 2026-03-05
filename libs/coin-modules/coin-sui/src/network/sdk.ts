@@ -712,10 +712,29 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
 function compareByTimestamp(
   order: "asc" | "desc",
 ): (a: SuiTransactionBlockResponse, b: SuiTransactionBlockResponse) => number {
-  return (a, b) =>
-    order === "asc"
-      ? Number(a.timestampMs ?? 0) - Number(b.timestampMs ?? 0)
-      : Number(b.timestampMs ?? 0) - Number(a.timestampMs ?? 0);
+  return (a, b) => {
+    const ta = Number(a.timestampMs ?? 0);
+    const tb = Number(b.timestampMs ?? 0);
+
+    if (ta !== tb) {
+      return order === "asc" ? ta - tb : tb - ta;
+    }
+
+    // Deterministic tie-breaker for identical timestamps: use digest
+    const da = (a as any).digest ?? "";
+    const db = (b as any).digest ?? "";
+
+    if (da === db) {
+      return 0;
+    }
+
+    if (order === "asc") {
+      return da < db ? -1 : 1;
+    }
+
+    // For descending order, reverse digest comparison
+    return da > db ? -1 : 1;
+  };
 }
 
 type ListOperationsCursor = {
