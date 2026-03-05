@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.4
+
+### Minor Changes
+
+- [#15092](https://github.com/LedgerHQ/ledger-live/pull/15092) [`1f277e4`](https://github.com/LedgerHQ/ledger-live/commit/1f277e410915bf08028946f90467c630df599c4e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Wallet40 fix backgroundColor property
+
 ## 3.109.0-next.3
 
 ### Minor Changes
