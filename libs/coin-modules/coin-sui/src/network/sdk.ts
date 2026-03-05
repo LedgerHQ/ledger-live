@@ -728,14 +728,27 @@ type ListOperationsCursor = {
   timestamp: number;
 };
 
-/**
- * Fetch operations for Alpaca
- * It fetches separately the "OUT" and "IN" operations and then merge them.
- * The cursor is composed of the last "OUT" and "IN" operation cursors.
- *
- * @returns the operations.
- *
- */
+function serializeListOperationsCursor(cursor: ListOperationsCursor): string {
+  return `${cursor.timestamp}:${cursor.digest}`;
+}
+
+function parseListOperationsCursor(cursor: string | undefined): ListOperationsCursor | null {
+  if (!cursor) return null;
+
+  const sepIdx = cursor.indexOf(":");
+  if (sepIdx <= 0 || sepIdx === cursor.length - 1) {
+    throw new Error("Invalid list operations cursor format: missing timestamp or digest");
+  }
+
+  const ts = Number(cursor.slice(0, sepIdx));
+  const digest = cursor.slice(sepIdx + 1);
+  if (!Number.isFinite(ts) || !digest) {
+    throw new Error("Invalid list operations cursor format: invalid timestamp or digest");
+  }
+
+  return { digest, timestamp: ts };
+}
+
 export const getListOperations = async (
   addr: string,
   order: "asc" | "desc",
@@ -743,29 +756,8 @@ export const getListOperations = async (
   cursor?: string,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
-    function serializeCursor(cursor: ListOperationsCursor): string {
-      return `${cursor.timestamp}:${cursor.digest}`;
-    }
-
-    function parseCursor(cursor: string | undefined): ListOperationsCursor | null {
-      if (!cursor) return null;
-
-      const sepIdx = cursor.indexOf(":");
-      if (sepIdx <= 0 || sepIdx === cursor.length - 1) {
-        throw new Error("Invalid list operations cursor format: missing timestamp or digest");
-      }
-
-      const ts = Number(cursor.slice(0, sepIdx));
-      const digest = cursor.slice(sepIdx + 1);
-      if (!Number.isFinite(ts) || !digest) {
-        throw new Error("Invalid list operations cursor format: invalid timestamp or digest");
-      }
-
-      return { digest, timestamp: ts };
-    }
-
     const rpcOrder = convertApiOrderToSdkOrder(order);
-    const parsedCursor = parseCursor(cursor);
+    const parsedCursor = parseListOperationsCursor(cursor);
     const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
 
     const [opsOut, opsIn] = await Promise.all([
@@ -831,11 +823,11 @@ export const getListOperations = async (
     );
 
     // compute next cursor: we have one if IN or OUT operations have one, or we have filtered out operations.
-    const lastBoundaryOp = pageOps[pageOps.length - 1] ?? sortedOps[sortedOps.length - 1];
+    const lastBoundaryOp = pageOps.at(-1) ?? sortedOps.at(-1);
     const nextCursorCandidate =
       (opsIn.hasNextPage || opsOut.hasNextPage || pageOps.length < sortedOps.length) &&
       lastBoundaryOp
-        ? serializeCursor({
+        ? serializeListOperationsCursor({
             digest: lastBoundaryOp.digest,
             timestamp: Number(lastBoundaryOp.timestampMs ?? 0),
           })
