@@ -5,6 +5,17 @@ import { createFixtureAccount, mockSignerContext } from "../../fixtures/common.f
 
 jest.setTimeout(10000);
 
+jest.mock("../../wallet-btc/explorer", () => {
+  const Actual = jest.requireActual("../../wallet-btc/explorer").default;
+  return {
+    __esModule: true,
+    default: class MockBitcoinLikeExplorer extends Actual {
+      getCurrentBlock = jest.fn().mockResolvedValue({ height: 0, hash: "0", time: "0" });
+      getTxsSinceBlockheight = jest.fn().mockResolvedValue({ txs: [], nextPageToken: null });
+    },
+  };
+});
+
 describe("synchronisation", () => {
   it("should return a function", () => {
     const result = makeGetAccountShape(mockSignerContext);

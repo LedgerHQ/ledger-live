@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
-import CollapsibleStep from "./CollapsibleStep";
+import CollapsibleStep from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import useCompanionSteps from "./useCompanionSteps";
 import { useTranslation } from "~/context/Locale";

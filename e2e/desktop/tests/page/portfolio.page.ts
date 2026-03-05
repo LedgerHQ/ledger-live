@@ -1,7 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
-import { waitForAccountsPersisted } from "tests/utils/userdata";
+import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -183,6 +183,14 @@ export class PortfolioPage extends AppPage {
     timeoutMs: number = 5000,
   ) {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
+  }
+
+  @step("Expect app.json to have identities object within $1ms")
+  async expectIdentitiesPersistedInAppJson(
+    userdataFile: string,
+    timeoutMs: number = 10000,
+  ): Promise<{ userId: string; datadogId: string; deviceIds: string[] }> {
+    return waitForIdentitiesInAppJson(userdataFile, timeoutMs);
   }
 
   // Wallet 4.0 methods

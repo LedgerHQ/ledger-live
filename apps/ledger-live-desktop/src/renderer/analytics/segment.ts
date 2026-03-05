@@ -16,8 +16,8 @@ import { useCallback, useContext } from "react";
 import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import user from "~/helpers/user";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -348,14 +348,13 @@ function getAnalytics(): AnalyticsBrowser | null {
   return analyticsInstance;
 }
 export const startAnalytics = async (store: ReduxStore) => {
-  if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
-  // calling user() first is essential because otherwise the store data will not reflect the user's preferences
-  // and hence canBeTracked will always be set to true...
-  const { id } = await user();
+  if (!store || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
   storeInstance = store;
 
   const canBeTracked = trackingEnabledSelector(store.getState());
   if (!canBeTracked) return;
+
+  const id = userIdSelector(store.getState()).exportUserIdForAnalytics();
 
   // Initialize Segment with the write key from config
   initializeSegment();
@@ -432,7 +431,7 @@ export const updateIdentify = async ({ force }: UpdateIdentifyOptions = { force:
     if (!analytics) return;
   }
 
-  const { id } = await user();
+  const id = userIdSelector(storeInstance.getState()).exportUserIdForAnalytics();
 
   const allProperties = {
     ...extraProperties(storeInstance),

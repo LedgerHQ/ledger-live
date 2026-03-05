@@ -13,6 +13,7 @@ import { useSwapLiveAppState } from "./hooks/useSwapLiveAppState";
 import { useSwapWebviewProps } from "./hooks/useSwapWebviewProps";
 import { DefaultAccountSwapParamList } from "../types";
 import { useSwapWallet40HeaderStateUpdater } from "./navigationHandlers/wallet40/useSwapWallet40HeaderState";
+import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAndroidHardwareBackPress";
 
 type SwapWebviewContentProps = {
   manifest: LiveAppManifest;
@@ -50,10 +51,15 @@ export function SwapLiveAppWallet40({
 
   const { theme: lumenTheme } = useLumenTheme();
 
-  const { manifest, error, isLoading, webviewRef, setWebviewState, defaultParams } =
+  const { manifest, error, isLoading, webviewRef, webviewState, setWebviewState, defaultParams } =
     useSwapLiveAppState(params);
 
   const updateWallet40HeaderState = useSwapWallet40HeaderStateUpdater(webviewRef);
+
+  useSwapAndroidHardwareBackPress({
+    webviewRef,
+    canGoBack: webviewState.canGoBack,
+  });
 
   const handleWebviewStateChange = useCallback(
     (nextState: WebviewState) => {

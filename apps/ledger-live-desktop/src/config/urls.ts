@@ -182,6 +182,10 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  editBitcoinTx: {
+    learnMore:
+      "https://support.ledger.com/fr/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
+  },
   ledgerAcademy: {
     whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
     ethereumStakingHowToStakeEth:
