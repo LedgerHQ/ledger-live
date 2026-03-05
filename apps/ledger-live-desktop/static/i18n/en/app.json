@@ -8256,16 +8256,16 @@
   "walletV4Tour": {
     "slides": {
       "portfolio": {
-        "title": "Swap effortlessly",
-        "description": "Adapt your portfolio allocation anytime with the security of your Ledger device"
+        "title": "A clearer view of your portfolio",
+        "description": "See your total balance at a glance, and tap \"Today\" to dive deeper."
       },
       "navigation": {
-        "title": "Everything in its right place",
-        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the sidebar for faster access."
+        "title": "Access key actions faster",
+        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
       },
       "actions": {
-        "title": "Actions at market speed",
-        "description": "Spot market trends with the new banner and trade instantly."
+        "title": "View market trends instantly",
+        "description": "Quickly see what's trending directly in your portfolio, and move from insights to action."
       }
     },
     "cta": {
