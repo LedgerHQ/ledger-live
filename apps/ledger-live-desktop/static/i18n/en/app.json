@@ -8105,6 +8105,11 @@
   "assets": {
     "cryptos": "Cryptos",
     "stablecoins": "Stablecoins",
+    "cryptoAddresses": "Crypto addresses",
+    "addressCount_one": "{{count}} address",
+    "addressCount_other": "{{count}} addresses",
+    "noCryptoAddresses": "No addresses yet",
+    "addCryptoAddress": "Add",
     "columns": {
       "name": "Name",
       "price": "Price",

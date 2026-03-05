@@ -543,6 +543,22 @@ describe("PortfolioView", () => {
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
   });
+
+  describe("CryptoAddressesBanner", () => {
+    it("should render crypto-addresses-banner when asset section is displayed", async () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={true} />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("crypto-addresses-banner")).toBeVisible();
+      });
+    });
+
+    it("should not render crypto-addresses-banner when asset section is not displayed", () => {
+      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
+
+      expect(screen.queryByTestId("crypto-addresses-banner")).toBeNull();
+    });
+  });
 });
 
 const walletV4TourFlags = {
