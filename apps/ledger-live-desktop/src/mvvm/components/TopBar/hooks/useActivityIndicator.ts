@@ -67,7 +67,7 @@ export const useActivityIndicator = () => {
     dispatch(setLastUserSyncClickTimestamp(now));
     triggerRefresh();
     track("SyncRefreshClick", {
-      triggered_after_sync_error: isError,
+      triggeredAfterSyncError: isError,
     });
   }, [dispatch, triggerRefresh, isError]);
 

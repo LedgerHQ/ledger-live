@@ -202,7 +202,7 @@ describe("useActivityIndicator", () => {
 
     expect(mockTriggerRefresh).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("SyncRefreshClick", {
-      triggered_after_sync_error: false,
+      triggeredAfterSyncError: false,
     });
   });
 
