@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.3
+
+### Minor Changes
+
+- [#15059](https://github.com/LedgerHQ/ledger-live/pull/15059) [`b6601c4`](https://github.com/LedgerHQ/ledger-live/commit/b6601c4a028820bf76242853e6788f7d5e2501cd) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix(live-27196): use useOpenSwap for market/accounts/assets swap navigation
+
 ## 3.109.0-next.2
 
 ### Minor Changes
