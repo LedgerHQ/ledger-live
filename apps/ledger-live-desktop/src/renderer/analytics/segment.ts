@@ -313,7 +313,11 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
-    ...getOnboardingStatusAttributes(postOnboardingInProgress, isOnboardingFlow, onboardingSyncFlow),
+    ...getOnboardingStatusAttributes(
+      postOnboardingInProgress,
+      isOnboardingFlow,
+      onboardingSyncFlow,
+    ),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
