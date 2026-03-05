@@ -387,14 +387,21 @@ export async function getLastBlock(): Promise<Block> {
   return toBlock(data);
 }
 
-export async function getBlock(
-  blockNumber: number,
-  detail = false,
-): Promise<BlockWithTransactionsAPI> {
-  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail });
+export async function getBlock(blockNumber: number): Promise<Block> {
+  const data: BlockWithTransactionsAPI = await post(`/wallet/getblock`, {
+    id_or_num: String(blockNumber),
+    detail: false,
+  });
+  return toBlock(data);
 }
 
-export function toBlock(data: BlockWithTransactionsAPI): Block {
+export async function getBlockWithTransactions(
+  blockNumber: number,
+): Promise<BlockWithTransactionsAPI> {
+  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true });
+}
+
+function toBlock(data: BlockWithTransactionsAPI): Block {
   const timestamp = data.block_header.raw_data.timestamp;
   const ret: Block = {
     height: data.block_header.raw_data.number,

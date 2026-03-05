@@ -1,5 +1,5 @@
 import type { Block, BlockInfo, BlockOperation, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
-import { getBlock as networkGetBlock, toBlock } from "../network";
+import { getBlock as networkGetBlock, getBlockWithTransactions } from "../network";
 import { formatTrongridTxResponse } from "../network/format";
 import { inferAssetInfo } from "../network/trongrid/trongrid-adapters";
 import type { BlockTransactionAPI, TransactionTronAPI } from "../network/types";
@@ -10,8 +10,7 @@ export async function getBlockInfo(height: number): Promise<BlockInfo> {
     return { height, hash: "", time: new Date(0) };
   }
 
-  const data = await networkGetBlock(height);
-  const block = toBlock(data);
+  const block = await networkGetBlock(height);
   return {
     height: block.height,
     hash: block.hash,
@@ -24,7 +23,7 @@ export async function getBlock(height: number): Promise<Block> {
     return { info: { height, hash: "", time: new Date(0) }, transactions: [] };
   }
 
-  const data = await networkGetBlock(height, true);
+  const data = await getBlockWithTransactions(height);
   const header = data.block_header.raw_data;
   const blockTimestamp = header.timestamp ?? 0;
 

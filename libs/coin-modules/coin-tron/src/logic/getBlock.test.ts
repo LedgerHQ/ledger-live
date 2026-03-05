@@ -1,13 +1,10 @@
-import { getBlock as networkGetBlock } from "../network";
+import { getBlock as networkGetBlock, getBlockWithTransactions } from "../network";
 import { getBlock, getBlockInfo } from "./getBlock";
 
-jest.mock("../network", () => {
-  const actual = jest.requireActual("../network");
-  return {
-    ...actual,
-    getBlock: jest.fn(),
-  };
-});
+jest.mock("../network", () => ({
+  getBlock: jest.fn(),
+  getBlockWithTransactions: jest.fn(),
+}));
 
 describe("getBlockInfo", () => {
   beforeEach(() => {
@@ -23,8 +20,9 @@ describe("getBlockInfo", () => {
 
   it("should return block info from network", async () => {
     (networkGetBlock as jest.Mock).mockResolvedValue({
-      blockID: "blockhash",
-      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      height: 100,
+      hash: "blockhash",
+      time: new Date(1700000000000),
     });
 
     const result = await getBlockInfo(100);
@@ -50,11 +48,11 @@ describe("getBlock", () => {
       info: { height: 0, hash: "", time: new Date(0) },
       transactions: [],
     });
-    expect(networkGetBlock).not.toHaveBeenCalled();
+    expect(getBlockWithTransactions).not.toHaveBeenCalled();
   });
 
   it("should map TRX transfer to transfer operations", async () => {
-    (networkGetBlock as jest.Mock).mockResolvedValue({
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
       block_header: { raw_data: { number: 100, timestamp: 1700000000000, parentHash: "parent" } },
       transactions: [
@@ -95,11 +93,11 @@ describe("getBlock", () => {
       asset: { type: "native" },
       amount: BigInt(1000000),
     });
-    expect(networkGetBlock).toHaveBeenCalledWith(100, true);
+    expect(getBlockWithTransactions).toHaveBeenCalledWith(100);
   });
 
   it("should map TRC10 transfer to transfer operations", async () => {
-    (networkGetBlock as jest.Mock).mockResolvedValue({
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
       block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
       transactions: [
@@ -134,7 +132,7 @@ describe("getBlock", () => {
   });
 
   it("should map non-transfer contracts to other operations", async () => {
-    (networkGetBlock as jest.Mock).mockResolvedValue({
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
       block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
       transactions: [
@@ -167,7 +165,7 @@ describe("getBlock", () => {
   });
 
   it("should handle failed transactions", async () => {
-    (networkGetBlock as jest.Mock).mockResolvedValue({
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
       block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
       transactions: [
@@ -198,7 +196,7 @@ describe("getBlock", () => {
   });
 
   it("should handle blocks with no transactions", async () => {
-    (networkGetBlock as jest.Mock).mockResolvedValue({
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
       block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
     });

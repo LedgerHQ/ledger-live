@@ -5,7 +5,6 @@ import {
   fetchTronAccountTxs,
   FetchTxsStopPredicate as FetchTxsContinuePredicate,
   getBlock,
-  toBlock,
 } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { Block } from "../network/types";
@@ -35,8 +34,7 @@ export async function listOperations(
   const order = options?.order ?? defaultOptions.order;
   const softLimit = options?.softLimit ?? defaultOptions.softLimit;
 
-  const blockData = await getBlock(minHeight);
-  const block = toBlock(blockData);
+  const block = await getBlock(minHeight);
   const minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
   const fetchParams = {
     ...defaultFetchParams,
@@ -64,8 +62,8 @@ export async function listOperations(
   );
 
   await promiseAllBatched(5, uniqueHeights, async height => {
-    const fetchedBlockData = await getBlock(height);
-    blocksByHeight.set(height, toBlock(fetchedBlockData));
+    const fetchedBlock = await getBlock(height);
+    blocksByHeight.set(height, fetchedBlock);
   });
 
   const operations = txs.map(tx => {

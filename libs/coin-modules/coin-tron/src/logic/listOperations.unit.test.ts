@@ -5,20 +5,15 @@ import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adap
 import { TrongridTxInfo } from "../types";
 import { defaultOptions, listOperations } from "./listOperations";
 
+// Mock the fetchTronAccountTxs and fromTrongridTxInfoToOperation functions
 jest.mock("../network", () => ({
   fetchTronAccountTxs: jest.fn(),
   getBlock: jest.fn(),
-  toBlock: jest.requireActual("../network").toBlock,
 }));
 
 jest.mock("../network/trongrid/trongrid-adapters", () => ({
   fromTrongridTxInfoToOperation: jest.fn(),
 }));
-
-const toBlockResponse = (height: number, hash: string, time: Date) => ({
-  blockID: hash,
-  block_header: { raw_data: { number: height, timestamp: time.getTime() } },
-});
 
 describe("listOperations", () => {
   const mockAddress = "tronExampleAddress";
@@ -27,7 +22,9 @@ describe("listOperations", () => {
   const mockBlockTimestamp = mockBlockTime.getTime();
   beforeEach(() => {
     jest.clearAllMocks();
-    (getBlock as jest.Mock).mockResolvedValue(toBlockResponse(0, "blockhash", mockBlockTime));
+    (getBlock as jest.Mock).mockResolvedValue({
+      time: mockBlockTime,
+    });
   });
 
   const expectedFetchParams = {
@@ -98,6 +95,11 @@ describe("listOperations", () => {
   });
 
   it("should fetch blocks for unique heights and cache them", async () => {
+    const mockBlock0 = { height: 0, hash: "hash0", time: mockBlockTime };
+    const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
+    const mockBlock200 = { height: 200, hash: "hash200", time: new Date("2023-01-01T02:00:00Z") };
+    const mockBlock300 = { height: 300, hash: "hash300", time: new Date("2023-01-01T03:00:00Z") };
+
     const mockTxs: Partial<TrongridTxInfo>[] = [
       { txID: "tx1", value: new BigNumber(0), blockHeight: 100 },
       { txID: "tx2", value: new BigNumber(10), blockHeight: 200 },
@@ -108,10 +110,10 @@ describe("listOperations", () => {
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
     (getBlock as jest.Mock)
-      .mockResolvedValueOnce(toBlockResponse(0, "hash0", mockBlockTime))
-      .mockResolvedValueOnce(toBlockResponse(100, "hash100", new Date("2023-01-01T01:00:00Z")))
-      .mockResolvedValueOnce(toBlockResponse(200, "hash200", new Date("2023-01-01T02:00:00Z")))
-      .mockResolvedValueOnce(toBlockResponse(300, "hash300", new Date("2023-01-01T03:00:00Z")));
+      .mockResolvedValueOnce(mockBlock0)
+      .mockResolvedValueOnce(mockBlock100)
+      .mockResolvedValueOnce(mockBlock200)
+      .mockResolvedValueOnce(mockBlock300);
 
     const operationBlocks: Array<{ height: number; hash: string }> = [];
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
@@ -141,6 +143,9 @@ describe("listOperations", () => {
   });
 
   it("should use cached block for minHeight without fetching again", async () => {
+    const mockBlock50 = { height: 50, hash: "hash50", time: new Date("2023-01-01T00:50:00Z") };
+    const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
+
     const mockTxs: Partial<TrongridTxInfo>[] = [
       { txID: "tx1", value: new BigNumber(0), blockHeight: 50 },
       { txID: "tx2", value: new BigNumber(10), blockHeight: 100 },
@@ -148,9 +153,7 @@ describe("listOperations", () => {
     ];
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock)
-      .mockResolvedValueOnce(toBlockResponse(50, "hash50", new Date("2023-01-01T00:50:00Z")))
-      .mockResolvedValueOnce(toBlockResponse(100, "hash100", new Date("2023-01-01T01:00:00Z")));
+    (getBlock as jest.Mock).mockResolvedValueOnce(mockBlock50).mockResolvedValueOnce(mockBlock100);
 
     const operationBlocks: Array<{ height: number; hash: string }> = [];
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
@@ -181,10 +184,11 @@ describe("listOperations", () => {
       { txID: "tx3", value: new BigNumber(20), blockHeight: undefined },
     ];
 
+    const mockBlock0 = { height: 0, hash: "hash0", time: mockBlockTime };
+    const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
+
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock)
-      .mockResolvedValueOnce(toBlockResponse(0, "hash0", mockBlockTime))
-      .mockResolvedValueOnce(toBlockResponse(100, "hash100", new Date("2023-01-01T01:00:00Z")));
+    (getBlock as jest.Mock).mockResolvedValueOnce(mockBlock0).mockResolvedValueOnce(mockBlock100);
 
     const operationBlocks: Array<{ height: number; hash: string }> = [];
     (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
