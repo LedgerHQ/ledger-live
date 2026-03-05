@@ -25,7 +25,7 @@ type AmountFooterProps = Readonly<{
   reviewDisabled: boolean;
   reviewLoading: boolean;
   onReview: () => void;
-  onGetFunds?: () => void;
+  onGetFunds: () => void;
 }>;
 
 export function CoinControlFooter({
