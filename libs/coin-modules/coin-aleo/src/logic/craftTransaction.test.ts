@@ -46,6 +46,7 @@ describe("craftTransaction", () => {
       txIntent: mockTxIntentTransferPublic,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
+      feeConfiguration: null,
     });
 
     expect(result).toEqual({ transaction: mockSerializedTx });
@@ -57,6 +58,7 @@ describe("craftTransaction", () => {
       intent: mockSdkIntent,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
+      feeConfiguration: null,
     });
     expect(toHex).toHaveBeenCalledTimes(1);
     expect(toHex).toHaveBeenCalledWith(mockSdkResponse);
@@ -86,6 +88,7 @@ describe("craftTransaction", () => {
         txIntent: mockTxIntentTransferPublic,
         feeConfiguration: mockFeeConfiguration,
         viewKey: mockViewKey,
+        feeConfiguration: null,
       }),
     ).rejects.toThrow("sdk error");
   });

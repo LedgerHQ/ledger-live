@@ -15,6 +15,7 @@ import {
 import {
   getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
+  getMockedRecord,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";

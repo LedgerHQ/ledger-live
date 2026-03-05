@@ -568,3 +568,30 @@ export function extractViewKey(account: AleoAccount): string {
   invariant(viewKey, `aleo: view key is missing in ${account.freshAddress} account`);
   return viewKey;
 }
+
+export function findBestRecordForFee({
+  unspentRecords,
+  targetFee,
+  selectedAmountRecordCommitment,
+}: {
+  unspentRecords: AleoUnspentRecord[];
+  targetFee: BigNumber;
+  selectedAmountRecordCommitment: string | null;
+}): AleoUnspentRecord | null {
+  const recordsSufficientForFee = unspentRecords.filter(
+    r =>
+      r.commitment !== selectedAmountRecordCommitment &&
+      new BigNumber(r.microcredits).gte(targetFee),
+  );
+
+  if (recordsSufficientForFee.length === 0) {
+    return null;
+  }
+
+  // find the smallest record that can cover the fee
+  const bestFeeRecord = recordsSufficientForFee.reduce((min, current) =>
+    new BigNumber(current.microcredits).lt(new BigNumber(min.microcredits)) ? current : min,
+  );
+
+  return bestFeeRecord;
+}

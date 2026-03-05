@@ -293,6 +293,11 @@ export type LLDCoinFamily<
   SendStepAmount?: React.ComponentType<SendStepProps>;
 
   /**
+   * Allow to override the "Amount" step footer in the Send modal.
+   */
+  SendStepAmountFooter?: React.ComponentType<SendStepProps>;
+
+  /**
    * Allow to add component below recipient field
    *
    * FIXME: account will have to be A | TokenAccount

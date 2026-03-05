@@ -109,7 +109,7 @@ const StepAmount = (props: StepProps) => {
   return <Component {...props} />;
 };
 
-export class StepAmountFooter extends PureComponent<StepProps> {
+export class DefaultStepAmountFooter extends PureComponent<StepProps> {
   onNext = async () => {
     const { transitionTo } = this.props;
     transitionTo("summary");
@@ -141,5 +141,16 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     );
   }
 }
+
+export const StepAmountFooter = (props: StepProps) => {
+  const { account, parentAccount } = props;
+  if (!account) return null;
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const Component = specific?.SendStepAmountFooter ?? DefaultStepAmountFooter;
+
+  return <Component {...props} />;
+};
 
 export default StepAmount;

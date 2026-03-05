@@ -11,6 +11,7 @@ import type {
 import type { TRANSACTION_TYPE } from "../constants";
 import type { AleoTransactionType } from "./api";
 import type { ProvableApi, AleoUnspentRecord } from "./logic";
+import type { AleoDecryptedRecordResponse } from "./sdk";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";

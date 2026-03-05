@@ -47,11 +47,11 @@
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "rimraf": "^4.4.1",
     "ts-node": "^10.4.0",
     "ws": "catalog:"

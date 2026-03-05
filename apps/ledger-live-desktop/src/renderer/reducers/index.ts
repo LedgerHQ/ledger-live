@@ -24,6 +24,7 @@ import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
+import aleoSendFlow, { AleoSendFlowState } from "~/renderer/families/aleo/reducers/aleoSendFlow";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -45,6 +46,7 @@ export type State = LLDRTKApiState & {
   walletSync: WalletSyncState;
   dialogs: DialogsState;
   syncRefresh: SyncRefreshState;
+  aleoSendFlow: AleoSendFlowState;
 };
 
 const appReducer = combineReducers({
@@ -67,6 +69,7 @@ const appReducer = combineReducers({
   trustchain,
   dialogs,
   syncRefresh,
+  aleoSendFlow,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

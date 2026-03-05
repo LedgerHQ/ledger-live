@@ -3,6 +3,7 @@ import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowMan
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import SendStepRecipient from "./SendStepRecipient";
 import SendStepAmount from "./SendStepAmount";
+import SendStepAmountFooter from "./SendStepAmountFooter";
 import operationDetails from "./operationDetails";
 import StepSummaryAmountRow from "./StepSummaryAmountRow";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
@@ -13,6 +14,8 @@ const family: AleoFamily = {
   AccountBalanceSummaryFooter,
   ModularDrawerAddAccountFlowManager,
   SendStepRecipient,
+  SendStepAmount,
+  SendStepAmountFooter,
   accountHeaderManageActions,
   operationDetails,
   SendStepAmount,

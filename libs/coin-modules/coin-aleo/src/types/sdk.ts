@@ -2,6 +2,7 @@ export interface AleoEncryptedRegistrationResponse {
   encrypted: string;
 }
 
+// TODO: maybe rename to AleoIntentRecord
 export interface AleoDecryptedRecordResponse {
   owner: string;
   data: Record<string, string>;
