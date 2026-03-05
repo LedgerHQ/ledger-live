@@ -15,7 +15,7 @@ import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { AssetVirtualList } from "../AssetVirtualList";
-import { ApyIndicator } from "../../../../components/ApyIndicator";
+import { ApyIndicator } from "~/mvvm/features/ModularDialog/components/ApyIndicator";
 
 export type AssetSelectorContentProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];

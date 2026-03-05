@@ -8,7 +8,7 @@ import { balanceItem } from "../../../../components/Balance";
 import { useAccountData } from "../../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { NetworkVirtualList } from "../NetworkVirtualList";
-import { accountsApy } from "../../../../components/Account/AccountApy";
+import { ApyIndicator } from "../../../../components/ApyIndicator";
 import { accountsCount } from "../../../../components/Account/AccountCount";
 import { accountsCountAndApy } from "../../../../components/Account/AccountCountApy";
 
@@ -35,7 +35,7 @@ export const NetworkSelectorContent = ({
     useAccountData,
     accountsCount,
     accountsCountAndApy,
-    accountsApy,
+    ApyIndicator,
     useBalanceDeps,
     balanceItem,
   };

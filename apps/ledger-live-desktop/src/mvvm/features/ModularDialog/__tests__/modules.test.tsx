@@ -1,3 +1,4 @@
+import * as systemLocale from "~/helpers/systemLocale";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import {
   ARB_ACCOUNT,
@@ -24,6 +25,11 @@ import ModularDialogFlowManager from "../ModularDialogFlowManager";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
+}));
+
+jest.mock("~/helpers/systemLocale", () => ({
+  ...jest.requireActual("~/helpers/systemLocale"),
+  getParsedSystemDeviceLocale: jest.fn(() => ({ language: "en", region: "US" })),
 }));
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
@@ -315,5 +321,47 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
     expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible();
     expect(screen.getByText(/34,478.4 eth/i)).toBeVisible();
+  });
+
+  describe("APY indicator appearance by region", () => {
+    afterEach(() => {
+      jest.mocked(systemLocale.getParsedSystemDeviceLocale).mockReset();
+    });
+
+    it("should render the APY tag with gray appearance for GB users", async () => {
+      jest
+        .mocked(systemLocale.getParsedSystemDeviceLocale)
+        .mockReturnValue({ language: "en", region: "GB" });
+
+      renderWithMockedCounterValuesProvider(
+        <ModularDialogFlowManager />,
+        createMockedInitialState({
+          dialogConfiguration: { assets: { leftElement: "apy" } },
+        }),
+      );
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+
+      const apyIndicator = screen.getAllByTestId("apy-indicator")[0];
+      expect(apyIndicator.classList.contains("text-muted")).toBe(true);
+    });
+
+    it("should render the APY tag with success appearance for non-GB users", async () => {
+      jest
+        .mocked(systemLocale.getParsedSystemDeviceLocale)
+        .mockReturnValue({ language: "en", region: "US" });
+
+      renderWithMockedCounterValuesProvider(
+        <ModularDialogFlowManager />,
+        createMockedInitialState({
+          dialogConfiguration: { assets: { leftElement: "apy" } },
+        }),
+      );
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+
+      const apyIndicator = screen.getAllByTestId("apy-indicator")[0];
+      expect(apyIndicator.classList.contains("text-success")).toBe(true);
+    });
   });
 });

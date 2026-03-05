@@ -1,3 +1,4 @@
+import React from "react";
 import {
   AccountDataItem,
   AccountModuleParams,
@@ -6,12 +7,13 @@ import {
 } from "../utils/type";
 import { useInterestRatesByCurrencies } from "../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
+import { ApyType } from "../../dada-client/types/trend";
 
 export function useLeftAccountsApyModule(
   params: AccountModuleParams,
   useAccountData: (params: AccountModuleParams) => AccountDataItem[],
   accountsCountAndApy: CreateAccountsCountAndApy,
-  accountsApy: CreateAccountsCountAndApy,
+  ApyIndicator: React.ComponentType<{ value: number; type: ApyType }>,
 ): Array<NetworkWithCount> {
   const { networks } = params;
   const accountData = useAccountData(params);
@@ -37,10 +39,9 @@ export function useLeftAccountsApyModule(
         type: interestRate?.type,
       }),
       description: count > 0 ? label : undefined,
-      apy: accountsApy({
-        value: interestRatePercentageRounded,
-        type: interestRate?.type,
-      }),
+      apy: interestRate ? (
+        <ApyIndicator value={interestRatePercentageRounded} type={interestRate.type} />
+      ) : undefined,
       count,
     };
   });

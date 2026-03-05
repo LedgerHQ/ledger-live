@@ -1,5 +1,6 @@
 import React from "react";
 import { act, render } from "@tests/test-renderer";
+import * as getStakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import {
   mockedAccounts,
   mockedFF,
@@ -11,6 +12,11 @@ import { State } from "~/reducers/types";
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
+}));
+
+jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
+  ...jest.requireActual("~/helpers/getStakeLabelLocaleBased"),
+  getCountryLocale: jest.fn(() => "US"),
 }));
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
@@ -230,5 +236,67 @@ describe("ModularDrawer modules integration", () => {
     await user.press(ethereumElements[0]);
     advanceTimers();
     expect(getByText(/23.4663 ETH/i)).toBeVisible();
+  });
+
+  describe("APY indicator appearance by region", () => {
+    afterEach(() => {
+      jest.mocked(getStakeLabelHelpers.getCountryLocale).mockReset();
+    });
+
+    it("should render the APY tag with gray appearance for GB users on asset list", async () => {
+      jest.mocked(getStakeLabelHelpers.getCountryLocale).mockReturnValue("GB");
+
+      const { getByText, UNSAFE_getAllByProps, user } = render(
+        <ModularDrawerSharedNavigator
+          assetsConfiguration={{
+            leftElement: "apy",
+          }}
+        />,
+        {
+          ...INITIAL_STATE,
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              overriddenFeatureFlags: mockedFF,
+            },
+          }),
+        },
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+
+      const grayTags = UNSAFE_getAllByProps({ appearance: "gray" });
+      expect(grayTags.length).toBeGreaterThan(0);
+    });
+
+    it("should render the APY tag with success appearance for non-GB users on asset list", async () => {
+      jest.mocked(getStakeLabelHelpers.getCountryLocale).mockReturnValue("US");
+
+      const { getByText, UNSAFE_getAllByProps, user } = render(
+        <ModularDrawerSharedNavigator
+          assetsConfiguration={{
+            leftElement: "apy",
+          }}
+        />,
+        {
+          ...INITIAL_STATE,
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              overriddenFeatureFlags: mockedFF,
+            },
+          }),
+        },
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+
+      const successTags = UNSAFE_getAllByProps({ appearance: "success" });
+      expect(successTags.length).toBeGreaterThan(0);
+    });
   });
 });
