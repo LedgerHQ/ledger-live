@@ -1615,7 +1615,7 @@ describe("listOperations", () => {
       if (!params.cursor) {
         return isOut
           ? {
-              data: [tx("boundary", "1", "200")],
+              data: [tx("zzzz", "1", "200")],
               hasNextPage: true,
               nextCursor: "out-next",
             }
@@ -1626,7 +1626,7 @@ describe("listOperations", () => {
             };
       }
 
-      if (params.cursor === "boundary") {
+      if (params.cursor === "zzzz") {
         return isOut
           ? { data: [tx("same-1", "2", "200")], hasNextPage: false, nextCursor: null }
           : { data: [tx("same-2", "3", "200")], hasNextPage: false, nextCursor: null };
@@ -1643,7 +1643,7 @@ describe("listOperations", () => {
     const page2 = await sdk.getListOperations(address, "asc", apiCall, page1.next);
     const page3 = await sdk.getListOperations(address, "asc", apiCall, page2.next);
 
-    expect(page1.items.map(op => op.tx.hash)).toEqual(["boundary"]);
+    expect(page1.items.map(op => op.tx.hash)).toEqual(["zzzz"]);
     expect(page2.items).toEqual([]);
     expect(page2.next).not.toEqual("");
     expect(page3.items).toEqual([]);
