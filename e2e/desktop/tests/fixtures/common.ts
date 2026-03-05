@@ -68,6 +68,7 @@ const DEFAULT_FEATURE_FLAGS: OptionalFeatureMap = {
       live_apps_blocklist: [],
     },
   },
+  lwdWallet40: { enabled: false },
 };
 
 async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
