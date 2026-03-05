@@ -1,6 +1,6 @@
 import React from "react";
 import { accountsCount } from "./AccountCount";
-import { accountsApy } from "./AccountApy";
+import { ApyIndicator } from "./ApyIndicator";
 import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
 
 export const accountsCountAndApy = ({
@@ -13,7 +13,7 @@ export const accountsCountAndApy = ({
   type?: ApyType;
 }) => (
   <>
-    {label && accountsCount({ label })}
-    {accountsApy({ value, type })}
+    {!!label && accountsCount({ label })}
+    {!!value && !!type && <ApyIndicator value={value} type={type} />}
   </>
 );

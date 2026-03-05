@@ -1,12 +1,14 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
-import type { ReactNode, ReactElement } from "react";
+import type { ComponentType, ReactNode, ReactElement } from "react";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 import { InterestRate } from "../../dada-client/entities";
 import { MarketItemResponse } from "../../market/utils/types";
 import BigNumber from "bignumber.js";
 import { ApyType } from "../../dada-client/types/trend";
+
+export type ApyIndicatorComponent = ComponentType<{ value: number; type: ApyType }>;
 
 export type AssetType = {
   name: string;
@@ -94,7 +96,7 @@ export type NetworkConfigurationDeps = {
   useAccountData: UseAccountData;
   accountsCount: CreateAccountsCount;
   accountsCountAndApy: CreateAccountsCountAndApy;
-  accountsApy: CreateAccountsCountAndApy;
+  ApyIndicator: ApyIndicatorComponent;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: CreateBalanceItem;
 };
@@ -121,7 +123,7 @@ type Props = {
 };
 
 export type AssetConfigurationDeps = {
-  ApyIndicator: (args: { value: number; type: ApyType }) => ReactNode;
+  ApyIndicator: ApyIndicatorComponent;
   MarketPercentIndicator: (args: { percent: number }) => ReactNode;
   MarketPriceIndicator: (args: { price: string; percent: number }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;

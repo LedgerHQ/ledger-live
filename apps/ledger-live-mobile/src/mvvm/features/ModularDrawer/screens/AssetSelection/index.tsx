@@ -6,7 +6,7 @@ import {
   MarketPriceIndicator,
   MarketPercentIndicator,
 } from "@ledgerhq/native-ui/pre-ldls/index";
-import { ApyIndicator } from "../../components/AccountApy";
+import { ApyIndicator } from "../../components/ApyIndicator";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import SkeletonList from "../../components/Skeleton/SkeletonList";

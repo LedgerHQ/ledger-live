@@ -4,7 +4,6 @@ export * from "./Address/Address";
 export * from "./AssetItem/AssetItem";
 export * from "./AssetList/AssetList";
 export * from "./CardButton/CardButton";
-export * from "./ApyIndicator/ApyIndicator";
 export * from "./MarketPriceIndicator/MarketPriceIndicator";
 export * from "./MarketPercentIndicator/MarketPercentIndicator";
 export * from "./Input/Input";

@@ -1,6 +1,8 @@
+import React from "react";
 import {
   AccountDataItem,
   AccountModuleParams,
+  ApyIndicatorComponent,
   CreateAccountsCountAndApy,
   NetworkWithCount,
 } from "../utils/type";
@@ -11,7 +13,7 @@ export function useLeftAccountsApyModule(
   params: AccountModuleParams,
   useAccountData: (params: AccountModuleParams) => AccountDataItem[],
   accountsCountAndApy: CreateAccountsCountAndApy,
-  accountsApy: CreateAccountsCountAndApy,
+  ApyIndicator: ApyIndicatorComponent,
 ): Array<NetworkWithCount> {
   const { networks } = params;
   const accountData = useAccountData(params);
@@ -37,10 +39,10 @@ export function useLeftAccountsApyModule(
         type: interestRate?.type,
       }),
       description: count > 0 ? label : undefined,
-      apy: accountsApy({
-        value: interestRatePercentageRounded,
-        type: interestRate?.type,
-      }),
+      apy:
+        interestRate && interestRatePercentageRounded > 0 ? (
+          <ApyIndicator value={interestRatePercentageRounded} type={interestRate.type} />
+        ) : undefined,
       count,
     };
   });
