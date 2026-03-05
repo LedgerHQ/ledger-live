@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import getUser from "~/helpers/user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { getStoreValue } from "~/renderer/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { saveSettings } from "~/renderer/actions/settings";
@@ -19,10 +19,11 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: SeedPathStatus) => 
   const recoverServices = useFeature("protectServicesDesktop");
   const recoverStoreId = recoverServices?.params?.protectId ?? "";
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const userId = useSelector(userIdSelector);
   const [onboardedViaRecoverRestore, setOnboardedViaRecoverRestore] = useState<boolean>();
 
   const confirmRecoverOnboardingStatus = useCallback(async () => {
-    const { id } = await getUser();
+    const id = userId.exportUserIdForRecover();
     const status = getStoreValue(
       `${ONBOARDED_VIA_RECOVER_RESTORE_USER_PREFIX}${id}`,
       recoverStoreId,
@@ -37,7 +38,7 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: SeedPathStatus) => 
         }),
       );
     }
-  }, [dispatch, isLocked, onboardedViaRecoverRestore, recoverStoreId]);
+  }, [dispatch, isLocked, onboardedViaRecoverRestore, recoverStoreId, userId]);
 
   useEffect(() => {
     const userIsOnboardingOrSettingUp =

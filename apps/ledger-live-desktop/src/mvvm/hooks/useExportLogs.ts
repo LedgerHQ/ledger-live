@@ -1,5 +1,5 @@
-import getUser from "~/helpers/user";
 import { getAllEnvs } from "@ledgerhq/live-env";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { webFrame, ipcRenderer } from "electron";
 import { useCallback, useState } from "react";
 import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";
@@ -11,19 +11,19 @@ import { saveLogs } from "~/helpers/saveLogs";
 export function useExportLogs() {
   const getDateTxt = useTechnicalDateTimeFn();
   const accounts = useSelector(accountsSelector);
+  const userId = useSelector(userIdSelector);
   const [exporting, setExporting] = useState(false);
 
   const exportLogs = useCallback(async () => {
     try {
       const resourceUsage = webFrame.getResourceUsage();
-      const user = await getUser();
       logger.log("exportLogsMeta", {
         resourceUsage,
         release: __APP_VERSION__,
         git_commit: __GIT_REVISION__,
         environment: __DEV__ ? "development" : "production",
         userAgent: window.navigator.userAgent,
-        userAnonymousId: user.id,
+        userAnonymousId: userId.exportUserIdForUserLogs(),
         env: getAllEnvs(),
         accountsIds: accounts.map(a => a.id),
       });
@@ -40,7 +40,7 @@ export function useExportLogs() {
     } catch (error) {
       logger.critical(error as Error);
     }
-  }, [accounts, getDateTxt]);
+  }, [accounts, getDateTxt, userId]);
 
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;
