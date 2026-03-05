@@ -4,8 +4,8 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import type { FeePresetOption as DescriptorFeePresetOption } from "@ledgerhq/live-common/bridge/descriptor";
 import isEqual from "lodash/isEqual";
-import { isEvmTransaction } from "../utils/isEvmTransaction";
 import { hasDistinctGasOptions } from "../utils/gas";
+import { isEvmTransaction } from "../utils/isEvmTransaction";
 
 export type FeePresetOption = DescriptorFeePresetOption;
 

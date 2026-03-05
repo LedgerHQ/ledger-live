@@ -10,7 +10,7 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
-import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
+import { createMockAccount } from "../../screens/Recipient/__integrations__/__fixtures__/accounts";
 import type { FeePresetOption } from "../useFeePresetOptions";
 
 jest.mock("@ledgerhq/live-common/bridge/index");

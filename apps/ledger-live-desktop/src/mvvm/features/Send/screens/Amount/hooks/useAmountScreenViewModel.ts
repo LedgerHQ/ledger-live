@@ -14,15 +14,9 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/acc
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useAmountInput } from "./useAmountInput";
 import { useQuickActions } from "./useQuickActions";
-import { useFeeInfo } from "./useFeeInfo";
-import { useFeePresetOptions } from "./useFeePresetOptions";
-import { useFeePresetFiatValues } from "./useFeePresetFiatValues";
-import { useFeePresetLegends } from "./useFeePresetLegends";
-import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import { useInitialTransactionPreparation } from "./useInitialTransactionPreparation";
+import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useAmountScreenMessage } from "./useAmountScreenMessage";
+import { useNetworkFees } from "../../../hooks/useNetworkFees";
 
 type UseAmountScreenViewModelParams = Readonly<{
   account: AccountLike;
@@ -53,34 +47,6 @@ export function useAmountScreenViewModel({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const fiatUnit = counterValueCurrency.units[0];
-  const feePresetOptions = useFeePresetOptions(accountCurrency, transaction);
-  const hasFeePresets = sendFeatures.hasFeePresets(accountCurrency);
-  const shouldEstimateFeePresetsWithBridge = sendFeatures.shouldEstimateFeePresetsWithBridge(
-    accountCurrency,
-    transaction,
-  );
-  const shouldForceBridgeEstimationForEvm =
-    hasFeePresets && transaction.family === "evm" && feePresetOptions.length === 0;
-  const shouldEstimateFeePresets =
-    shouldEstimateFeePresetsWithBridge || shouldForceBridgeEstimationForEvm;
-  const fiatByPreset = useFeePresetFiatValues({
-    account,
-    parentAccount,
-    mainAccount,
-    transaction,
-    feePresetOptions,
-    fallbackPresetIds: shouldForceBridgeEstimationForEvm ? ["slow", "medium", "fast"] : undefined,
-    counterValueCurrency,
-    fiatUnit,
-    enabled: hasFeePresets,
-    shouldEstimateWithBridge: shouldEstimateFeePresets,
-  });
-  const legendByPreset = useFeePresetLegends({
-    currency: accountCurrency,
-    feePresetOptions,
-  });
 
   const updateTransactionWithPatch = useCallback(
     (patch: Partial<Transaction>) => {
@@ -163,17 +129,20 @@ export function useAmountScreenViewModel({
     onSelectMax: handleSelectMax,
   });
 
-  const { feeSummary } = useFeeInfo({
-    account,
-    parentAccount,
-    status,
-  });
-
   const { amountMessage, isStellarMultisignBlocked } = useAmountScreenMessage({
     status,
     accountCurrency,
     amountComputationPending,
     hasRawAmount,
+  });
+
+  const networkFees = useNetworkFees({
+    account,
+    parentAccount,
+    transaction,
+    status,
+    uiConfig,
+    transactionActions,
   });
 
   const hasInsufficientFundsError = useMemo(() => {
@@ -195,51 +164,10 @@ export function useAmountScreenViewModel({
   const hasAmount = hasRawAmount;
   const reviewDisabled =
     (hasErrors && !hasInsufficientFundsError) || !hasAmount || amountComputationPending;
-  const showNetworkFees = true;
-
-  const selectedFeeStrategy = transaction.feesStrategy ?? null;
-  const selectedPresetFiatValue =
-    selectedFeeStrategy && selectedFeeStrategy !== "custom"
-      ? fiatByPreset[selectedFeeStrategy] ?? null
-      : null;
-
-  const onSelectFeeStrategy = useCallback(
-    (strategy: string) => {
-      const feesStrategy: Transaction["feesStrategy"] =
-        strategy === "slow" || strategy === "medium" || strategy === "fast" || strategy === "custom"
-          ? strategy
-          : null;
-
-      const patch: Partial<Transaction> = { feesStrategy };
-
-      // When switching from custom back to a preset, clear custom fee overrides
-      if (feesStrategy && feesStrategy !== "custom") {
-        Object.assign(patch, {
-          customGasLimit: undefined,
-          gasPrice: undefined,
-          maxFeePerGas: undefined,
-          maxPriorityFeePerGas: undefined,
-          feePerByte: undefined,
-          customFeeRate: undefined,
-          fees: undefined,
-          customFees: undefined,
-        } as Partial<Transaction>);
-      }
-
-      updateTransactionWithPatch(patch);
-    },
-    [updateTransactionWithPatch],
-  );
 
   const reviewLabel = hasInsufficientFundsError
     ? t("newSendFlow.getCta", { currency: accountCurrency?.ticker ?? "CRYPTO" })
     : t("newSendFlow.reviewCta");
-
-  const getFeeStrategyLabel = (strategy: string | null): string => {
-    if (!strategy) return t("fees.medium");
-    if (strategy === "custom") return t("fees.custom");
-    return t(`fees.${strategy}`);
-  };
 
   // Navigate to custom fees step
   const onOpenCustomFees = useCallback(() => {
@@ -247,7 +175,7 @@ export function useAmountScreenViewModel({
   }, [navigation]);
 
   // Navigate to coin control step
-  const onOpenCoinControl = useCallback(() => {
+  const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);
   }, [navigation]);
 
@@ -261,24 +189,15 @@ export function useAmountScreenViewModel({
     onToggleInputMode: amountInput.onToggleInputMode,
     toggleLabel: t("newSendFlow.switchInputMode"),
     secondaryValue: amountInput.secondaryValue,
-    feesRowLabel: t("fees.networkFees"),
-    feesRowValue: selectedPresetFiatValue ?? feeSummary?.fiatValue ?? "--",
-    feesRowStrategyLabel: getFeeStrategyLabel(selectedFeeStrategy),
     quickActions,
     showQuickActions: quickActionsAvailableBalance.gt(0),
     amountMessage,
-    showNetworkFees,
     reviewLabel,
     reviewShowIcon: !hasInsufficientFundsError,
     reviewDisabled,
     reviewLoading: amountComputationPending,
-    showFeePresets: uiConfig.hasFeePresets,
-    selectedFeeStrategy,
-    onSelectFeeStrategy,
     onOpenCustomFees,
-    onOpenCoinControl,
-    feePresetOptions,
-    fiatByPreset,
-    legendByPreset,
+    onSelectCoinControl,
+    ...networkFees,
   };
 }
