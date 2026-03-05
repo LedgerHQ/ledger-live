@@ -721,8 +721,8 @@ function compareByTimestamp(
     }
 
     // Deterministic tie-breaker for identical timestamps: use digest
-    const da = (a as any).digest ?? "";
-    const db = (b as any).digest ?? "";
+    const da = a.digest ?? "";
+    const db = b.digest ?? "";
 
     if (da === db) {
       return 0;
