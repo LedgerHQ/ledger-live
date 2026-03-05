@@ -19,6 +19,7 @@ const DEFAULT_STATE: SwapWallet40HeaderStoreState = {
   headerStyle: "transparent",
   titleKey: null,
   canGoBack: false,
+  isTransactionComplete: false,
   goBackWebview: null,
 };
 
@@ -66,6 +67,7 @@ export function useSwapWallet40HeaderStateUpdater(webviewRef: RefObject<WebviewA
         headerStyle: parsedRoute.headerStyle,
         titleKey: parsedRoute.titleKey,
         canGoBack: webviewState.canGoBack,
+        isTransactionComplete: parsedRoute.isTransactionComplete,
         goBackWebview: () => webviewRef.current?.goBack(),
       });
     },

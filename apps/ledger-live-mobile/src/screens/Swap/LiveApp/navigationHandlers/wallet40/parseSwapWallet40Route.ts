@@ -4,12 +4,14 @@ const HOME_ROUTE: SwapWallet40ParsedRoute = {
   routeName: "home",
   headerStyle: "transparent",
   titleKey: null,
+  isTransactionComplete: false,
 };
 
 const UNKNOWN_ROUTE: SwapWallet40ParsedRoute = {
   routeName: "unknown",
   headerStyle: "transparent",
   titleKey: null,
+  isTransactionComplete: false,
 };
 
 function normalizePathname(pathname: string): string {
@@ -58,6 +60,7 @@ export function parseSwapWallet40Route(url: string): SwapWallet40ParsedRoute {
           routeName: "quotesList",
           headerStyle: "opaque",
           titleKey: "transfer.swap2.quotesList.title",
+          isTransactionComplete: false,
         };
       }
 
@@ -73,6 +76,7 @@ export function parseSwapWallet40Route(url: string): SwapWallet40ParsedRoute {
         titleKey: isTransactionComplete
           ? "transfer.swap2.twoStepApproval.completedTitle"
           : "transfer.swap2.twoStepApproval.title",
+        isTransactionComplete,
       };
     }
 
@@ -81,6 +85,7 @@ export function parseSwapWallet40Route(url: string): SwapWallet40ParsedRoute {
         routeName: "devSettings",
         headerStyle: "opaque",
         titleKey: "Dev Settings",
+        isTransactionComplete: false,
       };
     }
 

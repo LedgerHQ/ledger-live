@@ -1,7 +1,8 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
 import { render } from "@tests/test-renderer";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import { NavigatorName } from "~/const";
 import { SwapWallet40Header } from "../SwapWallet40Header";
 import { useSwapWallet40HeaderState } from "../../navigationHandlers/wallet40/useSwapWallet40HeaderState";
 
@@ -21,16 +22,27 @@ jest.mock("../SwapTopBarHeader", () => ({
 jest.mock("../SwapOpaqueHeader", () => ({
   SwapOpaqueHeader: ({
     onBackPress,
+    onClosePress,
+    showBackButton,
     titleKey,
   }: {
     onBackPress: () => void;
+    onClosePress?: () => void;
+    showBackButton?: boolean;
     titleKey: string | null;
   }) => (
     <>
       <Text testID="swap-opaque-title">{titleKey ?? ""}</Text>
-      <Pressable testID="swap-opaque-back" onPress={onBackPress}>
-        <Text>back</Text>
-      </Pressable>
+      {showBackButton !== false ? (
+        <Pressable testID="swap-opaque-back" onPress={onBackPress}>
+          <Text>back</Text>
+        </Pressable>
+      ) : null}
+      {onClosePress ? (
+        <Pressable testID="swap-opaque-close" onPress={onClosePress}>
+          <Text>close</Text>
+        </Pressable>
+      ) : null}
     </>
   ),
 }));
@@ -40,10 +52,11 @@ const mockedUseSwapWallet40HeaderState = jest.mocked(useSwapWallet40HeaderState)
 
 describe("SwapWallet40Header", () => {
   const goBack = jest.fn();
+  const dispatch = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseNavigation.mockImplementation(() => ({ goBack }));
+    mockedUseNavigation.mockImplementation(() => ({ goBack, dispatch }));
   });
 
   it("should render transparent top bar header when header style is transparent", () => {
@@ -51,6 +64,7 @@ describe("SwapWallet40Header", () => {
       headerStyle: "transparent",
       titleKey: null,
       canGoBack: false,
+      isTransactionComplete: false,
       goBackWebview: null,
       routeName: "home",
     });
@@ -67,6 +81,7 @@ describe("SwapWallet40Header", () => {
       headerStyle: "opaque",
       titleKey: "transfer.swap2.quotesList.title",
       canGoBack: true,
+      isTransactionComplete: false,
       goBackWebview,
       routeName: "quotesList",
     });
@@ -84,6 +99,7 @@ describe("SwapWallet40Header", () => {
       headerStyle: "opaque",
       titleKey: "transfer.swap2.quotesList.title",
       canGoBack: false,
+      isTransactionComplete: false,
       goBackWebview: null,
       routeName: "quotesList",
     });
@@ -93,5 +109,30 @@ describe("SwapWallet40Header", () => {
     await user.press(getByTestId("swap-opaque-back"));
 
     expect(goBack).toHaveBeenCalledTimes(1);
+  });
+
+  it("should show close-only action for completed swap and reset to swap form", async () => {
+    mockedUseSwapWallet40HeaderState.mockReturnValue({
+      headerStyle: "opaque",
+      titleKey: "transfer.swap2.twoStepApproval.completedTitle",
+      canGoBack: true,
+      isTransactionComplete: true,
+      goBackWebview: jest.fn(),
+      routeName: "multiStepTransaction",
+    });
+
+    const { user, queryByTestId, getByTestId } = render(<SwapWallet40Header />);
+
+    expect(queryByTestId("swap-opaque-back")).toBeNull();
+
+    await user.press(getByTestId("swap-opaque-close"));
+
+    expect(dispatch).toHaveBeenCalledWith(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: NavigatorName.Swap }],
+      }),
+    );
+    expect(goBack).not.toHaveBeenCalled();
   });
 });
