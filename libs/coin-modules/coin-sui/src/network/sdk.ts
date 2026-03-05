@@ -802,7 +802,6 @@ export const getListOperations = async (
       if (!parsedCursor) return true;
 
       if (op.digest === parsedCursor.digest) return false;
-      if (parsedCursor.timestamp === undefined) return true;
 
       const ts = Number(op.timestampMs ?? 0);
       return order === "asc" ? ts > parsedCursor.timestamp : ts < parsedCursor.timestamp;
