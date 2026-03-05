@@ -28,7 +28,7 @@ export const AmountInput = ({
         aria-label={amountInputLabel}
         onChange={onAmountChange}
         value={amount ?? ""}
-        type="string"
+        type="text"
         errorMessage={errorMessage ?? undefined}
       />
     </div>
