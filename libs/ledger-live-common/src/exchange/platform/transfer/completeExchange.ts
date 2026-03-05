@@ -161,7 +161,10 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
+        if (
+          e instanceof TransportStatusError &&
+          (e.statusCode === 0x6a84 || e.statusCode === 0x5501)
+        ) {
           throw new TransactionRefusedOnDevice();
         }
 
