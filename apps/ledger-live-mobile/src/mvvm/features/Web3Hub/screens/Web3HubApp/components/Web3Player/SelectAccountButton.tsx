@@ -59,8 +59,9 @@ export default function SelectAccountButton({
           )
         }
         onPress={onSelectAccount}
+        accessibilityLabel="Select Account"
         isNewIcon
-      ></Button>
+      />
     </>
   );
 }
