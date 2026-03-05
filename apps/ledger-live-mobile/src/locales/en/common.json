@@ -2213,7 +2213,7 @@
       },
       "protectConnectionInformationModal": {
         "title": "Ledger Nano X connection",
-        "description": "Make sure your Ledger is close to your phone and try again. <LinkBluethooth>Bluetooth® connection issues\u2028\n</LinkBluethooth>.\nIf Bluetooth® is working, you might need to update Ledger’s OS. Try updating the OS, or contact Ledger Support for assistance. ",
+        "description": "Make sure your Ledger is close to your phone and try again. <LinkBluethooth>Bluetooth® connection issues \n</LinkBluethooth>.\nIf Bluetooth® is working, you might need to update Ledger’s OS. Try updating the OS, or contact Ledger Support for assistance. ",
         "learnHowToUpdate": "Learn how to update"
       }
     },
@@ -3097,7 +3097,6 @@
     },
     "availableBalance": "Available balance",
     "availableBalanceTooltip": "Funds you can use right now.",
-
     "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
@@ -5045,13 +5044,13 @@
   "FirmwareUpdate": {
     "banner": {
       "wallet40": {
-          "title": {
-            "default": "OS update available",
-            "manager": "Ledger OS update available"
-          },
-          "version": "Version {{firmwareVersion}}",
-          "cta": "Update"
+        "title": {
+          "default": "OS update available",
+          "manager": "Ledger OS update available"
         },
+        "version": "Version {{firmwareVersion}}",
+        "cta": "Update"
+      },
       "title": "OS update available",
       "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
@@ -8261,7 +8260,7 @@
       "title": "No accounts found",
       "subTitle": "Looks like you haven’t added an account yet. Get started now.",
       "cta": "Add an account",
-      "link": "Need help? Learn how to add an account to Ledger\u00a0Wallet."
+      "link": "Need help? Learn how to add an account to Ledger Wallet."
     }
   },
   "lnsUpsell": {
@@ -8550,7 +8549,32 @@
   },
   "concordium": {
     "onboard": {
-      "title": "Concordium Onboarding"
+      "title": "Concordium Onboarding",
+      "acknowledge": {
+        "title": "Acknowledgement",
+        "description": "Concordium requires external identity verification. Please read these important security warnings:",
+        "list": {
+          "1": "No address verification – Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds.",
+          "2": "Concordium ID App uses a separate seed – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
+          "3": "You'll be redirected outside Ledger Live – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
+          "4": "Transaction signing stays secure – Only your Ledger device can sign transactions and create accounts."
+        },
+        "allow": "Agree"
+      },
+      "pair": {
+        "title": "Connect to Concordium ID App",
+        "connecting": "Connecting...",
+        "scanQRCodeOrDownload": "Scan the QR code with another device, or download the Concordium ID App to continue.",
+        "openIdApp": "Open Concordium ID App",
+        "success": "Successfully paired with Concordium ID App.",
+        "error": "Failed to pair with Concordium ID App."
+      },
+      "create": {
+        "title": "Create Account",
+        "prepare": {
+          "title": "To create an account, match the code below in the Concordium ID App"
+        }
+      }
     }
   },
   "fearAndGreed": {
