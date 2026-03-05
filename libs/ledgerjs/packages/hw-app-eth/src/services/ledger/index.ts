@@ -40,6 +40,7 @@ const getAdditionalDataForContract = async (
   chainIdUint32: number,
   loadConfig: LoadConfig,
   shouldResolve: PotentialResolutions,
+  providedErc20SignaturesBlob?: string,
 ): Promise<Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens">> => {
   const resolution: Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens"> = {
     nfts: [],
@@ -61,7 +62,8 @@ const getAdditionalDataForContract = async (
   }
 
   if (shouldResolve.token) {
-    const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig, chainIdUint32);
+    const erc20SignaturesBlob =
+      providedErc20SignaturesBlob ?? (await findERC20SignaturesInfo(loadConfig, chainIdUint32));
     const erc20Info = byContractAddressAndChainId(
       contractAddress,
       chainIdUint32,
@@ -200,9 +202,11 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
   rawTxHex,
   loadConfig,
   resolutionConfig,
+  parseTx = parseTransaction,
+  additionalErc20SignaturesConfig = null,
 ) => {
   const rawTx = Buffer.from(rawTxHex, "hex");
-  const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+  const parsedTransaction = parseTx(`0x${rawTx.toString("hex")}`);
   const chainIdUint32 = getChainIdAsUint32(parsedTransaction.chainId);
   const { domains } = resolutionConfig;
 
@@ -250,6 +254,21 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
       loadConfig,
       shouldResolve,
     );
+
+    if (contractResolution) {
+      resolutions.push(contractResolution);
+    }
+  }
+
+  if (additionalErc20SignaturesConfig) {
+    const contractResolution = await getAdditionalDataForContract(
+      additionalErc20SignaturesConfig.contractAddressToResolve,
+      chainIdUint32,
+      loadConfig,
+      { token: true, nft: false, externalPlugins: false, uniswapV3: false },
+      additionalErc20SignaturesConfig.additionalErc20SignaturesBlob,
+    );
+
     if (contractResolution) {
       resolutions.push(contractResolution);
     }
@@ -270,4 +289,5 @@ export default {
   resolveTransaction,
   signDomainResolution,
   signAddressResolution,
+  parseTransaction,
 } as LedgerEthTransactionService;
