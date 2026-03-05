@@ -1,12 +1,7 @@
-import type {
-  AssetInfo,
-  Block,
-  BlockInfo,
-  BlockOperation,
-  BlockTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+import type { Block, BlockInfo, BlockOperation, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
 import { getBlock as networkGetBlock, toBlock } from "../network";
 import { formatTrongridTxResponse } from "../network/format";
+import { inferAssetInfo } from "../network/trongrid/trongrid-adapters";
 import type { BlockTransactionAPI, TransactionTronAPI } from "../network/types";
 import type { TrongridTxInfo } from "../types";
 
@@ -74,9 +69,8 @@ function toBlockTransaction(
 }
 
 function toBlockOperations(txInfo: TrongridTxInfo): BlockOperation[] {
-  const asset = inferAsset(txInfo);
-
   if (isTransfer(txInfo) && txInfo.to && txInfo.value) {
+    const asset = inferAssetInfo(txInfo);
     const amount = BigInt(txInfo.value.toFixed(0));
     return [
       { type: "transfer", address: txInfo.from, peer: txInfo.to, asset, amount: -amount },
@@ -93,14 +87,4 @@ function isTransfer(txInfo: TrongridTxInfo): boolean {
     txInfo.type === "TransferAssetContract" ||
     (txInfo.type === "TriggerSmartContract" && txInfo.tokenType === "trc20")
   );
-}
-
-function inferAsset(txInfo: TrongridTxInfo): AssetInfo {
-  if (txInfo.tokenType === "trc10" && txInfo.tokenId) {
-    return { type: "trc10", assetReference: txInfo.tokenId };
-  }
-  if (txInfo.tokenType === "trc20" && txInfo.tokenAddress) {
-    return { type: "trc20", assetReference: txInfo.tokenAddress };
-  }
-  return { type: "native" };
 }
