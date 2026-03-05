@@ -82,6 +82,7 @@ export type SwapProps = {
   toAccountId: string;
   fromAmount: string;
   toAmount?: string;
+  finalAmount?: string;
   quoteId: string;
   rate: string;
   feeStrategy: string;
@@ -460,6 +461,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             amount: new BigNumber(swap.toAmount),
             account: toAccount,
           })!,
+          finalAmount: swap.finalAmount ? new BigNumber(swap.finalAmount) : undefined,
         };
 
         dispatch(
