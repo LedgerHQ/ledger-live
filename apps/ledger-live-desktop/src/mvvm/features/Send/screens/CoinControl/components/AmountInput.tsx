@@ -6,6 +6,7 @@ type AmountInputProps = Readonly<{
   amount: string | null;
   errorMessage?: string | null;
   amountToSendLabel: string;
+  amountInputLabel: string;
 }>;
 
 export const AmountInput = ({
@@ -13,6 +14,7 @@ export const AmountInput = ({
   amount,
   errorMessage,
   amountToSendLabel,
+  amountInputLabel,
 }: AmountInputProps) => {
   return (
     <div className="flex flex-col gap-12">
@@ -22,7 +24,8 @@ export const AmountInput = ({
         </SubheaderRow>
       </Subheader>
       <TextInput
-        label="Amount to send"
+        label={amountInputLabel}
+        aria-label={amountInputLabel}
         onChange={onAmountChange}
         value={amount ?? ""}
         type="string"

@@ -20,7 +20,6 @@ type AmountFooterProps = Readonly<{
   fiatByPreset: FeeFiatMap;
   legendByPreset: FeePresetLegendMap;
   onSelectFeeStrategy: (strategy: string) => void;
-  onSelectCustomFees: () => void;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -41,7 +40,6 @@ export function CoinControlFooter({
   fiatByPreset,
   legendByPreset,
   onSelectFeeStrategy,
-  onSelectCustomFees,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -81,9 +79,6 @@ export function CoinControlFooter({
           options: feePresetOptions,
           fiatByPreset,
           legendByPreset,
-        }}
-        actions={{
-          onSelectCustomFees: onSelectCustomFees,
         }}
       />
       <Button

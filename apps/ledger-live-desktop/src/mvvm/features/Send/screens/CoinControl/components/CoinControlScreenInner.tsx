@@ -65,6 +65,7 @@ export function CoinControlScreenInner({
         changeToReturnLabel={viewModel.changeToReturnLabel}
         enterAmountPlaceholder={viewModel.enterAmountPlaceholder}
         amountToSendLabel={viewModel.amountToSendLabel}
+        amountInputLabel={viewModel.amountInputLabel}
         feesRowLabel={viewModel.feesRowLabel}
         feesRowValue={viewModel.feesRowValue}
         feesRowStrategyLabel={viewModel.feesRowStrategyLabel}

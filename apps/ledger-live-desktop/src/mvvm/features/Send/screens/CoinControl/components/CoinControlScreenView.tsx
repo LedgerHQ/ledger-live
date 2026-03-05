@@ -26,6 +26,7 @@ type CoinControlScreenViewProps = Readonly<{
   changeToReturnLabel: string;
   enterAmountPlaceholder: string;
   amountToSendLabel: string;
+  amountInputLabel: string;
   feesRowLabel: string;
   feesRowValue: string;
   feesRowStrategyLabel: string;
@@ -57,6 +58,7 @@ export function CoinControlScreenView({
   changeToReturnLabel,
   enterAmountPlaceholder,
   amountToSendLabel,
+  amountInputLabel,
   feesRowLabel,
   feesRowValue,
   feesRowStrategyLabel,
@@ -88,6 +90,7 @@ export function CoinControlScreenView({
           amount={amountValue}
           errorMessage={amountError}
           amountToSendLabel={amountToSendLabel}
+          amountInputLabel={amountInputLabel}
         />
         <UtxoSelector utxoDisplayData={utxoDisplayData} coinToSendLabel={coinToSendLabel} />
       </DialogBody>
@@ -104,7 +107,6 @@ export function CoinControlScreenView({
         fiatByPreset={fiatByPreset}
         legendByPreset={legendByPreset}
         onSelectFeeStrategy={onSelectFeeStrategy}
-        onSelectCustomFees={() => {}}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}
         reviewDisabled={reviewDisabled}

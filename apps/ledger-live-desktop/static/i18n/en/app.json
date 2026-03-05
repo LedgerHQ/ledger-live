@@ -2474,7 +2474,8 @@
       "coinToSend": "Coin to send",
       "changeToReturn": "Change to return",
       "enterAmount": "Enter amount",
-      "amountToSendInCurrency": "Amount to send in {{ticker}}"
+      "amountToSendInCurrency": "Amount to send in {{ticker}}",
+      "amountInputLabel": "Amount to send"
     }
   },
   "releaseNotes": {
