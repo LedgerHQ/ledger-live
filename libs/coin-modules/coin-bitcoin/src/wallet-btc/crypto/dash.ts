@@ -1,8 +1,8 @@
+import type { BitcoinJS } from "coininfo";
 import Base from "./base";
 
 class Dash extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     this.network.messagePrefix = "\x19DarkCoin Signed Message:\n";
     this.network.bip32 = {

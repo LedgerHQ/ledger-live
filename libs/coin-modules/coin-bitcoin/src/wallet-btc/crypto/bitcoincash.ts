@@ -1,15 +1,12 @@
 import bchaddr from "bchaddrjs";
 import { address as btcAddress } from "bitcoinjs-lib";
+import type { BitcoinJS } from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import Base from "./base";
 
 // a mock explorer class that just use js objects
 class BitcoinCash extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  network: any;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     this.network = network;
     this.network.dustThreshold = 5430;

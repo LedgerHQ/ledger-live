@@ -1,6 +1,6 @@
+import type { BitcoinJS } from "coininfo";
 export interface ICrypto {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  network: any;
+  network: BitcoinJS;
   getPubkeyAt(xpub: string, account: number, index: number): Promise<Buffer>;
   getAddress(derivationMode: string, xpub: string, account: number, index: number): Promise<string>;
   customGetAddress(
