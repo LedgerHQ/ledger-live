@@ -170,7 +170,6 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
-  startAnalytics(store);
 
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
@@ -187,6 +186,12 @@ async function init() {
   const language = languageSelector(state);
 
   i18n.changeLanguage(language);
+
+  try {
+    await startAnalytics(store);
+  } catch (error) {
+    logger.error("Failed to start analytics:", error);
+  }
 
   const hideEmptyTokenAccounts = hideEmptyTokenAccountsSelector(state);
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);

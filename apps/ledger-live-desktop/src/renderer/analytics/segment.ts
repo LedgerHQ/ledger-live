@@ -339,9 +339,9 @@ export const startAnalytics = async (store: ReduxStore) => {
   storeInstance = store;
 
   const canBeTracked = trackingEnabledSelector(store.getState());
-  if (!canBeTracked) return;
-
-  const id = userIdSelector(store.getState()).exportUserIdForAnalytics();
+  if (!canBeTracked) {
+    return;
+  }
 
   // Initialize Segment with the write key from config
   initializeSegment();
@@ -349,6 +349,7 @@ export const startAnalytics = async (store: ReduxStore) => {
   const analytics = getAnalytics();
   if (!analytics) return;
 
+  const id = userIdSelector(store.getState()).exportUserIdForAnalytics();
   const allProperties = {
     ...extraProperties(store),
     userId: id,
