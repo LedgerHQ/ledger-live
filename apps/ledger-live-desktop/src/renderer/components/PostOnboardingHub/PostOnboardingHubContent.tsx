@@ -40,6 +40,7 @@ const PostOnboardingHubContent = () => {
       height="100%"
       width="100%"
       maxWidth={450}
+      data-testid="postonboarding-hub-content"
     >
       <PostOnboardingHub />
       {!areAllPostOnboardingActionsCompleted ? (

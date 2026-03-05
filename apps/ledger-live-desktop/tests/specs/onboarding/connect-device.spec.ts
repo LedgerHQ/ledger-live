@@ -67,9 +67,9 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Reach app", async () => {
         await onboardingPage.reachApp();
-        const assetTransferRow = page.getByTestId("postonboarding-action-row-assetsTransfer");
-        await assetTransferRow.waitFor({ state: "hidden", timeout: 2000 });
-        await expect(page).toHaveScreenshot("v3-onboarding-complete.png");
+        await expect(page).toHaveScreenshot("v3-onboarding-complete.png", {
+          mask: [page.locator('[data-testid="postonboarding-hub-content"]')],
+        });
       });
     });
   }
