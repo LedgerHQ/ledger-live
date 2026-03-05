@@ -800,11 +800,24 @@ export const getListOperations = async (
     // filter out operations before the cursor
     const pageOps = sortedOps.filter(op => {
       if (!parsedCursor) return true;
-
+      // never return the boundary operation itself
       if (op.digest === parsedCursor.digest) return false;
 
+      const boundaryTs = parsedCursor.timestamp;
+      const boundaryDigest = parsedCursor.digest;
+
+      // if we don't have full boundary information, fall back to previous behavior
+      if (boundaryTs === undefined || !boundaryDigest) return true;
+
       const ts = Number(op.timestampMs ?? 0);
-      return order === "asc" ? ts > parsedCursor.timestamp : ts < parsedCursor.timestamp;
+
+      if (order === "asc") {
+        // keep ops strictly after the cursor in (timestamp, digest) ordering
+        return ts > boundaryTs || (ts === boundaryTs && op.digest > boundaryDigest);
+      }
+
+      // order === "desc": keep ops strictly after the cursor in reverse (timestamp, digest) ordering
+      return ts < boundaryTs || (ts === boundaryTs && op.digest < boundaryDigest);
     });
 
     // fetch checkpoints for the operations
