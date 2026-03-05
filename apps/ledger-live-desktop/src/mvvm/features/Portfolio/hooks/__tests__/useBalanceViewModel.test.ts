@@ -44,6 +44,7 @@ const defaultBalanceSyncReturn = {
   counterValue: mockCounterValue,
   balanceAvailable: true,
   isColdStart: false,
+  isInitialLoading: false,
   isBalanceLoading: false,
   isManualRefreshLoading: false,
   stableSyncPending: false,
@@ -72,6 +73,7 @@ describe("useBalanceViewModel", () => {
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
     expect(result.current.balance).toBe(1500);
+    expect(result.current.balanceAvailable).toBe(true);
     expect(result.current.formatter).toBeDefined();
     expect(result.current.formatter(result.current.balance).integerPart).toContain("15");
     expect(result.current.valueChange).toEqual(mockPortfolio.countervalueChange);
@@ -133,6 +135,36 @@ describe("useBalanceViewModel", () => {
     });
 
     expect(result.current.isColdStart).toBe(true);
+  });
+
+  it("freezes balance during loading and unfreezes when loading completes", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isBalanceLoading: false,
+      portfolio: { ...mockPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
+    });
+
+    const { result, rerender } = renderHook(() => useBalanceViewModel(), { initialState });
+
+    expect(result.current.balance).toBe(1500);
+
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isBalanceLoading: true,
+      portfolio: { ...mockPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
+    });
+    rerender();
+
+    expect(result.current.balance).toBe(1500);
+
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isBalanceLoading: false,
+      portfolio: { ...mockPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
+    });
+    rerender();
+
+    expect(result.current.balance).toBe(2000);
   });
 
   it("returns shouldDisplayBalanceRefreshRework false when lwdWallet40 has balanceRefreshRework false", () => {

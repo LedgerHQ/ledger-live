@@ -67,7 +67,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>
-      <ThemeProvider defaultMode={selectedPalette}>
+      <ThemeProvider colorScheme={selectedPalette}>
         <ThrowBlock
           onError={() => {
             if (!__DEV__) {

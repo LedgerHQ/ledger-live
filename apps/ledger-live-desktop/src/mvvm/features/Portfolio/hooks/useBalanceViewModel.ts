@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
@@ -31,12 +31,23 @@ export const useBalanceViewModel = (
   const discreet = useSelector(discreetModeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
-  const { portfolio, counterValue, isBalanceLoading, isColdStart } = usePortfolioBalanceSync({
-    legacyRange,
-  });
+  const { portfolio, counterValue, isBalanceLoading, isColdStart, balanceAvailable } =
+    usePortfolioBalanceSync({
+      legacyRange,
+    });
 
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
+
+  const frozenBalanceRef = useRef(latestBalanceValue);
+  useEffect(() => {
+    if (!isBalanceLoading) {
+      frozenBalanceRef.current = latestBalanceValue;
+    }
+  }, [isBalanceLoading, latestBalanceValue]);
+  const shouldFreezeBalance = shouldDisplayBalanceRefreshRework && isBalanceLoading;
+  const displayedBalance = shouldFreezeBalance ? frozenBalanceRef.current : latestBalanceValue;
+
   const unit = counterValue.units[0];
   const valueChange = portfolio.countervalueChange;
 
@@ -70,7 +81,8 @@ export const useBalanceViewModel = (
   );
 
   return {
-    balance: latestBalanceValue,
+    balance: displayedBalance,
+    balanceAvailable,
     formatter,
     discreet,
     valueChange,

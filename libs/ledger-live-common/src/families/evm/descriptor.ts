@@ -52,7 +52,7 @@ function isEip1559(transaction: Record<string, unknown>): boolean {
   return false;
 }
 
-function getSuggestedMaxFeeRange(transaction: Record<string, unknown>): {
+function getSuggestedPriorityFeeRange(transaction: Record<string, unknown>): {
   min: string;
   max: string;
 } | null {
@@ -63,55 +63,75 @@ function getSuggestedMaxFeeRange(transaction: Record<string, unknown>): {
   const fast = gasOptions.fast;
   if (!isRecord(slow) || !isRecord(fast)) return null;
 
-  const slowFee = getMaxFeeFromGasOption(slow.maxFeePerGas, slow.gasPrice);
-  const fastFee = getMaxFeeFromGasOption(fast.maxFeePerGas, fast.gasPrice);
-  if (slowFee.isZero() && fastFee.isZero()) return null;
+  // For EIP-1559, suggested range for *priority fee* should use maxPriorityFeePerGas.
+  const slowPriorityFee = isBigNumber(slow.maxPriorityFeePerGas)
+    ? slow.maxPriorityFeePerGas
+    : new BigNumber(0);
+  const fastPriorityFee = isBigNumber(fast.maxPriorityFeePerGas)
+    ? fast.maxPriorityFeePerGas
+    : new BigNumber(0);
+  if (slowPriorityFee.isZero() && fastPriorityFee.isZero()) return null;
 
   return {
-    min: weiToGwei(slowFee),
-    max: weiToGwei(fastFee),
+    min: weiToGwei(slowPriorityFee),
+    max: weiToGwei(fastPriorityFee),
   };
 }
 
-function getNextBlockPriorityFee(transaction: Record<string, unknown>): string | null {
+function getNextBlockBaseFee(transaction: Record<string, unknown>): string | null {
   const gasOptions = transaction.gasOptions;
   if (!isRecord(gasOptions)) return null;
 
   const medium = gasOptions.medium;
   if (!isRecord(medium)) return null;
 
-  const maxPriorityFeePerGas = medium.maxPriorityFeePerGas;
-  if (!isBigNumber(maxPriorityFeePerGas)) return null;
-
-  return `${weiToGwei(maxPriorityFeePerGas)} Gwei`;
+  // The gas tracker provides a `nextBaseFee` (base fee), which is what we want to display
+  // for the "Next block" helper under maxFeePerGas.
+  const nextBaseFee = medium.nextBaseFee;
+  if (!isBigNumber(nextBaseFee)) return null;
+  return `${weiToGwei(nextBaseFee)} Gwei`;
 }
 
 /** Custom fee input descriptors for EIP-1559 transactions */
 const eip1559Inputs: readonly CustomFeeInputDescriptor[] = [
   {
-    key: "maxFeePerGas",
+    key: "maxPriorityFeePerGas",
     type: "number",
     unitLabel: "Gwei",
     suggestedRange: {
       getRange: transaction => {
         if (!isRecord(transaction)) return null;
-        return getSuggestedMaxFeeRange(transaction);
+        return getSuggestedPriorityFeeRange(transaction);
       },
     },
   },
   {
-    key: "maxPriorityFeePerGas",
+    key: "maxFeePerGas",
     type: "number",
     unitLabel: "Gwei",
     helperInfo: {
       getValue: transaction => {
         if (!isRecord(transaction)) return null;
-        return getNextBlockPriorityFee(transaction);
+        return getNextBlockBaseFee(transaction);
       },
     },
   },
   {
     key: "gasLimit",
+    type: "number",
+    minValue: {
+      getValue: transaction => {
+        if (!isRecord(transaction)) return null;
+        const gasLimit = transaction.gasLimit;
+        return isBigNumber(gasLimit) ? gasLimit.toFixed() : null;
+      },
+    },
+  },
+];
+
+const legacyInputs: readonly CustomFeeInputDescriptor[] = [
+  {
+    key: "gasPrice",
     type: "number",
     unitLabel: "Gwei",
   },
@@ -169,7 +189,7 @@ export const descriptor: CoinDescriptor = {
         },
       },
       custom: {
-        inputs: eip1559Inputs,
+        inputs: [...eip1559Inputs, ...legacyInputs],
         getInitialValues: (transaction): Record<string, string> => {
           const empty: Record<string, string> = {};
           if (!isRecord(transaction)) return empty;
@@ -224,13 +244,11 @@ export const descriptor: CoinDescriptor = {
             const mediumGasPrice = medium.gasPrice;
             return {
               gasPrice: isBigNumber(mediumGasPrice) ? weiToGwei(mediumGasPrice) : "",
-              gasLimit: isBigNumber(gasLimit) ? gasLimit.toFixed() : "",
             };
           }
 
           return {
             gasPrice: isBigNumber(gasPrice) ? weiToGwei(gasPrice) : "",
-            gasLimit: isBigNumber(gasLimit) ? gasLimit.toFixed() : "",
           };
         },
         buildTransactionPatch: values => {

@@ -48,7 +48,6 @@ describe("useActivityIndicator", () => {
       hasAccounts: true,
       isError: false,
       isRotating: false,
-      isDisabled: false,
     });
     expect(result.current.tooltip).toBeDefined();
     expect(typeof result.current.tooltip).toBe("string");
@@ -71,6 +70,42 @@ describe("useActivityIndicator", () => {
     expect(typeof result.current.onTooltipShow).toBe("function");
   });
 
+  it("returns isError false when stableSyncPending is true even if sync has errors", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      stableSyncPending: true,
+      hasWalletSyncError: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isError).toBe(false);
+  });
+
+  it("returns isError false when accounts are not up-to-date but have never been (cold start)", () => {
+    const mockUseBatchAccountsSyncState = jest.requireMock(
+      "@ledgerhq/live-common/bridge/react/index",
+    ).useBatchAccountsSyncState;
+    mockUseBatchAccountsSyncState.mockReturnValue([
+      {
+        syncState: { pending: false, error: null },
+        account: {
+          ...BTC_ACCOUNT,
+          currency: { ...BTC_ACCOUNT.currency, blockAvgTime: 600 },
+          lastSyncDate: new Date(0),
+        },
+      },
+    ]);
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isError).toBe(false);
+  });
+
   it("onTooltipShow tracks SyncErrorList with currencies as array", () => {
     const trackSpy = jest.spyOn(segment, "track");
     mockUsePortfolioBalanceSync.mockReturnValue({
@@ -89,13 +124,14 @@ describe("useActivityIndicator", () => {
     expect(trackSpy).toHaveBeenCalledWith(
       "SyncErrorList",
       expect.objectContaining({
+        page: "/",
         currencies: expect.any(Array),
       }),
     );
     trackSpy.mockRestore();
   });
 
-  it("returns isRotating and isDisabled true when balance is loading (e.g. countervalues polling)", () => {
+  it("returns isRotating true when balance is loading (e.g. countervalues polling)", () => {
     mockUsePortfolioBalanceSync.mockReturnValue({
       ...defaultPortfolioBalanceSync,
       isBalanceLoading: true,
@@ -106,7 +142,6 @@ describe("useActivityIndicator", () => {
     });
 
     expect(result.current.isRotating).toBe(true);
-    expect(result.current.isDisabled).toBe(true);
   });
 
   it("returns isRotating true on cold start when portfolio balance is not available", () => {
@@ -123,10 +158,9 @@ describe("useActivityIndicator", () => {
     expect(result.current.tooltip).toBeNull();
   });
 
-  it("returns isRotating true when sync is pending", () => {
+  it("returns isRotating true when balance is loading during sync", () => {
     mockUsePortfolioBalanceSync.mockReturnValue({
       ...defaultPortfolioBalanceSync,
-      stableSyncPending: true,
       isBalanceLoading: true,
     });
 
@@ -137,10 +171,9 @@ describe("useActivityIndicator", () => {
     expect(result.current.isRotating).toBe(true);
   });
 
-  it("returns isRotating true after user click when sync is pending", () => {
+  it("returns isRotating true after user click when balance is loading", () => {
     mockUsePortfolioBalanceSync.mockReturnValue({
       ...defaultPortfolioBalanceSync,
-      stableSyncPending: true,
       isBalanceLoading: true,
     });
 
@@ -155,7 +188,6 @@ describe("useActivityIndicator", () => {
     });
 
     expect(result.current.isRotating).toBe(true);
-    expect(result.current.isDisabled).toBe(true);
   });
 
   it("handleSync calls triggerRefresh and track", () => {

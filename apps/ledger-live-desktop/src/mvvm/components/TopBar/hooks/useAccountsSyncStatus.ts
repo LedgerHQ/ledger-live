@@ -1,5 +1,6 @@
 import { useBatchAccountsSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { Account } from "@ledgerhq/types-live";
+import { useLocation } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 
 export interface AccountWithUpToDateCheck {
@@ -20,6 +21,7 @@ export interface AccountsSyncStatus {
 export function useAccountsSyncStatus(
   accountsWithUpToDateCheck: AccountWithUpToDateCheck[],
 ): AccountsSyncStatus {
+  const location = useLocation();
   const allAccounts = accountsWithUpToDateCheck.map(item => item.account);
   const isUpToDateByAccountId = new Map(
     accountsWithUpToDateCheck.map(item => [item.account.id, item.isUpToDate === true]),
@@ -35,6 +37,7 @@ export function useAccountsSyncStatus(
       errorTickersSet.add(currency);
       track("SyncError", {
         currency,
+        page: location.pathname,
       });
     }
   }

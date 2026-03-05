@@ -2,10 +2,8 @@ import React from "react";
 import { Banner } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { EvmGasOptionsSync } from "../Fees/EvmGasOptionsSync";
 
 type Props = Readonly<{
@@ -13,6 +11,9 @@ type Props = Readonly<{
   parentAccount: Account | null;
   transaction: EvmTransaction;
   transactionActions: SendFlowTransactionActions;
+  evmGasOptions: GasOptions | undefined;
+  gasOptionsError: Error | undefined;
+  gasOptionsLoading: boolean;
 }>;
 
 export function EvmGasOptionsSyncPluginEvm({
@@ -20,19 +21,11 @@ export function EvmGasOptionsSyncPluginEvm({
   parentAccount,
   transaction,
   transactionActions,
+  evmGasOptions,
+  gasOptionsError,
+  gasOptionsLoading,
 }: Props) {
   const { t } = useTranslation();
-
-  const mainAccount = getMainAccount(account, parentAccount ?? undefined);
-  const gasOptionsInterval = mainAccount.currency.blockAvgTime
-    ? mainAccount.currency.blockAvgTime * 1000
-    : undefined;
-
-  const [evmGasOptions, gasOptionsError, gasOptionsLoading] = useGasOptions({
-    currency: mainAccount.currency,
-    transaction,
-    interval: gasOptionsInterval,
-  });
 
   return (
     <>

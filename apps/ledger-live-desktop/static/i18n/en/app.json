@@ -237,7 +237,7 @@
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address."
+        "description": "Sending 0 {{ticker}} to your own address. Cancellation is not guaranteed. If the network processes your original transaction before this cancellation request, the funds will still be sent to the recipient."
       },
       "steps": {
         "method": {
@@ -2153,6 +2153,24 @@
         "description": "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
       }
     }
+  },
+  "buyDeviceModal": {
+    "title": "Connect a Ledger device",
+    "subtitle": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
+    "0": {
+      "title": "Full ownership",
+      "desc": "Your private keys never leave the device."
+    },
+    "1": {
+      "title": "Trade securely",
+      "desc": "Verify transactions on a secure screen."
+    },
+    "2": {
+      "title": "Access the most powerful wallet",
+      "desc": "Manage thousands of assets in one place."
+    },
+    "connectCTA": "Connect",
+    "buyCTA": "Buy your Ledger device"
   },
   "fund": {
     "title": "Fund",
@@ -5050,7 +5068,7 @@
     }
   },
   "theme": {
-    "system": "Select the system theme",
+    "system": "System",
     "light": "Light",
     "dusk": "Dusk",
     "dark": "Dark"
@@ -8077,12 +8095,7 @@
       "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry",
       "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe. Tap to retry",
       "upToDate": "You're up to date",
-      "minutesAgo_one": "Last sync: {{count}} min ago. Tap to refresh",
-      "minutesAgo_other": "Last sync: {{count}} mins ago. Tap to refresh",
-      "hoursAgo_one": "Last sync: {{count}} hour ago. Tap to refresh",
-      "hoursAgo_other": "Last sync: {{count}} hours ago. Tap to refresh",
-      "daysAgo_one": "Last sync: {{count}} day ago. Tap to refresh",
-      "daysAgo_other": "Last sync: {{count}} days ago. Tap to refresh"
+      "lastSync": "Last sync: {{timeAgo}}. Tap to refresh"
     },
     "notificationIndicator": {
       "tooltip": "Notifications"
@@ -8250,5 +8263,3 @@
     }
   }
 }
-
-

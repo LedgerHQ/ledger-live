@@ -275,17 +275,15 @@ export const MainAppLayout = () => {
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
-  //TODO: Remove this once testing is done
-  const walletFeatureFlag = useFeature("lwdWallet40");
-  const walletParams = walletFeatureFlag?.params;
-  const backgroundEnabled = isWallet40Enabled && Boolean(walletParams?.background);
-  const backgroundImage = backgroundEnabled ? getPageBackground(pathname, theme) : undefined;
+  const backgroundImage = shouldDisplayWallet40MainNav
+    ? getPageBackground(pathname, theme)
+    : undefined;
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
 
   useEffect(() => {
-    if (backgroundEnabled) preloadBackgrounds();
-  }, [backgroundEnabled]);
+    if (shouldDisplayWallet40MainNav) preloadBackgrounds();
+  }, [shouldDisplayWallet40MainNav]);
 
   return (
     <>

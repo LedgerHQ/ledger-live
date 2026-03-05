@@ -46,6 +46,7 @@ export async function createDevServer(options: DevServerOptions): Promise<Rspack
     historyApiFallback: true,
     devMiddleware: {
       writeToDisk: true,
+      stats: "errors-only",
     },
   };
 
