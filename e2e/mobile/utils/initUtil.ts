@@ -308,6 +308,13 @@ export class InitializationManager {
 
     // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
-    if (featureFlags) await setFeatureFlags(featureFlags);
+
+    const defaultFlags = {
+      lwmWallet40: { enabled: false },
+    };
+    await setFeatureFlags({
+      ...defaultFlags,
+      ...featureFlags,
+    });
   }
 }
