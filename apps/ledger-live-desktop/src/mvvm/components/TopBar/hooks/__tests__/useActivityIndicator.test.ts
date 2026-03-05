@@ -155,7 +155,7 @@ describe("useActivityIndicator", () => {
     });
 
     expect(result.current.isRotating).toBe(true);
-    expect(result.current.tooltip).toBeNull();
+    expect(result.current.tooltip).toBeUndefined();
   });
 
   it("returns isRotating true when balance is loading during sync", () => {
