@@ -1162,7 +1162,7 @@ export const queryTransactions = async (params: {
 }): Promise<PaginatedTransactionResponse> => {
   const { api, addr, type, cursor, order } = params;
   // what we really want is a FromOrToAddress filter, but it's not supported yet
-  // it would relieve a lot of complexity (see dedupOperations)
+  // it would relieve a lot of complexity in the merged/sorted pagination and cursor boundary filtering logic above
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 
