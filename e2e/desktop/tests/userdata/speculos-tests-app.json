@@ -94,7 +94,8 @@
       "swapAcceptedProviderIds": [],
       "swapProviders": [],
       "starredAccountIds": [],
-      "hasPassword": false
+      "hasPassword": false,
+      "hasSeenWalletV4Tour": true
     },
     "trustchain": {
       "trustchain": null,

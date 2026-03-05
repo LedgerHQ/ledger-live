@@ -77,7 +77,8 @@
       "swapAcceptedProviderIds": [],
       "swapProviders": [],
       "starredAccountIds": [],
-      "hasPassword": false
+      "hasPassword": false,
+      "hasSeenWalletV4Tour": true
     },
     "wallet": {
       "walletSyncState": { "data": null, "version": 0 },

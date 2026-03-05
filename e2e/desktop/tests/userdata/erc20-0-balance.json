@@ -3067,7 +3067,8 @@
       ],
       "dismissedContentCards": {},
       "anonymousBrazeId": "anonymous_id_1",
-      "starredMarketCoins": []
+      "starredMarketCoins": [],
+      "hasSeenWalletV4Tour": true
     },
     "accounts": [
       {

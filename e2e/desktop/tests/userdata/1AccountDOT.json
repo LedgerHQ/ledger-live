@@ -5,7 +5,7 @@
         "acceptedTermsVersion": "2042-01-01"
       }
     },
-    "settings": { "hasCompletedOnboarding": true },
+    "settings": { "hasCompletedOnboarding": true, "hasSeenWalletV4Tour": true },
     "accounts": [
       {
         "data": {

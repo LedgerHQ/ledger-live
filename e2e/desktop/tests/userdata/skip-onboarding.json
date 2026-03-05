@@ -42,7 +42,8 @@
       "swapProviders": [],
       "showClearCacheBanner": false,
       "starredAccountIds": [],
-      "hasPassword": false
+      "hasPassword": false,
+      "hasSeenWalletV4Tour": true
     },
     "user": {
       "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
