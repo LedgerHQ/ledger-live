@@ -2371,6 +2371,37 @@ describe("getCoinsForAmount", () => {
       expect(page.next).toMatch(/^200:(out-same-ts|in-same-ts)$/);
     });
 
+    test("uses sorted fallback boundary when filtered page has no items", async () => {
+      const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+      const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+        ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+      const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+      mockApi.queryTransactionBlocks.mockReset();
+      mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+        digest: `checkpoint-${id}`,
+      }));
+
+      mockApi.queryTransactionBlocks.mockImplementation(async params => {
+        const isOut = "FromAddress" in (params.filter || {});
+        return isOut
+          ? {
+              data: [tx("filtered-tail", "1", "400")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      });
+
+      const page = await sdk.getListOperations(address, "asc", apiCall, "500:boundary");
+      expect(page.items).toEqual([]);
+      expect(page.next).toEqual("400:filtered-tail");
+    });
+
     test.each(["asc", "desc"] as const)(
       "does not return cursor when no hasNext and no filtered ops (%s)",
       async order => {
