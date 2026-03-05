@@ -16,8 +16,8 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBridgeError";
-import { useBitcoinUtxoDisplayData } from "../hooks/useBitcoinUtxoDisplayData";
-import { useCoinControlAmountInput } from "../hooks/useCoinControlAmountInput";
+import { useBitcoinUtxoDisplayData } from "./useBitcoinUtxoDisplayData";
+import { useCoinControlAmountInput } from "./useCoinControlAmountInput";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 
