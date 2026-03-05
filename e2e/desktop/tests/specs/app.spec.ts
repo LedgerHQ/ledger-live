@@ -32,8 +32,10 @@ test.describe("Identities migration from legacy user", () => {
   test(
     "after boot with skip-onboarding userdata, user id is in store identities (same value), deviceIds [], new datadogId",
     { tag: ["@smoke", "@NanoSP", "@NanoX", "@LNS"] },
-    async ({ app, page, userdataFile }) => {
-      const initial = JSON.parse(await readFile(userdataFile, "utf-8"));
+    async ({ app, page, userdataFile, userdataOriginalFile }) => {
+      // Read legacy user id from the original fixture: the app overwrites app.json
+      // and drops "user" when it saves identities, so userdataFile no longer has it.
+      const initial = JSON.parse(await readFile(userdataOriginalFile!, "utf-8"));
       const legacyUserId = initial?.data?.user?.id;
       expect(legacyUserId).toBeDefined();
       expect(typeof legacyUserId).toBe("string");
@@ -49,6 +51,27 @@ test.describe("Identities migration from legacy user", () => {
       expect(identities.deviceIds).toEqual([]);
       expect(identities.datadogId).toBeDefined();
       expect(identities.datadogId).not.toBe("");
+    },
+  );
+});
+
+test.describe("App namespace allow list", () => {
+  test.use({ userdata: "app-allowlist-cleanup" });
+
+  test(
+    "invalid keys in app.json are dropped on load and not written back",
+    { tag: ["@smoke", "@NanoSP", "@NanoX", "@LNS"] },
+    async ({ app, userdataFile }) => {
+      await app.layout.goToSettings();
+
+      await app.portfolio.expectIdentitiesPersistedInAppJson(userdataFile, 15000);
+
+      const content = await readFile(userdataFile, "utf-8");
+      const parsed = JSON.parse(content);
+      expect(parsed.data).toBeDefined();
+      expect(parsed.data._this_is_not_valid_field_).toBeUndefined();
+      expect(parsed.data.user).toBeUndefined();
+      expect(parsed.data.identities).toBeDefined();
     },
   );
 });
