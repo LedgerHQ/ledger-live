@@ -68,11 +68,13 @@ const pickingStrategyOptions: readonly PickingStrategyOption[] = pickingStrategy
   labelKey: `bitcoin.pickingStrategyLabels.${key}`,
 }));
 
+type UtxoStatus = ReturnType<typeof getUTXOStatus>;
+
 function utxoToRowDisplayData(
   utxo: BitcoinOutput,
+  utxoStatus: UtxoStatus,
   context: Readonly<{
     rowIndex: number;
-    utxoStrategy: BitcoinTransaction["utxoStrategy"];
     txInputs: BitcoinTransactionStatus["txInputs"];
     totalExcludedUTXOS: number;
     utxosLength: number;
@@ -81,16 +83,15 @@ function utxoToRowDisplayData(
     locale: string;
   }>,
 ): UtxoRowDisplayData {
-  const s = getUTXOStatus(utxo, context.utxoStrategy);
-  const exclusionReason = s.excluded ? s.reason : undefined;
+  const exclusionReason = utxoStatus.excluded ? utxoStatus.reason : undefined;
   const isUsedInTx = (context.txInputs ?? []).some(
     input => input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
   );
   const unconfirmed = exclusionReason === "pickPendingUtxo";
-  const isLastSelected = !s.excluded && context.totalExcludedUTXOS + 1 === context.utxosLength;
+  const isLastSelected =
+    !utxoStatus.excluded && context.totalExcludedUTXOS + 1 === context.utxosLength;
   const disabled = unconfirmed || isLastSelected;
-  const confirmations = utxo.blockHeight ? context.blockHeight - utxo.blockHeight : 0;
-
+  const confirmations = utxo.blockHeight ? Math.max(0, context.blockHeight - utxo.blockHeight) : 0;
   const formattedValue = formatCurrencyUnit(context.accountUnit, utxo.value, {
     showCode: true,
     disableRounding: true,
@@ -105,7 +106,7 @@ function utxoToRowDisplayData(
     utxo,
     titleLabel,
     formattedValue,
-    excluded: s.excluded,
+    excluded: utxoStatus.excluded,
     exclusionReason,
     isUsedInTx,
     unconfirmed,
@@ -139,14 +140,14 @@ export function useBitcoinUtxoDisplayData({
     const utxos = bitcoinResources.utxos;
     const blockHeight = account.blockHeight ?? 0;
 
-    const totalExcludedUTXOS = utxos.filter(u => getUTXOStatus(u, utxoStrategy).excluded).length;
+    const utxoStatuses = utxos.map(u => getUTXOStatus(u, utxoStrategy));
+    const totalExcludedUTXOS = utxoStatuses.filter(s => s.excluded).length;
 
     const txInputs = status.txInputs ?? [];
 
     const utxoRows: UtxoRowDisplayData[] = utxos.map((utxo, rowIndex) =>
-      utxoToRowDisplayData(utxo, {
+      utxoToRowDisplayData(utxo, utxoStatuses[rowIndex], {
         rowIndex,
-        utxoStrategy,
         txInputs,
         totalExcludedUTXOS,
         utxosLength: utxos.length,
