@@ -197,6 +197,16 @@ const getMandatoryProperties = (store: ReduxStore) => {
   };
 };
 
+function getOnboardingStatusAttributes(
+  postOnboardingInProgress: boolean,
+  isOnboardingFlow: boolean,
+  onboardingSyncFlow: { seedConfiguration: string } | null,
+): { onboarding_status?: string; seedConfiguration?: string } {
+  if (isOnboardingFlow) return { onboarding_status: "Onboarding", ...onboardingSyncFlow };
+  if (postOnboardingInProgress) return { onboarding_status: "post-onboarding" };
+  return {};
+}
+
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
   const mandatoryProperties = getMandatoryProperties(store);
@@ -303,8 +313,7 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
-    ...(postOnboardingInProgress && !isOnboardingFlow ? { flow: "post-onboarding" } : {}),
-    ...(isOnboardingFlow ? { flow: "Onboarding", ...onboardingSyncFlow } : {}),
+    ...getOnboardingStatusAttributes(postOnboardingInProgress, isOnboardingFlow, onboardingSyncFlow),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
