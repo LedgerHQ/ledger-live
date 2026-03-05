@@ -110,7 +110,7 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
 
       if (config.useHgraphForErc20) {
         const evmAddress = await toEVMAddress(address);
-        invariant(evmAddress, "hedera: evm address is missing");
+        invariant(evmAddress, `hedera: evm address is missing for ${address}`);
         const [mirrorTokens, erc20TokenBalances] = await Promise.all([
           apiClient.getAccountTokens(address),
           getERC20BalancesForAccountV2(address),
