@@ -148,7 +148,7 @@ describe("OnboardModal", () => {
     expect(agreeButton).toBeVisible();
 
     await user.click(agreeButton);
-    expect(mockPairWalletConnect).toHaveBeenCalledWith(currency, mockDevice.deviceId);
+    expect(mockPairWalletConnect).toHaveBeenCalledWith(currency.id, mockDevice.deviceId);
 
     await waitFor(() => {
       expect(screen.getByText(/scan the qr code/i)).toBeVisible();
@@ -160,7 +160,7 @@ describe("OnboardModal", () => {
 
     await user.click(screen.getByRole("button", { name: /continue/i }));
     expect(mockOnboardAccount).toHaveBeenCalledWith(
-      currency,
+      currency.id,
       mockDevice.deviceId,
       creatableAccount,
     );
