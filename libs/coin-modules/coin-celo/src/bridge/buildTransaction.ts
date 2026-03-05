@@ -9,7 +9,7 @@ import {
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
 } from "../constants";
-import { valueToHex, isSameTokenAsFee } from "./utils";
+import { valueToHex, isSameTokenAsFee, normalizeAndSubtract } from "./utils";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
@@ -144,7 +144,6 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       value: valueToHex(value),
       ...(transaction.feeCurrency
         ? {
-            type: "cip64",
             feeCurrency: transaction.feeCurrency,
           }
         : {}),
@@ -189,15 +188,16 @@ const transactionValue = (account: CeloAccount, transaction: Transaction): BigNu
       const shouldSubtractFee = isSameTokenAsFee(
         isTokenTransaction,
         tokenContractAddress,
-        transaction.feeCurrency,
+        transaction.feeCurrencyUnwrapped,
       );
 
       if (shouldSubtractFee) {
         // Fee is paid in same token - subtract fee from balance
-        const balance = isTokenTransaction
-          ? tokenAccount.spendableBalance
-          : account.spendableBalance;
-        value = BigNumber.max(0, balance.minus(transaction.fees || 0));
+        const balanceAfterFee = isTokenTransaction
+          ? normalizeAndSubtract(tokenAccount?.spendableBalance, transaction.fees)
+          : account.spendableBalance.minus(transaction.fees || 0);
+
+        value = BigNumber.max(0, balanceAfterFee);
       } else {
         // Fee is paid in different token - can send full balance
         value = isTokenTransaction ? tokenAccount.spendableBalance : account.spendableBalance;

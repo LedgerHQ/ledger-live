@@ -125,7 +125,7 @@ export const getTransactionStatus: AccountBridge<
       const shouldSumFeeForTotalSpent = isSameTokenAsFee(
         isTokenTransaction,
         tokenAccount?.token?.contractAddress,
-        transaction.feeCurrency,
+        transaction.feeCurrencyUnwrapped,
       );
 
       return {
@@ -133,7 +133,9 @@ export const getTransactionStatus: AccountBridge<
         warnings,
         estimatedFees,
         amount,
-        totalSpent: shouldSumFeeForTotalSpent ? amount.plus(estimatedFees) : totalSpent,
+        totalSpent: shouldSumFeeForTotalSpent
+          ? amount.multipliedBy(1e12).plus(estimatedFees)
+          : totalSpent,
       };
     }
   }
@@ -144,6 +146,7 @@ export const getTransactionStatus: AccountBridge<
     estimatedFees,
     amount,
     totalSpent,
+    feeCurrencyAccount: transaction.feeCurrencyAccount,
   };
 };
 

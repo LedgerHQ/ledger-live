@@ -42,3 +42,16 @@ export const isSameTokenAsFee = (
 
   return false;
 };
+
+type SixDecimalBigNumber = BigNumber;
+type EighteenDecimalBigNumber = BigNumber;
+
+export const normalizeAndSubtract = (
+  balance: SixDecimalBigNumber,
+  fee?: EighteenDecimalBigNumber | null,
+): BigNumber => {
+  const feeValue = fee || BigNumber(0);
+  const balanceInWei = balance.multipliedBy(1e12);
+
+  return balanceInWei.minus(feeValue);
+};

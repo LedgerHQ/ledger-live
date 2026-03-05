@@ -9,7 +9,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/helpers";
 import BigNumber from "bignumber.js";
-import { isSameTokenAsFee } from "./utils";
+import { isSameTokenAsFee, normalizeAndSubtract } from "./utils";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,
@@ -33,13 +33,12 @@ export const estimateMaxSpendable: AccountBridge<
   const shouldSubtractFee = isSameTokenAsFee(
     !!fromTokenAccount,
     tokenAccount?.token?.contractAddress,
-    t.feeCurrency,
+    t.feeCurrencyUnwrapped,
   );
 
   if (fromTokenAccount) {
-    // Token transfer
     return shouldSubtractFee
-      ? BigNumber.max(0, tokenAccount.spendableBalance.minus(fees))
+      ? BigNumber.max(0, normalizeAndSubtract(account.spendableBalance, fees))
       : tokenAccount.spendableBalance;
   } else {
     // Native CELO transfer

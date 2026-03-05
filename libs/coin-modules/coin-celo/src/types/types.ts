@@ -5,6 +5,7 @@ import type {
   OperationExtra,
   OperationExtraRaw,
   OperationRaw,
+  TokenAccount,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -61,7 +62,11 @@ export type CeloResourcesRaw = {
 export type Transaction = TransactionCommon & {
   family: "celo";
   fees: BigNumber | null | undefined;
+  // adapter address or contract address for fee currency
   feeCurrency?: `0x${string}` | null | undefined;
+  // always contract address for fee currency
+  feeCurrencyUnwrapped?: `0x${string}` | null | undefined;
+  feeCurrencyAccount?: TokenAccount | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
   data?: Buffer | null | undefined;
@@ -70,6 +75,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";
   fees: string | null | undefined;
   feeCurrency?: `0x${string}` | null | undefined;
+  feeCurrencyUnwrapped?: `0x${string}` | null | undefined;
+  feeCurrencyAccount?: TokenAccount | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
 };
@@ -129,7 +136,9 @@ export type CeloPreloadData = {
   validatorGroups: CeloValidatorGroup[];
 };
 
-export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatus = TransactionStatusCommon & {
+  feeCurrencyAccount?: TokenAccount | null | undefined;
+};
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 

@@ -153,7 +153,6 @@ const getFeesForTransaction = async ({
       value: valueToHex(value),
       ...(transaction.feeCurrency
         ? {
-            type: "cip64" as TransactionTypes,
             feeCurrency: transaction.feeCurrency,
           }
         : {}),
