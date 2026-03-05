@@ -709,6 +709,20 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
   return ret;
 }
 
+function compareByTimestamp(
+  order: "asc" | "desc",
+): (a: SuiTransactionBlockResponse, b: SuiTransactionBlockResponse) => number {
+  return (a, b) =>
+    order === "asc"
+      ? Number(a.timestampMs ?? 0) - Number(b.timestampMs ?? 0)
+      : Number(b.timestampMs ?? 0) - Number(a.timestampMs ?? 0);
+}
+
+type ListOperationsCursor = {
+  digest: string;
+  timestamp: number;
+};
+
 /**
  * Fetch operations for Alpaca
  * It fetches separately the "OUT" and "IN" operations and then merge them.
@@ -724,35 +738,69 @@ export const getListOperations = async (
   cursor?: string,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
+    function serializeCursor(cursor: ListOperationsCursor): string {
+      return `${cursor.timestamp}:${cursor.digest}`;
+    }
+
+    function parseCursor(cursor: string | undefined): ListOperationsCursor | null {
+      if (!cursor) return null;
+
+      const sepIdx = cursor.indexOf(":");
+      if (sepIdx <= 0 || sepIdx === cursor.length - 1) {
+        throw new Error("Invalid list operations cursor format: missing timestamp or digest");
+      }
+
+      const ts = Number(cursor.slice(0, sepIdx));
+      const digest = cursor.slice(sepIdx + 1);
+      if (!Number.isFinite(ts) || !digest) {
+        throw new Error("Invalid list operations cursor format: invalid timestamp or digest");
+      }
+
+      return { digest, timestamp: ts };
+    }
+
     const rpcOrder = convertApiOrderToSdkOrder(order);
+    const parsedCursor = parseCursor(cursor);
+    const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
 
     const [opsOut, opsIn] = await Promise.all([
       queryTransactions({
         api,
         addr,
         type: "OUT",
-        cursor: toSdkCursor(cursor),
+        cursor: rpcCursor,
         order: rpcOrder,
       }),
       queryTransactions({
         api,
         addr,
         type: "IN",
-        cursor: toSdkCursor(cursor),
+        cursor: rpcCursor,
         order: rpcOrder,
       }),
     ]);
 
-    const ops = dedupOperations(opsOut, opsIn, order);
+    // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+    // so IN operations and OUT operations are not disjoint. We merge both lists, remove duplicates, and keep
+    // chronological order.
+    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest);
+    const sortedOps = [...mergedOps].sort(compareByTimestamp(order));
 
-    const sortedOps = [...ops.operations].sort(
-      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
-    );
+    // filter out operations before the cursor
+    const pageOps = sortedOps.filter(op => {
+      if (!parsedCursor) return true;
 
+      if (op.digest === parsedCursor.digest) return false;
+      if (parsedCursor.timestamp === undefined) return true;
+
+      const ts = Number(op.timestampMs ?? 0);
+      return order === "asc" ? ts > parsedCursor.timestamp : ts < parsedCursor.timestamp;
+    });
+
+    // fetch checkpoints for the operations
     const uniqueCheckpoints = new Set(
-      sortedOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
+      pageOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
     );
-
     const checkpointHashMap = new Map<string, string>();
     await Promise.all(
       Array.from(uniqueCheckpoints).map(async checkpoint => {
@@ -768,7 +816,8 @@ export const getListOperations = async (
       }),
     );
 
-    const operations = sortedOps.map(t =>
+    // convert operations to alpaca model
+    const operations = pageOps.map(t =>
       alpacaTransactionToOp(
         addr,
         t,
@@ -776,70 +825,23 @@ export const getListOperations = async (
       ),
     );
 
+    // compute next cursor: we have one if IN or OUT operations have one, or we have filtered out operations.
+    const lastBoundaryOp = pageOps[pageOps.length - 1] ?? sortedOps[sortedOps.length - 1];
+    const nextCursorCandidate =
+      (opsIn.hasNextPage || opsOut.hasNextPage || pageOps.length < sortedOps.length) &&
+      lastBoundaryOp
+        ? serializeCursor({
+            digest: lastBoundaryOp.digest,
+            timestamp: Number(lastBoundaryOp.timestampMs ?? 0),
+          })
+        : "";
+    const nextCursor = nextCursorCandidate === cursor ? "" : nextCursorCandidate;
+
     return {
       items: operations,
-      next: ops.cursor ?? "",
+      next: nextCursor,
     };
   });
-
-const oldestOpTime = (ops: PaginatedTransactionResponse) =>
-  Number(ops.data[ops.data.length - 1]?.timestampMs ?? 0);
-const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0]?.timestampMs ?? 0);
-
-/**
- * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
- * So IN operations and OUT operations are not disjoint
- * This function will takes the logical lowest operation of the two lists (according so sort order)
- * and remove any higher operation of the other list.
- *
- * Most of the logic have been duplicated from filterOperations (used by bridge).
- *
- * Warning:
- * This function removes some results, so it's not very efficient
- * What we want is the FromOrToAddress filter from SUI RPC, but it's not supported yet
- *
- * Note: I think it's possible to detect duplicated IN oprations:
- * - if the address is the sender of the tx
- * - and there is some transfer to other address
- * - and the address is the single only owner of mutated or deleted object
- * when all that conditions are met, the transaction will be fetched as an OUT operation,
- * and it can be filtered out from the IN operations results.
- *
- * @returns a chronologically sorted list of operations without duplicates and
- *          a cursor that guarantee to not return any operation that was already returned in previous calls
- *
- */
-export const dedupOperations = (
-  outOps: PaginatedTransactionResponse,
-  inOps: PaginatedTransactionResponse,
-  order: "asc" | "desc",
-): LoadOperationResponse => {
-  // in asc order, the operations are sorted by timestamp in ascending order
-  // in desc order, the operations are sorted by timestamp in descending order
-
-  let lastOpTime: number = 0;
-  let nextCursor: string | null | undefined = undefined;
-  const findLastOpTime = order === "asc" ? newestOpTime : oldestOpTime;
-
-  // When we've reached the limit for either sent or received operations,
-  // we filter out extra operations to maintain correct chronological order
-  if (outOps.hasNextPage || inOps.hasNextPage) {
-    const lastOut = findLastOpTime(outOps);
-    const lastIn = findLastOpTime(inOps);
-    if (lastOut >= lastIn) {
-      nextCursor = outOps.nextCursor;
-      lastOpTime = lastOut;
-    } else {
-      nextCursor = inOps.nextCursor;
-      lastOpTime = lastIn;
-    }
-  }
-  const operations = [...outOps.data, ...inOps.data]
-    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= lastOpTime);
-
-  return { operations: uniqBy(operations, tx => tx.digest), cursor: nextCursor };
-};
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata.
@@ -1143,7 +1145,7 @@ export const queryTransactions = async (params: {
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
   const { api, addr, type, cursor, order } = params;
-  // what we really want is te  FromOrToAddress filter, but it's not supported yet
+  // what we really want is a FromOrToAddress filter, but it's not supported yet
   // it would relieve a lot of complexity (see dedupOperations)
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
