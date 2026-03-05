@@ -160,6 +160,7 @@ describe("getBlock", () => {
 
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "other",
+      operationType: "VOTE",
       contractType: "VoteWitnessContract",
     });
   });

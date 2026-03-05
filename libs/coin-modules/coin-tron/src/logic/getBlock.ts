@@ -77,7 +77,8 @@ function toBlockOperations(txInfo: TrongridTxInfo): BlockOperation[] {
     ];
   }
 
-  return [{ type: "other", contractType: txInfo.type }];
+  const operationType = getOperationType(txInfo.type);
+  return [{ type: "other", operationType, contractType: txInfo.type }];
 }
 
 function isTransfer(txInfo: TrongridTxInfo): boolean {
@@ -86,4 +87,30 @@ function isTransfer(txInfo: TrongridTxInfo): boolean {
     txInfo.type === "TransferAssetContract" ||
     (txInfo.type === "TriggerSmartContract" && txInfo.tokenType === "trc20")
   );
+}
+
+function getOperationType(contractType: string): string {
+  switch (contractType) {
+    case "ContractApproval":
+      return "APPROVE";
+    case "ExchangeTransactionContract":
+      return "OUT";
+    case "VoteWitnessContract":
+      return "VOTE";
+    case "WithdrawBalanceContract":
+      return "REWARD";
+    case "FreezeBalanceContract":
+    case "FreezeBalanceV2Contract":
+      return "FREEZE";
+    case "UnfreezeBalanceV2Contract":
+      return "UNFREEZE";
+    case "WithdrawExpireUnfreezeContract":
+      return "WITHDRAW_EXPIRE_UNFREEZE";
+    case "UnDelegateResourceContract":
+      return "UNDELEGATE_RESOURCE";
+    case "UnfreezeBalanceContract":
+      return "LEGACY_UNFREEZE";
+    default:
+      return "NONE";
+  }
 }
