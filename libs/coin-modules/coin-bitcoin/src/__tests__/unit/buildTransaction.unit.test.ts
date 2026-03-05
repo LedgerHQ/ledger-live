@@ -13,6 +13,9 @@ jest.mock("../../wallet-btc", () => ({
     xpub: {
       crypto: "bitcoin",
     },
+    params: {
+      currency: "bitcoin",
+    },
   }),
 }));
 
