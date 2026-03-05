@@ -160,6 +160,9 @@ const SwapOperationDetails = ({
     case "nearintents":
       url = "https://track.swapkit.dev/tx/$hash".replace("$hash", operation.hash);
       break;
+    case "swapsxyz":
+      url = "https://scan.swaps.xyz/transactions/$hash".replace("$hash", operation.hash);
+      break;
     case "okx":
       if (mainCurrency?.id) {
         url = `https://web3.okx.com/fi/explorer/${mainCurrency.id}/tx/${operation.hash}`;

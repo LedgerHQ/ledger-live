@@ -214,6 +214,27 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  swapsxyz: {
+    type: "CEX",
+    name: "Swaps.xyz",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.swaps.xyz/resources/terms-of-service",
+    supportUrl: "https://scan.swaps.xyz/",
+    mainUrl: "https://swaps.xyz/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "", // TODO: provide the public key
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "", // TODO: provide the signature
+      "hex",
+    ),
+  },
   lifi: {
     type: "CEX",
     name: "lifi",
