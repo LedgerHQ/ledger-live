@@ -4,16 +4,19 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
-import { TrackScreen } from "~/analytics";
-import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
-import BackgroundBlue from "../assets/BackgroundBlue";
-import BackgroundRed from "../assets/BackgroundRed";
-import SeedCompanionStep from "./SeedCompanionStep";
-import { SeedPathStatus, FirstStepCompanionStepKey } from "./types";
-import LedgerSyncActivationStep from "./LedgerSyncActivationStep";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "~/context/hooks";
+import { TrackScreen } from "~/analytics";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import BackgroundBlue from "../assets/BackgroundBlue";
+import BackgroundRed from "../assets/BackgroundRed";
+import ContinueOnDeviceWithAnim from "~/screens/SyncOnboarding/TwoStepStepper/ContinueOnDeviceWithAnim";
+import SeedCompanionStep from "~/screens/SyncOnboarding/TwoStepStepper/SeedCompanionStep";
+import {
+  SeedPathStatus,
+  FirstStepCompanionStepKey,
+} from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import LedgerSyncActivationStep from "~/screens/SyncOnboarding/TwoStepStepper/LedgerSyncActivationStep";
 
 const { BodyText } = VerticalTimeline;
 
@@ -72,6 +75,10 @@ const useCompanionSteps = ({
   const hasSyncStep = !isLedgerSyncActiveAtStart.current && isSyncStepEnabled;
 
   const steps = useMemo(() => {
+    let seedBackground: null | React.ReactNode = null;
+    if (seedPathStatus === "new_seed") seedBackground = <BackgroundBlue />;
+    if (seedPathStatus === "backup_charon") seedBackground = <BackgroundRed />;
+
     const steps: Array<
       Omit<Step, "status"> & {
         status?: Step["status"];
@@ -122,12 +129,7 @@ const useCompanionSteps = ({
         title: t("syncOnboarding.seedStep.title"),
         doneTitle: t("syncOnboarding.seedStep.doneTitle"),
         isNeutral: true,
-        background:
-          seedPathStatus === "new_seed" ? (
-            <BackgroundBlue />
-          ) : seedPathStatus === "backup_charon" ? (
-            <BackgroundRed />
-          ) : null,
+        background: seedBackground,
         renderBody: () => (
           <SeedCompanionStep
             productName={productName}
@@ -159,16 +161,22 @@ const useCompanionSteps = ({
       });
     }
 
-    return steps.map<Step>(step => ({
-      ...step,
-      status:
-        step.status ||
-        (step.key > companionStepKey
-          ? "inactive"
-          : step.key < companionStepKey
-            ? "completed"
-            : "active"),
-    }));
+    return steps.map(step => {
+      let status = step.status;
+      if (!step.status) {
+        if (step.key > companionStepKey) {
+          status = "inactive";
+        } else if (step.key < companionStepKey) {
+          status = "completed";
+        } else {
+          status = "active";
+        }
+      }
+      return {
+        ...step,
+        status: status!,
+      };
+    });
   }, [
     device,
     companionStepKey,
