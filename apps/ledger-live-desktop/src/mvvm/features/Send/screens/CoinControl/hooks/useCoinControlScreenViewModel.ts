@@ -197,6 +197,7 @@ export function useCoinControlScreenViewModel({
     amountToSendLabel: t("newSendFlow.coinControl.amountToSendInCurrency", {
       ticker: accountCurrency?.ticker ?? "CRYPTO",
     }),
+    amountInputLabel: t("newSendFlow.coinControl.amountInputLabel"),
     ...networkFees,
   };
 }

@@ -188,6 +188,7 @@ describe("useCoinControlScreenViewModel", () => {
     expect(result.current.changeToReturnLabel).toBeDefined();
     expect(result.current.enterAmountPlaceholder).toBeDefined();
     expect(result.current.amountToSendLabel).toBeDefined();
+    expect(result.current.amountInputLabel).toBeDefined();
     expect(result.current.feesRowLabel).toBe("Network Fees");
   });
 

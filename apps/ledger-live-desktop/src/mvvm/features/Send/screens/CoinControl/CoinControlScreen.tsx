@@ -1,6 +1,6 @@
 import React from "react";
 import { CoinControlScreenInner } from "./components/CoinControlScreenInner";
-import { useCoinControlScreen } from "./hooks/useCoinControlView";
+import { useCoinControlScreen } from "./hooks/useCoinControlScreen";
 
 export function CoinControlScreen() {
   const viewModel = useCoinControlScreen();
