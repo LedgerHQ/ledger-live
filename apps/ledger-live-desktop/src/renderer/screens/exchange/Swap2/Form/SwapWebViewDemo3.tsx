@@ -96,6 +96,7 @@ export type SwapProps = {
   estimatedFees: string;
   estimatedFeesUnit: string;
   swapId?: string;
+  status?: string;
 };
 
 export type SwapWebProps = {
@@ -447,7 +448,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
         const accountId =
           fromAccount.type === "TokenAccount" ? getParentAccount(fromAccount, accounts).id : fromId;
         const swapOperation: SwapOperation = {
-          status: "pending",
+          status: swap.status ?? "pending",
           provider: swap.provider,
           operationId,
           swapId: swap.swapId,
