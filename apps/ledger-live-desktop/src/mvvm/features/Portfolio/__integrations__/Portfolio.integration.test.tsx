@@ -625,9 +625,9 @@ describe("Portfolio (Wallet V4 Tour)", () => {
     await waitFor(() => {
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
-    expect(track).toHaveBeenCalledWith("Wallet V4 Tour Shown", {
-      platform: "LWD",
-      source: "portfolio",
+    expect(track).toHaveBeenCalledWith("product_tour_card", {
+      page: "Product Tour WV4",
+      card: 1,
     });
   });
 

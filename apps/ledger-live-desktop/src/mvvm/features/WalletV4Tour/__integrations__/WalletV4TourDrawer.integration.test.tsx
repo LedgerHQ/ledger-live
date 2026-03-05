@@ -4,16 +4,22 @@ import { WalletV4TourDialog } from "../Drawer/WalletV4TourDialog";
 import { useWalletV4TourDrawerViewModel } from "../Drawer/hooks/useWalletV4TourDrawerViewModel";
 
 function TestHarness({ isOnPortfolioPage = false }: { isOnPortfolioPage?: boolean }) {
-  const { isDialogOpen, handleOpenDialog, handleCloseDialog } = useWalletV4TourDrawerViewModel({
-    isOnPortfolioPage,
-  });
+  const { isDialogOpen, handleOpenDialog, closeDrawer, completeDrawer, onSlideChange } =
+    useWalletV4TourDrawerViewModel({
+      isOnPortfolioPage,
+    });
 
   return (
     <div>
       <button data-testid="open-dialog" onClick={handleOpenDialog}>
         Open
       </button>
-      <WalletV4TourDialog isOpen={isDialogOpen} onClose={handleCloseDialog} />
+      <WalletV4TourDialog
+        isOpen={isDialogOpen}
+        onClose={closeDrawer}
+        onComplete={completeDrawer}
+        onSlideChange={onSlideChange}
+      />
     </div>
   );
 }
