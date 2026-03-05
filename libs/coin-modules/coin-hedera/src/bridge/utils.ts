@@ -100,14 +100,12 @@ export const calculateAmount = ({
 
 export const getSubAccounts = async ({
   ledgerAccountId,
-  latestHTSTokenOperations,
-  latestERC20TokenOperations,
+  latestTokenOperations,
   mirrorTokens,
   erc20Tokens,
 }: {
   ledgerAccountId: string;
-  latestHTSTokenOperations: Operation[];
-  latestERC20TokenOperations: Operation[];
+  latestTokenOperations: Operation[];
   mirrorTokens: HederaMirrorToken[];
   erc20Tokens: HederaERC20TokenBalance[];
 }): Promise<TokenAccount[]> => {
@@ -115,7 +113,7 @@ export const getSubAccounts = async ({
   const operationsByToken = new Map<TokenCurrency, Operation[]>();
   const subAccounts: TokenAccount[] = [];
 
-  for (const tokenOperation of [...latestHTSTokenOperations, ...latestERC20TokenOperations]) {
+  for (const tokenOperation of latestTokenOperations) {
     const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token) continue;
 
