@@ -311,6 +311,7 @@ apps/ledger-live-mobile/e2e/                                                @led
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
+.github/copilot-instructions.md
 libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
 libs/ledgerjs/packages/types-live/src/feature.ts
 libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts
