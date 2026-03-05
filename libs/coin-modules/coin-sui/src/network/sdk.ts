@@ -806,17 +806,10 @@ export const getListOperations = async (
       const boundaryTs = parsedCursor.timestamp;
       const boundaryDigest = parsedCursor.digest;
 
-      // if we don't have full boundary information, fall back to previous behavior
-      if (boundaryTs === undefined || !boundaryDigest) return true;
-
       const ts = Number(op.timestampMs ?? 0);
 
-      if (order === "asc") {
-        // keep ops strictly after the cursor in (timestamp, digest) ordering
+      if (order === "asc")
         return ts > boundaryTs || (ts === boundaryTs && op.digest > boundaryDigest);
-      }
-
-      // order === "desc": keep ops strictly after the cursor in reverse (timestamp, digest) ordering
       return ts < boundaryTs || (ts === boundaryTs && op.digest < boundaryDigest);
     });
 
