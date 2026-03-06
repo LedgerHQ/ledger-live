@@ -53,7 +53,7 @@ jobs:
           git checkout -b hotfix
           git push -u origin hotfix
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
           use-mise: true

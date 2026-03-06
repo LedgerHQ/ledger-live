@@ -264,7 +264,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -461,7 +461,7 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
           use-mise: true
@@ -702,7 +702,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"

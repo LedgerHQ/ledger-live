@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
           use-mise: true

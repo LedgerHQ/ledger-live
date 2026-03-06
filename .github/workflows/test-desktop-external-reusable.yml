@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
           use-mise: true
@@ -70,7 +70,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
           use-mise: true
@@ -102,7 +102,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         id: setup-caches
         with:
           use-mise: true
