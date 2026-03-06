@@ -41,23 +41,20 @@ describe("Concordium Onboard Component", () => {
     expect(ConcordiumOnboard.options).toEqual({ headerShown: false });
   });
 
-  it("should render on iOS", () => {
-    const originalPlatform = Platform.OS;
-    Platform.OS = "ios";
+  describe.each(["ios", "android"] as const)("when running on %s", os => {
+    const originalOS = Platform.OS;
 
-    const result = render(<TestNavigator />);
-    expect(result).toBeDefined();
+    beforeEach(() => {
+      Platform.OS = os;
+    });
 
-    Platform.OS = originalPlatform;
-  });
+    afterEach(() => {
+      Platform.OS = originalOS;
+    });
 
-  it("should render on Android", () => {
-    const originalPlatform = Platform.OS;
-    Platform.OS = "android";
-
-    const result = render(<TestNavigator />);
-    expect(result).toBeDefined();
-
-    Platform.OS = originalPlatform;
+    it("should render without crashing", () => {
+      const result = render(<TestNavigator />);
+      expect(result).toBeDefined();
+    });
   });
 });
