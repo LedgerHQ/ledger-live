@@ -13,6 +13,7 @@ const mockOpenAssetAndAccount = jest.fn();
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
+  useLocation: () => ({ pathname: "/market" }),
 }));
 
 jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () => ({
@@ -63,7 +64,7 @@ describe.each(cases)(
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { mode: rampMode, defaultTicker: "BTC" },
+        state: { mode: rampMode, defaultTicker: "BTC", returnTo: "/market" },
       });
       expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
     });
@@ -79,7 +80,7 @@ describe.each(cases)(
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { mode: rampMode, defaultTicker: "ETH" },
+        state: { mode: rampMode, defaultTicker: "ETH", returnTo: "/market" },
       });
       expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
     });
@@ -95,7 +96,7 @@ describe.each(cases)(
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { currency: bitcoin.id, mode },
+        state: { currency: bitcoin.id, mode, returnTo: "/market" },
       });
       expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
     });
@@ -112,7 +113,7 @@ describe.each(cases)(
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { currency: bitcoin.id, account: account.id, mode },
+        state: { currency: bitcoin.id, account: account.id, mode, returnTo: "/market" },
       });
       expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
     });
@@ -136,6 +137,7 @@ describe.each(cases)(
       expect(callState.currency).toBe(usdcToken.id);
       expect(callState.account).toBe(ethAccount.id);
       expect(callState.mode).toBe(mode);
+      expect(callState.returnTo).toBe("/market");
       expect(mockOpenAssetAndAccount).not.toHaveBeenCalled();
     });
 
@@ -189,7 +191,7 @@ describe.each(cases)(
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { currency: bitcoin.id, account: account1.id, mode },
+        state: { currency: bitcoin.id, account: account1.id, mode, returnTo: "/market" },
       });
     });
   },

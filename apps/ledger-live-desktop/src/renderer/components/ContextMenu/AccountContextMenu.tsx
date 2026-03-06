@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { openModal } from "~/renderer/actions/modals";
@@ -41,6 +41,7 @@ export default function AccountContextMenu({
   withStar,
 }: Props) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
@@ -90,7 +91,8 @@ export default function AccountContextMenu({
             state: {
               currency: currency?.id,
               account: mainAccount?.id,
-              mode: "buy", // buy or sell
+              mode: "buy",
+              returnTo: location.pathname,
             },
           });
         },
@@ -107,7 +109,8 @@ export default function AccountContextMenu({
             state: {
               currency: currency?.id,
               account: mainAccount?.id,
-              mode: "sell", // buy or sell
+              mode: "sell",
+              returnTo: location.pathname,
             },
           });
         },
@@ -197,6 +200,7 @@ export default function AccountContextMenu({
     openSendFlow,
     isStarred,
     refreshAccountsOrdering,
+    location.pathname,
   ]);
   const currency = getAccountCurrency(account);
   return (
