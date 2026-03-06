@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { lastSeenDeviceSelector, hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import useBuyDeviceDialog from "LLD/features/BuyDevice/hooks/useBuyDeviceDialog";
 import { useTranslation } from "react-i18next";
 import { getDeviceIcon, type DeviceIconComponent } from "LLD/utils/getDeviceIcon";
 import { MANAGER_PATH, MANAGER_TRACK_ENTRY } from "../utils/constants";
@@ -17,18 +18,25 @@ export const useMyLedger = (): {
   const navigate = useNavigate();
   const location = useLocation();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+  const { handleOpen: openBuyDeviceModal } = useBuyDeviceDialog();
   const icon = useMemo(() => getDeviceIcon(lastSeenDevice?.modelId), [lastSeenDevice?.modelId]);
 
   const handleMyLedger = useCallback(() => {
     if (location.pathname !== MANAGER_PATH) {
       setTrackingSource("topbar");
-      navigate(MANAGER_PATH);
+      if (hasOnboardedDevice) {
+        navigate(MANAGER_PATH);
+      } else {
+        openBuyDeviceModal();
+      }
     }
+
     track("button_clicked", {
       entry: MANAGER_TRACK_ENTRY,
       page: location.pathname,
     });
-  }, [navigate, location.pathname]);
+  }, [hasOnboardedDevice, location.pathname, navigate, openBuyDeviceModal]);
 
   return {
     handleMyLedger,

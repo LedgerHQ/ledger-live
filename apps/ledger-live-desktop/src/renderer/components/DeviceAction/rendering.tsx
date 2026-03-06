@@ -848,7 +848,12 @@ export const renderError = ({
     return (
       <NoSuchAppOnProviderErrorComponent
         error={tmpError}
-        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        productName={
+          getDeviceModel(
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            device?.modelId as DeviceModelId,
+          )?.productName
+        }
         learnMoreLink={learnMoreLink}
         learnMoreTextKey={learnMoreTextKey}
       />
@@ -876,12 +881,23 @@ export const renderError = ({
                 </Logo>
               )
         }
-        title={<TranslatedError error={tmpError as unknown as Error} noLink />}
+        title={
+          <TranslatedError
+            error={
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              tmpError as unknown as Error
+            }
+            noLink
+          />
+        }
         description={
           withDescription && (
             <TranslatedError
               dataTestId="error-description-deviceAction"
-              error={tmpError as unknown as Error}
+              error={
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                tmpError as unknown as Error
+              }
               field="description"
             />
           )
@@ -889,7 +905,13 @@ export const renderError = ({
         list={
           list ? (
             <ol style={{ textAlign: "justify" }}>
-              <TranslatedError error={tmpError as unknown as Error} field="list" />
+              <TranslatedError
+                error={
+                  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                  tmpError as unknown as Error
+                }
+                field="list"
+              />
             </ol>
           ) : undefined
         }
@@ -952,40 +974,42 @@ export const renderInWrongAppForAccount = ({
     stretch: true,
   });
 
-export const renderConnectYourDevice = ({
+export const ConnectYourDevice = ({
   modelId,
   type,
   onRepairModal,
-  device,
+  device = null,
   unresponsive,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
   onRepairModal?: ((open: boolean) => void) | null;
-  device: Device;
+  device?: Device | null;
   unresponsive?: boolean | null;
-}) => (
-  <Wrapper>
-    <Header />
-    <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
-    </AnimationWrapper>
-    <Footer>
-      <Title>
-        <Trans
-          i18nKey={
-            unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
-          }
-        />
-      </Title>
-      {!device && onRepairModal ? (
-        <TroubleshootingWrapper>
-          <ConnectTroubleshooting onRepair={onRepairModal} />
-        </TroubleshootingWrapper>
-      ) : null}
-    </Footer>
-  </Wrapper>
-);
+}) => {
+  return (
+    <Wrapper>
+      <Header />
+      <AnimationWrapper>
+        <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
+      </AnimationWrapper>
+      <Footer>
+        <Title>
+          <Trans
+            i18nKey={
+              unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
+            }
+          />
+        </Title>
+        {!device && onRepairModal ? (
+          <TroubleshootingWrapper>
+            <ConnectTroubleshooting onRepair={onRepairModal} />
+          </TroubleshootingWrapper>
+        ) : null}
+      </Footer>
+    </Wrapper>
+  );
+};
 
 const OpenSwapBtn = () => {
   const { setDrawer } = useContext(context);

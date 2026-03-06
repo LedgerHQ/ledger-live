@@ -1,8 +1,9 @@
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { closeBuyDevice, selectIsBuyDeviceOpen } from "./buyDeviceDialog";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { track } from "~/renderer/analytics/segment";
+import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 
 export interface BuyDeviceViewProps {
   isOpen: boolean;
@@ -16,7 +17,14 @@ const ANALYTICS_PAGE = "buy device dialog";
 const useBuyDeviceViewModel = (): BuyDeviceViewProps => {
   const dispatch = useDispatch();
   const isOpen = useSelector(selectIsBuyDeviceOpen);
+  const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { handleBuyDevice, handleConnect: handleConnectDevice } = useLazyOnboardingActions();
+
+  useEffect(() => {
+    if (hasOnboardedDevice && isOpen) {
+      dispatch(closeBuyDevice());
+    }
+  }, [hasOnboardedDevice, isOpen, dispatch]);
 
   const onClose = useCallback(() => {
     dispatch(closeBuyDevice());

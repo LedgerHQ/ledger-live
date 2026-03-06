@@ -48,7 +48,7 @@ import {
   renderAllowOpeningApp,
   renderAllowRemoveCustomLockscreen,
   renderBootloaderStep,
-  renderConnectYourDevice,
+  ConnectYourDevice,
   renderError,
   renderInstallingLanguage,
   renderInWrongAppForAccount,
@@ -90,6 +90,7 @@ import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTra
 import { useTrackDmkErrorsEvents } from "~/renderer/analytics/hooks/useTrackDmkErrorsEvents";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { useBuyDeviceIntercept } from "~/renderer/hooks/useBuyDeviceIntercept";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -451,12 +452,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
     switch (exchangeType) {
       // swap
       case 0x00: {
+        /* eslint-disable @typescript-eslint/consistent-type-assertions */
         const {
           transaction,
           exchange,
@@ -487,6 +490,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           stateSettings,
           walletState,
         });
+        /* eslint-enable @typescript-eslint/consistent-type-assertions */
       }
 
       case 0x01: // sell
@@ -505,6 +509,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
     const wording = allowOpeningRequestedWording || requestOpenApp || "";
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { tokenCurrency } = request as { tokenCurrency: TokenCurrency };
     const tokenContext = tokenCurrency;
     return renderAllowOpeningApp({
@@ -530,6 +535,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (!isLoading && error) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const e = error as unknown;
     if (
       e instanceof ManagerNotEnoughSpaceError ||
@@ -539,6 +545,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return renderError({
         t,
         error,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         managerAppName: (error as { managerAppName: string }).managerAppName,
       });
     }
@@ -564,11 +571,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         withOpenManager: true,
         withExportLogs: true,
         ...(device && { device }),
-        ...getNoSuchAppProviderLearnMoreMetadataPerApp((request as { appName: string })?.appName),
+        ...getNoSuchAppProviderLearnMoreMetadataPerApp(
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          (request as { appName: string })?.appName,
+        ),
       });
     }
 
     // workaround to catch ECONNRESET error and show better message
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     if ((error as Error)?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
@@ -584,6 +595,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
+    /* eslint-disable @typescript-eslint/consistent-type-assertions */
     if (
       (error as unknown) instanceof UserRefusedFirmwareUpdate ||
       (error as unknown) instanceof UserRefusedAllowManager ||
@@ -595,7 +607,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs = false;
       warning = true;
     }
+    /* eslint-enable @typescript-eslint/consistent-type-assertions */
 
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
       withDescription = false;
     }
@@ -621,13 +635,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (!isLoading && !device) {
-    return renderConnectYourDevice({
-      modelId,
-      type,
-      unresponsive,
-      device,
-      onRepairModal,
-    });
+    return (
+      <ConnectYourDevice
+        modelId={modelId}
+        type={type}
+        unresponsive={unresponsive}
+        device={device}
+        onRepairModal={onRepairModal}
+      />
+    );
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
@@ -642,6 +658,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     if (renderDeviceSignatureRequested) {
       return renderDeviceSignatureRequested({ device, request });
     }
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
@@ -676,6 +693,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && signMessageRequested) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { account, parentAccount } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
@@ -720,15 +738,9 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 };
 
 /**
- * Perform an action involving a device.
- * @prop action: one of the actions/*
- * @prop request: an object that is the input of that action
- * @prop Result optional: an action produces a result, this gives a component to render it
- * @prop onResult optional: an action produces a result, this gives a callback to be called with it
- * @prop location optional: an action might need to know the location for analytics
+ * Inner DeviceAction: performs the device action. Used by the default export after intercept.
  */
-
-export default function DeviceAction<R, H extends States, P>({
+function DeviceActionInner<R, H extends States, P>({
   action,
   request,
   location,
@@ -751,4 +763,24 @@ export default function DeviceAction<R, H extends States, P>({
       {...props}
     />
   );
+}
+
+/**
+ * Perform an action involving a device.
+ * Intercepts when user has no onboarded device: opens Buy Device modal and returns null.
+ * @prop action: one of the actions/*
+ * @prop request: an object that is the input of that action
+ * @prop Result optional: an action produces a result, this gives a component to render it
+ * @prop onResult optional: an action produces a result, this gives a callback to be called with it
+ * @prop location optional: an action might need to know the location for analytics
+ */
+export default function DeviceAction<R, H extends States, P>(
+  props: InnerProps<P> & { action: Action<R, H, P>; request: R },
+): React.JSX.Element | null {
+  const shouldShowContent = useBuyDeviceIntercept();
+
+  if (!shouldShowContent) {
+    return null;
+  }
+  return <DeviceActionInner {...props} />;
 }
