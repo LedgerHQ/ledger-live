@@ -24,11 +24,11 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@support/LIVE-26911-add-mise
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
         id: monitoring
         timeout-minutes: 120
         with:

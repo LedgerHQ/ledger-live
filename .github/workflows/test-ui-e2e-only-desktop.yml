@@ -158,7 +158,7 @@ jobs:
 
       - name: Setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -173,7 +173,7 @@ jobs:
         shell: bash
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
@@ -189,7 +189,7 @@ jobs:
         shell: bash
 
       - name: Configure test environment (API endpoints, broadcast settings)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.build_type }}
@@ -238,7 +238,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -288,7 +288,7 @@ jobs:
       - name: Publish report to Allure Server
         id: allure-server
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           platform: ${{ github.event_name == 'schedule' && 'linux-speculos-nightly' || (inputs.smoke_tests && 'linux-speculos-smoke' || 'linux-speculos') }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -298,7 +298,7 @@ jobs:
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux
