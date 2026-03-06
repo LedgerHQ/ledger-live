@@ -14,6 +14,7 @@ export const accountsCountAndApy = ({
 }) => (
   <>
     {label && accountsCount({ label })}
+    {/* Allow valid 0% APY to display */}
     {typeof value === "number" && type ? <ApyIndicator value={value} type={type} /> : null}
   </>
 );
