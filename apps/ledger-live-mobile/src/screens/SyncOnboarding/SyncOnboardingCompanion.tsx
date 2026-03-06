@@ -54,9 +54,9 @@ import {
   Note,
   ShieldCheck,
 } from "@ledgerhq/native-ui/assets/icons";
-import SecretRecoveryPhraseImage from "./assets/srp.png";
-import BackgroundBlue from "./assets/BackgroundBlue";
-import BackgroundRed from "./assets/BackgroundRed";
+import SecretRecoveryPhraseImage from "./assets/srp.webp";
+import BackgroundBlue from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundBlue";
+import BackgroundRed from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundRed";
 import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";
 import { ShadowedView } from "react-native-fast-shadow";
