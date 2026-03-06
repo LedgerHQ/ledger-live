@@ -151,7 +151,7 @@ export class Account {
     1,
     "44'/60'/1'/0/0",
     undefined,
-    "speculos.eth",
+    "speculos-qaa.eth",
   );
   static readonly ETH_2_LOWER_CASE = new Account(Currency.ETH, "Ethereum 2", 1, "44'/60'/1'/0/0");
   static readonly ETH_3 = new Account(Currency.ETH, "Ethereum 3", 3, "44'/60'/2'/0/0");
