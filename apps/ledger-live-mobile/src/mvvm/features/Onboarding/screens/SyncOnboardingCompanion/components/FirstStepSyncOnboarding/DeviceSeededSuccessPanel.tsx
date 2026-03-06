@@ -2,24 +2,18 @@ import React, { useEffect, useRef } from "react";
 import { BoxedIcon, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 
-/*
- * Constants
- */
+const READY_REDIRECT_DELAY_MS = 2_500;
 
-const READY_REDIRECT_DELAY_MS = 2500;
+type DeviceSeededSuccessPanelProps = {
+  handleNextStep: () => void;
+  productName: string;
+};
 
 const DeviceSeededSuccessPanel = ({
   handleNextStep,
   productName,
-}: {
-  handleNextStep: () => void;
-  productName: string;
-}) => {
+}: DeviceSeededSuccessPanelProps) => {
   const { t } = useTranslation();
-
-  /*
-   * Refs
-   */
   const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle move to second step
@@ -35,7 +29,13 @@ const DeviceSeededSuccessPanel = ({
   }, [handleNextStep]);
 
   return (
-    <Flex height="264px" justifyContent="center" alignItems="center" marginX="16px">
+    <Flex
+      height="264px"
+      justifyContent="center"
+      alignItems="center"
+      marginX="16px"
+      testID="device-seeded-success-panel"
+    >
       <BoxedIcon
         backgroundColor="opacityDefault.c10"
         borderColor="transparent"

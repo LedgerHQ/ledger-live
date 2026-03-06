@@ -20,7 +20,7 @@ import {
   setIsOnboardingFlowReceiveSuccess,
   setReadOnlyMode,
 } from "~/actions/settings";
-import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
+import FirstStepSyncOnboarding from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/FirstStepSyncOnboarding";
 import SecondStepSyncOnboarding from "./SecondStepSyncOnboarding";
 import { useTranslation } from "~/context/Locale";
 import { ScrollView } from "react-native";
