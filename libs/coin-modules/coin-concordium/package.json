@@ -198,7 +198,7 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --outDir lib --module commonjs --moduleResolution node && tsc --outDir lib-es --module esnext --moduleResolution bundler",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node && tsc --outDir lib-es --module esnext --moduleResolution bundler && cp -r src/network/proto lib/network/ && cp -r src/network/proto lib-es/network/",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
