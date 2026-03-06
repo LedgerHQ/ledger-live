@@ -1,13 +1,13 @@
 import { useEffect, useReducer, useRef } from "react";
 
-type Phase = "idle" | "waitingForSync" | "syncing";
-type Event = "click" | "syncStarted" | "syncDone";
+type RefreshPhase = "idle" | "waitingForSync" | "syncing";
+type RefreshEvent = "click" | "syncStarted" | "syncDone";
 
 /**
  * State machine for manual refresh lifecycle:
  *   idle → (click) → waitingForSync → (syncStarted) → syncing → (syncDone) → idle
  */
-function reducer(phase: Phase, event: Event): Phase {
+function reducer(phase: RefreshPhase, event: RefreshEvent): RefreshPhase {
   switch (event) {
     case "click":
       return "waitingForSync";
@@ -22,25 +22,24 @@ function reducer(phase: Phase, event: Event): Phase {
 
 /**
  * Tracks whether a user-triggered manual refresh is in progress.
- *
  * Latches on when a click is detected and releases once the sync completes.
  */
-export function useManualRefreshLoading(
+export function useManualRefresh(
   stableSyncPending: boolean,
   lastUserSyncClickTimestamp: number,
 ): boolean {
-  const [phase, send] = useReducer(reducer, "idle");
+  const [phase, dispatch] = useReducer(reducer, "idle");
   const prevTimestampRef = useRef(lastUserSyncClickTimestamp);
 
   useEffect(() => {
     if (lastUserSyncClickTimestamp !== prevTimestampRef.current) {
       prevTimestampRef.current = lastUserSyncClickTimestamp;
-      send("click");
+      dispatch("click");
     }
   }, [lastUserSyncClickTimestamp]);
 
   useEffect(() => {
-    send(stableSyncPending ? "syncStarted" : "syncDone");
+    dispatch(stableSyncPending ? "syncStarted" : "syncDone");
   }, [stableSyncPending]);
 
   return phase !== "idle";
