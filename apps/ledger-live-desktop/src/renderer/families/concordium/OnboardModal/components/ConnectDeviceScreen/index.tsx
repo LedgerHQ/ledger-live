@@ -4,7 +4,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
-import { renderConnectYourDevice } from "~/renderer/components/DeviceAction/rendering";
+import { ConnectYourDevice } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 
 type Props = Readonly<{
@@ -25,18 +25,20 @@ export default function ConnectDeviceScreen({ lastSeenDevice }: Props) {
           title={<Trans i18nKey="families.concordium.addAccount.title" />}
           onClose={onClose}
           noScroll={true}
-          render={() =>
-            renderConnectYourDevice({
-              modelId: fallbackModelId,
-              type: theme.theme,
-              device: lastSeenDevice || {
-                deviceId: "",
-                modelId: fallbackModelId,
-                wired: false,
-              },
-              unresponsive: false,
-            })
-          }
+          render={() => (
+            <ConnectYourDevice
+              modelId={fallbackModelId}
+              type={theme.theme}
+              device={
+                lastSeenDevice || {
+                  deviceId: "",
+                  modelId: fallbackModelId,
+                  wired: false,
+                }
+              }
+              unresponsive={false}
+            />
+          )}
         />
       )}
     />
