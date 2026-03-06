@@ -52,11 +52,7 @@ export default defineConfig({
         http2: false,
         dns: false,
       };
-      appendPlugins([
-        new rspack.IgnorePlugin({ resourceRegExp: /^electron$/ }),
-        new rspack.IgnorePlugin({ resourceRegExp: /@grpc\/grpc-js/ }),
-        new rspack.IgnorePlugin({ resourceRegExp: /@grpc\/proto-loader/ }),
-      ]);
+      appendPlugins([new rspack.IgnorePlugin({ resourceRegExp: /^electron$/ })]);
     },
   },
 });
