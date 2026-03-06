@@ -40,6 +40,10 @@ PROJECT_NAME = "{{ config_root | basename }}"
 BIN_PATH = "{{ config_root }}/node_modules/.bin"
 # NODE_ENV = "{{ env.NODE_ENV | default(value='development') }}"
 
+
+[task_config]
+includes = [".mise/tasks/nx.toml"]
+
 [tasks.info]
 description = "Display installed tools, versions, and project name"
 run = '''

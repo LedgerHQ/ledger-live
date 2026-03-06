@@ -1,0 +1,16 @@
+
+["nx:build"]
+description = "Build the project according to the dependency graph"
+usage = '''
+arg "[subproject]" help="define subproject" default="*" {
+  choices "libs/*" "apps/ledger-live-desktop"
+}
+'''
+alias = "b"
+run = "nx run-many -t build -p '@ledgerhq/{{ usage.subproject }}'"
+
+
+["nx:build:libs"]
+description = "Build the libs project according to the dependency graph"
+alias = "bl"
+run = ["mise run nx:build 'libs/*'"]

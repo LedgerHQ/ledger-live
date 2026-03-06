@@ -72,7 +72,7 @@ jobs:
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
       - name: Run unit tests
-        run: mise exec -- pnpm mobile test:jest:coverage
+        run: pnpm mobile test:jest:coverage
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         name: upload eslint json output
