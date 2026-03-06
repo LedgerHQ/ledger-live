@@ -2533,6 +2533,47 @@ describe("filterOperations", () => {
       expect(result.feesPayer).toBe(sponsorAddress);
     });
 
+    test("toBlockTransaction should not include feesPayer when gasData.owner is missing or empty", () => {
+      const txWithoutOwner = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: undefined,
+            },
+          },
+        },
+      };
+      const txWithEmptyOwner = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: "",
+            },
+          },
+        },
+      };
+
+      const resultWithoutOwner = sdk.toBlockTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        txWithoutOwner as unknown as SuiTransactionBlockResponse,
+      );
+      const resultWithEmptyOwner = sdk.toBlockTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        txWithEmptyOwner as unknown as SuiTransactionBlockResponse,
+      );
+
+      expect(resultWithoutOwner).not.toHaveProperty("feesPayer");
+      expect(resultWithEmptyOwner).not.toHaveProperty("feesPayer");
+    });
+
     test("toSuiAsset should map native coin correctly", () => {
       expect(sdk.toSuiAsset(sdk.DEFAULT_COIN_TYPE)).toEqual({ type: "native" });
     });

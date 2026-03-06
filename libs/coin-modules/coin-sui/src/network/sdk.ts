@@ -527,6 +527,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  */
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   const operationFee = getOperationFee(transaction);
+  const feesPayer = getFeesPayer(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
@@ -535,7 +536,7 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
         toBlockOperation(transaction, change, operationFee),
       ) || [],
     fees: BigInt(operationFee.toString()),
-    feesPayer: getFeesPayer(transaction) ?? "",
+    ...(feesPayer ? { feesPayer } : {}),
   };
 }
 
