@@ -340,9 +340,15 @@ const handlers: SettingsHandlers = {
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
     const filteredSettings = filterValidSettings(settings);
+    // Preserve forced overrides (e.g. lwdWallet40 on this branch) after rehydration from disk
+    const overriddenFeatureFlags = {
+      ...(filteredSettings.overriddenFeatureFlags ?? {}),
+      ...INITIAL_STATE.overriddenFeatureFlags,
+    };
     return {
       ...state,
       ...filteredSettings,
+      overriddenFeatureFlags,
       loaded: true,
     };
   },
