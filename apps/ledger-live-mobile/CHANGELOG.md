@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.6
+
+### Minor Changes
+
+- [#15123](https://github.com/LedgerHQ/ledger-live/pull/15123) [`45802dc`](https://github.com/LedgerHQ/ledger-live/commit/45802dc64772e0a9d227669c58d9cf4f751976fa) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen to fix balance animation fontScale
+
 ## 3.109.0-next.5
 
 ### Minor Changes
