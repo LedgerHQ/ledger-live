@@ -84,9 +84,7 @@ export function useCustomFeesViewModel({
     () => sendFeatures.getCustomAssetsConfig(currency),
     [currency],
   );
-  // Custom fee assets are exposed by descriptor for CELO, but not wired into
-  // transaction patching/estimation yet. Keep selector hidden until functional.
-  const hasCustomAssetsFlag = false;
+  const hasCustomAssetsFlag = Boolean(customAssetsConfig?.options.length);
 
   const [selectedAssetId, setSelectedAssetId] = useState<string>(
     () => customAssetsConfig?.defaultId ?? "",
@@ -129,7 +127,7 @@ export function useCustomFeesViewModel({
   );
 
   // Local fee estimation shortcut — avoids a bridge round-trip when fees can be
-  // derived directly from the user inputs (EVM: feeRate * gasLimit, or direct fees field).
+  // derived directly from the user inputs using the transaction gas limit.
   const estimatedFeesFromInputs = useMemo(() => {
     if (!customFeeConfig || !allInputsValid) return null;
 
@@ -139,17 +137,12 @@ export function useCustomFeesViewModel({
     if (BigNumber.isBigNumber(directFees) && directFees.gt(0)) return directFees;
 
     const feeRate = patch["maxFeePerGas"] ?? patch["gasPrice"];
-    // gasLimit is no longer an editable custom fee input, but the estimation formula
-    // (feeRate × gasLimit) still needs it. We read it as read-only from the transaction
-    // (set by the bridge), falling back through customGasLimit -> gasLimit.
     const txRecord = transaction as Record<string, unknown>;
-    let transactionGasLimit: BigNumber | null = null;
-    if (BigNumber.isBigNumber(txRecord.customGasLimit)) {
-      transactionGasLimit = txRecord.customGasLimit;
-    } else if (BigNumber.isBigNumber(txRecord.gasLimit)) {
-      transactionGasLimit = txRecord.gasLimit;
-    }
-    const gasLimit = patch["customGasLimit"] ?? patch["gasLimit"] ?? transactionGasLimit;
+    const customGasLimit = BigNumber.isBigNumber(txRecord.customGasLimit)
+      ? txRecord.customGasLimit
+      : null;
+    const gasLimit =
+      customGasLimit ?? (BigNumber.isBigNumber(txRecord.gasLimit) ? txRecord.gasLimit : null);
     if (BigNumber.isBigNumber(feeRate) && BigNumber.isBigNumber(gasLimit)) {
       const localFees = feeRate.times(gasLimit);
       if (localFees.gt(0)) return localFees;
