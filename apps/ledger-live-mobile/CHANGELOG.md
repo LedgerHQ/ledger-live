@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.5
+
+### Minor Changes
+
+- [#15106](https://github.com/LedgerHQ/ledger-live/pull/15106) [`6ac5315`](https://github.com/LedgerHQ/ledger-live/commit/6ac531517ef33adc8cfb68835e7a5b6baa0dbf2f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Disable LumenBottomSheet in the MAD
+
 ## 3.109.0-next.4
 
 ### Minor Changes
