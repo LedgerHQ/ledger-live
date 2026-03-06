@@ -24,7 +24,7 @@ export const ListHeader = memo<ListHeaderProps>(function ListHeader({
 }) {
   return (
     <div className="px-20" data-testid="market-list-header">
-      <TableRow header style={{ paddingRight: 6 }}>
+      <TableRow header style={{ paddingRight: 11 }}>
         <SortTableCell data-testid="market-sort-button" onClick={onToggleSortBy} order={order}>
           #
         </SortTableCell>
