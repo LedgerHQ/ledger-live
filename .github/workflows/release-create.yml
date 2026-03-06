@@ -30,7 +30,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Push branch
         run: git push -u origin $RELEASE_BRANCH
       - name: Move patch updates to minor
