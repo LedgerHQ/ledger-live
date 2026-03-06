@@ -6,15 +6,17 @@ import type {
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Result } from "@ledgerhq/coin-framework/derivation";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import hederaCoinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT } from "../constants";
-import { listOperations } from "../logic";
+import { listOperations, listOperationsV2 } from "../logic";
 import { toEVMAddress } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { thirdwebClient } from "../network/thirdweb";
-import { getERC20BalancesForAccount } from "../network/utils";
+import { getERC20BalancesForAccount, getERC20BalancesForAccountV2 } from "../network/utils";
 import type { HederaAccount } from "../types";
 import {
   getSubAccounts,
@@ -23,6 +25,111 @@ import {
   mergeSubAccounts,
   integrateERC20Operations,
 } from "./utils";
+
+const getAccountShapeV2 = async ({
+  address,
+  evmAddress,
+  liveAccountId,
+  currency,
+  initialAccount,
+  blacklistedTokenIds,
+}: {
+  address: string;
+  evmAddress: string;
+  liveAccountId: string;
+  currency: CryptoCurrency;
+  initialAccount: HederaAccount | undefined;
+  blacklistedTokenIds: string[] | undefined;
+}): Promise<Partial<HederaAccount>> => {
+  // get current account balance and tokens
+  // tokens are fetched with separate requests to get "created_timestamp" for each token
+  // based on this, ASSOCIATE_TOKEN operations can be connected with tokens
+  const [mirrorAccount, mirrorTokens, erc20Tokens] = await Promise.all([
+    apiClient.getAccount(address),
+    apiClient.getAccountTokens(address),
+    getERC20BalancesForAccountV2(address),
+  ]);
+
+  const accountBalance = new BigNumber(mirrorAccount.balance.balance);
+
+  // we should sync again when new tokens are added or blacklist changes
+  const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
+  const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
+
+  const pendingOperations = shouldSyncFromScratch ? [] : initialAccount?.pendingOperations ?? [];
+  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const latestOperation = oldOperations[0];
+
+  // grab latest operation timestamps for incremental sync
+  let latestOperationTimestamp: string | null = null;
+
+  if (!shouldSyncFromScratch && latestOperation) {
+    const timestamp = Math.floor(latestOperation.date.getTime() / 1000);
+    latestOperationTimestamp = new BigNumber(timestamp).toFixed(9);
+  }
+
+  const latestAccountOperations = await listOperationsV2({
+    currency,
+    address,
+    evmAddress,
+    mirrorTokens,
+    erc20Tokens,
+    ...(latestOperationTimestamp && { cursor: latestOperationTimestamp }),
+    fetchAllPages: true,
+    skipFeesForTokenOperations: false,
+    useEncodedHash: true,
+    useSyntheticBlocks: false,
+  });
+
+  const newOperations = await prepareOperations(
+    latestAccountOperations.coinOperations,
+    latestAccountOperations.tokenOperations,
+  );
+  const enrichedNewOperations = applyPendingExtras(newOperations, pendingOperations);
+  const operations = shouldSyncFromScratch
+    ? enrichedNewOperations
+    : mergeOps(oldOperations, enrichedNewOperations);
+
+  const delegation =
+    typeof mirrorAccount.staked_node_id === "number"
+      ? {
+          nodeId: mirrorAccount.staked_node_id,
+          delegated: accountBalance,
+          pendingReward: new BigNumber(mirrorAccount.pending_reward),
+        }
+      : null;
+
+  const newSubAccounts = await getSubAccounts({
+    ledgerAccountId: liveAccountId,
+    latestTokenOperations: latestAccountOperations.tokenOperations,
+    mirrorTokens,
+    erc20Tokens,
+  });
+
+  const subAccounts = shouldSyncFromScratch
+    ? newSubAccounts
+    : mergeSubAccounts(initialAccount, newSubAccounts);
+
+  return {
+    id: liveAccountId,
+    freshAddress: address,
+    syncHash,
+    lastSyncDate: new Date(),
+    balance: accountBalance,
+    spendableBalance: accountBalance,
+    operations: operations,
+    operationsCount: operations.length,
+    // NOTE: there are no "blocks" in hedera
+    // set a value just so that operations are considered confirmed according to isConfirmedOperation
+    blockHeight: HARDCODED_BLOCK_HEIGHT,
+    subAccounts,
+    hederaResources: {
+      maxAutomaticTokenAssociations: mirrorAccount.max_automatic_token_associations,
+      isAutoTokenAssociationEnabled: mirrorAccount.max_automatic_token_associations === -1,
+      delegation,
+    },
+  };
+};
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
@@ -33,6 +140,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const evmAddress = await toEVMAddress(address);
   invariant(evmAddress, `hedera: evm address is missing for ${address}`);
 
+  const coinConfig = hederaCoinConfig.getCoinConfig(currency);
   const liveAccountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -40,6 +148,17 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     xpubOrAddress: address,
     derivationMode,
   });
+
+  if (coinConfig.useHgraphForErc20) {
+    return getAccountShapeV2({
+      address,
+      evmAddress,
+      liveAccountId,
+      currency,
+      initialAccount,
+      blacklistedTokenIds,
+    });
+  }
 
   // get current account balance and tokens
   // tokens are fetched with separate requests to get "created_timestamp" for each token
@@ -195,6 +314,12 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
 // TODO: remove once migration to new API is complete
 // it might be necessary to remove pending operations after ERC20 patching done by `integrateERC20Operations`
 export const postSync = (_initial: Account, synced: Account): Account => {
+  const coinConfig = hederaCoinConfig.getCoinConfig(synced.currency);
+
+  if (coinConfig.useHgraphForErc20) {
+    return synced;
+  }
+
   const erc20Operations = synced.operations.filter(op => op.standard === "erc20");
   const erc20Hashes = new Set(erc20Operations.map(op => op.hash));
 
