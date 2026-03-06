@@ -8,6 +8,14 @@ inputs:
   gh-token:
     description: "use the GITHUB_TOKEN to download binaries and avoid GitHub limits"
     required: false
+  install-proto:
+    description: "true to install proto, false by default"
+    required: false
+    default: "false"
+  upgrade-proto:
+    description: "true to upgrade proto, false by default"
+    required: false
+    default: "false"
   skip-pnpm-cache:
     description: "true to skip pnpm caching, true by default"
     required: false
@@ -47,16 +55,27 @@ runs:
       if: inputs.use-mise == 'true'
       uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
       with:
-        install: true # [default: true] run `mise install`
+        install: true
         cache: true
         reshim: true
         github_token: ${{ inputs['gh-token'] }}
 
-    - name: Force mise reshim
-      if: inputs.use-mise == 'true'
+    - name: Setup proto
+      if: inputs.install-proto == 'true'
+      uses: moonrepo/setup-toolchain@v0
+      with:
+        proto-version: "0.55.2"
+
+    - name: Update proto
+      if: inputs.upgrade-proto == 'true'
+      run: proto upgrade
       shell: bash
-      run: |
-        mise reshim
+
+    - name: Setup the toolchain
+      # If we're not using mise, keep this behaviour of activating proto tools
+      if: inputs.use-mise == 'false'
+      shell: bash
+      run: proto use
 
     - name: Get pnpm store directory
       shell: bash
