@@ -15,31 +15,6 @@ jest.mock("./OnboardScreen", () => {
   };
 });
 
-jest.mock("~/navigation/navigatorConfig", () => ({
-  getStackNavigatorConfig: jest.fn(() => ({
-    headerStyle: { backgroundColor: "#000" },
-  })),
-}));
-
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useTheme: jest.fn(() => ({
-    colors: {
-      background: "#000",
-      card: "#111",
-      text: "#fff",
-      border: "#333",
-      notification: "#ff0000",
-      primary: "#0066cc",
-    },
-    fonts: {
-      bold: "System",
-      regular: "System",
-      medium: "System",
-    },
-  })),
-}));
-
 const mockCurrency = getCryptoCurrencyById("concordium");
 const mockAccount = genAccount("concordium-test", { currency: mockCurrency });
 
