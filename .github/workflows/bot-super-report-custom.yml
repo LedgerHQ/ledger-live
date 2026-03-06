@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
           use-mise: true
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter='!./apps/**'
       - name: generate super report
-        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@develop
         with:
           branch: ${{inputs.branch}}
           environment: ${{inputs.environment}}

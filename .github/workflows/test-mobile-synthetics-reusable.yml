@@ -135,7 +135,7 @@ jobs:
           fi
 
       - name: Run performance tests
-        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@develop
         id: test-results
         with:
           api-key: ${{ secrets.DATADOG_API_KEY }}
