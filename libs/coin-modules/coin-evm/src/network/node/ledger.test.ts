@@ -4,6 +4,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import BigNumber from "bignumber.js";
+import { Transaction } from "ethers";
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
@@ -679,24 +680,6 @@ describe("EVM Family", () => {
         );
       });
 
-      it("should return 0 for invalid transaction", async () => {
-        const transaction: EvmTransaction = {
-          family: "evm",
-          mode: "send",
-          recipient: "0xINVALID",
-          amount: new BigNumber(1),
-          gasLimit: new BigNumber(2),
-          chainId: 1,
-          nonce: 0,
-          gasPrice: new BigNumber(3),
-          type: 0,
-        };
-
-        expect(
-          await LEDGER_API.getOptimismAdditionalFees({ ...currency, id: "optimism" }, transaction),
-        ).toEqual(new BigNumber("0"));
-      });
-
       it("should return the expected payload", async () => {
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: [
@@ -711,20 +694,27 @@ describe("EVM Family", () => {
           ],
         }));
 
-        const transaction: EvmTransaction = {
-          family: "evm",
-          mode: "send",
-          recipient: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-          amount: new BigNumber(1),
-          gasLimit: new BigNumber(2),
+        // Build a serialized transaction, the exact same way we do in `estimateFees`
+        const transaction = Transaction.from({
+          to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          value: 1n,
+          gasLimit: 2n,
           chainId: 1,
           nonce: 0,
-          gasPrice: new BigNumber(3),
+          gasPrice: 3n,
           type: 0,
-        };
+          signature: {
+            r: "0xffffffffffffffffffffffffffffffffffffffff",
+            s: "0xffffffffffffffffffffffffffffffffffffffff",
+            v: 27,
+          },
+        });
 
         expect(
-          await LEDGER_API.getOptimismAdditionalFees({ ...currency, id: "optimism" }, transaction),
+          await LEDGER_API.getOptimismAdditionalFees(
+            { ...currency, id: "optimism" },
+            transaction.serialized,
+          ),
         ).toEqual(new BigNumber("100000000"));
       });
     });
@@ -748,24 +738,6 @@ describe("EVM Family", () => {
         );
       });
 
-      it("should return 0 for invalid transaction", async () => {
-        const transaction: EvmTransaction = {
-          family: "evm",
-          mode: "send",
-          recipient: "0xINVALID",
-          amount: new BigNumber(1),
-          gasLimit: new BigNumber(2),
-          chainId: 1,
-          nonce: 0,
-          gasPrice: new BigNumber(3),
-          type: 0,
-        };
-
-        expect(
-          await LEDGER_API.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction),
-        ).toEqual(new BigNumber("0"));
-      });
-
       it("should return the expected payload", async () => {
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: [
@@ -780,20 +752,27 @@ describe("EVM Family", () => {
           ],
         }));
 
-        const transaction: EvmTransaction = {
-          family: "evm",
-          mode: "send",
-          recipient: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-          amount: new BigNumber(1),
-          gasLimit: new BigNumber(2),
+        // Build a serialized transaction, the exact same way we do in `estimateFees`
+        const transaction = Transaction.from({
+          to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          value: 1n,
+          gasLimit: 2n,
           chainId: 1,
           nonce: 0,
-          gasPrice: new BigNumber(3),
+          gasPrice: 3n,
           type: 0,
-        };
+          signature: {
+            r: "0xffffffffffffffffffffffffffffffffffffffff",
+            s: "0xffffffffffffffffffffffffffffffffffffffff",
+            v: 27,
+          },
+        });
 
         expect(
-          await LEDGER_API.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction),
+          await LEDGER_API.getScrollAdditionalFees(
+            { ...currency, id: "scroll" },
+            transaction.serialized,
+          ),
         ).toEqual(new BigNumber("100000000"));
       });
     });

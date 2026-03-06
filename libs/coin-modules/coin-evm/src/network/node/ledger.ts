@@ -10,7 +10,6 @@ import { ethers } from "ethers";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
-import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { getGasOptions } from "../gasTracker/ledger";
@@ -389,26 +388,12 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction =
-    typeof transaction === "string"
-      ? transaction
-      : ((): string | null => {
-          try {
-            return getSerializedTransaction(transaction, {
-              r: "0xffffffffffffffffffffffffffffffffffffffff",
-              s: "0xffffffffffffffffffffffffffffffffffffffff",
-              v: 27,
-            });
-          } catch {
-            return null;
-          }
-        })();
-  if (!serializedTransaction) {
+  if (!transaction) {
     return new BigNumber(0);
   }
 
   const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
-  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [serializedTransaction]);
+  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [transaction]);
 
   const [result] = await fetchWithRetries<
     Array<{
@@ -458,26 +443,12 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction =
-    typeof transaction === "string"
-      ? transaction
-      : ((): string | null => {
-          try {
-            return getSerializedTransaction(transaction, {
-              r: "0xffffffffffffffffffffffffffffffffffffffff",
-              s: "0xffffffffffffffffffffffffffffffffffffffff",
-              v: 27,
-            });
-          } catch {
-            return null;
-          }
-        })();
-  if (!serializedTransaction) {
+  if (!transaction) {
     return new BigNumber(0);
   }
 
   const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
-  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [serializedTransaction]);
+  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [transaction]);
 
   const [result] = await fetchWithRetries<
     Array<{

@@ -107,14 +107,8 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
-  getOptimismAdditionalFees: (
-    currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
-  getScrollAdditionalFees: (
-    currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
+  getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
+  getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];

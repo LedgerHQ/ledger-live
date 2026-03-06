@@ -20,12 +20,5 @@ This serializer transforms a stringified transaction into a hydrated transaction
 ##### toTransactionRaw <sub><sup><sub><sup>[standard]</sup><sub></sup><sub>
 This serializer transforms a stringified transaction into a hydrated transaction.
 
-##### getTransactionData
-This method returns the *callData* of a smart contract transaction when crafted with a transaction mode (`send` mode can be coins or ERC20 transactions, while `erc721` & `erc1155` modes are NFT transactions).
-
 ##### getTypedTransaction
 [EIP-2718](https://eips.ethereum.org/EIPS/eip-2718 "eip-2718") defines the capacity of a transaction to have different types, which can introduce new properties compared to the legacy definition. This method acts as a type guard for a transaction, depending on its type, to ensure that you're interacting with a transaction that has all the necessary properties for the [RLP encoding](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/ "RLP encoding") to work correctly. As of today, only type 0 (legacy) and type 2 ([EIP-1559](https://eips.ethereum.org/EIPS/eip-1559 "EIP-1559")) transactions are supported. Type 1 ([EIP-2930](https://eips.ethereum.org/EIPS/eip-2930 "EIP-2930")) is compatible but does not add any access lists.
-
-
-##### getSerializedTransaction
-This method returns an [RLP encoding](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/ "RLP encoding") hexadecimal string representation of the provided transaction.
