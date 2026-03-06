@@ -128,7 +128,14 @@ function isDone(limitParameter: number | undefined, operationCount: number): boo
   );
 }
 
-function paginationParams(params: FetchOperationsParams): {
+/** Query params for etherscan-like block-range endpoints (startblock, endblock, page, offset, sort). */
+function blockRangeQueryParams(params: {
+  fromBlock: number;
+  toBlock?: number;
+  page?: number;
+  limit?: number;
+  sort: "asc" | "desc";
+}): {
   tag: "latest";
   page: number;
   offset?: number;
@@ -144,6 +151,16 @@ function paginationParams(params: FetchOperationsParams): {
     startblock: params.fromBlock,
     endblock: params.toBlock,
   };
+}
+
+function paginationParams(params: FetchOperationsParams): ReturnType<typeof blockRangeQueryParams> {
+  return blockRangeQueryParams({
+    fromBlock: params.fromBlock,
+    ...(params.toBlock !== undefined && { toBlock: params.toBlock }),
+    ...(params.page !== undefined && { page: params.page }),
+    ...(params.limit !== undefined && { limit: params.limit }),
+    sort: params.sort,
+  });
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -486,6 +503,55 @@ export const getInternalOperations = async (
     isPageFull: isPageFull(params.limit, ops.length),
   };
 };
+
+/**
+ * Get internal transactions for a single block from etherscan/blockscout explorer.
+ * Used by getBlock to merge internal transfers into block transactions.
+ * Returns empty array for non-etherscan/non-blockscout explorers (ledger, none, teloscan, etc.).
+ */
+export async function getInternalTransactionsByBlock(
+  currency: CryptoCurrency,
+  blockHeight: number,
+): Promise<EtherscanInternalTransaction[]> {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || {};
+
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    return [];
+  }
+  if (explorer.type !== "etherscan" && explorer.type !== "blockscout") {
+    return [];
+  }
+
+  const PAGE_SIZE = 10000;
+  const allOps: EtherscanInternalTransaction[] = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const raw = await fetchWithRetries<EtherscanInternalTransaction[] | string>({
+      method: "GET",
+      url: `${explorer.uri}?module=account&action=txlistinternal`,
+      params: blockRangeQueryParams({
+        fromBlock: blockHeight,
+        toBlock: blockHeight,
+        page,
+        limit: PAGE_SIZE,
+        sort: "asc",
+      }),
+    });
+
+    const ops = Array.isArray(raw) ? raw : [];
+    allOps.push(...ops.map(fixTxHash));
+
+    hasMore = ops.length >= PAGE_SIZE;
+    if (hasMore) {
+      page += 1;
+    }
+  }
+
+  return allOps;
+}
 
 /**
  * Type for endpoint getter functions

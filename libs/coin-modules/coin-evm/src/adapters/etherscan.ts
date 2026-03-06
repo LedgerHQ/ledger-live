@@ -1,6 +1,7 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import type { BlockOperation, TransferBlockOperation } from "@ledgerhq/coin-framework/api/index";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
@@ -294,6 +295,56 @@ export const etherscanInternalTransactionToOperations = (
       }) as Operation,
   );
 };
+
+const NATIVE_ASSET = { type: "native" } as const;
+
+/**
+ * Converts valid internal transactions to BlockOperations grouped by transaction hash.
+ * Skips internal txs with isError === "1" or value === "0".
+ */
+export function internalTxsToOperationsByHash(
+  internalTxs: EtherscanInternalTransaction[],
+): Map<string, BlockOperation[]> {
+  const byHash = new Map<string, BlockOperation[]>();
+
+  for (const it of internalTxs) {
+    if (it.isError === "1") continue;
+    const value = BigInt(it.value);
+    if (value === 0n) continue;
+
+    const hash = it.hash;
+    if (!hash) continue;
+
+    const encodedFrom = it.from ? safeEncodeEIP55(it.from) : "";
+    const encodedTo = it.to ? safeEncodeEIP55(it.to) : "";
+    if (!encodedFrom && !encodedTo) continue;
+
+    const ops: BlockOperation[] = [];
+    if (encodedFrom) {
+      ops.push({
+        type: "transfer",
+        address: encodedFrom,
+        ...(encodedTo ? { peer: encodedTo } : {}),
+        asset: NATIVE_ASSET,
+        amount: -value,
+      } as TransferBlockOperation);
+    }
+    if (encodedTo) {
+      ops.push({
+        type: "transfer",
+        address: encodedTo,
+        ...(encodedFrom ? { peer: encodedFrom } : {}),
+        asset: NATIVE_ASSET,
+        amount: value,
+      } as TransferBlockOperation);
+    }
+
+    const existing = byHash.get(hash) ?? [];
+    byHash.set(hash, [...existing, ...ops]);
+  }
+
+  return byHash;
+}
 
 export type PagingState = {
   // Pagination cursor boundary block (boundary between ).

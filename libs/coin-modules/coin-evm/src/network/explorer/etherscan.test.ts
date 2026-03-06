@@ -1497,6 +1497,219 @@ describe("EVM Family", () => {
     });
   });
 
+  describe("getInternalTransactionsByBlock", () => {
+    const blockHeight = 12345;
+    beforeEach(() => {
+      jest.mocked(axios.request).mockClear();
+    });
+    const internalTxResult = [
+      {
+        blockNumber: "12345",
+        timeStamp: "1635100060",
+        hash: "0xabc",
+        from: "0xfrom",
+        to: "0xto",
+        value: "1000",
+        contractAddress: "",
+        input: "",
+        type: "call",
+        gas: "21000",
+        gasUsed: "21000",
+        traceId: "0",
+        isError: "0",
+        errCode: "",
+      },
+    ];
+
+    it("calls etherscan API with correct URL and params for etherscan explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      const axiosSpy = jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "1", message: "OK", result: internalTxResult },
+      });
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].hash).toBe("0xabc");
+      expect(axiosSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://api.etherscan.io?module=account&action=txlistinternal",
+          params: expect.objectContaining({
+            startblock: blockHeight,
+            endblock: blockHeight,
+            page: 1,
+            offset: 10000,
+            sort: "asc",
+          }),
+        }),
+      );
+    });
+
+    it("calls API with correct params for blockscout explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "blockscout", uri: "https://blockscout.com/api" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      const axiosSpy = jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "1", message: "OK", result: internalTxResult },
+      });
+
+      await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(axiosSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: "https://blockscout.com/api?module=account&action=txlistinternal",
+          params: expect.objectContaining({
+            startblock: blockHeight,
+            endblock: blockHeight,
+            page: 1,
+            offset: 10000,
+            sort: "asc",
+          }),
+        }),
+      );
+    });
+
+    it("returns empty array for ledger explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "ledger", explorerId: "eth" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toEqual([]);
+      expect(axios.request).not.toHaveBeenCalled();
+    });
+
+    it("returns empty array for none explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "none" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toEqual([]);
+      expect(axios.request).not.toHaveBeenCalled();
+    });
+
+    it("returns empty array for teloscan explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "teloscan", uri: "https://teloscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toEqual([]);
+    });
+
+    it("returns empty array when API returns non-array result", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "1", message: "OK", result: "No transactions found" },
+      });
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toEqual([]);
+    });
+
+    it("loops over pagination until all internal txs are drained", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+
+      const PAGE_SIZE = 10000;
+      const fullPage = Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        ...internalTxResult[0],
+        hash: `0x${i.toString(16).padStart(64, "0")}`,
+        traceId: String(i),
+      }));
+      const lastPage = [
+        { ...internalTxResult[0], hash: "0xlast1", traceId: "0" },
+        { ...internalTxResult[0], hash: "0xlast2", traceId: "1" },
+      ];
+
+      const axiosSpy = jest
+        .spyOn(axios, "request")
+        .mockResolvedValueOnce({
+          data: { status: "1", message: "OK", result: fullPage },
+        })
+        .mockResolvedValueOnce({
+          data: { status: "1", message: "OK", result: lastPage },
+        });
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toHaveLength(PAGE_SIZE + lastPage.length);
+      expect(axiosSpy).toHaveBeenCalledTimes(2);
+      expect(axiosSpy).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 1, offset: PAGE_SIZE }),
+        }),
+      );
+      expect(axiosSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 2, offset: PAGE_SIZE }),
+        }),
+      );
+      expect(result[0].hash).toBe(fullPage[0].hash);
+      expect(result[PAGE_SIZE].hash).toBe("0xlast1");
+      expect(result[result.length - 1].hash).toBe("0xlast2");
+
+      axiosSpy.mockRestore();
+    });
+
+    it("propagates errors from fetchWithRetries", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      jest.mocked(axios.request).mockReset();
+      jest.mocked(axios.request).mockRejectedValue(new Error("network error"));
+
+      await expect(
+        ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight),
+      ).rejects.toThrow("network error");
+    });
+  });
+
   describe("getNftOperations without nft", () => {
     beforeEach(() => {
       mockGetConfig.mockImplementation((): any => {
