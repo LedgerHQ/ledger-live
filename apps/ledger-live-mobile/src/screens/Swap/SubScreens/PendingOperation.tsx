@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { track, TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import IconCheck from "~/icons/Check";
 import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
@@ -17,13 +17,7 @@ import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-
-function hasSwapTabRoute(
-  getState: () => ReturnType<PendingOperationParamList["navigation"]["getState"]> | undefined,
-) {
-  const routeNames = getState()?.routeNames;
-  return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
-}
+import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigation/navigateBackToSwapTab";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
@@ -40,57 +34,26 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
       swapVersion: SWAP_VERSION,
     });
 
-    if (supportsSwapTabRoute) {
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: ScreenName.SwapTab }],
-        }),
-      );
-      return;
-    }
+    navigateBackToSwapTab({
+      navigation: {
+        dispatchReset: action => navigation.dispatch(action),
+        getState: () => navigation.getState(),
+        getParent: () => {
+          const parentNavigation = navigation.getParent();
 
-    const parentNavigation = navigation.getParent();
+          if (!parentNavigation) {
+            return undefined;
+          }
 
-    if (!parentNavigation) {
-      navigation.goBack();
-      return;
-    }
-
-    if (shouldDisplayWallet40MainNav) {
-      parentNavigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: NavigatorName.Main,
-              params: {
-                screen: NavigatorName.Swap,
-                params: {
-                  screen: ScreenName.SwapTab,
-                },
-              },
-            },
-          ],
-        }),
-      );
-      return;
-    }
-
-    parentNavigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Swap,
-            params: {
-              screen: ScreenName.SwapTab,
-            },
-          },
-        ],
-      }),
-    );
-  }, [navigation, shouldDisplayWallet40MainNav, supportsSwapTabRoute]);
+          return {
+            dispatchReset: action => parentNavigation.dispatch(action),
+          };
+        },
+        goBack: () => navigation.goBack(),
+      },
+      shouldDisplayWallet40MainNav,
+    });
+  }, [navigation, shouldDisplayWallet40MainNav]);
 
   useEffect(() => {
     navigation.setOptions({
