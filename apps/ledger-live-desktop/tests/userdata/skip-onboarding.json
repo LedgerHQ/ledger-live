@@ -33,7 +33,11 @@
       "preferredDeviceModel": "nanoSP",
       "hasInstalledApps": true,
       "hasAcceptedSwapKYC": false,
-      "lastSeenDevice": null,
+      "lastSeenDevice": {
+        "modelId": "nanoSP",
+        "deviceInfo": {},
+        "apps": []
+      },
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],
       "deepLinkUrl": null,

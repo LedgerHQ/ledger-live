@@ -38,6 +38,10 @@ jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => ({
   clearWalletConnect: jest.fn(),
 }));
 
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
+  useOpenAssetFlow: () => ({ openAssetFlow: jest.fn() }),
+}));
+
 const currency = getCryptoCurrencyById("concordium");
 const mockDevice = createMockDevice();
 

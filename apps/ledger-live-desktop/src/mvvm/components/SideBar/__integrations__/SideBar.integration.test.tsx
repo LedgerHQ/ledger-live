@@ -5,10 +5,16 @@ import SideBar from "../index";
 import { defaultInitialState, withFeatureFlags } from "../__tests__/testUtils";
 
 const mockNavigate = jest.fn();
+const mockOpenBuyDeviceModal = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
+}));
+
+jest.mock("LLD/features/BuyDevice/hooks/useBuyDeviceDialog", () => ({
+  __esModule: true,
+  default: () => ({ handleOpen: mockOpenBuyDeviceModal }),
 }));
 
 jest.mock("~/renderer/screens/card/CardPlatformApp", () => ({
@@ -146,6 +152,24 @@ describe("SideBar", () => {
 
       await user.click(screen.getByText("Home"));
 
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("should open buy device modal and not navigate when clicking My Ledger without onboarded device", async () => {
+      const { user } = renderSideBarWithRoute("/", {
+        ...defaultInitialState,
+        settings: {
+          ...defaultInitialState.settings,
+          lastOnboardedDevice: null,
+        },
+      });
+
+      const managerButton = screen.queryByTestId("drawer-manager-button");
+      if (!managerButton) return; // Manager entry hidden when Wallet 4.0 main nav is enabled
+
+      await user.click(managerButton);
+
+      expect(mockOpenBuyDeviceModal).toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });

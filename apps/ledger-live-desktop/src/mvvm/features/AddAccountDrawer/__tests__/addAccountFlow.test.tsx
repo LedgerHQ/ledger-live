@@ -1,3 +1,5 @@
+import { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -152,6 +154,13 @@ jest.mock("~/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
 }));
 
+const lastSeenDeviceForTest = {
+  modelId: DeviceModelId.stax,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  deviceInfo: {} as DeviceInfo,
+  apps: [],
+};
+
 const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
   const initialState = {
     ...state,
@@ -159,6 +168,11 @@ const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
       source: "MADSource",
       flow: "Add account",
       ...state?.modularDrawer,
+    },
+    settings: {
+      ...state?.settings,
+      lastSeenDevice: lastSeenDeviceForTest,
+      vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
     },
   };
 
