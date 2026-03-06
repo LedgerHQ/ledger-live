@@ -51,6 +51,7 @@ libs/live-currency-format/                               @ledgerhq/wallet-xp
 libs/live-hooks/                                         @ledgerhq/wallet-xp
 libs/ui/                                                 @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
+libs/ledger-live-common/src/featureFlags/walletFeaturesConfig/ @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
 libs/ledger-live-common/src/cmc-client/                  @ledgerhq/wallet-xp
