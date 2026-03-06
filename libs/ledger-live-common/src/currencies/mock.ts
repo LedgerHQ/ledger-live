@@ -487,19 +487,19 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
     coinType: 118,
     name: "Mantra",
     managerAppName: "Cosmos",
-    ticker: "OM",
+    ticker: "MANTRA",
     scheme: "mantra",
     color: "#ffb386",
     family: "cosmos",
     units: [
       {
         name: "Mantra",
-        code: "OM",
-        magnitude: 6,
+        code: "MANTRA",
+        magnitude: 18,
       },
       {
         name: "Micro-Mantra",
-        code: "uom",
+        code: "amantra",
         magnitude: 0,
       },
     ],
