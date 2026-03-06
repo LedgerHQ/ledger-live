@@ -74,11 +74,10 @@ jobs:
           ruby-version: 3.3.0
           bundler-cache: true
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
       - name: Build desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         id: build-desktop

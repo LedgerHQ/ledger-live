@@ -43,7 +43,7 @@ jobs:
     name: "Turbo Affected"
     needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
@@ -52,25 +52,25 @@ jobs:
   build-desktop:
     name: "Build Desktop"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit
 
   test-desktop:
     name: "Test Desktop"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
   build-test-mobile:
     name: "Build & Test Mobile"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
@@ -80,7 +80,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
   test-features:
@@ -93,30 +93,30 @@ jobs:
   test-design-system:
     name: "Test UI Libs"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
 
   test-cli:
     name: "Test CLI"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
   test-additional:
     name: "Test Additional"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
     secrets: inherit
 
   notify-e2e-required:
     name: "Notify E2E Required"
     needs: determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
     secrets: inherit
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
@@ -129,7 +129,7 @@ jobs:
       - test-libraries
       - test-features
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
     if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:

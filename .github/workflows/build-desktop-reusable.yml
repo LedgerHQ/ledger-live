@@ -36,14 +36,14 @@ jobs:
               name: "Linux",
               os: "ledger-live-linux-8CPU-32RAM",
               image: "linux-x86_64.AppImage",
-              output-name: "linux"
+              output-name: "linux",
             },
             {
               name: "Windows",
               os: "windows-2022",
               dotnet: true,
               image: "win-x64.exe",
-              output-name: "win"
+              output-name: "win",
             },
             { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
           ]
@@ -66,11 +66,10 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
