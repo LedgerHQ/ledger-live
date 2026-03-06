@@ -74,6 +74,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         drawerConfiguration,
         areCurrenciesFiltered,
         useCase,
+        uiUseCase,
         onSuccess,
         onCancel,
       }) => {
@@ -94,6 +95,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
             areCurrenciesFiltered,
             useCase,
+            uiUseCase,
             onSuccess,
             onCancel,
           });

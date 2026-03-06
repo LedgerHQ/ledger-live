@@ -20,14 +20,22 @@ type DrawerParams = {
   currencies?: string[];
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   useCase?: string;
+  uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
 };
 
 function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
-  const { currencies, drawerConfiguration, useCase, areCurrenciesFiltered, onSuccess, onCancel } =
-    params;
+  const {
+    currencies,
+    drawerConfiguration,
+    useCase,
+    uiUseCase,
+    areCurrenciesFiltered,
+    onSuccess,
+    onCancel,
+  } = params;
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
 
@@ -49,6 +57,7 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
       },
       dialogConfiguration: modularDrawerConfiguration,
       useCase,
+      uiUseCase,
       areCurrenciesFiltered,
       onClose: handleClose,
     }),
