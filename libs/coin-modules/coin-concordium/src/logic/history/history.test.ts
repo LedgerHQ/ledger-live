@@ -1,5 +1,4 @@
 import { VALID_ADDRESS } from "../../test/fixtures";
-import { createTestCryptoCurrency } from "../../test/testHelpers";
 import { lastBlock } from "./lastBlock";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
@@ -25,11 +24,6 @@ const {
 
 const { getOperations: getOperationsProxyMock } = jest.requireMock("../../network/proxyClient");
 
-const mockCurrency = createTestCryptoCurrency({
-  id: "concordium",
-  name: "Concordium",
-});
-
 describe("history", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -46,10 +40,10 @@ describe("history", () => {
       });
 
       // WHEN
-      const result = await lastBlock(mockCurrency);
+      const result = await lastBlock("concordium_testnet");
 
       // THEN
-      expect(getLastBlockMock).toHaveBeenCalledWith(mockCurrency);
+      expect(getLastBlockMock).toHaveBeenCalledWith("concordium_testnet");
       expect(result).toEqual({
         height: 12345,
         hash: "abc123hash",
@@ -70,10 +64,10 @@ describe("history", () => {
       getBlockByHeightMock.mockResolvedValue(mockBlock);
 
       // WHEN
-      const result = await getBlock(1000, mockCurrency);
+      const result = await getBlock(1000, "concordium_testnet");
 
       // THEN
-      expect(getBlockByHeightMock).toHaveBeenCalledWith(mockCurrency, 1000);
+      expect(getBlockByHeightMock).toHaveBeenCalledWith("concordium_testnet", 1000);
       expect(result).toEqual(mockBlock);
     });
   });
@@ -89,10 +83,10 @@ describe("history", () => {
       getBlockInfoByHeightMock.mockResolvedValue(mockBlockInfo);
 
       // WHEN
-      const result = await getBlockInfo(2000, mockCurrency);
+      const result = await getBlockInfo(2000, "concordium_testnet");
 
       // THEN
-      expect(getBlockInfoByHeightMock).toHaveBeenCalledWith(mockCurrency, 2000);
+      expect(getBlockInfoByHeightMock).toHaveBeenCalledWith("concordium_testnet", 2000);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -111,16 +105,16 @@ describe("history", () => {
           recipients: ["recipient1"],
         },
       ];
-      getOperationsGrpcMock.mockResolvedValue([mockOperations, ""]);
+      getOperationsGrpcMock.mockResolvedValue({ items: mockOperations, next: undefined });
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 100 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 100 }, "concordium_testnet");
 
       // THEN
-      expect(getOperationsGrpcMock).toHaveBeenCalledWith(mockCurrency, VALID_ADDRESS, {
+      expect(getOperationsGrpcMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
         minHeight: 100,
       });
-      expect(result).toEqual([mockOperations, ""]);
+      expect(result).toEqual({ items: mockOperations, next: undefined });
     });
 
     it("should use proxy client when minHeight is 0", async () => {
@@ -142,10 +136,10 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue(mockLiveOperations);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
-      expect(getOperationsProxyMock).toHaveBeenCalledWith(mockCurrency, {
+      expect(getOperationsProxyMock).toHaveBeenCalledWith("concordium_testnet", {
         address: VALID_ADDRESS,
         accountId: expect.stringContaining("concordium"),
       });
@@ -177,7 +171,7 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue(mockLiveOperations);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
       const { items: operations } = result;
@@ -222,7 +216,7 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue(mockLiveOperations);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
       const { items: operations } = result;
@@ -238,7 +232,7 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue([]);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
       expect(result).toEqual({ items: [], next: undefined });

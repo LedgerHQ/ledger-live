@@ -3,16 +3,11 @@ import {
   type IdOwnershipProofs,
   insertAccountOwnershipProofs,
 } from "@ledgerhq/concordium-core";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   SubmitCredentialData,
   SubmitTransferData,
   SerializedCredentialDeploymentTransaction,
 } from "../types";
-
-export function getConcordiumNetwork(currency: CryptoCurrency): "Mainnet" | "Testnet" {
-  return currency.isTestnetFor ? "Testnet" : "Mainnet";
-}
 
 /**
  * Structure of parsed unsignedCdi from ID App

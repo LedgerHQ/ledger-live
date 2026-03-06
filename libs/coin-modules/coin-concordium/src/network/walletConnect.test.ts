@@ -33,7 +33,7 @@ const createMockSession = (overrides: Partial<SessionTypes.Struct> = {}): Sessio
     expiry: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
     namespaces: {
       ccd: {
-        chains: [CONCORDIUM_CHAIN_IDS.Mainnet],
+        chains: [CONCORDIUM_CHAIN_IDS.mainnet],
         methods: ["create_account"],
         events: [],
         accounts: [],
@@ -111,7 +111,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue([]);
         const wc = new ConcordiumWalletConnect();
 
-        const session = await wc.getSession("Mainnet");
+        const session = await wc.getSession("mainnet");
 
         expect(session).toBeNull();
       });
@@ -121,7 +121,7 @@ describe("walletConnect", () => {
           topic: "mainnet-session",
           namespaces: {
             ccd: {
-              chains: [CONCORDIUM_CHAIN_IDS.Mainnet],
+              chains: [CONCORDIUM_CHAIN_IDS.mainnet],
               methods: [],
               events: [],
               accounts: [],
@@ -131,7 +131,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue([mainnetSession]);
         const wc = new ConcordiumWalletConnect();
 
-        const session = await wc.getSession("Mainnet");
+        const session = await wc.getSession("mainnet");
 
         expect(session?.topic).toBe("mainnet-session");
       });
@@ -141,7 +141,7 @@ describe("walletConnect", () => {
           topic: "testnet-session",
           namespaces: {
             ccd: {
-              chains: [CONCORDIUM_CHAIN_IDS.Testnet],
+              chains: [CONCORDIUM_CHAIN_IDS.testnet],
               methods: [],
               events: [],
               accounts: [],
@@ -151,7 +151,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue([testnetSession]);
         const wc = new ConcordiumWalletConnect();
 
-        const session = await wc.getSession("Mainnet");
+        const session = await wc.getSession("mainnet");
 
         expect(session).toBeNull();
       });
@@ -168,7 +168,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue([expiredSession, validSession]);
         const wc = new ConcordiumWalletConnect();
 
-        const session = await wc.getSession("Mainnet");
+        const session = await wc.getSession("mainnet");
 
         expect(session?.topic).toBe("valid");
       });
@@ -185,7 +185,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue([olderSession, newerSession]);
         const wc = new ConcordiumWalletConnect();
 
-        const session = await wc.getSession("Mainnet");
+        const session = await wc.getSession("mainnet");
 
         expect(session?.topic).toBe("newer");
       });
@@ -195,7 +195,7 @@ describe("walletConnect", () => {
           topic: "testnet-session",
           namespaces: {
             ccd: {
-              chains: [CONCORDIUM_CHAIN_IDS.Testnet],
+              chains: [CONCORDIUM_CHAIN_IDS.testnet],
               methods: [],
               events: [],
               accounts: [],
@@ -205,7 +205,7 @@ describe("walletConnect", () => {
         mockSessionGetAll.mockReturnValue([testnetSession]);
         const wc = new ConcordiumWalletConnect();
 
-        const session = await wc.getSession("Testnet");
+        const session = await wc.getSession("testnet");
 
         expect(session?.topic).toBe("testnet-session");
       });
@@ -262,7 +262,7 @@ describe("walletConnect", () => {
 
         const params = {
           topic: "test-topic",
-          chainId: CONCORDIUM_CHAIN_IDS.Mainnet,
+          chainId: CONCORDIUM_CHAIN_IDS.mainnet,
           params: { identityIndex: 0, credNumber: 0, ipIdentity: 1 },
         };
 
@@ -271,7 +271,7 @@ describe("walletConnect", () => {
         expect(result).toEqual(mockResponse);
         expect(mockRequest).toHaveBeenCalledWith({
           topic: "test-topic",
-          chainId: CONCORDIUM_CHAIN_IDS.Mainnet,
+          chainId: CONCORDIUM_CHAIN_IDS.mainnet,
           request: {
             method: "create_account",
             params: { identityIndex: 0, credNumber: 0, ipIdentity: 1 },
@@ -292,7 +292,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        await wc.initiatePairing("Mainnet", CONCORDIUM_CHAIN_IDS.Mainnet);
+        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
 
         expect(mockPairingDelete).toHaveBeenCalledWith("expired-pairing", {
           code: 6001,
@@ -309,7 +309,7 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        await wc.initiatePairing("Mainnet", CONCORDIUM_CHAIN_IDS.Mainnet);
+        await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
 
         expect(mockPairingDelete).not.toHaveBeenCalled();
       });
@@ -318,14 +318,14 @@ describe("walletConnect", () => {
         mockConnect.mockResolvedValue({ uri: "wc:test-uri", approval: jest.fn() });
         const wc = new ConcordiumWalletConnect();
 
-        const result = await wc.initiatePairing("Mainnet", CONCORDIUM_CHAIN_IDS.Mainnet);
+        const result = await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
 
         expect(result.uri).toBe("wc:test-uri");
         expect(mockConnect).toHaveBeenCalledWith({
           requiredNamespaces: {
             ccd: {
               methods: ["create_account"],
-              chains: [CONCORDIUM_CHAIN_IDS.Mainnet],
+              chains: [CONCORDIUM_CHAIN_IDS.mainnet],
               events: [],
             },
           },
@@ -336,7 +336,7 @@ describe("walletConnect", () => {
         mockConnect.mockRejectedValue(new Error("Connect failed"));
         const wc = new ConcordiumWalletConnect();
 
-        await expect(wc.initiatePairing("Mainnet", CONCORDIUM_CHAIN_IDS.Mainnet)).rejects.toThrow(
+        await expect(wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet)).rejects.toThrow(
           "Connect failed",
         );
       });

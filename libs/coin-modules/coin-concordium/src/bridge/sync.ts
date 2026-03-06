@@ -64,7 +64,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
   let spendableBalance = new BigNumber(0);
 
   try {
-    const accountsResponse = await getAccountsByPublicKey(currency, publicKey);
+    const accountsResponse = await getAccountsByPublicKey(currency.id, publicKey);
 
     if (!accountsResponse?.length) {
       return {
@@ -90,7 +90,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     const account = accountsResponse[0];
 
     const { finalizedBalance: { accountAmount, accountAtDisposal } = {} } = await getAccountBalance(
-      currency,
+      currency.id,
       account.address,
     ).catch(error => {
       // If balance request fails, log the error and return zeros,
@@ -104,7 +104,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
     balance = valueToBigNumber(accountAmount);
 
-    const minReserve = coinConfig.getCoinConfig(currency).minReserve;
+    const minReserve = coinConfig.getCoinConfig(currency.id).minReserve;
     spendableBalance = accountAtDisposal
       ? valueToBigNumber(accountAtDisposal)
       : balance.minus(minReserve);
@@ -112,7 +112,7 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
     const oldOperations = initialAccount?.operations ?? [];
 
-    const proxyOperations = await getOperations(currency, {
+    const proxyOperations = await getOperations(currency.id, {
       address: account.address,
       accountId,
       size: 100,

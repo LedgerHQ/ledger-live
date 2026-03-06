@@ -18,13 +18,16 @@ describe("Concordium Api (testnet)", () => {
   const PUBLIC_KEY = "aa".repeat(32);
 
   beforeAll(() => {
-    api = createApi({
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    });
+    api = createApi(
+      {
+        networkType: "testnet",
+        grpcUrl: "grpc.testnet.concordium.com",
+        grpcPort: 20000,
+        proxyUrl: "https://wallet-proxy.testnet.concordium.com",
+        minReserve: 100000,
+      },
+      "concordium_testnet",
+    );
   });
 
   describe("estimateFees", () => {

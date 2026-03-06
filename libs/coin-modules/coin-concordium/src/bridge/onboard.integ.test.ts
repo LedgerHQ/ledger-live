@@ -94,7 +94,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       const statuses = events.filter(e => "status" in e).map(e => e.status);
@@ -120,7 +120,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
         "No active WalletConnect session",
@@ -140,7 +140,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
         "IDApp create_account failed",
@@ -160,7 +160,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       await firstValueFrom(observable.pipe(toArray()));
 
       expect(getPublicKey).toHaveBeenCalled();
@@ -179,7 +179,7 @@ describe("onboard (testnet integration)", () => {
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       const statuses = events.filter(e => "status" in e).map(e => e.status);
@@ -207,7 +207,7 @@ describe("onboard (testnet integration)", () => {
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
         "WalletConnect connect() returned no URI",
@@ -228,7 +228,7 @@ describe("onboard (testnet integration)", () => {
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow();
     }, 15000);
@@ -268,10 +268,10 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const mockData = { v: 0, value: {} } as never;
 
-      const result = await submitCredential(currency, mockData);
+      const result = await submitCredential(currency.id, mockData);
 
       expect(result).toEqual({ submissionId: "test-submission-123" });
-      expect(mockSubmitCredential).toHaveBeenCalledWith(currency, mockData);
+      expect(mockSubmitCredential).toHaveBeenCalledWith(currency.id, mockData);
     }, 15000);
 
     it("should use correct testnet configuration", () => {

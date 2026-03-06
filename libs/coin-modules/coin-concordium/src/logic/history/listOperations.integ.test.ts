@@ -1,10 +1,8 @@
 import type { Operation } from "@ledgerhq/coin-framework/api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../../config";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
-  const currency = getCryptoCurrencyById("concordium");
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
@@ -26,7 +24,7 @@ describe("listOperations", () => {
       const { items: operations, next: cursor } = await listOperations(
         ADDRESS_PRISTINE,
         { minHeight: 0 },
-        currency,
+        "concordium_testnet",
       );
 
       expect(Array.isArray(operations)).toBe(true);
@@ -40,7 +38,11 @@ describe("listOperations", () => {
     let cursor: string | undefined;
 
     beforeAll(async () => {
-      const page = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      const page = await listOperations(
+        ADDRESS_WITH_BALANCE,
+        { minHeight: 0 },
+        "concordium_testnet",
+      );
       operations = page.items;
       cursor = page.next;
     });
@@ -124,7 +126,11 @@ describe("listOperations", () => {
     let operations: Operation[];
 
     beforeAll(async () => {
-      const page = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      const page = await listOperations(
+        ADDRESS_WITH_BALANCE,
+        { minHeight: 0 },
+        "concordium_testnet",
+      );
       operations = page.items;
     });
 

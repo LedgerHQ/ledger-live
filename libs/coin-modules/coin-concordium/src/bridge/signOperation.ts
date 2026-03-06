@@ -25,10 +25,10 @@ export const buildSignOperation =
 
         const nextSequenceNumber = await getNextValidSequence(
           account.freshAddress,
-          account.currency,
+          account.currency.id,
         );
 
-        const estimation = await estimateFees(account.currency, transaction.memo);
+        const estimation = await estimateFees(account.currency.id, transaction.memo);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;

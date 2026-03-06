@@ -139,8 +139,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 
   const newSubAccounts = await getSubAccounts({
     ledgerAccountId: liveAccountId,
-    latestHTSTokenOperations: latestAccountOperations.tokenOperations,
-    latestERC20TokenOperations: newERC20TokenOperations,
+    latestTokenOperations: [...latestAccountOperations.tokenOperations, ...newERC20TokenOperations],
     mirrorTokens,
     erc20Tokens: erc20TokenBalances,
   });

@@ -116,17 +116,6 @@ const eip1559Inputs: readonly CustomFeeInputDescriptor[] = [
       },
     },
   },
-  {
-    key: "gasLimit",
-    type: "number",
-    minValue: {
-      getValue: transaction => {
-        if (!isRecord(transaction)) return null;
-        const gasLimit = transaction.gasLimit;
-        return isBigNumber(gasLimit) ? gasLimit.toFixed() : null;
-      },
-    },
-  },
 ];
 
 const legacyInputs: readonly CustomFeeInputDescriptor[] = [
@@ -195,8 +184,6 @@ export const descriptor: CoinDescriptor = {
           if (!isRecord(transaction)) return empty;
 
           const is1559 = isEip1559(transaction);
-          const gasLimit = transaction.gasLimit;
-
           if (is1559) {
             // Try to get from transaction first (if custom values were set)
             const maxFeePerGas = transaction.maxFeePerGas;
@@ -206,7 +193,6 @@ export const descriptor: CoinDescriptor = {
               return {
                 maxFeePerGas: weiToGwei(maxFeePerGas),
                 maxPriorityFeePerGas: weiToGwei(maxPriorityFeePerGas),
-                gasLimit: isBigNumber(gasLimit) ? gasLimit.toFixed() : "",
               };
             }
 
@@ -222,7 +208,6 @@ export const descriptor: CoinDescriptor = {
                   maxPriorityFeePerGas: isBigNumber(mediumPriorityFee)
                     ? weiToGwei(mediumPriorityFee)
                     : "",
-                  gasLimit: isBigNumber(gasLimit) ? gasLimit.toFixed() : "",
                 };
               }
             }
@@ -230,7 +215,6 @@ export const descriptor: CoinDescriptor = {
             return {
               maxFeePerGas: "",
               maxPriorityFeePerGas: "",
-              gasLimit: isBigNumber(gasLimit) ? gasLimit.toFixed() : "",
             };
           }
 
@@ -265,14 +249,6 @@ export const descriptor: CoinDescriptor = {
           if ("gasPrice" in values) {
             patch.gasPrice = gweiToWei(values.gasPrice);
           }
-          if ("gasLimit" in values) {
-            const limit = new BigNumber(values.gasLimit);
-            patch.customGasLimit =
-              limit.isNaN() || limit.isNegative()
-                ? new BigNumber(0)
-                : limit.integerValue(BigNumber.ROUND_DOWN);
-          }
-
           return patch;
         },
       },
