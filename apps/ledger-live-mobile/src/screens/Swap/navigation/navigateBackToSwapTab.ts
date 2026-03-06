@@ -21,9 +21,7 @@ export function hasSwapTabRoute(state: NavigationStateWithRouteNames | undefined
   return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
 }
 
-function getResetToSwapTabAction({
-  shouldDisplayWallet40MainNav,
-}: RootResetOptions) {
+function getResetToSwapTabAction({ shouldDisplayWallet40MainNav }: RootResetOptions) {
   return CommonActions.reset({
     index: 0,
     routes: shouldDisplayWallet40MainNav

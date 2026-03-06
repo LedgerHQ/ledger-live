@@ -16,7 +16,7 @@ describe("navigateBackToSwapTab", () => {
     return {
       navigation: {
         dispatch,
-        getState: () => ({ routeNames } as const),
+        getState: () => ({ routeNames }) as const,
         getParent: () => parentNavigation,
         goBack,
       },
