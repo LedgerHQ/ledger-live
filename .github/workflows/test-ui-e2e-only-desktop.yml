@@ -158,7 +158,7 @@ jobs:
 
       - name: Setup caches
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
