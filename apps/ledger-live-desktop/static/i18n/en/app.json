@@ -2470,7 +2470,14 @@
       "payFeesIn": "Pay fees in"
     },
     "coinControl": {
-      "title": "Coin control"
+      "title": "Coin control",
+      "strategy": "Strategy",
+      "learnMore": "Learn more",
+      "coinToSend": "Coin to send",
+      "changeToReturn": "Change to return",
+      "enterAmount": "Enter amount",
+      "amountToSendInCurrency": "Amount to send in {{ticker}}",
+      "amountInputLabel": "Amount to send"
     }
   },
   "releaseNotes": {
@@ -8047,6 +8054,8 @@
     "title": "Explore market",
     "genericError": "Connection failed",
     "cta": "View all",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
     "fearAndGreed": {
       "title": "Mood"
     }
