@@ -445,7 +445,7 @@ function useUiHook({ manifest }: Props): UiHook {
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : currentRouteNameRef.current ?? "Unknown";
+      : (currentRouteNameRef.current ?? "Unknown");
 
   const flow = manifest.name;
 
@@ -699,7 +699,7 @@ export function useSelectAccount({
       source:
         currentRouteNameRef.current === "Platform Catalog"
           ? "Discover"
-          : currentRouteNameRef.current ?? "Unknown",
+          : (currentRouteNameRef.current ?? "Unknown"),
     });
   };
 

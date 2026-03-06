@@ -36,7 +36,7 @@ export function TranslatedError({ error, field = "title" }: Props): React.JSX.El
       const message =
         field === "title"
           ? error._tag
-          : (error?.originalError as Error)?.message ?? error.message ?? error._tag;
+          : ((error?.originalError as Error)?.message ?? error.message ?? error._tag);
 
       return <Text>{t(`errors.generic.${field}`, { message })}</Text>;
     }

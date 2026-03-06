@@ -17,7 +17,7 @@ export function getEstimatedListSize({
   fallbackDimension = FALLBACK_DIMENSION,
 }: EstimatedListSizeParams = {}) {
   return {
-    height: limit ? limit * itemSize : screenDimensions?.height ?? fallbackDimension,
+    height: limit ? limit * itemSize : (screenDimensions?.height ?? fallbackDimension),
     width: screenDimensions?.width ?? fallbackDimension,
   };
 }
