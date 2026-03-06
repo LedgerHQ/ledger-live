@@ -34,7 +34,7 @@ jobs:
     name: "Turbo Affected"
     needs: pre_job
     if: ${{ !github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@support/LIVE-26911-add-mise
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}

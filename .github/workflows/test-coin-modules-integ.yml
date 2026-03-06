@@ -42,7 +42,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           git checkout $GITHUB_SHA
-      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@support/LIVE-26911-add-mise
         id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}

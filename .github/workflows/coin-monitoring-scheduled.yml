@@ -16,7 +16,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@support/LIVE-26911-add-mise
         id: monitoring
         timeout-minutes: 120
         with:

@@ -31,26 +31,25 @@ jobs:
           repository: ${{ inputs.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
-
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
         env:
           ImageOS: ubuntu20
-
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu" # See 'Supported distributions' for available options
+          java-version: "17"
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
-
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
@@ -98,20 +97,16 @@ jobs:
           repository: ${{ inputs.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
-
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3.0
-
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm

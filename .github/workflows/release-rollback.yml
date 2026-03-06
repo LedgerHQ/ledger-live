@@ -85,13 +85,13 @@ jobs:
         run: pnpm changeset version
 
       - name: Get desktop version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/LIVE-26911-add-mise
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
       - name: Get mobile version
-        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@support/LIVE-26911-add-mise
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
