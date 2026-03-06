@@ -246,7 +246,7 @@ describe("ModularDrawer modules integration", () => {
     it("should render the APY tag with gray appearance for GB users on asset list", async () => {
       jest.mocked(getStakeLabelHelpers.getCountryLocale).mockReturnValue("GB");
 
-      const { getByText, UNSAFE_getAllByProps, user, getAllByTestId } = render(
+      const { getByText, getAllByTestId, user } = render(
         <ModularDrawerSharedNavigator
           assetsConfiguration={{
             leftElement: "apy",
@@ -267,14 +267,14 @@ describe("ModularDrawer modules integration", () => {
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
       advanceTimers();
 
-      const [firstApyTag] = getAllByTestId("apy-indicator")[0];
+      const firstApyTag = getAllByTestId("apy-indicator")[0];
       expect(firstApyTag.props.appearance).toBe("gray");
     });
 
     it("should render the APY tag with success appearance for non-GB users on asset list", async () => {
       jest.mocked(getStakeLabelHelpers.getCountryLocale).mockReturnValue("US");
 
-      const { getByText, user, getAllByTestId } = render(
+      const { getByText, getAllByTestId, user } = render(
         <ModularDrawerSharedNavigator
           assetsConfiguration={{
             leftElement: "apy",
@@ -295,7 +295,7 @@ describe("ModularDrawer modules integration", () => {
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
       advanceTimers();
 
-      const [firstApyTag] = getAllByTestId("apy-indicator")[0];
+      const firstApyTag = getAllByTestId("apy-indicator")[0];
       expect(firstApyTag.props.appearance).toBe("success");
     });
   });

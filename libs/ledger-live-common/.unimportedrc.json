@@ -515,6 +515,7 @@
     "src/modularDrawer/modules/createNetworkConfiguration.ts",
     "src/modularDrawer/types/index.ts",
     "src/modularDrawer/useModularDrawerVisibility.ts",
+    "src/modularDrawer/utils/getApyAppearance.ts",
     "src/modularDrawer/utils/getBalanceAndFiatValueByAssets.ts",
     "src/modularDrawer/utils/getInterestRateForAsset.ts",
     "src/modularDrawer/utils/getLoadingStatus.ts",
