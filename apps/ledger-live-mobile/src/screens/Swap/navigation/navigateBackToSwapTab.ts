@@ -1,10 +1,14 @@
-import { CommonActions, NavigationState } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 
+type NavigationStateWithRouteNames = {
+  routeNames?: string[];
+};
+
 type NavigationWithState = {
-  dispatchReset(action: ReturnType<typeof CommonActions.reset>): void;
-  getState(): NavigationState | undefined;
-  getParent(): { dispatchReset(action: ReturnType<typeof CommonActions.reset>): void } | undefined;
+  dispatch(action: ReturnType<typeof CommonActions.reset>): void;
+  getState(): NavigationStateWithRouteNames | undefined;
+  getParent(): { dispatch(action: ReturnType<typeof CommonActions.reset>): void } | undefined;
   goBack(): void;
 };
 
@@ -12,12 +16,12 @@ type RootResetOptions = {
   shouldDisplayWallet40MainNav: boolean;
 };
 
-export function hasSwapTabRoute(getState: () => NavigationState | undefined) {
-  const routeNames = getState()?.routeNames;
+export function hasSwapTabRoute(state: NavigationStateWithRouteNames | undefined) {
+  const routeNames = state?.routeNames;
   return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
 }
 
-export function getResetToSwapTabAction({
+function getResetToSwapTabAction({
   shouldDisplayWallet40MainNav,
 }: RootResetOptions) {
   return CommonActions.reset({
@@ -52,8 +56,8 @@ export function navigateBackToSwapTab({
   navigation: NavigationWithState;
   shouldDisplayWallet40MainNav: boolean;
 }) {
-  if (hasSwapTabRoute(() => navigation.getState())) {
-    navigation.dispatchReset(
+  if (hasSwapTabRoute(navigation.getState())) {
+    navigation.dispatch(
       CommonActions.reset({
         index: 0,
         routes: [{ name: ScreenName.SwapTab }],
@@ -69,5 +73,5 @@ export function navigateBackToSwapTab({
     return;
   }
 
-  parentNavigation.dispatchReset(getResetToSwapTabAction({ shouldDisplayWallet40MainNav }));
+  parentNavigation.dispatch(getResetToSwapTabAction({ shouldDisplayWallet40MainNav }));
 }

@@ -25,7 +25,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const syncAccounts = useSyncAllAccounts();
-  const supportsSwapTabRoute = hasSwapTabRoute(() => navigation.getState());
+  const supportsSwapTabRoute = hasSwapTabRoute(navigation.getState());
 
   const navigateToSwapForm = useCallback(() => {
     track("button_clicked", {
@@ -35,22 +35,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
     });
 
     navigateBackToSwapTab({
-      navigation: {
-        dispatchReset: action => navigation.dispatch(action),
-        getState: () => navigation.getState(),
-        getParent: () => {
-          const parentNavigation = navigation.getParent();
-
-          if (!parentNavigation) {
-            return undefined;
-          }
-
-          return {
-            dispatchReset: action => parentNavigation.dispatch(action),
-          };
-        },
-        goBack: () => navigation.goBack(),
-      },
+      navigation,
       shouldDisplayWallet40MainNav,
     });
   }, [navigation, shouldDisplayWallet40MainNav]);

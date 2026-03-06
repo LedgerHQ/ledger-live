@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
@@ -33,30 +33,6 @@ export default function SwapSubScreensNavigator() {
   const { t } = useTranslation();
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  const navigateHistoryBackToSwapTab = useCallback(
-    (navigation: Parameters<NonNullable<React.ComponentProps<typeof NavigationHeaderBackButton>["onPress"]>>[0]) => {
-      navigateBackToSwapTab({
-        navigation: {
-          dispatchReset: action => navigation.dispatch(action),
-          getState: () => navigation.getState(),
-          getParent: () => {
-            const parentNavigation = navigation.getParent();
-
-            if (!parentNavigation) {
-              return undefined;
-            }
-
-            return {
-              dispatchReset: action => parentNavigation.dispatch(action),
-            };
-          },
-          goBack: () => navigation.goBack(),
-        },
-        shouldDisplayWallet40MainNav,
-      });
-    },
-    [shouldDisplayWallet40MainNav],
-  );
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: true }}>
@@ -73,7 +49,16 @@ export default function SwapSubScreensNavigator() {
         component={SwapHistory}
         options={{
           headerTitle: t("transfer.swap2.history.title"),
-          headerLeft: () => <NavigationHeaderBackButton onPress={navigateHistoryBackToSwapTab} />,
+          headerLeft: () => (
+            <NavigationHeaderBackButton
+              onPress={navigation =>
+                navigateBackToSwapTab({
+                  navigation,
+                  shouldDisplayWallet40MainNav,
+                })
+              }
+            />
+          ),
           headerRight: NullHeader,
         }}
       />

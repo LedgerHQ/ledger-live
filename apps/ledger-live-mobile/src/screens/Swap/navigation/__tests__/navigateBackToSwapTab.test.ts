@@ -1,10 +1,6 @@
 import { CommonActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import {
-  getResetToSwapTabAction,
-  hasSwapTabRoute,
-  navigateBackToSwapTab,
-} from "../navigateBackToSwapTab";
+import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigateBackToSwapTab";
 
 describe("navigateBackToSwapTab", () => {
   const createNavigation = ({
@@ -12,30 +8,30 @@ describe("navigateBackToSwapTab", () => {
     parentNavigation,
   }: {
     routeNames?: string[];
-    parentNavigation?: { dispatchReset: jest.Mock } | undefined;
+    parentNavigation?: { dispatch: jest.Mock } | undefined;
   }) => {
-    const dispatchReset = jest.fn();
+    const dispatch = jest.fn();
     const goBack = jest.fn();
 
     return {
       navigation: {
-        dispatchReset,
+        dispatch,
         getState: () => ({ routeNames } as const),
         getParent: () => parentNavigation,
         goBack,
       },
-      dispatchReset,
+      dispatch,
       goBack,
     };
   };
 
   it("should detect when the current navigator contains SwapTab", () => {
-    expect(hasSwapTabRoute(() => ({ routeNames: [ScreenName.SwapTab] } as const))).toBe(true);
-    expect(hasSwapTabRoute(() => ({ routeNames: [ScreenName.SwapHistory] } as const))).toBe(false);
+    expect(hasSwapTabRoute({ routeNames: [ScreenName.SwapTab] } as const)).toBe(true);
+    expect(hasSwapTabRoute({ routeNames: [ScreenName.SwapHistory] } as const)).toBe(false);
   });
 
   it("should reset locally to SwapTab when the current navigator contains SwapTab", () => {
-    const { navigation, dispatchReset, goBack } = createNavigation({
+    const { navigation, dispatch, goBack } = createNavigation({
       routeNames: [ScreenName.SwapTab, ScreenName.SwapHistory],
     });
 
@@ -44,7 +40,7 @@ describe("navigateBackToSwapTab", () => {
       shouldDisplayWallet40MainNav: true,
     });
 
-    expect(dispatchReset).toHaveBeenCalledWith(
+    expect(dispatch).toHaveBeenCalledWith(
       CommonActions.reset({
         index: 0,
         routes: [{ name: ScreenName.SwapTab }],
@@ -54,10 +50,10 @@ describe("navigateBackToSwapTab", () => {
   });
 
   it("should reset root navigation through Main and Swap in Wallet40", () => {
-    const parentDispatchReset = jest.fn();
-    const { navigation, dispatchReset } = createNavigation({
+    const parentDispatch = jest.fn();
+    const { navigation, dispatch } = createNavigation({
       routeNames: [ScreenName.SwapHistory],
-      parentNavigation: { dispatchReset: parentDispatchReset },
+      parentNavigation: { dispatch: parentDispatch },
     });
 
     navigateBackToSwapTab({
@@ -65,17 +61,30 @@ describe("navigateBackToSwapTab", () => {
       shouldDisplayWallet40MainNav: true,
     });
 
-    expect(dispatchReset).not.toHaveBeenCalled();
-    expect(parentDispatchReset).toHaveBeenCalledWith(
-      getResetToSwapTabAction({ shouldDisplayWallet40MainNav: true }),
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(parentDispatch).toHaveBeenCalledWith(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Main,
+            params: {
+              screen: NavigatorName.Swap,
+              params: {
+                screen: ScreenName.SwapTab,
+              },
+            },
+          },
+        ],
+      }),
     );
   });
 
   it("should reset root navigation directly to Swap in legacy flow", () => {
-    const parentDispatchReset = jest.fn();
-    const { navigation, dispatchReset } = createNavigation({
+    const parentDispatch = jest.fn();
+    const { navigation, dispatch } = createNavigation({
       routeNames: [ScreenName.SwapHistory],
-      parentNavigation: { dispatchReset: parentDispatchReset },
+      parentNavigation: { dispatch: parentDispatch },
     });
 
     navigateBackToSwapTab({
@@ -83,8 +92,8 @@ describe("navigateBackToSwapTab", () => {
       shouldDisplayWallet40MainNav: false,
     });
 
-    expect(dispatchReset).not.toHaveBeenCalled();
-    expect(parentDispatchReset).toHaveBeenCalledWith(
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(parentDispatch).toHaveBeenCalledWith(
       CommonActions.reset({
         index: 0,
         routes: [
@@ -100,7 +109,7 @@ describe("navigateBackToSwapTab", () => {
   });
 
   it("should fallback to goBack when no parent navigation exists", () => {
-    const { navigation, dispatchReset, goBack } = createNavigation({
+    const { navigation, dispatch, goBack } = createNavigation({
       routeNames: [ScreenName.SwapHistory],
     });
 
@@ -109,7 +118,7 @@ describe("navigateBackToSwapTab", () => {
       shouldDisplayWallet40MainNav: true,
     });
 
-    expect(dispatchReset).not.toHaveBeenCalled();
+    expect(dispatch).not.toHaveBeenCalled();
     expect(goBack).toHaveBeenCalledTimes(1);
   });
 });
