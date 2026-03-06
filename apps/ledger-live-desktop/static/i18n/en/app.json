@@ -5193,6 +5193,7 @@
         "title": "The most secure cryptocurrency & NFT wallet",
         "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Wallet.",
         "nextButton": "Get started",
+        "skipOnboarding": "Skip for now",
         "noDevice": "No device?",
         "buyLink": "No device? Buy a Ledger",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",

@@ -206,23 +206,7 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  // Branch feat/desktop-lwdv40-always-enabled: force Wallet 4.0 (lwdWallet40) on for all sessions
-  overriddenFeatureFlags: {
-    lwdWallet40: {
-      enabled: true,
-      params: {
-        marketBanner: true,
-        graphRework: true,
-        quickActionCtas: true,
-        mainNavigation: true,
-        tour: true,
-        lazyOnboarding: true,
-        newReceiveDialog: true,
-        balanceRefreshRework: true,
-        assetSection: true,
-      },
-    },
-  } as Record<FeatureId, Feature>,
+  overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 
   // Vault
@@ -340,15 +324,9 @@ const handlers: SettingsHandlers = {
   },
   FETCH_SETTINGS: (state, { payload: settings }) => {
     const filteredSettings = filterValidSettings(settings);
-    // Preserve forced overrides (e.g. lwdWallet40 on this branch) after rehydration from disk
-    const overriddenFeatureFlags = {
-      ...(filteredSettings.overriddenFeatureFlags ?? {}),
-      ...INITIAL_STATE.overriddenFeatureFlags,
-    };
     return {
       ...state,
       ...filteredSettings,
-      overriddenFeatureFlags,
       loaded: true,
     };
   },

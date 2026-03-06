@@ -137,17 +137,15 @@ export function WelcomeNew() {
             />
           )}
 
-          {__DEV__ ? (
-            <Button
-              iconPosition="right"
-              onClick={skipOnboarding}
-              outline={true}
-              flexDirection="column"
-              whiteSpace="normal"
-            >
-              {"(DEV) skip onboarding"}
-            </Button>
-          ) : null}
+          <Button
+            variant="shade"
+            onClick={skipOnboarding}
+            outline={true}
+            flexDirection="column"
+            whiteSpace="normal"
+          >
+            {t("onboarding.screens.welcome.skipOnboarding")}
+          </Button>
 
           <TermsAndConditionsText>
             <Trans

@@ -183,8 +183,8 @@ export function useWelcomeNewViewModel() {
     isFeatureFlagsSettingsButtonDisplayed,
     handleOpenFeatureFlagsDrawer,
 
-    // Dev utilities
-    skipOnboarding: skipOnboardingDev,
+    // Skip onboarding (visible when opened from web / first time so user can skip)
+    skipOnboarding: __DEV__ ? skipOnboardingDev : skipOnboarding,
 
     // Action handlers
     handleGetStarted,

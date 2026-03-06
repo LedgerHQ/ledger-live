@@ -5132,6 +5132,7 @@
         "title" : "La billetera más segura para tus criptomonedas y NFTs",
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Wallet",
         "nextButton" : "Comenzar",
+        "skipOnboarding" : "Omitir por ahora",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo?\nCompra un Ledger",
         "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
