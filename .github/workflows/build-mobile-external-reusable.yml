@@ -41,6 +41,12 @@ jobs:
         with:
           install-proto: true
 
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+        env:
+          ImageOS: ubuntu20
+
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
 
@@ -81,6 +87,9 @@ jobs:
 
   build-mobile-app-ios:
     runs-on: macos-14
+    name: "iOS Build"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -97,6 +106,10 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
 
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
