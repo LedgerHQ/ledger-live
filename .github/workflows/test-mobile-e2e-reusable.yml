@@ -235,7 +235,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/LIVE-26911-add-mise
         with:
           test_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.filter }}
@@ -308,7 +308,7 @@ jobs:
       - name: Check if Android AVD cache exists
         id: check-avd
         if: ${{ inputs.tests_type != 'iOS Only' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@support/LIVE-26911-add-mise
         with:
           key: ${{ steps.cache-keys.outputs.avd_cache_key }}
           accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
@@ -321,7 +321,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/LIVE-26911-add-mise
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
@@ -337,7 +337,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/LIVE-26911-add-mise
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: false
@@ -355,7 +355,7 @@ jobs:
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     steps:
       - name: Setup Android AVDs
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@support/LIVE-26911-add-mise
         with:
           ref: ${{ inputs.ref || github.sha }}
           avd_api: ${{ env.AVD_API }}
@@ -482,7 +482,7 @@ jobs:
         working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/LIVE-26911-add-mise
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -493,7 +493,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/LIVE-26911-add-mise
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
@@ -509,7 +509,7 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -517,7 +517,7 @@ jobs:
           disable_cache: false
 
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:cli
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -526,14 +526,14 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@support/LIVE-26911-add-mise
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/LIVE-26911-add-mise
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
@@ -652,10 +652,10 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup Android Environment
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@support/LIVE-26911-add-mise
 
       - name: Download Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/LIVE-26911-add-mise
         with:
           key: ${{ needs.determine-builds.outputs.android_native_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -665,7 +665,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Download JS Bundle
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/LIVE-26911-add-mise
         with:
           key: ${{ needs.determine-builds.outputs.android_js_key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
@@ -706,7 +706,7 @@ jobs:
         working-directory: apps/ledger-live-mobile
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -715,7 +715,7 @@ jobs:
 
       - name: Download android emulator
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@support/LIVE-26911-add-mise
         id: detox-avd
         with:
           key: ${{ needs.determine-builds.outputs.avd_cache_key }}
@@ -727,7 +727,7 @@ jobs:
           destination: /
 
       - name: Duplicate AVDs for parallel testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@support/LIVE-26911-add-mise
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
@@ -767,14 +767,14 @@ jobs:
 
       - name: Setup Speculos image and Coin Apps
         id: setup-speculos
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@support/LIVE-26911-add-mise
         with:
           coinapps_path: ${{ env.COINAPPS }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:cli
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -782,7 +782,7 @@ jobs:
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@support/LIVE-26911-add-mise
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == 'true' && 'js' || 'testing' }}
@@ -845,7 +845,7 @@ jobs:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/LIVE-26911-add-mise
         if: ${{ !cancelled() }}
         id: upload
         with:
@@ -857,13 +857,13 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/LIVE-26911-add-mise
         with:
           allure-results-path: ios-test-artifacts
           platform: iOS
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/LIVE-26911-add-mise
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios)[0].total }}
           status_1: ${{ needs.detox-tests-ios.outputs.status_1 }}
@@ -896,7 +896,7 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@support/LIVE-26911-add-mise
         id: upload
         if: ${{ !cancelled() }}
         with:
@@ -908,13 +908,13 @@ jobs:
       - name: Get summary
         id: summary
         if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@support/LIVE-26911-add-mise
         with:
           allure-results-path: android-test-artifacts
           platform: android
       - name: Aggregate test results
         id: aggregate
-        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@support/LIVE-26911-add-mise
         with:
           total_shards: ${{ fromJSON(needs.determine-builds.outputs.matrix_android)[0].total }}
           status_1: ${{ needs.detox-tests-android.outputs.status_1 }}
@@ -1154,7 +1154,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/LIVE-26911-add-mise
         with:
           platform: ios
           artifacts_dir: e2e/mobile/artifacts
@@ -1181,7 +1181,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@support/LIVE-26911-add-mise
         with:
           platform: android
           artifacts_dir: e2e/mobile/artifacts

@@ -40,7 +40,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/LIVE-26911-add-mise
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -80,7 +80,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/LIVE-26911-add-mise
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -112,7 +112,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@support/LIVE-26911-add-mise
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -184,7 +184,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@support/LIVE-26911-add-mise
         with:
           images: images.json
           no-actor: true

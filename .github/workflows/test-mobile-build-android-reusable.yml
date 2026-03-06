@@ -138,7 +138,7 @@ jobs:
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -146,7 +146,7 @@ jobs:
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:dummy-apps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -161,7 +161,7 @@ jobs:
           SKIP_JS_BUNDLING: true
 
       - name: Upload Detox Native Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/LIVE-26911-add-mise
         with:
           path: |
             ${{ github.workspace }}/${{ env.ANDROID_APK_PATH }}
@@ -218,7 +218,7 @@ jobs:
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@support/LIVE-26911-add-mise
         with:
           command: pnpm build:llm:deps
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
@@ -238,7 +238,7 @@ jobs:
           echo size=`ls -l apps/ledger-live-mobile/main.jsbundle.minified | cut -d " " -f5` >> $GITHUB_OUTPUT
 
       - name: Upload Detox JS Build
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@support/LIVE-26911-add-mise
         with:
           path: ${{ github.workspace }}/${{ env.ANDROID_JSBUNDLE_PATH }}
           key: ${{ inputs.android-js-cache-key }}
