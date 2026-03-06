@@ -50,6 +50,7 @@ export default function SelectAccountModal({ isOpened, ...params }: Props) {
           : NetworkHeader(handleClose)
       }
       isRequestingToBeOpened={isOpened}
+      onClose={handleClose}
     >
       <Flex minHeight={MODAL_HEIGHT}>
         {selectedCurrency ? (

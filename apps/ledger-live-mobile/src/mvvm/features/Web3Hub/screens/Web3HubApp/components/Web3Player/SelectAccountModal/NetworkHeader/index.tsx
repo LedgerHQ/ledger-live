@@ -9,7 +9,7 @@ export default function NetworkHeaderWrapper(onClose: () => void) {
     const { t } = useTranslation();
 
     return (
-      <Box width="100%">
+      <>
         <Flex
           mt={6}
           mb={6}
@@ -29,7 +29,7 @@ export default function NetworkHeaderWrapper(onClose: () => void) {
           />
         </Flex>
         <Box height="1px" width="100%" backgroundColor={"translucentGrey"} />
-      </Box>
+      </>
     );
   };
 }

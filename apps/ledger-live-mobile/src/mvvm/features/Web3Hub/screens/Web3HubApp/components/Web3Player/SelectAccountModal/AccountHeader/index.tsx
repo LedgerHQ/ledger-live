@@ -10,7 +10,7 @@ export default function AccountHeaderWrapper(onBackPress: () => void, onClose: (
     const { t } = useTranslation();
 
     return (
-      <Box width="100%">
+      <>
         <Flex
           mt={6}
           mx={6}
@@ -33,7 +33,7 @@ export default function AccountHeaderWrapper(onBackPress: () => void, onClose: (
           />
         </Flex>
         <Box height="1px" width="100%" backgroundColor={"translucentGrey"} />
-      </Box>
+      </>
     );
   };
 }
