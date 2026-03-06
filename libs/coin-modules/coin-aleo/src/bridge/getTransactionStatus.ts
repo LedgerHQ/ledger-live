@@ -15,7 +15,7 @@ import type {
   TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
-import { calculateAmount, isSelfTransferTransaction } from "../logic/utils";
+import { calculateAmount, getAvailableBalance, isSelfTransferTransaction } from "../logic/utils";
 import aleoCoinConfig from "../config";
 
 type Errors = Record<string, Error>;
@@ -60,6 +60,7 @@ async function handleTransferTransaction({
   const errors: Errors = {};
   const warnings: Warnings = {};
 
+  const availableBalance = getAvailableBalance(account, transaction);
   const config = aleoCoinConfig.getCoinConfig(account.currency);
   const feeEstimation = estimateFees({
     configOrCurrencyId: config,
@@ -86,7 +87,7 @@ async function handleTransferTransaction({
     errors.amount = new AmountRequired();
   }
 
-  if (account.balance.isLessThan(calculatedAmount.totalSpent)) {
+  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 
