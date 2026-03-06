@@ -7,7 +7,7 @@ import { LWD_WALLET_40_FLAGS } from "tests/utils/featureFlagUtils";
 
 test.describe("Portfolio", () => {
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "speculos-subAccount",
   });
   test(
     "Charts are displayed when user added his accounts",
