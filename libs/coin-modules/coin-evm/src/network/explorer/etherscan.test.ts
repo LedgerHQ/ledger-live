@@ -1693,7 +1693,7 @@ describe("EVM Family", () => {
       axiosSpy.mockRestore();
     });
 
-    it("propagates errors from fetchWithRetries", async () => {
+    it("propagates errors from explorer API call", async () => {
       mockGetConfig.mockImplementation((): any => ({
         info: {
           explorer: { type: "etherscan", uri: "https://api.etherscan.io" },

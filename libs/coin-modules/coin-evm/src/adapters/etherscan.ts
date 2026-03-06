@@ -339,8 +339,12 @@ export function internalTxsToOperationsByHash(
       } as TransferBlockOperation);
     }
 
-    const existing = byHash.get(hash) ?? [];
-    byHash.set(hash, [...existing, ...ops]);
+    let arr = byHash.get(hash);
+    if (arr === undefined) {
+      arr = [];
+      byHash.set(hash, arr);
+    }
+    arr.push(...ops);
   }
 
   return byHash;

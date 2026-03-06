@@ -529,17 +529,20 @@ export async function getInternalTransactionsByBlock(
   let hasMore = true;
 
   while (hasMore) {
-    const raw = await fetchWithRetries<EtherscanInternalTransaction[] | string>({
-      method: "GET",
-      url: `${explorer.uri}?module=account&action=txlistinternal`,
-      params: blockRangeQueryParams({
-        fromBlock: blockHeight,
-        toBlock: blockHeight,
-        page,
-        limit: PAGE_SIZE,
-        sort: "asc",
-      }),
-    });
+    const raw = await fetchWithRetries<EtherscanInternalTransaction[] | string>(
+      {
+        method: "GET",
+        url: `${explorer.uri}?module=account&action=txlistinternal`,
+        params: blockRangeQueryParams({
+          fromBlock: blockHeight,
+          toBlock: blockHeight,
+          page,
+          limit: PAGE_SIZE,
+          sort: "asc",
+        }),
+      },
+      1, // do not retry on error
+    );
 
     const ops = Array.isArray(raw) ? raw : [];
     allOps.push(...ops.map(fixTxHash));
