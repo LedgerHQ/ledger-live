@@ -8,7 +8,7 @@ import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
@@ -19,6 +19,7 @@ import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAc
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
+import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
 
@@ -208,6 +209,23 @@ export default function useScanDeviceAccountsViewModel({
         navigation.replace(NavigatorName.CantonOnboard, {
           screen: ScreenName.CantonOnboardAccount,
           params: { accountsToAdd: accountsToAdd, currency },
+        });
+        return;
+      }
+    }
+
+    if (isCryptoCurrency(currency) && currency.family === "concordium") {
+      const accountsNeedingOnboarding = accountsToAdd.filter(account => {
+        if (isConcordiumAccount(account)) {
+          return !account.concordiumResources.isOnboarded;
+        }
+        return true;
+      });
+
+      if (accountsNeedingOnboarding.length > 0) {
+        navigation.replace(NavigatorName.ConcordiumOnboard, {
+          screen: ScreenName.ConcordiumOnboardAccount,
+          params: { accountsToAdd, currency },
         });
         return;
       }
