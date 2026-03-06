@@ -287,7 +287,7 @@ describe("useQuickActions", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { mode: "buy" },
+        state: { mode: "buy", returnTo: "/accounts" },
       });
     });
   });
@@ -306,7 +306,7 @@ describe("useQuickActions", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { mode: "sell" },
+        state: { mode: "sell", returnTo: "/accounts" },
       });
     });
   });
