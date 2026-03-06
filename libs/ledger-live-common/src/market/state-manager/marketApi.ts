@@ -11,8 +11,8 @@ import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
 import { MarketDataTags, MarketPerformersQueryParams } from "./types";
 import { format, formatPerformer } from "../utils/currencyFormatter";
 
-export const countervaluesApi = createApi({
-  reducerPath: "countervaluesApi",
+export const marketApi = createApi({
+  reducerPath: "marketApi",
   baseQuery: fetchBaseQuery({
     baseUrl: getEnv("LEDGER_COUNTERVALUES_API"),
   }),
@@ -55,4 +55,4 @@ export const countervaluesApi = createApi({
   }),
 });
 
-export const { useGetMarketPerformersQuery, useGetCurrencyDataQuery } = countervaluesApi;
+export const { useGetMarketPerformersQuery, useGetCurrencyDataQuery } = marketApi;
