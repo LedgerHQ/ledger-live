@@ -1,5 +1,5 @@
 export enum Addresses {
-  BTC_NATIVE_SEGWIT_1 = "bc1qk77vszzatp8khe0crvnkylzn0usfytfvkrw22n",
+  BTC_NATIVE_SEGWIT_1 = "bc1q2dh3p38d3pavjkvvk7wr25dcdnclvjnll9kta9",
   SANCTIONED_ETHEREUM = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
   ETH_2 = "0xc79c7a29c40Ce8F5746af2c956F93F27e2820307",
   ETH_OTHER_SEED = "0xce12D0A5cFf4A88ECab96ff8923215Dff366127b",

@@ -6,27 +6,32 @@ export interface SellNavigationState {
   currency: string;
   account?: string;
   mode: "sell";
+  returnTo?: string;
 }
 
 export interface SellNavigationOffRampState {
   mode: "offRamp";
   defaultTicker?: string;
+  returnTo?: string;
 }
 
 interface BuildSellStateParams {
   ledgerCurrency: CryptoOrTokenCurrency;
   account?: AccountLike;
   parentAccount?: Account;
+  returnTo?: string;
 }
 
 export function buildSellNavigationState({
   ledgerCurrency,
   account,
   parentAccount,
+  returnTo,
 }: BuildSellStateParams): SellNavigationState {
   const state: SellNavigationState = {
     currency: ledgerCurrency.id,
     mode: "sell",
+    returnTo,
   };
 
   if (account) {

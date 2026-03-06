@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import semver from "semver";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -36,8 +36,7 @@ import PageHeader from "LLD/components/PageHeader";
 import { getWallet40HeaderKey } from "./helpers";
 import Box from "~/renderer/components/Box/Box";
 
-type ExchangeState = { account?: string } | undefined;
-
+type ExchangeState = { account?: string; returnTo?: string };
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const location = useLocation();
   const urlParams = location.state as ExchangeState;
@@ -63,6 +62,16 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // Persist initial returnTo in a ref so it survives in-webview navigations that push
+  // new React Router locations and overwrite location.state.
+  const returnToRef = useRef<string | null>(null);
+  useEffect(() => {
+    const value = urlParams?.returnTo;
+    if (returnToRef.current === null && value != null && value !== "") {
+      returnToRef.current = value;
+    }
+  }, [urlParams?.returnTo]);
+  const returnTo = returnToRef.current ?? urlParams?.returnTo ?? "/";
   const providerInterstitialEnabled = useProviderInterstitalEnabled({
     manifest,
   });
@@ -112,7 +121,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   return (
     <>
       {shouldDisplayWallet40MainNav && headerKey ? (
-        <PageHeader title={t(headerKey)} onBack={() => navigate(-1)} />
+        <PageHeader title={t(headerKey)} onBack={() => navigate(returnTo, { replace: true })} />
       ) : null}
       <Box
         grow

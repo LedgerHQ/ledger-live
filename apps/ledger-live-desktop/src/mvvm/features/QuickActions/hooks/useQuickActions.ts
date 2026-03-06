@@ -83,9 +83,10 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
     navigate("/exchange", {
       state: {
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
-  }, [navigate, trackingPageName]);
+  }, [navigate, trackingPageName, location.pathname]);
 
   const onSell = useCallback(() => {
     track("button_clicked", {
@@ -96,9 +97,10 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
     navigate("/exchange", {
       state: {
         mode: "sell",
+        returnTo: location.pathname,
       },
     });
-  }, [navigate, trackingPageName]);
+  }, [navigate, trackingPageName, location.pathname]);
 
   const onConnect = useCallback(() => {
     track("button_clicked", {
