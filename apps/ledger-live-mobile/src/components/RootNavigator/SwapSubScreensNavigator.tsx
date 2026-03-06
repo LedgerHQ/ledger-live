@@ -20,6 +20,39 @@ function BackButton() {
   return <NavigationHeaderBackButton />;
 }
 
+function SwapHistoryBackButton({
+  shouldDisplayWallet40MainNav,
+}: {
+  shouldDisplayWallet40MainNav: boolean;
+}) {
+  return (
+    <NavigationHeaderBackButton
+      onPress={navigation =>
+        navigateBackToSwapTab({
+          navigation,
+          shouldDisplayWallet40MainNav,
+        })
+      }
+    />
+  );
+}
+
+function getSwapHistoryScreenOptions({
+  headerTitle,
+  shouldDisplayWallet40MainNav,
+}: {
+  headerTitle: string;
+  shouldDisplayWallet40MainNav: boolean;
+}) {
+  return {
+    headerTitle,
+    headerLeft: () => (
+      <SwapHistoryBackButton shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
+    ),
+    headerRight: NullHeader,
+  };
+}
+
 /**
  * Navigator containing all native Swap sub-screens (History, PendingOperation,
  * OperationDetails, Loading, CustomError).
@@ -47,20 +80,10 @@ export default function SwapSubScreensNavigator() {
       <Stack.Screen
         name={ScreenName.SwapHistory}
         component={SwapHistory}
-        options={{
+        options={getSwapHistoryScreenOptions({
           headerTitle: t("transfer.swap2.history.title"),
-          headerLeft: () => (
-            <NavigationHeaderBackButton
-              onPress={navigation =>
-                navigateBackToSwapTab({
-                  navigation,
-                  shouldDisplayWallet40MainNav,
-                })
-              }
-            />
-          ),
-          headerRight: NullHeader,
-        }}
+          shouldDisplayWallet40MainNav,
+        })}
       />
       <Stack.Screen
         name={ScreenName.SwapLoading}
