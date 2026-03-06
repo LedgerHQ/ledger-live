@@ -10,7 +10,7 @@ import { ModularDrawerFlowProps } from ".";
 import useScreenTransition from "./useScreenTransition";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+//import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function ModularDrawerFlowView({
   assetsViewModel,
@@ -18,18 +18,19 @@ export function ModularDrawerFlowView({
   accountsViewModel,
 }: ModularDrawerFlowProps) {
   const currentStep = useSelector(modularDrawerStepSelector);
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
+  // TODO: Re-enable it for LIVE-27294:
+  // const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case ModularDrawerStep.Asset:
-        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={isEnabled} />;
+        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={false} />;
       case ModularDrawerStep.Network:
-        return <NetworkSelection {...networksViewModel} useLumenBottomSheet={isEnabled} />;
+        return <NetworkSelection {...networksViewModel} useLumenBottomSheet={false} />;
       case ModularDrawerStep.Account:
-        return <AccountSelection {...accountsViewModel} useLumenBottomSheet={isEnabled} />;
+        return <AccountSelection {...accountsViewModel} useLumenBottomSheet={false} />;
       default:
         return null;
     }
@@ -45,7 +46,8 @@ export function ModularDrawerFlowView({
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        {!isEnabled && <Title step={step} />}
+        {/* TODO: Re-enable it for LIVE-27294: {!isEnabled && <Title step={step} />} */}
+        <Title step={step} />
         {renderStepContent(step)}
       </Animated.View>
     );
