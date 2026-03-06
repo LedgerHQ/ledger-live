@@ -3,6 +3,7 @@ import { renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/te
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useNavigate } from "react-router";
 import { server } from "tests/server";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import Assets from "../index";
 import {
   BTC_ACCOUNT,
@@ -34,18 +35,12 @@ const MANY_CRYPTO_ACCOUNTS = [
   SOL_ACCOUNT,
 ];
 
-const MOCK_LAST_SEEN_DEVICE = {
-  modelId: DeviceModelId.nanoX,
-  deviceInfo: {},
-  apps: [],
-};
-
 const initialState = {
   settings: { counterValue: "USD" },
 };
 
 const onboardedState = {
-  settings: { counterValue: "USD", lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+  settings: { ...AFTER_ONBOARDING_STATE, counterValue: "USD" },
 };
 
 describe("Assets", () => {

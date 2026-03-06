@@ -1,7 +1,6 @@
 import { useContext, useEffect, useRef } from "react";
 import { useLocation } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { context } from "~/renderer/drawers/Provider";
 import { setDrawerVisibility } from "~/renderer/actions/walletSync";
@@ -14,7 +13,6 @@ import { closeBuyDevice } from "LLD/features/BuyDevice/buyDeviceDialog";
  * Otherwise returns true (show the device action content).
  */
 export function useBuyDeviceIntercept(): boolean {
-  const device = useSelector(getCurrentDevice);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { pathname } = useLocation();
   const dispatch = useDispatch();
@@ -23,7 +21,7 @@ export function useBuyDeviceIntercept(): boolean {
   const didOpenRef = useRef(false);
 
   const isDeviceSetupRoute = pathname.includes("onboarding") || pathname.includes("recover");
-  const shouldShowContent = hasOnboardedDevice || !!device || isDeviceSetupRoute;
+  const shouldShowContent = hasOnboardedDevice || isDeviceSetupRoute;
 
   useEffect(() => {
     if (shouldShowContent) {

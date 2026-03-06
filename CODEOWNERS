@@ -285,6 +285,9 @@ apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                          
 apps/ledger-live-mobile/src/screens/Onboarding/                                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/screens/PostOnboarding/                                            @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/postOnboarding.handler.ts  @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts                         @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                    @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/contentCards/                                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/dynamicContent/                                                    @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement

@@ -26,7 +26,7 @@ type WorkflowParams = {
 
 export function useOpenSendFlow() {
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector);
+  const hasNoAccounts = useSelector(state => accountsSelector(state).length === 0);
   const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
 
   const openSendFlow = useCallback(
@@ -35,7 +35,7 @@ export function useOpenSendFlow() {
         if (!nextParams?.account) {
           // When there are no accounts, the old modal requires an account and would throw.
           // Always use the new drawer for account selection (or empty state) in that case.
-          const shouldUseNewFlowForNoAccount = accounts.length === 0 || isEnabledForFamily();
+          const shouldUseNewFlowForNoAccount = hasNoAccounts || isEnabledForFamily();
           if (shouldUseNewFlowForNoAccount) {
             // Feature flag enabled: use new drawer for account selection
             dispatch(
@@ -107,7 +107,7 @@ export function useOpenSendFlow() {
 
       openSendFlowImpl(params);
     },
-    [accounts.length, dispatch, isEnabledForFamily, getFamilyFromAccount],
+    [hasNoAccounts, dispatch, isEnabledForFamily, getFamilyFromAccount],
   );
 
   return openSendFlow;

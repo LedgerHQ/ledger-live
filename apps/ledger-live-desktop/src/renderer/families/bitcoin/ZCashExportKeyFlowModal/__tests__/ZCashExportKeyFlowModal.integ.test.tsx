@@ -6,6 +6,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { of } from "rxjs";
 import Body from "../Body";
 import { StepId } from "../types";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
 // Mock useConnectAppAction to prevent actual device connection attempts
 jest.mock("~/renderer/hooks/useConnectAppAction", () => {
@@ -106,6 +107,7 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
       />,
       {
         initialState: {
+          settings: AFTER_ONBOARDING_STATE,
           devices: { currentDevice: mockDevice, devices: [mockDevice] },
         },
       },

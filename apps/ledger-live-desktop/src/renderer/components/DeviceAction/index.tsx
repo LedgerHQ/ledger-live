@@ -452,14 +452,12 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
     switch (exchangeType) {
       // swap
       case 0x00: {
-        /* eslint-disable @typescript-eslint/consistent-type-assertions */
         const {
           transaction,
           exchange,
@@ -490,7 +488,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           stateSettings,
           walletState,
         });
-        /* eslint-enable @typescript-eslint/consistent-type-assertions */
       }
 
       case 0x01: // sell
@@ -509,7 +506,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
     const wording = allowOpeningRequestedWording || requestOpenApp || "";
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { tokenCurrency } = request as { tokenCurrency: TokenCurrency };
     const tokenContext = tokenCurrency;
     return renderAllowOpeningApp({
@@ -535,7 +531,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (!isLoading && error) {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const e = error as unknown;
     if (
       e instanceof ManagerNotEnoughSpaceError ||
@@ -545,7 +540,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return renderError({
         t,
         error,
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         managerAppName: (error as { managerAppName: string }).managerAppName,
       });
     }
@@ -571,15 +565,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         withOpenManager: true,
         withExportLogs: true,
         ...(device && { device }),
-        ...getNoSuchAppProviderLearnMoreMetadataPerApp(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          (request as { appName: string })?.appName,
-        ),
+        ...getNoSuchAppProviderLearnMoreMetadataPerApp((request as { appName: string })?.appName),
       });
     }
 
     // workaround to catch ECONNRESET error and show better message
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     if ((error as Error)?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
@@ -595,7 +585,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
-    /* eslint-disable @typescript-eslint/consistent-type-assertions */
     if (
       (error as unknown) instanceof UserRefusedFirmwareUpdate ||
       (error as unknown) instanceof UserRefusedAllowManager ||
@@ -607,9 +596,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs = false;
       warning = true;
     }
-    /* eslint-enable @typescript-eslint/consistent-type-assertions */
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
       withDescription = false;
     }
@@ -658,7 +645,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     if (renderDeviceSignatureRequested) {
       return renderDeviceSignatureRequested({ device, request });
     }
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
@@ -693,7 +679,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && signMessageRequested) {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const { account, parentAccount } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;

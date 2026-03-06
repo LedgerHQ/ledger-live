@@ -848,12 +848,7 @@ export const renderError = ({
     return (
       <NoSuchAppOnProviderErrorComponent
         error={tmpError}
-        productName={
-          getDeviceModel(
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            device?.modelId as DeviceModelId,
-          )?.productName
-        }
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
         learnMoreLink={learnMoreLink}
         learnMoreTextKey={learnMoreTextKey}
       />
@@ -881,23 +876,12 @@ export const renderError = ({
                 </Logo>
               )
         }
-        title={
-          <TranslatedError
-            error={
-              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              tmpError as unknown as Error
-            }
-            noLink
-          />
-        }
+        title={<TranslatedError error={tmpError as unknown as Error} noLink />}
         description={
           withDescription && (
             <TranslatedError
               dataTestId="error-description-deviceAction"
-              error={
-                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                tmpError as unknown as Error
-              }
+              error={tmpError as unknown as Error}
               field="description"
             />
           )
@@ -905,13 +889,7 @@ export const renderError = ({
         list={
           list ? (
             <ol style={{ textAlign: "justify" }}>
-              <TranslatedError
-                error={
-                  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                  tmpError as unknown as Error
-                }
-                field="list"
-              />
+              <TranslatedError error={tmpError as unknown as Error} field="list" />
             </ol>
           ) : undefined
         }

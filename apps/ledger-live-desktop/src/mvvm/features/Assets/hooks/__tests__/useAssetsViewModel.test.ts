@@ -13,6 +13,7 @@ import { genAccount } from "@ledgerhq/coin-framework/lib-es/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/index";
 import type { AssetTableItem } from "../../types";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
 
@@ -42,8 +43,9 @@ const MOCK_LAST_SEEN_DEVICE = {
   apps: [],
 };
 
+
 const onboardedStateWithAccounts = {
-  settings: { lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+  settings: AFTER_ONBOARDING_STATE,
   accounts: [genAccount("acc-1", { currency: getCryptoCurrencyById("bitcoin") })],
 };
 
