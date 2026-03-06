@@ -269,6 +269,7 @@ function mockStakingTx(address: string, amount: string) {
     transaction: {
       data: {
         sender: address,
+        gasData: { owner: address },
         transaction: {
           kind: "ProgrammableTransaction",
           inputs: [],
@@ -309,6 +310,7 @@ function mockUnstakingTx(address: string, amount: string) {
     transaction: {
       data: {
         sender: address,
+        gasData: { owner: address },
         transaction: {
           kind: "ProgrammableTransaction",
           inputs: [],
@@ -962,6 +964,32 @@ describe("Staking Operations", () => {
           stakedAmount: 1000000000n,
         },
       });
+    });
+
+    test("transactionToOp should use gasData.owner as feesPayer for sponsored transactions", () => {
+      const senderAddress = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const sponsorAddress = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      const sponsoredTx = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            sender: senderAddress,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: sponsorAddress,
+            },
+          },
+        },
+      };
+      const operation = sdk.alpacaTransactionToOp(
+        senderAddress,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        sponsoredTx as unknown as SuiTransactionBlockResponse,
+        "mockCheckpointHash",
+      );
+      expect(operation.tx.feesPayer).toBe(sponsorAddress);
     });
   });
 });
@@ -2067,6 +2095,30 @@ describe("filterOperations", () => {
           },
         ],
       });
+    });
+
+    test("toBlockTransaction should use gasData.owner as feesPayer for sponsored transactions", () => {
+      const sponsorAddress = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      const senderAddress = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const sponsoredTx = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            sender: senderAddress,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: sponsorAddress,
+            },
+          },
+        },
+      };
+      const result = sdk.toBlockTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        sponsoredTx as unknown as SuiTransactionBlockResponse,
+      );
+      expect(result.feesPayer).toBe(sponsorAddress);
     });
 
     test("toSuiAsset should map native coin correctly", () => {
