@@ -29,6 +29,7 @@ import {
   getWalletExportState,
   getLargeMoverState,
   getIdentities,
+  getUser,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
@@ -47,8 +48,8 @@ import {
   PERSISTENCE_VERSION,
   type PersistedCAL,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
+import { initIdentities } from "../helpers/identities";
 
 interface Props {
   onInitFinished: () => void;
@@ -105,6 +106,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         cryptoAssetsCache,
         persistedIdentities,
         persistedFeatureFlags,
+        legacyUser,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -119,6 +121,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
         retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
+        retry(getUser, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
         logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
           readTime: Date.now() - readStorageStart,
@@ -161,10 +164,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importLargeMoverState(largeMoverState));
       }
 
-      // Load persisted identities
-      if (persistedIdentities) {
-        store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
-      }
+      // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only
+      await initIdentities(store, persistedIdentities ?? null, legacyUser ?? null);
 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));

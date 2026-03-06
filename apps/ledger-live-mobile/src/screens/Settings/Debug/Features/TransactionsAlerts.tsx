@@ -8,7 +8,7 @@ import styled from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { notificationsSelector } from "~/reducers/settings";
 import { getSupportedChainsAccounts } from "@ledgerhq/live-common/transactionsAlerts/index";
-import getOrCreateUser from "../../../../user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 
 export const TagEnabled = styled(Tag).attrs({
   bg: "success.c50",
@@ -27,6 +27,7 @@ export const TagDisabled = styled(Tag).attrs({
 export default function DebugTransactionsAlerts() {
   const featureTransactionsAlerts = useFeature("transactionsAlerts");
   const notifications = useSelector(notificationsSelector);
+  const userId = useSelector(userIdSelector);
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
   const supportedChains: ChainwatchNetwork[] = useMemo(
     () => featureTransactionsAlerts?.params?.networks || [],
@@ -37,20 +38,20 @@ export default function DebugTransactionsAlerts() {
 
   useEffect(() => {
     if (chainwatchBaseUrl) {
-      getOrCreateUser().then(({ user }) => {
-        getSupportedChainsAccounts(user.id, chainwatchBaseUrl, supportedChains).then(
-          (results: (ChainwatchAccount | undefined)[]) => {
-            const data: Record<string, ChainwatchAccount | undefined> = {};
-            for (let i = 0; i < results.length; i++) {
-              const chainId = supportedChains[i].ledgerLiveId;
-              data[chainId] = results[i];
-            }
-            setChainsData(data);
-          },
-        );
+      getSupportedChainsAccounts(
+        userId.exportUserIdForChainwatch(),
+        chainwatchBaseUrl,
+        supportedChains,
+      ).then((results: (ChainwatchAccount | undefined)[]) => {
+        const data: Record<string, ChainwatchAccount | undefined> = {};
+        for (let i = 0; i < results.length; i++) {
+          const chainId = supportedChains[i].ledgerLiveId;
+          data[chainId] = results[i];
+        }
+        setChainsData(data);
       });
     }
-  }, [chainwatchBaseUrl, supportedChains]);
+  }, [chainwatchBaseUrl, supportedChains, userId]);
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>

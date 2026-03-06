@@ -97,7 +97,7 @@ import {
   customLogEventMapper,
   initializeDatadogProvider,
 } from "./datadog";
-import getOrCreateUser from "./user";
+import { datadogIdSelector, isDummyDatadogId } from "@ledgerhq/client-ids/store";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
@@ -138,6 +138,7 @@ function App() {
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
+  const datadogId = useSelector(datadogIdSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
@@ -206,12 +207,10 @@ function App() {
 
   useEffect(() => {
     if (!datadogFF?.enabled) return;
-    const setUserEquipmentId = async () => {
-      const { user } = await getOrCreateUser();
-      if (!user) return;
-      const { datadogId } = user;
+    const setUserEquipmentId = () => {
+      if (isDummyDatadogId(datadogId)) return;
       DdSdkReactNative.setUserInfo({
-        id: datadogId,
+        id: datadogId.exportDatadogIdForRumUser(),
       });
     };
     initializeDatadogProvider(
@@ -226,7 +225,7 @@ function App() {
       .catch(e => {
         console.error("Datadog initialization failed", e);
       });
-  }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled]);
+  }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled, datadogId]);
 
   const checkAccountsWithFunds = useCheckAccountWithFunds();
 

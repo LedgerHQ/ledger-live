@@ -29,17 +29,15 @@ const ACCOUNTS_DB_PREFIX = "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
 export async function clearDb() {
   const list = await storage.keys();
-  await storage.delete(list.filter(k => k !== "user"));
+  await storage.delete(list);
 }
+/** Used only at boot for migration from legacy "user" into identities. */
 export async function getUser(): Promise<User> {
   const user = (await storage.get("user")) as User;
   return user;
 }
-export async function setUser(user: User): Promise<void> {
-  await storage.update("user", user);
-}
-export async function updateUser(user: User): Promise<void> {
-  await storage.update("user", user);
+export async function deleteUser(): Promise<void> {
+  await storage.delete("user");
 }
 export async function getSettings(): Promise<Partial<SettingsState>> {
   const settings = (await storage.get("settings")) as Partial<SettingsState>;
