@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
@@ -37,7 +37,7 @@ export function useAmountScreen(): AmountScreenViewModel {
   const { transaction: transactionActions, close } = useSendFlowActions();
   const { navigation } = useFlowWizard();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const { account, parentAccount } = state.account;
   const { bridgePending, bridgeError, status, transaction } = state.transaction;
 
@@ -51,10 +51,11 @@ export function useAmountScreen(): AmountScreenViewModel {
         currency: currencyId,
         account: mainAccount.id,
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
     close();
-  }, [account, close, navigate, parentAccount]);
+  }, [account, close, navigate, parentAccount, location.pathname]);
 
   const onReview = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.SIGNATURE);

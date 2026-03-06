@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -43,6 +43,7 @@ interface Props {
 
 const ActionsContainer = ({ account, currencyId }: Props) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isCurrencyAvailable } = useRampCatalog();
@@ -56,7 +57,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
     setDrawer();
     if (location.pathname === "/manager") navigate("/accounts");
     dispatch(openModal("MODAL_RECEIVE", { account }));
-  }, [account, dispatch, navigate, trackAddAccountEvent]);
+  }, [account, dispatch, location.pathname, navigate, trackAddAccountEvent]);
 
   const handleBuy = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -65,9 +66,14 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
     });
     setDrawer();
     navigate("/exchange", {
-      state: { currency: currencyId, account: account.id, mode: "buy" },
+      state: {
+        currency: currencyId,
+        account: account.id,
+        mode: "buy",
+        returnTo: location.pathname,
+      },
     });
-  }, [currencyId, account.id, navigate, trackAddAccountEvent]);
+  }, [currencyId, account.id, location.pathname, navigate, trackAddAccountEvent]);
 
   const actions = useMemo(() => {
     const baseActions = [
