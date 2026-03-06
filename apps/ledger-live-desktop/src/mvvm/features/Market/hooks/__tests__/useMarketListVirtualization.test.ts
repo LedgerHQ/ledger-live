@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook, waitFor } from "tests/testSetup";
-import { useMarketListVirtualization } from "./useMarketListVirtualization";
+import { useMarketListVirtualization } from "../useMarketListVirtualization";
 import { mockDomMeasurements, setRefCurrent } from "LLD/features/__tests__/shared";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 
