@@ -33,14 +33,17 @@ export const WalletV4TourDialog = ({
   const slides = useMemo(
     () => [
       {
+        id: "portfolio" as const,
         title: t("walletV4Tour.slides.portfolio.title"),
         description: t("walletV4Tour.slides.portfolio.description"),
       },
       {
+        id: "navigation" as const,
         title: t("walletV4Tour.slides.navigation.title"),
         description: t("walletV4Tour.slides.navigation.description"),
       },
       {
+        id: "actions" as const,
         title: t("walletV4Tour.slides.actions.title"),
         description: t("walletV4Tour.slides.actions.description"),
       },
@@ -60,9 +63,9 @@ export const WalletV4TourDialog = ({
         <DialogHeader appearance="compact" onClose={onClose} />
         <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
           <Slides.Content>
-            {slides.map(slide => (
-              <Slides.Content.Item key={slide.title}>
-                <SlideItem title={slide.title} description={slide.description} />
+            {slides.map((slide, index) => (
+              <Slides.Content.Item key={slide.id}>
+                <SlideItem slideIndex={index} title={slide.title} description={slide.description} />
               </Slides.Content.Item>
             ))}
           </Slides.Content>
