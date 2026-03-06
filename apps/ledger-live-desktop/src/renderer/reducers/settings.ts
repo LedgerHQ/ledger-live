@@ -206,8 +206,23 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
+  // Branch feat/desktop-lwdv40-always-enabled: force Wallet 4.0 (lwdWallet40) on for all sessions
+  overriddenFeatureFlags: {
+    lwdWallet40: {
+      enabled: true,
+      params: {
+        marketBanner: true,
+        graphRework: true,
+        quickActionCtas: true,
+        mainNavigation: true,
+        tour: true,
+        lazyOnboarding: true,
+        newReceiveDialog: true,
+        balanceRefreshRework: true,
+        assetSection: true,
+      },
+    },
+  } as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 
   // Vault
