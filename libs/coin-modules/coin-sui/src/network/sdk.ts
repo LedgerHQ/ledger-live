@@ -847,12 +847,9 @@ export const getListOperations = async (
     );
 
     // compute next cursor: we have one if IN or OUT operations have one, or we have filtered out operations.
-    const lastBoundaryOp =
-      pageOps.length > 0
-        ? pageOps[pageOps.length - 1]
-        : sortedOps.length > 0
-          ? sortedOps[sortedOps.length - 1]
-          : undefined;
+    const lastPageOp = pageOps.length > 0 ? pageOps[pageOps.length - 1] : undefined;
+    const lastSortedOp = sortedOps.length > 0 ? sortedOps[sortedOps.length - 1] : undefined;
+    const lastBoundaryOp = lastPageOp ?? lastSortedOp;
     const nextCursorCandidate =
       (opsIn.hasNextPage || opsOut.hasNextPage || pageOps.length < sortedOps.length) &&
       lastBoundaryOp
