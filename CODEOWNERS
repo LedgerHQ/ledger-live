@@ -130,7 +130,7 @@ tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integrat
 tools/actions/composites/monitor/                        @ledgerhq/coin-integration
 
 # Cloud Wallet team
-libs/coin-framework/src/api/                             @ledgerhq/cloud-wallet
+libs/coin-framework/src/api/                             @ledgerhq/coin-integration @ledgerhq/cloud-wallet
 
 # Shared with partners
 ## Blockchain support
