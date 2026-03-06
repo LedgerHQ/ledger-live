@@ -221,8 +221,7 @@
     },
     "live-mobile#lint": {
       "dependsOn": ["^build"],
-      "env": ["CI_OS"],
-      "outputs": ["lint.json"]
+      "env": ["CI_OS"]
     },
     "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],

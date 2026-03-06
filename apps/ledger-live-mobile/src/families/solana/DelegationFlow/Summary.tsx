@@ -279,7 +279,7 @@ function tx({
   return {
     family: "solana",
     amount: new BigNumber(
-      delegationAction.kind === "new" ? amount ?? 0 : txAmount(delegationAction),
+      delegationAction.kind === "new" ? (amount ?? 0) : txAmount(delegationAction),
     ),
     recipient: "",
     model: txModelByDelegationAction(delegationAction, defaultValidator, chosenValidator),

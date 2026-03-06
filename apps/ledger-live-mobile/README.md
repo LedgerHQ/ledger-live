@@ -76,6 +76,10 @@ You need to have metro running with `pnpm dev:llm` then `pnpm mobile android` in
 
 Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings.
 
+### Linting (oxlint + ESLint i18n)
+
+Linting uses [oxlint](https://oxc.rs/docs/guide/usage/linter) with config in `.oxlintrc.json`. Scripts: `pnpm mobile lint`, `pnpm mobile lint:ci`, `pnpm mobile lint:fix`, `pnpm mobile format`, `pnpm mobile format:check`. The rule **`i18next/no-literal-string`** (no raw string literals in JSX) is not supported by oxlint; run it separately with **`pnpm mobile lint:i18n`**, which uses a minimal ESLint config (`.eslintrc.i18n.js`) with only that rule.
+
 ### `pnpm build:llm:ios`
 
 Produces a development .ipa signed with the developer's current certificates (can be installed on phones added to our apple dev center). Not eligible for AppStore/TestFlight
