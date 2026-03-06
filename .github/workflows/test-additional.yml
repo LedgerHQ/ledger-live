@@ -27,11 +27,10 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Install pnpm
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
 
       - name: Validate Changesets
         uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop

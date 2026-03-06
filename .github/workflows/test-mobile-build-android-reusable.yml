@@ -102,11 +102,10 @@ jobs:
           persist-credentials: false
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -196,10 +195,9 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          use-mise: "true"
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"

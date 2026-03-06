@@ -212,7 +212,7 @@ jobs:
   build-ios:
     name: "iOS Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -226,7 +226,7 @@ jobs:
   build-android:
     name: "Android Build"
     needs: [determine-builds]
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@support/LIVE-26911-add-mise
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
@@ -263,7 +263,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -460,11 +460,10 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
           skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -694,12 +693,11 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
-          use-mise: "true"
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
           skip-turbo-cache: "true"
 
       - name: Install dependencies

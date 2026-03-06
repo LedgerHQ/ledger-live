@@ -123,7 +123,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
@@ -210,10 +210,9 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"

@@ -36,11 +36,10 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
 
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.10
@@ -94,11 +93,10 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/LIVE-26911-add-mise
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          install-proto: true
 
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm

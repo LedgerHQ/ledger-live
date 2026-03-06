@@ -1,3 +1,4 @@
+
 name: "[All Platforms] - Build and Test - PR"
 on:
   merge_group:
@@ -172,3 +173,4 @@ jobs:
       - name: Check result
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
+       run: exit 1
