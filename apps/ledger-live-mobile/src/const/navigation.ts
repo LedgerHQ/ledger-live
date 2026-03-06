@@ -344,6 +344,8 @@ export enum ScreenName {
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
   CantonOnboardAccount = "CantonOnboardAccount",
+  // Concordium
+  ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -668,6 +670,7 @@ export enum NavigatorName {
   SuiUndelegateFlow = "SuiUndelegateFlow",
 
   CantonOnboard = "CantonOnboard",
+  ConcordiumOnboard = "ConcordiumOnboard",
 
   // Tab
   Main = "Main",

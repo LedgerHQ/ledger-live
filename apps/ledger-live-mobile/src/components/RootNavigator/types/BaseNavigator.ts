@@ -45,6 +45,7 @@ import type { TezosDelegationFlowParamList } from "../../../families/tezos/Deleg
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
+import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
 import type { HederaUndelegationFlowParamList } from "../../../families/hedera/UndelegationFlow/types";
 import type { HederaRedelegationFlowParamList } from "../../../families/hedera/RedelegationFlow/types";
@@ -306,6 +307,9 @@ export type BaseNavigatorStackParamList = {
 
   // Canton
   [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
+
+  // Concordium
+  [NavigatorName.ConcordiumOnboard]: NavigatorScreenParams<ConcordiumOnboardAccountParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;
