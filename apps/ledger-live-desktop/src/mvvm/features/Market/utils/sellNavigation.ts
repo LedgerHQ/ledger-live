@@ -30,7 +30,7 @@ export function buildSellNavigationState({
   };
 
   if (account) {
-    state.account = isTokenAccount(account) ? parentAccount?.id ?? account.parentId : account.id;
+    state.account = isTokenAccount(account) ? (parentAccount?.id ?? account.parentId) : account.id;
   }
 
   return state;

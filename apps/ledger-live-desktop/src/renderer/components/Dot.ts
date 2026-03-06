@@ -45,11 +45,11 @@ export const Dot = styled.div<{
   width: 10px;
   height: 10px;
   animation: ${p =>
-      p.collapsed
-        ? css`
+    p.collapsed
+      ? css`
             ${collapseAnim}
           `
-        : css`
+      : css`
             ${openAnim}
           `}
     200ms 500ms ease forwards;

@@ -109,7 +109,7 @@ const AppsList = ({
     const params = new URLSearchParams(search);
     const q = params.get("q");
     if (q) setQuery(q);
-    if (inputRef.current && inputRef.current && inputRef.current.focus) inputRef.current.focus();
+    if (inputRef.current?.focus) inputRef.current.focus();
   }, [search]);
   const { installed: installedApps, uninstallQueue } = state;
   const addAccount = useCallback(
