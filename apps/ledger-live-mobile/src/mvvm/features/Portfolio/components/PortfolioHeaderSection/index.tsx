@@ -1,7 +1,6 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useCallback } from "react";
+import { View, type LayoutChangeEvent } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import { PortfolioBalanceSection } from "../PortfolioBalanceSection";
@@ -24,17 +23,26 @@ export const PortfolioHeaderSection = ({
   isReadOnlyMode = false,
   ctas,
 }: PortfolioHeaderSectionProps) => {
-  const { safeAreaTop } = usePortfolioHeaderSectionViewModel();
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
+  const { safeAreaTop, shouldDisplayBalanceRefreshRework, onBannerHeightChange, minContentHeight } =
+    usePortfolioHeaderSectionViewModel();
+
+  const onBannerLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      onBannerHeightChange(e.nativeEvent.layout.height);
+    },
+    [onBannerHeightChange],
+  );
 
   if (hideGraph) {
     return (
       <View key="portfolioHeaderElements" style={{ paddingTop: safeAreaTop }}>
         {shouldDisplayBalanceRefreshRework && <PortfolioRefreshStatus />}
-        <Flex px={6} key="FirmwareUpdateBanner">
-          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-        </Flex>
-        <ScreenHeroSectionView ctas={ctas}>
+        <View onLayout={onBannerLayout}>
+          <Flex px={6} key="FirmwareUpdateBanner">
+            <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+          </Flex>
+        </View>
+        <ScreenHeroSectionView ctas={ctas} minContentHeight={minContentHeight}>
           <PortfolioBalanceSection showAssets={showAssets} isReadOnlyMode={isReadOnlyMode} />
         </ScreenHeroSectionView>
       </View>
