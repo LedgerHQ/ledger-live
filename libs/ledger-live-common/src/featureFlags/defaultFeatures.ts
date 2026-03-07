@@ -839,6 +839,11 @@ export const DEFAULT_FEATURES: Features = {
       ],
     },
   },
+
+  hackathonEngagementH1SecurityScore: {
+    ...DEFAULT_FEATURE,
+    enabled: false,
+  },
 };
 
 // Firebase SDK treat JSON values as strings

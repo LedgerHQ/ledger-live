@@ -58,7 +58,7 @@ export const PortfolioView = memo(function PortfolioView({
             {shouldDisplayQuickActionCtas && <Divider orientation="horizontal" className="mb-8" />}
           </div>
 
-          {isWallet40Enabled ? <SecurityScoreWidget /> : null}
+          <SecurityScoreWidget />
 
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
