@@ -30,6 +30,7 @@ import {
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
+  PortfolioSecurityScoreSection,
 } from "../../components";
 
 type NavigationProps = BaseComposite<
@@ -115,6 +116,10 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       />,
     );
 
+    if (shouldDisplayWallet40MainNav) {
+      sections.push(<PortfolioSecurityScoreSection key="securityScore" />);
+    }
+
     sections.push(
       <PortfolioAssetsSection
         key="assets"
@@ -155,6 +160,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     backgroundColor,
     goToAnalyticsAllocations,
+    shouldDisplayWallet40MainNav,
   ]);
 
   return (
