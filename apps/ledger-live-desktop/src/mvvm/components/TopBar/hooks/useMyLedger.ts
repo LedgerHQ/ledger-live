@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { lastSeenDeviceSelector, hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
@@ -8,6 +8,8 @@ import useBuyDeviceDialog from "LLD/features/BuyDevice/hooks/useBuyDeviceDialog"
 import { useTranslation } from "react-i18next";
 import { getDeviceIcon, type DeviceIconComponent } from "LLD/utils/getDeviceIcon";
 import { MANAGER_PATH, MANAGER_TRACK_ENTRY } from "../utils/constants";
+import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export const useMyLedger = (): {
   handleMyLedger: () => void;
@@ -15,6 +17,7 @@ export const useMyLedger = (): {
   icon: DeviceIconComponent;
 } => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -24,6 +27,7 @@ export const useMyLedger = (): {
 
   const handleMyLedger = useCallback(() => {
     if (location.pathname !== MANAGER_PATH) {
+      dispatch(setOriginFlow(HOOKS_TRACKING_LOCATIONS.managerDashboard));
       setTrackingSource("topbar");
       if (hasOnboardedDevice) {
         navigate(MANAGER_PATH);
@@ -36,7 +40,7 @@ export const useMyLedger = (): {
       entry: MANAGER_TRACK_ENTRY,
       page: location.pathname,
     });
-  }, [hasOnboardedDevice, location.pathname, navigate, openBuyDeviceModal]);
+  }, [dispatch, hasOnboardedDevice, location.pathname, navigate, openBuyDeviceModal]);
 
   return {
     handleMyLedger,

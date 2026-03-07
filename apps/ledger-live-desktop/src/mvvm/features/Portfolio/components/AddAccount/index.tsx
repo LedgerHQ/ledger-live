@@ -1,19 +1,24 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "LLD/hooks/redux";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { setOriginFlow } from "~/renderer/reducers/originFlow";
 
 export const AddAccount = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "portfolio_add_account",
   );
 
-  const onAction = () => {
+  const onAction = useCallback(() => {
+    dispatch(setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal));
     openAssetFlow();
-  };
+  }, [dispatch, openAssetFlow]);
 
   return (
     <div className="flex flex-col items-center px-2">

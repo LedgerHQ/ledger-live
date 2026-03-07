@@ -1,0 +1,23 @@
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+/**
+ * Origin flow context (e.g. "stake", "manager", "send", "receive").
+ * Set when entering a flow; used e.g. for Buy Device modal analytics (trigger).
+ * Separate from modularDrawer so it is not reset when the drawer/dialog state is cleared.
+ */
+export type OriginFlowState = string;
+
+const initialState: OriginFlowState = "";
+
+const originFlowSlice = createSlice({
+  name: "originFlow",
+  initialState,
+  reducers: {
+    setOriginFlow: (_, action: PayloadAction<string>) => action.payload,
+    clearOriginFlow: () => "",
+  },
+});
+
+export const { setOriginFlow, clearOriginFlow } = originFlowSlice.actions;
+export const selectOriginFlow = (state: { originFlow: OriginFlowState }) => state.originFlow;
+export default originFlowSlice.reducer;

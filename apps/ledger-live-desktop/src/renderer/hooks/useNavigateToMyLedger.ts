@@ -1,6 +1,8 @@
 import { useCallback, useContext } from "react";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { context } from "~/renderer/drawers/Provider";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { setOriginFlow } from "~/renderer/reducers/originFlow";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import useBuyDeviceDialog from "LLD/features/BuyDevice/hooks/useBuyDeviceDialog";
 
@@ -13,17 +15,19 @@ export function useNavigateToMyLedger(
   push: (path: string) => void,
   trackEntry: (entry: string, flagged?: boolean) => void,
 ) {
+  const dispatch = useDispatch();
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { setDrawer } = useContext(context);
   const { handleOpen: openBuyDeviceModal } = useBuyDeviceDialog();
 
   return useCallback(() => {
     trackEntry("manager");
+    dispatch(setOriginFlow(HOOKS_TRACKING_LOCATIONS.managerDashboard));
     if (!hasOnboardedDevice) {
       setDrawer();
       openBuyDeviceModal();
       return;
     }
     push("/manager");
-  }, [hasOnboardedDevice, setDrawer, openBuyDeviceModal, push, trackEntry]);
+  }, [dispatch, hasOnboardedDevice, setDrawer, openBuyDeviceModal, push, trackEntry]);
 }

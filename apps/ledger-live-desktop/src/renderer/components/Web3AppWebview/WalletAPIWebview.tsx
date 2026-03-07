@@ -41,6 +41,7 @@ import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer"
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { setOriginFlow } from "~/renderer/reducers/originFlow";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -87,6 +88,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
+          dispatch(setOriginFlow(flow));
           dispatch(setSourceValue(source));
 
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
