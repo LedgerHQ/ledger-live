@@ -196,7 +196,7 @@ function execCapture(cmd: string, timeoutMs = 5000): Promise<string> {
     }, timeoutMs);
     exec(cmd, { timeout: timeoutMs }, (err, stdout, stderr) => {
       clearTimeout(t);
-      if (err) resolve(`(exit ${err.code}): ${(stderr || stdout || "").trim()}`);
+      if (err) resolve(`(exit ${err.code}): ${(stderr || stdout || String(err.message)).trim()}`);
       else resolve((stdout || stderr || "").trim());
     });
   });
@@ -205,17 +205,16 @@ function execCapture(cmd: string, timeoutMs = 5000): Promise<string> {
 /** Try to identify what is using the given port (Linux/CI). */
 async function getPortUsageDiagnostic(port: number): Promise<string> {
   const lines: string[] = [];
-  const lsof = await execCapture(`lsof -i :${port} 2>/dev/null || true`, 3000);
-  if (lsof && !lsof.startsWith("(")) lines.push(`lsof -i :${port}:\n${lsof}`);
-  const ss = await execCapture(`ss -tlnp 2>/dev/null | grep :${port} || true`, 3000);
-  if (ss && !ss.startsWith("(")) lines.push(`ss -tlnp | grep :${port}:\n${ss}`);
+  const lsof = await execCapture("lsof -i :" + port + " 2>&1 || true", 3000);
+  lines.push("lsof: " + lsof);
+  const ss = await execCapture("ss -tlnp 2>&1 | grep :" + port + " || true", 3000);
+  lines.push("ss: " + ss);
   const docker = await execCapture(
-    `docker ps -a --format '{{.Names}} {{.Ports}}' 2>/dev/null | grep -E ':${port}[^0-9]|:${port}$' || true`,
+    "docker ps -a --format '{{.Names}} {{.Ports}}' 2>&1 | grep -E ':" + port + "[^0-9]|:" + port + "' || true",
     3000,
   );
-  if (docker && !docker.startsWith("(")) lines.push(`docker ps (port ${port}):\n${docker}`);
-  if (lines.length === 0) return "(could not run lsof/ss/docker)";
-  return lines.join("\n\n");
+  lines.push("docker: " + docker);
+  return lines.join("\n");
 }
 
 const BASE_PORT = 30000;
