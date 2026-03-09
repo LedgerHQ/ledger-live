@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
@@ -6,6 +6,7 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "../Button";
 import { useSelectAccount } from "./helpers";
+
 type NoAccountScreenProps = {
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
@@ -16,6 +17,24 @@ export function NoAccountScreen({ manifest, currentAccountHistDb }: NoAccountScr
     manifest,
     currentAccountHistDb,
   });
+  const [displayAddAccountButton, setDisplayAddAccountButton] = useState(false);
+
+  useEffect(() => {
+    handleAddAccountPress();
+
+    const timeoutDisplayAddAccountButton = setTimeout(() => {
+      setDisplayAddAccountButton(true);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeoutDisplayAddAccountButton);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!displayAddAccountButton) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

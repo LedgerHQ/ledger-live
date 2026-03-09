@@ -166,7 +166,6 @@ export function useWebView(
     uiHook,
     postMessage: webviewHook.postMessage,
     tracking,
-    initialAccountId: inputs?.accountId?.toString(),
     mevProtected,
   });
 
