@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "Annuler",
-        "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
+        "description" : "Envoyez 0 {{ticker}} à votre propre adresse. L’annulation n’est pas garantie. Si le réseau traite votre transaction initiale avant cette demande d’annulation, vos actifs seront envoyés au bénéficiaire."
       },
       "steps" : {
         "method" : {
@@ -308,6 +308,7 @@
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
     "perps" : "Perpétuels",
+    "home" : "Accueil",
     "refer" : "Parrainage",
     "lend" : "Prêter",
     "catalog" : "Discover",
@@ -1498,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
+    "continue" : "Continuer"
+  },
   "currentAddress" : {
     "title" : "Adresse actuelle",
     "for" : "Adresse pour <1><0>{{name}}</0></1>",
@@ -1751,7 +1771,8 @@
       "previousStakingNodeId" : "ID du nœud précédent",
       "gasConsumed" : "Gaz consommé",
       "gasUsed" : "Gaz utilisé",
-      "gasLimit" : "Limite de gaz"
+      "gasLimit" : "Limite de gaz",
+      "functionId" : "Identifiant de la fonction"
     }
   },
   "operationList" : {
@@ -1939,6 +1960,13 @@
       "updateBtn" : "Mettre à jour le micrologiciel",
       "installUpdate" : "Installation",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "Mise à jour disponible",
+            "manager" : "Mise à jour de Ledger OS disponible"
+          },
+          "cta" : "Mettre à jour"
+        },
         "warning" : "Mise à jour du système d’exploitation disponible",
         "version" : "Version {{latestFirmware}}",
         "cta" : "Accéder à My Ledger",
@@ -2144,6 +2172,24 @@
         "description" : "Votre opération a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire la traite."
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "Connectez un appareil Ledger",
+    "subtitle" : "Libérez toute la puissance de Ledger Wallet en connectant un appareil Ledger.",
+    "0" : {
+      "title" : "Contrôle absolu",
+      "desc" : "Vos clés privées ne quittent jamais votre appareil."
+    },
+    "1" : {
+      "title" : "Opérations sécurisées",
+      "desc" : "Vérifiez les détails de vos transactions sur un écran sécurisé."
+    },
+    "2" : {
+      "title" : "Wallet ultra-puissant",
+      "desc" : "Gérez des milliers d’actifs au même endroit."
+    },
+    "connectCTA" : "Connecter",
+    "buyCTA" : "Acheter un appareil"
   },
   "fund" : {
     "title" : "Approvisionner",
@@ -2431,17 +2477,26 @@
       "confirm" : "Confirmer",
       "maxFee" : "Frais maximaux ({{unit}})",
       "maxPriorityFee" : "Frais de priorité maximaux ({{unit}})",
-      "gasLimit" : "Limite de gaz ({{unit}})",
       "feePerByte" : "Montant des frais ({{unit}})",
       "suggested" : "Suggéré",
       "nextBlock" : "Bloc suivant",
       "networkFeesInFiat" : "Frais de réseau en {{currency}}",
       "invalidValue" : "Saisissez un nombre valide",
       "belowMinimum" : "Minimum : {{min}}",
-      "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
+      "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max.",
+      "feeAsset" : "Frais en",
+      "feesAmount" : "Montant des frais ({{unit}})",
+      "payFeesIn" : "Payer les frais en"
     },
     "coinControl" : {
-      "title" : "Contrôle des coins"
+      "title" : "Contrôle des coins",
+      "strategy" : "La stratégie",
+      "learnMore" : "En savoir plus",
+      "coinToSend" : "Crypto à envoyer",
+      "changeToReturn" : "Crypto à rendre",
+      "enterAmount" : "Entrer le montant",
+      "amountToSendInCurrency" : "Montant à envoyer en {{ticker}}",
+      "amountInputLabel" : "Montant à envoyer"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5071,7 @@
     }
   },
   "theme" : {
-    "system" : "Sélectionnez le mode de l’interface",
+    "system" : "Système",
     "light" : "Clair",
     "dusk" : "Crépuscule",
     "dark" : "Sombre"
@@ -7528,7 +7583,8 @@
     },
     "selectAccount" : {
       "title" : "Choisir un compte",
-      "addAccount" : "Créer ou ajouter un compte"
+      "addAccount" : "Créer ou ajouter un compte",
+      "perpetualsBanner" : "Actuellement uniquement disponible pour l’USDC sur la blockchain Arbitrum."
     }
   },
   "customImage" : {
@@ -7991,6 +8047,8 @@
     "title" : "Explorer le marché",
     "genericError" : "Échec de la connexion",
     "cta" : "Afficher tout",
+    "scrollLeft" : "Défiler à gauche",
+    "scrollRight" : "Défiler à droite",
     "fearAndGreed" : {
       "title" : "Sentiment"
     }
@@ -8017,6 +8075,18 @@
     "connect" : "Connecter",
     "buyALedger" : "Acheter un Ledger"
   },
+  "assets" : {
+    "cryptos" : "Cryptos",
+    "stablecoins" : "Stablecoins",
+    "columns" : {
+      "name" : "Nom",
+      "price" : "Cours",
+      "balance" : "Solde",
+      "value" : "Valeur",
+      "trend" : "Tendance 1J",
+      "trendTooltip" : "Variation du solde sur 24h."
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
     "entry" : {
@@ -8029,12 +8099,7 @@
       "errorToolTip" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité. Liste des comptes touchés : {{accounts}}. Cliquez pour réessayer",
       "emptyErrorToolTip" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité. Cliquez pour réessayer",
       "upToDate" : "Tout est à jour",
-      "minutesAgo_one" : "Dernière synchro il y a {{count}} min. Cliquez pour actualiser",
-      "minutesAgo_other" : "Dernière synchro il y a {{count}} min. Cliquez pour actualiser",
-      "hoursAgo_one" : "Dernière synchro il y a {{count}} h. Cliquez pour actualiser",
-      "hoursAgo_other" : "Dernière synchro il y a {{count}} h. Cliquez pour actualiser",
-      "daysAgo_one" : "Dernière synchro il y a {{count}} j. Cliquez pour actualiser",
-      "daysAgo_other" : "Dernière synchro il y a {{count}} j. Cliquez pour actualiser"
+      "lastSync" : "Dernière synchro : {{timeAgo}}. Cliquez pour actualiser"
     },
     "notificationIndicator" : {
       "tooltip" : "Notifications"
@@ -8174,5 +8239,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Erreur lors de la mise à jour, réessayez",
     "installAndRelaunch" : "Installer et relancer"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Un vue plus claire de votre portefeuille",
+        "description" : "Consultez votre solde total d’un coup d’œil, et appuyez sur « Aujourd’hui » pour plus d’informations."
+      },
+      "navigation" : {
+        "title" : "Accédez instantanément aux actions clés",
+        "description" : "Échangez, transférez et achetez des actifs en toute simplicité. Les sections Gagner et Carte se trouvent désormais en bas de votre app."
+      },
+      "actions" : {
+        "title" : "Suivez l’évolution des marchés",
+        "description" : "Visualisez les tendances au sein de votre portefeuille et agissez sans attendre."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuer",
+      "explore" : "Explorer"
+    }
   }
 }
