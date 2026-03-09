@@ -125,7 +125,7 @@ export type BlockTransaction = {
   fees: bigint;
 
   /** The address that paid for this transaction's fees. */
-  feesPayer: string;
+  feesPayer?: string;
 };
 
 /** An operation belonging to a {@link BlockTransaction}. */

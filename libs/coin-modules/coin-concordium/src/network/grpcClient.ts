@@ -521,7 +521,7 @@ export async function getBlockByHeight(currencyId: string, height: number): Prom
           feesPayer: sender,
         };
       })
-      .filter((tx): tx is BlockTransaction => tx !== null);
+      .filter(tx => tx !== null);
 
     return {
       info,
