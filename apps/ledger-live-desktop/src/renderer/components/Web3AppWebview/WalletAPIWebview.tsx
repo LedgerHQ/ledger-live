@@ -63,7 +63,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+      : currentRouteNameRef.current ?? "Unknown";
 
   const flow = manifest.name;
 
@@ -372,7 +372,7 @@ function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage, noAccounts } = useDappLogic({
+  const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     accounts,
     uiHook,
@@ -405,10 +405,7 @@ function useWebView(
 
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
     // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
-    globalThis.api?.openWindow(
-      id,
-      manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined,
-    );
+    globalThis.api?.openWindow(id, manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined);
   }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
   useEffect(() => {
@@ -441,7 +438,7 @@ function useWebView(
     };
   }, [customWebviewStyle, widgetLoaded]);
 
-  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts };
+  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts, isLoadingAccounts };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
@@ -501,7 +498,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
     }, [webviewState, onStateChange]);
 
-    const { webviewStyle, widgetLoaded, noAccounts } = useWebView(
+    const { webviewStyle, widgetLoaded, noAccounts, isLoadingAccounts } = useWebView(
       {
         manifest,
         customHandlers,
@@ -519,6 +516,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
 
     if (isDapp && noAccounts) {
+      if (isLoadingAccounts) return <BigSpinner size={50} />;
+
       return <NoAccountOverlay manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
 

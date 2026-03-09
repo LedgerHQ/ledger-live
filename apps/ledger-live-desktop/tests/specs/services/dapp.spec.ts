@@ -10,7 +10,22 @@ import { DeviceAction } from "../../models/DeviceAction";
 import dummyLiveApp from "./dapp.spec.ts-mocks/dummy-live-app";
 import dummy1inchLiveApp from "./dapp.spec.ts-mocks/1inch-live-app";
 
-test.use({ userdata: "1AccountBTC1AccountETH1AccountPOLYGON" });
+test.use({
+  userdata: "1AccountBTC1AccountETH1AccountPOLYGON",
+  // Legacy SelectAccountAndCurrencyDrawer uses currency-row-* test ids; modular drawer does not.
+  featureFlags: {
+    lldModularDrawer: {
+      enabled: false,
+      params: {
+        add_account: false,
+        live_app: false,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: false,
+      },
+    },
+  },
+});
 
 test.describe("Metamask Test Dapp", () => {
   test.beforeAll(async () => {
@@ -27,6 +42,12 @@ test.describe("Metamask Test Dapp", () => {
     await layout.goToDiscover();
     await discoverPage.openTestApp();
     await drawer.continue();
+    await drawer.waitForDrawerToDisappear();
+
+    // Handle account selection drawer (auto-opened by NoAccountOverlay)
+    await drawer.waitForDrawerToBeVisible();
+    await drawer.selectCurrency("ethereum");
+    await drawer.selectAccount("Ethereum", 0);
     await drawer.waitForDrawerToDisappear();
 
     // Wait for webview window - React 19's concurrent rendering may delay its creation

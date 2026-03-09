@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback, Dispatch, SetStateAction } from "react";
 
-export type StateDB<State, Selected> = [Selected, Dispatch<SetStateAction<State>>];
+export type StateDB<State, Selected> = [Selected, Dispatch<SetStateAction<State>>, boolean];
 
 export function useDBRaw<State, Selected>({
   initialState,
@@ -14,15 +14,16 @@ export function useDBRaw<State, Selected>({
   selector: (state: State) => Selected;
 }): StateDB<State, Selected> {
   const [state, setState] = useState<State>(initialState);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     getter().then(state => {
       if (!state) {
         setterRaw(initialState);
-        return;
+      } else {
+        setState(state);
       }
-
-      setState(state);
+      setLoaded(true);
     });
     // Run once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,5 +40,5 @@ export function useDBRaw<State, Selected>({
   );
 
   const result = useMemo(() => selector(state), [state, selector]);
-  return [result, setter];
+  return [result, setter, loaded];
 }

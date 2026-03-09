@@ -40,6 +40,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
+      isLoadingAccounts,
     } = useWebView(
       {
         manifest,
@@ -63,7 +64,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const javaScriptCanOpenWindowsAutomatically =
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
-    if (!!manifest.dapp && noAccounts) {
+    if (manifest.dapp && noAccounts) {
+      if (isLoadingAccounts) {
+        return <Loader />;
+      }
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
 
@@ -114,7 +118,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
 WalletAPIWebview.displayName = "WalletAPIWebview";
 
-function DefaultLoader() {
+export function DefaultLoader() {
   return (
     <View style={styles.center}>
       <ActivityIndicator size="small" />

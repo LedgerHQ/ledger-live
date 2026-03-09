@@ -128,26 +128,12 @@ function useDappAccountLogic({
     manifest.id,
     currentAccountHistDb,
   );
+
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
     }
   }, [currentAccount, accounts]);
-
-  const firstAccountAvailable = useMemo(() => {
-    const account = accounts.find(account => {
-      if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
-        return account;
-      }
-      if (account.type === "TokenAccount" && currencyIds.includes(account.token.id)) {
-        return getParentAccount(account, accounts);
-      }
-    });
-    // might not even need to set parent here
-    if (account) {
-      return getParentAccount(account, accounts);
-    }
-  }, [accounts, currencyIds]);
 
   const storedCurrentAccountIsPermitted = useCallback(() => {
     if (!currentAccount) return false;
@@ -193,23 +179,25 @@ function useDappAccountLogic({
     }
 
     if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-      /** if there is no current account OR if there is a current account but it is not in the manifest currencies then fall back to the first permitted account */
-      setCurrentAccount(firstAccountAvailable ?? null);
+      setCurrentAccount(null);
     }
   }, [
-    currentAccount,
-    currentAccountFromHist,
-    firstAccountAvailable,
-    initialAccount,
     initialAccountSelected,
+    initialAccount,
+    currentAccountFromHist,
+    storedCurrentAccountIsPermitted,
     manifest.id,
     setCurrentAccount,
     setCurrentAccountHist,
-    storedCurrentAccountIsPermitted,
+    setInitialAccountSelected,
   ]);
+
+  const currentAccountHistDbLoaded = currentAccountHistDb?.[2] ?? true;
 
   return {
     currentAccount,
+    currentAccountFromHist,
+    currentAccountHistDbLoaded,
     setCurrentAccount,
     currentParentAccount,
     setCurrentAccountHist,
@@ -250,13 +238,19 @@ export function useDappLogic({
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
   const ws = useRef<SmartWebsocket | undefined>(undefined);
-  const { currentAccount, currentParentAccount, setCurrentAccount, setCurrentAccountHist } =
-    useDappAccountLogic({
-      manifest,
-      accounts,
-      currentAccountHistDb,
-      initialAccountId,
-    });
+  const {
+    currentAccount,
+    currentAccountFromHist,
+    currentAccountHistDbLoaded,
+    currentParentAccount,
+    setCurrentAccount,
+    setCurrentAccountHist,
+  } = useDappAccountLogic({
+    manifest,
+    accounts,
+    currentAccountHistDb,
+    initialAccountId,
+  });
 
   /** Current network is needed for recognising the current chain id.
    * If a token account is selected, this depends on the parent currency. */
@@ -725,5 +719,8 @@ export function useDappLogic({
     ],
   );
 
-  return { onDappMessage, noAccounts: !currentAccount };
+  const isLoadingAccounts =
+    !currentAccountHistDbLoaded || (!currentAccount && !!currentAccountFromHist);
+
+  return { onDappMessage, noAccounts: !currentAccount, isLoadingAccounts };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
@@ -6,6 +6,7 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "../Button";
 import { useSelectAccount } from "./helpers";
+
 type NoAccountScreenProps = {
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
@@ -17,6 +18,11 @@ export function NoAccountScreen({ manifest, currentAccountHistDb }: NoAccountScr
     currentAccountHistDb,
   });
 
+  useEffect(() => {
+    handleAddAccountPress();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <View style={styles.container}>
       <Flex flexDirection="column" alignItems="center">
@@ -24,7 +30,7 @@ export function NoAccountScreen({ manifest, currentAccountHistDb }: NoAccountScr
           <Trans i18nKey="webview.noAccounts.title" />
         </Text>
         <Button marginTop={10} onPress={handleAddAccountPress} type="primary">
-          <Trans i18nKey="webview.noAccounts.add" />
+          <Trans i18nKey="webview.noAccounts.select" />
         </Button>
       </Flex>
     </View>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -9,6 +9,7 @@ import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 const Overlay = styled.div`
   display: flex;
   height: 100vh;
+  width: 100%;
   align-items: center;
   justify-content: center;
   user-select: none;
@@ -45,6 +46,11 @@ export const NoAccountOverlay = ({
 }) => {
   const { t } = useTranslation();
   const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+
+  useEffect(() => {
+    onSelectAccount();
+  }, [onSelectAccount]);
+
   return (
     <Overlay>
       <Flex flexDirection="column" alignItems="center">
@@ -52,7 +58,7 @@ export const NoAccountOverlay = ({
           {t("webview.noAccounts.title")}
         </Text>
         <Button onClick={onSelectAccount} variant="main">
-          {t("webview.noAccounts.add")}
+          {t("webview.noAccounts.select")}
         </Button>
       </Flex>
     </Overlay>
