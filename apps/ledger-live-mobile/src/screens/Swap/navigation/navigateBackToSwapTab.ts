@@ -8,12 +8,13 @@ type NavigationStateWithRouteNames = {
 type NavigationWithState = {
   dispatch(action: ReturnType<typeof CommonActions.reset>): void;
   getState(): NavigationStateWithRouteNames | undefined;
-  getParent(): { dispatch(action: ReturnType<typeof CommonActions.reset>): void } | undefined;
+  getParent():
+    | {
+        dispatch(action: ReturnType<typeof CommonActions.reset>): void;
+        goBack(): void;
+      }
+    | undefined;
   goBack(): void;
-};
-
-type RootResetOptions = {
-  shouldDisplayWallet40MainNav: boolean;
 };
 
 export function hasSwapTabRoute(state: NavigationStateWithRouteNames | undefined) {
@@ -21,29 +22,40 @@ export function hasSwapTabRoute(state: NavigationStateWithRouteNames | undefined
   return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
 }
 
-function getResetToSwapTabAction({ shouldDisplayWallet40MainNav }: RootResetOptions) {
+function getResetToSwapTabAction() {
   return CommonActions.reset({
     index: 0,
-    routes: shouldDisplayWallet40MainNav
-      ? [
-          {
-            name: NavigatorName.Main,
-            params: {
-              screen: NavigatorName.Swap,
-              params: {
-                screen: ScreenName.SwapTab,
-              },
-            },
+    routes: [
+      {
+        name: NavigatorName.Main,
+        params: {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
           },
-        ]
-      : [
-          {
-            name: NavigatorName.Swap,
-            params: {
-              screen: ScreenName.SwapTab,
-            },
-          },
-        ],
+        },
+      },
+    ],
+  });
+}
+
+function getResetToLegacySwapAction() {
+  // Legacy Swap lives outside Main in the base stack, but we still need Main
+  // underneath it so the Swap form back button returns to home instead of
+  // leaving Swap as a dead-end root route.
+  return CommonActions.reset({
+    index: 1,
+    routes: [
+      {
+        name: NavigatorName.Main,
+      },
+      {
+        name: NavigatorName.Swap,
+        params: {
+          screen: ScreenName.SwapTab,
+        },
+      },
+    ],
   });
 }
 
@@ -71,5 +83,10 @@ export function navigateBackToSwapTab({
     return;
   }
 
-  parentNavigation.dispatch(getResetToSwapTabAction({ shouldDisplayWallet40MainNav }));
+  if (!shouldDisplayWallet40MainNav) {
+    parentNavigation.dispatch(getResetToLegacySwapAction());
+    return;
+  }
+
+  parentNavigation.dispatch(getResetToSwapTabAction());
 }
