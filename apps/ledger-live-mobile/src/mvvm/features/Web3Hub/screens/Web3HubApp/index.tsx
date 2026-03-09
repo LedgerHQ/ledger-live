@@ -15,7 +15,7 @@ const edges = ["top", "bottom", "left", "right"] as const;
 
 // TODO local manifests ?
 export default function Web3HubApp({ navigation, route }: AppProps) {
-  const { layoutY, onScroll } = useWebviewScrollHandler(TOTAL_HEADER_HEIGHT);
+  const { onScroll } = useWebviewScrollHandler(TOTAL_HEADER_HEIGHT);
 
   const {
     manifest,
@@ -38,7 +38,6 @@ export default function Web3HubApp({ navigation, route }: AppProps) {
           manifest={manifest}
           inputs={inputs}
           onScroll={onScroll}
-          layoutY={layoutY}
           webviewState={webviewState}
           setWebviewState={setWebviewState}
           initialLoad={initialLoad}
