@@ -410,7 +410,7 @@ describe("estimateFees", () => {
     });
   });
 
-  it("gives 0 additional fees if the transaction is not deserializable", async () => {
+  it("gives 0 additional fees if the transaction is not serializable", async () => {
     mockNodeApi.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     mockNodeApi.getTransactionCount.mockResolvedValue(42);
     jest.mocked(getNodeApi).mockReturnValue(mockNodeApi as any);

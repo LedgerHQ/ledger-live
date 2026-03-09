@@ -4,7 +4,7 @@ import { useActivityIndicatorTooltip } from "../useActivityIndicatorTooltip";
 const enUsState = { settings: { locale: "en-US" } };
 
 describe("useActivityIndicatorTooltip", () => {
-  it("returns null when isRotating is true", () => {
+  it("returns undefined when isRotating is true", () => {
     const { result } = renderHook(() =>
       useActivityIndicatorTooltip({
         isRotating: true,
@@ -13,7 +13,7 @@ describe("useActivityIndicatorTooltip", () => {
         lastSyncMs: 0,
       }),
     );
-    expect(result.current).toBeNull();
+    expect(result.current).toBeUndefined();
   });
 
   it("returns emptyErrorToolTip when isError is true and no account names", () => {

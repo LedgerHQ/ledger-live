@@ -24,6 +24,8 @@ import type { State } from "~/renderer/reducers";
 import {
   developerModeSelector,
   devicesModelListSelector,
+  hasCompletedOnboardingSelector,
+  hasOnboardedDeviceSelector,
   hasSeenAnalyticsOptInPromptSelector,
   languageSelector,
   lastSeenDeviceSelector,
@@ -42,6 +44,7 @@ import {
   onboardingReceiveFlowSelector,
   onboardingSyncFlowSelector,
 } from "../reducers/onboarding";
+import { getOnboardingStatusAttributes } from "./onboardingStatus";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
@@ -188,12 +191,14 @@ const getMandatoryProperties = (store: ReduxStore) => {
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
   const devModeEnabled = developerModeSelector(state);
+  const readOnlyMode = !hasOnboardedDeviceSelector(state);
 
   return {
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
+    readOnlyMode,
   };
 };
 
@@ -212,6 +217,8 @@ const extraProperties = (store: ReduxStore) => {
   const isOnboardingSyncFlow = onboardingIsSyncFlowSelector(state);
   const onboardingSyncFlow = onboardingSyncFlowSelector(state);
   const isOnboardingFlow = isOnboardingReceiveFlow || isOnboardingSyncFlow;
+  const readOnlyMode = !hasOnboardedDeviceSelector(state);
+  const hasCompletedOnboarding = hasCompletedOnboardingSelector(state);
 
   const ptxAttributes = getPtxAttributes();
   const ldmkTransport = analyticsFeatureFlagMethod
@@ -303,8 +310,13 @@ const extraProperties = (store: ReduxStore) => {
     lldSyncOnboardingIncr1: Boolean(lldSyncOnboardingIncr1?.enabled),
     nanoOnboardingFundWallet: Boolean(nanoOnboardingFundWallet?.enabled),
     // For tracking receive flow events during onboarding
-    ...(postOnboardingInProgress && !isOnboardingFlow ? { flow: "post-onboarding" } : {}),
-    ...(isOnboardingFlow ? { flow: "Onboarding", ...onboardingSyncFlow } : {}),
+    ...getOnboardingStatusAttributes(
+      postOnboardingInProgress,
+      isOnboardingFlow,
+      onboardingSyncFlow,
+      readOnlyMode,
+      hasCompletedOnboarding,
+    ),
     isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,

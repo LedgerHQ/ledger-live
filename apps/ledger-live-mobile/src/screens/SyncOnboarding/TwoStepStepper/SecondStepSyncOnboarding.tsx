@@ -5,7 +5,7 @@ import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import BackgroundBlue from "../assets/BackgroundBlue";
+import BackgroundBlue from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/assets/BackgroundBlue";
 import { Box } from "@ledgerhq/native-ui";
 import Animated, {
   useAnimatedStyle,

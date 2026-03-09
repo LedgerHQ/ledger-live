@@ -1,9 +1,8 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
 import { getLastBlock, getBlockInfoByHeight, getBlockByHeight } from "./grpcClient";
 
 describe("grpcClient", () => {
-  const currency = getCryptoCurrencyById("concordium");
+  const currencyId = "concordium_testnet";
 
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
@@ -20,7 +19,7 @@ describe("grpcClient", () => {
 
   describe("getLastBlock", () => {
     it("should return last block info", async () => {
-      const result = await getLastBlock(currency);
+      const result = await getLastBlock(currencyId);
 
       expect(result).toHaveProperty("height");
       expect(result).toHaveProperty("hash");
@@ -31,10 +30,10 @@ describe("grpcClient", () => {
     });
 
     it("should return increasing block height on subsequent calls", async () => {
-      const result1 = await getLastBlock(currency);
+      const result1 = await getLastBlock(currencyId);
       // Wait a bit for potential new block
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const result2 = await getLastBlock(currency);
+      const result2 = await getLastBlock(currencyId);
 
       expect(result2.height).toBeGreaterThanOrEqual(result1.height);
     });
@@ -42,10 +41,10 @@ describe("grpcClient", () => {
 
   describe("getBlockInfoByHeight", () => {
     it("should return block info for specific height", async () => {
-      const lastBlock = await getLastBlock(currency);
+      const lastBlock = await getLastBlock(currencyId);
       const targetHeight = lastBlock.height - 10;
 
-      const result = await getBlockInfoByHeight(currency, targetHeight);
+      const result = await getBlockInfoByHeight(currencyId, targetHeight);
 
       expect(result.height).toBe(targetHeight);
       expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -53,11 +52,11 @@ describe("grpcClient", () => {
     });
 
     it("should return consistent info for same height", async () => {
-      const lastBlock = await getLastBlock(currency);
+      const lastBlock = await getLastBlock(currencyId);
       const targetHeight = lastBlock.height - 10;
 
-      const result1 = await getBlockInfoByHeight(currency, targetHeight);
-      const result2 = await getBlockInfoByHeight(currency, targetHeight);
+      const result1 = await getBlockInfoByHeight(currencyId, targetHeight);
+      const result2 = await getBlockInfoByHeight(currencyId, targetHeight);
 
       expect(result1.height).toBe(result2.height);
       expect(result1.hash).toBe(result2.hash);
@@ -65,10 +64,10 @@ describe("grpcClient", () => {
     });
 
     it("should handle recent blocks", async () => {
-      const lastBlock = await getLastBlock(currency);
+      const lastBlock = await getLastBlock(currencyId);
       const recentHeight = lastBlock.height - 1;
 
-      const result = await getBlockInfoByHeight(currency, recentHeight);
+      const result = await getBlockInfoByHeight(currencyId, recentHeight);
 
       expect(result.height).toBe(recentHeight);
       expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -77,10 +76,10 @@ describe("grpcClient", () => {
 
   describe("getBlockByHeight", () => {
     it("should return block with transaction info", async () => {
-      const lastBlock = await getLastBlock(currency);
+      const lastBlock = await getLastBlock(currencyId);
       const targetHeight = lastBlock.height - 10;
 
-      const result = await getBlockByHeight(currency, targetHeight);
+      const result = await getBlockByHeight(currencyId, targetHeight);
 
       expect(result.info.height).toBe(targetHeight);
       expect(result.info.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -89,10 +88,10 @@ describe("grpcClient", () => {
     });
 
     it("should return transactions with valid structure", async () => {
-      const lastBlock = await getLastBlock(currency);
+      const lastBlock = await getLastBlock(currencyId);
       const targetHeight = lastBlock.height - 10;
 
-      const result = await getBlockByHeight(currency, targetHeight);
+      const result = await getBlockByHeight(currencyId, targetHeight);
 
       result.transactions.forEach(tx => {
         expect(tx).toHaveProperty("hash");
@@ -104,11 +103,11 @@ describe("grpcClient", () => {
     });
 
     it("should return consistent block data", async () => {
-      const lastBlock = await getLastBlock(currency);
+      const lastBlock = await getLastBlock(currencyId);
       const targetHeight = lastBlock.height - 10;
 
-      const result1 = await getBlockByHeight(currency, targetHeight);
-      const result2 = await getBlockByHeight(currency, targetHeight);
+      const result1 = await getBlockByHeight(currencyId, targetHeight);
+      const result2 = await getBlockByHeight(currencyId, targetHeight);
 
       expect(result1.info.height).toBe(result2.info.height);
       expect(result1.info.hash).toBe(result2.info.hash);
@@ -119,12 +118,16 @@ describe("grpcClient", () => {
   describe("Network connectivity", () => {
     it("should successfully connect to gRPC endpoint", async () => {
       // This test verifies the gRPC connection works
-      const result = await getLastBlock(currency);
+      const result = await getLastBlock(currencyId);
       expect(result.height).toBeGreaterThan(0);
     });
 
     it("should handle multiple concurrent requests", async () => {
-      const promises = [getLastBlock(currency), getLastBlock(currency), getLastBlock(currency)];
+      const promises = [
+        getLastBlock(currencyId),
+        getLastBlock(currencyId),
+        getLastBlock(currencyId),
+      ];
 
       const results = await Promise.all(promises);
 

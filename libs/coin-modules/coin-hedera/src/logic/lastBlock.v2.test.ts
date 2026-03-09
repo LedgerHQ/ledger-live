@@ -12,7 +12,9 @@ const BLOCK_WINDOW_MS = SYNTHETIC_BLOCK_WINDOW_SECONDS * 1000;
 
 describe("lastBlockV2", () => {
   const mockHgraphTimestampNs = new BigNumber("1625097500000000000");
-  const mockHgraphTimestamp = nanosToSeconds(mockHgraphTimestampNs);
+  const mockHgraphTimestamp = nanosToSeconds(mockHgraphTimestampNs).minus(
+    SYNTHETIC_BLOCK_WINDOW_SECONDS,
+  );
   const mockTransaction = {
     consensus_timestamp: "1625097600.000000000",
   };

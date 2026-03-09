@@ -1,16 +1,8 @@
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import {
-  CryptoCurrency,
-  CryptoCurrencyId,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
-import type { Operation } from "@ledgerhq/types-live";
+import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
 jest.mock("./network/node/rpc.common", () => ({
@@ -22,32 +14,18 @@ jest.mock("./network/node/rpc.common", () => ({
 const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
 const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import { getCoinConfig } from "./config";
-import {
-  deepFreeze,
-  makeAccount,
-  makeNftOperation,
-  makeOperation,
-  makeTokenAccount,
-} from "./fixtures/common.fixtures";
+import { makeAccount, makeOperation, makeTokenAccount } from "./fixtures/common.fixtures";
 import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
 import wethTokenData from "./fixtures/ethereum-erc20-weth.json";
 import {
-  attachOperations,
   createSwapHistoryMap,
-  eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
-  getDefaultFeeUnit,
   getMessageProperties,
   getSyncHash,
-  legacyTransactionHasFees,
   mergeSubAccounts,
 } from "./logic";
 import { getOptimismAdditionalFees, getScrollAdditionalFees } from "./network/node/rpc.common";
-import {
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-  Transaction as EvmTransaction,
-} from "./types";
+import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -128,81 +106,6 @@ mockGetConfig.mockImplementation((currency: { id: string }): any => {
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
-    describe("legacyTransactionHasFees", () => {
-      it("should return true for legacy tx with fees", () => {
-        const tx: Partial<EvmTransactionLegacy> = {
-          type: 0,
-          gasPrice: new BigNumber(100),
-        };
-
-        expect(legacyTransactionHasFees(tx as EvmTransactionLegacy)).toBe(true);
-      });
-
-      it("should return true for type 1 (unused in the live for now) tx with fees", () => {
-        const tx: Partial<EvmTransactionLegacy> = {
-          type: 1,
-          gasPrice: new BigNumber(100),
-        };
-
-        expect(legacyTransactionHasFees(tx as EvmTransactionLegacy)).toBe(true);
-      });
-
-      it("should return false for legacy tx without fees", () => {
-        const tx: Partial<EvmTransactionLegacy> = {
-          type: 0,
-        };
-
-        expect(legacyTransactionHasFees(tx as any)).toBe(false);
-      });
-
-      it("should return false for legacy tx with wrong fees", () => {
-        const tx: Partial<EvmTransactionEIP1559> = {
-          type: 2,
-          maxFeePerGas: new BigNumber(100),
-          maxPriorityFeePerGas: new BigNumber(100),
-        };
-
-        expect(legacyTransactionHasFees(tx as any)).toBe(false);
-      });
-
-      it("should return true for legacy tx with fees but no type (default being a legacy tx)", () => {
-        const tx: Partial<EvmTransactionLegacy> = {
-          gasPrice: new BigNumber(100),
-        };
-
-        expect(legacyTransactionHasFees(tx as any)).toBe(true);
-      });
-    });
-
-    describe("eip1559TransactionHasFess", () => {
-      it("should return true for 1559 tx with fees", () => {
-        const tx: Partial<EvmTransactionEIP1559> = {
-          type: 2,
-          maxFeePerGas: new BigNumber(100),
-          maxPriorityFeePerGas: new BigNumber(100),
-        };
-
-        expect(eip1559TransactionHasFees(tx as any)).toBe(true);
-      });
-
-      it("should return false for 1559 tx without fees", () => {
-        const tx: Partial<EvmTransactionEIP1559> = {
-          type: 2,
-        };
-
-        expect(eip1559TransactionHasFees(tx as any)).toBe(false);
-      });
-
-      it("should return false for 1559 tx with wrong fees", () => {
-        const tx: unknown = {
-          type: 2,
-          gasPrice: new BigNumber(100),
-        };
-
-        expect(eip1559TransactionHasFees(tx as any)).toBe(false);
-      });
-    });
-
     describe("getGasLimit", () => {
       it("should return the gasLimit when no customGasLimit provided", () => {
         const tx: Partial<EvmTransaction> = {
@@ -297,40 +200,6 @@ describe("EVM Family", () => {
         };
 
         expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
-      });
-    });
-
-    describe("getDefaultFeeUnit", () => {
-      it("should return the unit when currency has only one", () => {
-        const expectedUnit: Unit = {
-          name: "name",
-          code: "code",
-          magnitude: 18,
-        };
-
-        const currency: Partial<CryptoCurrency> = {
-          units: [expectedUnit],
-        };
-
-        expect(getDefaultFeeUnit(currency as CryptoCurrency)).toEqual(expectedUnit);
-      });
-
-      it("should return the second unit when currency has multiple", () => {
-        const expectedUnit: Unit = {
-          name: "name",
-          code: "code",
-          magnitude: 18,
-        };
-
-        const currency: Partial<CryptoCurrency> = {
-          units: [
-            { ...expectedUnit, name: "unit0" },
-            expectedUnit,
-            { ...expectedUnit, name: "unit2" },
-          ],
-        };
-
-        expect(getDefaultFeeUnit(currency as CryptoCurrency)).toEqual(expectedUnit);
       });
     });
 
@@ -649,285 +518,6 @@ describe("EVM Family", () => {
         const uniqueSet = new Set(hashes);
 
         expect(hashes).toEqual(Array.from(uniqueSet));
-      });
-    });
-
-    describe("attachOperations", () => {
-      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
-        setupMockCryptoAssetsStore({
-          findTokenByAddressInCurrency: async (
-            address: string,
-            currencyId: string,
-          ): Promise<TokenCurrency | undefined> => {
-            if (address === "0xTokenContract" && currencyId === "ethereum") {
-              return {
-                type: "TokenCurrency" as const,
-                id: "ethereum/erc20/usd__coin",
-                contractAddress: "0xTokenContract",
-                parentCurrency: getCryptoCurrencyById("ethereum"),
-                tokenType: "erc20",
-                name: "USD Coin",
-                ticker: "USDC",
-                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-              };
-            }
-            if (address === "0xOtherTokenContract" && currencyId === "ethereum") {
-              return {
-                type: "TokenCurrency" as const,
-                id: "ethereum/erc20/usd__coin",
-                contractAddress: "0xOtherTokenContract",
-                parentCurrency: getCryptoCurrencyById("ethereum"),
-                tokenType: "erc20",
-                name: "USD Coin",
-                ticker: "USDC",
-                units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-              };
-            }
-            return undefined;
-          },
-          getTokensSyncHash: async () => "0",
-        });
-        const coinOperation = makeOperation({
-          hash: "0xCoinOp3Hash",
-        });
-        const tokenAccountId =
-          coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
-        const tokenOperations = [
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "OUT",
-          }),
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(2),
-            type: "IN",
-          }),
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: "0xUnknownHash",
-            contract: "0xOtherTokenContract",
-            value: new BigNumber(2),
-            type: "IN",
-          }),
-        ];
-        const nftOperations = [
-          makeNftOperation({
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "NFT_OUT",
-          }),
-          makeNftOperation({
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(2),
-            type: "NFT_IN",
-          }),
-          makeNftOperation({
-            hash: "0xUnknownNftHash",
-            contract: "0xOtherNftTokenContract",
-            value: new BigNumber(2),
-            type: "NFT_IN",
-          }),
-        ];
-        const internalOperations = [
-          makeOperation({
-            accountId: coinOperation.accountId,
-            value: new BigNumber(5),
-            type: "OUT",
-            hash: coinOperation.hash,
-          }),
-        ];
-
-        expect(
-          await attachOperations(
-            [coinOperation],
-            tokenOperations,
-            nftOperations,
-            internalOperations,
-            {
-              blacklistedTokenIds: [],
-              findToken: async (contractAddress: string) =>
-                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
-            },
-          ),
-        ).toEqual([
-          {
-            ...coinOperation,
-            subOperations: [tokenOperations[0], tokenOperations[1]],
-            nftOperations: [nftOperations[0], nftOperations[1]],
-            internalOperations: [internalOperations[0]],
-          },
-          {
-            ...tokenOperations[2],
-            id: `js:2:ethereum:0xkvn:-${tokenOperations[2].hash}-NONE`,
-            type: "NONE",
-            value: new BigNumber(0),
-            fee: new BigNumber(0),
-            senders: [],
-            recipients: [],
-            nftOperations: [],
-            subOperations: [tokenOperations[2]],
-            internalOperations: [],
-            accountId: "",
-            contract: undefined,
-          },
-          {
-            ...nftOperations[2],
-            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE`,
-            type: "NONE",
-            value: new BigNumber(0),
-            fee: new BigNumber(0),
-            senders: [],
-            recipients: [],
-            nftOperations: [nftOperations[2]],
-            subOperations: [],
-            internalOperations: [],
-            accountId: "",
-            contract: undefined,
-          },
-        ]);
-      });
-
-      it("should not mutate the original operations", () => {
-        const coinOperations = deepFreeze([
-          makeOperation({
-            hash: "0xCoinOp3Hash",
-          }),
-        ]);
-        const tokenOperations = deepFreeze([
-          makeOperation({
-            hash: coinOperations[0].hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "OUT",
-          }),
-        ]);
-        const nftOperations = deepFreeze([
-          makeNftOperation({
-            hash: coinOperations[0].hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "NFT_OUT",
-          }),
-        ]);
-        const internalOperations = deepFreeze([
-          makeOperation({
-            hash: "0xCoinOpInternal",
-          }),
-        ]);
-        expect(() =>
-          attachOperations(
-            coinOperations as Operation[],
-            tokenOperations as Operation[],
-            nftOperations as Operation[],
-            internalOperations as Operation[],
-            {
-              blacklistedTokenIds: [],
-              findToken: async (contractAddress: string) =>
-                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
-            },
-          ),
-        ).not.toThrow(); // mutation prevented by deepFreeze method
-      });
-
-      it("should filter blacklisted tokens", async () => {
-        const coinOperation = makeOperation({
-          hash: "0xCoinOp3Hash",
-        });
-        const tokenAccountId =
-          coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
-        const tokenOperations = [
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "OUT",
-          }),
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(2),
-            type: "IN",
-          }),
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: "0xUnknownHash",
-            contract: "0xOtherTokenContract",
-            value: new BigNumber(2),
-            type: "IN",
-          }),
-        ];
-        const nftOperations = [
-          makeNftOperation({
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "NFT_OUT",
-          }),
-          makeNftOperation({
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(2),
-            type: "NFT_IN",
-          }),
-          makeNftOperation({
-            hash: "0xUnknownNftHash",
-            contract: "0xOtherNftTokenContract",
-            value: new BigNumber(2),
-            type: "NFT_IN",
-          }),
-        ];
-        const internalOperations = [
-          makeOperation({
-            accountId: coinOperation.accountId,
-            value: new BigNumber(5),
-            type: "OUT",
-            hash: coinOperation.hash,
-          }),
-        ];
-
-        expect(
-          await attachOperations(
-            [coinOperation],
-            tokenOperations,
-            nftOperations,
-            internalOperations,
-            {
-              blacklistedTokenIds: [USD_COIN_TOKEN.id],
-              findToken: async (contractAddress: string) =>
-                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
-            },
-          ),
-        ).toEqual([
-          {
-            ...coinOperation,
-            subOperations: [],
-            nftOperations: [nftOperations[0], nftOperations[1]],
-            internalOperations: [internalOperations[0]],
-          },
-          {
-            ...nftOperations[2],
-            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE`,
-            type: "NONE",
-            value: new BigNumber(0),
-            fee: new BigNumber(0),
-            senders: [],
-            recipients: [],
-            nftOperations: [nftOperations[2]],
-            subOperations: [],
-            internalOperations: [],
-            accountId: "",
-            contract: undefined,
-          },
-        ]);
       });
     });
 

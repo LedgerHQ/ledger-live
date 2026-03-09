@@ -23,9 +23,15 @@ export async function lastBlockV2(): Promise<BlockInfo> {
     hgraphClient.getLatestIndexedConsensusTimestamp(),
   ]);
 
-  // take the smaller of the two timestamps (mirror node vs hgraph) to ensure we only return blocks for which we have all data available
   const lastMirrorTimestamp = latestTransaction.consensus_timestamp;
-  const lastHgraphTimestamp = nanosToSeconds(latestHgraphTimestampNs);
+
+  // just like with mirror timestamp, we subtract one full block window from the hgraph timestamp
+  // without this, getBlock() re-fetches hgraph's latest timestamp independently and may find it has not advanced past the block's end boundary
+  const lastHgraphTimestamp = nanosToSeconds(latestHgraphTimestampNs).minus(
+    SYNTHETIC_BLOCK_WINDOW_SECONDS,
+  );
+
+  // take the smaller of the two timestamps (mirror node vs hgraph) to ensure we only return blocks for which we have all data available
   const consensusTimestamp = BigNumber.minimum(lastMirrorTimestamp, lastHgraphTimestamp).toFixed(9);
 
   const syntheticBlock = getSyntheticBlock(consensusTimestamp);

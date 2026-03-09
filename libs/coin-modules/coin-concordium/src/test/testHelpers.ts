@@ -90,12 +90,12 @@ export function createTestAccount(overrides?: Partial<Account>): Account {
     blockHeight: 0,
     currency: {
       type: "CryptoCurrency",
-      id: "concordium",
+      id: "concordium_testnet",
       coinType: 919,
       name: "Concordium",
       managerAppName: "Concordium",
       ticker: "CCD",
-      scheme: "concordium",
+      scheme: "concordium_testnet",
       color: "#000000",
       family: "concordium",
       units: [
@@ -159,7 +159,7 @@ export function createTestAccountRaw(
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    currencyId: "concordium",
+    currencyId: "concordium_testnet",
     balance: "0",
     spendableBalance: "0",
     lastSyncDate: new Date().toISOString(),
@@ -180,7 +180,7 @@ export function createTestConcordiumAccountRaw(
   overrides?: Partial<import("../types").ConcordiumAccountRaw>,
 ): import("../types").ConcordiumAccountRaw {
   return {
-    ...createTestAccountRaw({ currencyId: "concordium" }),
+    ...createTestAccountRaw({ currencyId: "concordium_testnet" }),
     concordiumResources: {
       isOnboarded: false,
       credId: "",
@@ -201,12 +201,12 @@ export function createTestCryptoCurrency(
 ): import("@ledgerhq/types-cryptoassets").CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "concordium",
+    id: "concordium_testnet",
     coinType: 919,
     name: "Concordium",
     managerAppName: "Concordium",
     ticker: "CCD",
-    scheme: "concordium",
+    scheme: "concordium_testnet",
     color: "#000000",
     family: "concordium",
     units: [
