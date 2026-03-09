@@ -1,5 +1,11 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.16.0-next.1
+
+### Minor Changes
+
+- [#15201](https://github.com/LedgerHQ/ledger-live/pull/15201) [`96415c0`](https://github.com/LedgerHQ/ledger-live/commit/96415c06aaf69381811987eb13cd00d1b59b4c4d) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
 ## 0.16.0-next.0
 
 ### Minor Changes
