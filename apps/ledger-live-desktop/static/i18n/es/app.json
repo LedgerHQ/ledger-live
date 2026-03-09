@@ -153,7 +153,8 @@
     "memoTag" : {
       "learnMore" : "Obtén más información acerca de las etiquetas y los memos"
     },
-    "memo" : "Memo"
+    "memo" : "Memo",
+    "stake" : "Participación"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -237,7 +238,7 @@
       },
       "cancel" : {
         "title" : "Cancelar",
-        "description" : "Enviando 0 {{ticker}} a tu propia dirección."
+        "description" : "Enviando 0 {{ticker}} a tu propia dirección. La cancelación no está garantizada. Si la red procesa tu transacción original antes de esta solicitud de cancelación, los fondos se enviarán igualmente al receptor."
       },
       "steps" : {
         "method" : {
@@ -308,6 +309,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "perps" : "Perpetuos",
+    "home" : "Inicio",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
     "catalog" : "Discover",
@@ -1751,7 +1753,8 @@
       "previousStakingNodeId" : "ID del nodo anterior",
       "gasConsumed" : "Gas consumido",
       "gasUsed" : "Gas usado",
-      "gasLimit" : "Límite de gas"
+      "gasLimit" : "Límite de gas",
+      "functionId" : "ID de función"
     }
   },
   "operationList" : {
@@ -1939,6 +1942,13 @@
       "updateBtn" : "Actualizar firmware",
       "installUpdate" : "Instalar actualización",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "Actualización del SO disponible",
+            "manager" : "Actualización de Ledger OS disponible"
+          },
+          "cta" : "Actualizar"
+        },
         "warning" : "Actualización del SO disponible",
         "version" : "Versión {{latestFirmware}}",
         "cta" : "Ir a Mi Ledger",
@@ -2144,6 +2154,24 @@
         "description" : "Tu operación se ha enviado a la red para su confirmación. Espera a que tu transacción se confirme y a que el proveedor la procese."
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "Conecta un dispositivo Ledger",
+    "subtitle" : "Conecta un dispositivo Ledger para aprovechar todo el potencial de tu Ledger Wallet.",
+    "0" : {
+      "title" : "Titularidad real",
+      "desc" : "Tus claves privadas nunca salen del dispositivo."
+    },
+    "1" : {
+      "title" : "Opera de forma segura",
+      "desc" : "Verifica las transacciones en una pantalla segura."
+    },
+    "2" : {
+      "title" : "Accede a la wallet más potente",
+      "desc" : "Gestiona miles de activos desde un mismo sitio."
+    },
+    "connectCTA" : "Conectar",
+    "buyCTA" : "Compra tu dispositivo Ledger"
   },
   "fund" : {
     "title" : "Agregar fondos",
@@ -2431,17 +2459,26 @@
       "confirm" : "Confirmar",
       "maxFee" : "Tarifa máxima ({{unit}})",
       "maxPriorityFee" : "Tarifa de prioridad máxima ({{unit}})",
-      "gasLimit" : "Limite de gas ({{unit}})",
       "feePerByte" : "Monto de la tarifa ({{unit}})",
       "suggested" : "Sugerida",
       "nextBlock" : "Siguiente bloque",
       "networkFeesInFiat" : "Tarifas de red en {{currency}}",
       "invalidValue" : "Ingresa un número válido",
       "belowMinimum" : "El mínimo es {{min}}",
-      "maxFeeBelowPriorityFee" : "La tarifa máxima debe ser mayor o igual que la tarifa de prioridad máxima"
+      "maxFeeBelowPriorityFee" : "La tarifa máxima debe ser mayor o igual que la tarifa de prioridad máxima",
+      "feeAsset" : "Activo sujeto a tarifa",
+      "feesAmount" : "Monto de la tarifa ({{unit}})",
+      "payFeesIn" : "Pagar tarifas en"
     },
     "coinControl" : {
-      "title" : "Control de monedas"
+      "title" : "Control de monedas",
+      "strategy" : "La estrategia ",
+      "learnMore" : "Más información",
+      "coinToSend" : "Monedas a enviar",
+      "changeToReturn" : "Cambio para devolver",
+      "enterAmount" : "Ingresar importe",
+      "amountToSendInCurrency" : "Monto a enviar en ({{ticker}})",
+      "amountInputLabel" : "Importe a enviar"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5053,7 @@
     }
   },
   "theme" : {
-    "system" : "Selecciona el tema del sistema",
+    "system" : "Sistema",
     "light" : "Claro",
     "dusk" : "Atardecer",
     "dark" : "Oscuro"
@@ -7307,6 +7344,50 @@
     "memoPlaceholder" : "Escribir etiqueta/memo",
     "memoWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Tarifa",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Cambiar delegación",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. ",
+      "changeCTA" : "Cambiar"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "commission" : "Comisión"
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -7528,7 +7609,8 @@
     },
     "selectAccount" : {
       "title" : "elige una cuenta",
-      "addAccount" : "Agregar cuenta nueva o existente"
+      "addAccount" : "Agregar cuenta nueva o existente",
+      "perpetualsBanner" : "Actualmente solo se admite con USDC en la cadena Arbitrum."
     }
   },
   "customImage" : {
@@ -7991,6 +8073,8 @@
     "title" : "Explorar mercado",
     "genericError" : "La conexión ha fallado",
     "cta" : "Ver todo",
+    "scrollLeft" : "Desplaza a la izquierda",
+    "scrollRight" : "Desplaza a la derecha",
     "fearAndGreed" : {
       "title" : "Sentimiento"
     }
@@ -8017,6 +8101,18 @@
     "connect" : "Conectar",
     "buyALedger" : "Compra un Ledger"
   },
+  "assets" : {
+    "cryptos" : "Cripto",
+    "stablecoins" : "Monedas estables",
+    "columns" : {
+      "name" : "Nombre",
+      "price" : "Precio",
+      "balance" : "Saldo",
+      "value" : "Valor",
+      "trend" : "Tendencia 1D",
+      "trendTooltip" : "Cambio de saldo en 24 horas"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
     "entry" : {
@@ -8029,12 +8125,7 @@
       "errorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Lista de cuentas afectadas: {{accounts}}. Pulsa para reintentar",
       "emptyErrorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Pulsa para reintentar",
       "upToDate" : "Estás al día",
-      "minutesAgo_one" : "Última sincronización: Hace {{count}} minuto. Pulsa para actualizar",
-      "minutesAgo_other" : "Última sincronización: Hace {{count}} minutos. Pulsa para actualizar",
-      "hoursAgo_one" : "Última sincronización: Hace {{count}} hora. Pulsa para actualizar",
-      "hoursAgo_other" : "Última sincronización: Hace {{count}} horas. Pulsa para actualizar",
-      "daysAgo_one" : "Última sincronización: Hace {{count}} día. Pulsa para actualizar",
-      "daysAgo_other" : "Última sincronización: Hace {{count}} días. Pulsa para actualizar"
+      "lastSync" : "Última sincronización: {{timeAgo}} Pulsa para actualizar"
     },
     "notificationIndicator" : {
       "tooltip" : "Notificaciones"
@@ -8174,5 +8265,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Error al actualizar, inténtalo de nuevo",
     "installAndRelaunch" : "Instalar actualización y ejecutar de nuevo"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Una visión más clara de tu portfolio",
+        "description" : "Consulta tu saldo total de un vistazo y pulsa \"Hoy\" para profundizar."
+      },
+      "navigation" : {
+        "title" : "Accede a las acciones clave más rápido",
+        "description" : "Acceso instantáneo a Permutas, Transferir y Comprar. Las opciones Earn y tu Tarjeta están en el menú de navegación inferior."
+      },
+      "actions" : {
+        "title" : "Observa las tendencias del mercado al instante",
+        "description" : "Visualiza rápidamente las tendencias actuales directamente en tu portfolio para pasar de los datos a la acción."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuar",
+      "explore" : "Explorar mi nuevo portfolio"
+    }
   }
 }
