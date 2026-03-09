@@ -58,8 +58,8 @@ describe("TransferDrawer Navigation", () => {
       screen: ScreenName.SendCoin,
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "quick_action_transfer",
-      flow: "send",
+      button: "send",
+      buttonLocation: "quick_action_transfer",
       page: SOURCE_SCREEN,
     });
   });
@@ -74,8 +74,8 @@ describe("TransferDrawer Navigation", () => {
       params: { manifestId: "noah" },
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "quick_action_transfer",
-      flow: "bank_transfer",
+      button: "bank_transfer",
+      buttonLocation: "quick_action_transfer",
       page: SOURCE_SCREEN,
     });
   });
@@ -88,8 +88,8 @@ describe("TransferDrawer Navigation", () => {
     expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "quick_action_transfer",
-      flow: "receive",
+      button: "receive",
+      buttonLocation: "quick_action_transfer",
       page: SOURCE_SCREEN,
     });
   });
