@@ -1,15 +1,13 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import { Button, Tag, Divider } from "@ledgerhq/lumen-ui-react";
 import { ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
 import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import type { FeatureId } from "@ledgerhq/types-live";
-
-/* eslint-disable i18next/no-literal-string */
+import { openURL } from "~/renderer/linking";
 
 const STORAGE_KEY = "hackathon.h1.securityScore.lastCheckIn";
-const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 const DEFAULT_SCORE = 75;
+const HEALTHY_SCORE = 100;
 const RESET_TAP_COUNT = 5;
 const RESET_TAP_WINDOW_MS = 3000;
 
@@ -21,32 +19,24 @@ function getStoredLastCheckIn(): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function computeScore(lastCheckIn: number | null): number {
-  if (!lastCheckIn) return DEFAULT_SCORE;
-  const weeksSinceCheckIn = Math.floor((Date.now() - lastCheckIn) / MS_PER_WEEK);
-  return Math.max(0, 100 - weeksSinceCheckIn);
-}
-
-function formatLastChecked(lastCheckIn: number | null): string {
-  if (!lastCheckIn) return "Last check-in: never";
+function formatStatusLabel(lastCheckIn: number | null): string {
+  if (!lastCheckIn) return "Token approvals review recommended";
   const days = Math.floor((Date.now() - lastCheckIn) / (24 * 60 * 60 * 1000));
-  if (days === 0) return "Last checked today";
-  if (days === 1) return "Last checked 1 day ago";
-  return `Last checked ${days} days ago`;
+  if (days === 0) return "Token approvals checked today";
+  if (days === 1) return "Token approvals checked 1 day ago";
+  return `Token approvals checked ${days} days ago`;
 }
 
 const SecurityScoreWidgetInner = () => {
-  const navigate = useNavigate();
   const [lastCheckIn, setLastCheckIn] = useState<number | null>(() => getStoredLastCheckIn());
-  const [showConfirmation, setShowConfirmation] = useState(false);
-
   const resetTaps = useRef<number[]>([]);
 
-  const score = useMemo(() => computeScore(lastCheckIn), [lastCheckIn]);
-  const lastCheckedLabel = useMemo(() => formatLastChecked(lastCheckIn), [lastCheckIn]);
+  const score = useMemo(() => (lastCheckIn ? HEALTHY_SCORE : DEFAULT_SCORE), [lastCheckIn]);
+  const statusLabel = useMemo(() => formatStatusLabel(lastCheckIn), [lastCheckIn]);
+  const isHealthy = score >= 80;
 
-  const tagAppearance = score >= 80 ? ("success" as const) : ("warning" as const);
-  const tagLabel = score >= 80 ? "Good" : "Check recommended";
+  const tagAppearance = isHealthy ? ("success" as const) : ("warning" as const);
+  const tagLabel = isHealthy ? "Good" : "Check recommended";
 
   const onCheckIn = useCallback(() => {
     const timestamp = Date.now();
@@ -54,13 +44,10 @@ const SecurityScoreWidgetInner = () => {
       window.localStorage.setItem(STORAGE_KEY, String(timestamp));
     }
     setLastCheckIn(timestamp);
-    setShowConfirmation(true);
-    setTimeout(() => setShowConfirmation(false), 3000);
+    openURL("ledgerlive://discover/revoke-cash");
+  }, []);
 
-    navigate("/platform/revoke-cash");
-  }, [navigate]);
-
-  const onCardAreaClick = useCallback(() => {
+  const onResetAreaClick = useCallback(() => {
     const now = Date.now();
     resetTaps.current = resetTaps.current.filter(t => now - t < RESET_TAP_WINDOW_MS);
     resetTaps.current.push(now);
@@ -70,20 +57,18 @@ const SecurityScoreWidgetInner = () => {
         window.localStorage.removeItem(STORAGE_KEY);
       }
       setLastCheckIn(null);
-      setShowConfirmation(false);
     }
   }, []);
 
   return (
     <div
       data-testid="portfolio-security-score-widget"
-      className="flex flex-col gap-12 rounded-xl border border-neutral-40 bg-surface p-16"
-      onClick={onCardAreaClick}
+      className="flex flex-col gap-12 rounded-xl border border-muted-subtle bg-surface p-16"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-8">
           <ShieldCheck size={20} />
-          <span className="text-body-semibold">Vault Health</span>
+          <span className="heading-5-semi-bold text-base">Vault Health</span>
         </div>
         <Tag size="sm" appearance={tagAppearance} label={tagLabel} />
       </div>
@@ -92,29 +77,38 @@ const SecurityScoreWidgetInner = () => {
 
       <div className="flex items-end justify-between">
         <div className="flex flex-col gap-4">
-          <span className="text-h2">{score}</span>
-          <span className="text-small text-neutral-70">{lastCheckedLabel}</span>
+          <span className="heading-3-semi-bold text-base">{score}</span>
+          <span className="body-2 text-muted">{statusLabel}</span>
         </div>
-        <Button
-          appearance="accent"
-          size="sm"
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            onCheckIn();
-          }}
+        <div
+          data-testid="portfolio-security-score-reset-area"
+          className="-m-8 p-8"
+          onClick={onResetAreaClick}
         >
-          Do security check-in
-        </Button>
+          <Button
+            appearance="accent"
+            size="sm"
+            data-testid="portfolio-security-score-cta"
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onCheckIn();
+            }}
+          >
+            Do security check-in
+          </Button>
+        </div>
       </div>
 
-      {showConfirmation && (
-        <div className="text-small text-success">Vault health improved. Well done!</div>
+      {lastCheckIn && (
+        <div className="body-2 text-success">
+          Vault health improved. Token approvals are in a healthier state.
+        </div>
       )}
     </div>
   );
 };
 
-const FEATURE_FLAG_ID = "hackathonEngagementH1SecurityScore" as FeatureId;
+const FEATURE_FLAG_ID: FeatureId = "feature_hackathon_engagement_h1_security_score";
 
 export const SecurityScoreWidget = () => (
   <FeatureToggle featureId={FEATURE_FLAG_ID}>

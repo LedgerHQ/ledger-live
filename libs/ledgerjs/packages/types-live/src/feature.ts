@@ -314,7 +314,7 @@ export type Features = CurrencyFeatures & {
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
-  hackathonEngagementH1SecurityScore: DefaultFeature;
+  feature_hackathon_engagement_h1_security_score: DefaultFeature;
 };
 
 /**

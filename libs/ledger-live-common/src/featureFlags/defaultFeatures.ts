@@ -840,7 +840,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  hackathonEngagementH1SecurityScore: {
+  feature_hackathon_engagement_h1_security_score: {
     ...DEFAULT_FEATURE,
     enabled: false,
   },
