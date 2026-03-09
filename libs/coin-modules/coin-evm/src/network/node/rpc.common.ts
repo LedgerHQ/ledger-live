@@ -21,6 +21,7 @@ import {
   PrefetchedBlockTransaction,
   LogWithAddress,
   TransactionReceipt,
+  TraceBlockItem,
 } from "./types";
 
 /**
@@ -399,6 +400,66 @@ export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> =
     });
   });
 
+/**
+ * Get execution traces for a block via trace_block RPC.
+ * Not supported by all RPC providers (e.g. Fantom supports it).
+ * @see https://www.quicknode.com/docs/ethereum/trace_block
+ */
+export const traceBlock: Exclude<NodeApi["traceBlock"], undefined> = (
+  currency,
+  blockHeight = "latest",
+) =>
+  withApi(currency, async api => {
+    const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+    let traces: unknown;
+    try {
+      traces = await api.send("trace_block", [blockTag]);
+    } catch (error) {
+      if (isUnsupportedRpcMethodError(error)) {
+        throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
+          method: "trace_block",
+          rawError: error,
+        });
+      }
+      throw error;
+    }
+
+    if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
+
+    return traces.map((trace, index) => {
+      if (!isTraceBlockItem(trace)) {
+        throw new Error(`Malformed trace_block response at index ${index}`);
+      }
+      return trace;
+    });
+  });
+
+function isTraceBlockItem(value: unknown): value is TraceBlockItem {
+  if (typeof value !== "object" || value === null) return false;
+  const o = value as Record<string, unknown>;
+  if (!o.action || typeof o.action !== "object") return false;
+  const action = o.action as Record<string, unknown>;
+  return (
+    typeof action.from === "string" &&
+    typeof action.to === "string" &&
+    typeof action.callType === "string" &&
+    typeof action.gas === "string" &&
+    typeof action.input === "string" &&
+    typeof action.value === "string" &&
+    typeof o.result === "object" &&
+    o.result !== null &&
+    typeof (o.result as Record<string, unknown>).gasUsed === "string" &&
+    typeof (o.result as Record<string, unknown>).output === "string" &&
+    typeof o.blockHash === "string" &&
+    typeof o.blockNumber === "number" &&
+    typeof o.transactionHash === "string" &&
+    typeof o.transactionPosition === "number" &&
+    Array.isArray(o.traceAddress) &&
+    typeof o.subtraces === "number" &&
+    typeof o.type === "string"
+  );
+}
+
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
   return (
     typeof value === "object" &&
@@ -537,6 +598,7 @@ const node: NodeApi = {
   getTransactionCount,
   getTransaction,
   getBlockReceipts,
+  traceBlock,
   getGasEstimation,
   getFeeData,
   broadcastTransaction,

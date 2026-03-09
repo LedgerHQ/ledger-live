@@ -34,6 +34,43 @@ export type LogWithAddress = {
   data: string;
 };
 
+/**
+ * Action part of a trace_block trace item (OpenEthereum/Erigon trace API).
+ * @see https://www.quicknode.com/docs/ethereum/trace_block
+ */
+export type TraceBlockAction = {
+  from: string;
+  to: string;
+  callType: string;
+  gas: string;
+  input: string;
+  value: string;
+};
+
+/**
+ * Result part of a trace_block trace item.
+ */
+export type TraceBlockResult = {
+  gasUsed: string;
+  output: string;
+  error?: string;
+};
+
+/**
+ * Single trace entry returned by trace_block RPC.
+ */
+export type TraceBlockItem = {
+  action: TraceBlockAction;
+  result: TraceBlockResult;
+  blockHash: string;
+  blockNumber: number;
+  transactionHash: string;
+  transactionPosition: number;
+  traceAddress: number[];
+  subtraces: number;
+  type: string;
+};
+
 /** A transaction receipt as returned by a RPC node. */
 export type TransactionReceipt = {
   transactionHash: string;
@@ -108,6 +145,10 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
+  traceBlock?: (
+    currency: CryptoCurrency,
+    blockHeight: number | "latest",
+  ) => Promise<TraceBlockItem[]>;
   getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
   getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };

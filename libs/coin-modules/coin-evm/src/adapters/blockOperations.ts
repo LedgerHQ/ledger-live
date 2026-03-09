@@ -3,7 +3,7 @@ import type {
   BlockOperation,
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
-import { TransactionInfo } from "../network/node/types";
+import { TransactionInfo, TraceBlockItem } from "../network/node/types";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 
@@ -71,6 +71,41 @@ export function rpcTransactionToBlockOperations(
   }
 
   return operations;
+}
+
+/**
+ * Converts trace_block items to BlockOperations grouped by transaction hash.
+ * Only includes internal calls with native value transfer (value > 0) and no error.
+ */
+export function traceBlockItemsToOperationsByHash(
+  items: TraceBlockItem[],
+): Map<string, BlockOperation[]> {
+  const byHash = new Map<string, BlockOperation[]>();
+
+  for (const item of items) {
+    const { action, result } = item;
+    if (result.error) continue;
+
+    const value = BigInt(action.value);
+    if (value === 0n) continue;
+
+    const from = action.from || null;
+    const to = action.to || undefined;
+    if (!from && !to) continue;
+
+    const ops: BlockOperation[] = [];
+    addTransferOperations(ops, from, to, { type: "native" }, value);
+
+    const hash = item.transactionHash;
+    let arr = byHash.get(hash);
+    if (arr === undefined) {
+      arr = [];
+      byHash.set(hash, arr);
+    }
+    arr.push(...ops);
+  }
+
+  return byHash;
 }
 
 export function ledgerTransactionToBlockOperations(

@@ -85,6 +85,7 @@ const EMPTY_RESULT: Readonly<EndpointResult> = {
 export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
   retries = DEFAULT_RETRIES_API,
+  messageIsAnError = ["NOTOK"],
 ): Promise<T> {
   try {
     const { data } = await axios.request<{
@@ -93,7 +94,7 @@ export async function fetchWithRetries<T>(
       result: T;
     }>(params);
 
-    if (!Number(data.status) && data.message === "NOTOK") {
+    if (!Number(data.status) && messageIsAnError.includes(data.message)) {
       throw new EtherscanAPIError("Error while fetching data from Etherscan like API", {
         params,
         data,
@@ -519,9 +520,6 @@ export async function getInternalTransactionsByBlock(
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     return [];
   }
-  if (explorer.type !== "etherscan" && explorer.type !== "blockscout") {
-    return [];
-  }
 
   const PAGE_SIZE = 10000;
   const allOps: EtherscanInternalTransaction[] = [];
@@ -542,6 +540,13 @@ export async function getInternalTransactionsByBlock(
         }),
       },
       0, // do not retry on error
+      [
+        // blockscout can respond `{"message":"No internal transactions found","result":[],"status":"0"}`
+        // even though there are internal transactions that could be fetched otherwise !
+        "No internal transactions found",
+        // this is the common error message for all etherscan like explorers
+        "NOTOK",
+      ],
     );
 
     const ops = Array.isArray(raw) ? raw : [];

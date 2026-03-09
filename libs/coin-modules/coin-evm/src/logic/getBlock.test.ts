@@ -228,7 +228,15 @@ describe("getBlock", () => {
   });
 
   it("merges internal transactions from explorer into block transactions", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce({
@@ -307,8 +315,16 @@ describe("getBlock", () => {
     );
   });
 
-  it("fails when getInternalTransactionsByBlock fails", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+  it("when getInternalTransactionsByBlock fails and traceBlock is undefined, returns block with no internal transactions", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     mockGetNodeApi.mockReturnValue({
@@ -317,15 +333,117 @@ describe("getBlock", () => {
         height: 12345,
         timestamp: Date.now(),
         parentHash: "0xparent",
-        transactions: [],
+        transactions: [
+          {
+            hash: "0xtx1",
+            value: "0",
+            from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+          },
+        ],
       }),
-      getBlockReceipts: jest.fn().mockResolvedValue([]),
+      getBlockReceipts: jest.fn().mockResolvedValue([
+        {
+          hash: "0xtx1",
+          gasUsed: "21000",
+          gasPrice: "20000000000",
+          status: 1,
+          erc20Transfers: [],
+        },
+      ]),
       getTransaction: jest.fn(),
     } as any);
 
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
     mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
 
-    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow("explorer error");
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toHaveLength(0);
+  });
+
+  it("when getInternalTransactionsByBlock fails and traceBlock is defined, falls back to traceBlock for internal transactions", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const from = "0x224d8fd7ab6ad4c6eb4611ce56ef35dec2277f03";
+    const to = "0x9f41fe989c556d8b312ce398b7f7b5ac90919a73";
+    const amount = 240000481795678944n;
+    const traceBlockItem = {
+      action: { from, to, callType: "call", gas: "21000", input: "0x", value: amount.toString() },
+      result: { gasUsed: "0", output: "0x" },
+      blockHash: "0xabc",
+      blockNumber: 12345,
+      transactionHash: "0xtx1",
+      transactionPosition: 0,
+      traceAddress: [0],
+      subtraces: 0,
+      type: "call",
+    };
+
+    const mockTraceBlock = jest.fn().mockResolvedValue([traceBlockItem]);
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValue({
+        hash: "0xabc",
+        height: 12345,
+        timestamp: Date.now(),
+        parentHash: "0xparent",
+        transactions: [
+          {
+            hash: "0xtx1",
+            value: "0",
+            from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+          },
+        ],
+      }),
+      getBlockReceipts: jest.fn().mockResolvedValue([
+        {
+          hash: "0xtx1",
+          gasUsed: "21000",
+          gasPrice: "20000000000",
+          status: 1,
+          erc20Transfers: [],
+        },
+      ]),
+      getTransaction: jest.fn(),
+      traceBlock: mockTraceBlock,
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
+    const encodedFrom = safeEncodeEIP55(from);
+    const encodedTo = safeEncodeEIP55(to);
+    expect(result.transactions[0].operations).toContainEqual(
+      expect.objectContaining({
+        type: "transfer",
+        address: encodedFrom,
+        peer: encodedTo,
+        asset: { type: "native" },
+        amount: -amount,
+      }),
+    );
+    expect(result.transactions[0].operations).toContainEqual(
+      expect.objectContaining({
+        type: "transfer",
+        address: encodedTo,
+        peer: encodedFrom,
+        asset: { type: "native" },
+        amount: amount,
+      }),
+    );
   });
 });
