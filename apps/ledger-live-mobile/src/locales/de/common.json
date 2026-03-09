@@ -10,6 +10,9 @@
     "seeAll" : "Alles anzeigen",
     "seeAllWithNumber" : "Alle anzeigen ({{number}})",
     "back" : "Zurück",
+    "fee" : "Gebühr",
+    "stake" : "Staken",
+    "validator" : "Validator",
     "delete" : "Löschen",
     "paste" : "Einfügen",
     "yes" : "Ja",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Aktualisierung – Letzte Aktualisierung {{timeAgo}}",
+      "refreshingInitial" : "Wird neu geladen...",
+      "upToDate" : "Du bist auf dem aktuellen Stand"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "Abbrechen",
-      "description" : "Sendet 0 {{ticker}} an deine eigene Adresse."
+      "description" : "Es werden 0 {{ticker}} an deine eigene Adresse gesendet. Eine Stornierung kann nicht garantiert werden. Wenn das Netzwerk deine ursprüngliche Transaktion vor diesem Stornierungsantrag verarbeitet, werden die Assets trotzdem an den Empfänger überwiesen."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da dein Konto nicht genügend Guthaben aufweist.",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Betriebssystem-Update verfügbar",
+          "manager" : "Update für Ledger OS verfügbar"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Aktualisieren"
+      },
       "title" : "Betriebssystem-Update verfügbar",
       "descriptionDeviceName" : "Tippe hier, um {{deviceName}} auf Betriebssystemversion {{firmwareVersion}} zu aktualisieren.",
       "descriptionProductName" : "Tippe hier, um dein {{productName}}-Gerät auf Betriebssystemversion {{firmwareVersion}} zu aktualisieren."
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "Du musst zuerst mindestens 0,1 TRX an diese Adresse senden, um sie zu aktivieren."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse kopiert!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Erneut delegieren",
+      "earn" : "Verdienen"
+    },
+    "stakeBanner" : {
+      "title" : "Mit MINA Prämien verdienen",
+      "altTitle" : "Deine MINA-Delegation verwalten",
+      "description" : "Delegiere deine MINA an einen Blockproduzenten und verdiene Prämien aus der Blockproduktion. Die Prämien werden je nach Delegationsbetrag berechnet.",
+      "altDescription" : "Ändere deine Delegierungseinstellungen oder hebe die Delegierung deiner MINA-Token auf. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "delegiert an",
+      "stakedBalance" : "Kontostand gestaked",
+      "producerAddress" : "Produzentenadresse",
+      "delegatedToTooltip" : "Name des Blockproduzenten, an den du delegierst",
+      "stakedBalanceTooltip" : "MINA-Gesamtbetrag, der zurzeit bei diesem Validator gestaket ist",
+      "producerAddressTooltip" : "Öffentliche Adresse des Blockproduzenten, an den du delegierst"
+    },
+    "delegators" : "Delegatoren",
+    "memoPlaceholder" : "Optionales Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Validator auswählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "confirmation" : "Bestätigung"
+      },
+      "title" : "MINA staken",
+      "help" : "Wähle in der nachstehenden Liste einen Validator aus, um deine MINA-Token zu delegieren.",
+      "success" : {
+        "title" : "Transaktion erfolgreich übertragen",
+        "description" : "Dein Antrag auf Delegationsänderung wurde übertragen."
+      },
+      "error" : {
+        "title" : "Beim Übertragen der Transaktion ist ein Fehler aufgetreten"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "showAll" : "Alle anzeigen",
+      "showLess" : "Weniger anzeigen",
+      "iDelegate" : "Ich delegiere"
+    }
+  },
   "stellar" : {
     "token" : "Vermögenswerte",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Optionales Memo"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "Schütze deine Assets und entwickle dich weiter.",
       "buttonLabel" : "Schaue, was als nächstes kommt"
     },
+    "widget" : {
+      "title" : "Schließe nun die Wallet-Einrichtung ab",
+      "subtitle" : "Beginne mit Einzahlungen in deine Wallet."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Ledger-Gerät einrichten"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "Keine Assets gefunden",
     "accountCount_one" : "{{count}} Konto",
     "accountCount_other" : "{{count}} Konten",
+    "perpetualsBanner" : "Derzeit nur mit USD Coin (USDC) auf der Arbitrum-Chain unterstützt.",
     "errors" : {
       "title" : "Verbindung fehlgeschlagen",
       "backend" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal.",
