@@ -143,7 +143,7 @@ describe("createUnsignedSendTransaction", () => {
 
   it("should set created_at_time with current timestamp in nanoseconds", () => {
     const now = 1700000000000;
-    jest.spyOn(Date.prototype, "getTime").mockReturnValue(now);
+    const dateSpy = jest.spyOn(Date, "now").mockReturnValue(now);
 
     const { transferRawRequest } = createUnsignedSendTransaction(
       { recipient: validRecipient, amount: BigInt(100) },
@@ -151,9 +151,9 @@ describe("createUnsignedSendTransaction", () => {
     );
 
     expect(transferRawRequest.created_at_time).toEqual([
-      { timestamp_nanos: BigInt(now * 1000000) },
+      { timestamp_nanos: BigInt(now) * 1_000_000n },
     ]);
 
-    jest.restoreAllMocks();
+    dateSpy.mockRestore();
   });
 });

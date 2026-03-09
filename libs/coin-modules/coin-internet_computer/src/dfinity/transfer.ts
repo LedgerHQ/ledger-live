@@ -63,7 +63,7 @@ export const createUnsignedSendTransaction = (
     amount: { e8s: BigInt(transaction.amount.toString()) },
     memo: BigInt(transaction.memo ?? 0),
     fee: { e8s: BigInt(ICP_FEES) },
-    created_at_time: [{ timestamp_nanos: BigInt(new Date().getTime() * 1000000) }],
+    created_at_time: [{ timestamp_nanos: BigInt(Date.now()) * 1_000_000n }],
     from_subaccount: [],
   };
 
