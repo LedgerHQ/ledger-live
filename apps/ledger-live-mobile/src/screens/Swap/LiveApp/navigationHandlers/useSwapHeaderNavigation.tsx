@@ -10,6 +10,7 @@ import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
 import { useIsSwapTab } from "./useIsSwapTab";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 function getScreenTitle({
   webviewCurrentPage,
@@ -40,6 +41,7 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
   const navigation = useNavigation();
   const { t } = useTranslation();
   const track = useTrack();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const { isSwapTabScreen, swapTabScreen } = useIsSwapTab();
 
@@ -50,10 +52,15 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
       swapVersion: SWAP_VERSION,
     });
 
-    navigation.navigate(NavigatorName.SwapSubScreens, {
-      screen: ScreenName.SwapHistory,
-    });
-  }, [navigation, track]);
+    if (shouldDisplayWallet40MainNav) {
+      navigation.navigate(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapHistory,
+      });
+      return;
+    }
+
+    navigation.navigate(ScreenName.SwapHistory);
+  }, [navigation, shouldDisplayWallet40MainNav, track]);
 
   const goBackWebView = useCallback(
     (currentWebviewPage?: SwapWebviewAllowedPageNames) => {

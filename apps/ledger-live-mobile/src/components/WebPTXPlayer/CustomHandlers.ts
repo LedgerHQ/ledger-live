@@ -361,13 +361,16 @@ export function useCustomExchangeHandlers({
 
                   if (result.error) {
                     onCancel(result.error);
-
-                    navigation.navigate(NavigatorName.SwapSubScreens, {
-                      screen: ScreenName.SwapCustomError,
-                      params: {
-                        error: result.error,
-                      },
-                    });
+                    if (onCompleteError) {
+                      onCompleteError(result.error);
+                    } else {
+                      navigation.navigate(NavigatorName.SwapSubScreens, {
+                        screen: ScreenName.SwapCustomError,
+                        params: {
+                          error: result.error,
+                        },
+                      });
+                    }
                   }
 
                   if (result.operation) {
@@ -387,12 +390,16 @@ export function useCustomExchangeHandlers({
               navigation.pop();
             }
 
-            navigation.navigate(NavigatorName.SwapSubScreens, {
-              screen: ScreenName.SwapCustomError,
-              params: {
-                error: error ?? unknownSwapError,
-              },
-            });
+            if (onCompleteError) {
+              onCompleteError(error ?? unknownSwapError);
+            } else {
+              navigation.navigate(NavigatorName.SwapSubScreens, {
+                screen: ScreenName.SwapCustomError,
+                params: {
+                  error: error ?? unknownSwapError,
+                },
+              });
+            }
           },
           "custom.isReady": async () => {
             if (Config.DETOX) {
