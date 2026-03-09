@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { runSwapCheckProvider } from "./swap.other";
+import { runSwapDexNativeFlow } from "./swapDexNativeFlow";
 
 const swapCheckProviderTestConfig = {
   fromAccount: Account.ETH_1,
@@ -10,7 +10,7 @@ const swapCheckProviderTestConfig = {
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 
-runSwapCheckProvider(
+runSwapDexNativeFlow(
   swapCheckProviderTestConfig.fromAccount,
   swapCheckProviderTestConfig.toAccount,
   swapCheckProviderTestConfig.provider,

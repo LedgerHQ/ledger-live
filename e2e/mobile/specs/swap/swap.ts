@@ -1,32 +1,15 @@
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
-import { swapSetup, waitSwapReady } from "../../bridge/server";
 import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { beforeAllFunctionSwap } from "./swap.setup";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 const beforeAllFunction = async (swap: SwapType) => {
   await app.speculos.setExchangeDependencies(swap);
-  await app.init({
+  await beforeAllFunctionSwap({
     speculosApp: AppInfos.EXCHANGE,
-    featureFlags: {
-      ptxSwapLiveAppMobile: {
-        enabled: true,
-        params: {
-          manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
-        },
-      },
-      llmAnalyticsOptInPrompt: {
-        enabled: true,
-        params: {
-          variant: ABTestingVariants.variantA,
-          entryPoints: [],
-        },
-      },
-    },
     cliCommandsOnApp: [
       {
         app: swap.accountToDebit.currency.speculosApp,
@@ -77,11 +60,6 @@ const beforeAllFunction = async (swap: SwapType) => {
       },
     ],
   });
-  await app.portfolio.waitForPortfolioPageToLoad();
-  const readyPromise = waitSwapReady();
-  await app.swap.openViaDeeplink();
-  await swapSetup();
-  await readyPromise;
 };
 
 export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) {
