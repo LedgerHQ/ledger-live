@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -151,6 +151,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@types/node": "catalog:",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",

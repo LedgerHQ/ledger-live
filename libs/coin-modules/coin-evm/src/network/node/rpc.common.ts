@@ -5,16 +5,23 @@ import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { ethers, JsonRpcProvider, Log } from "ethers";
+import { ethers, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { getCoinConfig } from "../../config";
-import { GasEstimationError, InsufficientFunds } from "../../errors";
-import { getSerializedTransaction } from "../../transaction";
+import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
-import { NodeApi, isExternalNodeConfig, ERC20Transfer } from "./types";
+import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
+import {
+  NodeApi,
+  isExternalNodeConfig,
+  ERC20Transfer,
+  PrefetchedBlockTransaction,
+  LogWithAddress,
+  TransactionReceipt,
+} from "./types";
 
 /**
  * ERC20 Transfer event topic: keccak256("Transfer(address,address,uint256)")
@@ -43,7 +50,7 @@ export const ERC20_TRANSFER_TOPIC =
  * @param logs - Array of logs from transaction receipt
  * @returns Array of parsed ERC20 transfers
  */
-export function parseERC20TransfersFromLogs(logs: ReadonlyArray<Log>): ERC20Transfer[] {
+export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>): ERC20Transfer[] {
   return logs
     .filter(
       log =>
@@ -283,7 +290,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, 
         const { hash } = await api.broadcastTransaction(signedTxHex);
         return hash;
       } catch (e) {
-        if ((e as Error & { code: string }).code === "INSUFFICIENT_FUNDS") {
+        if (hasErrorCode(e, "INSUFFICIENT_FUNDS")) {
           log("error", "EVM Family: Wrong estimation of fees", e);
           throw new InsufficientFunds();
         }
@@ -296,9 +303,13 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, 
 /**
  * Get the informations about a block by block height
  */
-export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHeight = "latest") =>
+export const getBlockByHeight: NodeApi["getBlockByHeight"] = (
+  currency,
+  blockHeight = "latest",
+  prefetchTxs = false,
+) =>
   withApi(currency, async api => {
-    const block = await api.getBlock(blockHeight);
+    const block = await api.getBlock(blockHeight, prefetchTxs);
 
     if (!block) {
       throw new Error(`Block ${blockHeight} not found`);
@@ -308,7 +319,32 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
       throw new Error(`Block ${blockHeight} is missing hash`);
     }
 
-    const transactionHashes = block.transactions as string[] | undefined;
+    const transactionHashes =
+      block.transactions === undefined
+        ? undefined
+        : block.transactions.map((tx, index) => {
+            if (typeof tx !== "string") {
+              throw new TypeError(
+                `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
+              );
+            }
+            return tx;
+          });
+
+    const prefetchedTransactions = prefetchTxs ? getPrefetchedBlockTransactions(block) : undefined;
+    const transactions = prefetchedTransactions?.map((tx, index) => {
+      if (!isPrefetchedBlockTransaction(tx))
+        throw new Error(
+          `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
+        );
+
+      return {
+        hash: tx.hash,
+        value: tx.value.toString(),
+        from: tx.from,
+        to: tx.to ?? undefined,
+      };
+    });
 
     return {
       hash: block.hash,
@@ -316,9 +352,94 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
       // timestamp is returned in seconds by getBlock, we need milliseconds
       timestamp: block.timestamp * 1000,
       parentHash: block.parentHash,
+      ...(transactions !== undefined && { transactions }),
       ...(transactionHashes !== undefined && { transactionHashes }),
     };
   });
+
+/**
+ * Get all transaction receipts for a block in one RPC call.
+ * This method is not supported by all RPC providers.
+ */
+export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> = (
+  currency,
+  blockHeight = "latest",
+) =>
+  withApi(currency, async api => {
+    const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+    let receipts: unknown;
+    try {
+      receipts = await api.send("eth_getBlockReceipts", [blockTag]);
+    } catch (error) {
+      if (isUnsupportedRpcMethodError(error)) {
+        throw new UnsupportedRpcMethodError(
+          "eth_getBlockReceipts is not supported by this RPC provider",
+          {
+            method: "eth_getBlockReceipts",
+            rawError: error,
+          },
+        );
+      }
+      throw error;
+    }
+
+    if (!Array.isArray(receipts)) throw new Error("Invalid eth_getBlockReceipts response");
+
+    return receipts.map((receipt, index) => {
+      if (!isTransactionReceipt(receipt))
+        throw new Error(`Malformed eth_getBlockReceipts response at index ${index}`);
+
+      return {
+        hash: receipt.transactionHash,
+        gasUsed: BigInt(receipt.gasUsed).toString(),
+        gasPrice: BigInt(receipt.effectiveGasPrice ?? receipt.gasPrice ?? "0x0").toString(),
+        status: receipt.status === null ? null : Number(receipt.status),
+        erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
+      };
+    });
+  });
+
+function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "hash" in value &&
+    "value" in value &&
+    "from" in value &&
+    ("to" in value
+      ? typeof value.to === "string" || value.to === null || value.to === undefined
+      : true) &&
+    typeof value.hash === "string" &&
+    typeof value.value === "bigint" &&
+    typeof value.from === "string"
+  );
+}
+
+function getPrefetchedBlockTransactions(block: ethers.Block): unknown[] | undefined {
+  try {
+    return block.prefetchedTransactions;
+  } catch (error) {
+    // Ethers throws UNSUPPORTED_OPERATION when the block payload does not include tx objects.
+    if (hasErrorCode(error, "UNSUPPORTED_OPERATION")) {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+function isTransactionReceipt(value: unknown): value is TransactionReceipt {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "transactionHash" in value &&
+    "gasUsed" in value &&
+    "status" in value &&
+    "logs" in value &&
+    typeof value.transactionHash === "string" &&
+    typeof value.gasUsed === "string" &&
+    Array.isArray(value.logs)
+  );
+}
 
 /**
  * ⚠️ Blockchain specific
@@ -346,25 +467,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       }
 
       // Fake signature is added to get the best approximation possible for the gas on L1
-      const serializedTransaction =
-        typeof transaction === "string"
-          ? transaction
-          : ((): string | null => {
-              try {
-                return getSerializedTransaction(transaction, {
-                  r: "0xffffffffffffffffffffffffffffffffffffffff",
-                  s: "0xffffffffffffffffffffffffffffffffffffffff",
-                  v: 27,
-                });
-              } catch (error) /* istanbul ignore next: just logs */ {
-                log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", {
-                  error,
-                });
-                return null;
-              }
-            })();
-
-      if (!serializedTransaction) {
+      if (!transaction) {
         return new BigNumber(0);
       }
 
@@ -375,22 +478,11 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
         OptimismGasPriceOracleAbi,
         api,
       );
-      const additionalL1Fees = await optimismGasOracle.getL1Fee(serializedTransaction);
+      const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
       return new BigNumber(additionalL1Fees.toString());
     }),
   (currency, transaction) => {
-    const serializedTransaction =
-      typeof transaction === "string"
-        ? transaction
-        : ((): string | null => {
-            try {
-              return getSerializedTransaction(transaction);
-            } catch {
-              return null;
-            }
-          })();
-
-    return "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction;
+    return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
   },
   { ttl: 15 * 1000 }, // preventing rate limit by caching this for at least 15sec
 );
@@ -413,24 +505,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
       return new BigNumber(0);
     }
 
-    // Fake signature is added to get the best approximation possible for the gas on L1
-    const serializedTransaction =
-      typeof transaction === "string"
-        ? transaction
-        : ((): string | null => {
-            try {
-              return getSerializedTransaction(transaction, {
-                r: "0xffffffffffffffffffffffffffffffffffffffff",
-                s: "0xffffffffffffffffffffffffffffffffffffffff",
-                v: 27,
-              });
-            } catch (error) /* istanbul ignore next: just logs */ {
-              log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
-              return null;
-            }
-          })();
-
-    if (!serializedTransaction) {
+    if (!transaction) {
       return new BigNumber(0);
     }
 
@@ -441,7 +516,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
       ScrollGasPriceOracleAbi,
       api,
     );
-    const additionalL1Fees = await scrollGasOracle.getL1Fee(serializedTransaction);
+    const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
     return new BigNumber(additionalL1Fees.toString());
   });
 
@@ -461,6 +536,7 @@ const node: NodeApi = {
   getTokenBalance,
   getTransactionCount,
   getTransaction,
+  getBlockReceipts,
   getGasEstimation,
   getFeeData,
   broadcastTransaction,

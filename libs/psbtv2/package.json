@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/psbtv2",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Partially Signed Bitcoin Transaction version 2 (BIP370) implementation",
   "keywords": [
     "Ledger",
@@ -56,12 +56,12 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
-    "typescript": "^5.4.3"
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

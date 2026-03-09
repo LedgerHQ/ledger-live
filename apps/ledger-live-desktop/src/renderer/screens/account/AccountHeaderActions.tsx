@@ -263,11 +263,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         state: {
           currency: currency?.id,
           account: mainAccount?.id,
-          mode, // buy or sell
+          mode,
+          returnTo: location.pathname,
         },
       });
     },
-    [currency, navigate, mainAccount.id, buttonSharedTrackingFields],
+    [currency, navigate, mainAccount.id, buttonSharedTrackingFields, location.pathname],
   );
 
   const onSwap = useCallback(() => {

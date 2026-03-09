@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-evm",
-  "version": "1.17.0",
+  "version": "1.17.2",
   "description": "Ledger EVM Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -81,6 +81,6 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "catalog:"
   }
 }

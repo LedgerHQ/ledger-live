@@ -1,23 +1,23 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
+import coinConfig from "../config";
 import {
-  getConcordiumNetwork,
   buildSubmitCredentialData,
   deserializeCredentialDeploymentTransaction,
 } from "../network/utils";
 import { getWalletConnect } from "../network/walletConnect";
 import { getPublicKey, signCredentialDeployment } from "../signer";
-import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import type {
-  ConcordiumSigner,
-  ConcordiumOnboardProgress,
-  ConcordiumOnboardResult,
-  ConcordiumPairingProgress,
+import {
+  type ConcordiumSigner,
+  type ConcordiumOnboardProgress,
+  type ConcordiumOnboardResult,
+  type ConcordiumPairingProgress,
+  AccountOnboardStatus,
+  ConcordiumPairingStatus,
 } from "../types";
 import { submitCredential } from "../network/proxyClient";
 
@@ -43,7 +43,7 @@ const withTimeout = <T>(promise: Promise<T>, errorMessage: string): Promise<T> =
 export const buildOnboardAccount =
   (signerContext: SignerContext<ConcordiumSigner>) =>
   (
-    currency: CryptoCurrency,
+    currencyId: string,
     deviceId: string,
     account: Account,
   ): Observable<ConcordiumOnboardProgress | ConcordiumOnboardResult> =>
@@ -63,7 +63,7 @@ export const buildOnboardAccount =
 
           o.next({ status: AccountOnboardStatus.PREPARE });
 
-          const network = getConcordiumNetwork(currency);
+          const network = coinConfig.getCoinConfig(currencyId).networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const session = await walletConnect.getSession(network);
@@ -123,7 +123,7 @@ export const buildOnboardAccount =
 
           const data = buildSubmitCredentialData(credentialDeploymentTransaction, signature);
 
-          await submitCredential(currency, data);
+          await submitCredential(currencyId, data);
 
           const onboardResult: ConcordiumOnboardResult = {
             account: {
@@ -171,7 +171,7 @@ export const buildOnboardAccount =
 
 export const buildPairWalletConnect =
   () =>
-  (currency: CryptoCurrency, _deviceId: string): Observable<ConcordiumPairingProgress> =>
+  (currencyId: string, _deviceId: string): Observable<ConcordiumPairingProgress> =>
     new Observable(o => {
       async function main() {
         o.next({ status: ConcordiumPairingStatus.INIT });
@@ -182,7 +182,7 @@ export const buildPairWalletConnect =
             throw new Error("WalletConnect context is not available");
           }
 
-          const network = getConcordiumNetwork(currency);
+          const network = coinConfig.getCoinConfig(currencyId).networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const { uri: encodedUri, approval } = await walletConnect.initiatePairing(

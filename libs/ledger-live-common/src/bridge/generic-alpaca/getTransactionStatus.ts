@@ -50,6 +50,7 @@ export function genericGetTransactionStatus(
       value: transaction.fees ?? new BigNumber(0),
       parameters: {
         gasLimit: transaction.gasLimit,
+        customGasLimit: transaction.customGasLimit,
         gasPrice: transaction.gasPrice,
         maxFeePerGas: transaction.maxFeePerGas,
         maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
@@ -71,7 +72,7 @@ export function genericGetTransactionStatus(
         !transaction.fees || transaction.fees.isZero()
           ? new BigNumber(estimatedFees.toString())
           : transaction.fees,
-      amount: transaction.amount.eq(0) ? new BigNumber(amount.toString()) : transaction.amount,
+      amount: new BigNumber(amount.toString()),
       totalSpent: new BigNumber(totalSpent.toString()),
     };
   };

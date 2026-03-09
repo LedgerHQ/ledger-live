@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
-import { hgraphClient } from "./hgraph";
+import BigNumber from "bignumber.js";
 import { getMockResponse } from "../test/fixtures/network.fixture";
+import { hgraphClient } from "./hgraph";
 
 jest.mock("@ledgerhq/live-network");
 const mockedNetwork = jest.mocked(network);

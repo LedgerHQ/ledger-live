@@ -17,11 +17,19 @@ import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 
+function hasSwapTabRoute(
+  getState: () => ReturnType<PendingOperationParamList["navigation"]["getState"]> | undefined,
+) {
+  const routeNames = getState()?.routeNames;
+  return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
+}
+
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const syncAccounts = useSyncAllAccounts();
+  const supportsSwapTabRoute = hasSwapTabRoute(() => navigation.getState());
 
   const navigateToSwapForm = useCallback(() => {
     track("button_clicked", {
@@ -30,13 +38,18 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
       swapVersion: SWAP_VERSION,
     });
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: ScreenName.SwapTab }],
-      }),
-    );
-  }, [navigation]);
+    if (supportsSwapTabRoute) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: ScreenName.SwapTab }],
+        }),
+      );
+      return;
+    }
+
+    navigation.getParent()?.goBack();
+  }, [navigation, supportsSwapTabRoute]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -51,13 +64,24 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, []);
 
   const onComplete = useCallback(() => {
+    if (!supportsSwapTabRoute) {
+      // In SwapSubScreensNavigator, keep navigation local to avoid resetting with unknown routes.
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: ScreenName.SwapHistory }],
+        }),
+      );
+      return;
+    }
+
     navigation.dispatch(
       CommonActions.reset({
         index: 1,
         routes: [{ name: ScreenName.SwapTab }, { name: ScreenName.SwapHistory }],
       }),
     );
-  }, [navigation]);
+  }, [navigation, supportsSwapTabRoute]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Flex, Text, Icon, Tooltip } from "@ledgerhq/react-ui";
+import { Text, Icon, Tooltip } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { SmallMarketItemChart } from "../MarketItemChart";
@@ -8,11 +8,21 @@ import { TableRow, TableCell, TablePlaceholder } from "../../../components/Table
 import { formatPercentage, formatPrice } from "../../../utils";
 import {
   CryptoCurrencyIconWrapper,
+  CryptoNameContainer,
   EllipsisText,
   TooltipContainer,
+  ActionsFullWidth,
+  ActionsIconOnly,
 } from "LLD/features/Market/components/RowItem/styles";
-import { RowItemViewProps } from "LLD/features/Market/components/RowItem/types";
+import { RowItemViewProps, MarketActionType } from "LLD/features/Market/components/RowItem/types";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
+
+const ACTION_ICONS: Record<MarketActionType, string> = {
+  buy: "Plus",
+  swap: "Trade",
+  stake: "GraphGrow",
+  sell: "Minus",
+};
 
 type MarketRowItemViewProps = RowItemViewProps & {
   loading: boolean;
@@ -26,23 +36,15 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
   locale,
   isStarred,
   hasActions,
+  actions,
   currentPriceChangePercentage,
-  earnStakeLabelCoin,
-  availableOnBuy,
-  availableOnSwap,
-  availableOnStake,
-  buyLabel,
-  swapLabel,
   onCurrencyClick,
   onStarClick,
-  onBuy,
-  onSwap,
-  onStake,
 }: MarketRowItemViewProps) {
   return (
     <div style={{ ...style }}>
       {loading || !currency ? (
-        <TablePlaceholder size={7} />
+        <TablePlaceholder size={8} />
       ) : (
         <TableRow
           data-testid={`market-${currency?.ticker}-row`}
@@ -50,7 +52,7 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
           role="row"
         >
           <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
-          <TableCell mr={3}>
+          <TableCell>
             <CryptoCurrencyIconWrapper>
               {currency.ledgerIds && currency.ledgerIds.length > 0 ? (
                 <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size="32px" />
@@ -58,58 +60,53 @@ export const MarketRowItemView = memo<MarketRowItemViewProps>(function MarketRow
                 <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
               )}
             </CryptoCurrencyIconWrapper>
-            <Tooltip
-              content={<TooltipContainer>{currency.name}</TooltipContainer>}
-              placement="top"
-              arrow={false}
-            >
-              <Flex
-                alignItems="left"
-                justifyContent="center"
-                flexDirection="column"
-                mr={2}
-                pl={3}
-                {...(hasActions ? { width: 86 } : {})}
-                overflow="hidden"
+            <CryptoNameContainer>
+              <Tooltip
+                content={<TooltipContainer>{currency.name}</TooltipContainer>}
+                placement="top"
+                arrow={false}
               >
                 <EllipsisText variant="body">{currency.name}</EllipsisText>
-                <EllipsisText variant="small" color="neutral.c60">
-                  {currency.ticker.toUpperCase()}
-                </EllipsisText>
-              </Flex>
-            </Tooltip>
+              </Tooltip>
+              <EllipsisText variant="small" color="neutral.c60">
+                {currency.ticker.toUpperCase()}
+              </EllipsisText>
+            </CryptoNameContainer>
+          </TableCell>
+          <TableCell>
             {hasActions ? (
-              <Flex flex={1}>
-                {availableOnBuy && (
-                  <Button
-                    data-testid={`market-${currency?.ticker}-buy-button`}
-                    variant="color"
-                    mr={1}
-                    onClick={onBuy}
-                  >
-                    {buyLabel}
-                  </Button>
-                )}
-                {availableOnSwap && (
-                  <Button
-                    data-testid={`market-${currency?.ticker}-swap-button`}
-                    variant="color"
-                    mr={1}
-                    onClick={onSwap}
-                  >
-                    {swapLabel}
-                  </Button>
-                )}
-                {availableOnStake && (
-                  <Button
-                    data-testid={`market-${currency?.ticker}-stake-button`}
-                    variant="color"
-                    onClick={onStake}
-                  >
-                    {earnStakeLabelCoin}
-                  </Button>
-                )}
-              </Flex>
+              <>
+                <ActionsFullWidth>
+                  {actions.map(action => (
+                    <Button
+                      key={action.type}
+                      data-testid={`market-${currency?.ticker}-${action.type}-button`}
+                      variant="color"
+                      onClick={action.onClick}
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </ActionsFullWidth>
+                <ActionsIconOnly>
+                  {actions.map(action => (
+                    <Tooltip
+                      key={action.type}
+                      content={<TooltipContainer>{action.label}</TooltipContainer>}
+                      placement="top"
+                      arrow={false}
+                    >
+                      <Button
+                        data-testid={`market-${currency?.ticker}-${action.type}-button`}
+                        variant="color"
+                        onClick={action.onClick}
+                      >
+                        <Icon name={ACTION_ICONS[action.type]} size={16} />
+                      </Button>
+                    </Tooltip>
+                  ))}
+                </ActionsIconOnly>
+              </>
             ) : null}
           </TableCell>
           <TableCell data-testid={"market-coin-price"}>

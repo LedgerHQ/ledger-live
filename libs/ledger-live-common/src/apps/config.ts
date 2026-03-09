@@ -85,7 +85,7 @@ const appConfig: Record<string, ConfigInfo> = {
   config_nanoapp_tron: {
     type: "object",
     default: {
-      minVersion: "0.7.3",
+      minVersion: "0.7.4",
       nanosMinVersion: "0.7.0",
     },
   },

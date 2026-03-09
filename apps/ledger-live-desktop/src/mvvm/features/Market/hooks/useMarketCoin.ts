@@ -57,11 +57,19 @@ export const useMarketCoin = () => {
 
   const ledgerCurrency = assetData && selectCurrency(assetData);
 
-  const { onBuy, onStake, onSwap, availableOnBuy, availableOnStake, availableOnSwap } =
-    useMarketActions({
-      currency: currency,
-      page: Page.MarketCoin,
-    });
+  const {
+    onBuy,
+    onStake,
+    onSwap,
+    onSell,
+    availableOnBuy,
+    availableOnStake,
+    availableOnSwap,
+    availableOnSell,
+  } = useMarketActions({
+    currency: currency,
+    page: Page.MarketCoin,
+  });
 
   const color = ledgerCurrency
     ? getCurrencyColor(ledgerCurrency, colors.background.main)
@@ -101,6 +109,7 @@ export const useMarketCoin = () => {
     onBuy,
     onStake,
     onSwap,
+    onSell,
     toggleStar,
     color,
     dataChart: resCurrencyChartData.data,
@@ -115,5 +124,6 @@ export const useMarketCoin = () => {
     availableOnBuy,
     availableOnStake,
     availableOnSwap,
+    availableOnSell,
   };
 };

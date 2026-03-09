@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
-import CollapsibleStep from "./CollapsibleStep";
+import CollapsibleStep from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import useCompanionSteps from "./useCompanionSteps";
 import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -34,6 +33,7 @@ import Animated, {
 import { LayoutChangeEvent, ScrollView } from "react-native";
 import { SEED_STATE, SeedPathStatus, FirstStepCompanionStepKey } from "./types";
 import { useIsFocused } from "@react-navigation/core";
+import useCompanionSteps from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
 
 /*
  * Constants

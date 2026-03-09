@@ -50,6 +50,7 @@ import {
   bitcoinFamilyAccountGetAddressesLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
+  protectStorageLogic,
 } from "./logic";
 import { handlers as featureFlagsHandlers } from "./FeatureFlags";
 import { getAccountBridge } from "../bridge";
@@ -121,6 +122,7 @@ export interface UiHook {
     account: AccountLike;
     parentAccount: Account | undefined;
     transaction: string;
+    broadcast?: boolean;
     options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
     onSuccess: (signedOperation: SignedOperation) => void;
     onError: (error: Error) => void;
@@ -705,14 +707,14 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiStorageGet) return;
 
-    server.setHandler("storage.get", uiStorageGet);
-  }, [server, uiStorageGet]);
+    server.setHandler("storage.get", protectStorageLogic(manifest, uiStorageGet));
+  }, [manifest, server, uiStorageGet]);
 
   useEffect(() => {
     if (!uiStorageSet) return;
 
-    server.setHandler("storage.set", uiStorageSet);
-  }, [server, uiStorageSet]);
+    server.setHandler("storage.set", protectStorageLogic(manifest, uiStorageSet));
+  }, [manifest, server, uiStorageSet]);
 
   useEffect(() => {
     if (!uiTxSignRaw) return;
@@ -729,6 +731,7 @@ export function useWalletAPIServer({
               account,
               parentAccount,
               transaction: tx,
+              broadcast,
               options: undefined,
               onSuccess: signedOperation => {
                 if (done) return;
@@ -867,6 +870,7 @@ export function useWalletAPIServer({
                 account,
                 parentAccount,
                 transaction: tx,
+                broadcast,
                 options,
                 onSuccess: signedOperation => {
                   if (done) return;

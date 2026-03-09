@@ -7,11 +7,6 @@ jest.mock("../logic", () => ({
   estimateFees: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/concordium-core", () => ({
-  ...jest.requireActual("@ledgerhq/concordium-core"),
-  encodeMemoToCbor: jest.fn((memo: string) => Buffer.from([0x68, ...Buffer.from(memo, "utf-8")])),
-}));
-
 const { craftTransaction: craftTransactionMock, estimateFees: estimateFeesMock } =
   jest.requireMock("../logic");
 
@@ -29,7 +24,7 @@ describe("api/estimateFees", () => {
   });
 
   it("should estimate fees for transaction with memo", async () => {
-    const api = createApi(mockConfig);
+    const api = createApi(mockConfig, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -54,16 +49,12 @@ describe("api/estimateFees", () => {
 
     const result = await api.estimateFees(transactionIntent);
 
-    expect(estimateFeesMock).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "concordium" }),
-      22, // TransactionType.TransferWithMemo
-      9, // memoSize: "fee test" = 9 bytes CBOR-encoded (1 byte header + 8 bytes string)
-    );
+    expect(estimateFeesMock).toHaveBeenCalledWith("concordium_testnet", "fee test");
     expect(result).toEqual({ value: BigInt(1500) });
   });
 
   it("should estimate fees for transaction without memo", async () => {
-    const api = createApi(mockConfig);
+    const api = createApi(mockConfig, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {

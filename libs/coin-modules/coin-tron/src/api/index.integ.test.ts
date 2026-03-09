@@ -69,6 +69,12 @@ describe("API", () => {
     expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
       txDesc[txDesc.length - 1].tx.block.height,
     );
+
+    // check format of operations
+    txDesc.forEach(operation => {
+      // there is always a fee payer equal to the sender address
+      expect(operation.tx.feesPayer).toBe(operation.senders[0]);
+    });
   });
 });
 

@@ -1,5 +1,13 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
+export type MarketActionType = "buy" | "swap" | "stake" | "sell";
+
+export type MarketAction = {
+  type: MarketActionType;
+  label: string;
+  onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
+};
+
 export type RowItemContainerProps = {
   currency: MarketCurrencyData;
   counterCurrency?: string;
@@ -17,16 +25,8 @@ export type RowItemViewProps = {
   locale: string;
   isStarred: boolean;
   hasActions: boolean;
+  actions: MarketAction[];
   currentPriceChangePercentage: number | undefined;
-  earnStakeLabelCoin: string;
-  availableOnBuy: boolean;
-  availableOnSwap: boolean;
-  availableOnStake: boolean;
-  buyLabel: string;
-  swapLabel: string;
   onCurrencyClick: () => void;
   onStarClick: (e: React.MouseEvent<HTMLDivElement>) => void;
-  onBuy: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
-  onSwap: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
-  onStake: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
 };

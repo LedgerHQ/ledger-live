@@ -84,7 +84,7 @@ describe("UserDataCleanup", () => {
       fileEntry("app.json"),
       directoryEntry("nested"),
       fileEntry("other.txt"),
-    ]);
+    ] as unknown as Awaited<ReturnType<typeof fsPromises.readdir>>);
     unlinkMock.mockResolvedValue(undefined);
 
     const cleanup = new UserDataCleanup("/tmp/userdata", {
@@ -97,7 +97,10 @@ describe("UserDataCleanup", () => {
   });
 
   it("supports custom regex patterns", async () => {
-    readdirMock.mockResolvedValue([fileEntry("keep.json"), fileEntry("extra.tmp")]);
+    readdirMock.mockResolvedValue([
+      fileEntry("keep.json"),
+      fileEntry("extra.tmp"),
+    ] as unknown as Awaited<ReturnType<typeof fsPromises.readdir>>);
     unlinkMock.mockResolvedValue(undefined);
 
     const cleanup = new UserDataCleanup("/data", { patterns: [/\.tmp$/] });
@@ -108,7 +111,10 @@ describe("UserDataCleanup", () => {
   });
 
   it("does nothing when no files match", async () => {
-    readdirMock.mockResolvedValue([fileEntry("app.json"), fileEntry("keep.json")]);
+    readdirMock.mockResolvedValue([
+      fileEntry("app.json"),
+      fileEntry("keep.json"),
+    ] as unknown as Awaited<ReturnType<typeof fsPromises.readdir>>);
 
     const cleanup = new UserDataCleanup("/tmp/userdata", {
       patterns: [/^app\.json\..+$/],
@@ -120,7 +126,10 @@ describe("UserDataCleanup", () => {
   });
 
   it("logs failures when cleanup fails", async () => {
-    readdirMock.mockResolvedValue([fileEntry("app.json.1"), fileEntry("app.json.2")]);
+    readdirMock.mockResolvedValue([
+      fileEntry("app.json.1"),
+      fileEntry("app.json.2"),
+    ] as unknown as Awaited<ReturnType<typeof fsPromises.readdir>>);
     unlinkMock.mockRejectedValueOnce(new Error("nope"));
     unlinkMock.mockResolvedValueOnce(undefined);
 

@@ -45,6 +45,7 @@ import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/wallet
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
 import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
+import { INITIAL_STATE as PORTFOLIO_REFRESH_INITIAL_STATE } from "~/reducers/portfolioRefresh";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
@@ -77,6 +78,7 @@ const INITIAL_STATE: State = {
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
   sendFlow: SEND_FLOW_INITIAL_STATE,
+  portfolioRefresh: PORTFOLIO_REFRESH_INITIAL_STATE,
   ...llmRtkApiInitialStates,
 };
 

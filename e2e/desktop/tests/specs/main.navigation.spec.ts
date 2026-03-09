@@ -1,6 +1,7 @@
 import { test } from "tests/fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { LWD_WALLET_40_FLAGS } from "tests/utils/featureFlagUtils";
 
 const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"] as const;
 
@@ -8,15 +9,7 @@ test.describe("Main navigation", () => {
   test.use({
     userdata: "1AccountBTC1AccountETH",
     featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
+      ...LWD_WALLET_40_FLAGS,
       referralProgramDesktopSidebar: {
         enabled: true,
         params: {
@@ -40,8 +33,8 @@ test.describe("Main navigation", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.mainNavigation.openTargetFromMainNavigation("portfolio");
-      await app.mainNavigation.validateTargetFromMainNavigation("portfolio");
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.mainNavigation.validateTargetFromMainNavigation("home");
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.mainNavigation.validateTargetFromMainNavigation("accounts");
       await app.mainNavigation.openTargetFromMainNavigation("swap");

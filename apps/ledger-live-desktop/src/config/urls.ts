@@ -182,6 +182,10 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  editBitcoinTx: {
+    learnMore:
+      "https://support.ledger.com/fr/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
+  },
   ledgerAcademy: {
     whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
     ethereumStakingHowToStakeEth:
@@ -221,7 +225,7 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
   aleo: {
-    viewKeyLearnMore: "", // TODO: waiting for https://ledgerhq.atlassian.net/browse/LIVE-26269
+    viewKeyLearnMore: "https://support.ledger.com/article/Aleo-ALEO",
   },
   concordium: {
     learnMore: "https://support.ledger.com/article/Concordium-CCD",

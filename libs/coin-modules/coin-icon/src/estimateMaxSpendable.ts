@@ -1,10 +1,10 @@
-import { BigNumber } from "bignumber.js";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import type { IconAccount, Transaction } from "./types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { createTransaction } from "./createTransaction";
 import getEstimatedFees from "./getFeesForTransaction";
 import { calculateAmount } from "./logic";
+import type { IconAccount, Transaction } from "./types";
 
 /**
  * Returns the maximum possible amount for transaction

@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { apiClient } from "../network/api";
@@ -179,8 +179,7 @@ describe("utils", () => {
 
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
-        latestHTSTokenOperations: [mockedOperation1, mockedOperation2],
-        latestERC20TokenOperations: [],
+        latestTokenOperations: [mockedOperation1, mockedOperation2],
         mirrorTokens: [mockedMirrorToken1, mockedMirrorToken2],
         erc20Tokens: [],
       });
@@ -211,8 +210,7 @@ describe("utils", () => {
 
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
-        latestHTSTokenOperations: [mockedOperation],
-        latestERC20TokenOperations: [],
+        latestTokenOperations: [mockedOperation],
         mirrorTokens: [],
         erc20Tokens: [],
       });
@@ -230,8 +228,7 @@ describe("utils", () => {
 
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
-        latestHTSTokenOperations: [],
-        latestERC20TokenOperations: [],
+        latestTokenOperations: [],
         mirrorTokens: [mockedTokenHTS],
         erc20Tokens: [],
       });
@@ -251,8 +248,7 @@ describe("utils", () => {
 
       const result = await getSubAccounts({
         ledgerAccountId: mockedAccount.id,
-        latestHTSTokenOperations: [],
-        latestERC20TokenOperations: [],
+        latestTokenOperations: [],
         mirrorTokens: [],
         erc20Tokens: [{ balance: new BigNumber(42), token: tokenCurrencyFromCAL }],
       });

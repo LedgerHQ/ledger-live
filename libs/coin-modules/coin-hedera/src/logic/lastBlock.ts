@@ -1,7 +1,7 @@
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";
 import { getSyntheticBlock } from "./utils";
-import { FINALITY_MS, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 
 /**
  * Gets the latest "block" information for Hedera.

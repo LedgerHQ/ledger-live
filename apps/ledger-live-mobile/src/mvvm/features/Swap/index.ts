@@ -12,6 +12,7 @@ import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/acc
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 type UseOpenSwapProps = {
   currency?: CryptoOrTokenCurrency;
@@ -43,6 +44,7 @@ function getAccountsForCurrency(
 
 export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const { openDrawer } = useModularDrawerController();
@@ -65,10 +67,20 @@ export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
           ...(currency && isTokenCurrency(currency) && { toTokenId: currency.id }),
         };
 
-        navigation.navigate(NavigatorName.Swap, {
-          screen: ScreenName.SwapTab,
-          params: swapParams,
-        });
+        if (shouldDisplayWallet40MainNav) {
+          navigation.navigate(NavigatorName.Main, {
+            screen: NavigatorName.Swap,
+            params: {
+              screen: ScreenName.SwapTab,
+              params: swapParams,
+            },
+          });
+        } else {
+          navigation.navigate(NavigatorName.Swap, {
+            screen: ScreenName.SwapTab,
+            params: swapParams,
+          });
+        }
         return;
       }
 
@@ -86,12 +98,22 @@ export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
         defaultParentAccount: parentAcc,
       };
 
-      navigation.navigate(NavigatorName.Swap, {
-        screen: ScreenName.SwapTab,
-        params: swapParams,
-      });
+      if (shouldDisplayWallet40MainNav) {
+        navigation.navigate(NavigatorName.Main, {
+          screen: NavigatorName.Swap,
+          params: {
+            screen: ScreenName.SwapTab,
+            params: swapParams,
+          },
+        });
+      } else {
+        navigation.navigate(NavigatorName.Swap, {
+          screen: ScreenName.SwapTab,
+          params: swapParams,
+        });
+      }
     },
-    [currency, sourceScreenName, navigation, shallowAccounts],
+    [currency, sourceScreenName, shallowAccounts, navigation, shouldDisplayWallet40MainNav],
   );
 
   const openAccountSelectionDrawer = useCallback(() => {

@@ -9,7 +9,7 @@ const memoize = <T extends (arg: string) => ReturnType<T>>(fn: T): T => {
 };
 
 const options = {
-  style: "currency",
+  style: "currency" as const,
   currency: "USD",
 };
 const localeNotAvailable = (1.2).toLocaleString("en", options) !== "$1.20";

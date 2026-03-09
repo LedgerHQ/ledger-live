@@ -31,7 +31,7 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const { transaction, appName, dependencies, onSuccess } = route.params;
+  const { transaction, broadcast, appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
   const handleTx = useCallback(
     (result: TransactionResult) => {
@@ -65,13 +65,14 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
       parentAccount,
       appName,
       transaction,
+      broadcast,
       dependencies: [
         { currency: mainAccount.currency },
         ...dependenciesToAppRequests(dependencies),
       ],
       requireLatestFirmware: true,
     }),
-    [account, appName, dependencies, mainAccount.currency, parentAccount, transaction],
+    [account, appName, broadcast, dependencies, mainAccount.currency, parentAccount, transaction],
   );
 
   const onSelectDeviceLink = useCallback(() => {

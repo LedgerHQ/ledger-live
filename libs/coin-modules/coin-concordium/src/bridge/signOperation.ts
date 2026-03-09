@@ -1,11 +1,10 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { AccountBridge, Operation } from "@ledgerhq/types-live";
+import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { TransactionType, memoEncodedSize } from "@ledgerhq/concordium-core";
-import { ConcordiumSigner, Transaction } from "../types";
+import type { ConcordiumSigner, Transaction } from "../types";
 import { combine, craftTransaction, estimateFees, getNextValidSequence } from "../logic";
 import { getTransactionStatus } from "./getTransactionStatus";
 
@@ -26,16 +25,10 @@ export const buildSignOperation =
 
         const nextSequenceNumber = await getNextValidSequence(
           account.freshAddress,
-          account.currency,
+          account.currency.id,
         );
 
-        const transactionType = transaction.memo
-          ? TransactionType.TransferWithMemo
-          : TransactionType.Transfer;
-
-        const memoSize = transaction.memo ? memoEncodedSize(transaction.memo) : undefined;
-
-        const estimation = await estimateFees(account.currency, transactionType, memoSize);
+        const estimation = await estimateFees(account.currency.id, transaction.memo);
 
         const signature = await signerContext(deviceId, async signer => {
           const { freshAddressPath: derivationPath } = account;

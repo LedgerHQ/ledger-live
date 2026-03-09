@@ -1,7 +1,11 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "daemon": false,
-  "globalDependencies": ["turbo.json", "tsconfig.base.json"],
+  "globalDependencies": [
+    "turbo.json",
+    "tsconfig.base.json",
+    "sonar-project.properties"
+  ],
   "globalEnv": [
     "ANDROID_HOME",
     "ANDROID_KEYSTORE_FILE",
@@ -194,7 +198,17 @@
     },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
-      "outputs": ["react/**", "native/**", "reactLegacy/**", "nativeLegacy/**", "index.js"]
+      "outputs": [
+        "react/**",
+        "native/**",
+        "reactLegacy/**",
+        "nativeLegacy/**",
+        "index.js",
+        "src/react/**",
+        "src/native/**",
+        "src/reactLegacy/**",
+        "src/nativeLegacy/**"
+      ]
     },
     "@ledgerhq/live-common#build": {
       "dependsOn": ["^build"],

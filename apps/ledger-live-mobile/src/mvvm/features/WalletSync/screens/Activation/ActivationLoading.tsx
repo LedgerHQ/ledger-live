@@ -13,9 +13,15 @@ import { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
-import { completeOnboarding, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import { OnboardingType } from "~/reducers/types";
+import { updateMainNavigatorVisibility } from "~/actions/appstate";
 
 type Props = BaseComposite<
   StackNavigatorProps<WalletSyncNavigatorStackParamList, ScreenName.WalletSyncLoading>
@@ -36,9 +42,11 @@ export function ActivationLoading({ route }: Props) {
   useEffect(() => {
     if (!hasCompletedOnboarding && onboardingType !== OnboardingType.setupNew) {
       dispatch(completeOnboarding());
-      dispatch(setIsReborn(false));
-      dispatch(setOnboardingHasDevice(true));
     }
+    dispatch(setOnboardingHasDevice(true));
+    dispatch(setIsReborn(false));
+    dispatch(setReadOnlyMode(false));
+    dispatch(updateMainNavigatorVisibility(true));
   }, [dispatch, hasCompletedOnboarding, onboardingType]);
 
   return (

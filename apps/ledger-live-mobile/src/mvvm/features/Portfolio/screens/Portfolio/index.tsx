@@ -17,6 +17,7 @@ import {
 } from "../../constants";
 import { getProgressViewOffset } from "../../utils/getProgressViewOffset";
 import usePortfolioViewModel from "./usePortfolioViewModel";
+import { useScrollToTop } from "./useScrollToTop";
 
 import { Box } from "@ledgerhq/native-ui";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
@@ -62,6 +63,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
+
+  const { handleFlatListRef } = useScrollToTop();
 
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
@@ -158,8 +161,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     <>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
-      <Animated.View style={{ flex: 1 }}>
+      <Animated.View testID="portfolio-screen" style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
+          onFlatListRef={handleFlatListRef}
           data={data}
           renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}

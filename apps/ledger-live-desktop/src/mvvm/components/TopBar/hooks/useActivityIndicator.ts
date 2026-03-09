@@ -1,54 +1,34 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { hasAccountsSelector, isUpToDateSelector } from "~/renderer/reducers/accounts";
-import { useWalletSyncUserState } from "LLD/features/WalletSync/components/WalletSyncContext";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
-import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { useCallback, useEffect, useReducer } from "react";
+import { useLocation } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 
-import { useAccountsSyncStatus } from "./useAccountsSyncStatus";
+import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
 import { useActivityIndicatorTooltip } from "./useActivityIndicatorTooltip";
 import { getActivityIndicatorIcon } from "../utils/getActivityIndicatorIcon";
-import {
-  PLAYWRIGHT_CLICK_SPIN_DURATION_MS,
-  TOOLTIP_UPDATE_INTERVAL_MS,
-  USER_CLICK_SPIN_DURATION_MS,
-} from "../utils/constants";
+import { TOOLTIP_UPDATE_INTERVAL_MS } from "../utils/constants";
 
+/**
+ * Activity indicator state for the TopBar sync button.
+ * Derives icon, tooltip, and interactivity from the shared `syncPhase` FSM.
+ */
 export const useActivityIndicator = () => {
-  const hasAccounts = useSelector(hasAccountsSelector);
-  const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
-  const wsUserState = useWalletSyncUserState();
-  const cvPolling = useCountervaluesPolling();
-  const bridgeSync = useBridgeSync();
-  const globalSyncState = useGlobalSyncState();
-  const [lastClickTime, setLastClickTime] = useState(0);
-  const [, setTick] = useState(0);
+  const location = useLocation();
+  const [, forceTooltipUpdate] = useReducer((tick: number) => tick + 1, 0);
 
-  const { allAccounts, listOfErrorAccountNames, areAllAccountsUpToDate } =
-    useAccountsSyncStatus(accountsWithUpToDateCheck);
+  const { hasAccounts, syncPhase, allAccounts, listOfErrorAccountNames, handleSync } =
+    usePortfolioBalance();
+
+  const isRotating = syncPhase === "syncing";
+  const isError = syncPhase === "failed";
 
   const lastSyncMs = Math.max(...allAccounts.map(a => a.lastSyncDate?.getTime() ?? 0), 0);
 
   const needsTooltipUpdates = hasAccounts && lastSyncMs > 0;
   useEffect(() => {
     if (!needsTooltipUpdates) return;
-    const id = setInterval(() => setTick(t => t + 1), TOOLTIP_UPDATE_INTERVAL_MS);
+    const id = setInterval(forceTooltipUpdate, TOOLTIP_UPDATE_INTERVAL_MS);
     return () => clearInterval(id);
   }, [needsTooltipUpdates]);
-
-  const isPending = cvPolling.pending || globalSyncState.pending || wsUserState.visualPending;
-  const hasWalletSyncError = !!wsUserState.walletSyncError;
-  const hasBridgeOrCvSyncError = !isPending && (!!cvPolling.error || !!globalSyncState.error);
-  const isError = hasBridgeOrCvSyncError || !areAllAccountsUpToDate || hasWalletSyncError;
-  const isPlaywrightRun = getEnv("PLAYWRIGHT_RUN");
-  const userClickSpinMs = isPlaywrightRun
-    ? PLAYWRIGHT_CLICK_SPIN_DURATION_MS
-    : USER_CLICK_SPIN_DURATION_MS;
-  const isUserClick = Date.now() - lastClickTime < userClickSpinMs;
-  const isRotating = isPending && isUserClick;
-  const isDisabled = isRotating;
 
   const icon = getActivityIndicatorIcon(isError, isRotating);
   const tooltip = useActivityIndicatorTooltip({
@@ -58,25 +38,24 @@ export const useActivityIndicator = () => {
     lastSyncMs,
   });
 
-  const handleSync = useCallback(() => {
-    wsUserState.onUserRefresh();
-    cvPolling.poll();
-    bridgeSync({
-      type: "SYNC_ALL_ACCOUNTS",
-      priority: 5,
-      reason: "user-click",
-    });
-    setLastClickTime(Date.now());
-    track("SyncRefreshClick");
-  }, [wsUserState, cvPolling, bridgeSync]);
+  const onTooltipShow = useCallback(() => {
+    if (isError) {
+      track("SyncErrorList", {
+        page: location.pathname,
+        currencies: listOfErrorAccountNames
+          ? listOfErrorAccountNames.split("/").filter(Boolean)
+          : [],
+      });
+    }
+  }, [isError, listOfErrorAccountNames, location.pathname]);
 
   return {
     hasAccounts,
     handleSync,
     isError,
     isRotating,
-    isDisabled,
     tooltip,
     icon,
+    onTooltipShow: isError ? onTooltipShow : undefined,
   };
 };

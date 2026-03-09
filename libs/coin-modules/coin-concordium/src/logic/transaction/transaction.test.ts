@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { TransactionType } from "@ledgerhq/concordium-core";
 import { CONCORDIUM_ENERGY } from "../../constants";
-import { createTestCryptoCurrency } from "../../test/testHelpers";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
 import { combine } from "./combine";
@@ -24,12 +23,6 @@ jest.mock("../../network/grpcClient", () => ({
 }));
 
 const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
-
-const createMockCurrency = () =>
-  createTestCryptoCurrency({
-    id: "concordium",
-    name: "Concordium",
-  });
 
 describe("logic/transaction", () => {
   beforeEach(() => {
@@ -197,9 +190,7 @@ describe("logic/transaction", () => {
 
   describe("estimateFees", () => {
     it("should return fee estimation for simple transfer", async () => {
-      const currency = createMockCurrency();
-
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees("concordium_testnet");
 
       expect(result).toHaveProperty("cost");
       expect(result).toHaveProperty("energy");
@@ -208,18 +199,14 @@ describe("logic/transaction", () => {
     });
 
     it("should use fixed energy for simple transfer without payload", async () => {
-      const currency = createMockCurrency();
-
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees("concordium_testnet");
 
       // Simple transfer has fixed energy cost
       expect(result.energy).toBe(CONCORDIUM_ENERGY.SIMPLE_TRANSFER);
     });
 
     it("should calculate energy for transfer with payload", async () => {
-      const currency = createMockCurrency();
-
-      const result = await estimateFees(currency, TransactionType.Transfer);
+      const result = await estimateFees("concordium_testnet");
 
       expect(result.energy).toBeGreaterThan(0n);
     });
@@ -228,45 +215,39 @@ describe("logic/transaction", () => {
       const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
       getTransactionCost.mockRejectedValueOnce(new Error("Network error"));
 
-      const currency = createMockCurrency();
+      const result = await estimateFees("concordium_testnet");
 
-      const result = await estimateFees(currency, TransactionType.Transfer);
-
-      // Should return defaults for simple transfer
       expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
       expect(result.energy).toBe(CONCORDIUM_ENERGY.DEFAULT);
     });
 
-    it("should return higher default energy for TransferWithMemo when fetch fails", async () => {
+    it("should return higher default energy for memo transfer when fetch fails", async () => {
       const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
       getTransactionCost.mockRejectedValueOnce(new Error("Network error"));
 
-      const currency = createMockCurrency();
+      const result = await estimateFees("concordium_testnet", "some memo");
 
-      const result = await estimateFees(currency, TransactionType.TransferWithMemo);
-
-      // Should return max memo energy for TransferWithMemo to avoid silent failures
       expect(result.cost).toBe(CONCORDIUM_ENERGY.DEFAULT_COST);
       expect(result.energy).toBe(CONCORDIUM_ENERGY.TRANSFER_WITH_MEMO_MAX);
     });
 
     it("should call getTransactionCost with correct parameters", async () => {
       const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
-      const currency = createMockCurrency();
 
-      await estimateFees(currency, TransactionType.Transfer);
+      await estimateFees("concordium_testnet");
 
-      expect(getTransactionCost).toHaveBeenCalledWith(currency, 1, undefined);
+      expect(getTransactionCost).toHaveBeenCalledWith("concordium_testnet", { numSignatures: 1 });
     });
 
-    it("should default transaction type to Transfer", async () => {
-      const currency = createMockCurrency();
+    it("should call getTransactionCost with memoSize when memo provided", async () => {
+      const { getTransactionCost } = jest.requireMock("../../network/proxyClient");
 
-      // Call without explicit transaction type
-      const result = await estimateFees(currency);
+      await estimateFees("concordium_testnet", "test");
 
-      expect(result).toHaveProperty("cost");
-      expect(result).toHaveProperty("energy");
+      expect(getTransactionCost).toHaveBeenCalledWith("concordium_testnet", {
+        numSignatures: 1,
+        memoSize: 5,
+      });
     });
   });
 
@@ -293,48 +274,49 @@ describe("logic/transaction", () => {
   describe("broadcast", () => {
     it("should broadcast transaction and return submission ID", async () => {
       const { submitTransfer } = jest.requireMock("../../network/proxyClient");
-      const currency = createMockCurrency();
       const signedTx = JSON.stringify({
         transactionBody: "aabbccdd",
         signature: "11223344",
       });
 
-      const result = await broadcast(signedTx, currency);
+      const result = await broadcast(signedTx, "concordium_testnet");
 
       expect(result).toBe("test-submission-id");
-      expect(submitTransfer).toHaveBeenCalledWith(currency, "aabbccdd", "11223344");
+      expect(submitTransfer).toHaveBeenCalledWith("concordium_testnet", {
+        transaction: "aabbccdd",
+        signatures: { "0": { "0": "11223344" } },
+      });
     });
 
     it("should parse signed transaction JSON correctly", async () => {
       const { submitTransfer } = jest.requireMock("../../network/proxyClient");
-      const currency = createMockCurrency();
       const signedTx = JSON.stringify({
         transactionBody: "deadbeef",
         signature: "cafebabe",
       });
 
-      await broadcast(signedTx, currency);
+      await broadcast(signedTx, "concordium_testnet");
 
-      expect(submitTransfer).toHaveBeenCalledWith(currency, "deadbeef", "cafebabe");
+      expect(submitTransfer).toHaveBeenCalledWith("concordium_testnet", {
+        transaction: "deadbeef",
+        signatures: { "0": { "0": "cafebabe" } },
+      });
     });
 
     it("should throw on invalid JSON", async () => {
-      const currency = createMockCurrency();
-
-      await expect(broadcast("not-json", currency)).rejects.toThrow();
+      await expect(broadcast("not-json", "concordium_testnet")).rejects.toThrow();
     });
 
     it("should propagate network errors", async () => {
       const { submitTransfer } = jest.requireMock("../../network/proxyClient");
       submitTransfer.mockRejectedValueOnce(new Error("Network error"));
 
-      const currency = createMockCurrency();
       const signedTx = JSON.stringify({
         transactionBody: "aabbccdd",
         signature: "11223344",
       });
 
-      await expect(broadcast(signedTx, currency)).rejects.toThrow("Network error");
+      await expect(broadcast(signedTx, "concordium_testnet")).rejects.toThrow("Network error");
     });
   });
 });

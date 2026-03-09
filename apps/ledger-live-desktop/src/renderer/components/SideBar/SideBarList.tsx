@@ -9,15 +9,16 @@ import Space from "~/renderer/components/Space";
  * !important to keep track color hidden
  **/
 const ListWrapper = styled(Box)<{
-  collapsed?: boolean;
+  $collapsed?: boolean;
+  $scroll?: boolean;
 }>`
-  ${p => (p.scroll ? p.theme.overflow.y : "")};
-  ${p => (p.scroll ? "padding-right: 2px" : "")};
+  ${p => (p.$scroll ? p.theme.overflow.y : "")};
+  ${p => (p.$scroll ? "padding-right: 2px" : "")};
   will-change: unset;
   ${p =>
-    p.collapsed
+    p.$collapsed
       ? `
-    padding-right: ${p.scroll ? 200 - p.theme.overflow.trackSize : 200}px;
+    padding-right: ${p.$scroll ? 200 - p.theme.overflow.trackSize : 200}px;
     margin-right: -${200 - p.theme.overflow.trackSize}px;
     --track-color: rgba(0,0,0,0)!important;
   `
@@ -49,7 +50,7 @@ class SideBarList extends Component<Props> {
       <>
         {!!title && (
           <>
-            <SideBarListTitle collapsed={collapsed}>
+            <SideBarListTitle $collapsed={collapsed}>
               {title}
               {!!titleRight && <Box ml="auto">{titleRight}</Box>}
             </SideBarListTitle>
@@ -59,8 +60,8 @@ class SideBarList extends Component<Props> {
         {children ? (
           <ListWrapper
             style={style}
-            collapsed={collapsed}
-            scroll={scroll}
+            $collapsed={collapsed}
+            $scroll={scroll}
             flow={2}
             px={3}
             fontSize={3}
@@ -82,7 +83,7 @@ const SideBarListTitle = styled(Box).attrs<React.ComponentProps<typeof Box>>({
   paddingX: 4,
   alignItems: "center",
   ff: "Inter|ExtraBold",
-})<{ collapsed?: boolean }>`
+})<{ $collapsed?: boolean }>`
   color: ${p => p.theme.colors.neutral.c100};
   font-size: ${p => p.theme.fontSizes[1]}px;
   cursor: default;
@@ -90,7 +91,7 @@ const SideBarListTitle = styled(Box).attrs<React.ComponentProps<typeof Box>>({
   text-transform: uppercase;
 
   // allow collapsing
-  opacity: ${p => (p.collapsed ? 0 : 1)};
+  opacity: ${p => (p.$collapsed ? 0 : 1)};
   transition: opacity 0.15s;
   overflow: hidden;
   white-space: nowrap;

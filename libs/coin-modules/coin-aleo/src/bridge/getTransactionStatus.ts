@@ -8,13 +8,14 @@ import {
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type {
+  AleoAccount,
   Transaction as AleoTransaction,
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
   TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
-import { calculateAmount, isSelfTransferTransaction } from "../logic/utils";
+import { calculateAmount, getAvailableBalance, isSelfTransferTransaction } from "../logic/utils";
 import aleoCoinConfig from "../config";
 
 type Errors = Record<string, Error>;
@@ -52,13 +53,14 @@ async function handleTransferTransaction({
   transaction,
   allowSelfTransfer,
 }: {
-  account: Account;
+  account: AleoAccount;
   transaction: TransactionSelfTransfer | TransactionTransfer;
   allowSelfTransfer: boolean;
 }): Promise<AleoTransactionStatus> {
   const errors: Errors = {};
   const warnings: Warnings = {};
 
+  const availableBalance = getAvailableBalance(account, transaction);
   const config = aleoCoinConfig.getCoinConfig(account.currency);
   const feeEstimation = estimateFees({
     configOrCurrencyId: config,
@@ -85,7 +87,7 @@ async function handleTransferTransaction({
     errors.amount = new AmountRequired();
   }
 
-  if (account.balance.isLessThan(calculatedAmount.totalSpent)) {
+  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -100,7 +102,7 @@ async function handleTransferTransaction({
 
 export const getTransactionStatus: AccountBridge<
   AleoTransaction,
-  Account,
+  AleoAccount,
   AleoTransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
   const allowSelfTransfer = isSelfTransferTransaction(transaction);

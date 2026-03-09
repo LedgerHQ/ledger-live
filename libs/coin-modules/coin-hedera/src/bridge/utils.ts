@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
@@ -9,10 +7,11 @@ import {
 } from "@ledgerhq/coin-framework/account";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES } from "../constants";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { estimateFees } from "../logic/estimateFees";
 import {
   fromEVMAddress,
@@ -32,6 +31,7 @@ import type {
   HederaThirdwebTransaction,
   ERC20OperationFields,
 } from "../types";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 interface CalculateAmountResult {
   amount: BigNumber;
@@ -100,14 +100,12 @@ export const calculateAmount = ({
 
 export const getSubAccounts = async ({
   ledgerAccountId,
-  latestHTSTokenOperations,
-  latestERC20TokenOperations,
+  latestTokenOperations,
   mirrorTokens,
   erc20Tokens,
 }: {
   ledgerAccountId: string;
-  latestHTSTokenOperations: Operation[];
-  latestERC20TokenOperations: Operation[];
+  latestTokenOperations: Operation[];
   mirrorTokens: HederaMirrorToken[];
   erc20Tokens: HederaERC20TokenBalance[];
 }): Promise<TokenAccount[]> => {
@@ -115,7 +113,7 @@ export const getSubAccounts = async ({
   const operationsByToken = new Map<TokenCurrency, Operation[]>();
   const subAccounts: TokenAccount[] = [];
 
-  for (const tokenOperation of [...latestHTSTokenOperations, ...latestERC20TokenOperations]) {
+  for (const tokenOperation of latestTokenOperations) {
     const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token) continue;
 
@@ -388,6 +386,7 @@ export function patchOperationWithExtra(
   };
 }
 
+// TODO: remove once migration to new API is complete
 // filter out CONTRACT_CALL operations based on pending and already existing ERC20 operations to avoid duplicates
 export const removeDuplicatedContractCallOperations = (
   operations: Operation[],
@@ -406,6 +405,7 @@ export const removeDuplicatedContractCallOperations = (
   });
 };
 
+// TODO: remove once migration to new API is complete
 // loop over latestERC20Operations and prepare lists of transactions that should be patched and added
 // - patching happens when we have a matching CONTRACT_CALL operation without blockHash set (mirror node transaction without ERC20 details)
 // - adding happens when we have no matching operation
@@ -444,6 +444,7 @@ export const classifyERC20Operations = ({
   return { erc20OperationsToPatch, erc20OperationsToAdd };
 };
 
+// TODO: remove once migration to new API is complete
 // extracts common fields from an ERC20 operation
 const buildERC20OperationFields = ({
   erc20Operation,
@@ -498,10 +499,12 @@ const buildERC20OperationFields = ({
     blockHash,
     extra,
     standard,
+    contract: erc20Operation.token.contractAddress,
     hasFailed: false,
   };
 };
 
+// TODO: remove once migration to new API is complete
 // patches an existing CONTRACT_CALL operation with ERC20 token operation details
 export const patchContractCallOperation = ({
   relatedExistingOperation,
@@ -525,6 +528,7 @@ export const patchContractCallOperation = ({
   });
 };
 
+// TODO: remove once migration to new API is complete
 export const integrateERC20Operations = async ({
   ledgerAccountId,
   address,

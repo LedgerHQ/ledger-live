@@ -2760,6 +2760,11 @@
       "connectDevice": {
         "title": "Access to your wallet is not backed up yet"
       }
+    },
+    "refreshStatus": {
+      "refreshing": "Refreshing - Last update {{timeAgo}}",
+      "refreshingInitial": "Refreshing...",
+      "upToDate": "You're up to date"
     }
   },
   "addAccountsModal": {
@@ -4431,7 +4436,7 @@
     },
     "cancel": {
       "title": "Cancel",
-      "description": "Sending 0 {{ticker}} to your own address."
+      "description": "Sending 0 {{ticker}} to your own address. Cancellation is not guaranteed. If the network processes your original transaction before this cancellation request, the funds will still be sent to the recipient."
     },
     "error": {
       "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
@@ -5042,6 +5047,14 @@
   },
   "FirmwareUpdate": {
     "banner": {
+      "wallet40": {
+          "title": {
+            "default": "OS update available",
+            "manager": "Ledger OS update available"
+          },
+          "version": "Version {{firmwareVersion}}",
+          "cta": "Update"
+        },
       "title": "OS update available",
       "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
@@ -7746,6 +7759,10 @@
       "description": "Secure your assets and go further.",
       "buttonLabel": "See what's next"
     },
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "actions": {
       "deviceOnboarded": {
         "titleCompleted": "Setup your Ledger device"
@@ -8379,6 +8396,7 @@
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
+    "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",

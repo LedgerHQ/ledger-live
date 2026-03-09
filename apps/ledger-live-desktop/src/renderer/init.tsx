@@ -28,8 +28,8 @@ import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/
 import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
-import type { ReduxStore, AppDispatch } from "~/renderer/createStore";
-import createStore from "~/renderer/createStore";
+import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
+import createStore from "~/state-manager/configureStore";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -53,7 +53,7 @@ import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { initIdentities } from "~/renderer/helpers/identities";
 
 const rootNode = document.getElementById("react-root");
 
@@ -149,7 +149,9 @@ async function init() {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
-  sentry(() => sentryLogsSelector(store.getState()));
+  // Initialize identities before Sentry so Sentry user id (datadogId) is set correctly
+  await initIdentities(store);
+  sentry(() => sentryLogsSelector(store.getState()), store);
   let notifiedSentryLogs = false;
   store.subscribe(() => {
     const next = sentryLogsSelector(store.getState());
@@ -168,8 +170,6 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
-  // Make sure startAnalytics is always called after a first getKey() because otherwise
-  // will run into issues where shareAnalytics state will not reflect the user's preferences and always be set to true...
   startAnalytics(store);
 
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
@@ -207,12 +207,6 @@ async function init() {
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
-  }
-
-  // Load persisted identities
-  const persistedIdentities = await getKey("app", "identities");
-  if (persistedIdentities) {
-    store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
   }
 
   const initialCountervalues = await getKey("app", "countervalues");

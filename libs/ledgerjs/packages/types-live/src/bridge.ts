@@ -76,6 +76,7 @@ export type SignRawOperationArg0<A extends Account> = {
   deviceId: DeviceId;
   deviceModelId?: DeviceModelId;
   certificateSignatureKind?: "prod" | "test";
+  broadcast?: boolean;
 };
 
 /**

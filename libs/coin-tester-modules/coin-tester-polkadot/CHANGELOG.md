@@ -1,5 +1,61 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.9.0
+
+### Minor Changes
+
+- [#14468](https://github.com/LedgerHQ/ledger-live/pull/14468) [`517fd99`](https://github.com/LedgerHQ/ledger-live/commit/517fd99b4e058e1ab7bb1f3a1e9e271eb5d0ff16) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update metadatashortener endpoint to sidecar
+
+- [#14529](https://github.com/LedgerHQ/ledger-live/pull/14529) [`e930812`](https://github.com/LedgerHQ/ledger-live/commit/e9308124fe0c84684e4c899b0a120962b144a1ae) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-polkadot): update `@polkadot/api`
+
+### Patch Changes
+
+- Updated dependencies [[`a96dc83`](https://github.com/LedgerHQ/ledger-live/commit/a96dc83916684e22c041904c479c615a3095303b), [`517fd99`](https://github.com/LedgerHQ/ledger-live/commit/517fd99b4e058e1ab7bb1f3a1e9e271eb5d0ff16), [`e954c1e`](https://github.com/LedgerHQ/ledger-live/commit/e954c1e0f0e45efe3b0e8c3fda9e6d5b22b5bc01), [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77), [`17149ee`](https://github.com/LedgerHQ/ledger-live/commit/17149ee26eeef8a600d650a6f4903c52320a0d8d), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8), [`5f1c644`](https://github.com/LedgerHQ/ledger-live/commit/5f1c644fd5f757f48618b62e976faac274ced40d), [`e930812`](https://github.com/LedgerHQ/ledger-live/commit/e9308124fe0c84684e4c899b0a120962b144a1ae), [`c7ed360`](https://github.com/LedgerHQ/ledger-live/commit/c7ed36086280d60631e235d375cc2db5f60e8aab), [`cc4c8f5`](https://github.com/LedgerHQ/ledger-live/commit/cc4c8f57e38586d77b89f32d359e65cc700912af)]:
+  - @ledgerhq/types-live@6.99.0
+  - @ledgerhq/coin-polkadot@6.18.0
+  - @ledgerhq/cryptoassets@13.40.0
+  - @ledgerhq/coin-framework@6.18.0
+  - @ledgerhq/coin-tester@0.17.0
+
+## 1.9.0-next.0
+
+### Minor Changes
+
+- [#14468](https://github.com/LedgerHQ/ledger-live/pull/14468) [`517fd99`](https://github.com/LedgerHQ/ledger-live/commit/517fd99b4e058e1ab7bb1f3a1e9e271eb5d0ff16) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update metadatashortener endpoint to sidecar
+
+- [#14529](https://github.com/LedgerHQ/ledger-live/pull/14529) [`e930812`](https://github.com/LedgerHQ/ledger-live/commit/e9308124fe0c84684e4c899b0a120962b144a1ae) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-polkadot): update `@polkadot/api`
+
+### Patch Changes
+
+- Updated dependencies [[`a96dc83`](https://github.com/LedgerHQ/ledger-live/commit/a96dc83916684e22c041904c479c615a3095303b), [`517fd99`](https://github.com/LedgerHQ/ledger-live/commit/517fd99b4e058e1ab7bb1f3a1e9e271eb5d0ff16), [`e954c1e`](https://github.com/LedgerHQ/ledger-live/commit/e954c1e0f0e45efe3b0e8c3fda9e6d5b22b5bc01), [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77), [`17149ee`](https://github.com/LedgerHQ/ledger-live/commit/17149ee26eeef8a600d650a6f4903c52320a0d8d), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8), [`5f1c644`](https://github.com/LedgerHQ/ledger-live/commit/5f1c644fd5f757f48618b62e976faac274ced40d), [`e930812`](https://github.com/LedgerHQ/ledger-live/commit/e9308124fe0c84684e4c899b0a120962b144a1ae), [`c7ed360`](https://github.com/LedgerHQ/ledger-live/commit/c7ed36086280d60631e235d375cc2db5f60e8aab), [`cc4c8f5`](https://github.com/LedgerHQ/ledger-live/commit/cc4c8f57e38586d77b89f32d359e65cc700912af)]:
+  - @ledgerhq/types-live@6.99.0-next.0
+  - @ledgerhq/coin-polkadot@6.18.0-next.0
+  - @ledgerhq/cryptoassets@13.40.0-next.0
+  - @ledgerhq/coin-framework@6.18.0-next.0
+  - @ledgerhq/coin-tester@0.17.0
+
+## 1.8.3
+
+### Patch Changes
+
+- Updated dependencies [[`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078)]:
+  - @ledgerhq/types-live@6.98.0
+  - @ledgerhq/coin-framework@6.17.0
+  - @ledgerhq/coin-polkadot@6.17.1
+  - @ledgerhq/coin-tester@0.17.0
+  - @ledgerhq/cryptoassets@13.39.1
+
+## 1.8.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e08c1be`](https://github.com/LedgerHQ/ledger-live/commit/e08c1be127e6a9c246c285ba818530e6756033e0), [`d02f203`](https://github.com/LedgerHQ/ledger-live/commit/d02f2035e4f2ac6c3b446cf4107cd017ea4faf43), [`e12fd1e`](https://github.com/LedgerHQ/ledger-live/commit/e12fd1eb27189a668cd8e61798256a0c20c0f078)]:
+  - @ledgerhq/types-live@6.98.0-next.0
+  - @ledgerhq/coin-framework@6.17.0-next.0
+  - @ledgerhq/coin-polkadot@6.17.1-next.0
+  - @ledgerhq/coin-tester@0.17.0
+  - @ledgerhq/cryptoassets@13.39.1-next.0
+
 ## 1.8.2
 
 ### Patch Changes

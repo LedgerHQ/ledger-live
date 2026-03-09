@@ -9,6 +9,8 @@ import { CARD_LANDING_TEST_IDS } from "../../testIds";
 import { PAGE_NAME, CARD_APP_ID, CL_CARD_APP_ID } from "../../constants";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/core";
+import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
+import { ImageSourcePropType } from "react-native";
 
 const HEADER_HEIGHT = 48;
 
@@ -18,10 +20,11 @@ export interface CardLandingScreenViewModelResult {
   readonly ctas: readonly CardLandingCta[];
   readonly pageName: string;
   readonly topInset: number;
+  readonly bottomInset: number;
   readonly backgroundColor: string;
-  readonly isWallet40DarkMode: boolean;
   readonly imageLoaded: boolean;
   readonly onImageLoaded: () => void;
+  readonly backgroundImageSource: ImageSourcePropType;
 }
 
 const TRACKING_BUTTON_EVENT = "button_clicked";
@@ -32,6 +35,7 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
   const { isWallet40DarkMode } = useWallet40Theme("mobile");
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigation = useNavigation();
+  const { bottomBarHeight } = useNavigationBarHeights();
 
   const onImageLoaded = useCallback(() => setImageLoaded(true), []);
 
@@ -84,7 +88,15 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     [t, handleExploreCardsPress, handleIHaveACardPress],
   );
 
+  const backgroundImageSource = useMemo(() => {
+    if (isWallet40DarkMode) {
+      return require("~/images/card/card-bg.webp");
+    }
+    return require("~/images/portfolio/v4-light.webp");
+  }, [isWallet40DarkMode]);
+
   const topInset = HEADER_HEIGHT;
+  const bottomInset = bottomBarHeight;
 
   return {
     title: t("cardLanding.title"),
@@ -92,9 +104,10 @@ export const useCardLandingScreenViewModel = (): CardLandingScreenViewModelResul
     ctas,
     pageName: PAGE_NAME,
     topInset,
+    bottomInset,
     backgroundColor: lumenTheme.colors.bg.base,
-    isWallet40DarkMode,
     imageLoaded,
     onImageLoaded,
+    backgroundImageSource,
   };
 };

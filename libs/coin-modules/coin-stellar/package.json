@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stellar",
-  "version": "6.14.0",
+  "version": "6.15.0",
   "description": "Ledger Stellar Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -140,7 +140,7 @@
     "@faker-js/faker": "^8.4.1",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "nock": "14.0.2",

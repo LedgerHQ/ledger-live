@@ -1,22 +1,33 @@
-import uniqBy from "lodash/uniqBy";
-import BigNumber from "bignumber.js";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
 import {
   AccountShapeInfo,
   GetAccountShape,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { utils as TyphonUtils, address as TyphonAddress } from "@stricahq/typhonjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import { getDelegationInfo } from "./api/getDelegationInfo";
+import { utils as TyphonUtils, address as TyphonAddress } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
+import uniqBy from "lodash/uniqBy";
 import { APITransaction, HashType } from "./api/api-types";
-import { getTransactions } from "./api/getTransactions";
+import { getDelegationInfo } from "./api/getDelegationInfo";
 import { fetchNetworkInfo } from "./api/getNetworkInfo";
+import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
+import { CARDANO_MAX_SUPPLY } from "./constants";
+import {
+  getAccountChange,
+  getAccountStakeCredential,
+  getBaseAddress,
+  getBipPathString,
+  getMemoFromTx,
+  getOperationType,
+  isHexString,
+  mergeTokens,
+} from "./logic";
 import { getNetworkParameters } from "./networks";
 import { CardanoSigner } from "./signer";
 import {
@@ -28,17 +39,6 @@ import {
   ProtocolParams,
   StakeCredential,
 } from "./types";
-import {
-  getAccountChange,
-  getAccountStakeCredential,
-  getBaseAddress,
-  getBipPathString,
-  getMemoFromTx,
-  getOperationType,
-  isHexString,
-  mergeTokens,
-} from "./logic";
-import { CARDANO_MAX_SUPPLY } from "./constants";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>

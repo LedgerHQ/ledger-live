@@ -1,19 +1,20 @@
 import BigNumber from "bignumber.js";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
 import {
-  getMockedEnrichedTransaction,
+  getMockedTransaction as getMockedPublicTransaction,
   getMockedEnrichedPrivateRecord,
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
+import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
-import type { ProvableApi } from "../types";
+import type { AleoOperationExtra, ProvableApi, AleoTransactionIntentData } from "../types";
 import {
   getNetworkConfig,
   parseMicrocredits,
@@ -27,8 +28,15 @@ import {
   getTransactionType,
   calculateAmount,
   isProvableApiConfigured,
+  isRecordScannerReady,
   getOperationTransactionType,
   splitPrivateAndPublicOperations,
+  serializeTransaction,
+  deserializeTransaction,
+  mapTransactionIntentToSdkIntent,
+  hasSpecificIntentData,
+  getOperationDetailsExtraFields,
+  getAvailableBalance,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -233,79 +241,68 @@ describe("toAlpacaOperation", () => {
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
   it("should set type to IN when address is the recipient", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.type).toBe("IN");
   });
 
   it("should set type to OUT when address is the sender", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, senderAddress);
+    const result = toAlpacaOperation(rawTx, senderAddress);
 
     expect(result.type).toBe("OUT");
   });
 
-  it("should set type to NONE when there are no details", () => {
-    const enriched = getMockedEnrichedTransaction({ details: null });
+  it("should set type to NONE when program_id is not CREDITS", () => {
+    const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.type).toBe("NONE");
   });
 
   it("should map core fields from rawTx", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
-    expect(result.id).toBe(enriched.rawTx.transaction_id);
-    expect(result.senders).toEqual([enriched.rawTx.sender_address]);
-    expect(result.recipients).toEqual([enriched.rawTx.recipient_address]);
-    expect(result.value).toBe(BigInt(enriched.rawTx.amount));
+    expect(result.id).toBe(rawTx.transaction_id);
+    expect(result.senders).toEqual([rawTx.sender_address]);
+    expect(result.recipients).toEqual([rawTx.recipient_address]);
+    expect(result.value).toBe(BigInt(rawTx.amount));
     expect(result.asset).toEqual({ type: "native" });
-    expect(result.tx.hash).toBe(enriched.rawTx.transaction_id);
-    expect(result.tx.block.height).toBe(enriched.rawTx.block_number);
+    expect(result.tx.hash).toBe(rawTx.transaction_id);
+    expect(result.tx.block.height).toBe(rawTx.block_number);
     expect(result.tx.failed).toBe(false);
   });
 
-  it("should derive fees and blockHash from details", () => {
-    const enriched = getMockedEnrichedTransaction();
+  it("should derive fees and blockHash from rawTx", () => {
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
-    expect(result.tx.fees).toBe(BigInt(enriched.details!.fee_value));
-    expect(result.tx.block.hash).toBe(enriched.details!.block_hash);
-  });
-
-  it("should use empty string for fees and blockHash when details are null", () => {
-    const enriched = getMockedEnrichedTransaction({ details: null });
-
-    const result = toAlpacaOperation(enriched, recipientAddress);
-
-    expect(result.tx.fees).toBe(0n);
-    expect(result.tx.block.hash).toBe("");
+    expect(result.tx.fees).toBe(BigInt(rawTx.fee));
+    expect(result.tx.block.hash).toBe(rawTx.block_hash);
   });
 
   it("should set failed to true when transaction_status is not Accepted", () => {
-    const enriched = getMockedEnrichedTransaction({
-      rawTx: { ...getMockedEnrichedTransaction().rawTx, transaction_status: "Rejected" },
-    });
+    const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.tx.failed).toBe(true);
   });
 
   it("should include functionId, transactionType, and ledgerOpType in details", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(enriched, recipientAddress);
+    const result = toAlpacaOperation(rawTx, recipientAddress);
 
     expect(result.details).toMatchObject({
-      functionId: enriched.rawTx.function_id,
+      functionId: rawTx.function_id,
       ledgerOpType: "IN",
     });
   });
@@ -317,37 +314,37 @@ describe("toBridgeOperation", () => {
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
   it("should produce an operation with encoded id and accountId", () => {
-    const enriched = getMockedEnrichedTransaction();
-    const expectedId = encodeOperationId(ledgerAccountId, enriched.rawTx.transaction_id, "IN");
+    const rawTx = getMockedPublicTransaction();
+    const expectedId = encodeOperationId(ledgerAccountId, rawTx.transaction_id, "IN");
 
-    const result = toBridgeOperation(ledgerAccountId, enriched, recipientAddress);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
     expect(result.id).toBe(expectedId);
     expect(result.accountId).toBe(ledgerAccountId);
   });
 
-  it("should derive all operation fields from rawTx and details", () => {
-    const enriched = getMockedEnrichedTransaction();
+  it("should derive all operation fields from rawTx", () => {
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toBridgeOperation(ledgerAccountId, enriched, recipientAddress);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
 
-    expect(result.hash).toBe(enriched.rawTx.transaction_id);
+    expect(result.hash).toBe(rawTx.transaction_id);
     expect(result.type).toBe("IN");
-    expect(result.value).toEqual(new BigNumber(enriched.rawTx.amount));
-    expect(result.fee).toEqual(new BigNumber(enriched.details!.fee_value));
-    expect(result.senders).toEqual([enriched.rawTx.sender_address]);
-    expect(result.recipients).toEqual([enriched.rawTx.recipient_address]);
-    expect(result.blockHeight).toBe(enriched.rawTx.block_number);
-    expect(result.blockHash).toBe(enriched.details!.block_hash);
+    expect(result.value).toEqual(new BigNumber(rawTx.amount));
+    expect(result.fee).toEqual(new BigNumber(rawTx.fee));
+    expect(result.senders).toEqual([rawTx.sender_address]);
+    expect(result.recipients).toEqual([rawTx.recipient_address]);
+    expect(result.blockHeight).toBe(rawTx.block_number);
+    expect(result.blockHash).toBe(rawTx.block_hash);
     expect(result.hasFailed).toBe(false);
   });
 
   it("should generate different ids for different account ids", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
     const otherId = "js:2:aleo:aleo1other:";
 
-    const result1 = toBridgeOperation(ledgerAccountId, enriched, recipientAddress);
-    const result2 = toBridgeOperation(otherId, enriched, recipientAddress);
+    const result1 = toBridgeOperation(ledgerAccountId, rawTx, recipientAddress);
+    const result2 = toBridgeOperation(otherId, rawTx, recipientAddress);
 
     expect(result1.id).not.toBe(result2.id);
     expect(result1.accountId).toBe(ledgerAccountId);
@@ -355,14 +352,12 @@ describe("toBridgeOperation", () => {
   });
 
   it("should set type to OUT when address is the sender", () => {
-    const enriched = getMockedEnrichedTransaction();
+    const rawTx = getMockedPublicTransaction();
 
-    const result = toBridgeOperation(ledgerAccountId, enriched, senderAddress);
+    const result = toBridgeOperation(ledgerAccountId, rawTx, senderAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.id).toBe(
-      encodeOperationId(ledgerAccountId, enriched.rawTx.transaction_id, "OUT"),
-    );
+    expect(result.id).toBe(encodeOperationId(ledgerAccountId, rawTx.transaction_id, "OUT"));
   });
 });
 
@@ -476,7 +471,11 @@ describe("calculateAmount", () => {
 
   it("should calculate max amount when useAllAmount is true", () => {
     const estimatedFees = new BigNumber(5000);
-    const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
+    const transparentBalance = new BigNumber(100000);
+    const mockAccount = getMockedAccount({
+      balance: transparentBalance,
+      aleoResources: { ...mockAleoResources, transparentBalance },
+    });
     const mockTransaction = getMockedTransaction({
       amount: new BigNumber(0),
       useAllAmount: true,
@@ -488,10 +487,8 @@ describe("calculateAmount", () => {
       estimatedFees,
     });
 
-    expect(result).toMatchObject({
-      amount: mockAccount.balance.minus(estimatedFees),
-      totalSpent: mockAccount.balance,
-    });
+    expect(result.amount).toStrictEqual(transparentBalance.minus(estimatedFees));
+    expect(result.totalSpent).toEqual(transparentBalance);
   });
 
   it("should return zero amount when balance is less than fees with useAllAmount", () => {
@@ -560,6 +557,36 @@ describe("isProvableApiConfigured", () => {
     const api: ProvableApi = { ...validProvableApi, jwt: { token: "", exp: 123456789 } };
 
     expect(isProvableApiConfigured(api)).toBe(false);
+  });
+});
+
+describe("isRecordScannerReady", () => {
+  const baseProvableApi: ProvableApi = {
+    apiKey: "test-api-key",
+    consumerId: "test-consumer-id",
+    uuid: "test-uuid",
+    jwt: { token: "test-token", exp: 123456789 },
+    scannerStatus: { synced: true, percentage: 100 },
+  };
+
+  it("should return true when scannerStatus.synced is true", () => {
+    expect(isRecordScannerReady(baseProvableApi)).toBe(true);
+  });
+
+  it("should return false when scannerStatus.synced is false", () => {
+    const api: ProvableApi = {
+      ...baseProvableApi,
+      scannerStatus: { synced: false, percentage: 50 },
+    };
+
+    expect(isRecordScannerReady(api)).toBe(false);
+  });
+
+  it("should return false when scannerStatus is undefined", () => {
+    const { scannerStatus: _, ...rest } = baseProvableApi;
+    const api: ProvableApi = rest;
+
+    expect(isRecordScannerReady(api)).toBe(false);
   });
 });
 
@@ -770,5 +797,239 @@ describe("splitPrivateAndPublicOperations", () => {
 
     expect(publicOps.map(o => o.id)).toEqual(["pub1", "pub2", "pub3"]);
     expect(privateOps.map(o => o.id)).toEqual(["priv1", "priv2"]);
+  });
+});
+
+describe("hasSpecificIntentData", () => {
+  it("should return true when data.type matches expectedType", () => {
+    // @ts-expect-error - only intent.data is required for this test
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      data: {
+        type: "fee_public",
+        executionId: "exec123",
+        priorityFee: 5000,
+      },
+    };
+
+    expect(hasSpecificIntentData(intent, "fee_public")).toBe(true);
+  });
+
+  it("should return false when data.type does not match expectedType", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      data: {
+        // @ts-expect-error - only intent.type is required for this test
+        type: "none",
+      },
+    };
+
+    expect(hasSpecificIntentData(intent, "fee_public")).toBe(false);
+  });
+
+  it("should return false when data property is absent", () => {
+    // @ts-expect-error - testing invalid intent
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {};
+
+    expect(hasSpecificIntentData(intent, "fee_public")).toBe(false);
+  });
+});
+
+describe("mapTransactionIntentToSdkIntent", () => {
+  const baseIntent = {
+    intentType: "transaction" as const,
+    asset: { type: "native" as const },
+    amount: 1000000n,
+    sender: "aleo1sender",
+    recipient: "aleo1recipient",
+  };
+
+  it("should map transfer_public intent to SDK intent with correct fields", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "transfer_public",
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+    });
+  });
+
+  it("should map transfer_public_to_private intent to SDK intent with correct fields", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "transfer_public_to_private",
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+    });
+  });
+
+  it("should map fee_public intent with priorityFee to SDK intent", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "fee_public",
+      data: {
+        type: "fee_public",
+        executionId: "exec123",
+        priorityFee: 5000,
+      },
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      base_fee: intent.amount.toString(),
+      execution_id: intent.data.executionId,
+      priority_fee: intent.data.priorityFee?.toString(),
+    });
+  });
+
+  it("should map fee_public intent without priorityFee defaulting priority_fee to '0'", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "fee_public",
+      data: {
+        type: "fee_public",
+        executionId: "exec456",
+      },
+    };
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: intent.type,
+      base_fee: intent.amount.toString(),
+      execution_id: intent.data.executionId,
+      priority_fee: "0",
+    });
+  });
+
+  it("should throw when fee_public intent has no matching data", () => {
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "fee_public",
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: intent data is required for ${intent.type}`,
+    );
+  });
+
+  it("should throw for unsupported intent type", () => {
+    // @ts-expect-error - testing unsupported intent type
+    const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
+      ...baseIntent,
+      type: "custom_intent",
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: unsupported intent type: ${intent.type}`,
+    );
+  });
+});
+
+describe("serializeTransaction", () => {
+  it("should produce a hex string that decodes back to the original JSON", () => {
+    const tx = getMockedPreparedRequestResponse();
+
+    const result = serializeTransaction(tx);
+    const decoded = JSON.parse(Buffer.from(result, "hex").toString());
+
+    expect(result).toMatch(/^[a-f0-9]+$/);
+    expect(decoded).toEqual(tx);
+  });
+
+  it("should produce different hex strings for different transactions", () => {
+    const tx1 = getMockedPreparedRequestResponse({ program_id: "custom.aleo" });
+    const tx2 = getMockedPreparedRequestResponse({ program_id: "another.aleo" });
+
+    expect(serializeTransaction(tx1)).not.toBe(serializeTransaction(tx2));
+  });
+});
+
+describe("deserializeTransaction", () => {
+  it("should deserialize a hex string back to the original transaction", () => {
+    const tx = getMockedPreparedRequestResponse();
+    const serialized = serializeTransaction(tx);
+
+    const result = deserializeTransaction(serialized);
+
+    expect(result).toEqual(tx);
+  });
+
+  it("should throw when given an invalid hex string", () => {
+    expect(() => deserializeTransaction("not-valid-hex")).toThrow();
+  });
+
+  it("should throw when given a hex string that is not valid JSON", () => {
+    const invalidJsonHex = Buffer.from("not json").toString("hex");
+
+    expect(() => deserializeTransaction(invalidJsonHex)).toThrow();
+  });
+});
+
+describe("getOperationDetailsExtraFields", () => {
+  it("should return only the functionId field", () => {
+    const extra = {
+      functionId: "transfer_private_to_public",
+      transactionType: "private",
+      patched: true,
+    } satisfies AleoOperationExtra;
+
+    const result = getOperationDetailsExtraFields(extra);
+
+    expect(result).toEqual([{ key: "functionId", value: "transfer_private_to_public" }]);
+  });
+});
+
+describe("getAvailableBalance", () => {
+  const mockTransparentBalance = new BigNumber(100);
+  const mockPrivateBalance = new BigNumber(200);
+  const mockAccount = getMockedAccount({
+    aleoResources: {
+      ...mockAleoResources,
+      transparentBalance: mockTransparentBalance,
+      privateBalance: mockPrivateBalance,
+    },
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_PUBLIC, mockTransparentBalance],
+    [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, mockTransparentBalance],
+    [TRANSACTION_TYPE.TRANSFER_PRIVATE, mockPrivateBalance],
+    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, mockPrivateBalance],
+  ])("should return correct balance for %s", (type, expected) => {
+    const transaction = getMockedTransaction({ type });
+
+    expect(getAvailableBalance(mockAccount, transaction)).toStrictEqual(expected);
+  });
+
+  it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.TRANSFER_PRIVATE])(
+    "should return zero when aleoResources is undefined (%s)",
+    type => {
+      const brokenAccount = getMockedAccount({ aleoResources: undefined });
+      const transaction = getMockedTransaction({ type });
+
+      expect(getAvailableBalance(brokenAccount, transaction)).toStrictEqual(new BigNumber(0));
+    },
+  );
+
+  it("should throw for an unsupported transaction type", () => {
+    const unsupportedType = "unsupported_type";
+    // @ts-expect-error - testing unsupported type
+    const transaction = getMockedTransaction({ type: unsupportedType });
+
+    expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
+      `aleo: unsupported tx type for balance calculation: ${unsupportedType}`,
+    );
   });
 });

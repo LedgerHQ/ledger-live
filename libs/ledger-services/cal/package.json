@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-cal-service",
-  "version": "1.11.2",
+  "version": "1.12.0",
   "description": "Ledger CAL service client",
   "keywords": [
     "Ledger",
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",

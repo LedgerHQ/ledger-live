@@ -9,6 +9,7 @@ import {
   TransactionStatusCommonRaw,
   Operation,
 } from "@ledgerhq/types-live";
+import { ZcashPrivateInfo, ZcashPrivateInfoRaw } from "@ledgerhq/zcash-shielded/types";
 
 export type BitcoinInput = {
   address: string | null | undefined;
@@ -147,7 +148,7 @@ export type Transaction = TransactionCommon & {
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
   psbt?: string;
-  finalizePsbt?: boolean;
+  replaceTxId?: string | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -158,6 +159,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   networkInfo: NetworkInfoRaw | null | undefined;
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
+  replaceTxId?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon & {
@@ -176,23 +178,6 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw & {
 
 export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
 
-export type ZcashAccount = BitcoinAccount & { privateInfo?: ZcashPrivateInfo };
-
-export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
-
-export type ZcashPrivateInfo = {
-  saplingBalance: BigNumber;
-  orchardBalance: BigNumber;
-  ufvk: string | null;
-  syncState: ZcashSyncState;
-  lastSyncTimestamp: number | null;
-  lastBlockProcessed: number | null;
-  transactions: {
-    hash: string;
-    type: "sapling" | "orchard";
-  }[];
-};
-
 export type BitcoinAccountRaw = AccountRaw & {
   bitcoinResources: BitcoinResourcesRaw;
 };
@@ -200,26 +185,12 @@ export type BitcoinAccountRaw = AccountRaw & {
 export type BtcOperationExtra = {
   inputs?: string[];
 };
+
 export type BtcOperation = Operation<BtcOperationExtra>;
+
+export type ZcashAccount = BitcoinAccount & { privateInfo?: ZcashPrivateInfo };
 
 export type ZcashAccountRaw = BitcoinAccountRaw & { privateInfo?: ZcashPrivateInfoRaw };
 
-export type ZcashPrivateInfoRaw = {
-  orchardBalance: string;
-  saplingBalance: string;
-  ufvk: string | null;
-  syncState: string;
-  lastSyncTimestamp: number | null;
-  lastBlockProcessed: number | null;
-  transactions: {
-    hash: string;
-    type: "sapling" | "orchard";
-  }[];
-};
-
-export const ZCASH_SHIELDED_TX_TYPES = [
-  "SHIELDED_TX_SAPLING_IN",
-  "SHIELDED_TX_SAPLING_OUT",
-  "SHIELDED_TX_ORCHARD_IN",
-  "SHIELDED_TX_ORCHARD_OUT",
-];
+// Possible types of "replace by fee" (aka "edit transaction") operations:
+export type EditType = "cancel" | "speedup";

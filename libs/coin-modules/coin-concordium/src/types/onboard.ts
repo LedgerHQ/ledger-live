@@ -1,4 +1,4 @@
-import { ConcordiumAccount } from "./bridge";
+import type { ConcordiumAccount } from "./bridge";
 
 export enum AccountOnboardStatus {
   INIT = "INIT",

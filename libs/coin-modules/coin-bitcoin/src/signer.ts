@@ -33,17 +33,18 @@ export interface BitcoinSigner {
   createPaymentTransaction(arg: CreateTransaction): Promise<string>;
   signPsbtBuffer?(
     psbtBuffer: Buffer,
-    options?: {
-      finalizePsbt?: boolean;
-      accountPath?: string;
-      addressFormat?: AddressFormat;
+    options: {
+      finalizePsbt: boolean;
+      accountPath: string;
+      addressFormat: AddressFormat;
       onDeviceSignatureRequested: (() => void) | undefined;
       onDeviceSignatureGranted: (() => void) | undefined;
       onDeviceStreaming:
         | ((arg: { progress: number; total: number; index: number }) => void)
         | undefined;
+      knownAddressDerivations: Map<string, { pubkey: Buffer; path: number[] }>;
     },
-  ): Promise<{ psbt: Buffer; tx: string }>;
+  ): Promise<{ psbt: Buffer; tx?: string }>;
 }
 
 export type SignerResult = BitcoinXPub | BitcoinAddress | BitcoinSignature;

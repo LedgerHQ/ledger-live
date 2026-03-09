@@ -3,9 +3,9 @@ import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+//import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+//import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
@@ -41,8 +41,10 @@ export type ModularDrawerProps = {
   /** Callback fired when an account is selected */
   readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
 
-  /** The use case identifier for the drawer */
+  /** The use case identifier for the drawer (sent to API as transaction param) */
   readonly useCase?: string;
+  /** UI-only use case identifier for conditional rendering (e.g. perpetuals banner) */
+  readonly uiUseCase?: string;
   /** Whether the currencies are filtered */
   readonly areCurrenciesFiltered?: boolean;
 };
@@ -59,9 +61,11 @@ export function ModularDrawer({
   networksConfiguration,
   onAccountSelected,
   useCase,
+  uiUseCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
+  // TODO: Re-enable it for LIVE-27294
+  // const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   const {
     assetsConfiguration: assetsConfigurationSanitized,
@@ -122,24 +126,26 @@ export function ModularDrawer({
       onAddNewAccount,
       asset: accountCurrency,
       onAccountSelected,
+      uiUseCase,
     },
   };
 
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
-        onClose={handleCloseButton}
-        enableBlurKeyboardOnGesture={true}
-        snapPoints={SNAP_POINTS}
-        hasBackButton={shouldShowBackButton}
-        onBack={handleBackButton}
-        enablePanDownToClose
-      >
-        <ModularDrawerFlowManager {...flowManagerProps} />
-      </QueuedDrawerBottomSheet>
-    );
-  }
+  // TODO: Re-enable it for LIVE-27294
+  // if (isEnabled) {
+  //   return (
+  //     <QueuedDrawerBottomSheet
+  //       isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
+  //       onClose={handleCloseButton}
+  //       enableBlurKeyboardOnGesture={true}
+  //       snapPoints={SNAP_POINTS}
+  //       hasBackButton={shouldShowBackButton}
+  //       onBack={handleBackButton}
+  //       enablePanDownToClose
+  //     >
+  //       <ModularDrawerFlowManager {...flowManagerProps} />
+  //     </QueuedDrawerBottomSheet>
+  //   );
+  // }
 
   return (
     <QueuedDrawerGorhom

@@ -4,13 +4,14 @@ import "./families";
 
 import { Store } from "redux";
 import VaultTransport from "@ledgerhq/hw-transport-vault";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
-import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import logger from "./logger";
+import type { State } from "~/renderer/reducers";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
@@ -33,8 +34,9 @@ enum RendererTransportModule {
  * This logic allows all transports to be registered at initialization time,
  * and then depending on a set of conditions, the right transport will be used.
  */
-export function registerTransportModules(_store: Store) {
-  setEnvOnAllThreads("USER_ID", getUserId());
+export function registerTransportModules(store: Store<State>) {
+  const userId = userIdSelector(store.getState());
+  setEnvOnAllThreads("USER_ID", userId.exportUserIdForAnalytics());
   const vaultTransportPrefixID = "vault-transport:";
 
   listenLogs(({ id, date, ...log }) => {

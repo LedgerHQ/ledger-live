@@ -4,8 +4,9 @@
  */
 
 import { renderHook, waitFor } from "@testing-library/react";
+import { http, HttpResponse } from "msw";
 import { useCurrencyData } from "../useMarketDataProvider";
-import { countervaluesApi } from "../../state-manager/countervaluesApi";
+import { marketApi } from "../../state-manager/marketApi";
 import { server } from "@tests/server";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
 
@@ -26,13 +27,13 @@ describe("useCurrencyData", () => {
   afterEach(() => {
     server.events.removeListener("request:start", requestListener);
     server.resetHandlers();
-    store.dispatch(countervaluesApi.util.resetApiState());
+    store.dispatch(marketApi.util.resetApiState());
   });
 
   afterAll(() => server.close());
 
   beforeEach(() => {
-    store = createTestStore([countervaluesApi], { disableSerializableCheck: true });
+    store = createTestStore([marketApi], { disableSerializableCheck: true });
     requestCount = 0;
     lastRequestUrl = null;
     requestListener = ({ request }: { request: Request }) => {
@@ -93,6 +94,21 @@ describe("useCurrencyData", () => {
 
     await waitFor(() => expect(requestCount).toBe(2), { timeout: 2000 });
     await waitFor(() => expect(result.current.isFetching).toBe(false));
+
+    unmount();
+  });
+
+  it("should return undefined data when API returns empty array (id not resolving to a currency)", async () => {
+    server.use(http.get("*/v3/markets", () => HttpResponse.json([])));
+    const wrapper = createWrapper(store);
+    const { result, unmount } = renderHook(
+      () => useCurrencyData({ id: "unknown-currency", counterCurrency: "usd" }),
+      { wrapper },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.isError).toBe(false);
 
     unmount();
   });

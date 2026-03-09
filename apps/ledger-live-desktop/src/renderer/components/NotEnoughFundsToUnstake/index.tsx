@@ -59,10 +59,11 @@ const NotEnoughFundsToUnstake = ({
         currency: currency.id,
         account: account.id,
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
     onClose();
-  }, [buttonSharedTrackingFields, navigate, currency.id, account?.id, onClose]);
+  }, [buttonSharedTrackingFields, navigate, currency.id, account?.id, onClose, location.pathname]);
 
   const onPressSwap = useCallback(() => {
     track("button_clicked2", {

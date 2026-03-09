@@ -110,6 +110,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               modalOnDisabledClick: {
                 component: PtxToast,
               },
+              eventProperties: { currency: currency?.ticker },
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -128,6 +129,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               id: "sell",
               label: t("exchange.sell.tabTitle"),
               Icon: iconSell,
+              eventProperties: { currency: currency?.ticker },
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -151,17 +153,19 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(availableOnSwap
               ? [
                   {
+                    id: "swap",
                     label: t("account.swap"),
                     Icon: iconSwap,
                     event: "button_clicked",
                     eventProperties: {
                       ...sharedSwapTracking,
                       button: "swap",
+                      currency: currency?.ticker,
                     },
                     navigationParams: [
                       NavigatorName.Swap,
                       {
-                        screen: ScreenName.Swap,
+                        screen: ScreenName.SwapTab,
                         params: {
                           defaultAccount,
                           defaultCurrency: currency,

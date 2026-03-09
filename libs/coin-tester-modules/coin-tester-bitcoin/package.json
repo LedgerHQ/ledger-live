@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.4.2",
+  "version": "1.4.4",
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -84,6 +84,6 @@
     "jest": "catalog:",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   }
 }

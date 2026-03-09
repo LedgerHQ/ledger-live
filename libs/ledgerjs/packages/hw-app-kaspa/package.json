@@ -35,7 +35,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "^20.11.30",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",

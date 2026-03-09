@@ -1,12 +1,12 @@
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/lib/operation";
 import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
-import { broadcast } from "./broadcast";
 import { broadcastTx } from "../api";
 import {
   createMockAccount,
   createMockTransaction,
   createMockSignedOperation,
 } from "../test/fixtures";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/lib/operation";
+import { broadcast } from "./broadcast";
 
 // Mock the dependencies
 jest.mock("casper-js-sdk", () => {

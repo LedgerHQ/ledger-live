@@ -13,18 +13,10 @@ import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/t
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
 import { ipcRenderer } from "electron";
-import React, {
-  type RefObject,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { type RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import getUser from "~/helpers/user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
@@ -198,6 +190,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         account,
         parentAccount,
         transaction,
+        broadcast,
         options,
         onSuccess,
         onError,
@@ -206,6 +199,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         dispatch(
           openModal("MODAL_SIGN_RAW_TRANSACTION", {
             transaction,
+            broadcast,
             useApp: options?.hwAppId,
             dependencies: options?.dependencies,
             account,
@@ -308,19 +302,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 }
 
 const useGetUserId = () => {
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let mounted = true;
-    getUser().then(({ id }) => {
-      if (mounted) setUserId(id);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return userId;
+  const userId = useSelector(userIdSelector);
+  return userId.exportUserIdForWalletAPI();
 };
 
 function useWebView(

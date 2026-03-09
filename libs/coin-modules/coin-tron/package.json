@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "5.13.0",
+  "version": "5.14.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -109,6 +109,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@types/node": "catalog:",
     "@types/bs58check": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
@@ -118,7 +119,7 @@
     "msw": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

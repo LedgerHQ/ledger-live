@@ -1,5 +1,4 @@
 import { device } from "detox";
-import { closeProxy } from "./bridge/proxy";
 import { close as closeBridge } from "./bridge/server";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
@@ -23,6 +22,5 @@ beforeAll(
 afterAll(async () => {
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   closeBridge();
-  closeProxy();
   await app.common.removeSpeculos();
 });

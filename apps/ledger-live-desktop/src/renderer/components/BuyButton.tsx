@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import { Account } from "@ledgerhq/types-live";
@@ -12,7 +12,7 @@ import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 const BuyButton = ({ currency, account }: { currency: CryptoCurrency; account: Account }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const location = useLocation();
   const onClick = useCallback(() => {
     dispatch(closeAllModal());
     setTrackingSource("send flow");
@@ -20,10 +20,11 @@ const BuyButton = ({ currency, account }: { currency: CryptoCurrency; account: A
       state: {
         currency: currency.id,
         account: account.id,
-        mode: "buy", // buy or sell
+        mode: "buy",
+        returnTo: location.pathname,
       },
     });
-  }, [account, currency, dispatch, navigate]);
+  }, [account, currency, dispatch, navigate, location.pathname]);
 
   if (!isCurrencySupported("BUY", currency)) {
     return null;

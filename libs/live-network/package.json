@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-network",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "Ledger Live network and cache utilities",
   "keywords": [
     "Ledger"
@@ -72,7 +72,7 @@
   "devDependencies": {
     "@types/invariant": "^2.2.35",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.6.4",
+  "version": "1.6.6",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -80,7 +80,7 @@
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "cross-env": "^7.0.3",
     "eslint-plugin-jest": "^27.4.2",
     "jest": "catalog:",

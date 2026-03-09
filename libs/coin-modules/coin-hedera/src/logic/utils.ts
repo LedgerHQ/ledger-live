@@ -1,6 +1,4 @@
-import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
-import invariant from "invariant";
 import {
   AccountId,
   EntityIdHelper,
@@ -10,12 +8,15 @@ import {
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
-import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { InvalidAddress } from "@ledgerhq/errors";
+import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
 import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import {
   HEDERA_DELEGATION_STATUS,
   HEDERA_OPERATION_TYPES,
@@ -23,25 +24,29 @@ import {
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   TINYBAR_SCALE,
   OP_TYPES_EXCLUDING_FEES,
+  HEDERA_TRANSACTION_NAMES,
 } from "../constants";
+import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
+import { rpcClient } from "../network/rpc";
+import { getCurrentHederaPreloadData } from "../preload-data";
 import type {
+  EnrichedERC20Transfer,
   HederaAccount,
   HederaMemo,
   HederaMirrorTransaction,
   HederaOperationExtra,
   HederaTxData,
   HederaValidator,
+  MergedTransaction,
   OperationDetailsExtraField,
   StakingAnalysis,
   Transaction,
   TransactionStaking,
   TransactionStatus,
   TransactionTokenAssociate,
+  SyntheticBlock,
 } from "../types";
-import { rpcClient } from "../network/rpc";
-import { HederaRecipientInvalidChecksum } from "../errors";
-import { getCurrentHederaPreloadData } from "../preload-data";
 
 export const serializeSignature = (signature: Uint8Array) => {
   return Buffer.from(signature).toString("base64");
@@ -76,6 +81,25 @@ export const getOperationValue = ({
 
   return BigInt(operation.value.toFixed(0));
 };
+
+/**
+ * Extract the fee payer account from a Hedera transaction_id.
+ *
+ * Hedera transaction IDs follow the format `0.0.ACCOUNT-TIMESTAMP-NONCE`.
+ * The first segment (before the first `-`) is the Hedera native account ID
+ * of the entity that paid for the transaction fees.
+ *
+ * This always returns a Hedera-native account ID (e.g. `0.0.12345`), never
+ * an EVM address, since the Mirror Node transaction_id always uses the native format.
+ *
+ * Note: Hedera supports scheduled/sponsored transactions where the fee payer
+ * (from transaction_id) may differ from the logical sender of the transfer.
+ * This function correctly handles that case since it reads from transaction_id,
+ * which always identifies the actual fee payer.
+ */
+export function extractFeesPayer(transactionId: string): string {
+  return transactionId.split("-")[0];
+}
 
 // this utils extracts the bodyBytes from a Hedera Transaction that are required for signing
 // hardcoded `.get(0)` is here because we are always using single node account id
@@ -323,7 +347,7 @@ export function getBlockHash(blockHeight: number): string {
 export function getSyntheticBlock(
   consensusTimestamp: string,
   blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS,
-) {
+): SyntheticBlock {
   const seconds = Math.floor(Number(consensusTimestamp));
 
   if (Number.isNaN(seconds) || seconds === 0) {
@@ -619,3 +643,142 @@ export const analyzeStakingOperation = async (
     stakedAmount: BigInt(actualStakedAmount.toString()), // always entire balance on Hedera (fully liquid)
   };
 };
+
+export const toEntityId = ({
+  num,
+  shard = 0,
+  realm = 0,
+}: {
+  num: number;
+  shard?: number;
+  realm?: number;
+}): string => {
+  invariant(Number.isInteger(shard) && shard >= 0, `invalid account shard: ${shard}`);
+  invariant(Number.isInteger(realm) && realm >= 0, `invalid account realm: ${realm}`);
+  invariant(Number.isInteger(num) && num >= 0, `invalid account num: ${num}`);
+
+  return `${shard}.${realm}.${num}`;
+};
+
+/**
+ * Merges transactions from Mirror Node and Hgraph ERC20 transfers into a unified, sorted list.
+ *
+ * This function handles the complexity of combining two data sources that may have different indexing speeds:
+ * - Mirror Node transactions (native HBAR transfers, HTS tokens, contract calls, etc.)
+ * - Hgraph ERC20 transfers (indexed separately, may lag behind Mirror Node)
+ *
+ * Key behaviors:
+ * 1. Merges both sources into a single array with type discrimination
+ * 2. Sorts by consensus timestamp (nanosecond precision) in specified order
+ * 3. Detects and handles ERC20 indexing delays by filtering out transactions after Hgraph's latest timestamp
+ * 4. Applies pagination limit and generates next cursor for pagination
+ *
+ * @param mirrorTransactions - Transactions from Mirror Node API
+ * @param enrichedERC20Transfers - enriched ERC20 transfers from Hgraph API
+ * @param order - Sort order: "asc" or "desc"
+ * @param limit - Maximum number of transactions to return (only applied when fetchAllPages is false)
+ * @param latestHgraphIndexedTimestampNs - Latest consensus timestamp indexed by Hgraph (used for delay detection)
+ * @param fetchAllPages - If true, returns all transactions; if false, applies limit
+ * @returns Object containing merged transactions and next cursor that can be used for pagination
+ */
+export const mergeTransactionsFromDifferentSources = ({
+  mirrorTransactions,
+  enrichedERC20Transfers,
+  order,
+  limit,
+  latestHgraphIndexedTimestampNs,
+  fetchAllPages,
+}: {
+  mirrorTransactions: HederaMirrorTransaction[];
+  enrichedERC20Transfers: EnrichedERC20Transfer[];
+  order: "asc" | "desc";
+  limit: number;
+  latestHgraphIndexedTimestampNs: BigNumber;
+  fetchAllPages: boolean;
+}) => {
+  let merged: MergedTransaction[] = [];
+  let nextCursor: string | null = null;
+  const latestHgraphIndexedTimestampSeconds = nanosToSeconds(latestHgraphIndexedTimestampNs);
+
+  // merge both transaction sources
+  merged.push(
+    ...mirrorTransactions.map(tx => ({ type: "mirror" as const, data: tx })),
+    ...enrichedERC20Transfers.map(tx => ({ type: "erc20" as const, data: tx })),
+  );
+
+  // lookup map of ERC20 transfers by mirror transaction hash for deduplication purposes
+  const erc20TransferByMirrorHash = new Map(
+    merged
+      .filter((item): item is Extract<MergedTransaction, { type: "erc20" }> => {
+        return item.type === "erc20";
+      })
+      .map(item => [item.data.mirrorTransaction.transaction_hash, item.data]),
+  );
+
+  // deduplicate CONTRACT_CALL transactions from mirror node if they are also present in erc20 transfers
+  merged = merged.filter(item => {
+    if (item.type !== "mirror") return true;
+    if (item.data.name !== HEDERA_TRANSACTION_NAMES.ContractCall) return true;
+    return !erc20TransferByMirrorHash.has(item.data.transaction_hash);
+  });
+
+  // sort merged transactions by consensus timestamp, keeping nanoseconds precision
+  merged.sort((a, b) => {
+    const aMirrorTx = a.type === "mirror" ? a.data : a.data.mirrorTransaction;
+    const bMirrorTx = b.type === "mirror" ? b.data : b.data.mirrorTransaction;
+    const aTime = new BigNumber(aMirrorTx.consensus_timestamp);
+    const bTime = new BigNumber(bMirrorTx.consensus_timestamp);
+
+    const result = order === "desc" ? bTime.minus(aTime) : aTime.minus(bTime);
+    return result.toNumber();
+  });
+
+  // if mirror node returned CONTRACT_CALL with timestamp higher than latest hgraph indexed timestamp,
+  // we need to remove all transactions that happened after that timestamp to avoid duplicates in next sync
+  const isERC20Delayed = merged.some(
+    i =>
+      i.type === "mirror" &&
+      i.data.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
+      new BigNumber(i.data.consensus_timestamp).gt(latestHgraphIndexedTimestampSeconds),
+  );
+
+  if (isERC20Delayed) {
+    log(
+      "hedera/sync",
+      `detected ERC20 indexing delay, filtering out transactions after ${latestHgraphIndexedTimestampSeconds.toString()}`,
+    );
+
+    merged = merged.filter(i => {
+      const mirrorTx = i.type === "mirror" ? i.data : i.data.mirrorTransaction;
+      return new BigNumber(mirrorTx.consensus_timestamp).lte(latestHgraphIndexedTimestampSeconds);
+    });
+  }
+
+  // apply final limit in pagination mode
+  if (!fetchAllPages && merged.length >= limit) {
+    merged = merged.slice(0, limit);
+  }
+
+  // for pagination mode, set nextCursor as the timestamp of the latest transaction
+  // desc: using oldest (last) timestamp to fetch older operations next
+  // asc: using newest (last) timestamp to fetch newer operations next
+  const last = merged.at(-1);
+  if (last) {
+    const lastMirrorTx = last.type === "mirror" ? last.data : last.data.mirrorTransaction;
+    nextCursor = lastMirrorTx.consensus_timestamp;
+  }
+
+  return { merged, nextCursor };
+};
+
+export function millisToSeconds(millis: number | BigNumber): BigNumber {
+  return new BigNumber(millis).dividedBy(10 ** 3);
+}
+
+export function secondsToNanos(seconds: number | BigNumber): BigNumber {
+  return new BigNumber(seconds).multipliedBy(10 ** 9);
+}
+
+export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
+  return new BigNumber(nanos).dividedBy(10 ** 9);
+}

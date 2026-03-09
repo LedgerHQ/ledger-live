@@ -106,6 +106,7 @@ export type CurrencyFeatures = {
   currencyInjective: DefaultFeature;
   currencyTelosEvm: DefaultFeature;
   currencyCoreum: DefaultFeature;
+  currencyPolygonAmoy: DefaultFeature;
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
@@ -157,6 +158,7 @@ export type CurrencyFeatures = {
   currencyZeroGravity: DefaultFeature;
   currencyConcordium: DefaultFeature;
   currencyConcordiumTestnet: DefaultFeature;
+  currencyAdi: DefaultFeature;
   currencyAleo: DefaultFeature;
   currencyAleoTestnet: DefaultFeature;
   currencyUnichain: DefaultFeature;
@@ -201,6 +203,7 @@ export type Features = CurrencyFeatures & {
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
   editEvmTx: Feature_EditEvmTx;
+  editBitcoinTx: Feature_EditBitcoinTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
@@ -278,6 +281,17 @@ export type Features = CurrencyFeatures & {
       trackWatchdogTerminations: boolean;
       uploadFrequency: "AVERAGE" | "FREQUENT" | "RARE";
       vitalsUpdateFrequency: "AVERAGE" | "FREQUENT" | "RARE" | "NEVER";
+    }>;
+  };
+  lldDatadog: {
+    enabled: boolean;
+    params: Partial<{
+      sessionSamplingRate: number;
+      sessionReplaySampleRate: number;
+      defaultPrivacyLevel: string;
+      traceSampleRate: number;
+      allowedTracingUrls: string[];
+      profilingSampleRate: number;
     }>;
   };
   llmSentry: DefaultFeature;
@@ -550,6 +564,10 @@ export type Feature_EditEvmTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+export type Feature_EditBitcoinTx = Feature<{
+  supportedCurrencyIds: string[];
+}>;
+
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
@@ -815,7 +833,7 @@ type Feature_Wallet40_Params = {
   newReceiveDialog?: boolean;
 };
 
-export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
+export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;

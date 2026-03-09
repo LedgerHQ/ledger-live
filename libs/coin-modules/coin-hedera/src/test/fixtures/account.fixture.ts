@@ -1,3 +1,5 @@
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type {
   HederaAccount,
@@ -5,8 +7,6 @@ import type {
   HederaResources,
   HederaResourcesRaw,
 } from "../../types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TokenAccount } from "@ledgerhq/types-live";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
@@ -139,6 +139,7 @@ export const MAINNET_TEST_ACCOUNTS = {
     associatedTokenWithBalance: "0.0.456858",
     associatedTokenWithoutBalance: "0.0.7243470",
     notAssociatedToken: "0.0.3176721",
+    erc20Token: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
   },
   withQuickBalanceChanges: {
     accountId: "0.0.10176637",

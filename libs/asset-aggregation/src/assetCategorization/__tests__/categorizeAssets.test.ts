@@ -1,5 +1,4 @@
 import { categorizeAssets } from "../categorizeAssets";
-import type { MarketDataMap } from "../types";
 import { btc, eth, usdtEth, usdcEth, makeDistItem, mockAccounts } from "./fixtures";
 
 describe("categorizeAssets", () => {
@@ -12,45 +11,29 @@ describe("categorizeAssets", () => {
     makeDistItem(usdcEth, { distribution: 0.08, amount: 8e9, countervalue: 8000 }),
   ];
 
-  const marketData: MarketDataMap = {
-    [btc.id]: { price: 60000, priceChangePercentage24h: 2.5 },
-    [eth.id]: { price: 3000, priceChangePercentage24h: -1.2 },
-    [usdtEth.id]: { price: 1, priceChangePercentage24h: 0.01 },
-    [usdcEth.id]: { price: 1, priceChangePercentage24h: -0.02 },
-  };
-
   it("should split distribution into cryptos and stablecoins", () => {
-    const result = categorizeAssets(distribution, marketData, stablecoinTickers);
+    const result = categorizeAssets(distribution, stablecoinTickers);
 
     expect(result.cryptos).toHaveLength(2);
     expect(result.stablecoins).toHaveLength(2);
   });
 
   it("should categorize BTC and ETH as cryptos", () => {
-    const tickers = categorizeAssets(distribution, marketData, stablecoinTickers).cryptos.map(
+    const tickers = categorizeAssets(distribution, stablecoinTickers).cryptos.map(
       i => i.currency.ticker,
     );
     expect(tickers).toEqual(expect.arrayContaining(["BTC", "ETH"]));
   });
 
   it("should categorize USDT and USDC as stablecoins", () => {
-    const tickers = categorizeAssets(distribution, marketData, stablecoinTickers).stablecoins.map(
+    const tickers = categorizeAssets(distribution, stablecoinTickers).stablecoins.map(
       i => i.currency.ticker,
     );
     expect(tickers).toEqual(expect.arrayContaining(["USDT", "USDC"]));
   });
 
-  it("should enrich items with market data", () => {
-    const btcItem = categorizeAssets(distribution, marketData, stablecoinTickers).cryptos.find(
-      i => i.currency.id === btc.id,
-    );
-
-    expect(btcItem?.price).toBe(60000);
-    expect(btcItem?.priceChangePercentage24h).toBe(2.5);
-  });
-
   it("should map balance, value, and distribution from input", () => {
-    const btcItem = categorizeAssets(distribution, marketData, stablecoinTickers).cryptos.find(
+    const btcItem = categorizeAssets(distribution, stablecoinTickers).cryptos.find(
       i => i.currency.id === btc.id,
     );
 
@@ -59,24 +42,15 @@ describe("categorizeAssets", () => {
     expect(btcItem?.distribution).toBe(0.6);
   });
 
-  it("should handle missing market data gracefully", () => {
-    const btcItem = categorizeAssets(distribution, {}, stablecoinTickers).cryptos.find(
-      i => i.currency.id === btc.id,
-    );
-
-    expect(btcItem?.price).toBeUndefined();
-    expect(btcItem?.priceChangePercentage24h).toBeUndefined();
-  });
-
   it("should handle empty distribution", () => {
-    const result = categorizeAssets([], marketData, stablecoinTickers);
+    const result = categorizeAssets([], stablecoinTickers);
     expect(result.cryptos).toHaveLength(0);
     expect(result.stablecoins).toHaveLength(0);
   });
 
   it("should default undefined countervalue to 0", () => {
     const item = [makeDistItem(btc, { distribution: 1, amount: 1e8, countervalue: undefined })];
-    expect(categorizeAssets(item, {}, stablecoinTickers).cryptos[0].value).toBe(0);
+    expect(categorizeAssets(item, stablecoinTickers).cryptos[0].value).toBe(0);
   });
 
   it("should preserve accounts for single-chain assets", () => {
@@ -84,18 +58,18 @@ describe("categorizeAssets", () => {
     const item = [
       makeDistItem(btc, { distribution: 1, amount: 1e8, countervalue: 60000, accounts }),
     ];
-    expect(categorizeAssets(item, {}, stablecoinTickers).cryptos[0].accounts).toEqual(accounts);
+    expect(categorizeAssets(item, stablecoinTickers).cryptos[0].accounts).toEqual(accounts);
   });
 
   it("should classify everything as crypto when stablecoinTickers is empty", () => {
-    const result = categorizeAssets(distribution, marketData, new Set());
+    const result = categorizeAssets(distribution, new Set());
     expect(result.cryptos).toHaveLength(4);
     expect(result.stablecoins).toHaveLength(0);
   });
 
   it("should match stablecoin tickers case-insensitively", () => {
     const mixedCaseTickers = new Set(["usdt", "Usdc"]);
-    const result = categorizeAssets(distribution, marketData, mixedCaseTickers);
+    const result = categorizeAssets(distribution, mixedCaseTickers);
 
     expect(result.stablecoins).toHaveLength(2);
     expect(result.stablecoins.map(i => i.currency.ticker)).toEqual(

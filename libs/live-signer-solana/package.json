@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-solana",
-  "version": "0.11.1",
+  "version": "0.11.3",
   "private": true,
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
@@ -56,7 +56,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "22.10.1",
+    "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",

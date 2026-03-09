@@ -287,7 +287,7 @@ describe("useQuickActions", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { mode: "buy" },
+        state: { mode: "buy", returnTo: "/accounts" },
       });
     });
   });
@@ -306,7 +306,7 @@ describe("useQuickActions", () => {
       });
 
       expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: { mode: "sell" },
+        state: { mode: "sell", returnTo: "/accounts" },
       });
     });
   });
@@ -405,7 +405,11 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: null },
+          settings: {
+            hasCompletedOnboarding: true,
+            lastSeenDevice: null,
+            lastOnboardedDevice: null,
+          },
         },
       });
 
@@ -419,7 +423,11 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: null },
+          settings: {
+            hasCompletedOnboarding: true,
+            lastSeenDevice: null,
+            lastOnboardedDevice: null,
+          },
         },
       });
 
@@ -436,7 +444,11 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: null },
+          settings: {
+            hasCompletedOnboarding: true,
+            lastSeenDevice: null,
+            lastOnboardedDevice: null,
+          },
         },
       });
 

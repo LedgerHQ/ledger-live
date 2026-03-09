@@ -1,12 +1,12 @@
-import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
-import { fromTransactionRaw } from "../transaction";
-import BigNumber from "bignumber.js";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidAddress,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { fromTransactionRaw } from "../transaction";
+import type { Transaction } from "../types";
 
 const TEST_ADDRESS = "hxe52720d9125586e64c745bf3c2c1917dbb46f9ba";
 

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-exchange-module",
-  "version": "0.21.0",
+  "version": "0.23.0",
   "description": "Wallet-API Exchange Module for Ledger Live",
   "license": "Apache-2.0",
   "keywords": [
@@ -39,6 +39,6 @@
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {
-    "@types/node": "^22.10.10"
+    "@types/node": "catalog:"
   }
 }

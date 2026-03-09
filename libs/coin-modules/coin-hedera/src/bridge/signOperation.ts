@@ -1,9 +1,8 @@
-import { Observable } from "rxjs";
-import type { AccountBridge } from "@ledgerhq/types-live";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import type { AccountBridge } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -15,6 +14,7 @@ import {
   isStakingTransaction,
 } from "../logic/utils";
 import type { Transaction, HederaSigner, HederaTxData, HederaAccount } from "../types";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 export const buildSignOperation =
   (

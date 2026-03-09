@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/zcash-shielded",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "ZCash library shielded accounts",
   "keywords": [
     "ZCash"
@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
+    "@types/node": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
@@ -67,8 +68,8 @@
   "dependencies": {
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.1.0",
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^9.1.2",
+    "rxjs": "catalog:"
   }
 }

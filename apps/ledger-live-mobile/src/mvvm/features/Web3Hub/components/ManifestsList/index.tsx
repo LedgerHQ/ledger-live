@@ -1,4 +1,4 @@
-import React, { ComponentProps, useCallback, useState } from "react";
+import React, { ComponentProps, useState } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
@@ -7,7 +7,6 @@ import { Box, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
 import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
-import { NavigatorName, ScreenName } from "~/const";
 import ManifestItem from "./ManifestItem";
 import CategoriesList from "./CategoriesList";
 import LoadingIndicator from "./LoadingIndicator";
@@ -50,19 +49,7 @@ export default function ManifestsList({
   const [selectedCategory, selectCategory] = useState("all");
   const { data, isLoading, onEndReached } = useManifestsListViewModel(selectedCategory);
 
-  const goToApp = useCallback(
-    (manifestId: string) => {
-      navigation.push(NavigatorName.Web3Hub, {
-        screen: ScreenName.Web3HubApp,
-        params: {
-          manifestId: manifestId,
-        },
-      });
-    },
-    [navigation],
-  );
-
-  const disclaimer = useDisclaimerViewModel(goToApp);
+  const disclaimer = useDisclaimerViewModel(navigation);
 
   return (
     <>

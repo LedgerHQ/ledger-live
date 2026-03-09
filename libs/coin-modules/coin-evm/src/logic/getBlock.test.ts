@@ -1,5 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmCoinConfig, setCoinConfig } from "../config";
+import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
 import { getBlock } from "./getBlock";
 
@@ -10,7 +11,7 @@ describe("getBlock", () => {
     jest.clearAllMocks();
   });
 
-  it("returns block with transactions and ERC20 transfers", async () => {
+  it("returns block with transactions and ERC20 transfers using bulk receipts", async () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
@@ -20,21 +21,27 @@ describe("getBlock", () => {
       height: 12345,
       timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
       parentHash: "0xparent123",
-      transactionHashes: ["0xtx1", "0xtx2"],
+      transactions: [
+        {
+          hash: "0xtx1",
+          value: "1000",
+          from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        },
+        {
+          hash: "0xtx2",
+          value: "0",
+          from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        },
+      ],
     });
-    const mockGetTransaction = jest.fn();
-    mockGetTransaction
-      .mockResolvedValueOnce({
+    const mockGetBlockReceipts = jest.fn().mockResolvedValue([
+      {
         hash: "0xtx1",
-        blockHeight: 12345,
-        blockHash: "0xabc123",
-        nonce: 1,
         gasUsed: "21000",
         gasPrice: "20000000000",
         status: 1,
-        value: "1000",
-        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
         erc20Transfers: [
           {
             asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
@@ -43,24 +50,20 @@ describe("getBlock", () => {
             value: "1000000",
           },
         ],
-      })
-      .mockResolvedValueOnce({
+      },
+      {
         hash: "0xtx2",
-        blockHeight: 12345,
-        blockHash: "0xabc123",
-        nonce: 2,
         gasUsed: "21000",
         gasPrice: "20000000000",
         status: 1,
-        value: "0",
-        from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-        to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
         erc20Transfers: [],
-      });
+      },
+    ]);
 
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: mockGetBlockByHeight,
-      getTransaction: mockGetTransaction,
+      getBlockReceipts: mockGetBlockReceipts,
+      getTransaction: jest.fn(),
     } as any);
 
     const result = await getBlock({} as CryptoCurrency, 12345);
@@ -88,5 +91,131 @@ describe("getBlock", () => {
 
     // tx2 has no value and no ERC20 transfers
     expect(result.transactions[1].operations).toHaveLength(0);
+    expect(mockGetBlockByHeight).toHaveBeenCalledWith(expect.anything(), 12345, true);
+  });
+
+  it("falls back to per-transaction calls when bulk receipts are unavailable", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce({
+      hash: "0xabc123",
+      height: 12345,
+      timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
+      parentHash: "0xparent123",
+      transactions: [
+        {
+          hash: "0xtx1",
+          value: "1000",
+          from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        },
+      ],
+    });
+    const mockGetBlockReceipts = jest.fn().mockRejectedValueOnce(
+      new UnsupportedRpcMethodError("eth_getBlockReceipts is not supported by this RPC provider", {
+        method: "eth_getBlockReceipts",
+        rawError: { code: -32601 },
+      }),
+    );
+    const mockGetTransaction = jest.fn().mockResolvedValueOnce({
+      hash: "0xtx1",
+      blockHeight: 12345,
+      blockHash: "0xabc123",
+      nonce: 1,
+      gasUsed: "21000",
+      gasPrice: "20000000000",
+      status: 1,
+      value: "1000",
+      from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+      to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      erc20Transfers: [],
+    });
+
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: mockGetBlockByHeight,
+      getBlockReceipts: mockGetBlockReceipts,
+      getTransaction: mockGetTransaction,
+    } as any);
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("0xtx1");
+    expect(mockGetBlockReceipts).toHaveBeenCalledWith(expect.anything(), 12345);
+    expect(mockGetTransaction).toHaveBeenCalledWith(expect.anything(), "0xtx1");
+  });
+
+  it("falls back to per-transaction calls when prefetchTxs is not supported", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce({
+      hash: "0xabc123",
+      height: 12345,
+      timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
+      parentHash: "0xparent123",
+      transactionHashes: ["0xtx1"],
+    });
+    const mockGetBlockReceipts = jest.fn();
+    const mockGetTransaction = jest.fn().mockResolvedValueOnce({
+      hash: "0xtx1",
+      blockHeight: 12345,
+      blockHash: "0xabc123",
+      nonce: 1,
+      gasUsed: "21000",
+      gasPrice: "20000000000",
+      status: 1,
+      value: "1000",
+      from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+      to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      erc20Transfers: [],
+    });
+
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: mockGetBlockByHeight,
+      getBlockReceipts: mockGetBlockReceipts,
+      getTransaction: mockGetTransaction,
+    } as any);
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("0xtx1");
+    expect(mockGetBlockByHeight).toHaveBeenCalledWith(expect.anything(), 12345, true);
+    expect(mockGetBlockReceipts).not.toHaveBeenCalled();
+    expect(mockGetTransaction).toHaveBeenCalledWith(expect.anything(), "0xtx1");
+  });
+
+  it("does not fallback when getBlockReceipts fails for another reason", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce({
+      hash: "0xabc123",
+      height: 12345,
+      timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
+      parentHash: "0xparent123",
+      transactions: [
+        {
+          hash: "0xtx1",
+          value: "1000",
+          from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        },
+      ],
+    });
+    const serverError = new Error("timeout");
+    const mockGetBlockReceipts = jest.fn().mockRejectedValueOnce(serverError);
+    const mockGetTransaction = jest.fn();
+
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: mockGetBlockByHeight,
+      getBlockReceipts: mockGetBlockReceipts,
+      getTransaction: mockGetTransaction,
+    } as any);
+
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow("timeout");
+    expect(mockGetTransaction).not.toHaveBeenCalled();
   });
 });

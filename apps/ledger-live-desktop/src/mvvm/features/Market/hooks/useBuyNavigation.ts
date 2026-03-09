@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -19,6 +19,7 @@ interface UseBuyNavigationResult {
 
 export function useBuyNavigation(): UseBuyNavigationResult {
   const navigate = useNavigate();
+  const location = useLocation();
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
   const { openAssetAndAccount } = useOpenAssetAndAccount();
@@ -29,6 +30,7 @@ export function useBuyNavigation(): UseBuyNavigationResult {
         const onRampState: BuyNavigationOnRampState = {
           mode: "onRamp",
           defaultTicker: ticker?.toUpperCase(),
+          returnTo: location.pathname,
         };
         navigate("/exchange", { state: onRampState });
         return;
@@ -39,7 +41,7 @@ export function useBuyNavigation(): UseBuyNavigationResult {
 
       if (!hasAccounts) {
         navigate("/exchange", {
-          state: buildBuyNavigationState({ ledgerCurrency }),
+          state: buildBuyNavigationState({ ledgerCurrency, returnTo: location.pathname }),
         });
         return;
       }
@@ -55,6 +57,7 @@ export function useBuyNavigation(): UseBuyNavigationResult {
             ledgerCurrency,
             account,
             parentAccount,
+            returnTo: location.pathname,
           }),
         });
         return;
@@ -71,12 +74,13 @@ export function useBuyNavigation(): UseBuyNavigationResult {
               ledgerCurrency,
               account,
               parentAccount,
+              returnTo: location.pathname,
             }),
           });
         },
       });
     },
-    [navigate, flattenedAccounts, allAccounts, openAssetAndAccount],
+    [navigate, flattenedAccounts, allAccounts, openAssetAndAccount, location.pathname],
   );
 
   return { navigateToBuy };

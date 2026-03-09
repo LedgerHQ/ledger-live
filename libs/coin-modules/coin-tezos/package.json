@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "6.16.0",
+  "version": "6.17.0",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -85,6 +85,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@types/node": "catalog:",
     "@faker-js/faker": "^8.4.1",
     "@taquito/local-forging": "^23.0.0-RC.0",
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -95,7 +96,7 @@
     "msw": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

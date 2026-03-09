@@ -3,16 +3,17 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/live-promise";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
+  GetOperationsParams,
+  GetTransactionCostParams,
   TransactionsResponse,
   PublicKeyAccountsResponse,
   SubmitCredentialData,
-  SubmitTransferRequest,
+  SubmitTransferData,
   TransactionQueryParams,
   WalletProxyTransaction,
 } from "../types";
@@ -26,13 +27,8 @@ const PROXY_TIMEOUT = 30000;
 const DEFAULT_RETRIES = 2;
 const RETRY_DELAY = 1000;
 
-function getProxyUrl(currency: CryptoCurrency): string {
-  const config = coinConfig.getCoinConfig(currency);
-  return config.proxyUrl;
-}
-
-function createProxyClient(currency: CryptoCurrency): ProxyClient {
-  const baseUrl = getProxyUrl(currency);
+function createProxyClient(currencyId: string): ProxyClient {
+  const baseUrl = coinConfig.getCoinConfig(currencyId).proxyUrl;
 
   const request = async <TResponse, TRequest = unknown>(
     config: LiveNetworkRequest<TRequest>,
@@ -56,31 +52,31 @@ function createProxyClient(currency: CryptoCurrency): ProxyClient {
   return { baseUrl, request };
 }
 
-const CLIENTS_BY_CURRENCY = new Map<CryptoCurrency["id"], ProxyClient>();
+const CLIENTS_BY_CURRENCY = new Map<string, ProxyClient>();
 
-function getClient(currency: CryptoCurrency): ProxyClient {
-  const existing = CLIENTS_BY_CURRENCY.get(currency.id);
+function getClient(currencyId: string): ProxyClient {
+  const existing = CLIENTS_BY_CURRENCY.get(currencyId);
   if (existing) return existing;
 
-  const client = createProxyClient(currency);
-  CLIENTS_BY_CURRENCY.set(currency.id, client);
+  const client = createProxyClient(currencyId);
+  CLIENTS_BY_CURRENCY.set(currencyId, client);
   return client;
 }
 
 /**
  * Executes a function with a proxy client, handling retries and error handling
  *
- * @param currency - The Concordium currency
+ * @param currencyId - The Concordium currency ID
  * @param execute - Function to execute with the client
  * @param retries - Number of retries (default: 2)
  * @returns Result of the execute function
  */
 export async function withClient<T>(
-  currency: CryptoCurrency,
+  currencyId: string,
   execute: (client: ProxyClient) => Promise<T>,
   retries = DEFAULT_RETRIES,
 ): Promise<T> {
-  const client = getClient(currency);
+  const client = getClient(currencyId);
 
   return retry(() => execute(client), {
     maxRetry: retries,
@@ -91,16 +87,13 @@ export async function withClient<T>(
 
 /**
  * Retrieves all accounts associated with a given public key from the Concordium network.
- *
- * @param currency - The cryptocurrency configuration for the Concordium network
- * @param publicKey - The public key to query for associated accounts
- * @returns A promise that resolves to a response containing the list of accounts associated with the public key
+ * GET /v0/keyAccounts/{publicKey}
  */
 export function getAccountsByPublicKey(
-  currency: CryptoCurrency,
+  currencyId: string,
   publicKey: string,
 ): Promise<PublicKeyAccountsResponse> {
-  return withClient(currency, async client =>
+  return withClient(currencyId, async client =>
     client.request<PublicKeyAccountsResponse>({
       method: "GET",
       url: `/v0/keyAccounts/${publicKey}`,
@@ -113,10 +106,10 @@ export function getAccountsByPublicKey(
  * GET /v2/accBalance/{address}
  */
 export async function getAccountBalance(
-  currency: CryptoCurrency,
+  currencyId: string,
   accountAddress: string,
 ): Promise<AccountBalanceResponse> {
-  return withClient(currency, async client =>
+  return withClient(currencyId, async client =>
     client.request<AccountBalanceResponse>({
       method: "GET",
       url: `/v2/accBalance/${accountAddress}`,
@@ -129,10 +122,10 @@ export async function getAccountBalance(
  * GET /v0/accNonce/{address}
  */
 export async function getAccountNonce(
-  currency: CryptoCurrency,
+  currencyId: string,
   accountAddress: string,
 ): Promise<{ nonce: number }> {
-  return withClient(currency, async client =>
+  return withClient(currencyId, async client =>
     client.request<{ nonce: number }>({
       method: "GET",
       url: `/v0/accNonce/${accountAddress}`,
@@ -145,11 +138,11 @@ export async function getAccountNonce(
  * GET /v3/accTransactions/{address}
  */
 export async function getTransactions(
-  currency: CryptoCurrency,
+  currencyId: string,
   accountAddress: string,
   params?: TransactionQueryParams,
 ): Promise<TransactionsResponse> {
-  return withClient(currency, async client =>
+  return withClient(currencyId, async client =>
     client.request<TransactionsResponse>({
       method: "GET",
       url: `/v3/accTransactions/${accountAddress}`,
@@ -166,18 +159,17 @@ export async function getTransactions(
  * Memo overhead is calculated via the optional memoSize parameter.
  */
 export async function getTransactionCost(
-  currency: CryptoCurrency,
-  numSignatures: number,
-  options?: { memoSize?: number },
-): Promise<{ cost: string; energy: string }> {
-  return withClient(currency, async client =>
-    client.request<{ cost: string; energy: string }>({
+  currencyId: string,
+  { numSignatures, memoSize }: GetTransactionCostParams,
+): Promise<{ cost: string; energy: number }> {
+  return withClient(currencyId, async client =>
+    client.request<{ cost: string; energy: number }>({
       method: "GET",
       url: "/v0/transactionCost",
       params: {
         type: "simpleTransfer",
         numSignatures,
-        ...(options?.memoSize ? { memoSize: options.memoSize } : {}),
+        ...(memoSize ? { memoSize } : {}),
       },
     }),
   );
@@ -187,31 +179,21 @@ export async function getTransactionCost(
  * Submit a signed transfer transaction to the network
  * PUT /v0/submitTransfer/
  *
- * @param currency - The Concordium currency
- * @param transactionBody - The hex-encoded transaction body
- * @param signature - The hex-encoded signature
+ * @param currencyId - The Concordium currency ID
+ * @param data - The transfer payload (hex-encoded transaction body and signatures)
  * @returns Submission ID
  */
 export async function submitTransfer(
-  currency: CryptoCurrency,
-  transactionBody: string,
-  signature: string,
+  currencyId: string,
+  data: SubmitTransferData,
 ): Promise<{ submissionId: string }> {
-  return withClient(currency, async client => {
-    const request: LiveNetworkRequest<SubmitTransferRequest> = {
+  return withClient(currencyId, async client => {
+    const request: LiveNetworkRequest<SubmitTransferData> = {
       method: "PUT",
       url: "/v0/submitTransfer/",
-      data: {
-        transaction: transactionBody,
-        signatures: {
-          "0": {
-            // credential index 0
-            "0": signature, // key index 0
-          },
-        },
-      },
+      data,
     };
-    return client.request<{ submissionId: string }, SubmitTransferRequest>(request);
+    return client.request<{ submissionId: string }, SubmitTransferData>(request);
   });
 }
 
@@ -219,15 +201,15 @@ export async function submitTransfer(
  * Submit a credential deployment transaction to the network
  * PUT /v0/submitCredential/
  *
- * @param currency - The Concordium currency
+ * @param currencyId - The Concordium currency ID
  * @param data - The credential deployment data in proxy format
  * @returns Submission ID
  */
 export async function submitCredential(
-  currency: CryptoCurrency,
+  currencyId: string,
   data: SubmitCredentialData,
 ): Promise<{ submissionId: string }> {
-  return withClient(currency, async client => {
+  return withClient(currencyId, async client => {
     const request: LiveNetworkRequest<SubmitCredentialData> = {
       method: "PUT",
       url: "/v0/submitCredential/",
@@ -316,18 +298,16 @@ function operationAdapter(
  * Filters and converts wallet-proxy transactions to network operation format
  */
 export async function getOperations(
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  params?: { size?: number },
+  currencyId: string,
+  { address, accountId, size }: GetOperationsParams,
 ): Promise<ProxyOperation[]> {
   try {
     const proxyParams: TransactionQueryParams = {
-      limit: params?.size || 100,
+      limit: size || 100,
       order: "d",
     };
 
-    const response = await getTransactions(currency, address, proxyParams);
+    const response = await getTransactions(currencyId, address, proxyParams);
 
     if (!("transactions" in response) || !Array.isArray(response.transactions)) {
       return [];

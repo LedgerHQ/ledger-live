@@ -14,8 +14,8 @@ import {
   ListOperationsOptions,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import coinConfig, { type CantonConfig } from "../config";
 import { combine } from "../common-logic/transaction/combine";
+import coinConfig, { type CantonConfig } from "../config";
 
 export function createApi(config: CantonConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));

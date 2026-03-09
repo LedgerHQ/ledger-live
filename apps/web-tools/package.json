@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -59,7 +59,7 @@
     "semver": "catalog:",
     "styled-components": "catalog:",
     "stylis": "catalog:",
-    "typescript": "5.4.3",
+    "typescript": "catalog:",
     "utf-8-validate": "^6.0.6"
   },
   "devDependencies": {
@@ -70,7 +70,7 @@
     "@rspack/core": "catalog:",
     "@types/invariant": "^2.2.37",
     "@types/lodash": "^4.17.21",
-    "@types/node": "22.19.3",
+    "@types/node": "catalog:",
     "@types/qrcode": "^1.5.6",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

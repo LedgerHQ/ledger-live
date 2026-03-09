@@ -46,8 +46,12 @@ export const killAtlas = async (): Promise<void> => {
   });
 };
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e, async () => {
-    await killAtlas();
-  }),
-);
+const processOn = process.on.bind(process) as (
+  event: string,
+  listener: () => void,
+) => typeof process;
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e => {
+  processOn(e, () => {
+    void killAtlas();
+  });
+});

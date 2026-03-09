@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { buildSubAccounts, CantonTokenAccount } from "./buildSubAccounts";
+import type { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { TransferProposal } from "../network/gateway";
+import { buildSubAccounts, CantonTokenAccount } from "./buildSubAccounts";
 
 const makeTokenCurrency = (overrides: Partial<TokenCurrency> = {}): TokenCurrency => {
   return {

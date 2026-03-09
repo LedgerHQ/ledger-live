@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
+import BigNumber from "bignumber.js";
 import {
   DEFAULT_GAS_LIMIT,
   DEFAULT_GAS_PRICE_TINYBARS,
@@ -10,11 +10,11 @@ import {
   HEDERA_TRANSACTION_MODES,
   TINYBAR_SCALE,
 } from "../constants";
-import { estimateFees } from "./estimateFees";
-import { getMockedAccount } from "../test/fixtures/account.fixture";
-import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
 import { apiClient } from "../network/api";
+import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
+import { estimateFees } from "./estimateFees";
+import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
 
 jest.mock("@ledgerhq/live-countervalues/api/index");
 jest.mock("../network/api");

@@ -2,6 +2,8 @@
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Adi unit (ADI) 1`] = `"0,012345678900000000- -ADI"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Akroma unit (AKA) 1`] = `"123.456.789,00000000- -AKA"`;
@@ -278,6 +280,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -401,6 +405,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Adi unit (ADI) 1`] = `"0.012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
@@ -678,6 +684,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -801,6 +809,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Adi unit (ADI) 1`] = `"0,012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
@@ -1078,6 +1088,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -1201,6 +1213,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Adi unit (ADI) 1`] = `"0,012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Aion unit (AION) 1`] = `"123 456 789,00000000- -AION"`;
 
@@ -1478,6 +1492,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polkadot unit (DOT) 2`] = `"1 234 567,8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -1601,6 +1617,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format æternity unit (AE) 1`] = `"12 345 678 900 000 000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Adi unit (ADI) 1`] = `"0.012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
@@ -1878,6 +1896,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -2001,6 +2021,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Adi unit (ADI) 1`] = `"0.012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
@@ -2278,6 +2300,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -2401,6 +2425,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Adi unit (ADI) 1`] = `"0,012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
@@ -2678,6 +2704,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -2801,6 +2829,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Adi unit (ADI) 1`] = `"0,012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Aion unit (AION) 1`] = `"123 456 789,00000000- -AION"`;
 
@@ -3078,6 +3108,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polkadot unit (DOT) 2`] = `"1 234 567,8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -3201,6 +3233,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format æternity unit (AE) 1`] = `"12 345 678 900 000 000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format 0G unit (0G) 1`] = `"0,012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Adi unit (ADI) 1`] = `"0,012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Aion unit (AION) 1`] = `"123.456.789,00000000- -AION"`;
 
@@ -3478,6 +3512,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
@@ -3601,6 +3637,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format æternity unit (AE) 1`] = `"12.345.678.900.000.000- -AE"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format 0G unit (0G) 1`] = `"0.012345678900000000- -0G"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Adi unit (ADI) 1`] = `"0.012345678900000000- -ADI"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Aion unit (AION) 1`] = `"123,456,789.00000000- -AION"`;
 
@@ -3878,6 +3916,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon zkEVM Testnet unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
@@ -4001,6 +4041,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format æternity unit (AE) 1`] = `"12,345,678,900,000,000- -AE"`;
 
 exports[`formatCurrencyUnit with default options should correctly format 0G unit (0G) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Adi unit (ADI) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Aion unit (AION) 1`] = `"123,456,789"`;
 
@@ -4277,6 +4319,8 @@ exports[`formatCurrencyUnit with default options should correctly format Pirl un
 exports[`formatCurrencyUnit with default options should correctly format Polkadot unit (DOT) 1`] = `"1,234,567"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Polkadot unit (DOT) 2`] = `"1,234,567"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Polygon Amoy unit (POL) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Polygon unit (POL) 1`] = `"0.0123456"`;
 

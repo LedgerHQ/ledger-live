@@ -8,8 +8,12 @@ import {
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { log } from "@ledgerhq/logs";
 import { getBalance, lastBlock, listOperations } from "../logic";
-import { isProvableApiConfigured, splitPrivateAndPublicOperations } from "../logic/utils";
-import { accessProvableApi } from "../network/utils";
+import {
+  isProvableApiConfigured,
+  isRecordScannerReady,
+  splitPrivateAndPublicOperations,
+} from "../logic/utils";
+import { accessProvableApi, patchPublicOperations } from "../network/utils";
 import type { AleoAccount, AleoOperation, AleoUnspentRecord, ProvableApi } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
@@ -78,12 +82,20 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
     },
   });
 
+  // sort by date desc
+  latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  // merge old and new public operations
+  let publicOperations = shouldSyncFromScratch
+    ? latestAccountPublicOperations.operations
+    : (mergeOps(oldPublicOps, latestAccountPublicOperations.operations) as AleoOperation[]);
+
   let privateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
   let unspentPrivateRecords: AleoUnspentRecord[] | null = null;
   let latestAccountPrivateOperations: AleoOperation[] = [];
   let lastPrivateSyncDate = initialAccount?.aleoResources?.lastPrivateSyncDate ?? null;
 
-  if (viewKey && isProvableApiConfigured(provableApi)) {
+  if (viewKey && isProvableApiConfigured(provableApi) && isRecordScannerReady(provableApi)) {
     const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
       apiClient.getAccountOwnedRecords({
         currency,
@@ -101,34 +113,38 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       }),
     ]);
 
-    latestAccountPrivateOperations = await listPrivateOperations({
-      currency,
-      viewKey,
-      address,
-      ledgerAccountId,
-      privateRecords: rawNewPrivateRecords,
-    });
+    const [privateOperationsResult, patchedPublicOperationsResult, privateBalanceResult] =
+      await Promise.all([
+        listPrivateOperations({
+          currency,
+          viewKey,
+          address,
+          ledgerAccountId,
+          privateRecords: rawNewPrivateRecords,
+        }),
+        patchPublicOperations({
+          currency,
+          publicOperations,
+          privateRecords: rawNewPrivateRecords,
+          address,
+          ledgerAccountId,
+          viewKey,
+        }),
+        getPrivateBalance({
+          currency,
+          viewKey,
+          privateRecords: rawUnspentPrivateRecords,
+        }),
+      ]);
 
-    const privateBalanceResult = await getPrivateBalance({
-      currency,
-      viewKey,
-      privateRecords: rawUnspentPrivateRecords,
-    });
-
+    latestAccountPrivateOperations = privateOperationsResult;
+    publicOperations = patchedPublicOperationsResult;
     privateBalance = privateBalanceResult.balance;
     unspentPrivateRecords = privateBalanceResult.unspentRecords;
     lastPrivateSyncDate = new Date();
   }
 
   const totalBalance = transparentBalance.plus(privateBalance ?? 0);
-
-  // sort by date desc
-  latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  // merge old and new public operations
-  const publicOperations = shouldSyncFromScratch
-    ? latestAccountPublicOperations.operations
-    : mergeOps(oldPublicOps, latestAccountPublicOperations.operations);
 
   // merge old and new private operations — same incremental pattern as public ops;
   // deduplication is by operation id (encodeOperationId(accountId, txHash, type))

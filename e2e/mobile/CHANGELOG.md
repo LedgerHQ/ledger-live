@@ -1,5 +1,29 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.15.0
+
+### Minor Changes
+
+- [#14666](https://github.com/LedgerHQ/ledger-live/pull/14666) [`e239c48`](https://github.com/LedgerHQ/ledger-live/commit/e239c4866a194cc4db90247eee7d84389ac2333f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen for mobile and desktop + fix e2e marketbanner
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#14666](https://github.com/LedgerHQ/ledger-live/pull/14666) [`e239c48`](https://github.com/LedgerHQ/ledger-live/commit/e239c4866a194cc4db90247eee7d84389ac2333f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen for mobile and desktop + fix e2e marketbanner
+
+## 0.14.0
+
+### Minor Changes
+
+- [#13829](https://github.com/LedgerHQ/ledger-live/pull/13829) [`ff67587`](https://github.com/LedgerHQ/ledger-live/commit/ff67587241e5c521b4e1be2074985450fb6f9edc) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - test: e2e send hbar
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#13829](https://github.com/LedgerHQ/ledger-live/pull/13829) [`ff67587`](https://github.com/LedgerHQ/ledger-live/commit/ff67587241e5c521b4e1be2074985450fb6f9edc) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - test: e2e send hbar
+
 ## 0.13.0
 
 ### Minor Changes

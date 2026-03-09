@@ -39,6 +39,34 @@ export const descriptor: CoinDescriptor = {
           }));
         },
       },
+      custom: {
+        inputs: [
+          {
+            key: "feePerByte",
+            type: "number",
+            unitLabel: "Sompi/byte",
+          },
+        ],
+        getInitialValues: transaction => {
+          const tx = transaction as {
+            customFeeRate?: BigNumber;
+            networkInfo?: KaspaNetworkInfoItem[];
+          };
+          if (BigNumber.isBigNumber(tx.customFeeRate) && tx.customFeeRate.gt(0)) {
+            return { feePerByte: tx.customFeeRate.toFixed() };
+          }
+          const medium = tx.networkInfo?.find(item => item.label === "medium")?.amount;
+          return { feePerByte: BigNumber.isBigNumber(medium) ? medium.toFixed() : "" };
+        },
+        buildTransactionPatch: values => {
+          const feePerByte = new BigNumber(values.feePerByte);
+          return {
+            feesStrategy: "custom",
+            customFeeRate:
+              feePerByte.isNaN() || feePerByte.isNegative() ? new BigNumber(0) : feePerByte,
+          };
+        },
+      },
     },
   },
 };

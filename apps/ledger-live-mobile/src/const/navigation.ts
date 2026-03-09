@@ -301,6 +301,9 @@ export enum ScreenName {
   EditTransactionSummary = "EditTransactionSummary",
   EvmEditTransactionMethodSelection = "EvmEditTransactionMethodSelection",
 
+  // Bitcoin
+  BitcoinEditTransactionMethodSelection = "BitcoinEditTransactionMethodSelection",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -612,6 +615,7 @@ export enum NavigatorName {
   Settings = "Settings",
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
+  SwapSubScreens = "SwapSubScreensNavigator",
   Perps = "PerpsNavigator",
   Earn = "EarnNavigator",
   Fees = "FeesNavigator",
@@ -629,6 +633,9 @@ export enum NavigatorName {
 
   // Evm
   EvmEditTransaction = "EvmEditTransaction",
+
+  // Bitcoin
+  BitcoinEditTransaction = "BitcoinEditTransaction",
 
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",

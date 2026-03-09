@@ -1,8 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-framework/api/types";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type { AleoOperation } from "../types/bridge";
-import { enrichTransaction, fetchAccountTransactionsFromHeight } from "../network/utils";
+import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { toAlpacaOperation, toBridgeOperation } from "./utils";
 
 interface Params {
@@ -44,15 +43,13 @@ export async function listOperations(
     ...(options.order && { order: options.order }),
   });
 
-  await promiseAllBatched(2, result.transactions, async rawTx => {
-    const enrichedTx = await enrichTransaction({ currency, rawTx });
-
+  for (const rawTx of result.transactions) {
     if (mode === "alpaca") {
-      operations.push(toAlpacaOperation(enrichedTx, address));
+      operations.push(toAlpacaOperation(rawTx, address));
     } else {
-      operations.push(toBridgeOperation(params.ledgerAccountId, enrichedTx, address));
+      operations.push(toBridgeOperation(params.ledgerAccountId, rawTx, address));
     }
-  });
+  }
 
   return {
     operations,

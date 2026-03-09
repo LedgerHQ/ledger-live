@@ -1,12 +1,10 @@
-import { log } from "@ledgerhq/logs";
-
-import { IndexerResponseRoot, ITxnHistoryData, RpcError } from "./types";
-
 import network from "@ledgerhq/live-network";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
 import { getCoinConfig } from "../config";
-import BigNumber from "bignumber.js";
 import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../consts";
+import { IndexerResponseRoot, ITxnHistoryData, RpcError } from "./types";
 
 const getCasperIndexerURL = (path: string): string => {
   const baseUrl = getCoinConfig().infra.API_CASPER_INDEXER;

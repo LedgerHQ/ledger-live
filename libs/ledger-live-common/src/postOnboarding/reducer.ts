@@ -8,6 +8,7 @@ export const initialState: PostOnboardingState = {
   deviceModelId: null,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: null,
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
@@ -22,17 +23,26 @@ type InitPayload = {
 type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
-export type Payload = undefined | PartialNewStatePayload | InitPayload | SetActionCompletedPayload;
+
+export type Payload =
+  | undefined
+  | PartialNewStatePayload
+  | InitPayload
+  | SetActionCompletedPayload
+  | boolean;
 
 const handlers: ReducerMap<PostOnboardingState, Payload> = {
-  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState =>
-    (payload as PartialNewStatePayload).newState as PostOnboardingState,
+  POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState => ({
+    ...initialState,
+    ...(payload as PartialNewStatePayload).newState,
+  }),
   POST_ONBOARDING_INIT: (_, { payload }) => {
     const { deviceModelId, actionsIds } = payload as InitPayload;
     return {
       deviceModelId,
       walletEntryPointDismissed: false,
       entryPointFirstDisplayedDate: new Date(),
+      walletEntryPointEligibleForPortfolio: null,
       actionsToComplete: actionsIds,
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
@@ -57,6 +67,14 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
     walletEntryPointDismissed: true,
     entryPointFirstDisplayedDate: null,
   }),
+
+  POST_ONBOARDING_SET_WALLET_ENTRY_POINT_ELIGIBILITY: (state, { payload }) => {
+    if (typeof payload !== "boolean") return state;
+    return {
+      ...state,
+      walletEntryPointEligibleForPortfolio: payload,
+    };
+  },
 
   POST_ONBOARDING_SET_FINISHED: state => ({
     ...state,
@@ -122,4 +140,9 @@ export const walletPostOnboardingEntryPointDismissedSelector = createSelector(
 export const entryPointFirstDisplayedDateSelector = createSelector(
   postOnboardingSelector,
   postOnboarding => postOnboarding.entryPointFirstDisplayedDate,
+);
+
+export const walletEntryPointEligibleForPortfolioSelector = createSelector(
+  postOnboardingSelector,
+  postOnboarding => postOnboarding.walletEntryPointEligibleForPortfolio,
 );

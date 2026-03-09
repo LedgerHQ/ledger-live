@@ -1,5 +1,43 @@
 # @ledgerhq/react-ui
 
+## 0.47.0
+
+### Minor Changes
+
+- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
+
+- [#14135](https://github.com/LedgerHQ/ledger-live/pull/14135) [`9d5c4c6`](https://github.com/LedgerHQ/ledger-live/commit/9d5c4c6a0baec0292720d522b3d827a9c2c55247) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): update lwd and dependent libs to react 19
+
+### Patch Changes
+
+- Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77)]:
+  - @ledgerhq/icons-ui@0.20.0
+
+## 0.47.0-next.0
+
+### Minor Changes
+
+- [#14616](https://github.com/LedgerHQ/ledger-live/pull/14616) [`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate to React 19.
+
+- [#14135](https://github.com/LedgerHQ/ledger-live/pull/14135) [`9d5c4c6`](https://github.com/LedgerHQ/ledger-live/commit/9d5c4c6a0baec0292720d522b3d827a9c2c55247) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): update lwd and dependent libs to react 19
+
+### Patch Changes
+
+- Updated dependencies [[`e292df3`](https://github.com/LedgerHQ/ledger-live/commit/e292df30514168181545d7a572f723e31df78e77)]:
+  - @ledgerhq/icons-ui@0.20.0-next.0
+
+## 0.46.0
+
+### Minor Changes
+
+- [#14380](https://github.com/LedgerHQ/ledger-live/pull/14380) [`d38b48b`](https://github.com/LedgerHQ/ledger-live/commit/d38b48b105bd50e1d5ca45a1ea65f6e2ed4814fa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: walletv4 tour lwd slides component
+
+## 0.46.0-next.0
+
+### Minor Changes
+
+- [#14380](https://github.com/LedgerHQ/ledger-live/pull/14380) [`d38b48b`](https://github.com/LedgerHQ/ledger-live/commit/d38b48b105bd50e1d5ca45a1ea65f6e2ed4814fa) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: walletv4 tour lwd slides component
+
 ## 0.45.0
 
 ### Minor Changes

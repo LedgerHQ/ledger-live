@@ -104,7 +104,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       navigationParams: [
         NavigatorName.Swap,
         {
-          screen: ScreenName.Swap,
+          screen: ScreenName.SwapTab,
           params: {
             defaultAccount: account,
             defaultCurrency: currency,
@@ -116,7 +116,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       Icon: iconSwap,
       disabled: false,
       event: "Swap Crypto Account Button",
-      eventProperties: { currencyName: currency.name },
+      eventProperties: { currency: currency.ticker, currencyName: currency.name },
     }),
     [currency, account, parentAccount, t],
   );
@@ -142,6 +142,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       Icon: iconBuy,
       event: "Buy Crypto Account Button",
       eventProperties: {
+        currency: currency.ticker,
         currencyName: currency.name,
       },
     }),
@@ -169,6 +170,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       },
       event: "Sell Crypto Account Button",
       eventProperties: {
+        currency: currency.ticker,
         currencyName: currency.name,
       },
     }),

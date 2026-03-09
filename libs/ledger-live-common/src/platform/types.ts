@@ -130,6 +130,7 @@ export type LiveAppManifest = {
   visibility: Visibility;
   highlight?: boolean;
   featureFlags?: string[] | "*";
+  storage?: string[];
   providerTestBaseUrl?: string;
   providerTestId?: string;
   content: {

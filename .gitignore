@@ -22,7 +22,7 @@ libs/ui/packages/react/rsbuild.config.js
 libs/ui/packages/react/rsbuild.config.js.map
 .zed
 
-
+.cursor/rules/trial/*
 
 .nx/cache
 .nx/workspace-data

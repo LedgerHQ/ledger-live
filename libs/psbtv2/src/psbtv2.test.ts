@@ -1,4 +1,4 @@
-import { NoSuchEntry, PsbtV2, psbtGlobal, psbtIn, parseBip32Path } from "./psbtv2";
+import { NoSuchEntry, PsbtV2, psbtGlobal, psbtIn, psbtOut, parseBip32Path } from "./psbtv2";
 import { Psbt, networks } from "bitcoinjs-lib";
 
 describe("PsbtV2", () => {
@@ -188,6 +188,10 @@ describe("PsbtV2", () => {
       const keyDatas = psbtv2.getInputKeyDatas(0, psbtIn.TAP_BIP32_DERIVATION);
       expect(keyDatas).toHaveLength(1);
       expect(keyDatas[0]).toEqual(pubkey);
+
+      const outputKeyDatas = psbtv2.getOutputKeyDatas(0, psbtOut.TAP_BIP32_DERIVATION);
+      expect(outputKeyDatas).toHaveLength(1);
+      expect(outputKeyDatas[0]).toEqual(pubkey);
     });
 
     it("should delete specified input entries and throw when accessing them afterwards", () => {

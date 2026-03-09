@@ -1,6 +1,6 @@
+import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { IconAccount } from "./types";
-import { Account } from "@ledgerhq/types-live";
 
 export function initAccount(account: Account): void {
   (account as IconAccount).iconResources = {

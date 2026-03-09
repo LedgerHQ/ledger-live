@@ -95,6 +95,12 @@ describe("lastSeenDeviceSelector", () => {
   });
 });
 
+describe("INITIAL_STATE defaults", () => {
+  it("should default theme to dark", () => {
+    expect(SETTINGS_INITIAL_STATE.theme).toBe("dark");
+  });
+});
+
 describe("action: purgeAnonymousUserNotifications", () => {
   it("should remove notifications older than cutoff but keep newer ones", () => {
     const now = new Date();

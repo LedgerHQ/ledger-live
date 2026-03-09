@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Ledgerを購入する",
     "setupCta" : "所有するLedgerをセットアップ"
   },
+  "rebornBuyDevice" : {
+    "title" : "Ledgerデバイスを接続",
+    "desc" : "Ledger Walletの機能を最大限にご活用いただくには、Ledgerデバイスを接続してください。",
+    "0" : {
+      "title" : "完全な所有権",
+      "desc" : "秘密鍵がデバイスの外に出ることはありません。"
+    },
+    "1" : {
+      "title" : "安全な取引",
+      "desc" : "取引内容は、安全なデバイス画面で確認・承認できます。"
+    },
+    "2" : {
+      "title" : "最強のウォレット機能へアクセス",
+      "desc" : "数千種類の暗号資産をこれ一つで管理。"
+    },
+    "cta" : "接続",
+    "buyCta" : "Ledgerデバイスを購入する"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Ledgerはすでに入手されましたか？",
     "desc" : "Ledgerを入手したら、セットアップしてLedger Walletアプリの全機能をご利用ください。",
@@ -2638,7 +2656,9 @@
     "discover" : "アプリ一覧",
     "nanoX" : "Nano X",
     "market" : "Market",
-    "earn" : "報酬獲得"
+    "earn" : "報酬獲得",
+    "card" : "カード",
+    "swap" : "スワップ"
   },
   "portfolio" : {
     "totalBalance" : "総資産",
@@ -2690,7 +2710,7 @@
     "walletBalance" : "ウォレット残高",
     "balance" : {
       "noSigner" : "最も安全な\nウォレット",
-      "noFund" : "暗号資産を\n安全に保護"
+      "noAccounts" : "暗号資産を\n安全に保護"
     },
     "seeAllAssets" : "すべての暗号資産を表示",
     "seeAllAccounts" : "すべてのアカウントを表示",
@@ -3497,6 +3517,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "ファームウェアのアップデートをデバッグする"
         }
+      },
+      "contentCards" : {
+        "title" : "コンテンツカード",
+        "titleDesc" : "テスト用に、Brazeを経由せずローカルのコンテンツカードを生成します。",
+        "description" : "ローカルカードは、Brazeを使用せずにポートフォリオ（およびその他の場所）に表示されます。これらは、手動で閉じるか、この画面で削除するまで表示され続けます。",
+        "addSampleBanner" : "サンプルバナーを追加",
+        "addSampleBannerDesc" : "ポートフォリオにサンプルのヒーローバナーを追加します。",
+        "addSampleActionCarousel" : "サンプルアクションカルーセルを追加",
+        "addSampleActionCarouselDesc" : "ポートフォリオにアクションカード（購入、スワップ、ステーキング）のカルーセルを追加します。",
+        "dismissAll" : "すべてのローカルカードを削除",
+        "dismissAllDesc" : "ローカルで生成されたすべてのコンテンツカードを削除します。"
       }
     }
   },
@@ -4143,6 +4174,100 @@
     "loading" : "デバイスを検索中…"
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "{{currency}}を送付",
+      "available" : "利用可能: {{amount}}",
+      "placeholder" : "アドレスまたはENSを入力してください",
+      "placeholderNoENS" : "アドレスを入力",
+      "editRecipientAccessibilityLabel" : "受取人を編集",
+      "recent" : "再送信",
+      "recentDetail" : "最近の詳細",
+      "myAccounts" : "アカウント",
+      "account" : "アカウント",
+      "sendTo" : "送付先：{{address}}",
+      "addressMatched" : "アドレスが一致",
+      "addressNotFound" : "住所が見つかりません",
+      "alreadyUsed" : "使用ずみ・{{date}}",
+      "recentSendWillAppear" : "最近の送付がこちらに表示されます",
+      "relativeDate" : {
+        "justNow" : "たった今",
+        "minutesAgo_one" : "1分前",
+        "minutesAgo_other" : "{{count}}分前",
+        "hoursAgo_one" : "1時間前",
+        "hoursAgo_other" : "{{count}}時間前",
+        "daysAgo_one" : "1日前",
+        "daysAgo_other" : "{{count}}日前"
+      },
+      "remove" : "削除",
+      "enterTag" : "{{tag}}を入力してください",
+      "firstInteraction" : {
+        "title" : "新しいアドレスへ送付しようとしています",
+        "description" : "アドレスが正しいことを確認してください。不安な場合は、まず少額を送金してください。"
+      },
+      "sanctioned" : {
+        "title" : "フラグが立てられたアドレス",
+        "description" : "このアドレスはフラグが付けられており、Ledgerでは送金できません",
+        "helpCenter" : "ヘルプセンター"
+      },
+      "errors" : {
+        "incorrectFormat" : "アドレス形式が正しくありません",
+        "incompatibleAsset" : "住所は選択したアセットと互換性がありません",
+        "walletNotExist" : "ウォレットが存在しません"
+      },
+      "skipMemo" : {
+        "title" : "{{tag}}の追加をスキップしますか？",
+        "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります"
+      },
+      "tagHelp" : {
+        "title" : "{{tag}}とは何ですか？",
+        "description" : "{{currency}}を暗号資産取引所に送付する際、{{tag}}が必要です。これは、取引の受信者を識別するために使用される機能です。{{tag}}のメモを入力しないと、資産を失う可能性があります。"
+      },
+      "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
+      "feesAmount" : "手数料金額 ({{unit}})",
+      "gasLimit" : "ガス制限（{{unit}}）",
+      "feesPaid" : "トランザクションを処理するためにネットワークへ支払われる手数料です",
+      "insufficientBalanceFees" : "ネットワーク手数料をカバーするための残高が不足しています",
+      "amountToSend" : "送金金額 ({{currency}})",
+      "coinToSend" : "送付するコイン",
+      "coinControlCustom" : "コインセレクションをカスタマイズ",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "最大"
+      },
+      "reviewCta" : "確認",
+      "getCta" : "{{currency}}を受け取る",
+      "switchInputMode" : "入力モードを切り替え",
+      "aboveMaximum" : "残高上限超過",
+      "transactionSigned" : "取引に署名済み",
+      "processingTransaction" : "トランザクションを処理中です",
+      "sign" : {
+        "title" : "Ledger {{wording}}で続ける",
+        "description" : "セキュアタッチスクリーンに表示される指示に従ってください。"
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "ネットワーク手数料を更新できません",
+        "warningDescription" : "手数料のプリセット（設定値）が古い可能性があります。"
+      },
+      "customFees" : {
+        "title" : "手数料をカスタマイズ",
+        "confirm" : "確認",
+        "maxFee" : "最大手数料 ({{unit}})",
+        "maxPriorityFee" : "最大優先手数料 ({{unit}})",
+        "gasLimit" : "ガス制限（{{unit}}）",
+        "feePerByte" : "手数料金額 ({{unit}})",
+        "suggested" : "提案済み",
+        "nextBlock" : "次のブロック",
+        "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
+        "invalidValue" : "有効な数字を入力してください",
+        "belowMinimum" : "最小は{{min}}です",
+        "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上である必要があります"
+      },
+      "coinControl" : {
+        "title" : "コインコントロール"
+      }
+    },
     "pendingTxWarning" : "保留中の受信トランザクションがあります。保留中のトランザクションは取り消される可能性がありますので、ご注意ください。",
     "tooMuchUTXOBottomModal" : {
       "cta" : "続行",
@@ -4195,7 +4320,8 @@
       "useMax" : "全額を選択",
       "loadingNetwork" : "ネットワーク手数料を読み込み中…",
       "noRateProvider" : "利用不可",
-      "quantityAvailable" : "利用可能な数量"
+      "quantityAvailable" : "利用可能な数量",
+      "toggleCurrency" : "通貨の切り替え"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4255,6 +4381,12 @@
       "required" : "手数料がかかります。",
       "chooseGas" : "ガス代を選択する",
       "higherFaster" : "ガス代が高いほど、承認が早く完了します。",
+      "medium" : "標準",
+      "fast" : "高速",
+      "slow" : "低速",
+      "custom" : "カスタム",
+      "customFees" : "手数料を手動設定",
+      "coinControl" : "コインコントロール",
       "edit" : {
         "title" : "単位を選択"
       },
@@ -7153,7 +7285,8 @@
         "website" : "ウェブサイト"
       },
       "back" : {
-        "card" : "すべてのカード"
+        "card" : "すべてのカード",
+        "cardTab" : "カード"
       }
     }
   },
@@ -8311,22 +8444,36 @@
       "authorize" : "許可する",
       "preapprove" : "アカウントを追加しました",
       "validator" : "Ledgerバリデーター",
-      "title" : "資金の自動受け取り",
+      "title" : "初期設定",
+      "success" : "アカウントのオンボーディング（初期設定）が完了しました",
+      "status" : {
+        "prepare" : "アカウントのオンボーディング用トランザクションを準備しています。\nこれには最大1分ほどかかる場合があります...",
+        "submit" : "アカウントを設定中…",
+        "default" : "処理中..."
+      },
       "processing" : {
         "title" : "トランザクションを処理中",
-        "description" : "この処理には最大1分かかる場合があります。",
+        "description" : "お待ちください",
         "keepDeviceNearby" : "Ledger Walletアプリを開いた状態で、Ledgerを近くに置いてください。"
       },
       "reonboard" : {
         "title" : "アカウントの更新が必要です",
         "account" : "アカウント",
         "authorize" : "バリデーターを再承認",
+        "success" : "アカウントが正常に更新されました",
         "warning" : {
           "title" : "トポロジーの変更を検出",
           "description" : "Cantonネットワークでトポロジーの変更が検出されました。利用を継続するには、アカウントの再設定（再オンボーディング）を行ってください。"
         }
       },
       "error429" : "現在、Cantonネットワークの1日のアカウント作成上限に達しています。しばらくしてから、もう一度お試しください。"
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "承認を準備中...",
+        "submit" : "バリデーターを承認中...",
+        "default" : "処理中..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "対応が必要です：UTXOが多すぎます",
@@ -8402,5 +8549,40 @@
     "actions" : {
       "swap" : "スワップ"
     }
+  },
+  "cardLanding" : {
+    "title" : "暗号資産で決済",
+    "subtitle" : "暗号資産カードを使用して、オンラインや実店舗でショッピング",
+    "ctas" : {
+      "exploreCards" : "カードを探す",
+      "iHaveACard" : "すでにカードをお持ちの方"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "新しくなったポートフォリオ",
+    "slides" : {
+      "portfolio" : {
+        "title" : "ポートフォリオがさらに見やすく",
+        "description" : "総残高を一目で確認。「今日」をタップすると、さらに詳細を見ることができます。"
+      },
+      "navigation" : {
+        "title" : "主要な機能へすばやくアクセス",
+        "description" : "スワップ、送付・受取、購入をスムーズに。報酬獲得やカードには、下部メニューからアクセスできます。"
+      },
+      "actions" : {
+        "title" : "市場のトレンドをすばやくチェック",
+        "description" : "ポートフォリオからトレンドを直接確認。市場の動きをチェックして、すぐに次のアクションを起こせます。"
+      }
+    },
+    "cta" : {
+      "continue" : "次へ",
+      "explore" : "新しいポートフォリオを見る"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "ホーム",
+    "swap" : "スワップ",
+    "earn" : "報酬獲得",
+    "card" : "カード"
   }
 }

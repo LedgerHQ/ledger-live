@@ -644,3 +644,33 @@ export async function completeExchangeLogic(
 function getToCurrency(account: AccountLike, tokenAccount?: TokenAccount): CryptoOrTokenCurrency {
   return tokenAccount ? getCurrencyForAccount(tokenAccount) : getCurrencyForAccount(account);
 }
+
+type StorageGetArgs = {
+  key: string;
+  storeId: string;
+};
+
+type StorageSetArgs = {
+  key: string;
+  value: unknown;
+  storeId: string;
+};
+
+type StorageHandlerArgs = StorageGetArgs | StorageSetArgs;
+
+export function protectStorageLogic<T extends StorageHandlerArgs, R>(
+  manifest: AppManifest,
+  handler: (args: T) => R,
+) {
+  return (args: T) => {
+    const { storeId } = args;
+
+    // Either the live app can access storage created by itself OR storage explitly listed in the manifest's permissions
+    if (storeId !== manifest.id && (!manifest.storage || !manifest.storage.includes(storeId))) {
+      throw new Error(`Live App "${manifest.id}" is not permitted to access storage "${storeId}".`);
+    }
+
+    // Forward call to original handler
+    return handler(args);
+  };
+}

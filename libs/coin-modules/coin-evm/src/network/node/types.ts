@@ -26,6 +26,23 @@ export type ERC20Transfer = {
   value: string;
 };
 
+/** An EVM log entry with address, topics and data. */
+export type LogWithAddress = {
+  address: string;
+  topics: readonly string[];
+  data: string;
+};
+
+/** A transaction receipt as returned by a RPC node. */
+export type TransactionReceipt = {
+  transactionHash: string;
+  gasUsed: string;
+  effectiveGasPrice?: string;
+  gasPrice?: string;
+  status: string | number | null;
+  logs: LogWithAddress[];
+};
+
 /**
  * Transaction information returned by NodeApi.getTransaction
  */
@@ -43,6 +60,13 @@ export type TransactionInfo = {
   /** ERC20 Transfer events extracted from receipt logs */
   erc20Transfers: ERC20Transfer[];
 };
+
+export type PrefetchedBlockTransaction = Pick<TransactionInfo, "hash" | "value" | "from" | "to">;
+
+export type BlockReceiptInfo = Pick<
+  TransactionInfo,
+  "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers"
+>;
 
 export type NodeApi = {
   getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
@@ -69,6 +93,7 @@ export type NodeApi = {
   getBlockByHeight: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
+    prefetchTxs?: boolean,
     // timestamp is in milliseconds
   ) => Promise<{
     hash: string;
@@ -76,15 +101,14 @@ export type NodeApi = {
     timestamp: number;
     parentHash: string;
     transactionHashes?: string[];
+    transactions?: PrefetchedBlockTransaction[];
   }>;
-  getOptimismAdditionalFees: (
+  getBlockReceipts?: (
     currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
-  getScrollAdditionalFees: (
-    currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
+    blockHeight: number | "latest",
+  ) => Promise<BlockReceiptInfo[]>;
+  getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
+  getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];

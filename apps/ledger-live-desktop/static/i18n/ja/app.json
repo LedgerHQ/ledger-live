@@ -152,7 +152,8 @@
     "quote" : "見積もり",
     "memoTag" : {
       "learnMore" : "タグ/メモについて詳しく知る"
-    }
+    },
+    "memo" : "メモ"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -208,7 +209,11 @@
       "BURN" : "バーン済み",
       "ASSOCIATE_TOKEN" : "トークンの関連付け",
       "CONTRACT_CALL" : "コントラクトコール",
-      "UPDATE_ACCOUNT" : "アカウント更新"
+      "UPDATE_ACCOUNT" : "アカウント更新",
+      "SHIELDED_TX_SAPLING_IN" : "受取済み",
+      "SHIELDED_TX_SAPLING_OUT" : "送付済み",
+      "SHIELDED_TX_ORCHARD_IN" : "受取済み",
+      "SHIELDED_TX_ORCHARD_OUT" : "送付済み"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -267,6 +272,8 @@
     "minute" : "分",
     "minute_other" : "分",
     "minute_short" : "分",
+    "second" : "秒",
+    "second_other" : "秒",
     "second_short" : "秒",
     "hour" : "時間",
     "hour_other" : "時間",
@@ -778,6 +785,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "購入または売却",
     "chooseProvider" : "{{providerCount}}プロバイダーから選択",
     "chooseProviders" : "{{providerCount}}プロバイダーから選択",
     "title" : "暗号資産を購入・売却する",
@@ -2380,12 +2388,15 @@
       "walletNotExist" : "ウォレットが存在しません"
     },
     "skipMemo" : {
-      "title" : "{{tag}}の追加をスキップしますか？",
-      "warning" : "受取人が{{tag}}を要求した場合、資産が失われる可能性があります"
+      "title" : "{{memoLabel}}の追加をスキップしますか？",
+      "description" : "受取人が{{memoLabel}}を要求した場合、資産が失われる可能性があります",
+      "notRequired" : "受取人は{{memoLabel}}を不要としていますか？",
+      "confirm" : "はい、スキップします",
+      "neverAskAgain" : "今後この警告を表示しない"
     },
     "tagHelp" : {
-      "title" : "{{tag}}とは何ですか？",
-      "description" : "{{currency}} を暗号通貨取引所に送信する場合は、{{tag}} が必要です。これは、取引の受信者を識別するために使用される機能です。{{tag}}メモを含めないと資金が失われる可能性があります。"
+      "inputLabel" : "{{memoLabel}}を入力してください",
+      "description" : "{{currency}} を暗号通貨取引所に送信する場合は、{{memoLabel}} が必要です。これは、取引の受信者を識別するために使用される機能です。{{memoLabel}}メモを含めないと資金が失われる可能性があります。"
     },
     "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
     "feesAmount" : "手数料金額 ({{unit}})",
@@ -2414,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "ネットワーク手数料を更新できません",
       "warningDescription" : "手数料のプリセット（設定値）が古い可能性があります。"
+    },
+    "customFees" : {
+      "title" : "手数料をカスタマイズ",
+      "confirm" : "確認",
+      "maxFee" : "最大手数料 ({{unit}})",
+      "maxPriorityFee" : "最大優先手数料 ({{unit}})",
+      "gasLimit" : "ガス制限（{{unit}}）",
+      "feePerByte" : "手数料金額 ({{unit}})",
+      "suggested" : "提案済み",
+      "nextBlock" : "次のブロック",
+      "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
+      "invalidValue" : "有効な数字を入力してください",
+      "belowMinimum" : "最小値は{{min}}です",
+      "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上でなければなりません"
+    },
+    "coinControl" : {
+      "title" : "コインコントロール"
     }
   },
   "releaseNotes" : {
     "title" : "リリースノート",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "了解"
   },
   "troubleshootNetwork" : {
     "title" : "ネットワークの問題解決",
@@ -4897,6 +4926,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "数量がゼロのトランザクションを非表示にする",
         "desc" : "数量がゼロのトランザクションを非表示にすることで、イーサやPolygon、BSC、Tronのポイズニング攻撃などを事前に防ぐことができます。"
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "送金時のメモ省略警告を非表示にする",
+        "desc" : "送金時にメモ（タグ）を空欄にした際の警告メッセージを無効にします。"
       }
     }
   },
@@ -5808,11 +5841,13 @@
     "casper" : {
       "transferIdPlaceholder" : "任意",
       "transferId" : "送金ID（メモ）",
-      "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
+      "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください",
+      "memo" : "送金ID（メモ）"
     },
     "ton" : {
       "commentPlaceholder" : "任意",
-      "comment" : "コメント"
+      "comment" : "コメント",
+      "memo" : "コメント"
     },
     "canton" : {
       "commentPlaceholder" : "任意",
@@ -5939,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Concordiumアカウントを追加",
+        "acknowledge" : {
+          "title" : "確認事項",
+          "description" : "Concordiumの利用には外部での本人確認が必要です。以下の重要なセキュリティ警告を必ずお読みください：",
+          "list" : {
+            "1" : "<0>アドレスの確認ができません</0> – Ledgerデバイス上でConcordiumの受取アドレスを確認・検証することができません。資金を受け取る前に、必ず手動でアドレスを確認・検証してください。",
+            "2" : "<0>Concordium IDアプリは別のシードを使用します</0> – Concordiumアプリでは「新しい」24単語を作成してください。Ledgerのリカバリーフレーズ（シード）は「絶対に」入力しないでください。",
+            "3" : "<0>Ledger Wallet外部へ移動します</0> – 本人確認は外部のConcordiumウォレットアプリで行われます。これは、Concordiumのブロックチェーンプロトコルにより必須の手順です。",
+            "4" : "<0>取引署名のセキュリティは維持されます</0> – 取引の署名やアカウント作成は、引き続きLedgerデバイスのみで行われます。"
+          },
+          "allow" : "同意する"
+        },
+        "identity" : {
+          "title" : "接続",
+          "account" : "アカウント",
+          "newAccount" : "新しいアカウント",
+          "init" : "「許可（Allow）」を押すと、アカウント認証に必要なKYC（本人確認）プロセスへ進みます。",
+          "scanQRCode" : "モバイル端末でQRコードをスキャンし、Concordium IDアプリを接続してください。<0>詳細を見る</0>",
+          "ledgerSeedWarning" : "Concordium IDアプリには、Ledgerのリカバリーフレーズ（シード）を<0>絶対に入力しないでください</0>。",
+          "downloadApp" : "Concordium IDアプリをダウンロード",
+          "connecting" : "Concordium IDアプリに接続中...",
+          "onboarded" : "設定済みアカウント",
+          "success" : "Concordium IDアプリに接続しました。",
+          "error" : "新しいアカウントの初期設定に失敗しました。もう一度お試しください。",
+          "status" : {
+            "prepare" : "アカウントの初期設定を準備中...",
+            "submit" : "アカウントを設定中…",
+            "default" : "処理中..."
+          }
+        },
+        "create" : {
+          "title" : "アカウントを作成",
+          "init" : {
+            "title" : "Concordium IDアプリへの接続成功"
+          },
+          "prepare" : {
+            "title" : "アカウントを作成するには、以下のコードがConcordium IDアプリ上のものと一致しているか確認してください",
+            "resendButton" : "確認コードを再送",
+            "resendDescription" : "<0>{{count}}</0>{{unit}}後に再送できます"
+          },
+          "success" : "Concordiumアカウントが正常に作成されました。",
+          "error" : "アカウントの作成に失敗しました。もう一度お試しください。",
+          "error429" : "リクエストが多すぎます。しばらく待ってからもう一度お試しください。",
+          "button" : "作成",
+          "processing" : "処理中...",
+          "status" : {
+            "prepare" : "アカウント作成の準備中...",
+            "submit" : "アカウントを作成中...",
+            "default" : "処理中..."
+          }
+        },
+        "finish" : {
+          "title" : "確認"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "現在、Concordiumアドレスを検証できません。Concordiumのエクスプローラーにアドレスを貼り付け、間違いがないか必ず再確認してください。",
+        "verifyLink" : "認証する"
+      }
+    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {
@@ -5970,6 +6067,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "任意のメモ"
+    },
+    "xrp" : {
+      "memo" : "タグ"
     }
   },
   "errors" : {
@@ -6832,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "メモの文字数が制限を超えています。最大64文字までです。",
       "description" : "Cardanoのメモには文字数制限があります。メモを短くしてください。"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "メモが最大文字数を超えています",
+      "description" : "メモのサイズは{{memoLength}}バイトですが、許容される最大サイズは{{maxLength}}バイトです。メモの内容を短くしてください。"
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "資金が不足しています。"
     },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
@@ -7817,6 +7924,11 @@
           "description" : "{{currency}}エコシステムでは、選択された数のサービスのみが新しいアカウントを作成できます。Ledgerは現在このオンボーディングサービスを提供していませんが、代替サービスは利用可能です。{{currency}}アカウントが作成されたら、Ledger Walletに追加できるようになります。",
           "cta" : "{{currency}}アカウントの作成方法",
           "close" : "閉じる"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "{{currency}}アカウントは追加されませんでした",
+          "description" : "選択した1つ以上のアカウントについて、必要なセットアップが完了していません。",
+          "close" : "閉じる"
         }
       },
       "status" : {
@@ -7923,6 +8035,12 @@
       "hoursAgo_other" : "最終同期：{{count}}時間前。クリックして更新",
       "daysAgo_one" : "最終同期：{{count}}日前。クリックして更新",
       "daysAgo_other" : "最終同期：{{count}}日前。クリックして更新"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "通知"
+    },
+    "myLedger" : {
+      "tooltip" : "My Ledger"
     }
   },
   "geoBlocking" : {
@@ -7951,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "残高を表示",
-        "pausedAt" : "一時停止中： ",
+        "startSync" : "同期を開始",
+        "stopSync" : "同期を停止",
+        "lastProcessedBlock" : "最後に処理されたブロック：{{block}}未処理のブロック：{{missing}}",
         "lastSync" : "最終同期：{{date}}"
+      },
+      "datepicker" : {
+        "label" : "バースデーハイト",
+        "tooltip" : "バースデーハイトとは、ブロックチェーン上でウォレットが資産のスキャンを開始する地点（ブロック）のことです。"
       },
       "flows" : {
         "export" : {
@@ -7991,12 +8115,64 @@
             }
           }
         }
+      }
+    },
+    "operationDetails" : {
+      "txType" : "トランザクションの種類",
+      "transparentTx" : "透明性",
+      "shieldedSaplingTx" : "🛡 プライベート（Sapling）",
+      "shieldedOrchardTx" : "🛡 プライベート（Orchard）"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleoプライベート残高の設定",
+        "description" : "Ledger Walletは、プライベート残高を表示するためにお客様の閲覧キーを保存し、プライベートな取引の処理には外部サービスを使用します。<0>詳細を見る</0>",
+        "bullets" : ["プライベート残高を復号するための読み取り専用アクセス権", "Ledgerがお客様の資金を送金または使用することはできません", "お客様の資金の署名と使用ができるのはお客様のみです", "処理の高速化のため、証明の生成は外部のプルーバー（証明）サービスによって行われます", "プルーバーがお客様の資金にアクセスしたり使用したりすることはできません"],
+        "cta" : {
+          "allow" : "許可する",
+          "cancel" : "キャンセル"
+        }
       },
-      "startSync" : "同期を開始",
-      "datepicker" : {
-        "label" : "バースデーハイト",
-        "tooltip" : "バースデーハイトとは、ブロックチェーン上でウォレットが資産のスキャンを開始する地点（ブロック）のことです。"
+      "stepViewKeyApprove" : {
+        "title" : "Ledgerデバイスで承認",
+        "description" : "デバイス上で閲覧キーの共有を確定してください",
+        "cancelAlert" : "デバイス上で個別にアカウントを拒否することも可能です。「全てキャンセル」を選択すると、ポートフォリオへのアカウント追加を中止します。",
+        "cancelAllBtn_one" : "キャンセル",
+        "cancelAllBtn_other" : "全てキャンセル"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "閲覧キーを共有",
+          "shareKey_other" : "閲覧キーを共有"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "選択したどのアカウントについても、閲覧キーが共有されていません。Ledger Walletでプライベート残高を表示するには、閲覧キーが必要です。"
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "利用可能残高",
+      "availableBalanceTooltip" : "送金可能な残高",
+      "transparentBalance" : "トランスペアレント残高",
+      "transparentBalanceTooltip" : "一般に公開されている残高",
+      "privateBalance" : "プライベート残高",
+      "privateBalanceTooltip" : "一般には非公開の残高"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "パブリック",
+        "private" : "プライベート"
       }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "新しいアップデートがあります",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "アップデート中にエラーが発生しました。再試行してください。",
+    "installAndRelaunch" : "アップデートをインストールして再起動"
   }
 }

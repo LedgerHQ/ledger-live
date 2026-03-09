@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import Animated from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
 import { FlashList, FlashListProps } from "@shopify/flash-list";
@@ -7,7 +7,6 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import LoadingIndicator from "LLM/features/Web3Hub/components/ManifestsList/LoadingIndicator";
 import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
 import type { SearchProps } from "LLM/features/Web3Hub/types";
-import { ScreenName } from "~/const";
 import useSearchListViewModel from "./useSearchListViewModel";
 import SearchItem from "./SearchItem";
 
@@ -42,16 +41,7 @@ export default function SearchList({ navigation, search, onScroll, pt = 0 }: Pro
   const { t } = useTranslation();
   const { data, isLoading, onEndReached } = useSearchListViewModel(search);
 
-  const goToApp = useCallback(
-    (manifestId: string) => {
-      navigation.push(ScreenName.Web3HubApp, {
-        manifestId: manifestId,
-      });
-    },
-    [navigation],
-  );
-
-  const disclaimer = useDisclaimerViewModel(goToApp);
+  const disclaimer = useDisclaimerViewModel(navigation);
 
   return (
     <>

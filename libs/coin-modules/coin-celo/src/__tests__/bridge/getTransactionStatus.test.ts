@@ -1,6 +1,6 @@
+import BigNumber from "bignumber.js";
 import { accountFixture, transactionFixture } from "../../bridge/fixtures";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
-import BigNumber from "bignumber.js";
 
 jest.mock("../../network/sdk", () => {
   return {

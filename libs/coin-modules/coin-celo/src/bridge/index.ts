@@ -1,31 +1,31 @@
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getPreloadStrategy, preload, hydrate } from "./preload";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { prepareTransaction } from "./prepareTransaction";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import resolver from "../signer/hw-getAddress";
+import { CeloSigner } from "../signer/signer";
+import type { CeloAccount, Transaction, TransactionStatus } from "../types";
+import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { getPreloadStrategy, preload, hydrate } from "./preload";
+import { prepareTransaction } from "./prepareTransaction";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
   toOperationExtraRaw,
   fromOperationExtraRaw,
 } from "./serialization";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import resolver from "../signer/hw-getAddress";
-import type { CeloAccount, Transaction, TransactionStatus } from "../types";
-import { broadcast } from "./broadcast";
 
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { getAccountShape } from "./synchronisation";
 import { buildSignOperation } from "./signOperation";
+import { getAccountShape } from "./synchronisation";
 import { sync } from "./synchronisation";
-import { CeloSigner } from "../signer/signer";
 import { validateAddress } from "./validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {

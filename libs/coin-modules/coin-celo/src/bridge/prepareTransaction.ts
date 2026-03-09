@@ -1,11 +1,11 @@
+import { isValidAddress } from "@celo/utils/lib/address";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isValidAddress } from "@celo/utils/lib/address";
-import getFeesForTransaction from "./getFeesForTransaction";
-import { CeloAccount, Transaction } from "../types";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { CELO_STABLE_TOKENS } from "../constants";
 import { celoKit } from "../network/sdk";
+import { CeloAccount, Transaction } from "../types";
+import getFeesForTransaction from "./getFeesForTransaction";
 
 export const prepareTransaction: AccountBridge<
   Transaction,

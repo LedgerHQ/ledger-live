@@ -4,8 +4,7 @@
  */
 
 import type { SessionTypes } from "@walletconnect/types";
-import type { IDAppCreateAccountResponse } from "../types";
-import { IDAppErrorCode, IDAppResponseStatus } from "../types";
+import { type IDAppCreateAccountResponse, IDAppErrorCode, IDAppResponseStatus } from "../types";
 import { createFixtureIdAppResponse } from "../bridge/bridge.fixture";
 
 export function createMockSession(network: "testnet" | "mainnet" = "testnet"): SessionTypes.Struct {

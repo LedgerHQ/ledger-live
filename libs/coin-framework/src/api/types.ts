@@ -60,11 +60,14 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
-  assetInfo?: AssetInfo;
   tx: {
     hash: string; // transaction hash
     block: BlockInfo; // block metadata, empty string for block hash if not available directly and no reorg possible
     fees: bigint; // network fees paid
+    // address that paid for this transaction's fees.
+    // optional as it may be unknown (e.g. the information is not available in the context of the operation).
+    // if it is unknown, it's expected that none of the sender addresses paid for the fees
+    feesPayer?: string;
     date: Date; // tx date (may differ from block time)
 
     /** If the transaction has failed, fees have been paid but other balance changes are not effective.*/

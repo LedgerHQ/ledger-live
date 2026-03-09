@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-solana",
-  "version": "1.12.0",
+  "version": "1.12.2",
   "description": "Ledger Solana Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -73,12 +73,13 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^5",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10",
     "dotenv": "^16",
-    "typescript": "^5"
+    "typescript": "catalog:"
   }
 }

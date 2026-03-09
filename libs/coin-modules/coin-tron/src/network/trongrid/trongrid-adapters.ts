@@ -18,6 +18,7 @@ export function fromTrongridTxInfoToOperation(
         time: block.time || new Date(0),
       },
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
+      feesPayer: trongridTxInfo.from,
       date: trongridTxInfo.date,
       failed: trongridTxInfo.hasFailed,
     },

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.23.0",
+  "version": "0.23.2",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -66,6 +66,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "jest": "catalog:",

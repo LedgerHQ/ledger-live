@@ -1,34 +1,36 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { Operation, ListOperationsOptions, Page } from "@ledgerhq/coin-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getOperations as getOperationsGrpc } from "../../network/grpcClient";
-import { getOperations as getOperationsProxy, ProxyOperation } from "../../network/proxyClient";
+import {
+  getOperations as getOperationsProxy,
+  type ProxyOperation,
+} from "../../network/proxyClient";
 
 /**
  * Returns list of operations associated to an account.
  * @param address Account address
  * @param options Pagination/filtering options
- * @param currency The cryptocurrency
+ * @param currencyId The cryptocurrency ID
  * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
  */
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<Page<Operation>> {
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
-    currencyId: currency.id,
+    currencyId,
     xpubOrAddress: address,
     derivationMode: "",
   });
 
   if (options.minHeight > 0) {
-    return getOperationsGrpc(currency, address, options);
+    return getOperationsGrpc(currencyId, address, options);
   }
 
-  const operations = await getOperationsProxy(currency, address, accountId);
+  const operations = await getOperationsProxy(currencyId, { address, accountId });
 
   return {
     items: operations.map(

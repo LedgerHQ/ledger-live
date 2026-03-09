@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cosmos",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Ledger Cosmos Coin integration",
   "keywords": [
     "Ledger",
@@ -72,6 +72,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.2",
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "@types/semver": "catalog:",

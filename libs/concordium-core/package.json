@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/concordium-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared Concordium protocol types, serialization, and utilities",
   "main": "lib/index.js",
   "module": "lib-es/index.js",
@@ -26,7 +26,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1"
   },

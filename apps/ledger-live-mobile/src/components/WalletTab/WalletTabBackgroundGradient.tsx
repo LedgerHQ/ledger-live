@@ -16,7 +16,7 @@ function WalletTabBackgroundGradient({ color, visible = true }: Readonly<Props>)
   const { theme, colors } = useTheme();
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const { isWallet40Enabled, isWallet40DarkMode } = useWallet40Theme("mobile");
+  const { isWallet40Enabled } = useWallet40Theme("mobile");
 
   const opacity = useMemo(
     () =>
@@ -59,23 +59,21 @@ function WalletTabBackgroundGradient({ color, visible = true }: Readonly<Props>)
   );
 
   const chosenSource = useMemo(() => {
-    if (isWallet40Enabled && theme === "dark") {
-      return require("~/images/portfolio/v4-dark.webp");
+    if (isWallet40Enabled) {
+      return theme === "dark"
+        ? require("~/images/portfolio/v4-dark.webp")
+        : require("~/images/portfolio/v4-light.webp");
     }
     return theme === "dark"
       ? require("~/images/portfolio/dark.webp")
       : require("~/images/portfolio/light.webp");
   }, [theme, isWallet40Enabled]);
 
-  // Wallet 4.0 light mode uses a solid background color
-  const isWallet40LightMode = isWallet40Enabled && !isWallet40DarkMode;
-
-  if (color || isWallet40LightMode) {
-    const backgroundColor = color ?? colors.background.main;
+  if (color) {
     return (
       <Animated.View style={[containerStyle, { opacity: visible ? opacity : 0 }]}>
         <LinearGradient
-          colors={[backgroundColor, colors.background.main]}
+          colors={[color, colors.background.main]}
           locations={[0, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
@@ -94,23 +92,7 @@ function WalletTabBackgroundGradient({ color, visible = true }: Readonly<Props>)
         onLoadStart={() => setImageLoaded(false)}
         fadeDuration={imageLoaded ? 0 : 300}
       />
-      {isWallet40DarkMode ? (
-        // Wallet 4.0: permanent gradient from transparent to black (faster fade)
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.6)", "#000000"]}
-          locations={[0, 0.5, 0.85]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            top: 0,
-            left: 0,
-          }}
-        />
-      ) : (
-        // Legacy: animated gradient on scroll
+      {!isWallet40Enabled && (
         <Animated.View
           style={{
             position: "absolute",

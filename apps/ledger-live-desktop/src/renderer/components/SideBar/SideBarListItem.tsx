@@ -55,9 +55,9 @@ class SideBarListItem extends PureComponent<Props> {
       <Tooltip arrow={false} content={renderedLabel} enabled={!!collapsed} placement="right">
         <Container
           data-testid={`drawer-${id}-button`}
-          isActive={!disabled && isActive}
+          $isActive={!disabled && isActive}
           data-active={isActive ? "true" : "false"}
-          iconActiveColor={iconActiveColor}
+          $iconActiveColor={iconActiveColor}
           onClick={disabled ? undefined : onClick}
           disabled={disabled}
         >
@@ -85,14 +85,15 @@ const Container = styled(Tabbable).attrs(() => ({
   px: 3,
   py: 2,
 }))<{
-  isActive?: boolean;
-  iconActiveColor?: string;
+  $isActive?: boolean;
+  $iconActiveColor?: string;
+  disabled?: boolean;
 }>`
   position: relative;
   width: 100%;
   cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
-  color: ${p => (p.isActive ? p.theme.colors.neutral.c100 : p.theme.colors.opacityDefault.c70)};
-  background: ${p => (p.isActive ? p.theme.colors.opacityDefault.c05 : "")};
+  color: ${p => (p.$isActive ? p.theme.colors.neutral.c100 : p.theme.colors.opacityDefault.c70)};
+  background: ${p => (p.$isActive ? p.theme.colors.opacityDefault.c05 : "")};
   opacity: ${p => (p.disabled ? 0.5 : 1)};
 
   &:active {
@@ -105,8 +106,8 @@ const Container = styled(Tabbable).attrs(() => ({
 
   ${p => {
     const iconActiveColor =
-      p.theme.colors[p.iconActiveColor as keyof DefaultTheme["colors"]] || p.iconActiveColor;
-    const color = p.isActive ? iconActiveColor : p.theme.colors.opacityDefault.c70;
+      p.theme.colors[p.$iconActiveColor as keyof DefaultTheme["colors"]] || p.$iconActiveColor;
+    const color = p.$isActive ? iconActiveColor : p.theme.colors.opacityDefault.c70;
     return `
       svg { color: ${color}; }
     `;

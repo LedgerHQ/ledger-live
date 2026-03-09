@@ -8,25 +8,22 @@ import {
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
-import { closeProxy, startProxy } from "../bridge/proxy";
 import { device, log } from "detox";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
-import { isRemoteIos } from "../helpers/commonHelpers";
-import { addKnownSpeculos, removeKnownSpeculos } from "../bridge/server";
-import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { isSpeculosRemote } from "../helpers/commonHelpers";
+import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
+import { CLI } from "./cliUtils";
 import { promises as fs } from "fs";
 import path from "path";
 
-import { CLI } from "./cliUtils";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 // Re-export setExchangeDependencies to ensure the same module instance is used
 export { setExchangeDependencies };
 
-const BASE_PORT = 30000;
 const MAX_PORT = 65535;
-let portCounter = BASE_PORT; // Counter for generating unique ports
-const proxyAddress = "localhost";
+const BASE_PORT = 30000;
+let portCounter = BASE_PORT;
 
 type SpeculosId = { deviceId: string };
 export const SPECULOS_TRACKING_FILE = path.resolve("artifacts/speculos-instances.json");
@@ -99,15 +96,6 @@ export async function launchSpeculos(appName: string) {
   return device;
 }
 
-export async function launchProxy(
-  proxyPort: number,
-  speculosAddress?: string,
-  speculosPort?: number,
-) {
-  await device.reverseTcpPort(proxyPort);
-  await startProxy(proxyPort, speculosAddress, speculosPort);
-}
-
 async function findPortByDeviceId(
   deviceId: string,
   maxAttempts = 3,
@@ -138,7 +126,7 @@ async function findPortByDeviceId(
   return undefined;
 }
 
-export async function deleteSpeculos(deviceId?: string) {
+export async function deleteSpeculos(deviceId?: string): Promise<number | undefined> {
   if (!deviceId) {
     if (!speculosDevices.size) {
       log.info("E2E", "No active Speculos instances to stop.");
@@ -168,17 +156,18 @@ export async function deleteSpeculos(deviceId?: string) {
 
   log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
   setEnv("SPECULOS_API_PORT", 0);
+  delete process.env.SPECULOS_API_PORT;
 
-  return closeProxy(port);
+  return port;
 }
 
 export async function takeSpeculosScreenshot() {
   for (const [deviceId, apiPort] of speculosDevices.entries()) {
-    if (isRemoteIos()) {
+    if (isSpeculosRemote()) {
       try {
         await waitForSpeculosReady(deviceId, {
           interval: 5_000,
-          timeout: 10_000,
+          timeout: 30_000,
         });
       } catch {
         log.warn("E2E", `Skipping screenshot: Speculos with ${deviceId} unreachable.`);
@@ -193,22 +182,66 @@ export async function takeSpeculosScreenshot() {
   }
 }
 
-export async function registerSpeculos(speculosPort: number, proxyPort: number) {
-  unregisterAllTransportModules();
+export async function registerSpeculos(speculosPort: number) {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
-  await launchProxy(proxyPort, speculosAddress, speculosPort);
-  process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
+  await device.reverseTcpPort(speculosPort);
+  process.env.SPECULOS_API_PORT = speculosPort.toString();
+  delete process.env.DEVICE_PROXY_URL;
   CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
   setEnv("SPECULOS_API_PORT", speculosPort);
 }
 
-export async function registerKnownSpeculos(proxyPort: number) {
-  await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+function getKnownSpeculosAddress(speculosPort: number): string {
+  const configuredAddress = process.env.SPECULOS_ADDRESS?.trim();
+  if (!configuredAddress) {
+    return `http://127.0.0.1:${speculosPort}`;
+  }
+
+  const normalizedAddress = configuredAddress.startsWith("http")
+    ? configuredAddress
+    : `http://${configuredAddress}`;
+  const withoutTrailingSlash = normalizedAddress.replace(/\/+$/, "");
+  return /:\d+$/.test(withoutTrailingSlash)
+    ? withoutTrailingSlash
+    : `${withoutTrailingSlash}:${speculosPort}`;
+}
+
+async function waitForBridgeEnv(
+  key: string,
+  expectedValue: string,
+  attempts = 12,
+  delayMs = 500,
+): Promise<void> {
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      const envsRaw = await getEnvs();
+      if (envsRaw) {
+        const envs = JSON.parse(envsRaw) as Record<string, string | undefined>;
+        if ((envs[key] ?? "") === expectedValue) return;
+      }
+    } catch {
+      // retry until timeout
+    }
+    if (attempt < attempts) {
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+  throw new Error(
+    `Bridge env sync failed: expected ${key}="${expectedValue}" after ${attempts} attempts`,
+  );
+}
+
+export async function registerKnownSpeculos(speculosPort: number) {
+  const address = getKnownSpeculosAddress(speculosPort);
+  await addKnownSpeculos(address);
+  await waitForBridgeEnv("DEVICE_PROXY_URL", address);
 }
 
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
-  const proxyPort = await deleteSpeculos(deviceId);
-  if (proxyPort) {
-    await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+  const speculosPort = await deleteSpeculos(deviceId);
+  if (speculosPort) {
+    await device.unreverseTcpPort(speculosPort);
+    await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
+    await waitForBridgeEnv("DEVICE_PROXY_URL", "");
   }
 }

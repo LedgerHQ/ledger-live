@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "4.14.0",
+  "version": "4.15.0",
   "description": "Boilerplate coin integration",
   "keywords": [
     "Ledger",
@@ -111,6 +111,7 @@
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
@@ -119,7 +120,7 @@
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

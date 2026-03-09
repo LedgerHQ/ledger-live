@@ -1,11 +1,13 @@
-import type { CredentialDeploymentTransaction, IdOwnershipProofs } from "@ledgerhq/concordium-core";
-import { insertAccountOwnershipProofs } from "@ledgerhq/concordium-core";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { SubmitCredentialData, SerializedCredentialDeploymentTransaction } from "../types";
-
-export function getConcordiumNetwork(currency: CryptoCurrency): "Mainnet" | "Testnet" {
-  return currency.isTestnetFor ? "Testnet" : "Mainnet";
-}
+import {
+  type CredentialDeploymentTransaction,
+  type IdOwnershipProofs,
+  insertAccountOwnershipProofs,
+} from "@ledgerhq/concordium-core";
+import type {
+  SubmitCredentialData,
+  SubmitTransferData,
+  SerializedCredentialDeploymentTransaction,
+} from "../types";
 
 /**
  * Structure of parsed unsignedCdi from ID App
@@ -116,13 +118,32 @@ export function deserializeCredentialDeploymentTransaction(
 }
 
 /**
+ * Builds the transfer submission request for wallet-proxy API.
+ *
+ * Wraps the transaction body and signature into the format expected by
+ * the /v0/submitTransfer endpoint, using credential index 0 and key index 0.
+ */
+export function buildSubmitTransferData(
+  transaction: string,
+  signature: string,
+): SubmitTransferData {
+  return {
+    transaction,
+    signatures: {
+      "0": {
+        "0": signature,
+      },
+    },
+  };
+}
+
+/**
  * Builds the credential submission data for wallet-proxy API.
  *
- * This function combines the credential deployment transaction from the ID App
+ * Combines the credential deployment transaction from the ID App
  * with the account ownership signature from the Ledger device to create the
  * complete payload for the /v0/submitCredential endpoint.
  *
- * ## Credential Type
  * The credential type is hardcoded to "normal" because Ledger Live only creates
  * credentials for existing identities. The "initial" type is only used when creating
  * the very first credential for a brand new identity, which is done through the
@@ -146,27 +167,24 @@ export function deserializeCredentialDeploymentTransaction(
  * @returns Complete credential submission data ready for wallet-proxy
  */
 export function buildSubmitCredentialData(
-  credentialDeploymentTransaction: CredentialDeploymentTransaction,
-  accountSignature: string,
+  transaction: CredentialDeploymentTransaction,
+  signature: string,
 ): SubmitCredentialData {
-  const completeProofs = insertAccountOwnershipProofs(
-    credentialDeploymentTransaction.proofs,
-    accountSignature,
-  );
+  const completeProofs = insertAccountOwnershipProofs(transaction.proofs, signature);
 
   return {
     v: 0,
     value: {
-      messageExpiry: Number(credentialDeploymentTransaction.expiry),
+      messageExpiry: Number(transaction.expiry),
       credential: {
         type: "normal",
         contents: {
-          credentialPublicKeys: credentialDeploymentTransaction.credentialPublicKeys,
-          credId: credentialDeploymentTransaction.credId,
-          ipIdentity: credentialDeploymentTransaction.ipIdentity,
-          revocationThreshold: credentialDeploymentTransaction.revocationThreshold,
-          arData: credentialDeploymentTransaction.arData,
-          policy: credentialDeploymentTransaction.policy,
+          credentialPublicKeys: transaction.credentialPublicKeys,
+          credId: transaction.credId,
+          ipIdentity: transaction.ipIdentity,
+          revocationThreshold: transaction.revocationThreshold,
+          arData: transaction.arData,
+          policy: transaction.policy,
           proofs: completeProofs,
         },
       },

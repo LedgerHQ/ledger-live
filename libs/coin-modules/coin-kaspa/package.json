@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.8.0",
+  "version": "1.8.2",
   "description": "Ledger framework for Kaspa integration",
   "keywords": [
     "Ledger",
@@ -108,6 +108,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/invariant": "^2.2.2",

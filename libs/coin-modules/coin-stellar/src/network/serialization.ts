@@ -138,6 +138,7 @@ async function formatOperation(
       ledgerOpType: type,
       blockTime: new Date(blockTime),
       index: rawOperation.id,
+      feeAccount: transaction.fee_account,
     },
   };
 

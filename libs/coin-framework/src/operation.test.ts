@@ -3,10 +3,15 @@ import Prando from "prando";
 import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount, genOperation, genTokenAccount } from "./mocks/account";
-import { isAddressPoisoningOperation, isOldestPendingOperation } from "./operation";
+import {
+  isAddressPoisoningOperation,
+  isOldestPendingOperation,
+  isOldestBitcoinPendingOperation,
+} from "./operation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ethereum = getCryptoCurrencyById("ethereum");
+const bitcoin = getCryptoCurrencyById("bitcoin");
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const usdc = { parentCurrency: { family: "evm" } } as TokenCurrency;
 const cardano = getCryptoCurrencyById("cardano");
@@ -187,6 +192,70 @@ describe("Operation.ts", () => {
       };
 
       expect(isOldestPendingOperation(testAccount, new BigNumber(0))).toBe(true);
+    });
+  });
+
+  describe("isOldestBitcoinPendingOperation", () => {
+    const account = genAccount("myAccount", { currency: bitcoin });
+
+    const pendingCoinOperation0: Operation = {
+      ...genOperation(account, account, account.operations, new Prando("")),
+      blockHeight: null,
+      value: new BigNumber(0),
+      date: new Date(1986, 0, 1),
+    };
+    const pendingCoinOperation1: Operation = {
+      ...pendingCoinOperation0,
+    };
+    const pendingCoinOperation2: Operation = {
+      ...pendingCoinOperation1,
+    };
+    it("should return true if there are no pending operations", () => {
+      const testAccount = { ...account, pendingOperations: [] };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 1))).toBe(true);
+    });
+
+    it("should return true if the given date is the same as the only pending operation", () => {
+      const testAccount = { ...account, pendingOperations: [pendingCoinOperation0] };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 1))).toBe(true);
+    });
+
+    it("should return true if the given date is less than all pending operation", () => {
+      const testAccount = {
+        ...account,
+        pendingOperations: [pendingCoinOperation1, pendingCoinOperation2],
+      };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 0))).toBe(true);
+    });
+
+    it("should return false if the given date is greater than all pending operation", () => {
+      const testAccount = {
+        ...account,
+        pendingOperations: [pendingCoinOperation0, pendingCoinOperation1],
+      };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 3))).toBe(false);
+    });
+
+    it("should return false if there is a pending operation with a lower date than the given date", () => {
+      const testAccount = {
+        ...account,
+        pendingOperations: [pendingCoinOperation0, pendingCoinOperation1],
+      };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 2))).toBe(false);
+    });
+
+    it("should still return true when pending operations are out of order", () => {
+      const testAccount = {
+        ...account,
+        pendingOperations: [pendingCoinOperation2, pendingCoinOperation0],
+      };
+
+      expect(isOldestBitcoinPendingOperation(testAccount, new Date(1986, 0, 1))).toBe(true);
     });
   });
 });

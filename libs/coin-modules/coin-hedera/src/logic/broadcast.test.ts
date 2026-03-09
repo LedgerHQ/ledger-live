@@ -1,5 +1,5 @@
-import { broadcast } from "./broadcast";
 import { rpcClient } from "../network/rpc";
+import { broadcast } from "./broadcast";
 import { deserializeTransaction } from "./utils";
 
 jest.mock("../network/rpc");

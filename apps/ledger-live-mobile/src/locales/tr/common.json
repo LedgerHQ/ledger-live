@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Ledger satın alın",
     "setupCta" : "Zaten bir Ledger cihazım var, onu kuralım"
   },
+  "rebornBuyDevice" : {
+    "title" : "Bir Ledger cihazı bağlayın",
+    "desc" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
+    "0" : {
+      "title" : "Tam mülkiyet",
+      "desc" : "Özel anahtarlarınız asla cihazdan ayrılmaz."
+    },
+    "1" : {
+      "title" : "Güvenle alıp satın",
+      "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
+    },
+    "2" : {
+      "title" : "En güçlü cüzdana erişin",
+      "desc" : "Binlerce varlığı tek bir yerden yönetin."
+    },
+    "cta" : "Bağlan",
+    "buyCta" : "Ledger cihazınızı satın alın"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Ledger cihazınız elinize ulaştı mı?",
     "desc" : "Ledger cihazınız elinize ulaştığında Ledger Wallet uygulamasının tüm özelliklerinin kilidini açmak için cihazınızın kurulumunu yapın.",
@@ -2638,7 +2656,9 @@
     "discover" : "Keşfet",
     "nanoX" : "Nano X",
     "market" : "Piyasa",
-    "earn" : "Kazan"
+    "earn" : "Kazan",
+    "card" : "Kart",
+    "swap" : "Takas et"
   },
   "portfolio" : {
     "totalBalance" : "Toplam bakiye",
@@ -2690,7 +2710,7 @@
     "walletBalance" : "Cüzdan bakiyesi",
     "balance" : {
       "noSigner" : "En güvenli\ncüzdan",
-      "noFund" : "Kriptolarınızı\ngüvende tutun"
+      "noAccounts" : "Kriptolarınızı\ngüvende tutun"
     },
     "seeAllAssets" : "Tüm varlıkları gör",
     "seeAllAccounts" : "Tüm hesapları gör",
@@ -2721,7 +2741,7 @@
       "buyLedger" : "Ledger satın alın",
       "transferDrawer" : {
         "title" : "Transfer",
-        "receiveCrypto" : "Kripto alın",
+        "receiveCrypto" : "Kripto al",
         "sendCrypto" : "Kripto gönder",
         "bankTransfer" : "Banka transferi",
         "bankTransferDescription" : "Nakit para göndererek stabil coin alın"
@@ -3492,11 +3512,22 @@
       "featureFlagsTabGroups" : "Gruplar",
       "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "showBannerDesc" : "Bayraklar geçersiz bırakıldığında banner'ı göster",
-      "bannerTitle" : "Bayraklar yerel olarak geçersiz bırakıldı",
+      "bannerTitle" : "Bayraklar yerel olarak uygulandı",
       "features" : {
         "firmwareUpdate" : {
           "headerTitle" : "Donanım yazılımı güncellemesi için hata ayıklama"
         }
+      },
+      "contentCards" : {
+        "title" : "İçerik Kartları",
+        "titleDesc" : "Test için Braze olmadan yerel içerik kartları oluşturun.",
+        "description" : "Yerel kartlar, Braze olmadan Portföyde (ve başka konumlarda) görüntülenir. Bu kartlar siz onları atana veya buradan silene kadar kalır.",
+        "addSampleBanner" : "Örnek banner ekle",
+        "addSampleBannerDesc" : "Portföye örnek bir hero banner’ı ekleyin.",
+        "addSampleActionCarousel" : "Örnek eylem galerisi ekle",
+        "addSampleActionCarouselDesc" : "Portföye eylem kartları (Satın Al, Takas Et, Stake Et) galerisi ekleyin.",
+        "dismissAll" : "Tüm yerel kartları kaldır",
+        "dismissAllDesc" : "Yerel olarak oluşturulan tüm içerik kartlarını kaldırın."
       }
     }
   },
@@ -4143,6 +4174,100 @@
     "loading" : "Cihazlar aranıyor..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "{{currency}} gönder",
+      "available" : "Mevcut: {{amount}}",
+      "placeholder" : "Adres ya da ENS adı girin",
+      "placeholderNoENS" : "Adresi girin",
+      "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
+      "recent" : "Son kullanılanlar",
+      "recentDetail" : "Son işlem ayrıntıları",
+      "myAccounts" : "Hesaplarım",
+      "account" : "Hesap",
+      "sendTo" : "{{address}} adresine gönder",
+      "addressMatched" : "Adres eşleşti",
+      "addressNotFound" : "Adres bulunamadı",
+      "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
+      "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+      "relativeDate" : {
+        "justNow" : "Şimdi",
+        "minutesAgo_one" : "1 dk. önce",
+        "minutesAgo_other" : "{{count}} dk. önce",
+        "hoursAgo_one" : "1 saat önce",
+        "hoursAgo_other" : "{{count}} saat önce",
+        "daysAgo_one" : "1 gün önce",
+        "daysAgo_other" : "{{count}} gün önce"
+      },
+      "remove" : "Kaldır",
+      "enterTag" : "{{tag}} gir",
+      "firstInteraction" : {
+        "title" : "Yeni bir adrese gönderiyorsunuz",
+        "description" : "Adresin doğru olduğunu doğrulayın. Emin değilseniz önce küçük bir tutar gönderin."
+      },
+      "sanctioned" : {
+        "title" : "İşaretlenmiş adres",
+        "description" : "Bu adres işaretlenmiş ve Ledger bu adrese gönderim yapamıyor.",
+        "helpCenter" : "Yardım merkezi"
+      },
+      "errors" : {
+        "incorrectFormat" : "Yanlış adres formatı",
+        "incompatibleAsset" : "Adres seçili varlıkla uyumlu değil",
+        "walletNotExist" : "Böyle bir cüzdan yok"
+      },
+      "skipMemo" : {
+        "title" : "{{tag}} ekleme atlansın mı?",
+        "warning" : "Alıcı bir {{tag}} gerektiriyorsa varlığınız kaybolabilir."
+      },
+      "tagHelp" : {
+        "title" : "{{tag}} nedir?",
+        "description" : "Bir kripto para borsasına {{currency}} gönderirken bir {{tag}} bilgisi gerekir. Bu, işlemin alıcısını tespit etmek için kullanılan bir özelliktir. {{tag}} memo’sunun eklenmediği durumlarda fonlar kaybolabilir."
+      },
+      "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+      "feesAmount" : "Ücret tutarı ({{unit}})",
+      "gasLimit" : "Gas limiti ({{unit}})",
+      "feesPaid" : "İşleminizi başlatabilmek için ağa ödenen ücretler",
+      "insufficientBalanceFees" : "Ağ ücretlerini karşılayacak kadar bakiye mevcut değil.",
+      "amountToSend" : "({{currency}}) olarak gönderilecek tutar",
+      "coinToSend" : "Gönderilecek coin",
+      "coinControlCustom" : "Özel coin seçimi",
+      "quickActions" : {
+        "quarter" : "%25",
+        "half" : "%50",
+        "threeQuarters" : "%75",
+        "max" : "Maks."
+      },
+      "reviewCta" : "İncele",
+      "getCta" : "{{currency}} al",
+      "switchInputMode" : "Miktar girme modunu değiştir",
+      "aboveMaximum" : "Maksimum bakiyenin üzerinde",
+      "transactionSigned" : "İşlem imzalandı",
+      "processingTransaction" : "İşleminiz gerçekleştiriliyor",
+      "sign" : {
+        "title" : "Ledger {{wording}} üzerinde devam edin",
+        "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin."
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "Ağ ücretleri yenilenemiyor",
+        "warningDescription" : "Önceden belirlenmiş ücretler eski olabilir."
+      },
+      "customFees" : {
+        "title" : "Özel ücretler",
+        "confirm" : "Onayla",
+        "maxFee" : "Ücret Üst Limiti ({{unit}})",
+        "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
+        "gasLimit" : "Gas limiti ({{unit}})",
+        "feePerByte" : "Ücret tutarı ({{unit}})",
+        "suggested" : "Önerilen",
+        "nextBlock" : "Sonraki blok",
+        "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+        "invalidValue" : "Geçerli bir sayı girin.",
+        "belowMinimum" : "Minimum değer: {{min}}",
+        "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır."
+      },
+      "coinControl" : {
+        "title" : "Coin yönetimi"
+      }
+    },
     "pendingTxWarning" : "Beklemede olan gelen işlemleriniz var. Bekleyen işlemlerin geri alınabileceğini lütfen unutmayın.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "Devam",
@@ -4195,7 +4320,8 @@
       "useMax" : "Tümünü kullan",
       "loadingNetwork" : "Ağ ücretleri yükleniyor...",
       "noRateProvider" : "Mevcut değil",
-      "quantityAvailable" : "Mevcut miktar"
+      "quantityAvailable" : "Mevcut miktar",
+      "toggleCurrency" : "Para birimini değiştir"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4255,6 +4381,12 @@
       "required" : "Ücretler zorunludur",
       "chooseGas" : "Bir gas fiyatı seçin",
       "higherFaster" : "Yüksek gas fiyatı, daha hızlı işlem onayı anlamına gelir.",
+      "medium" : "Orta",
+      "fast" : "Hızlı",
+      "slow" : "Yavaş",
+      "custom" : "Özel",
+      "customFees" : "Özel ücretler",
+      "coinControl" : "Coin yönetimi",
       "edit" : {
         "title" : "Birim seçin"
       },
@@ -7153,7 +7285,8 @@
         "website" : "Web sitesi"
       },
       "back" : {
-        "card" : "tüm kartlar"
+        "card" : "tüm kartlar",
+        "cardTab" : "Kart"
       }
     }
   },
@@ -8311,22 +8444,36 @@
       "authorize" : "İzin ver",
       "preapprove" : "Hesap başarıyla eklendi",
       "validator" : "Ledger Doğrulayıcı",
-      "title" : "Gelen fonları otomatik olarak kabul edin",
+      "title" : "Kurulum",
+      "success" : "Hesap açılışı başarıyla yapıldı",
+      "status" : {
+        "prepare" : "Hesap açılış işlemi hazırlanıyor.\nBu, 1 dakika kadar sürebilir...",
+        "submit" : "Hesabın kurulumu yapılıyor...",
+        "default" : "İşleniyor..."
+      },
       "processing" : {
         "title" : "İşlem sürüyor",
-        "description" : "Bu işlem 1 dakika kadar sürebilir",
+        "description" : "Lütfen bekleyin",
         "keepDeviceNearby" : "Ledger Wallet uygulamasında kalın ve Ledger'ınızı yakınınızda tutun."
       },
       "reonboard" : {
         "title" : "Hesap Güncellemesi Gerekiyor",
         "account" : "Hesap",
         "authorize" : "Doğrulayıcıyı Yeniden Yetkilendirin",
+        "success" : "Hesap başarıyla güncellendi",
         "warning" : {
           "title" : "Topoloji Değişimi Tespit Edildi",
           "description" : "Canton ağında bir topoloji değişimi tespit edildi. Hesabınızı kullanmaya devam edebilmek için kurulumunu lütfen tekrar yapın."
         }
       },
       "error429" : "An itibarıyla Canton Network'te bir gün içinde sınırlı sayıda hesap oluşturulabilir. Lütfen daha sonra tekrar deneyin."
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "Yetkinlendirme hazırlanıyor...",
+        "submit" : "Doğrulayıcı yetkilendiriliyor...",
+        "default" : "İşleniyor..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "Eylem Alınması Gerekiyor: Çok Fazla UTXO",
@@ -8382,13 +8529,13 @@
   },
   "fearAndGreed" : {
     "title" : "Duygu endeksi",
-    "description" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı açgözlülük anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
+    "description" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı coşku anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
     "levels" : {
       "extremeFear" : "Aşırı Korku",
       "fear" : "Korku",
       "neutral" : "Nötr",
-      "greed" : "Açgözlülük",
-      "extremeGreed" : "Aşırı Açgözlülük"
+      "greed" : "Coşku",
+      "extremeGreed" : "Aşırı Coşku"
     },
     "tileTitle" : "Duygu"
   },
@@ -8402,5 +8549,40 @@
     "actions" : {
       "swap" : "Takas et"
     }
+  },
+  "cardLanding" : {
+    "title" : "Kriptonuzla\nalışveriş yapın",
+    "subtitle" : "Bir kripto kartıyla internette veya mağazada alışveriş yapın",
+    "ctas" : {
+      "exploreCards" : "Kartları keşfedin",
+      "iHaveACard" : "Kartım var"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Yeni portföyünüzü keşfedin",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
+      },
+      "navigation" : {
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Takas, Transfer ve Satın Al işlevlerine anında erişin. Kazan bölümünü ve Kartınızı alt gezinti menüsünde bulabilirsiniz."
+      },
+      "actions" : {
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
+      }
+    },
+    "cta" : {
+      "continue" : "Sonraki",
+      "explore" : "Yeni portföyü keşfet"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "Ana Sayfa",
+    "swap" : "Takas et",
+    "earn" : "Kazan",
+    "card" : "Kart"
   }
 }

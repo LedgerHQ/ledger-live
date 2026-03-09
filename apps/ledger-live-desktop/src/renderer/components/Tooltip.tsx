@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Tippy from "@tippyjs/react";
 import styled from "styled-components";
 import { followCursor as followCursorPlugin, roundArrow, Placement } from "tippy.js";
@@ -41,6 +41,7 @@ type Props = {
   arrow?: boolean;
   hideOnClick?: boolean;
   containerStyle?: React.CSSProperties;
+  onShow?: () => void;
 };
 
 const ToolTip = ({
@@ -54,24 +55,32 @@ const ToolTip = ({
   arrow = true,
   hideOnClick = true,
   containerStyle,
+  onShow,
 }: Props) => {
+  const triggerRef = useRef<HTMLDivElement | null>(null);
   const colors = useTheme().colors;
   const bg = tooltipBg === "error-strong" ? colors.error.c50 : colors.neutral.c100;
   return (
-    <Tippy
-      {...defaultTippyOptions}
-      content={<ContentContainer bg={bg}>{content}</ContentContainer>}
-      delay={[delay, 0]}
-      arrow={arrow ? roundArrow : false}
-      followCursor={followCursor}
-      disabled={!(!!content && enabled)}
-      placement={placement}
-      hideOnClick={hideOnClick}
-      // eslint-disable-next-line better-tailwindcss/no-unknown-classes
-      className={tooltipBg ? `bg-${tooltipBg}` : "bg-base"}
-    >
-      <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>
-    </Tippy>
+    <>
+      <ChildrenContainer ref={triggerRef} style={containerStyle}>
+        {children}
+      </ChildrenContainer>
+      {/* Tippy's reference prop is typed RefObject<Element> (non-null); our ref is HTMLDivElement | null */}
+      <Tippy
+        {...defaultTippyOptions}
+        reference={triggerRef as React.RefObject<Element>}
+        content={<ContentContainer bg={bg}>{content}</ContentContainer>}
+        delay={[delay, 0]}
+        arrow={arrow ? roundArrow : false}
+        followCursor={followCursor}
+        disabled={!(!!content && enabled)}
+        placement={placement}
+        hideOnClick={hideOnClick}
+        onShow={onShow}
+        // eslint-disable-next-line better-tailwindcss/no-unknown-classes
+        className={tooltipBg ? `bg-${tooltipBg}` : "bg-base"}
+      />
+    </>
   );
 };
 export default ToolTip;

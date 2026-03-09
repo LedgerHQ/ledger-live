@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",
@@ -160,6 +160,10 @@
     },
     "./package.json": "./package.json"
   },
+  "browser": {
+    "./lib/network/grpcClient.js": "./lib/network/grpcClient.web.js",
+    "./lib-es/network/grpcClient.js": "./lib-es/network/grpcClient.web.js"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "@grpc/grpc-js": "^1.9.15",
@@ -181,6 +185,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@types/node": "catalog:",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -189,7 +194,7 @@
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

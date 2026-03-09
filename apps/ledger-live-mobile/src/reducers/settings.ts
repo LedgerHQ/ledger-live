@@ -109,7 +109,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
-  theme: "system",
+  theme: "dark",
   osTheme: undefined,
   customLockScreenType: null,
   lastSeenCustomImage: {

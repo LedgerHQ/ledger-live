@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-aleo",
-  "version": "0.12.0",
+  "version": "0.12.2",
   "private": true,
   "description": "Ledger Hardware Wallet Aleo Application API",
   "keywords": [
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "22.10.1",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",

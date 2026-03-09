@@ -15,6 +15,10 @@ on:
         required: false
         default: "false"
         type: string
+      should_download_features_coverage:
+        required: false
+        default: "false"
+        type: string
 
 permissions:
   id-token: write
@@ -23,7 +27,7 @@ permissions:
 jobs:
   scan-sonar:
     name: "Sonar Cloud"
-    runs-on: [ubuntu-22.04]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -39,7 +43,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          install-proto: false
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -67,6 +71,13 @@ jobs:
           name: coverage-libs
           path: coverage-libs
 
+      - name: Download features unit test coverage
+        if: ${{ inputs.should_download_features_coverage == 'true' }}
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-features
+          path: coverage-features
+
       - name: Merge coverage files
         run: |
           if [ -d ./coverage-desktop ]; then
@@ -83,6 +94,11 @@ jobs:
             echo "Merging libs coverage files"
             cat ./coverage-libs/lcov.info >> ./lcov.info
             cat ./coverage-libs/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-features ]; then
+            echo "Merging features coverage files"
+            cat ./coverage-features/lcov.info >> ./lcov.info
+            cat ./coverage-features/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
           if [ ! -f ./sonar-executionTests-report.xml ]; then
             echo "No report found, creating empty report to avoid sonar scan failing!"

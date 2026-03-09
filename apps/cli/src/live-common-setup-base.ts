@@ -13,6 +13,7 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "aptos",
   "aptos_testnet",
+  "adi",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -23,6 +24,7 @@ setSupportedCurrencies([
   "ripple",
   "litecoin",
   "polygon",
+  "polygon_amoy",
   "bitcoin_cash",
   "stellar",
   "dogecoin",

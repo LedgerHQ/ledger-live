@@ -1,6 +1,6 @@
 {
   "name": "@features/market-banner",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -28,7 +28,7 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
@@ -39,7 +39,7 @@
     "react-native-safe-area-context": "catalog:",
     "react-native-svg": "catalog:",
     "react-test-renderer": "catalog:",
-    "typescript": "5.4.3",
+    "typescript": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:"

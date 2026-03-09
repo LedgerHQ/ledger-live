@@ -1,10 +1,14 @@
-import BigNumber from "bignumber.js";
-import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getBalance } from "../common-logic/account/getBalance";
+import coinConfig from "../config";
+import { isCantonAccountEmpty } from "../helpers";
 import {
   getLedgerEnd,
   getOperations,
@@ -16,14 +20,10 @@ import {
   SEPARATOR,
   type TransferProposal,
 } from "../network/gateway";
-import { getBalance } from "../common-logic/account/getBalance";
-import coinConfig from "../config";
 import resolver from "../signer";
 import { CantonAccount, CantonResources, CantonSigner } from "../types";
-import { isAccountOnboarded } from "./onboard";
-import { isCantonAccountEmpty } from "../helpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { buildSubAccounts } from "./buildSubAccounts";
+import { isAccountOnboarded } from "./onboard";
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>

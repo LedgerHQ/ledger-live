@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import network from "@ledgerhq/live-network";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
-import type { PostSwapAccepted, PostSwapCancelled } from "./types";
+import type { PostSwapAccepted, PostSwapCancelled, FeatureFlags } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
@@ -47,6 +47,9 @@ function createSwapIntentHashes({
   return { swapIntentWithProvider, swapIntentWithoutProvider };
 }
 
+const getWallet40Header = (flags?: FeatureFlags): Record<string, string> =>
+  flags?.wallet40Ux ? { "x-ledger-client-v4-ux": "true" } : {};
+
 export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
   swapId = "",
@@ -55,6 +58,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   fromAccountAddress,
   toAccountAddress,
   fromAmount,
+  flags,
   ...rest
 }) => {
   if (isIntegrationTestEnv())
@@ -80,6 +84,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     const headers = {
       ...(ipHeader || {}),
       ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
+      ...getWallet40Header(flags),
     };
 
     await network({
@@ -107,6 +112,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   refundAddress,
   payoutAddress,
   data,
+  flags,
   ...rest
 }) => {
   if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
@@ -135,12 +141,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     const headers = {
       ...(ipHeader || {}),
       ...(swapAppVersion ? { "x-swap-app-version": swapAppVersion } : {}),
+      ...getWallet40Header(flags),
     };
-
-    const shouldIncludeAddresses =
-      rest.statusCode === "WrongDeviceForAccountPayout" ||
-      rest.statusCode === "WrongDeviceForAccountRefund" ||
-      rest.statusCode === "FeeNotLoaded";
 
     const requestData = {
       provider,
@@ -149,12 +151,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
       fromAmount,
-      ...(shouldIncludeAddresses && {
-        fromAccountAddress,
-        toAccountAddress,
-        payloadRefundAddress: refundAddress,
-        payloadPayoutAddress: payoutAddress,
-      }),
+      fromAccountAddress,
       maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
       data,
       ...rest,

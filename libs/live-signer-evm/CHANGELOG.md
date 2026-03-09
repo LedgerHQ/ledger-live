@@ -1,5 +1,37 @@
 # @ledgerhq/live-signer-evm
 
+## 0.13.3
+
+### Patch Changes
+
+- Updated dependencies [[`6553406`](https://github.com/LedgerHQ/ledger-live/commit/6553406aced5e36d10679538c175465460ae8016), [`494ccd1`](https://github.com/LedgerHQ/ledger-live/commit/494ccd12f74b5733844567883d21826bfed0f2c0), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0)]:
+  - @ledgerhq/coin-evm@2.45.0
+  - @ledgerhq/hw-app-eth@7.4.2
+
+## 0.13.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6553406`](https://github.com/LedgerHQ/ledger-live/commit/6553406aced5e36d10679538c175465460ae8016), [`494ccd1`](https://github.com/LedgerHQ/ledger-live/commit/494ccd12f74b5733844567883d21826bfed0f2c0), [`07fdf5a`](https://github.com/LedgerHQ/ledger-live/commit/07fdf5a4bcd12cb0cc5100389c8e355800d3aec0)]:
+  - @ledgerhq/coin-evm@2.45.0-next.0
+  - @ledgerhq/hw-app-eth@7.4.2-next.0
+
+## 0.13.2
+
+### Patch Changes
+
+- Updated dependencies [[`438989f`](https://github.com/LedgerHQ/ledger-live/commit/438989f96a31dfbd494284dadd05723f9eb864f5), [`5c9240a`](https://github.com/LedgerHQ/ledger-live/commit/5c9240aed148dd302cc6c29796fd1260411f0f9e)]:
+  - @ledgerhq/coin-evm@2.44.0
+  - @ledgerhq/hw-app-eth@7.4.1
+
+## 0.13.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`438989f`](https://github.com/LedgerHQ/ledger-live/commit/438989f96a31dfbd494284dadd05723f9eb864f5), [`5c9240a`](https://github.com/LedgerHQ/ledger-live/commit/5c9240aed148dd302cc6c29796fd1260411f0f9e)]:
+  - @ledgerhq/coin-evm@2.44.0-next.0
+  - @ledgerhq/hw-app-eth@7.4.1-next.0
+
 ## 0.13.1
 
 ### Patch Changes

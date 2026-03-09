@@ -5,7 +5,6 @@ import {
   AleoPublicTransaction,
   AleoPublicTransactionDetailsResponse,
   EnrichedPrivateRecord,
-  EnrichedTransaction,
 } from "../../types";
 
 export const getMockedTransaction = (
@@ -15,9 +14,11 @@ export const getMockedTransaction = (
   transition_id: "au1lz0t6x6nl45zryv9hhtmhuz9llkut2vxv2ajkellams68r2e9ygs5dhrhs",
   transaction_status: "Accepted",
   block_number: 100,
+  block_hash: "ab1mockhash",
   block_timestamp: "1709079312",
   function_id: "transfer_public",
   amount: 10000000,
+  fee: 1000,
   sender_address: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
   recipient_address: "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px",
   program_id: PROGRAM_ID.CREDITS,
@@ -56,19 +57,9 @@ export const getMockedTransactionDetails = (
   block_height: 100,
   block_hash: "ab1mockhash",
   block_timestamp: "1709079312",
-  status: "accepted",
+  status: "Accepted",
   ...overrides,
 });
-
-export function getMockedEnrichedTransaction(
-  overrides?: Partial<EnrichedTransaction>,
-): EnrichedTransaction {
-  return {
-    rawTx: getMockedTransaction(),
-    details: getMockedTransactionDetails(),
-    ...overrides,
-  };
-}
 
 type EnrichedPrivateRecordOverrides = Omit<
   Partial<EnrichedPrivateRecord>,

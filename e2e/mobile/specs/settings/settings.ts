@@ -1,6 +1,7 @@
 import { device } from "detox";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ApplicationOptions } from "page";
+import { delay, isAndroid } from "../../helpers/commonHelpers";
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
@@ -137,11 +138,21 @@ async function initPasswordTest() {
 async function setupPasswordAndLock(password: string) {
   await app.portfolio.navigateToSettings();
   await app.settings.navigateToGeneralSettings();
+  await app.settingsGeneral.expectPasswordToggleValue("OFF");
   await app.settingsGeneral.togglePassword();
   await app.settingsGeneral.enterNewPassword(password);
-  await app.settingsGeneral.enterNewPassword(password); // confirm password step
+  await app.settingsGeneral.enterNewPassword(password);
+  await app.settingsGeneral.expectPasswordToggleValue("ON");
   await device.sendToHome();
-  await device.launchApp(); // restart LLM
+  if (isAndroid()) {
+    /*
+     * delay for android due to state management workaround
+     * permalink: https://github.com/LedgerHQ/ledger-live/blob/9a9d649c1175ecf1a884a0ae615dba96b208c374/apps/ledger-live-mobile/src/context/AuthPass/auth.hooks.ts#L54-L61
+     * ticket reference: https://ledgerhq.atlassian.net/browse/LIVE-20822
+     */
+    await delay(2000);
+  }
+  await device.launchApp({ newInstance: false }); // bring back from background
   await app.passwordEntry.expectLock();
 }
 

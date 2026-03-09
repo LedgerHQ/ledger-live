@@ -15,7 +15,7 @@ import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
-import { isRemoteIos } from "../helpers/commonHelpers";
+import { isSpeculosRemote } from "../helpers/commonHelpers";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
@@ -218,7 +218,7 @@ export const CLI = {
       cliOpts.push("--add");
     }
 
-    return runCliCommandWithRetry(cliOpts.join("+"), 5, isRemoteIos() ? 5_000 : 2_000);
+    return runCliCommandWithRetry(cliOpts.join("+"), 5, isSpeculosRemote() ? 5_000 : 2_000);
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
     unregisterAllTransportModules();

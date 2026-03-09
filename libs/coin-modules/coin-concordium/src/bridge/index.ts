@@ -3,13 +3,18 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { CoinConfig } from "@ledgerhq/coin-framework/config";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import concordiumCoinConfig from "../config";
 import resolver from "../signer";
-import { ConcordiumAccount, ConcordiumCurrencyBridge, ConcordiumSigner } from "../types";
-import type { Transaction, ConcordiumCoinConfig } from "../types";
+import {
+  type ConcordiumAccount,
+  type ConcordiumCurrencyBridge,
+  type ConcordiumSigner,
+  type Transaction,
+  type ConcordiumCoinConfig,
+} from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";

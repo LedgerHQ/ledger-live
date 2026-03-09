@@ -1575,6 +1575,24 @@
     "bannerButtonTitle2" : "Acheter un appareil",
     "setupCta" : "J’ai un appareil Ledger, je le configure"
   },
+  "rebornBuyDevice" : {
+    "title" : "Connectez un appareil Ledger",
+    "desc" : "Libérez toute la puissance de Ledger Wallet en connectant un appareil Ledger.",
+    "0" : {
+      "title" : "Contrôle absolu",
+      "desc" : "Vos clés privées ne quittent jamais votre appareil."
+    },
+    "1" : {
+      "title" : "Opérations sécurisées",
+      "desc" : "Vérifiez les détails de vos transactions sur un écran sécurisé."
+    },
+    "2" : {
+      "title" : "Wallet ultra-puissant",
+      "desc" : "Gérez des milliers d’actifs au même endroit."
+    },
+    "cta" : "Connecter",
+    "buyCta" : "Acheter un appareil"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Avez-vous déjà votre appareil Ledger ?",
     "desc" : "Dès que vous recevez votre Ledger, configurez-le pour découvrir toutes les fonctionnalités de l’application Ledger Wallet.",
@@ -2638,7 +2656,9 @@
     "discover" : "Discover",
     "nanoX" : "Nano X",
     "market" : "Marché",
-    "earn" : "Gagner"
+    "earn" : "Gagner",
+    "card" : "Carte",
+    "swap" : "Swap"
   },
   "portfolio" : {
     "totalBalance" : "Solde total",
@@ -2690,7 +2710,7 @@
     "walletBalance" : "Solde total",
     "balance" : {
       "noSigner" : "Le wallet le plus\nsécurisé",
-      "noFund" : "Sécurisez\nvos cryptos"
+      "noAccounts" : "Sécurisez\nvos cryptos"
     },
     "seeAllAssets" : "Voir tous les actifs",
     "seeAllAccounts" : "Voir tous les comptes",
@@ -3025,7 +3045,7 @@
         "desc" : "Choisir l’unité à afficher."
       },
       "currency" : {
-        "title" : "Devise"
+        "title" : "Monnaie"
       },
       "delete" : {
         "title" : "Retirer ce compte du Portefeuille",
@@ -3228,7 +3248,7 @@
       "password" : "Verrouillage",
       "passwordDesc" : "Définissez un mot de passe pour verrouiller l’application Ledger Wallet.",
       "passwordDescBioCompat" : "Définissez un mot de passe ou votre {{biometricsType}} pour verrouiller l’application Ledger Wallet.",
-      "counterValue" : "Devise préférée",
+      "counterValue" : "Monnaie préférée",
       "theme" : "Mode",
       "themeDesc" : "Définissez le mode de l’interface utilisateur.",
       "themes" : {
@@ -3286,7 +3306,7 @@
       }
     },
     "currencies" : {
-      "header" : "Devises",
+      "header" : "Monnaies",
       "rateProvider" : "Fournisseur du taux de change ({{currencyTicker}} → BTC)",
       "rateProviderDesc" : "Choisissez le fournisseur du taux de change entre {{currencyTicker}} et Bitcoin.",
       "confirmationNb" : "Nombre de confirmations",
@@ -3497,6 +3517,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Debug de la mise à jour du micrologiciel"
         }
+      },
+      "contentCards" : {
+        "title" : "Content Cards",
+        "titleDesc" : "Générez des content cards locales sans passer par Braze, à des fins de test.",
+        "description" : "Les cartes locales apparaissent dans Portefeuille (et ailleurs), sans passer par Braze. Elles y restent jusqu’à ce que vous les fermiez ou les supprimiez.",
+        "addSampleBanner" : "Ajouter une bannière test",
+        "addSampleBannerDesc" : "Ajoutez une bannière hero test dans Portefeuille.",
+        "addSampleActionCarousel" : "Ajouter un carrousel test",
+        "addSampleActionCarouselDesc" : "Ajoutez un carrousel d’actions cards (Acheter, Échanger, Staker) dans Portefeuille.",
+        "dismissAll" : "Fermer toutes les cartes locales",
+        "dismissAllDesc" : "Supprimez toutes les content cards générées en local."
       }
     }
   },
@@ -4143,6 +4174,100 @@
     "loading" : "Recherche d’appareils..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "Envoyer des {{currency}}",
+      "available" : "Disponible : {{amount}}",
+      "placeholder" : "Entrer une adresse ou un ENS",
+      "placeholderNoENS" : "Entrer l’adresse",
+      "editRecipientAccessibilityLabel" : "Modifier le bénéficiaire",
+      "recent" : "Récent",
+      "recentDetail" : "Détails",
+      "myAccounts" : "Mes comptes",
+      "account" : "Compte",
+      "sendTo" : "Envoyer à {{address}}",
+      "addressMatched" : "Adresse correspondante",
+      "addressNotFound" : "Adresse introuvable",
+      "alreadyUsed" : "Déjà utilisée · {{date}}",
+      "recentSendWillAppear" : "Vos dernières transactions émises apparaîtront ici.",
+      "relativeDate" : {
+        "justNow" : "À l’instant",
+        "minutesAgo_one" : "Il y a 1 min.",
+        "minutesAgo_other" : "Il y a {{count}} min.",
+        "hoursAgo_one" : "Il y a 1 heure",
+        "hoursAgo_other" : "Il y a {{count}} heures",
+        "daysAgo_one" : "Il y a 1 jour",
+        "daysAgo_other" : "Il y a {{count}} jours"
+      },
+      "remove" : "Supprimer",
+      "enterTag" : "Entrer {{tag}}",
+      "firstInteraction" : {
+        "title" : "Vous envoyez à une nouvelle adresse",
+        "description" : "Vérifiez que l’adresse est correcte. En cas de doute, envoyez d’abord un petit montant."
+      },
+      "sanctioned" : {
+        "title" : "Adresse signalée",
+        "description" : "Les transactions vers cette adresse ne sont pas possibles.",
+        "helpCenter" : "Centre d’aide"
+      },
+      "errors" : {
+        "incorrectFormat" : "Format d’adresse incorrect",
+        "incompatibleAsset" : "Cette adresse n’est pas compatible avec l’actif sélectionné",
+        "walletNotExist" : "Le wallet n’existe pas"
+      },
+      "skipMemo" : {
+        "title" : "Ne pas ajouter de {{tag}} ?",
+        "warning" : "Votre actif peut être perdu si un {{tag}} est requis par le bénéficiaire."
+      },
+      "tagHelp" : {
+        "title" : "Qu’est-ce qu’un {{tag}} ?",
+        "description" : "Un {{tag}} est requis lors de l’envoi de {{currency}} vers une plateforme d’échange de cryptos. Cette fonctionnalité permet d’identifier le bénéficiaire de la transaction. L’absence de {{tag}} peut entraîner une perte d’actifs."
+      },
+      "networkFeesInFiat" : "Frais de réseau en {{currency}}",
+      "feesAmount" : "Montant des frais ({{unit}})",
+      "gasLimit" : "Limite de gaz ({{unit}})",
+      "feesPaid" : "Frais payés au réseau pour le traitement de votre transaction",
+      "insufficientBalanceFees" : "Solde insuffisant pour couvrir les frais de réseau",
+      "amountToSend" : "Montant à envoyer ({{currency}})",
+      "coinToSend" : "Crypto à envoyer",
+      "coinControlCustom" : "Sélection personnalisée",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "Max"
+      },
+      "reviewCta" : "Vérifier",
+      "getCta" : "Acheter des {{currency}}",
+      "switchInputMode" : "Changer le mode de saisie du montant",
+      "aboveMaximum" : "Solde maximal dépassé",
+      "transactionSigned" : "Transaction signée",
+      "processingTransaction" : "Transaction en cours de traitement",
+      "sign" : {
+        "title" : "Continuez sur votre Ledger {{wording}}",
+        "description" : "Consultez les instructions sur son écran tactile sécurisé."
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "Échec de l’actualisation des frais de réseau",
+        "warningDescription" : "Les frais prédéfinis peuvent ne plus être à jour."
+      },
+      "customFees" : {
+        "title" : "Modifier les frais",
+        "confirm" : "Confirmer",
+        "maxFee" : "Frais maximaux ({{unit}})",
+        "maxPriorityFee" : "Frais de priorité maximaux ({{unit}})",
+        "gasLimit" : "Limite de gaz ({{unit}})",
+        "feePerByte" : "Montant des frais ({{unit}})",
+        "suggested" : "Suggéré",
+        "nextBlock" : "Bloc suivant",
+        "networkFeesInFiat" : "Frais de réseau en {{currency}}",
+        "invalidValue" : "Saisissez un nombre valide",
+        "belowMinimum" : "Minimum : {{min}}",
+        "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
+      },
+      "coinControl" : {
+        "title" : "Contrôle des coins"
+      }
+    },
     "pendingTxWarning" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "Continuer",
@@ -4195,7 +4320,8 @@
       "useMax" : "Maximum",
       "loadingNetwork" : "Chargement des frais de réseau…",
       "noRateProvider" : "Indisponible",
-      "quantityAvailable" : "Quantité disponible"
+      "quantityAvailable" : "Quantité disponible",
+      "toggleCurrency" : "Inverser la monnaie"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4255,6 +4381,12 @@
       "required" : "Des frais sont requis.",
       "chooseGas" : "Choisissez un prix de gaz.",
       "higherFaster" : "Un prix de gaz plus élevé se traduit par une confirmation plus rapide.",
+      "medium" : "Moyen",
+      "fast" : "Rapide",
+      "slow" : "Lent",
+      "custom" : "Personnalisé",
+      "customFees" : "Modifier les frais",
+      "coinControl" : "Contrôle des coins",
       "edit" : {
         "title" : "Choisir une unité"
       },
@@ -7153,7 +7285,8 @@
         "website" : "Site"
       },
       "back" : {
-        "card" : "toutes les cartes"
+        "card" : "toutes les cartes",
+        "cardTab" : "Carte"
       }
     }
   },
@@ -8311,22 +8444,36 @@
       "authorize" : "Autoriser",
       "preapprove" : "Compte ajouté",
       "validator" : "Validateur Ledger",
-      "title" : "Accepter automatiquement les actifs versés",
+      "title" : "Ajout",
+      "success" : "Le compte a bien été ajouté",
+      "status" : {
+        "prepare" : "Préparation de la transaction d’ajout du compte.\nCela peut prendre jusqu’à 1 minute.",
+        "submit" : "Ajout du compte...",
+        "default" : "Traitement..."
+      },
       "processing" : {
         "title" : "Traitement de la transaction en cours",
-        "description" : "Le processus peut prendre jusqu’à 1 minute.",
+        "description" : "Veuillez patienter",
         "keepDeviceNearby" : "Restez dans l’application Ledger Wallet et gardez votre appareil Ledger à portée de main."
       },
       "reonboard" : {
         "title" : "Mise à jour du compte requise",
         "account" : "Compte",
         "authorize" : "Réautoriser le validateur",
+        "success" : "Compte bien mis à jour",
         "warning" : {
           "title" : "Changement de topologie détecté",
           "description" : "Un changement de topologie a été détecté dans le réseau Canton. Veuillez ajouter à nouveau votre compte pour continuer à l’utiliser."
         }
       },
       "error429" : "Canton Network prend actuellement en charge un nombre limité de créations de compte par jour. Veuillez réessayer plus tard."
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "Préparation de l’autorisation...",
+        "submit" : "Autorisation du validateur...",
+        "default" : "Traitement..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "Action requise : trop de UTXO",
@@ -8381,7 +8528,7 @@
     }
   },
   "fearAndGreed" : {
-    "title" : "Psychologie du marché",
+    "title" : "Sentiment du marché",
     "description" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
     "levels" : {
       "extremeFear" : "Peur+",
@@ -8390,7 +8537,7 @@
       "greed" : "Cupidité",
       "extremeGreed" : "Cupidité+"
     },
-    "tileTitle" : "Psychologie"
+    "tileTitle" : "Sentiment"
   },
   "analyticsAllocation" : {
     "header" : {
@@ -8402,5 +8549,40 @@
     "actions" : {
       "swap" : "Échanger"
     }
+  },
+  "cardLanding" : {
+    "title" : "Utilisez\nvos cryptos",
+    "subtitle" : "Effectuez vos achats en ligne et en magasin avec une carte crypto.",
+    "ctas" : {
+      "exploreCards" : "Découvrir les cartes",
+      "iHaveACard" : "J’ai une carte"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Découvrez votre nouveau portefeuille",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Un vue plus claire de votre portefeuille",
+        "description" : "Consultez votre solde total d’un coup d’œil, et appuyez sur « Aujourd’hui » pour plus d’informations."
+      },
+      "navigation" : {
+        "title" : "Accédez instantanément aux actions clés",
+        "description" : "Échangez, transférez et achetez des actifs en toute simplicité. Les sections Gagner et Carte se trouvent désormais en bas de votre app."
+      },
+      "actions" : {
+        "title" : "Suivez l’évolution des marchés",
+        "description" : "Visualisez les tendances au sein de votre portefeuille et agissez sans attendre."
+      }
+    },
+    "cta" : {
+      "continue" : "Suivant",
+      "explore" : "Découvrir mon nouveau portefeuille"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "Accueil",
+    "swap" : "Swap",
+    "earn" : "Gagner",
+    "card" : "Carte"
   }
 }

@@ -152,7 +152,8 @@
     "quote" : "报价",
     "memoTag" : {
       "learnMore" : "详细了解“标签/备忘标签”"
-    }
+    },
+    "memo" : "备忘标签"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -208,7 +209,11 @@
       "BURN" : "已销毁",
       "ASSOCIATE_TOKEN" : "关联代币",
       "CONTRACT_CALL" : "合约调用",
-      "UPDATE_ACCOUNT" : "已更新的账户"
+      "UPDATE_ACCOUNT" : "已更新的账户",
+      "SHIELDED_TX_SAPLING_IN" : "已接收",
+      "SHIELDED_TX_SAPLING_OUT" : "已发送",
+      "SHIELDED_TX_ORCHARD_IN" : "已接收",
+      "SHIELDED_TX_ORCHARD_OUT" : "已发送"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -267,6 +272,8 @@
     "minute" : "分钟",
     "minute_other" : "分钟",
     "minute_short" : "分钟",
+    "second" : "秒",
+    "second_other" : "秒",
     "second_short" : "秒",
     "hour" : "小时",
     "hour_other" : "小时",
@@ -778,6 +785,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "买入或卖出",
     "chooseProvider" : "从 {{providerCount}} 个供应商中选择",
     "chooseProviders" : "从 {{providerCount}} 个供应商中选择",
     "title" : "买卖加密货币",
@@ -2380,12 +2388,15 @@
       "walletNotExist" : "钱包不存在"
     },
     "skipMemo" : {
-      "title" : "跳过添加备注 {{tag}}？",
-      "warning" : "如果接收方要求备注 {{tag}}，您的资产可能会丢失。"
+      "title" : "跳过添加备注 {{memoLabel}}？",
+      "description" : "如果接收方要求备忘标签 {{memoLabel}}，您的资产可能会丢失。",
+      "notRequired" : "接收方不需要备忘标签 {{memoLabel}}？",
+      "confirm" : "是，跳过",
+      "neverAskAgain" : "不再显示此警告"
     },
     "tagHelp" : {
-      "title" : "什么是备注 {{tag}}？",
-      "description" : "向加密货币交易所发送 {{currency}} 时，需要输入备注 {{tag}}。这是用于识别交易接收人的功能。不包含备注 {{tag}} 可能会导致资金损失。"
+      "inputLabel" : "输入备忘标签 {{memoLabel}}",
+      "description" : "向加密货币交易所发送 {{currency}} 时，需要输入备注 {{memoLabel}}。这是用于识别交易接收人的功能。不包含备注 {{memoLabel}} 可能会导致资金损失。"
     },
     "networkFeesInFiat" : "网络费用为 {{currency}}",
     "feesAmount" : "费用数额 ({{unit}})",
@@ -2414,11 +2425,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "无法刷新网络费用",
       "warningDescription" : "费用预设可能已过期。"
+    },
+    "customFees" : {
+      "title" : "自定义费用",
+      "confirm" : "确认",
+      "maxFee" : "最高费用 ({{unit}})",
+      "maxPriorityFee" : "最高优先费用 ({{unit}})",
+      "gasLimit" : "Gas 限值 ({{unit}})",
+      "feePerByte" : "费用数额 ({{unit}})",
+      "suggested" : "建议",
+      "nextBlock" : "下一个区块",
+      "networkFeesInFiat" : "网络费用为 {{currency}}",
+      "invalidValue" : "输入有效的数字",
+      "belowMinimum" : "最小值为 {{min}}",
+      "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+    },
+    "coinControl" : {
+      "title" : "币控制（UTXO 管理）"
     }
   },
   "releaseNotes" : {
     "title" : "版本说明",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "知道了"
   },
   "troubleshootNetwork" : {
     "title" : "排除网络故障",
@@ -4897,6 +4926,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "值为 0 时隐藏代币交易",
         "desc" : "隐藏没有价值的代币交易可以防止一些针对以太坊（ETH）、多边形（Polygon）、币安智能链（BSC）和波场（Tron）等的潜在地址中毒攻击"
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "不再询问，发送时跳过备忘标签",
+        "desc" : "禁用发送资金时跳过备忘标签的警告"
       }
     }
   },
@@ -5808,11 +5841,13 @@
     "casper" : {
       "transferIdPlaceholder" : "可选",
       "transferId" : "转账 ID（备忘标签）",
-      "transferIdWarningText" : "当使用备忘标签时，请仔细核对接收方的信息。"
+      "transferIdWarningText" : "当使用备忘标签时，请仔细核对接收方的信息。",
+      "memo" : "转账 ID（备忘标签）"
     },
     "ton" : {
       "commentPlaceholder" : "可选",
-      "comment" : "备注"
+      "comment" : "备注",
+      "memo" : "备注"
     },
     "canton" : {
       "commentPlaceholder" : "可选",
@@ -5939,6 +5974,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "添加 Concordium 账户",
+        "acknowledge" : {
+          "title" : "确认声明",
+          "description" : "Concordium 需要进行外部身份验证。请阅读以下重要安全提示：",
+          "list" : {
+            "1" : "<0>无法核实地址</0>——Ledger 设备无法核实 Concordium 接收地址。接收资金之前，请人工核实地址。",
+            "2" : "<0>Concordium ID 应用程序使用独立的助记词</0>——您需要在 Concordium 应用程序中创建新的 24 个助记词。切勿使用您的 Ledger 助记词。",
+            "3" : "<0>您将被重定向到 Ledger Wallet 以外</0>——身份验证将在外部 Concordium Wallet 应用程序中完成。这是 Concordium 区块链协议的要求。",
+            "4" : "<0>交易签署始终安全</0>——只有您的 Ledger 设备可以签署交易和创建账户。"
+          },
+          "allow" : "同意"
+        },
+        "identity" : {
+          "title" : "连接",
+          "account" : "账户",
+          "newAccount" : "新账户",
+          "init" : "按“允许”即表示您已准备好继续完成验证账户所需的客户身份核实 (KYC)。",
+          "scanQRCode" : "使用您的移动设备扫描二维码，连接 Concordium ID 应用程序。<0>了解更多</0>",
+          "ledgerSeedWarning" : "<0>请勿</0>将您的 Ledger 助记词用于 Concordium ID 应用程序。",
+          "downloadApp" : "下载 Concordium ID 应用程序",
+          "connecting" : "正在连接 Concordium ID 应用程序……",
+          "onboarded" : "已完成引导流程的账户",
+          "success" : "已成功连接到 Concordium ID 应用程序。",
+          "error" : "新账户引导流程失败。请重试。",
+          "status" : {
+            "prepare" : "正在准备账户引导流程...",
+            "submit" : "正在引导账户设置",
+            "default" : "处理中..."
+          }
+        },
+        "create" : {
+          "title" : "创建账户",
+          "init" : {
+            "title" : "已成功连接到 Concordium ID 应用程序"
+          },
+          "prepare" : {
+            "title" : "要创建账户，请在 Concordium ID 应用程序中匹配以下代码",
+            "resendButton" : "重新发送确认",
+            "resendDescription" : "可在 <0>{{count}}</0> {{unit}}后重新发送确认"
+          },
+          "success" : "您的 Concordium 账户已成功创建。",
+          "error" : "账户创建失败。请重试。",
+          "error429" : "请求次数过多。请稍候再试。",
+          "button" : "创建",
+          "processing" : "处理中...",
+          "status" : {
+            "prepare" : "正在准备创建账户……",
+            "submit" : "正在创建账户……",
+            "default" : "处理中..."
+          }
+        },
+        "finish" : {
+          "title" : "确认"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "目前无法核实您的 Concordium 地址。请务必将地址粘贴到 Concordium 浏览器中进行仔细核对。",
+        "verifyLink" : "验证"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5970,6 +6067,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "可选 Memo"
+    },
+    "xrp" : {
+      "memo" : "标签"
     }
   },
   "errors" : {
@@ -6832,6 +6932,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "备忘标签长度无效，最大允许 64 个字符",
       "description" : "Cardano 备忘标签有最大长度限制。请缩减备忘标签的长度"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "备注长度超出最大限制",
+      "description" : "您的的备注长度为 {{memoLength}} 字节，但允许的最大长度为 {{maxLength}} 字节。请缩短备注长度。"
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "抱歉，资金不足"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
@@ -7817,6 +7924,11 @@
           "description" : "在 {{currency}} 生态系统中，仅有限数量的服务可以创建新账户。目前，Ledger 不提供入驻服务，但有其他的可用服务可选。创建 {{currency}} 账户后，就可以将其添加到 Ledger Wallet 中。",
           "cta" : "如何创建 {{currency}} 账户？",
           "close" : "关闭"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "未添加 {{currency}} 账户",
+          "description" : "您未完成一个或多个所选账户的必要设置。",
+          "close" : "关闭"
         }
       },
       "status" : {
@@ -7923,6 +8035,12 @@
       "hoursAgo_other" : "上次同步时间：{{count}} 小时前。点按刷新",
       "daysAgo_one" : "上次同步时间：{{count}} 天前。点按刷新",
       "daysAgo_other" : "上次同步时间：{{count}} 天前。点按刷新"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "通知"
+    },
+    "myLedger" : {
+      "tooltip" : "我的 Ledger"
     }
   },
   "geoBlocking" : {
@@ -7951,8 +8069,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "显示余额",
-        "pausedAt" : "已暂停于 ",
+        "startSync" : "开始同步",
+        "stopSync" : "停止同步",
+        "lastProcessedBlock" : "最后处理的区块：{{block}}。缺少 {{missing}} 个区块。",
         "lastSync" : "上次同步：{{date}}"
+      },
+      "datepicker" : {
+        "label" : "起始高度",
+        "tooltip" : "起始高度是指您的钱包在区块链上开始扫描您资金的点位。"
       },
       "flows" : {
         "export" : {
@@ -7991,12 +8115,64 @@
             }
           }
         }
+      }
+    },
+    "operationDetails" : {
+      "txType" : "交易类型",
+      "transparentTx" : "透明",
+      "shieldedSaplingTx" : "🛡 私密 (Sapling) ",
+      "shieldedOrchardTx" : "🛡 私密 (Orchard) "
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "设置 Aleo 私密余额",
+        "description" : "Ledger Wallet 存储您的查看密钥以显示您的私密余额，并使用第三方服务来处理私密交易。<0>了解更多</0>",
+        "bullets" : ["只读权限，旨在解密您的私密余额", "Ledger 无法发送或使用您的资金", "只有您本人可以签署和使用您的资金", "为确保快速处理，证明生成由第三方证明者服务处理", "证明者无法访问或使用您的资金"],
+        "cta" : {
+          "allow" : "允许",
+          "cancel" : "取消"
+        }
       },
-      "startSync" : "开始同步",
-      "datepicker" : {
-        "label" : "起始高度",
-        "tooltip" : "起始高度是指您的钱包在区块链上开始扫描您资金的点位。"
+      "stepViewKeyApprove" : {
+        "title" : "在您的 Ledger 设备上批准",
+        "description" : "在您的设备上确认分享查看密钥",
+        "cancelAlert" : "您可以在设备上拒绝单个账户。全部取消将停止向您的资产组合中添加任何账户。",
+        "cancelAllBtn_one" : "取消",
+        "cancelAllBtn_other" : "全部取消"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "分享查看密钥",
+          "shareKey_other" : "分享查看密钥"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "您未为任何所选账户分享查看密钥。在 Ledger Wallet 中显示您的私密余额需要查看密钥。"
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "可用余额",
+      "availableBalanceTooltip" : "可转账余额",
+      "transparentBalance" : "公开余额",
+      "transparentBalanceTooltip" : "公开可见的余额",
+      "privateBalance" : "私密余额",
+      "privateBalanceTooltip" : "对外隐藏的余额"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "公开",
+        "private" : "私密"
       }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "有新的可用更新",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "更新时出错，请重试",
+    "installAndRelaunch" : "安装更新并重新启动"
   }
 }

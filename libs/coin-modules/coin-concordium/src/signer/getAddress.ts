@@ -1,7 +1,7 @@
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { ConcordiumSigner } from "../types";
+import type { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { ConcordiumSigner } from "../types";
 
 /**
  * Get address for Concordium account

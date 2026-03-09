@@ -37,6 +37,47 @@ export async function waitForAccountsPersisted(
 }
 
 /**
+ * Waits up to `timeoutMs` for app.json to contain a data.identities object (userId, datadogId, deviceIds).
+ * Does not assert the userId value — use the returned object and assert in the test to get a fast failure
+ * if the id is wrong instead of a timeout.
+ */
+export async function waitForIdentitiesInAppJson(
+  userdataFile: string,
+  timeoutMs: number = DEFAULT_TIMEOUT_MS,
+): Promise<{ userId: string; datadogId: string; deviceIds: string[] }> {
+  const deadline = Date.now() + timeoutMs;
+  let lastError: Error | null = null;
+  while (Date.now() < deadline) {
+    try {
+      const parsed = (await getUserdata(userdataFile)) as {
+        data?: { identities?: { userId?: string; datadogId?: string; deviceIds?: string[] } };
+      };
+      const identities = parsed?.data?.identities;
+      if (
+        identities &&
+        typeof identities.userId === "string" &&
+        identities.userId.length > 0 &&
+        typeof identities.datadogId === "string" &&
+        identities.datadogId.length > 0 &&
+        Array.isArray(identities.deviceIds)
+      ) {
+        return {
+          userId: identities.userId,
+          datadogId: identities.datadogId,
+          deviceIds: identities.deviceIds,
+        };
+      }
+    } catch (e) {
+      lastError = e instanceof Error ? e : new Error(String(e));
+    }
+    await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+  }
+  throw new Error(
+    `data.identities not present in app.json within ${timeoutMs}ms. ${lastError ? lastError.message : ""}`,
+  );
+}
+
+/**
  * Waits up to `timeoutMs` for the account name to be persisted in the userdata file.
  * Polls every POLL_INTERVAL_MS. Use after rename-account flow to assert db middleware persisted.
  */

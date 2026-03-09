@@ -371,6 +371,11 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Mina",
+  Aleo: {
+    currency: getCryptoCurrencyById("aleo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Aleo",
     },
     dependencies: [],
   },
@@ -1084,3 +1089,14 @@ export const exportUfvk = withDeviceController(
       }
     },
 );
+
+export const shareViewKey = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
+    await buttons.both();
+  }
+});

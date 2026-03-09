@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
-import { store } from "~/context/store";
+import { store } from "~/state-manager/configureStore";
 import {
   importSettings,
   setLastConnectedDevice,
@@ -11,7 +11,7 @@ import {
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
+import { addKnownDevice, importBle, removeKnownDevice, removeKnownDevices } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
@@ -24,6 +24,8 @@ import {
   SettingsSetOverriddenFeatureFlagPlayload,
 } from "~/actions/types";
 import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
+import { bleDevicesSelector } from "~/reducers/ble";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -31,6 +33,10 @@ let ws: WebSocket;
 let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
+
+async function disconnectAllSpeculosSessions() {
+  await DeviceManagementKitTransportSpeculos.disconnectAll();
+}
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
@@ -155,9 +161,16 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "addKnownSpeculos": {
         const { address, model } = JSON.parse(msg.payload);
+        await disconnectAllSpeculosSessions();
+        const knownSpeculosIds = bleDevicesSelector(store.getState())
+          .map(device => device.id)
+          .filter(id => id.startsWith("speculos|"));
+        if (knownSpeculosIds.length) {
+          store.dispatch(removeKnownDevices(knownSpeculosIds));
+        }
         store.dispatch(
           setLastConnectedDevice({
-            deviceId: `httpdebug|ws://${address}`,
+            deviceId: `speculos|${address}`,
             deviceName: `${address}`,
             wired: false,
             modelId: model,
@@ -165,7 +178,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         );
         store.dispatch(
           addKnownDevice({
-            id: `httpdebug|ws://${address}`,
+            id: `speculos|${address}`,
             name: `${address}`,
             modelId: model,
           }),
@@ -175,7 +188,8 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "removeKnownSpeculos": {
         const address = msg.payload;
-        store.dispatch(removeKnownDevice(`httpdebug|ws://${address}`));
+        await disconnectAllSpeculosSessions();
+        store.dispatch(removeKnownDevice(`speculos|${address}`));
         setEnv("DEVICE_PROXY_URL", "");
         break;
       }

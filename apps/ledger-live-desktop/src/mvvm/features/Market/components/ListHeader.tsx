@@ -29,6 +29,7 @@ export const ListHeader = memo<ListHeaderProps>(function ListHeader({
           #
         </SortTableCell>
         <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
+        <TableCell disabled />
         <TableCell disabled>{t("market.marketList.price")}</TableCell>
         <TableCell disabled>{t("market.marketList.change")}</TableCell>
         <TableCell disabled>{t("market.marketList.marketCap")}</TableCell>
