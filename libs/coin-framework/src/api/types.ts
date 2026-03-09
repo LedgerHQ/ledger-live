@@ -60,7 +60,6 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
-  assetInfo?: AssetInfo;
   tx: {
     hash: string; // transaction hash
     block: BlockInfo; // block metadata, empty string for block hash if not available directly and no reorg possible
