@@ -61,9 +61,7 @@ jobs:
           skip_builds: true
           turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: lint
-        run: pnpm desktop lint:ci -p ${{ steps.setup-caches.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
-      - name: prettier
-        run: pnpm desktop prettier:check
+        run: pnpm desktop lint
       - name: typecheck
         run: pnpm desktop typecheck
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -310,7 +308,6 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const path = require("path");
 
             const [ owner, repo ] = "${{ github.repository }}".split("/");
 
@@ -399,40 +396,9 @@ jobs:
             ${{ steps.comment.outputs.body }}
             `
 
-            // Store eslint results as annotations
-            let annotations = []
-            try {
-              const lintResult = require("./lint-desktop.json");
-              const LEVELS = {
-                0: "notice",
-                1: "warning",
-                2: "failure"
-              };
-              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
-              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
-                messages.map((m) => {
-                  const sameLine = m.line === m.endLine;
-                  return {
-                    path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
-                    start_line: m.line,
-                    end_line: m.endLine,
-                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
-                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
-                    start_column: sameLine ? m.column : undefined,
-                    end_column: sameLine ? m.endColumn : undefined,
-                    annotation_level: LEVELS[m.severity],
-                    message: m.message,
-                    title: m.ruleId,
-                  }
-                })
-              );
-            } catch(error) {
-              console.error("Failed processing eslint annotations", error)
-            }
-
             const output = {
               summary,
-              annotations,
+              annotations: [],
               actions: [{
                 // 20 chars max
                 label: "Regen. Screenshots",
