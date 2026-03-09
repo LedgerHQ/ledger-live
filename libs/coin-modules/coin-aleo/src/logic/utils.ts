@@ -279,8 +279,8 @@ export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
   return (
-    transaction.type === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
-    transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
   );
 }
 

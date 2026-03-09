@@ -17,16 +17,16 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber;
 } & (
     | {
-        type: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+        mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
       }
     | {
-        type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
       }
     | {
-        type: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+        mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
       }
     | {
-        type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
       }
   );
 
@@ -35,16 +35,16 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees: string;
 } & (
     | {
-        type: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+        mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
       }
     | {
-        type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
       }
     | {
-        type: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+        mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
       }
     | {
-        type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
       }
   );
 
@@ -94,14 +94,14 @@ export type AleoOperation = Operation<AleoOperationExtra>;
 export type TransactionTransfer = Extract<
   Transaction,
   {
-    type: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+    mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
   }
 >;
 
 export type TransactionSelfTransfer = Extract<
   Transaction,
   {
-    type:
+    mode:
       | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
   }

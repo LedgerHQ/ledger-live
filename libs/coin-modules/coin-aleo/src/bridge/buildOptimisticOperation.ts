@@ -28,7 +28,7 @@ export function buildOptimisticOperation({
     date: new Date(),
     extra: {
       functionId: "",
-      transactionType: getOperationTransactionType(transaction.type),
+      transactionType: getOperationTransactionType(transaction.mode),
     },
   };
 

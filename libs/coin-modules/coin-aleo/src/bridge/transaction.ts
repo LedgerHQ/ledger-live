@@ -26,7 +26,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
   return {
     ...common,
     family: tr.family,
-    type: tr.type,
+    mode: tr.mode,
     fees: new BigNumber(tr.fees),
   };
 }
@@ -37,7 +37,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
   return {
     ...common,
     family: t.family,
-    type: t.type,
+    mode: t.mode,
     fees: t.fees.toString(),
   };
 }

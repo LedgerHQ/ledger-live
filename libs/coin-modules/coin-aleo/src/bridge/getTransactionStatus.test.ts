@@ -48,7 +48,7 @@ describe("getTransactionStatus", () => {
     useAllAmount: false,
     recipient: "aleo1recipient",
     fees: new BigNumber(0),
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
 
   beforeEach(() => {
@@ -133,7 +133,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         ...mockTransaction,
         recipient: "aleo1sender",
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(account, transaction);
@@ -146,7 +146,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         ...mockTransaction,
         recipient: account.freshAddress,
-        type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+        mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
       };
 
       const result = await getTransactionStatus(account, transaction);
@@ -161,7 +161,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         amount: new BigNumber(0),
         useAllAmount: false,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -174,7 +174,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         amount: new BigNumber(0),
         useAllAmount: true,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -190,7 +190,7 @@ describe("getTransactionStatus", () => {
 
       const transaction: Transaction = {
         ...mockTransaction,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -218,7 +218,7 @@ describe("getTransactionStatus", () => {
 
       const transaction: Transaction = {
         ...mockTransaction,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(poorAccount, transaction);
@@ -245,7 +245,7 @@ describe("getTransactionStatus", () => {
 
       const transaction: Transaction = {
         ...mockTransaction,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(sufficientAccount, transaction);
@@ -262,7 +262,7 @@ describe("getTransactionStatus", () => {
         recipient: "invalid",
         amount: new BigNumber(0),
         useAllAmount: false,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -281,7 +281,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         amount: new BigNumber(0),
         useAllAmount: false,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
