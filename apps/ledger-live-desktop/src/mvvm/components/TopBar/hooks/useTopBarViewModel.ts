@@ -2,6 +2,8 @@ import { useLocation } from "react-router";
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
+import { useExperimentalFeatures } from "./useExperimentalFeatures";
+import { useFeatureFlags } from "./useFeatureFlags";
 import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
 
@@ -17,10 +19,52 @@ const useTopBarViewModel = () => {
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
   const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
+  const {
+    isVisible: isExperimentalVisible,
+    handleExperimental,
+    icon: experimentalIcon,
+    tooltip: experimentalTooltip,
+  } = useExperimentalFeatures();
+  const {
+    isVisible: isFeatureFlagsVisible,
+    handleFeatureFlags,
+    icon: featureFlagsIcon,
+    tooltip: featureFlagsTooltip,
+  } = useFeatureFlags();
   const location = useLocation();
   const inManager = location.pathname === "/manager";
 
   const topBarSlots: TopBarSlot[] = [
+    ...(isExperimentalVisible
+      ? [
+          {
+            type: "action" as const,
+            action: {
+              label: "experimental",
+              tooltip: experimentalTooltip,
+              icon: experimentalIcon,
+              isInteractive: true,
+              onClick: handleExperimental,
+              appearance: "accent" as const,
+            },
+          },
+        ]
+      : []),
+    ...(isFeatureFlagsVisible
+      ? [
+          {
+            type: "action" as const,
+            action: {
+              label: "feature flags",
+              tooltip: featureFlagsTooltip,
+              icon: featureFlagsIcon,
+              isInteractive: true,
+              onClick: handleFeatureFlags,
+              appearance: "accent" as const,
+            },
+          },
+        ]
+      : []),
     ...(hasAccounts
       ? [
           {
