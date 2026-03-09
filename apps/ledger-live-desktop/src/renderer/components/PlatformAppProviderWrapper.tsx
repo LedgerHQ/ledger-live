@@ -14,6 +14,7 @@ import {
   DISCOVER_STORE_KEY,
   INITIAL_PLATFORM_STATE,
 } from "@ledgerhq/live-common/wallet-api/constants";
+import { PrefetchLiveAppCatalog } from "./PlatformAppProviderWrapper/PrefetchLiveAppCatalog";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -39,6 +40,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
+      <PrefetchLiveAppCatalog />
       <LocalLiveAppProvider db={localLiveAppDB}>
         <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
