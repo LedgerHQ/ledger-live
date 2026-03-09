@@ -70,8 +70,8 @@ type LayoutProps = {
 const Layout = ({ category, cards }: LayoutProps) => {
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
-  const onCardCick = (card: AnyContentCard, displayedPosition?: number) => {
-    trackContentCardEvent("contentcard_clicked", {
+  const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
+    await trackContentCardEvent("contentcard_clicked", {
       ...card.extras,
       page: card.location,
       campaign: card.id,
@@ -83,7 +83,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
     logClickCard(card.id);
     if (card.link) {
-      Linking.canOpenURL(card.link).then(() => Linking.openURL(card.link as string));
+      const canOpenLink = await Linking.canOpenURL(card.link);
+      if (canOpenLink) {
+        await Linking.openURL(card.link as string);
+      }
     }
   };
 
@@ -120,7 +123,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
         displayedPosition: index,
 
         actions: {
-          onClick: card.link ? () => onCardCick(card, index) : undefined,
+          onClick: card.link ? () => onCardClick(card, index) : undefined,
           onDismiss: category.isDismissable ? () => onCardDismiss(card, index) : undefined,
         },
       },
