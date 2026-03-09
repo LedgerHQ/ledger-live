@@ -3,11 +3,12 @@ import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { internalTxsToOperationsByHash } from "../adapters/etherscan";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
-import { mergeInternalTransactions } from "./internalTransactionsByBlock";
+import { EtherscanInternalTransaction } from "../types";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   // Note: to use RPC calls efficiently, the strategy here is:
@@ -49,6 +50,28 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     info,
     transactions: mergedTransactions,
   };
+}
+
+/**
+ * Merges internal transaction operations into block transactions by matching tx hash.
+ */
+function mergeInternalTransactions(
+  transactions: BlockTransaction[],
+  internalTxs: EtherscanInternalTransaction[],
+): BlockTransaction[] {
+  if (internalTxs.length === 0) return transactions;
+
+  const opsByHash = internalTxsToOperationsByHash(internalTxs);
+  if (opsByHash.size === 0) return transactions;
+
+  return transactions.map(tx => {
+    const extraOps = opsByHash.get(tx.hash);
+    if (!extraOps || extraOps.length === 0) return tx;
+    return {
+      ...tx,
+      operations: [...tx.operations, ...extraOps],
+    };
+  });
 }
 
 async function getTransactionsFromNode(

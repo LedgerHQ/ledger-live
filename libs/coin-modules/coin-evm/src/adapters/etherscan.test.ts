@@ -7,6 +7,7 @@ import {
   etherscanERC721EventToOperations,
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
+  internalTxsToOperationsByHash,
   safeBigNumber,
   deserializePagingToken,
   serializePagingToken,
@@ -1668,6 +1669,65 @@ describe("EVM Family", () => {
         });
         it("should handle hex values", () => {
           expect(safeBigNumber("0x10")).toEqual(new BigNumber(16));
+        });
+      });
+
+      describe("internalTxsToOperationsByHash", () => {
+        const baseInternalTx = {
+          blockNumber: "100",
+          timeStamp: "1635100060",
+          hash: "0xtx1",
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+          value: "1000000000000000000",
+          contractAddress: "",
+          input: "",
+          type: "call",
+          gas: "21000",
+          gasUsed: "21000",
+          traceId: "0",
+          isError: "0",
+          errCode: "",
+        };
+
+        it("groups internal txs by hash and converts to native transfer operations", () => {
+          const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", value: "1000000000000000000" }];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(1);
+          const ops = byHash.get("0xtx1")!;
+          expect(ops).toHaveLength(2); // sender + receiver
+          expect(ops.map(o => o.amount).sort()).toEqual([
+            -1000000000000000000n,
+            1000000000000000000n,
+          ]);
+          expect(ops.every(o => o.type === "transfer" && o.asset.type === "native")).toBe(true);
+        });
+
+        it("skips internal txs with isError === '1'", () => {
+          const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", isError: "1", value: "1000" }];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(0);
+        });
+
+        it("skips internal txs with value === '0'", () => {
+          const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", value: "0" }];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(0);
+        });
+
+        it("returns empty map for empty internal txs array", () => {
+          const byHash = internalTxsToOperationsByHash([]);
+          expect(byHash.size).toBe(0);
+        });
+
+        it("accumulates multiple internal txs for the same tx hash", () => {
+          const internalTxs = [
+            { ...baseInternalTx, hash: "0xtx1", value: "1000", from: "0xa", to: "0xb" },
+            { ...baseInternalTx, hash: "0xtx1", value: "2000", from: "0xc", to: "0xd" },
+          ];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(1);
+          expect(byHash.get("0xtx1")!.length).toBe(4); // 2 internal txs × 2 ops each
         });
       });
     });

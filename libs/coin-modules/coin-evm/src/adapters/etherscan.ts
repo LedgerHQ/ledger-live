@@ -298,6 +298,10 @@ export const etherscanInternalTransactionToOperations = (
 
 const NATIVE_ASSET = { type: "native" } as const;
 
+function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
+  return it.isError === "0" && BigInt(it.value) > 0n && !!it.from && !!it.to;
+}
+
 /**
  * Converts valid internal transactions to BlockOperations grouped by transaction hash.
  * Skips internal txs with isError === "1" or value === "0".
@@ -308,35 +312,32 @@ export function internalTxsToOperationsByHash(
   const byHash = new Map<string, BlockOperation[]>();
 
   for (const it of internalTxs) {
-    if (it.isError === "1") continue;
-    const value = BigInt(it.value);
-    if (value === 0n) continue;
+    if (!isInternalTransactionValid(it)) continue;
 
-    const hash = it.hash;
-    if (!hash) continue;
-
-    const encodedFrom = it.from ? safeEncodeEIP55(it.from) : "";
-    const encodedTo = it.to ? safeEncodeEIP55(it.to) : "";
-    if (!encodedFrom && !encodedTo) continue;
+    const { from, to, value, hash } = it;
+    const encodedFrom = safeEncodeEIP55(from);
+    const encodedTo = safeEncodeEIP55(to);
+    const amount = BigInt(value);
 
     const ops: BlockOperation[] = [];
+    const fromOp: TransferBlockOperation = {
+      type: "transfer",
+      address: encodedFrom,
+      ...(encodedTo ? { peer: encodedTo } : {}),
+      asset: NATIVE_ASSET,
+      amount: -amount,
+    };
+    const toOp: TransferBlockOperation = {
+      ...fromOp,
+      address: encodedTo,
+      ...(encodedFrom ? { peer: encodedFrom } : {}),
+      amount: amount,
+    };
     if (encodedFrom) {
-      ops.push({
-        type: "transfer",
-        address: encodedFrom,
-        ...(encodedTo ? { peer: encodedTo } : {}),
-        asset: NATIVE_ASSET,
-        amount: -value,
-      } as TransferBlockOperation);
+      ops.push(fromOp);
     }
     if (encodedTo) {
-      ops.push({
-        type: "transfer",
-        address: encodedTo,
-        ...(encodedFrom ? { peer: encodedFrom } : {}),
-        asset: NATIVE_ASSET,
-        amount: value,
-      } as TransferBlockOperation);
+      ops.push(toOp);
     }
 
     let arr = byHash.get(hash);

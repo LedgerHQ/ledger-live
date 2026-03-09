@@ -1580,10 +1580,14 @@ describe("EVM Family", () => {
       );
     });
 
-    it("returns empty array for ledger explorer type", async () => {
+    it.each([
+      ["ledger", { type: "ledger", explorerId: "eth" }],
+      ["none", { type: "none" }],
+      ["teloscan", { type: "teloscan", uri: "https://teloscan.io" }],
+    ] as const)("returns empty array for %s explorer type", async (_, explorer) => {
       mockGetConfig.mockImplementation((): any => ({
         info: {
-          explorer: { type: "ledger", explorerId: "eth" },
+          explorer,
           node: { type: "external", uri: "mock" },
           showNfts: true,
         },
@@ -1593,35 +1597,6 @@ describe("EVM Family", () => {
 
       expect(result).toEqual([]);
       expect(axios.request).not.toHaveBeenCalled();
-    });
-
-    it("returns empty array for none explorer type", async () => {
-      mockGetConfig.mockImplementation((): any => ({
-        info: {
-          explorer: { type: "none" },
-          node: { type: "external", uri: "mock" },
-          showNfts: true,
-        },
-      }));
-
-      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
-
-      expect(result).toEqual([]);
-      expect(axios.request).not.toHaveBeenCalled();
-    });
-
-    it("returns empty array for teloscan explorer type", async () => {
-      mockGetConfig.mockImplementation((): any => ({
-        info: {
-          explorer: { type: "teloscan", uri: "https://teloscan.io" },
-          node: { type: "external", uri: "mock" },
-          showNfts: true,
-        },
-      }));
-
-      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
-
-      expect(result).toEqual([]);
     });
 
     it("returns empty array when API returns non-array result", async () => {

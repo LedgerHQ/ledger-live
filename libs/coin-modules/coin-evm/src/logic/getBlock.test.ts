@@ -3,6 +3,7 @@ import { EvmCoinConfig, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
+import { safeEncodeEIP55 } from "../utils";
 import { getBlock } from "./getBlock";
 
 jest.mock("../network/node");
@@ -257,13 +258,16 @@ describe("getBlock", () => {
       getTransaction: jest.fn(),
     } as any);
 
+    const from = "0x224d8fd7ab6ad4c6eb4611ce56ef35dec2277f03";
+    const to = "0x9f41fe989c556d8b312ce398b7f7b5ac90919a73";
+    const amount = 240000481795678944n;
     const internalTx = {
       blockNumber: "12345",
       timeStamp: "1635100060",
       hash: "0xtx1",
-      from: "0x224d8fd7ab6ad4c6eb4611ce56ef35dec2277f03",
-      to: "0x9f41fe989c556d8b312ce398b7f7b5ac90919a73",
-      value: "240000481795678944",
+      from,
+      to,
+      value: amount.toString(),
       contractAddress: "",
       input: "",
       type: "call",
@@ -278,16 +282,26 @@ describe("getBlock", () => {
 
     const result = await getBlock({} as CryptoCurrency, 12345);
 
-    const tx1 = result.transactions[0];
-    const internalNativeOps = tx1.operations.filter(
-      op => op.type === "transfer" && op.asset.type === "native",
+    const encodedFrom = safeEncodeEIP55(from);
+    const encodedTo = safeEncodeEIP55(to);
+    expect(result.transactions[0].operations).toContainEqual(
+      expect.objectContaining({
+        type: "transfer",
+        address: encodedFrom,
+        peer: encodedTo,
+        asset: { type: "native" },
+        amount: -amount,
+      }),
     );
-    expect(internalNativeOps).toHaveLength(2); // sender and receiver from internal tx
-    expect(internalNativeOps.map(o => o.amount).sort()).toEqual([
-      -240000481795678944n,
-      240000481795678944n,
-    ]);
-    expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(expect.anything(), 12345);
+    expect(result.transactions[0].operations).toContainEqual(
+      expect.objectContaining({
+        type: "transfer",
+        address: encodedTo,
+        peer: encodedFrom,
+        asset: { type: "native" },
+        amount: amount,
+      }),
+    );
   });
 
   it("fails when getInternalTransactionsByBlock fails", async () => {
