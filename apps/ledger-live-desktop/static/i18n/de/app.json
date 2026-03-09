@@ -152,7 +152,9 @@
     "quote" : "Preis",
     "memoTag" : {
       "learnMore" : "Weitere Informationen zu Tags/Memos"
-    }
+    },
+    "memo" : "Memo",
+    "stake" : "Staken"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -208,7 +210,11 @@
       "BURN" : "Verbrannt",
       "ASSOCIATE_TOKEN" : "Token zuordnen",
       "CONTRACT_CALL" : "Vertragsaufruf",
-      "UPDATE_ACCOUNT" : "Aktualisiertes Konto"
+      "UPDATE_ACCOUNT" : "Aktualisiertes Konto",
+      "SHIELDED_TX_SAPLING_IN" : "Empfangen",
+      "SHIELDED_TX_SAPLING_OUT" : "Gesendet",
+      "SHIELDED_TX_ORCHARD_IN" : "Empfangen",
+      "SHIELDED_TX_ORCHARD_OUT" : "Gesendet"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -267,6 +273,8 @@
     "minute" : "Minute",
     "minute_other" : "Minuten",
     "minute_short" : "Min.",
+    "second" : "Sekunde",
+    "second_other" : "Sekunden",
     "second_short" : "Sek.",
     "hour" : "Stunde",
     "hour_other" : "Stunden",
@@ -778,6 +786,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "Kaufen oder verkaufen",
     "chooseProvider" : "Wähle aus {{providerCount}} Anbieter",
     "chooseProviders" : "Wähle aus {{providerCount}} Anbietern",
     "title" : "Kryptowährungen kaufen und verkaufen",
@@ -2380,12 +2389,15 @@
       "walletNotExist" : "Wallet existiert nicht"
     },
     "skipMemo" : {
-      "title" : "{{tag}} hinzufügen überspringen?",
-      "warning" : "Deine Assets können verloren gehen, falls der Empfänger ein {{tag}} voraussetzt"
+      "title" : "{{memoLabel}} hinzufügen überspringen?",
+      "description" : "Deine Assets können verloren gehen, falls der Empfänger ein {{memoLabel}} voraussetzt",
+      "notRequired" : "{{memoLabel}} für die Empfängeradresse nicht erforderlich?",
+      "confirm" : "Ja, überspringen",
+      "neverAskAgain" : "Diese Warnung nicht mehr anzeigen"
     },
     "tagHelp" : {
-      "title" : "Was ist ein {{tag}}?",
-      "description" : "Ein {{tag}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Das Fehlen eines {{tag}}-Memo kann zum Verlust von Guthaben führen."
+      "inputLabel" : "{{memoLabel}} eingeben",
+      "description" : "Ein {{memoLabel}} wird beim Senden von {{currency}} an eine Krypto-Börse benötigt. Dadurch kann der Empfänger der Transaktion identifiziert werden. Das Fehlen eines {{memoLabel}}-Memo kann zum Verlust von Guthaben führen."
     },
     "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
     "feesAmount" : "Gebührenbetrag ({{unit}})",
@@ -2414,11 +2426,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "Die Netzwerkgebühren können nicht neu geladen werden",
       "warningDescription" : "Möglicherweise sind die Gebühren-Presets veraltet."
+    },
+    "customFees" : {
+      "title" : "Angepasste Gebühren",
+      "confirm" : "Bestätigen",
+      "maxFee" : "Max. Gebühr ({{unit}})",
+      "maxPriorityFee" : "Max. Prioritätsgebühr ({{unit}})",
+      "gasLimit" : "Gaslimit ({{unit}})",
+      "feePerByte" : "Gebührenbetrag ({{unit}})",
+      "suggested" : "Empfohlen",
+      "nextBlock" : "Nächster Block",
+      "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
+      "invalidValue" : "Gib eine gültige Zahl ein.",
+      "belowMinimum" : "Der Mindestbetrag beträgt {{min}}",
+      "maxFeeBelowPriorityFee" : "Die maximale Gebühr muss größer oder gleich der maximalen Prioritätsgebühr sein."
+    },
+    "coinControl" : {
+      "title" : "Coin-Kontrolle"
     }
   },
   "releaseNotes" : {
-    "title" : "Informationen zur Version",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Versionshinweise",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Verstanden"
   },
   "troubleshootNetwork" : {
     "title" : "Fehlersuche im Netzwerk",
@@ -4897,6 +4927,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "Token-Transaktionen ausblenden, wenn der Wert 0 ist",
         "desc" : "Das Ausblenden von Token-Transaktionen ohne Wert kann einige potenzielle Adresspoisoning-Angriffe auf Eth, Polygon, BSC, Tron... verhindern."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "Nicht noch einmal fragen, sondern Memo beim Senden überspringen",
+        "desc" : "Warnung zum Überspringen des Memos beim Senden von Assets deaktivieren"
       }
     }
   },
@@ -5808,11 +5842,13 @@
     "casper" : {
       "transferIdPlaceholder" : "Optional",
       "transferId" : "Transfer-ID (Memo)",
-      "transferIdWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren"
+      "transferIdWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren",
+      "memo" : "Transfer-ID (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
+      "comment" : "Kommentar",
+      "memo" : "Kommentar"
     },
     "canton" : {
       "commentPlaceholder" : "Optional",
@@ -5939,6 +5975,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Concordium-Konto hinzufügen",
+        "acknowledge" : {
+          "title" : "Bestätigung",
+          "description" : "Concordium verlangt eine externe Identitätsprüfung. Bitte beachte die folgenden wichtigen Sicherheitshinweise:",
+          "list" : {
+            "1" : "<0>Keine Adressverifizierung</0>: Dein Ledger-Gerät kann Concordium-Empfangsadressen nicht verifizieren. Bitte verifiziere Adressen manuell, bevor du Geld empfängst.",
+            "2" : "<0>Die Concordium ID-App verwendet einen separaten Seed</0>: Du wirst in der Concordium-App 24 NEUE Wörter erstellen. Verwende KEINESFALLS deine Ledger-Seedphrase.",
+            "3" : "<0>Du wirst nach außerhalb von Ledger Wallet weitergeleitet</0>: Die Identitätsverifizierung erfolgt in der externen Concordium Wallet-App. Dies ist gemäß dem Blockchain-Protokoll von Concordium zwingend.",
+            "4" : "<0>Die Signierung der Transaktion bleibt sicher</0>: Nur dein Ledger-Gerät kann Transaktionen signieren und Konten erstellen."
+          },
+          "allow" : "Zustimmen"
+        },
+        "identity" : {
+          "title" : "Verbinden",
+          "account" : "Konto",
+          "newAccount" : "Neues Konto",
+          "init" : "Durch die Auswahl von „Zustimmen“ gibst du zum Ausdruck, mit der für die Verifizierung deines Kontos erforderlichen KYC-Identitätsprüfung fortfahren zu wollen.",
+          "scanQRCode" : "Scanne den QR-Code mit deinem Mobilgerät, um deine Concordium ID-App zu verbinden. <0>Weitere Informationen</0>",
+          "ledgerSeedWarning" : "<0>KEINESFALLS</0> deine Ledger-Seedphrase für die Concordium ID-App verwenden.",
+          "downloadApp" : "Concordium ID-App herunterladen",
+          "connecting" : "Die Verbindung mit der Concordium ID-App wird hergestellt …",
+          "onboarded" : "Eingerichtete Konten",
+          "success" : "Die Verbindung mit der Concordium ID-App wurde erfolgreich hergestellt.",
+          "error" : "Das Einrichten des neuen Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "status" : {
+            "prepare" : "Die Kontoeinrichtung wird vorbereitet …",
+            "submit" : "Konto wird eingerichtet …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "create" : {
+          "title" : "Konto erstellen",
+          "init" : {
+            "title" : "Die Verbindung mit der Concordium ID-App wurde erfolgreich hergestellt"
+          },
+          "prepare" : {
+            "title" : "Zum Erstellen eines Kontos gib den folgenden Code in die Concordium ID-App ein",
+            "resendButton" : "Bestätigung erneut senden",
+            "resendDescription" : "Die Bestätigung kann in <0>{{count}} {{unit}}</0> erneut gesendet werden"
+          },
+          "success" : "Dein Concordium-Konto wurde erfolgreich erstellt.",
+          "error" : "Das Erstellen des Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "error429" : "Zu viele Anfragen. Bitte warte und versuche es später noch einmal.",
+          "button" : "Erstellen",
+          "processing" : "In Bearbeitung …",
+          "status" : {
+            "prepare" : "Die Kontoerstellung wird vorbereitet …",
+            "submit" : "Das Konto wird erstellt …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "finish" : {
+          "title" : "Bestätigung"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "Deine Concordium-Adresse kann zurzeit nicht verifiziert werden. Bitte überprüfe dies, indem du deine Adresse in den Concordium-Explorer einfügst.",
+        "verifyLink" : "Bestätigen"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5970,6 +6068,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "Optionales Memo"
+    },
+    "xrp" : {
+      "memo" : "Tag"
     }
   },
   "errors" : {
@@ -6833,6 +6934,13 @@
       "title" : "Ungültige Memolänge; zulässig sind maximal 64 Zeichen",
       "description" : "Für Cardano-Memos gilt eine Längenbeschränkung. Bitte reduziere die Memolänge."
     },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo überschreitet zulässige Länge",
+      "description" : "Dein Memo hat eine Länge von {{memoLength}} Byte. Zulässig ist jedoch nur eine Länge von {{maxLength}} Byte. Bitte reduziere die Memogröße."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Entschuldigung, Guthaben reicht nicht aus"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
     },
@@ -7199,6 +7307,50 @@
     "memo" : "Memo",
     "memoPlaceholder" : "Tag/Memo eingeben",
     "memoWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Gebühr",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Delegierung ändern",
+      "earn" : "Verdienen"
+    },
+    "stakeBanner" : {
+      "title" : "Mit MINA Prämien verdienen",
+      "altTitle" : "Deine MINA-Delegation verwalten",
+      "description" : "Delegiere deine MINA an einen Blockproduzenten und verdiene Prämien aus der Blockproduktion. Die Prämien werden je nach Delegationsbetrag berechnet.",
+      "altDescription" : "Ändere deine Delegierungseinstellungen oder hebe die Delegierung deiner MINA-Token auf. ",
+      "changeCTA" : "Ändern"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "delegiert an",
+      "stakedBalance" : "Kontostand gestaked",
+      "producerAddress" : "Produzentenadresse",
+      "delegatedToTooltip" : "Name des Blockproduzenten, an den du delegierst",
+      "stakedBalanceTooltip" : "MINA-Gesamtbetrag, der zurzeit bei diesem Validator gestaket ist",
+      "producerAddressTooltip" : "Öffentliche Adresse des Blockproduzenten, an den du delegierst"
+    },
+    "delegators" : "Delegatoren",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Validator auswählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "confirmation" : "Bestätigung"
+      },
+      "title" : "MINA staken",
+      "help" : "Wähle in der nachstehenden Liste einen Validator aus, um deine MINA-Token zu delegieren.",
+      "success" : {
+        "title" : "Transaktion erfolgreich übertragen",
+        "description" : "Dein Antrag auf Delegationsänderung wurde übertragen."
+      },
+      "error" : {
+        "title" : "Beim Übertragen der Transaktion ist ein Fehler aufgetreten"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision"
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7817,6 +7969,11 @@
           "description" : "Im {{currency}}-Ökosystem können nur ausgewählte Services neue Konten erstellen. Ledger bietet diesen Onboarding-Service derzeit zwar nicht an, aber es gibt Alternativen. Du kannst dein {{currency}}-Konto in Ledger Wallet hinzufügen, nachdem es erstellt wurde.",
           "cta" : "Wie erstellt man ein {{currency}}-Konto?",
           "close" : "Schließen"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "Es wurden keine {{currency}}-Konten hinzugefügt",
+          "description" : "Du hast für mindestens ein ausgewähltes Konto die erforderliche Einrichtung nicht abgeschlossen.",
+          "close" : "Schließen"
         }
       },
       "status" : {
@@ -7923,6 +8080,12 @@
       "hoursAgo_other" : "Letzte Synchronisierung vor {{count}} Std. Zum Neuladen tippen",
       "daysAgo_one" : "Letzte Synchronisierung vor {{count}} Tag. Zum Neuladen tippen",
       "daysAgo_other" : "Letzte Synchronisierung vor {{count}} Tagen. Zum Neuladen tippen"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "Benachrichtigungen"
+    },
+    "myLedger" : {
+      "tooltip" : "My Ledger"
     }
   },
   "geoBlocking" : {
@@ -7951,8 +8114,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Saldo zeigen",
-        "pausedAt" : "Pausiert bei ",
+        "startSync" : "Synchronisierung starten",
+        "stopSync" : "Synchronisierung anhalten",
+        "lastProcessedBlock" : "Zuletzt verarbeiteter Block: {{block}}. {{missing}} Blöcke fehlen.",
         "lastSync" : "Letzte Synchronisierung: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Wiederherstellungshöhe",
+        "tooltip" : "Die Wiederherstellungshöhe ist der Punkt auf der Blockchain, an dem deine Wallet mit der Suche nach deinem Guthaben beginnt."
       },
       "flows" : {
         "export" : {
@@ -7991,12 +8160,64 @@
             }
           }
         }
+      }
+    },
+    "operationDetails" : {
+      "txType" : "Art der Transaktion",
+      "transparentTx" : "Transparent",
+      "shieldedSaplingTx" : "🛡 Privat (Sapling)",
+      "shieldedOrchardTx" : "🛡 Privat (Orchard)"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo-Privatguthaben einrichten",
+        "description" : "Ledger Wallet speichert deinen Viewkey, um dein privates Guthaben anzuzeigen, und nutzt Drittanbieterservices zur Verarbeitung privater Transaktionen. <0>Weitere Informationen</0>",
+        "bullets" : ["Schreibgeschützter Zugriff zum Entschlüsseln deines privaten Guthabens", "Ledger kann deine Assets weder senden noch ausgeben", "Nur du kannst deine Assets signieren und ausgeben", "Die Nachweiserstellung wird von externen Prüfdiensten abgewickelt, um eine schnelle Verarbeitung zu gewährleisten", "Die Prüfer können nicht auf deine Assets zugreifen oder sie ausgeben"],
+        "cta" : {
+          "allow" : "Erlauben",
+          "cancel" : "Abbrechen"
+        }
       },
-      "startSync" : "Synchronisierung starten",
-      "datepicker" : {
-        "label" : "Wiederherstellungshöhe",
-        "tooltip" : "Die Wiederherstellungshöhe ist der Punkt auf der Blockchain, an dem deine Wallet mit der Suche nach deinem Guthaben beginnt."
+      "stepViewKeyApprove" : {
+        "title" : "Auf deinem Ledger-Gerät genehmigen",
+        "description" : "Bestätige die Offenlegung des Viewkeys auf deinem Gerät",
+        "cancelAlert" : "Du kannst einzelne Konten auf deinem Gerät ablehnen. Wenn du alle Konten stornierst, werden keine weiteren Konten zu deinem Portfolio hinzugefügt.",
+        "cancelAllBtn_one" : "Abbrechen",
+        "cancelAllBtn_other" : "Alle stornieren"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Viewkey offenlegen",
+          "shareKey_other" : "Viewkeys offenlegen"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "Du hast für keines der ausgewählten Konten Viewkeys offengelegt. Viewkeys sind zum Anzeigen deines privaten Guthabens in Ledger Wallet erforderlich."
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "Verfügbares Guthaben",
+      "availableBalanceTooltip" : "Übertragbares Guthaben",
+      "transparentBalance" : "Transparenter Saldo",
+      "transparentBalanceTooltip" : "Guthaben, das öffentlich einsehbar ist",
+      "privateBalance" : "Privater Saldo",
+      "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Öffentlich",
+        "private" : "Privat"
       }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Neues Update verfügbar",
+    "downloadProgress" : "{{progress}} %",
+    "errorTryAgain" : "Fehler beim Update, bitte wiederholen",
+    "installAndRelaunch" : "Update installieren und neu starten"
   }
 }
