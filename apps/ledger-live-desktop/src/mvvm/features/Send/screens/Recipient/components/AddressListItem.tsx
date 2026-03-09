@@ -53,7 +53,7 @@ export function AddressListItem({
     ? formatRelativeDate(date)
     : formatAddress(address, { prefixLength: 5, suffixLength: 5 });
 
-  const subtitle = disabled || hideDescription ? undefined : (description ?? fallbackDescription);
+  const subtitle = disabled || hideDescription ? undefined : description ?? fallbackDescription;
   const icon = isLedgerAccount ? LedgerLogo : Wallet;
 
   const trailingContent =

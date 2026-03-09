@@ -48,11 +48,11 @@ const StyledBox = styled(Box)<{
   transform: translateY(0);
   opacity: 0;
   animation: ${p =>
-    p.collapsed
-      ? css`
+      p.collapsed
+        ? css`
             ${collapseAnim}
           `
-      : css`
+        : css`
             ${openAnim}
           `}
     200ms 500ms ease forwards;
