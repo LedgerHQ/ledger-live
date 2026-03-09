@@ -28,8 +28,13 @@ function internalTransactionsFetcher(
 
   async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {
     if (nodeApi.traceBlock !== undefined) {
-      const items = await nodeApi.traceBlock(currency, height);
-      return traceBlockItemsToOperationsByHash(items);
+      return nodeApi
+        .traceBlock(currency, height)
+        .then(traceBlockItemsToOperationsByHash)
+        .catch(error => {
+          if (error instanceof UnsupportedRpcMethodError) return new Map();
+          throw error;
+        });
     } else {
       return Promise.resolve(new Map());
     }

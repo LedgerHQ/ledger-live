@@ -508,7 +508,7 @@ export const getInternalOperations = async (
 /**
  * Get internal transactions for a single block from etherscan/blockscout explorer.
  * Used by getBlock to merge internal transfers into block transactions.
- * Returns empty array for non-etherscan/non-blockscout explorers (ledger, none, teloscan, etc.).
+ * Returns empty array for non-etherscan/non-blockscout explorers (ledger, none, etc.).
  */
 export async function getInternalTransactionsByBlock(
   currency: CryptoCurrency,

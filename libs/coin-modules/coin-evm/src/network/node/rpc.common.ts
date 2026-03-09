@@ -435,6 +435,9 @@ export const traceBlock: Exclude<NodeApi["traceBlock"], undefined> = (
   });
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
+  // do a "light" check here because we're not sure of all the possible shapes of the trace block item
+  // it depends on the kind of action. In our main use case, we are only interested with "call" type of actions
+  // and this is enough for that use case. Enhance if needed.
   if (typeof value !== "object" || value === null) return false;
   const o = value as Record<string, unknown>;
   if (!o.action || typeof o.action !== "object") return false;
@@ -443,20 +446,7 @@ function isTraceBlockItem(value: unknown): value is TraceBlockItem {
     typeof action.from === "string" &&
     typeof action.to === "string" &&
     typeof action.callType === "string" &&
-    typeof action.gas === "string" &&
-    typeof action.input === "string" &&
-    typeof action.value === "string" &&
-    typeof o.result === "object" &&
-    o.result !== null &&
-    typeof (o.result as Record<string, unknown>).gasUsed === "string" &&
-    typeof (o.result as Record<string, unknown>).output === "string" &&
-    typeof o.blockHash === "string" &&
-    typeof o.blockNumber === "number" &&
-    typeof o.transactionHash === "string" &&
-    typeof o.transactionPosition === "number" &&
-    Array.isArray(o.traceAddress) &&
-    typeof o.subtraces === "number" &&
-    typeof o.type === "string"
+    typeof action.value === "string"
   );
 }
 
