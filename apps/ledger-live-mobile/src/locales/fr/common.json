@@ -1601,6 +1601,25 @@
     "bannerCta" : "Démarrer",
     "continue" : "Continuer"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
+    "continue" : "Continuer"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Achetez un appareil",
     "debugDrawers" : {
@@ -2757,6 +2776,11 @@
       "connectDevice" : {
         "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Actualisation – Dernière mise à jour {{timeAgo}}",
+      "refreshingInitial" : "Actualisation...",
+      "upToDate" : "Tout est à jour"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "Annuler",
-      "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
+      "description" : "Envoyez 0 {{ticker}} à votre propre adresse. L’annulation n’est pas garantie. Si le réseau traite votre transaction initiale avant cette demande d’annulation, vos actifs seront envoyés au bénéficiaire."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Vous ne pouvez pas annuler la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
@@ -5040,6 +5064,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Mise à jour disponible",
+          "manager" : "Mise à jour de Ledger OS disponible"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Mettre à jour"
+      },
       "title" : "Mise à jour disponible",
       "descriptionDeviceName" : "Appuyez pour mettre à jour le système d’exploitation de {{deviceName}} vers la version {{firmwareVersion}}.",
       "descriptionProductName" : "Appuyez pour mettre à jour le système d’exploitation de votre {{productName}} vers la version {{firmwareVersion}}."
@@ -7693,6 +7725,10 @@
       "description" : "Sécurisez vos actifs et exploitez tout leur potentiel.",
       "buttonLabel" : "Explorer"
     },
+    "widget" : {
+      "title" : "Finalisez la configuration de votre wallet",
+      "subtitle" : "Commencez par y déposer des actifs."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Configurez votre appareil Ledger"
@@ -8326,6 +8362,7 @@
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount_one" : "{{count}} compte",
     "accountCount_other" : "{{count}} comptes",
+    "perpetualsBanner" : "Actuellement uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
     "errors" : {
       "title" : "Échec de la connexion",
       "backend" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
