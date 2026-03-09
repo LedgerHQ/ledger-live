@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef, useCallback, useState } from "react";
+import { useMemo, useEffect, useRef, useCallback } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
 import { atomFamily } from "jotai-family";
@@ -107,57 +107,25 @@ export function useDappCurrentAccount(
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
-const emptyArray: string[] = [];
-
 function useDappAccountLogic({
   manifest,
   accounts,
   currentAccountHistDb,
-  initialAccountId,
 }: {
   manifest: AppManifest;
   accounts: AccountLike[];
   currentAccountHistDb?: CurrentAccountHistDB;
-  initialAccountId?: string;
 }) {
-  const [initialAccountSelected, setInitialAccountSelected] = useState(false);
-  // If the manifest has a wildcard currencyId, we use an empty array to avoid any issues
-  // For dApps, currencies need to be specified explicitly
-  const currencyIds = manifest.currencies === "*" ? emptyArray : manifest.currencies;
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } = useDappCurrentAccount(
     manifest.id,
     currentAccountHistDb,
   );
+
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
     }
   }, [currentAccount, accounts]);
-
-  const firstAccountAvailable = useMemo(() => {
-    const account = accounts.find(account => {
-      if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
-        return account;
-      }
-      if (account.type === "TokenAccount" && currencyIds.includes(account.token.id)) {
-        return getParentAccount(account, accounts);
-      }
-    });
-    // might not even need to set parent here
-    if (account) {
-      return getParentAccount(account, accounts);
-    }
-  }, [accounts, currencyIds]);
-
-  const storedCurrentAccountIsPermitted = useCallback(() => {
-    if (!currentAccount) return false;
-    return accounts.some(
-      account =>
-        account.type === "Account" &&
-        currencyIds.includes(account.currency.id) &&
-        account.id === currentAccount.id,
-    );
-  }, [currentAccount, accounts, currencyIds]);
 
   const currentAccountIdFromHist = useMemo(() => {
     if (manifest && currentAccountHistDb) {
@@ -170,43 +138,12 @@ function useDappAccountLogic({
     return accounts.find(account => account.id === currentAccountIdFromHist);
   }, [accounts, currentAccountIdFromHist]);
 
-  const initialAccount = useMemo(() => {
-    if (!initialAccountId) return;
-    return accounts.find(account => account.id === initialAccountId);
-  }, [accounts, initialAccountId]);
-
   useEffect(() => {
-    if (initialAccountSelected) {
-      return;
-    }
-
-    if (initialAccount && !initialAccountSelected) {
-      setCurrentAccount(initialAccount);
-      setCurrentAccountHist(manifest.id, initialAccount);
-      setInitialAccountSelected(true);
-      return;
-    }
-
     if (currentAccountFromHist) {
       setCurrentAccount(currentAccountFromHist);
       return;
     }
-
-    if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-      /** if there is no current account OR if there is a current account but it is not in the manifest currencies then fall back to the first permitted account */
-      setCurrentAccount(firstAccountAvailable ?? null);
-    }
-  }, [
-    currentAccount,
-    currentAccountFromHist,
-    firstAccountAvailable,
-    initialAccount,
-    initialAccountSelected,
-    manifest.id,
-    setCurrentAccount,
-    setCurrentAccountHist,
-    storedCurrentAccountIsPermitted,
-  ]);
+  }, [currentAccountFromHist, setCurrentAccount]);
 
   return {
     currentAccount,
@@ -235,7 +172,6 @@ export function useDappLogic({
   uiHook,
   tracking,
   currentAccountHistDb,
-  initialAccountId,
   mevProtected,
 }: {
   manifest: AppManifest;
@@ -244,7 +180,6 @@ export function useDappLogic({
   uiHook: UiHook;
   tracking: TrackingAPI;
   currentAccountHistDb?: CurrentAccountHistDB;
-  initialAccountId?: string;
   mevProtected?: boolean;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
@@ -255,7 +190,6 @@ export function useDappLogic({
       manifest,
       accounts,
       currentAccountHistDb,
-      initialAccountId,
     });
 
   /** Current network is needed for recognising the current chain id.
