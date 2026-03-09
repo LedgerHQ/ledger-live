@@ -85,10 +85,10 @@ export default function NotificationCenter() {
 
   // ----- Utils Functions ----------
   const onPress = useCallback(
-    (item: NotificationContentCard) => {
+    async (item: NotificationContentCard) => {
       if (!item) return;
 
-      trackContentCardEvent("contentcard_clicked", {
+      await trackContentCardEvent("contentcard_clicked", {
         ...item.extras,
         screen: item.location,
         campaign: item.id,
@@ -99,7 +99,7 @@ export default function NotificationCenter() {
 
       // Notify Braze that the card has been clicked by the user
       logClickCard(item.id);
-      Linking.openURL(item.link);
+      await Linking.openURL(item.link);
     },
     [logClickCard, trackContentCardEvent],
   );

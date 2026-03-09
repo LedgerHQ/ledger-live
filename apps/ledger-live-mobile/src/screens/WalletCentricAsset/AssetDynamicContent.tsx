@@ -14,11 +14,11 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
     useDynamicContent();
   const dynamicContentCard = getAssetCardByIdOrTicker(currency);
 
-  const onClickLink = useCallback(() => {
+  const onClickLink = useCallback(async () => {
     if (!dynamicContentCard) return;
     if (!dynamicContentCard.link) return;
 
-    trackContentCardEvent("contentcard_clicked", {
+    await trackContentCardEvent("contentcard_clicked", {
       ...dynamicContentCard.extras,
       screen: dynamicContentCard.location,
       campaign: dynamicContentCard.id,
@@ -26,7 +26,7 @@ const AssetDynamicContent: React.FC<Props> = ({ currency }) => {
 
     // Notify Braze that the card has been clicked by the user
     logClickCard(dynamicContentCard.id);
-    Linking.openURL(dynamicContentCard.link);
+    await Linking.openURL(dynamicContentCard.link);
   }, [dynamicContentCard, logClickCard, trackContentCardEvent]);
 
   const onPressDismiss = useCallback(() => {
