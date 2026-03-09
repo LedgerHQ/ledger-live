@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "إلغاء",
-        "description" : "إرسال 0 {{ticker}} إلى عنوانك."
+        "description" : "إرسال {{ticker}} 0 إلى عنوانك. الإلغاء غير مضمون. إذا قامت الشبكة بمعالجة معاملتك الأصلية قبل طلب الإلغاء هذا، فسيتم إرسال الأموال إلى المستلم."
       },
       "steps" : {
         "method" : {
@@ -308,6 +308,7 @@
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
     "perps" : "العقود الدائمة",
+    "home" : "الصفحة الرئيسية",
     "refer" : "ترشيح صديق",
     "lend" : "إقراض",
     "catalog" : "Discover",
@@ -1498,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
+    "continue" : "متابعة"
+  },
   "currentAddress" : {
     "title" : "العنوان الحالي",
     "for" : "عنوان <1><0>{{name}}</0></1>",
@@ -1751,7 +1771,8 @@
       "previousStakingNodeId" : "مُعرّف العقدة السابقة",
       "gasConsumed" : "الغاز المستهلَك",
       "gasUsed" : "الغاز المستخدَم",
-      "gasLimit" : "حد الغاز"
+      "gasLimit" : "حد الغاز",
+      "functionId" : "مُعرّف الوظيفة"
     }
   },
   "operationList" : {
@@ -1939,6 +1960,13 @@
       "updateBtn" : "قم بتحديث البرنامج الثابت",
       "installUpdate" : "تثبيت التحديث",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "تحديث نظام التشغيل متاح",
+            "manager" : "تحديث نظام تشغيل Ledger OS متاح"
+          },
+          "cta" : "تحديث"
+        },
         "warning" : "تحديث نظام التشغيل متاح",
         "version" : "إصدار {{latestFirmware}}",
         "cta" : "انتقل إلى My Ledger",
@@ -2144,6 +2172,24 @@
         "description" : "تم إرسال العملية الخاصة بك إلى الشبكة لتأكيدها. يُرجى الانتظار حتى يتم تأكيد معاملتك وحتى يقوم المزود بمعالجتها."
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "توصيل جهاز Ledger",
+    "subtitle" : "لفتح الإمكانات الكاملة لـ Ledger Wallet لديك، قم بتوصيل جهاز Ledger.",
+    "0" : {
+      "title" : "ملكية كاملة",
+      "desc" : "مفاتيحك الخاصة لا تغادر الجهاز مطلقاً."
+    },
+    "1" : {
+      "title" : "تداول بأمان",
+      "desc" : "تحقق من المعاملات على شاشة آمنة."
+    },
+    "2" : {
+      "title" : "قم بالوصول إلى المحفظة الأكثر قوةً",
+      "desc" : "قم بإدارة آلاف الأصول في مكان واحد."
+    },
+    "connectCTA" : "اتصال",
+    "buyCTA" : "قم بشراء جهازك Ledger"
   },
   "fund" : {
     "title" : "تمويل",
@@ -2431,17 +2477,26 @@
       "confirm" : "تأكيد",
       "maxFee" : "الحد الأقصى للرسوم ({{unit}})",
       "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unit}})",
-      "gasLimit" : "حد الغاز ({{unit}})",
       "feePerByte" : "مبلغ الرسوم ({{unit}})",
       "suggested" : "مُقترح",
       "nextBlock" : "الكتلة التالية",
       "networkFeesInFiat" : "رسوم الشبكة بعملة {{currency}}",
       "invalidValue" : "أدخل رقم صالح",
       "belowMinimum" : "الحد الأدنى هو {{min}}",
-      "maxFeeBelowPriorityFee" : "يجب أن يكون الحد الأقصى للرسوم أكبر من أو يساوي الحد الأقصى لرسوم الأولوية"
+      "maxFeeBelowPriorityFee" : "يجب أن يكون الحد الأقصى للرسوم أكبر من أو يساوي الحد الأقصى لرسوم الأولوية",
+      "feeAsset" : "الأصل الخاص بالرسوم",
+      "feesAmount" : "مبلغ الرسوم ({{unit}})",
+      "payFeesIn" : "ادفع الرسوم بـ"
     },
     "coinControl" : {
-      "title" : "التحكم في العملات"
+      "title" : "التحكم في العملات",
+      "strategy" : "الاستراتيجية",
+      "learnMore" : "تعرّف على المزيد",
+      "coinToSend" : "العملة المراد إرسالها",
+      "changeToReturn" : "المتبقي المراد إرجاعه",
+      "enterAmount" : "أدخل المبلغ",
+      "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
+      "amountInputLabel" : "المبلغ المطلوب إرساله"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5071,7 @@
     }
   },
   "theme" : {
-    "system" : "اختر سمة النظام",
+    "system" : "النظام",
     "light" : "فاتح",
     "dusk" : "غسق",
     "dark" : "داكن"
@@ -7528,7 +7583,8 @@
     },
     "selectAccount" : {
       "title" : "اختر حساب",
-      "addAccount" : "إضافة حساب جديد أو قائم"
+      "addAccount" : "إضافة حساب جديد أو قائم",
+      "perpetualsBanner" : "حالياً مدعوم فقط مع USDC على سلسلة Arbitrum."
     }
   },
   "customImage" : {
@@ -7991,6 +8047,8 @@
     "title" : "استكشف السوق",
     "genericError" : "فشل الاتصال",
     "cta" : "عرض الكل",
+    "scrollLeft" : "التمرير لليسار",
+    "scrollRight" : "التمرير لليمين",
     "fearAndGreed" : {
       "title" : "الحالة المزاجية"
     }
@@ -8017,6 +8075,18 @@
     "connect" : "اتصال",
     "buyALedger" : "شراء Ledger"
   },
+  "assets" : {
+    "cryptos" : "الأصول المشفرة",
+    "stablecoins" : "العملات المستقرة",
+    "columns" : {
+      "name" : "الاسم",
+      "price" : "السعر",
+      "balance" : "الرصيد",
+      "value" : "القيمة",
+      "trend" : "اتجاه يوم 1",
+      "trendTooltip" : "تغيُّر الرصيد خلال 24 ساعة"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
     "entry" : {
@@ -8029,12 +8099,7 @@
       "errorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. قائمة الحسابات المتأثرة: {{accounts}}. انقر لإعادة المحاولة",
       "emptyErrorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. انقر لإعادة المحاولة",
       "upToDate" : "أنت على أحدث إصدار",
-      "minutesAgo_one" : "آخر مزامنة: منذ {{count}} دقيقة. انقر للتحديث",
-      "minutesAgo_other" : "آخر مزامنة: منذ {{count}} دقيقة. انقر للتحديث",
-      "hoursAgo_one" : "آخر مزامنة: منذ {{count}} ساعة. انقر للتحديث",
-      "hoursAgo_other" : "آخر مزامنة: منذ {{count}} ساعة. انقر للتحديث",
-      "daysAgo_one" : "آخر مزامنة: منذ {{count}} يوم. انقر للتحديث",
-      "daysAgo_other" : "آخر مزامنة: منذ {{count}} يوم. انقر للتحديث"
+      "lastSync" : "آخر مزامنة: {{timeAgo}} انقر للتحديث"
     },
     "notificationIndicator" : {
       "tooltip" : "الإشعارات"
@@ -8174,5 +8239,25 @@
     "downloadProgress" : "%{{progress}}",
     "errorTryAgain" : "حدث خطأ أثناء التحديث، أعد المحاولة",
     "installAndRelaunch" : "قم بتثبيت التحديث وإعادة التشغيل"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "عرض أوضح لمحفظتك الاستثمارية",
+        "description" : "See your total balance at a glance, and tap \"Today\" to dive deeper."
+      },
+      "navigation" : {
+        "title" : "قم بالوصول إلى الإجراءات الرئيسية بشكل أسرع",
+        "description" : "قم بالوصول إلى Swap (مبادلة)، و Transfer (تحويل)، و Buy (شراء) فوراً. اعثر على Earn (اكسب) و Card (البطاقة) في شريط التنقل السفلي."
+      },
+      "actions" : {
+        "title" : "اطلع على اتجاهات السوق فوراً",
+        "description" : "Quickly see what's trending directly in your portfolio, and move from insights to action."
+      }
+    },
+    "cta" : {
+      "continue" : "متابعة",
+      "explore" : "استكشاف محفظتي الاستثمارية الجديدة"
+    }
   }
 }
