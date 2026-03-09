@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.7
+
+### Minor Changes
+
+- [#15184](https://github.com/LedgerHQ/ledger-live/pull/15184) [`30e6c3b`](https://github.com/LedgerHQ/ledger-live/commit/30e6c3ba59ae0dc804aec0fc4a374098a030964a) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Fix token deeplink to buy
+
 ## 3.109.0-next.6
 
 ### Minor Changes
