@@ -1,5 +1,6 @@
 import { spawn, exec, ChildProcessWithoutNullStreams } from "child_process";
 import { createServer, createConnection } from "node:net";
+import * as http from "node:http";
 import { randomInt, randomUUID } from "node:crypto";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -124,7 +125,7 @@ async function isPortAvailable(port: number): Promise<boolean> {
 async function waitForPortReady(
   port: number,
   host = "127.0.0.1",
-  timeoutMs = process.env.CI ? 90_000 : 30_000,
+  timeoutMs = process.env.CI ? 120_000 : 30_000,
   intervalMs = 200,
 ): Promise<void> {
   const deadline = Date.now() + timeoutMs;
@@ -151,6 +152,34 @@ async function waitForPortReady(
 
   throw new Error(
     `Speculos API port ${port} on ${host} not ready after ${timeoutMs}ms`,
+  );
+}
+
+/** Wait until the Speculos HTTP API responds (TCP can be ready before HTTP). */
+async function waitForSpeculosHttpReady(
+  port: number,
+  host = "127.0.0.1",
+  timeoutMs = process.env.CI ? 60_000 : 15_000,
+  intervalMs = 300,
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  const path = "/events?stream=false&currentscreenonly=true";
+  while (Date.now() < deadline) {
+    const ok = await new Promise<boolean>(resolve => {
+      const req = http.get(
+        { host, port, path, timeout: 5_000 },
+        res => {
+          res.destroy();
+          resolve(res.statusCode === 200);
+        },
+      );
+      req.on("error", () => resolve(false));
+    });
+    if (ok) return;
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+  throw new Error(
+    `Speculos HTTP API on ${host}:${port} not ready after ${timeoutMs}ms`,
   );
 }
 
@@ -431,6 +460,9 @@ export async function createSpeculosDevice(
       destroy,
     };
   } else {
+    const apiPortNum = ports.apiPort as number;
+    await waitForSpeculosHttpReady(apiPortNum);
+    await delay(500);
     transport = await DeviceManagementKitTransportSpeculos.open({
       apiPort: ports.apiPort?.toString(),
     });
