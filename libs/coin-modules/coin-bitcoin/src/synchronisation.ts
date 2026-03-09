@@ -1,20 +1,19 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { CoinType, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CoinType } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId, decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   isSegwitDerivationMode,
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
-} from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
-  DerivationMode,
   SYNC_TYPE_TRANSPARENT,
   SYNC_TYPE_SHIELDED,
   SyncConfig,
@@ -22,8 +21,13 @@ import {
 } from "@ledgerhq/types-live";
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
+import { isZcashAccount } from "./logic";
 import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
-import { isZcashAccount, perCoinLogic, mapTxToOperations } from "./logic";
+import { perCoinLogic } from "./logic";
+import { mapTxToOperations } from "./logic";
+import { DerivationMode } from "@ledgerhq/types-live";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { map, merge, Observable, scan } from "rxjs";
 import {
@@ -32,7 +36,7 @@ import {
   ZCASH_SHIELDED_TX_OUT_TYPES,
   ShieldedSyncResult,
 } from "@ledgerhq/zcash-shielded/types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";

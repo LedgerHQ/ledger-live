@@ -3,9 +3,9 @@ import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, NearAccount } from "./types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 

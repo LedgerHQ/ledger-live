@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import {
   isEditableOperation as isEditableOperationEvm,
@@ -13,7 +13,7 @@ import {
 import { getCurrencyConfiguration } from "./config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
-export * from "@ledgerhq/coin-framework/operation";
+export * from "@ledgerhq/ledger-wallet-framework/operation";
 
 function hasGasTracker(currency: CryptoCurrency): boolean {
   const config = getCurrencyConfiguration<EvmConfigInfo>(currency);

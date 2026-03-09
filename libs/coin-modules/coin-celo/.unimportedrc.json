@@ -15,7 +15,11 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util","jest-get-type", "jest-matcher-utils", "jest-message-util"],
+    "jest-util",
+    "jest-get-type",
+    "jest-matcher-utils",
+    "jest-message-util"
+  ],
   "ignoreUnimported": [
     "src/bridge/transaction.ts",
     "src/bridge/fixtures.ts",
@@ -38,6 +42,7 @@
     "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
+    "@ledgerhq/coin-module-framework",
     "@celo/utils",
     "@celo/wallet-base",
     "@celo/wallet-ledger",

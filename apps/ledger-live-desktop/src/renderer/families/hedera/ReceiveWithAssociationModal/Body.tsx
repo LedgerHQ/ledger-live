@@ -29,7 +29,7 @@ import StepReceiveStakingFlow, {
   StepReceiveStakingFooter,
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { addPendingOperation } from "@ledgerhq/coin-framework/account/pending";
+import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/pending";
 import logger from "~/renderer/logger";
 import StepAccount from "~/renderer/modals/Receive/steps/StepAccount";
 import type {

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { bpsToPercent } from "@ledgerhq/live-common/families/solana/token";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   SolanaTokenAccount,
   SolanaTokenAccountExtensions,

@@ -10,7 +10,10 @@ import type {
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useAmountInput } from "./useAmountInput";
 import { useQuickActions } from "./useQuickActions";

@@ -1,4 +1,3 @@
-import { isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   InvalidAddress,
@@ -6,6 +5,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";

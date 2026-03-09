@@ -1,4 +1,4 @@
-import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 export type KaspaCoinConfig = CurrencyConfig;
 

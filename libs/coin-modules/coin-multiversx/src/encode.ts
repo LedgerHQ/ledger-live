@@ -1,4 +1,4 @@
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { extractTokenId } from "./logic";
 import type { Transaction } from "./types";

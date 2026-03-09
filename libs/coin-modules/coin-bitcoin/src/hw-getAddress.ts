@@ -2,10 +2,10 @@ import { log } from "@ledgerhq/logs";
 import {
   getAddressFormatDerivationMode,
   type GetAddressOptions,
-} from "@ledgerhq/coin-framework/derivation";
-import { UnsupportedDerivation } from "@ledgerhq/coin-framework/errors";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
+import { UnsupportedDerivation } from "@ledgerhq/coin-module-framework/errors";
 import { AddressFormat, BitcoinAddress, SignerContext } from "./signer";
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 
 const resolver = (signerContext: SignerContext): GetAddressFn => {
   return async (

@@ -1,4 +1,4 @@
-import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/index";
 import type { ConcordiumMemo } from "../types";
 import { createApi } from ".";
 

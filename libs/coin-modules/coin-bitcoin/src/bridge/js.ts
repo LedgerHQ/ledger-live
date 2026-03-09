@@ -3,8 +3,8 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { makeGetAccountShape, postSync } from "../synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { BitcoinAccount, Transaction, TransactionStatus } from "../types";

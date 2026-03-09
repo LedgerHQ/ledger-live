@@ -7,7 +7,7 @@ import {
   getDerivationScheme,
   getDerivationModesForCurrency,
   runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import type {
   AppAndVersion,
   ConnectAppEvent,

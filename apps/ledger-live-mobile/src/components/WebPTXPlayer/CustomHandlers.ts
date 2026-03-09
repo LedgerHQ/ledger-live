@@ -25,11 +25,11 @@ import {
   getParentAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   decodeTokenAccountIdSync,
   decodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { createCustomErrorClass } from "@ledgerhq/errors";

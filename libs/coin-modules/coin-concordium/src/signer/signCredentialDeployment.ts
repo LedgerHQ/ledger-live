@@ -1,4 +1,4 @@
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CredentialDeploymentTransaction } from "@ledgerhq/concordium-core";
 import type { ConcordiumSigner } from "../types";
 

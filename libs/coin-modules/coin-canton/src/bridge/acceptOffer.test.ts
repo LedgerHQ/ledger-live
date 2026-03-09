@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import * as signTransactionModule from "../common-logic/transaction/sign";

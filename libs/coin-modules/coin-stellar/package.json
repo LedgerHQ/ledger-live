@@ -119,7 +119,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

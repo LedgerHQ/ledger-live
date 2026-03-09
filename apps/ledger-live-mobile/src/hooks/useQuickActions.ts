@@ -14,7 +14,10 @@ import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/acc
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { walletSelector } from "~/reducers/wallet";
-import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import {
+  getAccountCurrency,
+  getParentAccount,
+} from "@ledgerhq/ledger-wallet-framework/lib/account/helpers";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";

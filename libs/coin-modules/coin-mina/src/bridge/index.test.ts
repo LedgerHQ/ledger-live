@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-module-framework/lib/signer";
 import { MinaCoinConfig } from "../config";
 import { MinaSigner } from "../types";
 import { createBridges } from ".";

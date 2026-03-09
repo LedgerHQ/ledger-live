@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { TxDataNotSupported } from "@ledgerhq/coin-framework/api/types";
+import type { TxDataNotSupported } from "@ledgerhq/coin-module-framework/api/types";
 import type { TRANSACTION_TYPE } from "../constants";
 import type {
   AleoJWT,

@@ -1,4 +1,4 @@
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import * as accountBalance from "../common-logic/account/getBalance";

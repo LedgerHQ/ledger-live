@@ -1,4 +1,4 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
 import { reEncodeRawSignature } from "../common-logic";
@@ -13,7 +13,7 @@ import { buildTransaction } from "./buildTransaction";
 import { buildSignOperation, buildOptimisticOperation } from "./signOperation";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("./buildTransaction");
 jest.mock("../common-logic");
 

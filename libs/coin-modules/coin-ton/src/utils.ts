@@ -1,4 +1,4 @@
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   Builder,
   SendMode,

@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 export type BitcoinConfigInfo = CurrencyConfig;
 

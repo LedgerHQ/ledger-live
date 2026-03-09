@@ -1,4 +1,4 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../../config";
 import { listOperations } from "./listOperations";
 

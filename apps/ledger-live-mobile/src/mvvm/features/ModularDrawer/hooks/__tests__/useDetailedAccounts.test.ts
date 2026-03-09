@@ -2,7 +2,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import { useDetailedAccounts } from "../useDetailedAccounts";
 import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { ETH_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import { State } from "~/reducers/types";
 

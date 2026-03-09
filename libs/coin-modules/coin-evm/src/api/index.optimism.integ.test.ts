@@ -1,4 +1,9 @@
-import { Api, BufferTxData, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/types";
+import {
+  Api,
+  BufferTxData,
+  MemoNotSupported,
+  Operation,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";

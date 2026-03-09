@@ -2,7 +2,7 @@ import type {
   TransactionIntent,
   FeeEstimation,
   MemoNotSupported,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoTransactionIntentData } from "../types";
 import coinConfig from "../config";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";

@@ -1,6 +1,9 @@
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";

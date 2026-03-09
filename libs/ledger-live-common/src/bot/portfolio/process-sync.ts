@@ -5,7 +5,7 @@ import "../../__tests__/test-helpers/environment";
 import allSpecs from "../../generated/specs";
 import type { AppSpec } from "../types";
 import { Account } from "@ledgerhq/types-live";
-import { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
+import { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import {
   createSpeculosDevice,
   findAppCandidate,

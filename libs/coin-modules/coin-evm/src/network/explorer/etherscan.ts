@@ -1,4 +1,4 @@
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";

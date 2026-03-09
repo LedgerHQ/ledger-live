@@ -6,7 +6,7 @@ import {
 import { useNavigate } from "react-router";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
 import { useCallback } from "react";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";

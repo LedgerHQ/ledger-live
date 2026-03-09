@@ -4,7 +4,7 @@ import {
   flattenAccounts,
   getAccountCurrency,
   getAccountHistoryBalances,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,

@@ -2,7 +2,7 @@ import type {
   CraftedTransaction,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { sdkClient } from "../network/sdk";
 import type { AleoTransactionIntentData } from "../types";

@@ -3,7 +3,7 @@ import type {
   Block,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import type {

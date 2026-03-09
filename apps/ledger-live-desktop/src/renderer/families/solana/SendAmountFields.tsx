@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import type { SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import TokenTransferFeesWarning from "./Token2022/TokenTransferFeesWarning";
 import { SolanaFamily } from "./types";
 

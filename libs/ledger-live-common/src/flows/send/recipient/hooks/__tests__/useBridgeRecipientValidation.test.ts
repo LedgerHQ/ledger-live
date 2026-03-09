@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

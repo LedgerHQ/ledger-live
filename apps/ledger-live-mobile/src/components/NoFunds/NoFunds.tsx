@@ -14,7 +14,10 @@ import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNa
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getAccountCurrency, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import {
+  getAccountCurrency,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/lib/account/helpers";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",

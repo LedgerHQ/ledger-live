@@ -1,4 +1,5 @@
-import type { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { AlpacaApi, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 
 export type TezosFeeParameters = {
   gasLimit: bigint;
@@ -12,4 +13,4 @@ export type TezosFeeEstimation = FeeEstimation & {
 
 export type TezosSender = { address: string; xpub?: string };
 
-export type TezosApi = Api;
+export type TezosApi = AlpacaApi & BridgeApi;

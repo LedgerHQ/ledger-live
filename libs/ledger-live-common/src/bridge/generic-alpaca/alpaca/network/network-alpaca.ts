@@ -1,4 +1,5 @@
 import type {
+  AlpacaApi,
   Balance,
   Block,
   BlockInfo,
@@ -7,7 +8,6 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-  Api,
   AssetInfo,
   Page,
   Stake,
@@ -15,7 +15,8 @@ import type {
   Cursor,
   CraftedTransaction,
   Validator,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import network from "@ledgerhq/live-network";
 
 function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
@@ -210,4 +211,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-  }) satisfies Api<any>;
+  }) satisfies Partial<AlpacaApi<any> & BridgeApi<any>>;

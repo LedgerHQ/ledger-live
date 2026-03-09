@@ -35,7 +35,7 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { Alert as NativeUiAlert, Flex, Text } from "@ledgerhq/native-ui";
 import SupportLinkError from "~/components/SupportLinkError";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/lib/sanction/errors";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

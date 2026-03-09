@@ -1,6 +1,6 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { useOpenBuy } from "../index";
-import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";

@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/coin-module-framework/lib/signer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight, VersionedTransaction } from "@solana/web3.js";

@@ -1,4 +1,4 @@
-import { Cursor } from "@ledgerhq/coin-framework/api/types";
+import { Cursor } from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { AccountTxResponse } from "./types";

@@ -1,5 +1,5 @@
-import type { CoinConfig } from "@ledgerhq/coin-framework/config";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

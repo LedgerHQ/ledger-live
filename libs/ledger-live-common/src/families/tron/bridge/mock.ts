@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-tron/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { getSerializedAddressParameters } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,

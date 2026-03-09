@@ -1,4 +1,4 @@
-import type { Balance, AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
+import type { Balance, AssetInfo } from "@ledgerhq/coin-module-framework/lib/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getExplorerApi } from "../network/explorer";

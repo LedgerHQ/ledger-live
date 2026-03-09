@@ -51,10 +51,10 @@ const View = ({ isOpen, onClose, handleConnect, handleBuy }: BuyDeviceViewProps)
       <DialogContent className="max-h-[90vh] rounded-xl">
         <DialogHeader onClose={onClose} />
         <DialogBody className="min-h-0 flex-1 gap-24 overflow-y-auto">
-          <Image resource={BuyDeviceHeader} alt="Ledger devices" className="rounded-xl h-[200px]" />
-          <div className="flex relative flex-col right-auto gap-[unset]">
+          <Image resource={BuyDeviceHeader} alt="Ledger devices" className="h-[200px] rounded-xl" />
+          <div className="relative right-auto flex flex-col gap-[unset]">
             <span className="heading-2-semi-bold text-base">{t("buyDeviceModal.title")}</span>
-            <span className="body-2 text-muted mb-12">{t("buyDeviceModal.subtitle")}</span>
+            <span className="mb-12 body-2 text-muted">{t("buyDeviceModal.subtitle")}</span>
 
             {items.map(item => (
               <ListItem key={item.id} className="pointer-events-none">
@@ -70,7 +70,7 @@ const View = ({ isOpen, onClose, handleConnect, handleBuy }: BuyDeviceViewProps)
             ))}
           </div>
         </DialogBody>
-        <DialogFooter className="justify-center w-full">
+        <DialogFooter className="w-full justify-center">
           <Flex alignItems="center" flexDirection="column" flexGrow={1} rowGap={2}>
             <Button appearance="base" size="lg" onClick={handleConnect} className="w-full">
               {t("buyDeviceModal.connectCTA")}

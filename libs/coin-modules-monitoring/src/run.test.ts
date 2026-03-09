@@ -1,7 +1,7 @@
 import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import * as bridgeModule from "@ledgerhq/live-common/bridge/impl";
-import { makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import BigNumber from "bignumber.js";
 import run from "./run";
 

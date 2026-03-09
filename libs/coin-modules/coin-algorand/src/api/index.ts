@@ -1,5 +1,4 @@
 import {
-  Api,
   Block,
   Cursor,
   Page,
@@ -8,7 +7,9 @@ import {
   Stake,
   CraftedTransaction,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+  AlpacaApi,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import coinConfig, { type AlgorandCoinConfig } from "../config";
 import {
   broadcast,
@@ -23,7 +24,9 @@ import {
 } from "../logic";
 import type { AlgorandMemo } from "../types";
 
-export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
+export function createApi(
+  config: AlgorandCoinConfig,
+): AlpacaApi<AlgorandMemo> & BridgeApi<AlgorandMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

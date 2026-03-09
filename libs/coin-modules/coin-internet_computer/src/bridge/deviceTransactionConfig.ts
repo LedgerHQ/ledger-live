@@ -1,9 +1,8 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-
 import { methodToString } from "../common-logic/utils";
 import { Transaction, TransactionStatus } from "../types";
 

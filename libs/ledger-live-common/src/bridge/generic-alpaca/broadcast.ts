@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getAlpacaApi } from "./alpaca";
 import { GenericTransaction } from "./types";
 

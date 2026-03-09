@@ -1,8 +1,15 @@
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import {
+  formatCurrencyUnit,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-module-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";

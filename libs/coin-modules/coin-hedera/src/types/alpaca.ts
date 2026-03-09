@@ -1,4 +1,4 @@
-import type { StringMemo, TxDataNotSupported } from "@ledgerhq/coin-framework/api/types";
+import type { StringMemo, TxDataNotSupported } from "@ledgerhq/coin-module-framework/api/types";
 
 export type HederaMemo = StringMemo;
 

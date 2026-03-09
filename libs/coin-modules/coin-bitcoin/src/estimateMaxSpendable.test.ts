@@ -29,7 +29,7 @@ jest.mock("./getAccountNetworkInfo", () => ({
 }));
 
 // Make getMainAccount a no-op passthrough
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   __esModule: true,
   getMainAccount: (a: any) => a,
 }));

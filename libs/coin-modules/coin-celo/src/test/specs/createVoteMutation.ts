@@ -1,6 +1,6 @@
-import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/parseCurrencyUnit";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { MutationSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";

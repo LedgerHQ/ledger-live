@@ -17,7 +17,7 @@ import type {
   Operation,
   ListOperationsOptions,
   Page,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 

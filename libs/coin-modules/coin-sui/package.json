@@ -133,7 +133,8 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-sui": "workspace:^",

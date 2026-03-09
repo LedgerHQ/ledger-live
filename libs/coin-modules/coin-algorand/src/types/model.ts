@@ -1,4 +1,4 @@
-import { StringMemo } from "@ledgerhq/coin-framework/api/types";
+import { StringMemo } from "@ledgerhq/coin-module-framework/api/types";
 
 // Algorand memo type for AlpacaApi
 export type AlgorandMemo = StringMemo<"note">;

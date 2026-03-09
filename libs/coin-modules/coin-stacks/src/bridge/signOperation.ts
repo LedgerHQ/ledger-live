@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/lib/signer";
 import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";

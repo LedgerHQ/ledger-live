@@ -10,8 +10,8 @@ import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/t
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
-jest.mock("@ledgerhq/coin-framework/account/helpers");
-jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
+jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
 }));
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
@@ -70,7 +70,7 @@ jest.mock("~/renderer/linking", () => ({
 }));
 
 const { getMainAccount, getAccountCurrency } = jest.requireMock(
-  "@ledgerhq/coin-framework/account/helpers",
+  "@ledgerhq/ledger-wallet-framework/account/helpers",
 );
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
 const { useTranslatedBridgeError } = jest.requireMock(

@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 export const createMockCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {

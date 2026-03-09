@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { sdkClient } from "../network/sdk";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { craftTransaction } from "./craftTransaction";

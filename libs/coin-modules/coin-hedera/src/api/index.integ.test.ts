@@ -9,7 +9,7 @@ import {
   ContractExecuteTransaction,
   ContractFunctionParameters,
 } from "@hashgraph/sdk";
-import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";

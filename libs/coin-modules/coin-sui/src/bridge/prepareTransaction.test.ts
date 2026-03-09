@@ -13,7 +13,7 @@ jest.mock("./getFeesForTransaction", () => ({
 const TEST_TOKEN_COIN_TYPE = "0x0::sui::TEST_TOKEN";
 
 // Mock findSubAccountById for testing token transactions
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   findSubAccountById: jest.fn().mockImplementation((account, subAccountId) => {
     if (subAccountId === "tokenSubAccountId") {
       return {

@@ -5,7 +5,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { FeePresetOption } from "./useFeePresetOptions";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { buildEstimationKey } from "../utils/feeEstimation";
 

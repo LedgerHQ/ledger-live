@@ -1,4 +1,8 @@
-import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  Operation,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from ".";
 

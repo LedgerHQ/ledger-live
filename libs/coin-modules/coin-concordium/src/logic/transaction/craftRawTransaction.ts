@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import type { CraftedTransaction } from "@ledgerhq/coin-framework/api/index";
+import type { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/index";
 import {
   type Transaction,
   AccountAddress,

@@ -1,7 +1,7 @@
 import type { BroadcastArg } from "@ledgerhq/types-live";
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../logic");
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { broadcast as broadcastLogic } from "../logic";
 import { createTestAccount } from "../test/testHelpers";
 import { broadcast } from "./broadcast";

@@ -1,4 +1,3 @@
-import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
 import type {
   AssetInfo,
   Balance,
@@ -7,8 +6,8 @@ import type {
   MemoNotSupported,
   TransactionIntent,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+} from "@ledgerhq/coin-module-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -24,6 +23,7 @@ import {
   PriorityFeeTooLow,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";

@@ -13,7 +13,7 @@ import {
   Balance,
   ListOperationsOptions,
   CraftedTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { combine } from "../common-logic/transaction/combine";
 import coinConfig, { type CantonConfig } from "../config";
 

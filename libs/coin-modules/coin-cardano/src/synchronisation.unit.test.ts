@@ -1,6 +1,9 @@
-import { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import {
+  AccountShapeInfo,
+  GetAccountShape,
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 

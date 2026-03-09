@@ -1,5 +1,5 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
-import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
+import { genOperation } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
@@ -9,7 +9,7 @@ import perFamilyMock from "../generated/mock";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
-import { Result } from "@ledgerhq/coin-framework/lib/derivation";
+import { Result } from "@ledgerhq/ledger-wallet-framework/lib/derivation";
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};

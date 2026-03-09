@@ -11,7 +11,7 @@ import {
   initMSW,
   makeAccount,
 } from "../fixtures";
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import BigNumber from "bignumber.js";
 import { setEnv } from "@ledgerhq/live-env";

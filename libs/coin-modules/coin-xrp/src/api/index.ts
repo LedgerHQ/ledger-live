@@ -1,5 +1,5 @@
 import {
-  Api,
+  AlpacaApi,
   Cursor,
   ListOperationsOptions as ApiListOperationsOptions,
   Page,
@@ -10,8 +10,9 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
-} from "@ledgerhq/coin-framework/api/index";
-import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {
@@ -32,7 +33,7 @@ import {
 } from "../logic";
 import { ListOperationsOptions, XrpMapMemo } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpMapMemo> {
+export function createApi(config: XrpConfig): AlpacaApi<XrpMapMemo> & BridgeApi<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

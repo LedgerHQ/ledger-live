@@ -1,11 +1,11 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
+import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/serialization";
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../types";

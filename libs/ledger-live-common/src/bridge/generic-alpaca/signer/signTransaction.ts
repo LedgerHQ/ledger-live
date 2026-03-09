@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { StellarSigner } from "@ledgerhq/coin-stellar/types/signer";
 import { TezosSigner } from "@ledgerhq/coin-tezos/types/signer";
 import { LegacySigner, SignTransactionOptions } from "./types";

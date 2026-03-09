@@ -1,7 +1,7 @@
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
-import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getDerivationModesForCurrency } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
-import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/index";
 import { accountDataToAccount, accountToAccountData } from "./cross";
 import { accountUserDataExportSelector, initialState } from "../store";
 

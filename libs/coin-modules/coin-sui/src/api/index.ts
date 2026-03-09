@@ -3,7 +3,7 @@ import {
   CraftedTransaction,
   FeeEstimation,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { type SuiConfig } from "../config";
 import {
   estimateFees,

@@ -1,4 +1,4 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { decode } from "ripple-binary-codec";
 import { createApi } from ".";
 

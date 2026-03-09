@@ -6,7 +6,7 @@ import perFamilyAccountActions from "../../generated/accountActions";
 import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { getAccountSpendableBalance } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { getAccountSpendableBalance } from "@ledgerhq/ledger-wallet-framework/lib/account/helpers";
 
 /** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */
 export function useStakingDrawer({

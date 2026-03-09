@@ -1,4 +1,4 @@
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
 import type { XrplOperation } from "../network/types";
 import { ListOperationsOptions, XrpMemo } from "../types";

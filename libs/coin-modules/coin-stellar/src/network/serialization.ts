@@ -2,9 +2,9 @@
  * Serialization functions from Horizon to Ledger Live types
  */
 
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/parseCurrencyUnit";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { OperationType } from "@ledgerhq/types-live";
 import { Horizon } from "@stellar/stellar-sdk";
 import BigNumber from "bignumber.js";

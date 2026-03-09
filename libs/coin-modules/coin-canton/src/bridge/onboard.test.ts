@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
 import * as signTransactionModule from "../common-logic/transaction/sign";

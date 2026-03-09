@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/live-promise";

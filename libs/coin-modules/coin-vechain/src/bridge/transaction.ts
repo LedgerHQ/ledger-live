@@ -1,18 +1,18 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type {
   Transaction,
   TransactionRaw,
   TransactionStatus,
   TransactionStatusRaw,
 } from "../types";
-import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
-} from "@ledgerhq/coin-framework/serialization";
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 
 export const formatTransaction = (t: Transaction, account: Account): string => {

@@ -1,5 +1,5 @@
-import { AssetInfo, Operation } from "@ledgerhq/coin-framework/api/types";
-import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
+import { AssetInfo, Operation } from "@ledgerhq/coin-module-framework/api/types";
+import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import type { TrongridTxInfo } from "../../types";
 import { Block } from "../types";
 

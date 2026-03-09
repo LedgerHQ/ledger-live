@@ -1,5 +1,5 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

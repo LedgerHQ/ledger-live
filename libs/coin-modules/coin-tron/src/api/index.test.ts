@@ -1,4 +1,4 @@
-import { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
 import {

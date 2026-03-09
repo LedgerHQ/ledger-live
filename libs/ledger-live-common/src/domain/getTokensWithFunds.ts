@@ -1,4 +1,4 @@
-import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { Account } from "@ledgerhq/types-live";
 
 export const getTokensWithFundsMap = (accounts: Account[]) => {

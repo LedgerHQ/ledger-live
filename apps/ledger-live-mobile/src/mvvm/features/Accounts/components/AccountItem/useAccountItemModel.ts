@@ -1,4 +1,4 @@
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/lib/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/lib/derivation";
 import {
   getAccountCurrency,
   getParentAccount,

@@ -1,5 +1,5 @@
 import type { InputEntryFunctionData, RawTransaction } from "@aptos-labs/ts-sdk";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import { APTOS_ASSET_ID, TOKEN_TYPE } from "../constants";
 import type { AptosAPI } from "../network";

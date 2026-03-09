@@ -4,7 +4,7 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { getLedgerByIndex } from "../network";
 import type {
   AffectedNode,

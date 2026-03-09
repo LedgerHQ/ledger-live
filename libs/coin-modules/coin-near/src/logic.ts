@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { utils } from "near-api-js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import {
   NearMappedStakingPosition,
@@ -10,7 +10,7 @@ import {
   NearAccount,
 } from "./types";
 import { createTransaction } from "./createTransaction";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCurrentNearPreloadData } from "./preload";
 import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 

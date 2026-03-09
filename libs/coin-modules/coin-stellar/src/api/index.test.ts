@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import expect from "expect";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";

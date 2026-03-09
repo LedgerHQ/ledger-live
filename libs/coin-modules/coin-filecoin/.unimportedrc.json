@@ -8,6 +8,7 @@
     "proxy-from-env"
   ],
   "ignoreUnused": [
+    "@ledgerhq/coin-module-framework",
     "@ledgerhq/cryptoassets",
     "@ledgerhq/devices",
     "expect"

@@ -9,8 +9,11 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import BigNumber from "bignumber.js";
 import { useBridgeFeeEstimation } from "./useBridgeFeeEstimation";
 import { useCustomFeeValidation } from "./useCustomFeeValidation";

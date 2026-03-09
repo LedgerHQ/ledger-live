@@ -1,9 +1,12 @@
 import BigNumber from "bignumber.js";
-import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import {
+  emptyHistoryCache,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { AssetInfo, Balance } from "@ledgerhq/coin-framework/api/types";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { mergeOps } from "../jsHelpers";
 import { cleanedOperation } from "./utils";
 import { OperationCommon } from "./types";

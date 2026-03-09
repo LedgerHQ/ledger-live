@@ -1,6 +1,9 @@
-import { decodeTokenAccountId, getAccountCurrency } from "@ledgerhq/coin-framework/account";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
+import {
+  decodeTokenAccountId,
+  getAccountCurrency,
+} from "@ledgerhq/ledger-wallet-framework/account";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isAmountSpentFromBalance } from "./logic";

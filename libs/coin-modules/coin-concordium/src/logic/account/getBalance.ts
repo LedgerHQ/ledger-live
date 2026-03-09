@@ -1,4 +1,4 @@
-import type { Balance } from "@ledgerhq/coin-framework/api/types";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getAccountBalance } from "../../network/proxyClient";
 
 export async function getBalance(address: string, currencyId: string): Promise<Balance[]> {

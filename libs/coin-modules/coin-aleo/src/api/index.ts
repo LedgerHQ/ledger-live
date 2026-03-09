@@ -1,5 +1,4 @@
 import type {
-  Api,
   Block,
   BlockInfo,
   Cursor,
@@ -13,9 +12,11 @@ import type {
   TransactionIntent,
   TransactionValidation,
   MemoNotSupported,
-} from "@ledgerhq/coin-framework/api/index";
+  AlpacaApi,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import invariant from "invariant";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
 import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
@@ -24,7 +25,8 @@ import type { AleoTransactionIntentData } from "../types";
 export function createApi(
   config: AleoConfig,
   currencyId: string,
-): Api<MemoNotSupported, AleoTransactionIntentData> {
+): AlpacaApi<MemoNotSupported, AleoTransactionIntentData> &
+  BridgeApi<MemoNotSupported, AleoTransactionIntentData> {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
   coinConfig.setCoinConfig(() => aleoCoinConfig);
   const currency = getCryptoCurrencyById(currencyId);

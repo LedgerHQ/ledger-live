@@ -1,10 +1,10 @@
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";

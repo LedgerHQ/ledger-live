@@ -9,7 +9,7 @@ import type {
   Stake,
   TransactionIntent,
   Validator,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import {
   serializeTransfer,

@@ -1,14 +1,18 @@
-import { isAccountEmpty } from "@ledgerhq/coin-framework/account";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import type {
   AppSpec,
   TransactionTestInput,
   TransactionArg,
   TransactionRes,
-} from "@ledgerhq/coin-framework/bot/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { DeviceModelId } from "@ledgerhq/devices";
+} from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import expect from "expect";

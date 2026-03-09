@@ -11,7 +11,7 @@ import {
   postAptosFullNode,
   TransactionResponseType,
 } from "@aptos-labs/ts-sdk";
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID } from "../../constants";

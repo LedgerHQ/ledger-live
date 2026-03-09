@@ -1,6 +1,6 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import { getAccount, getTransactions, getBlockInfo } from "../api";
 import {
@@ -11,9 +11,9 @@ import {
 } from "../test/fixtures";
 import { getAccountShape, mapRosettaTxnToOperation } from "./synchronisation";
 
-jest.mock("@ledgerhq/coin-framework/account/accountId");
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../api");
 
 describe("synchronisation", () => {

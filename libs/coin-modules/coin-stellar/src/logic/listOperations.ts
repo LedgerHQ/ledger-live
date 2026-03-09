@@ -1,4 +1,4 @@
-import { ListOperationsOptions, Operation } from "@ledgerhq/coin-framework/api/types";
+import { ListOperationsOptions, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { fetchOperations } from "../network";
 import type { StellarOperation } from "../types/bridge";
 

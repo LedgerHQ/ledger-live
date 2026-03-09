@@ -1,8 +1,8 @@
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
+import { toOperationRaw } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";

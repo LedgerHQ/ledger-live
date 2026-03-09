@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account } from "@ledgerhq/types-live";
 import { signMessage } from "./hw-signMessage";
 import { CasperSigner, CasperSignature } from "./types";

@@ -1,6 +1,9 @@
-import { getAccountCurrency, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
+import {
+  getAccountCurrency,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { toNano } from "@ton/core";
 import { BigNumber } from "bignumber.js";

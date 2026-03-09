@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { SuiAccount, SuiResources, SuiValidator, MappedStake } from "./types";
 import { getAccountCurrency } from "../../account";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
 import { getOperationExtra } from "@ledgerhq/coin-sui/getOperationExtra";
 import { OperationType } from "@ledgerhq/types-live";

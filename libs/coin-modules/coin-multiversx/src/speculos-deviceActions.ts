@@ -1,11 +1,11 @@
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "./types";
 

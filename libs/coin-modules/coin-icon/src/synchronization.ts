@@ -1,6 +1,6 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { mergeOps, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { mergeOps, AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
 import BigNumber from "bignumber.js";
 import { getAccount, getCurrentBlockHeight, getOperations } from "./api";

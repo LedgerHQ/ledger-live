@@ -1,4 +1,4 @@
-import { TypedMapMemo } from "@ledgerhq/coin-framework/api/types";
+import { TypedMapMemo } from "@ledgerhq/coin-module-framework/api/types";
 
 export type AccountInfo = {
   isNewAccount: boolean;

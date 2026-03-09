@@ -1,5 +1,5 @@
 import { firstValueFrom, toArray } from "rxjs";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ConcordiumSigner } from "../types";
 import { VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
 import { buildReceive } from "./receive";

@@ -1,5 +1,4 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
+import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -466,11 +465,6 @@ export type AccountInfo = {
   sequence: number;
 };
 
-export type AddressValidationCurrencyParameters = {
-  currency: CryptoCurrency;
-  networkId: number;
-};
-
 export type AlpacaApi<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
@@ -676,32 +670,3 @@ export type AlpacaApi<
    */
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
 };
-
-export type ChainSpecificRules = {
-  getAccountShape: (address: string) => void;
-  getTransactionStatus: {
-    throwIfPendingOperation?: boolean;
-  };
-};
-
-export type BridgeApi<
-  MemoType extends Memo = MemoNotSupported,
-  TxDataType extends TxData = TxDataNotSupported,
-> = {
-  validateIntent: (
-    transactionIntent: TransactionIntent<MemoType, TxDataType>,
-    balances: Balance[],
-    customFees?: FeeEstimation,
-  ) => Promise<TransactionValidation>;
-  getSequence: (address: string) => Promise<bigint>;
-  getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
-  computeIntentType?: (transaction: Record<string, unknown>) => string;
-  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-};
-
-export type Api<
-  MemoType extends Memo = MemoNotSupported,
-  TxDataType extends TxData = TxDataNotSupported,
-> = AlpacaApi<MemoType, TxDataType> & BridgeApi<MemoType, TxDataType>;

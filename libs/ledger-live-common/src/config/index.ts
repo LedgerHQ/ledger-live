@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ConfigInfo, LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 export type CurrencyLiveConfigDefinition = Record<`config_currency_${string}`, ConfigInfo>;
 

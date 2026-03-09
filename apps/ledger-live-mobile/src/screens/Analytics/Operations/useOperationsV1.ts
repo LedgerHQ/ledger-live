@@ -1,5 +1,5 @@
-import { groupAccountsOperationsByDay } from "@ledgerhq/coin-framework/lib/account/groupOperations";
-import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
+import { groupAccountsOperationsByDay } from "@ledgerhq/ledger-wallet-framework/lib/account/groupOperations";
+import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/lib/operation";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "~/context/hooks";

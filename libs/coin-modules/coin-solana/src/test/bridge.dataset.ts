@@ -1,4 +1,3 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
@@ -7,6 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/lib/account/accountId";
 import { getEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";

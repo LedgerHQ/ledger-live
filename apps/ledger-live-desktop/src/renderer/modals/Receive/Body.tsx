@@ -21,8 +21,8 @@ import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
 import StepOptions from "./steps/StepOptions";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import {
   onboardingReceiveFlowSelector,

@@ -1,5 +1,5 @@
 import { EntryFunctionPayloadResponse, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { APTOS_ASSET_ID, OP_TYPE } from "../constants";
 import { AptosTransaction } from "../types";

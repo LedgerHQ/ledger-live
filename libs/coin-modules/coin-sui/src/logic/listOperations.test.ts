@@ -1,4 +1,4 @@
-import { type Operation as Op, type Page } from "@ledgerhq/coin-framework/api/types";
+import { type Operation as Op, type Page } from "@ledgerhq/coin-module-framework/api/types";
 import { getListOperations, withApi } from "../network/sdk";
 import { listOperations } from "./listOperations";
 

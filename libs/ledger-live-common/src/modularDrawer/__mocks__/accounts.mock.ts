@@ -1,4 +1,4 @@
-import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/lib/mocks/account";
 import BigNumber from "bignumber.js";
 import {
   mockBtcCryptoCurrency,

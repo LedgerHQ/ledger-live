@@ -75,7 +75,8 @@
   ],
   "ignoreUnused": [
     "@bitcoinerlab/secp256k1",
-    "@ledgerhq/coin-framework",
+    "@ledgerhq/coin-module-framework",
+    "@ledgerhq/ledger-wallet-framework",
     "@ledgerhq/cryptoassets",
     "@ledgerhq/devices",
     "@ledgerhq/live-env",

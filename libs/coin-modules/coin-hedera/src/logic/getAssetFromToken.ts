@@ -1,4 +1,4 @@
-import type { AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInfo {

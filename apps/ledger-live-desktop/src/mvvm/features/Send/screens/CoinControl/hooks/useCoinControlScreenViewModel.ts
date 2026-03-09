@@ -1,5 +1,8 @@
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import type {
   SendFlowTransactionActions,

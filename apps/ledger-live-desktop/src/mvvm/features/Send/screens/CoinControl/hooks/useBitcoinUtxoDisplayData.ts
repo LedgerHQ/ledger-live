@@ -10,7 +10,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { BigNumber } from "bignumber.js";
 import { useMemo } from "react";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 
 function isBitcoinBasedAccount(account: AccountLike): account is BitcoinAccount {
   return "bitcoinResources" in account && account.bitcoinResources !== undefined;

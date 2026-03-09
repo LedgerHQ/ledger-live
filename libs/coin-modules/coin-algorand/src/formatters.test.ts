@@ -4,13 +4,13 @@ import formatters from "./formatters";
 import type { AlgorandAccount, AlgorandOperation } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   getAccountCurrency: jest.fn().mockReturnValue({
     units: [{ name: "Algo", code: "ALGO", magnitude: 6 }],
   }),
 }));
 
-jest.mock("@ledgerhq/coin-framework/currencies/index", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/index", () => ({
   formatCurrencyUnit: jest
     .fn()
     .mockImplementation((unit: Unit, amount: BigNumber, options?: { showCode?: boolean }) => {

@@ -1,4 +1,4 @@
-import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
+import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

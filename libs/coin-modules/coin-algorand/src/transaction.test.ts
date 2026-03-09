@@ -5,11 +5,11 @@ import transactionModule, { formatTransaction } from "./transaction";
 import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   getAccountCurrency: jest.fn().mockImplementation((account: Account) => account.currency),
 }));
 
-jest.mock("@ledgerhq/coin-framework/currencies/index", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/index", () => ({
   formatCurrencyUnit: jest.fn().mockImplementation((unit: Unit, amount: BigNumber) => {
     return `${amount.toString()} ${unit.code}`;
   }),

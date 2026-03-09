@@ -1,5 +1,5 @@
 import { assert } from "console";
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { Marker } from "../network/types";
 import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";

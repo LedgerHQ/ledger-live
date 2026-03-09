@@ -168,7 +168,8 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.9.15",
     "@grpc/proto-loader": "^0.7.15",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/concordium-core": "workspace:^",

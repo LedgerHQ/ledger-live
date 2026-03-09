@@ -1,4 +1,4 @@
-import type { AlpacaApi, Operation } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from ".";

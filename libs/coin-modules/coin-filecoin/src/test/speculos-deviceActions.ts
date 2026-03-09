@@ -2,8 +2,8 @@ import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import invariant from "invariant";
 import { fromEthAddress, fromString, toEthAddress } from "iso-filecoin/address";
 import {

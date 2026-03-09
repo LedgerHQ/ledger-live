@@ -1,4 +1,4 @@
-import buildCoinConfig from "@ledgerhq/coin-framework/config";
+import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { ConcordiumCoinConfig } from "./types/config";
 

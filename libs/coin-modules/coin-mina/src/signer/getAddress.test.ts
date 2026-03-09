@@ -1,6 +1,6 @@
-import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
+import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { MinaSigner } from "../types/signer";
 import resolver from "./getAddress";

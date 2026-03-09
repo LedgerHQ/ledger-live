@@ -52,7 +52,7 @@ import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;

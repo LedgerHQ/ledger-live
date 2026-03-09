@@ -1,6 +1,6 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";

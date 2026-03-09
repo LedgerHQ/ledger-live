@@ -10,7 +10,10 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
 import { sendFeatures, getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useTranslation } from "react-i18next";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import type { FeePresetOption } from "../../../../hooks/useFeePresetOptions";

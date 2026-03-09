@@ -1,4 +1,4 @@
-import { genAddress, genHex } from "@ledgerhq/coin-framework/mocks/helpers";
+import { genAddress, genHex } from "@ledgerhq/ledger-wallet-framework/mocks/helpers";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";

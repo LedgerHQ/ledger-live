@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-bitcoin": "workspace:^",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",

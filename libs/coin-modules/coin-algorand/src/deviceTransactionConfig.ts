@@ -1,7 +1,7 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { extractTokenId } from "./tokens";

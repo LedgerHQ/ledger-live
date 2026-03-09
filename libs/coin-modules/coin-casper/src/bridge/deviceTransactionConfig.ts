@@ -1,4 +1,4 @@
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

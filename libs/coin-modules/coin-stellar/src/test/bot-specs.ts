@@ -1,8 +1,8 @@
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

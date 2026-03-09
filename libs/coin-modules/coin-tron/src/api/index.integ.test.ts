@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/index";
 import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";

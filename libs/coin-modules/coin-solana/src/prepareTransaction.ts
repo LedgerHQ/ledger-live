@@ -1,6 +1,4 @@
-import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   AmountRequired,
@@ -10,6 +8,8 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {

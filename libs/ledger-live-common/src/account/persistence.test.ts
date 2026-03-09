@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";
 
 setSupportedCurrencies(["ethereum"]);

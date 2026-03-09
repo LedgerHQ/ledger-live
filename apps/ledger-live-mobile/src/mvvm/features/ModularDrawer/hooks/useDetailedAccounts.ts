@@ -13,7 +13,7 @@ import {
   AccountTuple,
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { AccountLike } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { ExtendedRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";

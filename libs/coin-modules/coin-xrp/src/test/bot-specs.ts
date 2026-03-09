@@ -1,8 +1,12 @@
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import expect from "expect";
 import invariant from "invariant";
 import type { Transaction } from "../types";
