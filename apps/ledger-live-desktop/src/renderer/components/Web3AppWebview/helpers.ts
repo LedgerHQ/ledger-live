@@ -68,16 +68,21 @@ export function useWebviewState(
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
 
-  // Mirror mobile's originWhitelist: if the feature flag is on and the initial URL is not
-  // allowed by manifest.domains, fall back to manifest.url so the first load is also gated.
+  // Mirror mobile's originWhitelist: if the feature flag is on, only load URLs that pass
+  // the manifest.domains whitelist. Fall back to manifest.url if initialURL is rejected,
+  // and to about:blank if neither is allowed (e.g. domains: []).
   const webviewSrc = useMemo(() => {
-    if (
-      manifestDomainCheckEnabled &&
-      !isUrlAllowedByManifestDomains(initialURL, manifest.domains ?? [])
-    ) {
+    if (!manifestDomainCheckEnabled) {
+      return initialURL;
+    }
+    const domains = manifest.domains ?? [];
+    if (isUrlAllowedByManifestDomains(initialURL, domains)) {
+      return initialURL;
+    }
+    if (isUrlAllowedByManifestDomains(manifest.url.toString(), domains)) {
       return manifest.url.toString();
     }
-    return initialURL;
+    return "about:blank";
   }, [initialURL, manifest.domains, manifest.url, manifestDomainCheckEnabled]);
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
@@ -179,13 +184,18 @@ export function useWebviewState(
     [webviewRef],
   );
 
+  const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "about:blank";
+
   const handleDidStartLoading = useCallback(() => {
     setState(oldState => ({
       ...oldState,
       loading: true,
-      isAppUnavailable: false,
+      // When the webview is intentionally pointed at about:blank due to domain
+      // restrictions, preserve isAppUnavailable so the blocked-app UI is not
+      // cleared by the loading event that about:blank itself triggers.
+      isAppUnavailable: isBlockedByDomainCheck ?? false,
     }));
-  }, []);
+  }, [isBlockedByDomainCheck]);
 
   const handleDidStopLoading = useCallback(() => {
     setState(oldState => ({

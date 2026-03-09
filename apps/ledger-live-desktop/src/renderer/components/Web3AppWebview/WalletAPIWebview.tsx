@@ -341,6 +341,7 @@ function useWebView(
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
+          if (origin === "null") return;
           webview.contentWindow?.postMessage(message, origin);
         }
       },
@@ -400,7 +401,7 @@ function useWebView(
 
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
     // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
-    window.api?.openWindow(id, manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined);
+    globalThis.api?.openWindow(id, manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined);
   }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
   useEffect(() => {

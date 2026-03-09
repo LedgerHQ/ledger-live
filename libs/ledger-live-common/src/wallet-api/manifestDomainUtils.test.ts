@@ -122,40 +122,26 @@ describe("manifestDomainUtils", () => {
 
   describe("isUrlAllowedByManifestDomains", () => {
     it("should allow https URL when domains include https://*", () => {
-      expect(
-        isUrlAllowedByManifestDomains("https://example.com/path", ["https://*"]),
-      ).toBe(true);
-      expect(
-        isUrlAllowedByManifestDomains("https://any.domain.com/foo", ["https://*"]),
-      ).toBe(true);
+      expect(isUrlAllowedByManifestDomains("https://example.com/path", ["https://*"])).toBe(true);
+      expect(isUrlAllowedByManifestDomains("https://any.domain.com/foo", ["https://*"])).toBe(true);
     });
 
     it("should allow exact origin match", () => {
       expect(
-        isUrlAllowedByManifestDomains("https://example.com/page", [
-          "https://example.com",
-        ]),
+        isUrlAllowedByManifestDomains("https://example.com/page", ["https://example.com"]),
       ).toBe(true);
     });
 
     it("should reject URL when origin does not match any pattern", () => {
-      expect(
-        isUrlAllowedByManifestDomains("https://other.com/path", [
-          "https://example.com",
-        ]),
-      ).toBe(false);
+      expect(isUrlAllowedByManifestDomains("https://other.com/path", ["https://example.com"])).toBe(
+        false,
+      );
     });
 
     it("should reject non-https and non-http schemes", () => {
-      expect(
-        isUrlAllowedByManifestDomains("javascript:alert(1)", ["https://*"]),
-      ).toBe(false);
-      expect(
-        isUrlAllowedByManifestDomains("data:text/html,<script>", ["https://*"]),
-      ).toBe(false);
-      expect(
-        isUrlAllowedByManifestDomains("file:///etc/passwd", ["https://*"]),
-      ).toBe(false);
+      expect(isUrlAllowedByManifestDomains("javascript:alert(1)", ["https://*"])).toBe(false);
+      expect(isUrlAllowedByManifestDomains("data:text/html,<script>", ["https://*"])).toBe(false);
+      expect(isUrlAllowedByManifestDomains("file:///etc/passwd", ["https://*"])).toBe(false);
     });
 
     it("should return false for empty or missing domains", () => {
@@ -164,50 +150,76 @@ describe("manifestDomainUtils", () => {
     });
 
     it("should return false for invalid URL", () => {
-      expect(isUrlAllowedByManifestDomains("not-a-url", ["https://*"])).toBe(
-        false,
-      );
+      expect(isUrlAllowedByManifestDomains("not-a-url", ["https://*"])).toBe(false);
     });
 
     it("should allow http URL when domains include http pattern", () => {
-      expect(
-        isUrlAllowedByManifestDomains("http://example.com/", ["http://*"]),
-      ).toBe(true);
-      expect(
-        isUrlAllowedByManifestDomains("http://example.com/", ["http://"]),
-      ).toBe(true);
+      expect(isUrlAllowedByManifestDomains("http://example.com/", ["http://*"])).toBe(true);
+      expect(isUrlAllowedByManifestDomains("http://example.com/", ["http://"])).toBe(true);
     });
 
     it("should allow subdomain when pattern is https://*.example.com", () => {
       expect(
-        isUrlAllowedByManifestDomains("https://app.example.com/page", [
-          "https://*.example.com",
-        ]),
+        isUrlAllowedByManifestDomains("https://app.example.com/page", ["https://*.example.com"]),
       ).toBe(true);
       expect(
-        isUrlAllowedByManifestDomains("https://example.com/page", [
-          "https://*.example.com",
-        ]),
-      ).toBe(true);
+        isUrlAllowedByManifestDomains("https://example.com/page", ["https://*.example.com"]),
+      ).toBe(false);
     });
 
     it("should reject different domain for https://*.example.com pattern", () => {
       expect(
-        isUrlAllowedByManifestDomains("https://evil.com/page", [
-          "https://*.example.com",
-        ]),
+        isUrlAllowedByManifestDomains("https://evil.com/page", ["https://*.example.com"]),
       ).toBe(false);
     });
 
     it("should not allow all domains for * alone (security)", () => {
-      expect(isUrlAllowedByManifestDomains("https://any.com", ["*"])).toBe(
+      expect(isUrlAllowedByManifestDomains("https://any.com", ["*"])).toBe(false);
+    });
+
+    it("should return false for http vs https when only https in domains", () => {
+      expect(isUrlAllowedByManifestDomains("http://example.com/", ["https://*"])).toBe(false);
+    });
+
+    it("should allow URL with non-standard port when pattern includes that port", () => {
+      expect(
+        isUrlAllowedByManifestDomains("http://localhost:3000/app", ["http://localhost:3000"]),
+      ).toBe(true);
+    });
+
+    it("should reject URL with non-standard port when pattern omits the port", () => {
+      expect(isUrlAllowedByManifestDomains("http://localhost:3000/app", ["http://localhost"])).toBe(
         false,
       );
     });
 
-    it("should return false for http vs https when only https in domains", () => {
+    it("should reject URL without port when pattern specifies a port", () => {
+      expect(isUrlAllowedByManifestDomains("http://localhost/app", ["http://localhost:3000"])).toBe(
+        false,
+      );
+    });
+
+    it("should allow subdomain with port when wildcard pattern includes that port", () => {
       expect(
-        isUrlAllowedByManifestDomains("http://example.com/", ["https://*"]),
+        isUrlAllowedByManifestDomains("https://app.example.com:8080/page", [
+          "https://*.example.com:8080",
+        ]),
+      ).toBe(true);
+    });
+
+    it("should reject subdomain with different port than wildcard pattern", () => {
+      expect(
+        isUrlAllowedByManifestDomains("https://app.example.com:9000/page", [
+          "https://*.example.com:8080",
+        ]),
+      ).toBe(false);
+    });
+
+    it("should reject subdomain with port when wildcard pattern has no port", () => {
+      expect(
+        isUrlAllowedByManifestDomains("https://app.example.com:8080/page", [
+          "https://*.example.com",
+        ]),
       ).toBe(false);
     });
   });
