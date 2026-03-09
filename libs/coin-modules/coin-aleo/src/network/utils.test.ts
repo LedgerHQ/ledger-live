@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI5xx } from "@ledgerhq/errors";
-import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
+import { EXPLORER_TRANSFER_TYPES } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
 import type { ProvableApi } from "../types";
-import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
 import {
+  getMockedRecord,
   getMockedPublicTransaction,
   getMockedTransactionDetails,
-} from "../__tests__/fixtures/transaction.fixture";
+} from "../__tests__/fixtures/api.fixture";
 import * as logicUtils from "../logic/utils";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { accessProvableApi } from "./utils";
