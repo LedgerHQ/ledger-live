@@ -1,5 +1,5 @@
 import { spawn, exec, ChildProcessWithoutNullStreams } from "child_process";
-import { createServer } from "node:net";
+import { createServer, createConnection } from "node:net";
 import { randomInt, randomUUID } from "node:crypto";
 import { log } from "@ledgerhq/logs";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -119,6 +119,39 @@ async function isPortAvailable(port: number): Promise<boolean> {
 
     server.listen(port);
   });
+}
+
+async function waitForPortReady(
+  port: number,
+  host = "127.0.0.1",
+  timeoutMs = 30_000,
+  intervalMs = 200,
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const isReady = await new Promise<boolean>(resolve => {
+      const socket = createConnection({ port, host }, () => {
+        socket.destroy();
+        resolve(true);
+      });
+      socket.once("error", () => {
+        socket.destroy();
+        resolve(false);
+      });
+      socket.setTimeout(1_000, () => {
+        socket.destroy();
+        resolve(false);
+      });
+    });
+
+    if (isReady) return;
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+
+  throw new Error(
+    `Speculos API port ${port} on ${host} not ready after ${timeoutMs}ms`,
+  );
 }
 
 const BASE_PORT = 30000;
@@ -348,7 +381,12 @@ export async function createSpeculosDevice(
     }
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
-      setTimeout(() => resolveReady(true), 500);
+      const probePort = isSpeculosWebsocket
+        ? (ports.apduPort as number)
+        : (ports.apiPort as number);
+      waitForPortReady(probePort)
+        .then(() => resolveReady(true))
+        .catch(e => rejectReady(e));
     } else if (data.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
