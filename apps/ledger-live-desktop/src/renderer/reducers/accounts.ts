@@ -8,7 +8,7 @@ import {
   isUpToDateAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { getEnv } from "@ledgerhq/live-env";
+
 import isEqual from "lodash/isEqual";
 import { State } from ".";
 import { Handlers } from "./types";
@@ -86,18 +86,7 @@ export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSe
 
 // FIXME we might reboot this idea later!
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
-  accounts.map(a => {
-    const { lastSyncDate } = a;
-    const { blockAvgTime } = a.currency;
-    let isUpToDate = true;
-    if (blockAvgTime) {
-      const outdated =
-        Date.now() - (lastSyncDate.getTime() || 0) >
-        blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
-      isUpToDate = !outdated;
-    }
-    return { account: a, isUpToDate };
-  }),
+  accounts.map(a => ({ account: a, isUpToDate: isUpToDateAccount(a) })),
 );
 
 export const hasAccountsSelector = createSelector(

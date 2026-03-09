@@ -25,7 +25,7 @@ import {
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
-import { getEnv } from "@ledgerhq/live-env";
+
 import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,
@@ -310,18 +310,7 @@ export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
 );
 
 export const accountsWithUpToDateCheckSelector = createSelector(accountsSelector, accounts =>
-  accounts.map(a => {
-    const { lastSyncDate } = a;
-    const { blockAvgTime } = a.currency;
-    let isUpToDate = false;
-    // if (blockAvgTime) {
-    //   const outdated =
-    //     Date.now() - (lastSyncDate.getTime() || 0) >
-    //     blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY") * 0;
-    //   isUpToDate = !outdated;
-    // }
-    return { account: a, isUpToDate };
-  }),
+  accounts.map(a => ({ account: a, isUpToDate: isUpToDateAccount(a) })),
 );
 
 function accountHasPositiveBalance(account: AccountLike) {

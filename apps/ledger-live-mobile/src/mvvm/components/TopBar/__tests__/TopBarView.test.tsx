@@ -19,11 +19,18 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
   };
 });
 
+jest.mock("../components/SyncErrorBottomSheet", () => ({
+  SyncErrorBottomSheet: () => null,
+}));
+
 describe("TopBarView", () => {
   const onMyLedgerPress = jest.fn();
   const onDiscoverPress = jest.fn();
   const onNotificationsPress = jest.fn();
   const onSettingsPress = jest.fn();
+
+  const openSyncDrawer = jest.fn();
+  const closeSyncDrawer = jest.fn();
 
   const defaultProps = {
     onMyLedgerPress,
@@ -36,6 +43,9 @@ describe("TopBarView", () => {
     isSyncPending: false,
     listOfErrorAccountNames: "",
     syncAccessibilityLabel: "Synchronize",
+    isSyncDrawerOpen: false,
+    openSyncDrawer,
+    closeSyncDrawer,
   };
 
   beforeEach(() => {
@@ -59,7 +69,7 @@ describe("TopBarView", () => {
   it("should render bell icon when there are no unread notifications", () => {
     const { getByTestId, queryByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
 
-    expect(getByTestId("icon-bell")).toBeTruthy();
+    expect(getByTestId("icon-bell")).toBeVisible();
     expect(queryByTestId("icon-bell-notification")).toBeNull();
   });
 
@@ -68,7 +78,7 @@ describe("TopBarView", () => {
       <TopBarView {...defaultProps} hasUnreadNotifications />,
     );
 
-    expect(getByTestId("icon-bell-notification")).toBeTruthy();
+    expect(getByTestId("icon-bell-notification")).toBeVisible();
     expect(queryByTestId("icon-bell")).toBeNull();
   });
 
@@ -77,7 +87,7 @@ describe("TopBarView", () => {
       <TopBarView {...defaultProps} hasAccounts isSyncError />,
     );
 
-    expect(getByTestId("topbar-sync")).toBeTruthy();
+    expect(getByTestId("topbar-sync")).toBeVisible();
   });
 
   it("should not render sync icon button when there are no accounts", () => {

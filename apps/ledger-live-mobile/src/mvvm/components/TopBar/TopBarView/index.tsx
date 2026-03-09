@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { IconButton } from "@ledgerhq/lumen-ui-rnative";
 import {
   Compass,
@@ -22,6 +22,9 @@ type TopBarViewProps = {
   isSyncPending: boolean;
   listOfErrorAccountNames: string;
   syncAccessibilityLabel: string;
+  isSyncDrawerOpen: boolean;
+  openSyncDrawer: () => void;
+  closeSyncDrawer: () => void;
 };
 
 export function TopBarView({
@@ -35,12 +38,10 @@ export function TopBarView({
   isSyncPending,
   listOfErrorAccountNames,
   syncAccessibilityLabel,
+  isSyncDrawerOpen,
+  openSyncDrawer,
+  closeSyncDrawer,
 }: Readonly<TopBarViewProps>) {
-  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
-
-  const openSyncDrawer = useCallback(() => setIsSyncDrawerOpen(true), []);
-  const closeSyncDrawer = useCallback(() => setIsSyncDrawerOpen(false), []);
-
   const notificationIcon = useCallback<
     NonNullable<React.ComponentProps<typeof IconButton>["icon"]>
   >(

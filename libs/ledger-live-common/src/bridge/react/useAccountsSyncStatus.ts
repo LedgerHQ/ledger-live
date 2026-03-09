@@ -18,7 +18,7 @@ export function useAccountsSyncStatus(
 ): AccountsSyncStatus {
   const allAccounts = accountsWithUpToDateCheck.map(item => item.account);
   const isUpToDateByAccountId = new Map(
-    accountsWithUpToDateCheck.map(item => [item.account.id, item.isUpToDate === true]),
+    accountsWithUpToDateCheck.map(item => [item.account.id, item.isUpToDate ?? true]),
   );
 
   const batchState = useBatchAccountsSyncState({ accounts: allAccounts });

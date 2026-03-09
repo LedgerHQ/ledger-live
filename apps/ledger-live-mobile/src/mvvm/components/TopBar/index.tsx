@@ -22,6 +22,9 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     isSyncPending,
     listOfErrorAccountNames,
     syncAccessibilityLabel,
+    isSyncDrawerOpen,
+    openSyncDrawer,
+    closeSyncDrawer,
   } = useTopBarViewModel(navigation, screenName);
 
   return (
@@ -36,6 +39,9 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
       isSyncPending={isSyncPending}
       listOfErrorAccountNames={listOfErrorAccountNames}
       syncAccessibilityLabel={syncAccessibilityLabel}
+      isSyncDrawerOpen={isSyncDrawerOpen}
+      openSyncDrawer={openSyncDrawer}
+      closeSyncDrawer={closeSyncDrawer}
     />
   );
 }
