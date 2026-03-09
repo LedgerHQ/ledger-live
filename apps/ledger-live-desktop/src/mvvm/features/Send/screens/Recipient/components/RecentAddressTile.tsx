@@ -43,8 +43,8 @@ export function RecentAddressTile({ recentAddress, onSelect, onRemove }: RecentA
     recentAddress.ensName ??
     (recentAddress.isLedgerAccount && accountName
       ? accountName
-      : recentAddress.name ??
-        formatAddress(recentAddress.address, { prefixLength: 5, suffixLength: 4 }));
+      : (recentAddress.name ??
+        formatAddress(recentAddress.address, { prefixLength: 5, suffixLength: 4 })));
 
   const dateText = formatRelativeDate(recentAddress.lastUsedAt);
 
