@@ -6,10 +6,10 @@ import { useNavigate } from "react-router";
 import { ViewAllTile } from "./ViewAllTile";
 import { AssetIcon } from "./AssetIcon";
 import { track } from "~/renderer/analytics/segment";
-import { TRACKING_PAGE_NAME } from "../utils/constants";
 import FearAndGreed from "LLD/features/FearAndGreed";
 import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
 import { ScrollArrowButton } from "./ScrollArrowButton";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "../../Portfolio/utils/constants";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -24,7 +24,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
       track("button_clicked", {
         button: "Market Tile",
         currency: id,
-        page: TRACKING_PAGE_NAME,
+        page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
       navigate(`/market/${id}`);
     },
