@@ -541,7 +541,7 @@ export async function getInternalTransactionsByBlock(
           sort: "asc",
         }),
       },
-      1, // do not retry on error
+      0, // do not retry on error
     );
 
     const ops = Array.isArray(raw) ? raw : [];
