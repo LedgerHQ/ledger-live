@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.8
+
+### Minor Changes
+
+- [#15187](https://github.com/LedgerHQ/ledger-live/pull/15187) [`9b27d33`](https://github.com/LedgerHQ/ledger-live/commit/9b27d33c7c660cd408b43aeeb07ec3d79f3855af) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: swap back navigation in legacy
+
 ## 3.109.0-next.7
 
 ### Minor Changes
