@@ -1,16 +1,16 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { CryptoAddressesBannerView } from "../CryptoAddressesBannerView";
-
-const MockIcon = () => <span data-testid="mock-icon" />;
+import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 
 const defaultProps = {
   title: "Add account",
   description: "You have no accounts",
-  icon: MockIcon,
+  icon: Wallet,
   onGoToAccounts: jest.fn(),
   onAddAccount: jest.fn(),
   firstThreeCurrencies: [],
+  buttonText: undefined,
 };
 
 describe("CryptoAddressesBannerView", () => {

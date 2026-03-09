@@ -9,6 +9,7 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { track } from "~/renderer/analytics/segment";
 import { useNavigate } from "react-router";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 const CRYPTO_ADDRESSES_BANNER_SOURCE = "portfolio_crypto_addresses_banner";
 
@@ -32,13 +33,13 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
   );
 
   const hasAccount = accounts.length > 0;
-  const accountsAmount = accounts.length;
-  const firstThreeCurrencies = accounts.slice(0, 3).map(a => getAccountCurrency(a));
+  const accountsCount = accounts.length;
+  const firstThreeCurrencies = [...new Set(accounts.map(a => getAccountCurrency(a)))].slice(0, 3);
 
   const onGoToAccounts = useCallback(() => {
     track("button_clicked", {
       button: "accounts",
-      page: "crypto_addresses_banner",
+      page: PORTFOLIO_TRACKING_PAGE_NAME,
     });
     navigate("/accounts");
   }, [navigate]);
@@ -50,12 +51,12 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
   return {
     title: t("assets.cryptoAddresses"),
     description: hasAccount
-      ? t("assets.addressCount", { count: accountsAmount })
+      ? t("assets.addressCount", { count: accountsCount })
       : t("assets.noCryptoAddresses"),
     icon: Wallet,
     onGoToAccounts,
     onAddAccount,
-    buttonText: !hasAccount ? t("assets.addCryptoAddress") : undefined,
+    buttonText: hasAccount ? undefined : t("assets.addCryptoAddress"),
     firstThreeCurrencies,
   };
 };

@@ -23,10 +23,12 @@ export const CryptoAddressesBannerView = memo(function CryptoAddressesBannerView
   firstThreeCurrencies,
 }: CryptoAddressesBannerViewModelResult) {
   const handleClick = useCallback(() => {
-    if (!buttonText) {
-      onGoToAccounts?.();
+    if (buttonText) {
+      onAddAccount();
+    } else {
+      onGoToAccounts();
     }
-  }, [buttonText, onGoToAccounts]);
+  }, [buttonText, onGoToAccounts, onAddAccount]);
 
   return (
     <Card data-testid="crypto-addresses-banner" onClick={handleClick}>
@@ -43,7 +45,14 @@ export const CryptoAddressesBannerView = memo(function CryptoAddressesBannerView
         </CardLeading>
         {buttonText && (
           <CardTrailing>
-            <Button appearance="base" size="sm" onClick={onAddAccount}>
+            <Button
+              appearance="base"
+              size="sm"
+              onClick={e => {
+                e.stopPropagation();
+                onAddAccount?.();
+              }}
+            >
               {buttonText}
             </Button>
           </CardTrailing>
