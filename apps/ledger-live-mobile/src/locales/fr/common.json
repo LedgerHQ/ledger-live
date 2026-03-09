@@ -10,6 +10,9 @@
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
+    "fee" : "Frais",
+    "stake" : "Staké",
+    "validator" : "Validateur",
     "delete" : "Effacer",
     "paste" : "Coller",
     "yes" : "Oui",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Actualisation – Dernière mise à jour {{timeAgo}}",
+      "refreshingInitial" : "Actualisation...",
+      "upToDate" : "Tout est à jour"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "Annuler",
-      "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
+      "description" : "Envoyez 0 {{ticker}} à votre propre adresse. L’annulation n’est pas garantie. Si le réseau traite votre transaction initiale avant cette demande d’annulation, vos actifs seront envoyés au bénéficiaire."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Vous ne pouvez pas annuler la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Mise à jour disponible",
+          "manager" : "Mise à jour de Ledger OS disponible"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Mettre à jour"
+      },
       "title" : "Mise à jour disponible",
       "descriptionDeviceName" : "Appuyez pour mettre à jour le système d’exploitation de {{deviceName}} vers la version {{firmwareVersion}}.",
       "descriptionProductName" : "Appuyez pour mettre à jour le système d’exploitation de votre {{productName}} vers la version {{firmwareVersion}}."
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse copiée",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redéléguer",
+      "earn" : "Gagner"
+    },
+    "stakeBanner" : {
+      "title" : "Gagner des récompenses avec MINA",
+      "altTitle" : "Gérer votre délégation de MINA",
+      "description" : "Déléguez vos MINA à un producteur de blocs et percevez les récompenses générées. Les récompenses sont calculées en fonction du montant délégué.",
+      "altDescription" : "Modifiez vos paramètres de délégation ou arrêtez la délégation de vos MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Délégué à",
+      "stakedBalance" : "Solde de staking",
+      "producerAddress" : "Adresse du producteur",
+      "delegatedToTooltip" : "Nom du producteur de blocs auquel vous accordez la délégation",
+      "stakedBalanceTooltip" : "Montant total de MINA actuellement stakés avec ce validateur",
+      "producerAddressTooltip" : "Adresse publique du producteur de blocs auquel vous accordez la délégation"
+    },
+    "delegators" : "Délégants",
+    "memoPlaceholder" : "Mémo facultatif",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choisir un validateur",
+        "connectDevice" : "Connecter votre appareil",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Staker des MINA",
+      "help" : "Pour déléguer vos MINA, sélectionnez un validateur dans la liste ci-dessous.",
+      "success" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre demande de modification de délégation a été envoyée."
+      },
+      "error" : {
+        "title" : "Erreur lors de l’émission de la transaction"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "showAll" : "Afficher tout",
+      "showLess" : "Afficher moins",
+      "iDelegate" : "Je délègue"
+    }
+  },
   "stellar" : {
     "token" : "Actifs",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Mémo facultatif"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "Sécurisez vos actifs et exploitez tout leur potentiel.",
       "buttonLabel" : "Explorer"
     },
+    "widget" : {
+      "title" : "Finalisez la configuration de votre wallet",
+      "subtitle" : "Commencez par y déposer des actifs."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Configurez votre appareil Ledger"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount_one" : "{{count}} compte",
     "accountCount_other" : "{{count}} comptes",
+    "perpetualsBanner" : "Actuellement uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
     "errors" : {
       "title" : "Échec de la connexion",
       "backend" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
