@@ -1601,6 +1601,25 @@
     "bannerCta" : "Empezar la configuración",
     "continue" : "Continuar"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ no puede usar la Firma Visible con esta transacción.",
+      "subtitle" : "Usa cualquier otro dispositivo Ledger para verificar los detalles de esta transacción antes de firmarla. Sin la Firma Visible, corres el riesgo de perder todos tus activos.",
+      "continue" : "Continúa por tu cuenta y riesgo."
+    },
+    "info" : {
+      "title" : "El {{date}} finalizará la compatibilidad de {{coinName}} con el {{device}}™ mediante Ledger Live™.",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a todos los proveedores de servicios de Ledger Live y recibir una atención al cliente de la máxima calidad.",
+      "reminder" : "No volver a recordármelo"
+    },
+    "error" : {
+      "title" : "{{device}}™ no es compatible con esta función",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Live."
+    },
+    "update" : "Descubre tu programa de renovación",
+    "learnMore" : "Más información",
+    "continue" : "Continuar"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Comprar dispositivo",
     "debugDrawers" : {
@@ -2757,6 +2776,11 @@
       "connectDevice" : {
         "title" : "Todavía no se ha hecho una copia de respaldo del acceso a tu billetera"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Actualizando - Última actualización {{timeAgo}}",
+      "refreshingInitial" : "Actualizando...",
+      "upToDate" : "Estás al día"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "Cancelar",
-      "description" : "Enviando 0 {{ticker}} a tu propia dirección."
+      "description" : "Enviando 0 {{ticker}} a tu propia dirección. La cancelación no está garantizada. Si la red procesa tu transacción original antes de esta solicitud de cancelación, los fondos se enviarán igualmente al receptor."
     },
     "error" : {
       "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
@@ -5040,6 +5064,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Actualización del SO disponible",
+          "manager" : "Actualización de Ledger OS disponible"
+        },
+        "version" : "Versión {{firmwareVersion}}",
+        "cta" : "Actualizar"
+      },
       "title" : "Actualización del SO disponible",
       "descriptionDeviceName" : "Toca para actualizar “{{deviceName}}” a la versión {{firmwareVersion}} del SO.",
       "descriptionProductName" : "Toca para actualizar tu {{productName}} a la versión {{firmwareVersion}} del SO."
@@ -7693,6 +7725,10 @@
       "description" : "Protege tus activos y ve más allá.",
       "buttonLabel" : "Mira lo que puedes hacer ahora"
     },
+    "widget" : {
+      "title" : "A continuación, termina de configurar la wallet",
+      "subtitle" : "Para empezar, agrega fondos a tu wallet."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Configura tu dispositivo Ledger"
@@ -8326,6 +8362,7 @@
     "emptyAssetList" : "No se encontraron activos",
     "accountCount_one" : "{{count}} cuenta",
     "accountCount_other" : "{{count}} cuentas",
+    "perpetualsBanner" : "Actualmente solo se admite con USDC en la cadena Arbitrum.",
     "errors" : {
       "title" : "La conexión ha fallado",
       "backend" : "Algo ha salido mal en nuestro sistema. Inténtalo de nuevo más tarde",
