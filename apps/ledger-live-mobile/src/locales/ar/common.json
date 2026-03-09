@@ -1601,6 +1601,25 @@
     "bannerCta" : "ابدأ الإعداد",
     "continue" : "متابعة"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
+    "continue" : "متابعة"
+  },
   "purchaseDevice" : {
     "pageTitle" : "شراء جهاز",
     "debugDrawers" : {
@@ -2757,6 +2776,11 @@
       "connectDevice" : {
         "title" : "الوصول إلى محفظتك لم يتم نسخه احتياطياً بعد"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "جارٍ التحديث - آخر تحديث {{timeAgo}}",
+      "refreshingInitial" : "جارٍ التحديث...",
+      "upToDate" : "أنت على أحدث إصدار"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "إلغاء",
-      "description" : "إرسال 0 {{ticker}} إلى عنوانك."
+      "description" : "إرسال {{ticker}} 0 إلى عنوانك. الإلغاء غير مضمون. إذا قامت الشبكة بمعالجة معاملتك الأصلية قبل طلب الإلغاء هذا، فسيتم إرسال الأموال إلى المستلم."
     },
     "error" : {
       "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
@@ -5040,6 +5064,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "تحديث نظام التشغيل متاح",
+          "manager" : "تحديث نظام تشغيل Ledger OS متاح"
+        },
+        "version" : "إصدار {{firmwareVersion}}",
+        "cta" : "تحديث"
+      },
       "title" : "تحديث متاح لنظام التشغيل",
       "descriptionDeviceName" : "انقر لتحديث \"{{deviceName}}\" إلى الإصدار {{firmwareVersion}} من نظام التشغيل.",
       "descriptionProductName" : "انقر لتحديث جهازك {{productName}} إلى الإصدار {{firmwareVersion}} من نظام التشغيل."
@@ -7693,6 +7725,10 @@
       "description" : "قم بتأمين أصولك المشفرة واتخذ خطوةً إضافيةً.",
       "buttonLabel" : "تعرف على التالي"
     },
+    "widget" : {
+      "title" : "بعد ذلك، قم بإنهاء إعداد المحفظة",
+      "subtitle" : "ابدأ بتمويل محفظتك."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "قم بإعداد جهازك Ledger"
@@ -8326,6 +8362,7 @@
     "emptyAssetList" : "لم يتم العثور على أصول",
     "accountCount_one" : "{{count}} حساب",
     "accountCount_other" : "{{count}} حساب",
+    "perpetualsBanner" : "حالياً مدعوم فقط مع USDC على سلسلة Arbitrum.",
     "errors" : {
       "title" : "فشل الاتصال",
       "backend" : "حدث خطأ ما من جانبنا. يُرجى إعادة المحاولة لاحقاً",
