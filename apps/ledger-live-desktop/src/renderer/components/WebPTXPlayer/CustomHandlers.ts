@@ -218,7 +218,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                 ...exchangeParams,
                 onResult: operation => {
                   if (operation && exchangeParams.swapId) {
-                    // return success to swap live app
                     onSuccess({
                       operationHash: operation.hash,
                       swapId: exchangeParams.swapId,
