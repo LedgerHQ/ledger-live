@@ -10,6 +10,9 @@
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
+    "fee" : "费用",
+    "stake" : "质押",
+    "validator" : "验证者",
     "delete" : "删除",
     "paste" : "粘贴",
     "yes" : "是",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "您尚未备份钱包访问权限"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "正在刷新 - 上次更新 {{timeAgo}}",
+      "refreshingInitial" : "刷新中...",
+      "upToDate" : "已同步至最新状态"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "取消",
-      "description" : "发送 0 {{ticker}} 到您自己的地址。"
+      "description" : "发送 0 {{ticker}} 到您自己的地址。不保证取消。如果网络在此次取消请求之前处理了您的原始交易，资金仍会发送给接收方。"
     },
     "error" : {
       "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "有可用的系统更新",
+          "manager" : "Ledger OS 有可用更新"
+        },
+        "version" : "版本 {{firmwareVersion}}",
+        "cta" : "更新"
+      },
       "title" : "操作系统有更新",
       "descriptionDeviceName" : "点按将“{{deviceName}}”更新到操作系统版本 {{firmwareVersion}}。",
       "descriptionProductName" : "点按将您的 {{productName}} 更新到操作系统版本 {{firmwareVersion}}。"
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "地址已复制！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "memoPlaceholder" : "可选 Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "showAll" : "显示全部",
+      "showLess" : "显示更少",
+      "iDelegate" : "我委托"
+    }
+  },
   "stellar" : {
     "token" : "多种资产",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "可选 Memo"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "保护您的资产，探索更多可能。",
       "buttonLabel" : "查看后续步骤"
     },
+    "widget" : {
+      "title" : "接着，完成钱包设置",
+      "subtitle" : "首先为您的钱包充值。"
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "设置您的 Ledger 设备"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "未找到资产",
     "accountCount_one" : "{{count}} 个账户",
     "accountCount_other" : "{{count}} 个账户",
+    "perpetualsBanner" : "目前仅支持 Arbitrum 链上的 USDC。",
     "errors" : {
       "title" : "连接失败",
       "backend" : "我们这边出错了。请稍后重试",
