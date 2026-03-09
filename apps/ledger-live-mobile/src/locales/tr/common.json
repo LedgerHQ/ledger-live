@@ -1601,6 +1601,25 @@
     "bannerCta" : "Kurulumu başlatın",
     "continue" : "Devam"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Cihaz Satın Alın",
     "debugDrawers" : {
@@ -2757,6 +2776,11 @@
       "connectDevice" : {
         "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Yenileniyor - Son güncelleme {{timeAgo}}",
+      "refreshingInitial" : "Yenileniyor...",
+      "upToDate" : "Güncelsiniz"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "İptal et",
-      "description" : "Kendi adresinize 0 {{ticker}} gönderiliyor."
+      "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal garanti edilmez. Eğer ağ, orijinal işleminizi bu iptal talebinden önce işleme koyarsa, fonlar yine de alıcıya gönderilir."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
@@ -5040,6 +5064,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "İşletim sistemi güncellemesi mevcut",
+          "manager" : "Ledger OS güncellemesi mevcut"
+        },
+        "version" : "Sürüm {{firmwareVersion}}",
+        "cta" : "Güncelle"
+      },
       "title" : "İşletim sistemi güncellemesi mevcut",
       "descriptionDeviceName" : "\"{{deviceName}}\" cihazını {{firmwareVersion}} işletim sistemi sürümüne güncellemek için dokunun.",
       "descriptionProductName" : "{{productName}} cihazınızı {{firmwareVersion}} işletim sistemi sürümüne güncellemek için dokunun."
@@ -7693,6 +7725,10 @@
       "description" : "Yalnızca varlıklarınızı güvenceye almakla kalmayın.",
       "buttonLabel" : "Sırada ne var?"
     },
+    "widget" : {
+      "title" : "Şimdi, cüzdan kurulumunu tamamlayın",
+      "subtitle" : "Cüzdanınıza fon aktararak başlayın."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Ledger cihazınızın kurulumunu yapın"
@@ -8326,6 +8362,7 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
+    "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir.",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
