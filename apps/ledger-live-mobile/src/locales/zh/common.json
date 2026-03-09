@@ -10,6 +10,9 @@
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
     "back" : "返回",
+    "fee" : "费用",
+    "stake" : "质押",
+    "validator" : "验证者",
     "delete" : "删除",
     "paste" : "粘贴",
     "yes" : "是",
@@ -1575,6 +1578,24 @@
     "bannerButtonTitle2" : "购买 Ledger 设备",
     "setupCta" : "我已经有一个 Ledger 设备，对该设备进行设置"
   },
+  "rebornBuyDevice" : {
+    "title" : "连接 Ledger 设备",
+    "desc" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
+    "0" : {
+      "title" : "完全所有权",
+      "desc" : "您的私钥永远不会离开设备。"
+    },
+    "1" : {
+      "title" : "安全交易",
+      "desc" : "在安全屏幕上验证交易。"
+    },
+    "2" : {
+      "title" : "使用功能强大的钱包",
+      "desc" : "一站式管理数千种资产。"
+    },
+    "cta" : "连接",
+    "buyCta" : "购买 Ledger 设备"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "拿到您的 Ledger 设备了吗？",
     "desc" : "拿到您的 Ledger 设备后，请完成设置，以解锁 Ledger Wallet 应用程序的所有功能。",
@@ -2638,7 +2659,9 @@
     "discover" : "探索",
     "nanoX" : "Nano X",
     "market" : "市场",
-    "earn" : "赚取"
+    "earn" : "赚取",
+    "card" : "卡",
+    "swap" : "互换"
   },
   "portfolio" : {
     "totalBalance" : "总余额",
@@ -2690,7 +2713,7 @@
     "walletBalance" : "钱包余额",
     "balance" : {
       "noSigner" : "最安全的\n钱包",
-      "noFund" : "保护您的\n加密货币"
+      "noAccounts" : "保护您的\n加密货币"
     },
     "seeAllAssets" : "查看所有资产",
     "seeAllAccounts" : "查看所有账户",
@@ -3497,6 +3520,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "排除固件更新故障"
         }
+      },
+      "contentCards" : {
+        "title" : "内容卡",
+        "titleDesc" : "无需使用 Braze 即可生成本地内容卡进行测试。",
+        "description" : "本地内容卡会显示在“资产组合”页面（及其他位置），无需使用 Braze。这些卡会一直显示，直至您手动关闭或在此处清除。",
+        "addSampleBanner" : "添加示例横幅",
+        "addSampleBannerDesc" : "在“资产组合”页面添加一个示例主页横幅。",
+        "addSampleActionCarousel" : "添加示例操作轮播",
+        "addSampleActionCarouselDesc" : "在“资产组合”页面添加一个操作卡轮播（买入、互换、质押）。",
+        "dismissAll" : "关闭所有本地卡",
+        "dismissAllDesc" : "移除所有本地生成的内容卡。"
       }
     }
   },
@@ -4143,6 +4177,100 @@
     "loading" : "正在搜索设备…"
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "发送 {{currency}}",
+      "available" : "可用 {{amount}}",
+      "placeholder" : "请输入地址或 ENS",
+      "placeholderNoENS" : "输入地址",
+      "editRecipientAccessibilityLabel" : "编辑接收方",
+      "recent" : "最近",
+      "recentDetail" : "最近详情",
+      "myAccounts" : "我的账户",
+      "account" : "账户",
+      "sendTo" : "发送到 {{address}}",
+      "addressMatched" : "已匹配地址",
+      "addressNotFound" : "未找到地址",
+      "alreadyUsed" : "已使用 · {{date}}",
+      "recentSendWillAppear" : "您最近的发送会显示在此处",
+      "relativeDate" : {
+        "justNow" : "刚刚",
+        "minutesAgo_one" : "1 分钟前",
+        "minutesAgo_other" : "{{count}} 分钟前",
+        "hoursAgo_one" : "1 小时前",
+        "hoursAgo_other" : "{{count}} 小时前",
+        "daysAgo_one" : "1 天前",
+        "daysAgo_other" : "{{count}} 天前"
+      },
+      "remove" : "删除",
+      "enterTag" : "输入备忘标签 {{tag}}",
+      "firstInteraction" : {
+        "title" : "您正在发送至新地址",
+        "description" : "核实地址是否正确。如有疑问，请先发送小额资金。"
+      },
+      "sanctioned" : {
+        "title" : "已标记地址",
+        "description" : "该地址已被标记，Ledger 不允许向其发送。",
+        "helpCenter" : "帮助中心"
+      },
+      "errors" : {
+        "incorrectFormat" : "地址格式不正确",
+        "incompatibleAsset" : "地址与所选资产不兼容。",
+        "walletNotExist" : "钱包不存在"
+      },
+      "skipMemo" : {
+        "title" : "跳过添加备忘标签 {{tag}}？",
+        "warning" : "如果接收方要求备忘标签 {{tag}}，您的资产可能会丢失。"
+      },
+      "tagHelp" : {
+        "title" : "什么是备忘标签 {{tag}}？",
+        "description" : "向加密货币交易所发送 {{currency}} 时，需要输入备忘标签 {{tag}}。这是用于识别交易接收人的功能。不填写备忘标签 {{tag}} 可能会导致资金损失。"
+      },
+      "networkFeesInFiat" : "网络费用为 {{currency}}",
+      "feesAmount" : "费用数额 ({{unit}})",
+      "gasLimit" : "Gas 限值 ({{unit}})",
+      "feesPaid" : "支付给网络用于处理交易的费用",
+      "insufficientBalanceFees" : "余额不足以支付网络费用",
+      "amountToSend" : "发送数额为 ({{currency}})",
+      "coinToSend" : "发送币种",
+      "coinControlCustom" : "自定义币种选择",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "最大值"
+      },
+      "reviewCta" : "审核",
+      "getCta" : "获取 {{currency}}",
+      "switchInputMode" : "切换数额输入模式",
+      "aboveMaximum" : "高于最大余额",
+      "transactionSigned" : "交易已签署",
+      "processingTransaction" : "您的交易正在处理中",
+      "sign" : {
+        "title" : "在您的 Ledger {{wording}} 上继续操作",
+        "description" : "按照安全触摸屏上的指示进行操作。"
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "无法刷新网络费用",
+        "warningDescription" : "费用预设可能已过期。"
+      },
+      "customFees" : {
+        "title" : "自定义费用",
+        "confirm" : "确认",
+        "maxFee" : "最高费用 ({{unit}})",
+        "maxPriorityFee" : "最高优先费用 ({{unit}})",
+        "gasLimit" : "Gas 限值 ({{unit}})",
+        "feePerByte" : "费用数额 ({{unit}})",
+        "suggested" : "建议",
+        "nextBlock" : "下一个区块",
+        "networkFeesInFiat" : "网络费用为 {{currency}}",
+        "invalidValue" : "输入有效的数字",
+        "belowMinimum" : "最小值为 {{min}}",
+        "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+      },
+      "coinControl" : {
+        "title" : "币控制（UTXO 管理）"
+      }
+    },
     "pendingTxWarning" : "您有待处理的传入交易。请注意，待处理交易可以撤销。",
     "tooMuchUTXOBottomModal" : {
       "cta" : "继续",
@@ -4195,7 +4323,8 @@
       "useMax" : "使用最大值",
       "loadingNetwork" : "正在加载网络费用...",
       "noRateProvider" : "缺货",
-      "quantityAvailable" : "可用数量"
+      "quantityAvailable" : "可用数量",
+      "toggleCurrency" : "切换货币"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4255,6 +4384,12 @@
       "required" : "需要费用",
       "chooseGas" : "选择 gas 价格",
       "higherFaster" : "较高的 gas 价格意味着更加快速地确认。",
+      "medium" : "标准",
+      "fast" : "快速",
+      "slow" : "慢速",
+      "custom" : "自定义",
+      "customFees" : "自定义费用",
+      "coinControl" : "交易输入选择",
       "edit" : {
         "title" : "选择单位"
       },
@@ -6092,6 +6227,52 @@
       "newAddressTRC20" : "您首先需要向该地址发送至少 0.1 TRX 才能将其激活。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "地址已复制！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "重新委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "memoPlaceholder" : "可选 Memo",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "showAll" : "显示全部",
+      "showLess" : "显示更少",
+      "iDelegate" : "我委托"
+    }
+  },
   "stellar" : {
     "token" : "多种资产",
     "memo" : {
@@ -6496,9 +6677,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "可选 Memo"
   },
   "near" : {
     "info" : {
@@ -7153,7 +7331,8 @@
         "website" : "网站"
       },
       "back" : {
-        "card" : "所有卡片"
+        "card" : "所有卡片",
+        "cardTab" : "卡"
       }
     }
   },
@@ -8311,22 +8490,36 @@
       "authorize" : "授权",
       "preapprove" : "账户添加成功",
       "validator" : "Ledger 验证者",
-      "title" : "自动接收汇入资金",
+      "title" : "引导流程",
+      "success" : "账户已成功完成引导流程",
+      "status" : {
+        "prepare" : "正在准备账户引导流程交易。\n此过程最多可能需要 1 分钟……",
+        "submit" : "正在引导账户设置",
+        "default" : "处理中..."
+      },
       "processing" : {
         "title" : "正在处理交易",
-        "description" : "此过程最多可能需要 1 分钟",
+        "description" : "请稍候",
         "keepDeviceNearby" : "停留在 Ledger Wallet 钱包应用程序中并将 Ledger 设备一直放在附近。"
       },
       "reonboard" : {
         "title" : "需要更新账户",
         "account" : "账户",
         "authorize" : "重新授权验证者",
+        "success" : "账户更新成功",
         "warning" : {
           "title" : "检测到拓扑变化",
           "description" : "检测到 Canton 网络发生拓扑变化。请重新接入您的账户以继续使用。"
         }
       },
       "error429" : "Canton Network 目前每天支持的账户创建数量有限。请稍后重试。"
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "正在准备授权……",
+        "submit" : "正在授权验证者……",
+        "default" : "处理中..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "需要操作：UTXO 数量过多",
@@ -8402,5 +8595,40 @@
     "actions" : {
       "swap" : "互换"
     }
+  },
+  "cardLanding" : {
+    "title" : "随心使用\n加密货币",
+    "subtitle" : "使用加密货币卡进行线上或线下支付",
+    "ctas" : {
+      "exploreCards" : "了解加密货币卡",
+      "iHaveACard" : "我有一张卡"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "探索您的全新资产组合",
+    "slides" : {
+      "portfolio" : {
+        "title" : "更清楚地展示您的资产组合",
+        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
+      },
+      "navigation" : {
+        "title" : "更快访问关键操作功能",
+        "description" : "快速访问互换、转账和买入功能。“赚取”和您的\"卡\"位于底部导航栏。"
+      },
+      "actions" : {
+        "title" : "快速查看市场趋势",
+        "description" : "快速查看您资产组合中的热门趋势，并从洞察转向行动。"
+      }
+    },
+    "cta" : {
+      "continue" : "下一步",
+      "explore" : "探索我的全新资产组合"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "首页",
+    "swap" : "互换",
+    "earn" : "赚取",
+    "card" : "卡"
   }
 }
