@@ -9,6 +9,7 @@ import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 const Overlay = styled.div`
   display: flex;
   height: 100vh;
+  width: 100%;
   align-items: center;
   justify-content: center;
   user-select: none;
