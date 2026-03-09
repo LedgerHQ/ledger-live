@@ -16,8 +16,8 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
-import { useOpenBuy } from "LLM/features/Buy";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useOpenBuySell } from "LLM/features/Buy";
 
 export type QuickAction = {
   disabled: boolean;
@@ -54,7 +54,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const isPtxServiceCtaExchangeDrawerDisabled = !(ptxServiceCtaExchangeDrawer?.enabled ?? true);
 
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
-  const canBeSold = !currency || currency.id === "bitcoin";
+  const canBeSold = !currency || isCurrencyAvailable(currency.id, "offRamp");
 
   const { getCanStakeCurrency, enabledCurrencies, partnerSupportedAssets } = useStake();
   const canStakeCurrency = !currency ? false : getCanStakeCurrency(currency.id);
@@ -87,7 +87,10 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   });
 
   const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
-  const { handleOpenBuy } = useOpenBuy({ currency, sourceScreenName: route.name });
+  const { handleOpenBuySell } = useOpenBuySell({
+    currency,
+    sourceScreenName: route.name,
+  });
 
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
 
@@ -121,8 +124,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     if (canBeBought) {
       list.BUY = {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || isLegacyRebornFlow,
-        customHandler: handleOpenBuy,
         icon: IconsLegacy.PlusMedium,
+        customHandler: () => handleOpenBuySell("buy"),
       };
     }
 
@@ -137,6 +140,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
           },
         ],
         icon: IconsLegacy.MinusMedium,
+        customHandler: () => handleOpenBuySell("sell"),
       };
     }
 
@@ -184,7 +188,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
     handleOpenSwap,
-    handleOpenBuy,
+    handleOpenBuySell,
     canBeBought,
     canBeSold,
     canStakeCurrency,
