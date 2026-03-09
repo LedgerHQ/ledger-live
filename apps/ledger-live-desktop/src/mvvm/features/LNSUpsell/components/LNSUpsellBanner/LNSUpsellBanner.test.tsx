@@ -18,7 +18,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-describe("LNSUpsellBanner ", () => {
+describe("LNSUpsellBanner", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

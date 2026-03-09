@@ -125,7 +125,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         const source =
           currentRouteNameRef.current === "Platform Catalog"
             ? "Discover"
-            : currentRouteNameRef.current ?? "Unknown";
+            : (currentRouteNameRef.current ?? "Unknown");
 
         const flow = manifest.name;
 

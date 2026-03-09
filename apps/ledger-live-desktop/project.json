@@ -15,11 +15,6 @@
       ]
     },
     "lint": {
-      "outputs": [
-        "{projectRoot}/lint.json",
-        "{projectRoot}/lint-desktop.json",
-        "{projectRoot}/lint-desktop-external.json"
-      ],
       "inputs": [
         "default",
         {
