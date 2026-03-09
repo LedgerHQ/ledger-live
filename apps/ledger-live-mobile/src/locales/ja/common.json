@@ -10,6 +10,9 @@
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
+    "fee" : "手数料",
+    "stake" : "ステーキング",
+    "validator" : "バリデータ",
     "delete" : "削除",
     "paste" : "貼り付け",
     "yes" : "はい",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "ウォレットへのアクセスはまだバックアップされていません"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "更新中 - 最終更新：{{timeAgo}}",
+      "refreshingInitial" : "更新中...",
+      "upToDate" : "最新の状態"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "キャンセル",
-      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。"
+      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルは保証されません。このキャンセルリクエストの前にネットワークが元のトランザクションを処理した場合、資金は受取人に送られます。"
     },
     "error" : {
       "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルすることはできません。",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OSアップデートをご利用いただけます",
+          "manager" : "Ledger OSのアップデートをご利用いただけます"
+        },
+        "version" : "バージョン{{firmwareVersion}}",
+        "cta" : "アップデート"
+      },
       "title" : "OSアップデートをご利用いただけます",
       "descriptionDeviceName" : "「{{deviceName}}」をOSバージョン{{firmwareVersion}}にアップデートする場合は、こちらをタップしてください。",
       "descriptionProductName" : "{{productName}}をOSバージョン{{firmwareVersion}}にアップデートする場合は、こちらをタップしてください。"
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "アドレスをコピーしました！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "再デリゲート",
+      "earn" : "報酬獲得"
+    },
+    "stakeBanner" : {
+      "title" : "MINAで報酬を獲得",
+      "altTitle" : "MINAのデリゲート（委任）管理",
+      "description" : "MINAをブロックプロデューサーにデリゲートして、ブロック生成による報酬を獲得。報酬はデリゲート量に応じて分配されます。",
+      "altDescription" : "デリゲート設定の変更や、MINAトークンのデリゲート解除ができます。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "デリゲート先：",
+      "stakedBalance" : "ステーキング済み残高",
+      "producerAddress" : "プロデューサーアドレス",
+      "delegatedToTooltip" : "デリゲート先のブロックプロデューサー名",
+      "stakedBalanceTooltip" : "現在このバリデーターにステーキングされているMINAの総量",
+      "producerAddressTooltip" : "デリゲート先のブロックプロデューサーの公開アドレス"
+    },
+    "delegators" : "デリゲーター",
+    "memoPlaceholder" : "任意のメモ",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "バリデーターを選択",
+        "connectDevice" : "デバイスを接続",
+        "confirmation" : "確認"
+      },
+      "title" : "MINAをステーキング",
+      "help" : "以下の一覧からバリデーターを選択し、MINAトークンをデリゲートしてください。",
+      "success" : {
+        "title" : "トランザクションの送信に成功しました",
+        "description" : "デリゲーションの変更リクエストが送信されました。"
+      },
+      "error" : {
+        "title" : "トランザクションの送信中にエラーが発生しました。"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "showAll" : "すべて表示",
+      "showLess" : "表示を減らす",
+      "iDelegate" : "デリゲートする"
+    }
+  },
   "stellar" : {
     "token" : "資産",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "任意のメモ"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "資産を保護して、さらに活用しましょう。",
       "buttonLabel" : "次のステップを見る"
     },
+    "widget" : {
+      "title" : "次は、ウォレット設定を完了します。",
+      "subtitle" : "まずはウォレットへの入金から始めましょう。"
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Ledgerデバイスのセットアップ"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "資産が見つかりません",
     "accountCount_one" : "{{count}}アカウント",
     "accountCount_other" : "{{count}}アカウント",
+    "perpetualsBanner" : "現在、ArbitrumチェーンのUSDCでのみサポートされています。",
     "errors" : {
       "title" : "接続に失敗しました。",
       "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",
