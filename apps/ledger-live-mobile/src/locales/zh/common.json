@@ -1601,6 +1601,25 @@
     "bannerCta" : "开始设置",
     "continue" : "继续"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
+    "continue" : "继续"
+  },
   "purchaseDevice" : {
     "pageTitle" : "购买设备",
     "debugDrawers" : {
@@ -2757,6 +2776,11 @@
       "connectDevice" : {
         "title" : "您尚未备份钱包访问权限"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "正在刷新 - 上次更新 {{timeAgo}}",
+      "refreshingInitial" : "刷新中...",
+      "upToDate" : "已同步至最新状态"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "取消",
-      "description" : "发送 0 {{ticker}} 到您自己的地址。"
+      "description" : "发送 0 {{ticker}} 到您自己的地址。不保证取消。如果网络在此次取消请求之前处理了您的原始交易，资金仍会发送给接收方。"
     },
     "error" : {
       "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
@@ -5040,6 +5064,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "有可用的系统更新",
+          "manager" : "Ledger OS 有可用更新"
+        },
+        "version" : "版本 {{firmwareVersion}}",
+        "cta" : "更新"
+      },
       "title" : "操作系统有更新",
       "descriptionDeviceName" : "点按将“{{deviceName}}”更新到操作系统版本 {{firmwareVersion}}。",
       "descriptionProductName" : "点按将您的 {{productName}} 更新到操作系统版本 {{firmwareVersion}}。"
@@ -7693,6 +7725,10 @@
       "description" : "保护您的资产，探索更多可能。",
       "buttonLabel" : "查看后续步骤"
     },
+    "widget" : {
+      "title" : "接着，完成钱包设置",
+      "subtitle" : "首先为您的钱包充值。"
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "设置您的 Ledger 设备"
@@ -8326,6 +8362,7 @@
     "emptyAssetList" : "未找到资产",
     "accountCount_one" : "{{count}} 个账户",
     "accountCount_other" : "{{count}} 个账户",
+    "perpetualsBanner" : "目前仅支持 Arbitrum 链上的 USDC。",
     "errors" : {
       "title" : "连接失败",
       "backend" : "我们这边出错了。请稍后重试",
