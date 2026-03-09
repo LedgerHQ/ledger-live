@@ -10,6 +10,9 @@
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
+    "fee" : "الرسوم",
+    "stake" : "الحصة",
+    "validator" : "المدقق",
     "delete" : "حذف",
     "paste" : "لصق",
     "yes" : "نعم",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "الوصول إلى محفظتك لم يتم نسخه احتياطياً بعد"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "جارٍ التحديث - آخر تحديث {{timeAgo}}",
+      "refreshingInitial" : "جارٍ التحديث...",
+      "upToDate" : "أنت على أحدث إصدار"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "إلغاء",
-      "description" : "إرسال 0 {{ticker}} إلى عنوانك."
+      "description" : "إرسال {{ticker}} 0 إلى عنوانك. الإلغاء غير مضمون. إذا قامت الشبكة بمعالجة معاملتك الأصلية قبل طلب الإلغاء هذا، فسيتم إرسال الأموال إلى المستلم."
     },
     "error" : {
       "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "تحديث نظام التشغيل متاح",
+          "manager" : "تحديث نظام تشغيل Ledger OS متاح"
+        },
+        "version" : "إصدار {{firmwareVersion}}",
+        "cta" : "تحديث"
+      },
       "title" : "تحديث متاح لنظام التشغيل",
       "descriptionDeviceName" : "انقر لتحديث \"{{deviceName}}\" إلى الإصدار {{firmwareVersion}} من نظام التشغيل.",
       "descriptionProductName" : "انقر لتحديث جهازك {{productName}} إلى الإصدار {{firmwareVersion}} من نظام التشغيل."
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "تم نسخ العنوان!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "إعادة التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "memoPlaceholder" : "ملاحظة اختيارية",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "showAll" : "عرض الكل",
+      "showLess" : "عرض أقل",
+      "iDelegate" : "أنا أفوّض"
+    }
+  },
   "stellar" : {
     "token" : "أصول",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "قم بتأمين أصولك المشفرة واتخذ خطوةً إضافيةً.",
       "buttonLabel" : "تعرف على التالي"
     },
+    "widget" : {
+      "title" : "بعد ذلك، قم بإنهاء إعداد المحفظة",
+      "subtitle" : "ابدأ بتمويل محفظتك."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "قم بإعداد جهازك Ledger"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "لم يتم العثور على أصول",
     "accountCount_one" : "{{count}} حساب",
     "accountCount_other" : "{{count}} حساب",
+    "perpetualsBanner" : "حالياً مدعوم فقط مع USDC على سلسلة Arbitrum.",
     "errors" : {
       "title" : "فشل الاتصال",
       "backend" : "حدث خطأ ما من جانبنا. يُرجى إعادة المحاولة لاحقاً",
