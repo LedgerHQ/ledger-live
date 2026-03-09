@@ -1,0 +1,197 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const path = require("path");
+
+const commonImportRestrictions = [
+  {
+    group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+    message: "Please remove the /lib import from live-common import.",
+  },
+  {
+    group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
+    message: "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports.",
+  },
+];
+
+const lodashImportRestriction = [
+  "lodash", // you must use the lodash/fp module import style to avoid importing the entire library
+];
+
+const reactReduxImportRestrictions = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+];
+
+const shellOpenExternalRestrictions = [
+  {
+    selector: "CallExpression[callee.object.name='shell'][callee.property.name='openExternal']",
+    message:
+      "Do not use shell.openExternal() directly. In renderer code, use openURL() from '~/renderer/linking' instead to prevent RCE vulnerabilities. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal. See: https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-openexternal-with-untrusted-content",
+  },
+  {
+    selector: "MemberExpression[object.name='shell'][property.name='openExternal']",
+    message:
+      "Do not use shell.openExternal directly. In renderer code, use openURL() from '~/renderer/linking'. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal.",
+  },
+];
+
+const currencyFamiliesRules = {
+  files: ["src/**"],
+  excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["**/families/*/**"],
+            message:
+              "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead.",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+const livecommonRules = {
+  files: ["src/**", "tests/**"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: commonImportRestrictions,
+        paths: [...lodashImportRestriction, ...reactReduxImportRestrictions],
+      },
+    ],
+  },
+};
+
+module.exports = {
+  env: {
+    browser: true,
+    es6: true,
+    node: true,
+  },
+  parser: "@typescript-eslint/parser",
+  plugins: ["react", "react-hooks", "import", "better-tailwindcss"],
+  extends: [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:better-tailwindcss/recommended",
+  ],
+  globals: {
+    __DEV__: "readonly",
+    INDEX_URL: "readonly",
+    Atomics: "readonly",
+    SharedArrayBuffer: "readonly",
+    __SENTRY_URL__: "readonly",
+    __APP_VERSION__: "readonly",
+    __GIT_REVISION__: "readonly",
+    __PRERELEASE__: "readonly",
+    __CHANNEL__: "readonly",
+    __static: "readonly",
+    $: "readonly",
+  },
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 2018,
+    sourceType: "module",
+  },
+  rules: {
+    "no-prototype-builtins": "off",
+    "no-use-before-define": "off",
+    "promise/param-names": "off",
+    "react/prop-types": "off",
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
+    "react/jsx-filename-extension": "off",
+    "space-before-function-paren": "off",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+    "import/no-duplicates": "error",
+    "better-tailwindcss/enforce-consistent-line-wrapping": "off",
+
+    // Ignore live-common for the moment because this rule does not work with subpath exports
+    // See: https://github.com/import-js/eslint-plugin-import/issues/1810
+    // "import/no-unresolved": [
+    //   "error",
+    //   { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/react-ui/.*"] },
+    // ],
+  },
+  overrides: [
+    currencyFamiliesRules,
+    livecommonRules,
+    {
+      files: ["src/**/*.ts", "src/**/*.tsx"],
+      excludedFiles: ["src/renderer/linking.ts"],
+      rules: {
+        "no-restricted-syntax": ["error", ...shellOpenExternalRestrictions],
+      },
+    },
+    {
+      files: [
+        "src/mvvm/hooks/redux.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.test.ts",
+        "src/**/*.integration.tsx",
+        "src/**/*.integration.ts",
+      ],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            patterns: commonImportRestrictions,
+            paths: lodashImportRestriction,
+          },
+        ],
+      },
+    },
+    {
+      files: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
+      env: {
+        browser: true,
+        es6: true,
+        node: true,
+        "jest/globals": true,
+      },
+      plugins: ["react", "react-hooks", "jest"],
+      extends: [
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:prettier/recommended",
+        "plugin:json/recommended",
+        "plugin:jest/recommended",
+        "plugin:jest/style",
+      ],
+      rules: {
+        "@typescript-eslint/no-explicit-any": "warn",
+      },
+    },
+    {
+      // Enable type-aware linting for TypeScript files only
+      files: ["*.ts", "*.tsx"],
+      parserOptions: {
+        project: true,
+      },
+      rules: {
+        "@typescript-eslint/no-deprecated": "error",
+      },
+    },
+  ],
+  settings: {
+    react: {
+      version: "detect",
+    },
+    "better-tailwindcss": {
+      entryPoint: path.join(__dirname, "./src/renderer/global.css"),
+      tailwindConfig: path.join(__dirname, "./tailwind.config.ts"),
+      callees: ["cn"],
+    },
+  },
+};

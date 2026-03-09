@@ -170,7 +170,7 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
     expect(percentIndicator).toHaveTextContent(/-3.64%$/);
   });
 
-  it("should not display balance on the right at assetSelection step when enableModularization is false", async () => {
+  it("should not display balance on the right at assetSelection step when enableModularization is false ", async () => {
     renderWithMockedCounterValuesProvider(<ModularDialogFlowManager />, {
       accounts: ETH_ACCOUNT,
       settings: {

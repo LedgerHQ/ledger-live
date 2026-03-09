@@ -84,7 +84,7 @@ export function TranslatedError({
         const message =
           field === "title"
             ? error._tag
-            : ((error?.originalError as Error)?.message ?? error.message ?? error._tag);
+            : (error?.originalError as Error)?.message ?? error.message ?? error._tag;
 
         return <Text>{t(`errors.generic.${field}`, { message })}</Text>;
       }

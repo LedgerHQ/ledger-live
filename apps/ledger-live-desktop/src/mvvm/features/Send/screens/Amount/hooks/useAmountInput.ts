@@ -96,7 +96,7 @@ export function useAmountInput({
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
-    inputMode === "fiat" ? (counterValueCurrency.symbol ?? fiatUnit.code) : accountUnit.code;
+    inputMode === "fiat" ? counterValueCurrency.symbol ?? fiatUnit.code : accountUnit.code;
   const currencyPosition: "left" | "right" = inputMode === "fiat" ? "left" : "right";
 
   const secondaryValue = useMemo(() => {
@@ -104,7 +104,7 @@ export function useAmountInput({
       const cryptoSource =
         cryptoInputValue && cryptoInputValue.length > 0
           ? lastTransactionAmountRef.current
-          : (lastTransactionAmountRef.current ?? cryptoAmount);
+          : lastTransactionAmountRef.current ?? cryptoAmount;
       return formatCurrencyUnit(accountUnit, cryptoSource ?? new BigNumber(0), {
         showCode: true,
         disableRounding: true,
@@ -114,7 +114,7 @@ export function useAmountInput({
     const fiatSource =
       fiatInputValue && fiatInputValue.length > 0
         ? lastFiatAmountRef.current
-        : (lastFiatAmountRef.current ?? fiatAmount);
+        : lastFiatAmountRef.current ?? fiatAmount;
     return formatCurrencyUnit(fiatUnit, fiatSource ?? new BigNumber(0), {
       showCode: true,
       disableRounding: true,

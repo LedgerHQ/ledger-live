@@ -125,7 +125,7 @@ export const OperationDetailsRewardFrom = ({
       </OpDetailsTitle>
       <OpDetailsData>
         <Address onClick={redirectAddress(currency, validatorStash)}>
-          {validator ? (validator.identity ?? validator.address) : validatorStash}
+          {validator ? validator.identity ?? validator.address : validatorStash}
         </Address>
       </OpDetailsData>
     </OpDetailsSection>

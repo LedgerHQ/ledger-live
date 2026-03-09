@@ -30,7 +30,7 @@ export function ValidationBanner(props: ValidationBannerProps) {
     openURL(helpCenterUrl);
   }, [helpCenterUrl]);
 
-  const error = props.type === "sanctioned" ? undefined : (props.error ?? props.warning);
+  const error = props.type === "sanctioned" ? undefined : props.error ?? props.warning;
   const translatedError = useTranslatedBridgeError(error);
 
   if (props.type === "sanctioned") {

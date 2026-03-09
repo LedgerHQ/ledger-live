@@ -120,7 +120,7 @@ function InputCurrency(props: Props) {
       setState(prev => {
         const valueFromRaw = prev.rawValue
           ? BigNumber(sanitizeValueString(unit, prev.rawValue, locale).value)
-          : (value ?? null);
+          : value ?? null;
         const displayValue =
           !valueFromRaw || (valueFromRaw.isZero() && !allowZero)
             ? ""
