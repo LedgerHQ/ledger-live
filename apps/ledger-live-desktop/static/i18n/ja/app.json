@@ -153,7 +153,8 @@
     "memoTag" : {
       "learnMore" : "タグ/メモについて詳しく知る"
     },
-    "memo" : "メモ"
+    "memo" : "メモ",
+    "stake" : "ステーキング"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -237,7 +238,7 @@
       },
       "cancel" : {
         "title" : "キャンセル",
-        "description" : "0{{ticker}}をお客様のアドレスに送信中です。"
+        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルは保証されません。このキャンセルリクエストの前にネットワークが元のトランザクションを処理した場合、資金は受取人に送られます。"
       },
       "steps" : {
         "method" : {
@@ -308,6 +309,7 @@
     "exchange" : "購入/売却",
     "swap" : "スワップ",
     "perps" : "無期限先物",
+    "home" : "ホーム",
     "refer" : "ご友人紹介",
     "lend" : "レンディング",
     "catalog" : "アプリ一覧",
@@ -1751,7 +1753,8 @@
       "previousStakingNodeId" : "以前のノードID",
       "gasConsumed" : "消費ガス量",
       "gasUsed" : "使用ガス量",
-      "gasLimit" : "ガスリミット"
+      "gasLimit" : "ガスリミット",
+      "functionId" : "関数ID"
     }
   },
   "operationList" : {
@@ -1939,6 +1942,13 @@
       "updateBtn" : "ファームウェアをアップデート",
       "installUpdate" : "アップデートをインストール",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "OSアップデートをご利用いただけます",
+            "manager" : "Ledger OSのアップデートをご利用いただけます"
+          },
+          "cta" : "アップデート"
+        },
         "warning" : "OSアップデートをご利用いただけます",
         "version" : "バージョン{{latestFirmware}}",
         "cta" : "My Ledgerに移動",
@@ -2144,6 +2154,24 @@
         "description" : "操作は、承認のためにネットワークに送信されました。トランザクションが承認され、プロバイダーが処理するまでお待ちください。"
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "Ledgerデバイスを接続",
+    "subtitle" : "Ledger Walletの機能を最大限にご活用いただくには、Ledgerデバイスを接続してください。",
+    "0" : {
+      "title" : "完全な所有権",
+      "desc" : "秘密鍵がデバイスの外に出ることはありません。"
+    },
+    "1" : {
+      "title" : "安全な取引",
+      "desc" : "取引内容は、安全なデバイス画面で確認・承認できます。"
+    },
+    "2" : {
+      "title" : "最強のウォレット機能へアクセス",
+      "desc" : "数千種類の暗号資産をこれ一つで管理。"
+    },
+    "connectCTA" : "接続",
+    "buyCTA" : "Ledgerデバイスを購入する"
   },
   "fund" : {
     "title" : "入金",
@@ -2431,17 +2459,26 @@
       "confirm" : "確認",
       "maxFee" : "最大手数料 ({{unit}})",
       "maxPriorityFee" : "最大優先手数料 ({{unit}})",
-      "gasLimit" : "ガス制限（{{unit}}）",
       "feePerByte" : "手数料金額 ({{unit}})",
       "suggested" : "提案済み",
       "nextBlock" : "次のブロック",
       "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
       "invalidValue" : "有効な数字を入力してください",
       "belowMinimum" : "最小値は{{min}}です",
-      "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上でなければなりません"
+      "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上でなければなりません",
+      "feeAsset" : "手数料用の資産",
+      "feesAmount" : "手数料金額 ({{unit}})",
+      "payFeesIn" : "手数料の支払い："
     },
     "coinControl" : {
-      "title" : "コインコントロール"
+      "title" : "コインコントロール",
+      "strategy" : "戦略",
+      "learnMore" : "詳細はこちら",
+      "coinToSend" : "送付するコイン",
+      "changeToReturn" : "戻される差額",
+      "enterAmount" : "数量を入力",
+      "amountToSendInCurrency" : "送金金額 ({{ticker}})",
+      "amountInputLabel" : "送付額"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5053,7 @@
     }
   },
   "theme" : {
-    "system" : "システムテーマを選択",
+    "system" : "システム",
     "light" : "ライト",
     "dusk" : "夕暮れ",
     "dark" : "ダーク"
@@ -7307,6 +7344,50 @@
     "memoPlaceholder" : "タグ/メモを入力",
     "memoWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "手数料",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "デリゲートを変更する",
+      "earn" : "報酬獲得"
+    },
+    "stakeBanner" : {
+      "title" : "MINAで報酬を獲得",
+      "altTitle" : "MINAのデリゲート（委任）管理",
+      "description" : "MINAをブロックプロデューサーにデリゲートして、ブロック生成による報酬を獲得。報酬はデリゲート量に応じて分配されます。",
+      "altDescription" : "デリゲート設定の変更や、MINAトークンのデリゲート解除ができます。 ",
+      "changeCTA" : "変更"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "デリゲート先：",
+      "stakedBalance" : "ステーキング済み残高",
+      "producerAddress" : "プロデューサーアドレス",
+      "delegatedToTooltip" : "デリゲート先のブロックプロデューサー名",
+      "stakedBalanceTooltip" : "現在このバリデーターにステーキングされているMINAの総量",
+      "producerAddressTooltip" : "デリゲート先のブロックプロデューサーの公開アドレス"
+    },
+    "delegators" : "デリゲーター",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "バリデーターを選択",
+        "connectDevice" : "デバイスを接続",
+        "confirmation" : "確認"
+      },
+      "title" : "MINAをステーキング",
+      "help" : "以下の一覧からバリデーターを選択し、MINAトークンをデリゲートしてください。",
+      "success" : {
+        "title" : "トランザクションの送信に成功しました",
+        "description" : "デリゲーションの変更リクエストが送信されました。"
+      },
+      "error" : {
+        "title" : "トランザクションの送信中にエラーが発生しました。"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション"
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -7528,7 +7609,8 @@
     },
     "selectAccount" : {
       "title" : "アカウントを選択",
-      "addAccount" : "新規または既存のアカウントを追加する"
+      "addAccount" : "新規または既存のアカウントを追加する",
+      "perpetualsBanner" : "現在、ArbitrumチェーンのUSDCでのみサポートされています。"
     }
   },
   "customImage" : {
@@ -7583,7 +7665,7 @@
       "skipCTA" : "後で行う"
     },
     "default" : {
-      "title" : "{{ productName }}には、独自のアプリがあります。トランザクションには、これらの専用アプリが必要となります。",
+      "title" : "{{ productName }}には、独自のアプリがあります。トランザクションには、専用アプリが必要となります。",
       "subtitle" : "例えば、{{productName}}のBitcoinアプリはBitcoinトランザクションに署名するのに必要です。\n\nデフォルトのアプリをインストールして、{{productName}}でのトランザクションの準備を整えてください。",
       "installCTA" : "今すぐインストールする",
       "skipCTA" : "後で行う"
@@ -7991,6 +8073,8 @@
     "title" : "市場を見る",
     "genericError" : "接続に失敗",
     "cta" : "すべて表示",
+    "scrollLeft" : "左にスクロール",
+    "scrollRight" : "右にスクロール",
     "fearAndGreed" : {
       "title" : "市場ムード"
     }
@@ -8017,6 +8101,18 @@
     "connect" : "接続",
     "buyALedger" : "Ledgerを購入する"
   },
+  "assets" : {
+    "cryptos" : "暗号資産",
+    "stablecoins" : "ステーブルコイン",
+    "columns" : {
+      "name" : "名前",
+      "price" : "価格",
+      "balance" : "残高",
+      "value" : "価値",
+      "trend" : "1日のトレンド",
+      "trendTooltip" : "24時間の残高変更"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
     "entry" : {
@@ -8029,12 +8125,7 @@
       "errorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。影響を受けたアカウント：{{accounts}}クリックして再試行",
       "emptyErrorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。クリックして再試行",
       "upToDate" : "最新の状態",
-      "minutesAgo_one" : "最終同期：{{count}}分前。クリックして更新",
-      "minutesAgo_other" : "最終同期：{{count}}分前。クリックして更新",
-      "hoursAgo_one" : "最終同期：{{count}}時間前。クリックして更新",
-      "hoursAgo_other" : "最終同期：{{count}}時間前。クリックして更新",
-      "daysAgo_one" : "最終同期：{{count}}日前。クリックして更新",
-      "daysAgo_other" : "最終同期：{{count}}日前。クリックして更新"
+      "lastSync" : "最終同期：{{timeAgo}}クリックして更新"
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8174,5 +8265,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "アップデート中にエラーが発生しました。再試行してください。",
     "installAndRelaunch" : "アップデートをインストールして再起動"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "ポートフォリオがさらに見やすく",
+        "description" : "残高を一目で確認。「今日」をタップすると、さらに詳細を見ることができます。"
+      },
+      "navigation" : {
+        "title" : "主要な機能へすばやくアクセス",
+        "description" : "スワップ、送付・受取、購入をスムーズに。報酬獲得やカードには、下部メニューからアクセスできます。"
+      },
+      "actions" : {
+        "title" : "市場のトレンドをすばやくチェック",
+        "description" : "ポートフォリオからトレンドを直接確認。市場の動きをチェックして、すぐに次のアクションへ。"
+      }
+    },
+    "cta" : {
+      "continue" : "続行",
+      "explore" : "新しいポートフォリオを見る"
+    }
   }
 }
