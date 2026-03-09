@@ -19,7 +19,7 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { SetCurrentAccountHistDb, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import Wallet from "~/renderer/icons/Wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
@@ -135,14 +135,14 @@ export type Props = {
   config?: TopBarConfig;
   webviewAPIRef: RefObject<WebviewAPI | null>;
   webviewState: WebviewState;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
   mobileView?: MobileView;
   setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;
 };
 
 export const TopBar = ({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
   onClose,
   config = {},
   webviewAPIRef,
@@ -220,7 +220,10 @@ export const TopBar = ({
     }
   }, [mobileView, updateMobileWidth]);
 
-  const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const { onSelectAccount, currentAccount } = useSelectAccount({
+    manifest,
+    setCurrentAccountHistDb,
+  });
   const currentAccountName =
     currentAccount &&
     (accountNameSelector(walletState, { accountId: currentAccount.id }) ||

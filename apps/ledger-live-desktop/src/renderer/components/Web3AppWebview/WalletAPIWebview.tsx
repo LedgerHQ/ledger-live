@@ -33,7 +33,7 @@ import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { NoAccountOverlay } from "./NoAccountOverlay";
 import { useWebviewState } from "./helpers";
-import { Loader } from "./styled";
+import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
@@ -317,8 +317,12 @@ function useWebView(
     manifest,
     customHandlers,
     currentAccountHistDb,
+    setCurrentAccountHistDb,
     inputs,
-  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
+  }: Pick<
+    WebviewProps,
+    "manifest" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb" | "inputs"
+  >,
   webviewRef: RefObject<WebviewTag | null>,
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
@@ -378,7 +382,8 @@ function useWebView(
     accounts,
     uiHook,
     postMessage: webviewHook.postMessage,
-    currentAccountHistDb,
+    currentAccountHistDb: currentAccountHistDb,
+    setCurrentAccountHistDb: setCurrentAccountHistDb,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
     mevProtected,
@@ -451,6 +456,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       manifest,
       inputs = {},
       currentAccountHistDb,
+      setCurrentAccountHistDb,
       customHandlers,
       onStateChange,
       hideLoader,
@@ -507,6 +513,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         manifest,
         customHandlers,
         currentAccountHistDb,
+        setCurrentAccountHistDb,
         inputs,
       },
       webviewRef,
@@ -520,7 +527,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
 
     if (isDapp && noAccounts) {
-      return <NoAccountOverlay manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+      return (
+        <NoAccountOverlay manifest={manifest} setCurrentAccountHistDb={setCurrentAccountHistDb} />
+      );
     }
 
     return (
@@ -563,9 +572,9 @@ function DefaultLoader({ isLoading }: { isLoading: boolean }) {
   if (!isLoading) return null;
 
   return (
-    <Loader>
+    <StyledLoader>
       <BigSpinner size={50} />
-    </Loader>
+    </StyledLoader>
   );
 }
 

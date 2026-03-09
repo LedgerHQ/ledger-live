@@ -41,7 +41,8 @@ const WebPlatformPlayer = ({
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
-  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
+  const [currentAccountHistDb, setCurrentAccountHistDb, currentAccountHistDbLoaded] =
+    useCurrentAccountHistDB();
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -89,7 +90,7 @@ const WebPlatformPlayer = ({
         secure={secure}
         baseUrl={baseUrl}
         manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
         setIsInfoPanelOpened={setIsInfoPanelOpened}
@@ -98,6 +99,8 @@ const WebPlatformPlayer = ({
         ref={webviewAPIRef}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
+        setCurrentAccountHistDb={setCurrentAccountHistDb}
+        currentAccountHistDbLoaded={currentAccountHistDbLoaded}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}

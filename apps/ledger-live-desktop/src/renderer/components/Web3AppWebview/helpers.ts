@@ -12,7 +12,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import {
-  CurrentAccountHistDB,
+  SetCurrentAccountHistDb,
   safeGetRefValue,
   useDAppManifestCurrencyIds,
 } from "@ledgerhq/live-common/wallet-api/react";
@@ -316,10 +316,10 @@ export function useWebviewState(
 
 export function useSelectAccount({
   manifest,
-  currentAccountHistDb,
+  setCurrentAccountHistDb,
 }: {
   manifest: LiveAppManifest;
-  currentAccountHistDb?: CurrentAccountHistDB;
+  setCurrentAccountHistDb: SetCurrentAccountHistDb;
 }) {
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -333,7 +333,7 @@ export function useSelectAccount({
   const currencyIds = useDAppManifestCurrencyIds(manifest);
   const { setCurrentAccountHist, setCurrentAccount, currentAccount } = useDappCurrentAccount(
     manifest.id,
-    currentAccountHistDb,
+    setCurrentAccountHistDb,
   );
 
   const onSuccess = useCallback(

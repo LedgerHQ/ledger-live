@@ -88,7 +88,8 @@ export default function WebPlatformPlayer({
     props.onStateChange?.(state);
   };
 
-  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
+  const [currentAccountHistDb, setCurrentAccountHistDb]: CurrentAccountHistDB =
+    useCurrentAccountHistDB();
 
   return (
     <Container>
@@ -99,7 +100,7 @@ export default function WebPlatformPlayer({
           webviewAPIRef={webviewAPIRef}
           webviewState={webviewState}
           config={config?.topBarConfig}
-          currentAccountHistDb={currentAccountHistDb}
+          setCurrentAccountHistDb={setCurrentAccountHistDb}
           mobileView={mobileView}
           setMobileView={setMobileView}
         />
@@ -111,6 +112,7 @@ export default function WebPlatformPlayer({
             ref={webviewAPIRef}
             customHandlers={customHandlers}
             currentAccountHistDb={currentAccountHistDb}
+            setCurrentAccountHistDb={setCurrentAccountHistDb}
             Loader={Loader}
           />
         </WebViewWrapper>
