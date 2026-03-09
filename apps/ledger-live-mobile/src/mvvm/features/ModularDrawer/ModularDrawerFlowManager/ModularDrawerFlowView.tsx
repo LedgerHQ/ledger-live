@@ -10,27 +10,29 @@ import { ModularDrawerFlowProps } from ".";
 import useScreenTransition from "./useScreenTransition";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
-//import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function ModularDrawerFlowView({
   assetsViewModel,
   networksViewModel,
   accountsViewModel,
+  useLumenBottomSheet,
 }: ModularDrawerFlowProps) {
   const currentStep = useSelector(modularDrawerStepSelector);
-  // TODO: Re-enable it for LIVE-27294:
-  // const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case ModularDrawerStep.Asset:
-        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={false} />;
+        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={useLumenBottomSheet} />;
       case ModularDrawerStep.Network:
-        return <NetworkSelection {...networksViewModel} useLumenBottomSheet={false} />;
+        return (
+          <NetworkSelection {...networksViewModel} useLumenBottomSheet={useLumenBottomSheet} />
+        );
       case ModularDrawerStep.Account:
-        return <AccountSelection {...accountsViewModel} useLumenBottomSheet={false} />;
+        return (
+          <AccountSelection {...accountsViewModel} useLumenBottomSheet={useLumenBottomSheet} />
+        );
       default:
         return null;
     }
@@ -46,8 +48,7 @@ export function ModularDrawerFlowView({
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        {/* TODO: Re-enable it for LIVE-27294: {!isEnabled && <Title step={step} />} */}
-        <Title step={step} />
+        {!useLumenBottomSheet && <Title step={step} />}
         {renderStepContent(step)}
       </Animated.View>
     );
