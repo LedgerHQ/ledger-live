@@ -19,7 +19,7 @@ import { BackConfig, WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { PtxNavigatorParamList } from "~/components/RootNavigator/types/PtxNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { accountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
@@ -39,7 +39,7 @@ export type Props = StackNavigatorProps<
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
 export function PtxScreen({ route, config }: Props) {
-  const accounts = useSelector(accountsSelector);
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
   const devMode = useEnv("MANAGER_DEV_MODE").toString();
   const { theme } = useTheme();
   const { platform, ...params } = route.params || {};
@@ -72,10 +72,11 @@ export function PtxScreen({ route, config }: Props) {
       semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)
     ) {
       const { account: accountId } = params;
-      const account = accounts.find(a => a.id === accountId);
+      // Use flattened accounts so token account ids resolve (shallow list only has parent accounts)
+      const account = flattenedAccounts.find(a => a.id === accountId);
       if (account) {
         const parentAccount = isTokenAccount(account)
-          ? getParentAccount(account, accounts)
+          ? getParentAccount(account, flattenedAccounts)
           : undefined;
         params.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
       }
@@ -84,7 +85,7 @@ export function PtxScreen({ route, config }: Props) {
     if (params?.goToURL) params.goToURL = decodeURIComponent(params.goToURL);
 
     return params;
-  }, [walletState, accounts, manifest?.apiVersion, params]);
+  }, [walletState, flattenedAccounts, manifest?.apiVersion, params]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
