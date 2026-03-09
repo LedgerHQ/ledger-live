@@ -92,6 +92,7 @@ jest.mock("LLD/hooks/useCategorizedAssets", () => ({
   useCategorizedAssetsFromPortfolio: () => ({
     categorizedAssets: createMockCategorizedAssets(),
     isLoadingStablecoinTickers: false,
+    stablecoinTickers: new Set<string>(),
   }),
 }));
 

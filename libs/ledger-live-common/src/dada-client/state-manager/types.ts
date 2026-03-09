@@ -10,7 +10,7 @@ export enum AssetsAdditionalData {
 }
 
 export enum AssetCategory {
-  Stablecoin = "stablecoin",
+  Stablecoins = "stablecoins",
 }
 
 export interface GetAssetsDataParams {
