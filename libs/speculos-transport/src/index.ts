@@ -125,7 +125,12 @@ async function isPortAvailable(port: number): Promise<boolean> {
 async function waitForPortReady(
   port: number,
   host = "127.0.0.1",
-  timeoutMs = process.env.CI ? 120_000 : 30_000,
+  timeoutMs = (() => {
+    const env = process.env.SPECULOS_TCP_READY_TIMEOUT_MS;
+    const parsed = env ? parseInt(env, 10) : NaN;
+    if (Number.isFinite(parsed) && parsed > 0) return parsed;
+    return process.env.CI ? 180_000 : 30_000;
+  })(),
   intervalMs = 200,
 ): Promise<void> {
   const deadline = Date.now() + timeoutMs;
@@ -371,7 +376,7 @@ export async function createSpeculosDevice(
 
   let resolveReady: (value: boolean) => void;
   let rejectReady: (e: Error) => void;
-  const ready = new Promise((resolve, reject) => {
+  const ready = new Promise<boolean>((resolve, reject) => {
     resolveReady = resolve;
     rejectReady = reject;
   });
@@ -400,13 +405,23 @@ export async function createSpeculosDevice(
       log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
     }
   });
-  let latestStderr: string | undefined;
+  const stderrChunks: string[] = [];
+  const maxStderrLength = 12_000;
   p.stderr.on("data", async data => {
     if (!data) return;
-    latestStderr = data;
+    const str = String(data);
+    stderrChunks.push(str);
+    let total = 0;
+    for (let i = stderrChunks.length - 1; i >= 0; i--) {
+      total += stderrChunks[i].length;
+      if (total > maxStderrLength) {
+        stderrChunks.splice(0, i);
+        break;
+      }
+    }
 
     if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
+      log("speculos-stderr", `${speculosID}: ${str.trim()}`);
     }
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
@@ -433,10 +448,25 @@ export async function createSpeculosDevice(
 
     if (!destroyed) {
       await destroy();
-      rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
+      const stderrTail = stderrChunks.length
+        ? stderrChunks.join("").slice(-maxStderrLength)
+        : "";
+      rejectReady(new Error(`speculos process failure. ${stderrTail || "(no stderr)"}`));
     }
   });
-  const hasSucceed = await ready;
+  let hasSucceed: boolean;
+  try {
+    hasSucceed = await ready;
+  } catch (e) {
+    const err = e as Error;
+    if (err?.message?.includes("not ready after") && stderrChunks.length > 0) {
+      const stderrTail = stderrChunks.join("").slice(-maxStderrLength);
+      throw new Error(
+        `${err.message}\n\nSpeculos/Docker stderr (last ~${Math.round(maxStderrLength / 1024)}KB):\n---\n${stderrTail}\n---`,
+      );
+    }
+    throw e;
+  }
 
   if (!hasSucceed) {
     await delay(1000);
