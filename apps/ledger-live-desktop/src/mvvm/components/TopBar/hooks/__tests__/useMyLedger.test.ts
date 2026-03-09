@@ -3,6 +3,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { renderHook } from "tests/testSetup";
 import { useMyLedger } from "../useMyLedger";
 import { MANAGER_PATH } from "../../utils/constants";
+import { defaultInitialState } from "LLD/components/SideBar/__tests__/testUtils";
 
 const mockOpenBuyDeviceModal = jest.fn();
 const mockNavigate = jest.fn();
@@ -70,17 +71,7 @@ describe("useMyLedger", () => {
 
     it("navigates to manager when user has onboarded device and is not on manager", () => {
       const { result } = renderHook(() => useMyLedger(), {
-        initialState: {
-          settings: {
-            ...defaultSettings,
-            lastOnboardedDevice: {
-              deviceId: "test-device",
-              modelId: DeviceModelId.nanoX,
-              wired: false,
-            },
-            lastSeenDevice: { modelId: DeviceModelId.nanoX },
-          },
-        },
+        initialState: { settings: defaultInitialState.settings },
       });
 
       result.current.handleMyLedger();
