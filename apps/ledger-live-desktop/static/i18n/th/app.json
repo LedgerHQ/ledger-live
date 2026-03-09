@@ -153,7 +153,8 @@
     "memoTag" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Tag/Memo"
     },
-    "memo" : "Memo"
+    "memo" : "Memo",
+    "stake" : "สเตค"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -237,7 +238,7 @@
       },
       "cancel" : {
         "title" : "ยกเลิก",
-        "description" : "กำลังส่ง 0 {{ticker}} ไปยัง Address ของคุณเอง"
+        "description" : "กำลังส่ง 0 {{ticker}} ไปยัง Address ของคุณเอง ไม่รับประกันว่าจะสามารถยกเลิกได้ หากเครือข่ายได้ทำธุรกรรมเดิมเสร็จก่อนคำขอยกเลิก เงินทุนจะยังคงถูกส่งไปถึงผู้รับอยู่"
       },
       "steps" : {
         "method" : {
@@ -308,6 +309,7 @@
     "exchange" : "ซื้อ / ขาย",
     "swap" : "สวอป",
     "perps" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
+    "home" : "หน้าหลัก",
     "refer" : "แนะนำเพื่อน",
     "lend" : "ให้ยืม",
     "catalog" : "ผู้ให้บริการ",
@@ -1751,7 +1753,8 @@
       "previousStakingNodeId" : "ID โหนดก่อนหน้า",
       "gasConsumed" : "ค่าแก๊สที่ใช้หมดไป",
       "gasUsed" : "ค่าแก๊สที่ใช้ไป",
-      "gasLimit" : "ค่าแก๊สสูงสุดที่ยอมจ่าย"
+      "gasLimit" : "ค่าแก๊สสูงสุดที่ยอมจ่าย",
+      "functionId" : "รหัสฟังก์ชัน"
     }
   },
   "operationList" : {
@@ -1939,6 +1942,13 @@
       "updateBtn" : "อัปเดตระบบปฏิบัติการ",
       "installUpdate" : "ติดตั้งการอัปเดต",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "มีการอัปเดตระบบปฏิบัติการที่พร้อมใช้งาน",
+            "manager" : "มีการอัปเดต Ledger OS ที่พร้อมใช้งาน"
+          },
+          "cta" : "อัปเดต"
+        },
         "warning" : "มีการอัปเดต OS ที่พร้อมใช้งาน",
         "version" : "เวอร์ชัน {{latestFirmware}}",
         "cta" : "ไปที่ My Ledger",
@@ -2144,6 +2154,24 @@
         "description" : "การดำเนินการของคุณได้รับการส่งไปยังเครือข่ายเพื่อการยืนยัน โปรดรอให้ธุรกรรมของคุณได้รับการยืนยันและรอให้ผู้ให้บริการดำเนินการ"
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "เชื่อมต่อกับอุปกรณ์ Ledger",
+    "subtitle" : "เชื่อมต่อกับอุปกรณ์ Ledger ของคุณ เพื่อใช้งานแอป Ledger Wallet ได้อย่างเต็มประสิทธิภาพ",
+    "0" : {
+      "title" : "การเป็นเจ้าของแบบเต็มรูปแบบ",
+      "desc" : "Private Key ของคุณจะไม่ถูกส่งออกไปจากอุปกรณ์"
+    },
+    "1" : {
+      "title" : "เทรดอย่างปลอดภัย",
+      "desc" : "ตรวจสอบธุรกรรมบนหน้าจอที่ปลอดภัย"
+    },
+    "2" : {
+      "title" : "เข้าถึงวอลเล็ตที่ปลอดภัยที่สุด",
+      "desc" : "จัดการสินทรัพย์นับพันได้ในที่เดียว"
+    },
+    "connectCTA" : "เชื่อมต่อ",
+    "buyCTA" : "ซื้ออุปกรณ์ Ledger"
   },
   "fund" : {
     "title" : "เงินทุน",
@@ -2431,17 +2459,26 @@
       "confirm" : "ยืนยัน",
       "maxFee" : "ค่าธรรมเนียมสูงสุด ({{unit}})",
       "maxPriorityFee" : "Priority Fee สูงสุด ({{unit}})",
-      "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
       "feePerByte" : "ยอดค่าธรรมเนียม {{unit}}",
       "suggested" : "แนะนำ",
       "nextBlock" : "บล็อกถัดไป",
       "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
       "invalidValue" : "ป้อนตัวเลขที่ถูกต้อง",
       "belowMinimum" : "ขั้นต่ำคือ {{min}}",
-      "maxFeeBelowPriorityFee" : "Max Fee ต้องมากกว่าหรือเท่ากับ Max Priority Fee"
+      "maxFeeBelowPriorityFee" : "Max Fee ต้องมากกว่าหรือเท่ากับ Max Priority Fee",
+      "feeAsset" : "คริปโตที่จะใช้จ่ายค่าธรรมเนียม",
+      "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
+      "payFeesIn" : "ชำระค่าธรรมเนียมด้วย"
     },
     "coinControl" : {
-      "title" : "Coin Control"
+      "title" : "Coin Control",
+      "strategy" : "กลยุทธ์",
+      "learnMore" : "เรียนรู้เพิ่มเติม",
+      "coinToSend" : "เหรียญที่จะส่ง",
+      "changeToReturn" : "เปลี่ยนเพื่อกลับไป",
+      "enterAmount" : "ป้อนจำนวน",
+      "amountToSendInCurrency" : "จำนวนที่ต้องการส่งในรูปแบบ {{ticker}}",
+      "amountInputLabel" : "จำนวนที่จะส่ง"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5053,7 @@
     }
   },
   "theme" : {
-    "system" : "เลือกธีมระบบ",
+    "system" : "ระบบ",
     "light" : "โหมดกลางวัน",
     "dusk" : "Dusk",
     "dark" : "โหมดกลางคืน"
@@ -7307,6 +7344,50 @@
     "memoPlaceholder" : "ป้อน Tag/Memo",
     "memoWarningText" : "เมื่อใช้บันทึก ควรตรวจสอบข้อมูลกับผู้รับอย่างละเอียดรอบคอบ"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "ค่าธรรมเนียม",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "เปลี่ยนการ Delegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ ",
+      "changeCTA" : "เปลี่ยน"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน"
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -7528,7 +7609,8 @@
     },
     "selectAccount" : {
       "title" : "เลือกบัญชี",
-      "addAccount" : "เพิ่มบัญชีใหม่หรือใช้บัญชีที่มีอยู่"
+      "addAccount" : "เพิ่มบัญชีใหม่หรือใช้บัญชีที่มีอยู่",
+      "perpetualsBanner" : "ปัจจุบันรองรับเฉพาะ USDC บนเครือข่าย Arbitrum เท่านั้น"
     }
   },
   "customImage" : {
@@ -7583,7 +7665,7 @@
       "skipCTA" : "ฉันจะจัดการทีหลัง"
     },
     "default" : {
-      "title" : "{{ productName }} มีแอปของตัวเอง คุณต้องการใช้แอปเหล่านั้นเพื่อทำธุรกรรม",
+      "title" : "{{ productName }} มีแอปของตัวเอง คุณต้องใช้แอปเหล่านั้นเพื่อทำธุรกรรม",
       "subtitle" : "เช่น แอป Bitcoin สำหรับ {{productName}} จำเป็นต้องลงนามในธุรกรรม Bitcoin\n\nติดตั้งแอปเริ่มต้นเพื่อเตรียมความพร้อมสำหรับการทำธุรกรรมให้กับ {{productName}} ของคุณ",
       "installCTA" : "ติดตั้งตอนนี้",
       "skipCTA" : "ฉันจะจัดการทีหลัง"
@@ -7991,6 +8073,8 @@
     "title" : "สำรวจตลาด",
     "genericError" : "การเชื่อมต่อล้มเหลว",
     "cta" : "ดูทั้งหมด",
+    "scrollLeft" : "เลื่อนไปทางซ้าย",
+    "scrollRight" : "เลื่อนไปทางขวา",
     "fearAndGreed" : {
       "title" : "อารมณ์"
     }
@@ -8017,6 +8101,18 @@
     "connect" : "เชื่อมต่อ",
     "buyALedger" : "ซื้อ Ledger"
   },
+  "assets" : {
+    "cryptos" : "คริปโต",
+    "stablecoins" : "สเตเบิลคอยน์",
+    "columns" : {
+      "name" : "ชื่อ",
+      "price" : "ราคา",
+      "balance" : "ยอดคงเหลือในบัญชี",
+      "value" : "มูลค่า",
+      "trend" : "แนวโน้ม 1 วัน",
+      "trendTooltip" : "การเปลี่ยนแปลงของยอดคงเหลือใน 24 ชม. ที่ผ่านมา"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
     "entry" : {
@@ -8029,12 +8125,7 @@
       "errorToolTip" : "เกิดปัญหาเครือข่ายชั่วคราว สินทรัพย์ของคุณยังปลอดภัย บัญชีที่ได้รับผลกระทบ: {{accounts}} แตะเพื่อลองใหม่",
       "emptyErrorToolTip" : "เกิดปัญหาเครือข่ายชั่วคราว สินทรัพย์ของคุณยังปลอดภัย แตะเพื่อลองใหม่",
       "upToDate" : "เป็นปัจจุบันแล้ว",
-      "minutesAgo_one" : "ซิงค์ล่าสุด: {{count}} นาทีที่แล้ว แตะเพื่อรีเฟรช",
-      "minutesAgo_other" : "ซิงค์ล่าสุด: {{count}} นาทีที่แล้ว แตะเพื่อรีเฟรช",
-      "hoursAgo_one" : "ซิงค์ล่าสุด: {{count}} ชั่วโมงที่แล้ว แตะเพื่อรีเฟรช",
-      "hoursAgo_other" : "ซิงค์ล่าสุด: {{count}} ชั่วโมงที่แล้ว แตะเพื่อรีเฟรช",
-      "daysAgo_one" : "ซิงค์ล่าสุด: {{count}} วันที่แล้ว แตะเพื่อรีเฟรช",
-      "daysAgo_other" : "ซิงค์ล่าสุด: {{count}} วันที่แล้ว แตะเพื่อรีเฟรช"
+      "lastSync" : "ซิงค์ล่าสุด: {{timeAgo}} แตะเพื่อรีเฟรช"
     },
     "notificationIndicator" : {
       "tooltip" : "การแจ้งเตือน"
@@ -8174,5 +8265,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "เกิดข้อผิดพลาดระหว่างการอัปเดต ลองอีกครั้ง",
     "installAndRelaunch" : "ติดตั้งการอัปเดตและเปิดใช้งานใหม่"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "เห็นภาพพอร์ตการลงทุนชัดเจนขึ้น",
+        "description" : "See your total balance at a glance, and tap \"Today\" to dive deeper."
+      },
+      "navigation" : {
+        "title" : "ใช้งานฟังก์ชันหลักได้ง่ายขึ้น",
+        "description" : "ทำการสวอป โอน และซื้อได้ทันที ดูส่วน 'สร้างรายได้' และ 'การ์ด' ของคุณได้ที่ด้านล่าง"
+      },
+      "actions" : {
+        "title" : "วิเคราะห์แนวโน้มตลาดแบบเรียลไทม์",
+        "description" : "Quickly see what's trending directly in your portfolio, and move from insights to action."
+      }
+    },
+    "cta" : {
+      "continue" : "ดำเนินการต่อ",
+      "explore" : "สำรวจพอร์ตการลงทุนใหม่ของฉัน"
+    }
   }
 }
