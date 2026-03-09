@@ -122,8 +122,8 @@ async function isPortAvailable(port: number): Promise<boolean> {
 }
 
 async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
-  const BASE_PORT = 30000;
-  const MAX_PORT = 60000;
+  const BASE_PORT = 61000;
+  const MAX_PORT = 65535;
   const MAX_PORT_RETRIES = 10;
 
   for (let attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
