@@ -10,6 +10,9 @@
     "seeAll" : "모두 보기",
     "seeAllWithNumber" : "모두 보기 ({{number}})",
     "back" : "뒤로",
+    "fee" : "수수료",
+    "stake" : "스테이킹",
+    "validator" : "검증인",
     "delete" : "삭제",
     "paste" : "붙여넣기",
     "yes" : "예",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "새로고침 중 - 마지막 업데이트 {{timeAgo}}",
+      "refreshingInitial" : "새로고침 중",
+      "upToDate" : "최신 상태입니다"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "취소",
-      "description" : "0의 {{ticker}}를 본인 주소로 전송하기"
+      "description" : "내 주소로 0 {{ticker}}를 전송합니다. 취소가 보장되지는 않습니다. 네트워크에서 이 취소 요청보다 기존 트랜잭션을 처리할 경우, 해당 자산은 여전히 기존 트랜잭션의 수령인에게 전송됩니다."
     },
     "error" : {
       "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OS 업데이트 가능",
+          "manager" : "Ledger OS 최신 업데이트가 있습니다"
+        },
+        "version" : "버전 {{firmwareVersion}}",
+        "cta" : "업데이트"
+      },
       "title" : "OS 업데이트 사용 가능",
       "descriptionDeviceName" : "탭하여 \"{{deviceName}}\" 장치를 OS 버전 {{firmwareVersion}}로 업데이트하세요.",
       "descriptionProductName" : "탭하여 {{productName}} 장치를 OS 버전 {{firmwareVersion}}로 업데이트하세요."
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "주소 복사 완료!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "스테이킹 잔액",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 스테이킹된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "memoPlaceholder" : "메모(선택)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 스테이킹",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다."
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료",
+      "showAll" : "모두 보기",
+      "showLess" : "접기",
+      "iDelegate" : "위임"
+    }
+  },
   "stellar" : {
     "token" : "자산",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "메모(선택)"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "자산을 안전하게 관리하며 수익을 창출해 보세요.",
       "buttonLabel" : "다음 단계를 확인하세요"
     },
+    "widget" : {
+      "title" : "다음 단계: 지갑 설정 마무리",
+      "subtitle" : "먼저, 자산 충전부터 시작해 보세요."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Ledger 장치 설정하기"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "accountCount_one" : "{{count}}개 계정",
     "accountCount_other" : "{{count}}개 계정",
+    "perpetualsBanner" : "현재 아비트럼 체인에서는 USDC만 지원됩니다.",
     "errors" : {
       "title" : "연결에 실패했습니다",
       "backend" : "문제가 발생했습니다. 나중에 다시 시도해 주세요",
