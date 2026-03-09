@@ -26,5 +26,6 @@ export const getWallet40Attributes = (
     lazyOnboarding: wallet40FeatureFlag?.params?.lazyOnboarding ?? false,
     balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
+    brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
   };
 };
