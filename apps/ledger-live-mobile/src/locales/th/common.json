@@ -10,6 +10,9 @@
     "seeAll" : "ดูทั้งหมด",
     "seeAllWithNumber" : "ดูทั้งหมด ({{number}})",
     "back" : "ย้อนกลับ",
+    "fee" : "ค่าธรรมเนียม",
+    "stake" : "สเตค",
+    "validator" : "ผู้ตรวจสอบ",
     "delete" : "ลบ",
     "paste" : "วาง",
     "yes" : "ใช่",
@@ -2757,6 +2760,11 @@
       "connectDevice" : {
         "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "กำลังรีเฟรช: อัปเดตล่าสุด {{timeAgo}}",
+      "refreshingInitial" : "กำลังรีเฟรช...",
+      "upToDate" : "เป็นปัจจุบันแล้ว"
     }
   },
   "addAccountsModal" : {
@@ -4427,7 +4435,7 @@
     },
     "cancel" : {
       "title" : "ยกเลิก",
-      "description" : "กำลังส่ง 0 {{ticker}} ไปยัง Address ของคุณเอง"
+      "description" : "กำลังส่ง 0 {{ticker}} ไปยัง Address ของคุณเอง ไม่รับประกันว่าจะสามารถยกเลิกได้ หากเครือข่ายได้ทำธุรกรรมเดิมเสร็จก่อนคำขอยกเลิก เงินทุนจะยังคงถูกส่งไปถึงผู้รับอยู่"
     },
     "error" : {
       "notEnoughFundsToCancel" : "การยกเลิกธุรกรรมไม่สามารถทำได้ เนื่องจากคุณมีเงินทุนไม่เพียงพอในบัญชี",
@@ -5040,6 +5048,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "มีการอัปเดตระบบปฏิบัติการที่พร้อมใช้งาน",
+          "manager" : "มีการอัปเดต Ledger OS ที่พร้อมใช้งาน"
+        },
+        "version" : "เวอร์ชัน {{firmwareVersion}}",
+        "cta" : "อัปเดต"
+      },
       "title" : "มีการอัปเดตระบบปฏิบัติการที่พร้อมใช้งาน",
       "descriptionDeviceName" : "แตะเพื่ออัปเดต “{{deviceName}}” เป็น OS เวอร์ชัน {{firmwareVersion}}",
       "descriptionProductName" : "แตะเพื่ออัปเดต {{productName}} เป็น OS เวอร์ชัน {{firmwareVersion}}"
@@ -6224,6 +6240,52 @@
       "newAddressTRC20" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งาน"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "คัดลอก Address แล้ว!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "memoPlaceholder" : "Memo (ไม่บังคับ)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน",
+      "showAll" : "แสดงทั้งหมด",
+      "showLess" : "แสดงน้อยลง",
+      "iDelegate" : "ฉันจะ Delegate"
+    }
+  },
   "stellar" : {
     "token" : "สินทรัพย์",
     "memo" : {
@@ -6628,9 +6690,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo (ไม่บังคับ)"
   },
   "near" : {
     "info" : {
@@ -7693,6 +7752,10 @@
       "description" : "รักษาสินทรัพย์ของคุณให้ปลอดภัยและไปต่อ",
       "buttonLabel" : "ดูว่ามีอะไรอีกบ้าง"
     },
+    "widget" : {
+      "title" : "ถัดไป! ทำการติดตั้งวอลเล็ตให้เรียบร้อย",
+      "subtitle" : "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ"
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "ตั้งค่าอุปกรณ์ Ledger ของคุณ"
@@ -8326,6 +8389,7 @@
     "emptyAssetList" : "ไม่พบสินทรัพย์",
     "accountCount_one" : "{{count}} บัญชี",
     "accountCount_other" : "{{count}} บัญชี",
+    "perpetualsBanner" : "ปัจจุบันรองรับเฉพาะ USDC บนเครือข่าย Arbitrum เท่านั้น",
     "errors" : {
       "title" : "การเชื่อมต่อล้มเหลว",
       "backend" : "เกิดข้อผิดพลาดในระบบของเรา โปรดลองอีกครั้งในภายหลัง",
