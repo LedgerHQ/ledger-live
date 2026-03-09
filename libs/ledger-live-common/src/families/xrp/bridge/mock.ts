@@ -128,7 +128,6 @@ const prepareTransaction = async (a, t) => {
       networkInfo: {
         family: "xrp",
         serverFee: new BigNumber(10),
-        baseReserve: new BigNumber(20),
       },
     };
   }

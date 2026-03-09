@@ -1,5 +1,4 @@
 import { NetworkDown } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { getServerInfos } from "../network";
 import { NetworkInfo } from "../types";
 import { parseAPIValue } from "./common";
@@ -25,7 +24,6 @@ export async function estimateFees(
       networkInfo = {
         family: "xrp",
         serverFee,
-        baseReserve: new BigNumber(0), // NOT USED. will refactor later.
       };
     } catch (e) {
       if (e instanceof Error) {

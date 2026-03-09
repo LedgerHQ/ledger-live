@@ -28,7 +28,6 @@ describe("estimateFees", () => {
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(result.networkInfo).toEqual({
-      baseReserve: BigNumber(0),
       family: "xrp",
       serverFee: BigNumber(23_000_000),
     });
@@ -40,7 +39,6 @@ describe("estimateFees", () => {
     const networkInfo = {
       family: "xrp",
       serverFee: BigNumber(78_000_000),
-      baseReserve: BigNumber("45"),
     } satisfies NetworkInfo;
 
     // When
