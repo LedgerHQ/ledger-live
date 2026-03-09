@@ -10,6 +10,9 @@
     "seeAll" : "Ver todo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
     "back" : "Atrás",
+    "fee" : "Tarifa",
+    "stake" : "Participación",
+    "validator" : "Validador",
     "delete" : "Borrar",
     "paste" : "Pegar",
     "yes" : "Sí",
@@ -1575,6 +1578,24 @@
     "bannerButtonTitle2" : "Compra un Ledger",
     "setupCta" : "Ya tengo un Ledger y quiero configurarlo"
   },
+  "rebornBuyDevice" : {
+    "title" : "Conecta un dispositivo Ledger",
+    "desc" : "Conecta un dispositivo Ledger para aprovechar todo el potencial de tu Ledger Wallet.",
+    "0" : {
+      "title" : "Titularidad real",
+      "desc" : "Tus claves privadas nunca salen del dispositivo."
+    },
+    "1" : {
+      "title" : "Opera de forma segura",
+      "desc" : "Verifica las transacciones en una pantalla segura."
+    },
+    "2" : {
+      "title" : "Accede a la wallet más potente",
+      "desc" : "Gestiona miles de activos desde un mismo sitio."
+    },
+    "cta" : "Conectar",
+    "buyCta" : "Compra tu dispositivo Ledger"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "¿Te ha llegado ya tu Ledger?",
     "desc" : "En cuanto lo tengas, configúralo para desbloquear todas las funciones de la aplicación Ledger Wallet.",
@@ -2638,7 +2659,9 @@
     "discover" : "Discover",
     "nanoX" : "Nano X",
     "market" : "Mercado",
-    "earn" : "Earn"
+    "earn" : "Earn",
+    "card" : "Tarjeta",
+    "swap" : "Permutas"
   },
   "portfolio" : {
     "totalBalance" : "Saldo total",
@@ -2690,7 +2713,7 @@
     "walletBalance" : "Saldo de la billetera",
     "balance" : {
       "noSigner" : "La wallet más\nsegura",
-      "noFund" : "Protege tus cripto"
+      "noAccounts" : "Protege tus cripto"
     },
     "seeAllAssets" : "Ver todos los activos",
     "seeAllAccounts" : "Ver todas las cuentas",
@@ -3497,6 +3520,17 @@
         "firmwareUpdate" : {
           "headerTitle" : "Actualización del firmware de depuración"
         }
+      },
+      "contentCards" : {
+        "title" : "Tarjetas de contenido",
+        "titleDesc" : "Genera tarjetas locales de contenido sin Braze para probarlas.",
+        "description" : "Las tarjetas locales aparecen en Portfolio (y en otras ubicaciones) sin Braze. Permanecen hasta que las descartas o las borras de aquí.",
+        "addSampleBanner" : "Agregar banner de ejemplo",
+        "addSampleBannerDesc" : "Agrega un banner hero de ejemplo a Portfolio.",
+        "addSampleActionCarousel" : "Agregar carrusel de acciones de ejemplo",
+        "addSampleActionCarouselDesc" : "Agrega un carrusel de tarjetas de acción (Comprar, Permutar, Participar) a Portfolio.",
+        "dismissAll" : "Descartar todas las tarjetas locales",
+        "dismissAllDesc" : "Quita todas las tarjetas de contenido generadas localmente."
       }
     }
   },
@@ -4143,6 +4177,100 @@
     "loading" : "Buscando dispositivos..."
   },
   "send" : {
+    "newSendFlow" : {
+      "title" : "Enviar {{currency}}",
+      "available" : "Disponibles {{amount}}",
+      "placeholder" : "Ingresa la dirección o el ENS",
+      "placeholderNoENS" : "Ingresar dirección",
+      "editRecipientAccessibilityLabel" : "Editar destinatario",
+      "recent" : "Recientes",
+      "recentDetail" : "Detalle reciente",
+      "myAccounts" : "Mis cuentas",
+      "account" : "Cuenta",
+      "sendTo" : "Enviar a {{address}}",
+      "addressMatched" : "Dirección coincidente",
+      "addressNotFound" : "Dirección no encontrada",
+      "alreadyUsed" : "Ya utilizado · {{date}}",
+      "recentSendWillAppear" : "Tus envíos anteriores aparecerán aquí",
+      "relativeDate" : {
+        "justNow" : "Ahora",
+        "minutesAgo_one" : "Hace 1 min",
+        "minutesAgo_other" : "Hace {{count}} min",
+        "hoursAgo_one" : "Hace 1 hora",
+        "hoursAgo_other" : "hace {{count}} horas",
+        "daysAgo_one" : "Hace 1 día",
+        "daysAgo_other" : "hace {{count}} días"
+      },
+      "remove" : "Eliminar",
+      "enterTag" : "Ingresar {{tag}}",
+      "firstInteraction" : {
+        "title" : "Enviarás a una dirección nueva",
+        "description" : "Verifica que la dirección sea correcta. Si tienes alguna duda, envía primero una cantidad pequeña."
+      },
+      "sanctioned" : {
+        "title" : "Dirección con alerta",
+        "description" : "Esta dirección ha sido marcada con un alerta y Ledger no permite envíos a esa dirección",
+        "helpCenter" : "Centro de ayuda"
+      },
+      "errors" : {
+        "incorrectFormat" : "Formato de dirección incorrecto",
+        "incompatibleAsset" : "La dirección no es compatible con el activo seleccionado",
+        "walletNotExist" : "La wallet no existe"
+      },
+      "skipMemo" : {
+        "title" : "¿Omitir agregar {{tag}}?",
+        "warning" : "Es posible que pierdas tus activos si el receptor solicita una {{tag}}"
+      },
+      "tagHelp" : {
+        "title" : "¿Qué es una {{tag}}?",
+        "description" : "Cuando envías {{currency}} a un exchange cripto, es necesaria una {{tag}}. Es una función utilizada para identificar al receptor de la transacción. Si no incluyes la {{tag}} memo, es posible que se pierdan los fondos."
+      },
+      "networkFeesInFiat" : "Tarifas de red en {{currency}}",
+      "feesAmount" : "Monto de la tarifa ({{unit}})",
+      "gasLimit" : "Limite de gas ({{unit}})",
+      "feesPaid" : "Tarifa abonada a la red para procesar tu transacción",
+      "insufficientBalanceFees" : "Saldo insuficiente para cubrir las tarifas de red.",
+      "amountToSend" : "Monto a enviar en ({{currency}})",
+      "coinToSend" : "Monedas a enviar",
+      "coinControlCustom" : "Selección de monedas personalizada",
+      "quickActions" : {
+        "quarter" : "25%",
+        "half" : "50%",
+        "threeQuarters" : "75%",
+        "max" : "Máx."
+      },
+      "reviewCta" : "Revisar",
+      "getCta" : "Obtener {{currency}}",
+      "switchInputMode" : "Cambiar modo de entrada de cantidad",
+      "aboveMaximum" : "Supera el saldo máximo",
+      "transactionSigned" : "Transacción firmada",
+      "processingTransaction" : "Tu transacción está en proceso",
+      "sign" : {
+        "title" : "Continúa en tu Ledger {{wording}}",
+        "description" : "Sigue las instrucciones que aparecen en tu pantalla táctil segura."
+      },
+      "gasOptionsSync" : {
+        "warningTitle" : "No se pueden actualizar las tarifas de red",
+        "warningDescription" : "Puede que los preajustes de la tarifa estén obsoletos."
+      },
+      "customFees" : {
+        "title" : "Tarifas personalizadas",
+        "confirm" : "Confirmar",
+        "maxFee" : "Tarifa máxima ({{unit}})",
+        "maxPriorityFee" : "Tarifa de prioridad máxima ({{unit}})",
+        "gasLimit" : "Limite de gas ({{unit}})",
+        "feePerByte" : "Monto de la tarifa ({{unit}})",
+        "suggested" : "Sugerida",
+        "nextBlock" : "Siguiente bloque",
+        "networkFeesInFiat" : "Tarifas de red en {{currency}}",
+        "invalidValue" : "Ingresa un número válido",
+        "belowMinimum" : "El mínimo es {{min}}",
+        "maxFeeBelowPriorityFee" : "La tarifa máxima debe ser mayor o igual que la tarifa de prioridad máxima"
+      },
+      "coinControl" : {
+        "title" : "Control de monedas"
+      }
+    },
     "pendingTxWarning" : "Tienes transacciones entrantes pendientes. Ten en cuenta que las transacciones pendientes pueden revertirse.",
     "tooMuchUTXOBottomModal" : {
       "cta" : "Continuar",
@@ -4195,7 +4323,8 @@
       "useMax" : "Utilizar máx",
       "loadingNetwork" : "Cargando tarifas de red...",
       "noRateProvider" : "No disponible",
-      "quantityAvailable" : "Cantidad disponible"
+      "quantityAvailable" : "Cantidad disponible",
+      "toggleCurrency" : "Cambiar divisa"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4255,6 +4384,12 @@
       "required" : "Se requieren tarifas",
       "chooseGas" : "Elige un precio de gas",
       "higherFaster" : "Un precio de gas más alto se traducirá en una confirmación más rápida.",
+      "medium" : "Media",
+      "fast" : "Rápida",
+      "slow" : "Lenta",
+      "custom" : "Personalizada",
+      "customFees" : "Tarifas personalizadas",
+      "coinControl" : "Control de monedas",
       "edit" : {
         "title" : "Elegir unidad"
       },
@@ -6092,6 +6227,52 @@
       "newAddressTRC20" : "Primero debes enviar al menos 0,1 TRX a esta dirección para activarla."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "¡Dirección copiada!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redelegar",
+      "earn" : "Earn"
+    },
+    "stakeBanner" : {
+      "title" : "Gana recompensas con MINA",
+      "altTitle" : "Gestiona tu delegación de MINA",
+      "description" : "Delega tus MINA a un productor de bloques y obtén recompensas por la producción de bloques. Las recompensas se distribuyen según la cantidad que tengas delegada.",
+      "altDescription" : "Cambia tus ajustes de delegación o cancela la delegación de tus tokens MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegados a",
+      "stakedBalance" : "Saldo en participación",
+      "producerAddress" : "Dirección del productor",
+      "delegatedToTooltip" : "Nombre del productor de bloques en el que delegas",
+      "stakedBalanceTooltip" : "Cantidad total de MINA que tienes puesta en participación con este validador",
+      "producerAddressTooltip" : "Dirección pública del productor de bloques al que delegas"
+    },
+    "delegators" : "Delegadores",
+    "memoPlaceholder" : "Memo opcional",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Elegir validador",
+        "connectDevice" : "Conectar dispositivo",
+        "confirmation" : "Confirmación"
+      },
+      "title" : "Poner en participación MINA",
+      "help" : "Selecciona un validador de la siguiente lista para delegar tus tokens MINA.",
+      "success" : {
+        "title" : "Transacción transmitida correctamente",
+        "description" : "Se ha transmitido tu solicitud de cambio de delegación"
+      },
+      "error" : {
+        "title" : "Se produjo un error al transmitir la transacción"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "commission" : "Comisión",
+      "showAll" : "Mostrar todo",
+      "showLess" : "Mostrar menos",
+      "iDelegate" : "Delego"
+    }
+  },
   "stellar" : {
     "token" : "Activos",
     "memo" : {
@@ -6496,9 +6677,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Memo opcional"
   },
   "near" : {
     "info" : {
@@ -7153,7 +7331,8 @@
         "website" : "Sitio web"
       },
       "back" : {
-        "card" : "todas las tarjetas"
+        "card" : "todas las tarjetas",
+        "cardTab" : "Tarjeta"
       }
     }
   },
@@ -8311,22 +8490,36 @@
       "authorize" : "Autorizar",
       "preapprove" : "Cuenta agregada correctamente",
       "validator" : "Validador de Ledger",
-      "title" : "Aceptar automáticamente fondos recibidos",
+      "title" : "Incorporación",
+      "success" : "Cuenta incorporada correctamente",
+      "status" : {
+        "prepare" : "Preparando transacción de incorporación de la cuenta.\nEste proceso puede llevar hasta un minuto.",
+        "submit" : "Incorporando cuenta...",
+        "default" : "Procesando..."
+      },
       "processing" : {
         "title" : "Procesando transacción",
-        "description" : "Este proceso puede tardar hasta 1 minuto.",
+        "description" : "Espera",
         "keepDeviceNearby" : "Mantente dentro de la aplicación Ledger Wallet y con tu Ledger disponible."
       },
       "reonboard" : {
         "title" : "Es necesario actualizar la cuenta",
         "account" : "Cuenta",
         "authorize" : "Volver a autorizar el validador",
+        "success" : "Cuenta actualizada con éxito",
         "warning" : {
           "title" : "Cambio de topología detectado",
           "description" : "Se ha detectado un cambio de topología en la red Canton. Vuelve a incorporar tu cuenta para seguir usándola."
         }
       },
       "error429" : "En este momento, Canton Network solo permite la creación de un número de cuentas limitado al día. Inténtalo de nuevo más tarde."
+    },
+    "authorize" : {
+      "status" : {
+        "prepare" : "Preparando autorización...",
+        "submit" : "Autorizando validador...",
+        "default" : "Procesando..."
+      }
     },
     "tooManyUtxos" : {
       "title" : "Acción necesaria: Demasiadas UTXOs",
@@ -8402,5 +8595,40 @@
     "actions" : {
       "swap" : "Permutar"
     }
+  },
+  "cardLanding" : {
+    "title" : "Gasta tus cripto",
+    "subtitle" : "Paga en tiendas online o físicas con una tarjeta cripto",
+    "ctas" : {
+      "exploreCards" : "Explorar tarjetas",
+      "iHaveACard" : "Tengo una tarjeta"
+    }
+  },
+  "walletV4Tour" : {
+    "title" : "Descubre tu nuevo portfolio",
+    "slides" : {
+      "portfolio" : {
+        "title" : "Una visión más clara de tu portfolio",
+        "description" : "Consulta tu saldo global de un vistazo y pulsa \"Hoy\" para profundizar."
+      },
+      "navigation" : {
+        "title" : "Accede a las acciones clave más rápido",
+        "description" : "Acceso instantáneo a Permutas, Transferir y Comprar. Las opciones Earn y tu Tarjeta están en el menú de navegación inferior."
+      },
+      "actions" : {
+        "title" : "Observa las tendencias del mercado al instante",
+        "description" : "Visualiza rápidamente las tendencias actuales directamente en tu portfolio para pasar de los datos a la acción."
+      }
+    },
+    "cta" : {
+      "continue" : "Siguiente",
+      "explore" : "Descubrir mi nuevo portfolio"
+    }
+  },
+  "mainNavigation" : {
+    "home" : "Inicio",
+    "swap" : "Permutas",
+    "earn" : "Earn",
+    "card" : "Tarjeta"
   }
 }
