@@ -49,7 +49,7 @@ const subAccountReceive: Array<{
 for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
     });
 
@@ -211,7 +211,7 @@ const transactionE2E = [
 for (const transaction of transactionE2E) {
   test.describe("Send token - E2E", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
         liveDataWithParentAddressCommand(
@@ -307,7 +307,7 @@ const transactionsAddressInvalid = [
 for (const transaction of transactionsAddressInvalid) {
   test.describe("Send token - invalid address input", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         async (appjsonPath: string) => {
@@ -377,7 +377,7 @@ const transactionsAddressValid = [
 for (const transaction of transactionsAddressValid) {
   test.describe("Send token - valid address input", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -464,7 +464,7 @@ const tokenTransactionInvalid = [
 for (const transaction of tokenTransactionInvalid) {
   test.describe("Send token (subAccount) - invalid amount input", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
         liveDataWithParentAddressCommand(
@@ -523,7 +523,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     Fee.MEDIUM,
   );
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
     cliCommands: [
       liveDataWithParentAddressCommand(
@@ -576,7 +576,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
     xrayTicket: "B2CQA-3908",
   };
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tokenValidSend.tx.accountToDebit.currency.speculosApp,
     cliCommands: [
       liveDataWithParentAddressCommand(

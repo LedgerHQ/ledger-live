@@ -45,7 +45,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTicket } of provid
     });
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
       cliCommandsOnApp: [
@@ -116,7 +116,7 @@ test.describe("Swap - Check Best Offer", () => {
   });
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [
@@ -178,7 +178,7 @@ test.describe("Swap - Landing page", () => {
   });
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [

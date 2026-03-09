@@ -102,7 +102,7 @@ const liveApps = [
 for (const account of e2eDelegationAccounts) {
   test.describe("Delegate", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -188,7 +188,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
   test.describe("Delegate without Broadcasting", () => {
     setupEnv(true);
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -276,7 +276,7 @@ test.describe("e2e delegation - Tezos", () => {
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
   setupEnv(true);
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
@@ -334,7 +334,7 @@ test.describe("e2e delegation - Tezos", () => {
 test.describe("e2e delegation - Celo", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
@@ -394,7 +394,7 @@ test.describe("e2e delegation - Celo", () => {
 for (const validator of validators) {
   test.describe("Select a validator", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: validator.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -453,7 +453,7 @@ for (const validator of validators) {
 test.describe("Staking flow from different entry point", () => {
   const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: delegateAccount.account.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
@@ -551,7 +551,7 @@ test.describe("Staking flow from different entry point", () => {
 for (const currency of liveApps) {
   test.describe("LiveApp delegate", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {

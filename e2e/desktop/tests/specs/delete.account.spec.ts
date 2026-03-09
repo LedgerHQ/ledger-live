@@ -23,7 +23,7 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({

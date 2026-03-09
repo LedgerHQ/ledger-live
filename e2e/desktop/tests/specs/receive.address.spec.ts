@@ -22,7 +22,7 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Receive", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -93,7 +93,7 @@ for (const account of accounts) {
 test.describe("Receive", () => {
   const account = Account.TRX_3;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {

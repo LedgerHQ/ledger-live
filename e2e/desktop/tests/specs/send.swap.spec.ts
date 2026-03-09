@@ -232,7 +232,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     });
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
       cliCommandsOnApp: [

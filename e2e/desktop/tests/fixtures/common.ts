@@ -131,6 +131,16 @@ export const test = base.extend<TestFixtures>({
       : {};
 
     const userData = merge({ data: { settings } }, fileUserData);
+
+    const hasAccounts = (userData.data?.accounts?.length ?? 0) > 0;
+    const settingsData = userData.data?.settings as Record<string, unknown> | undefined;
+    if (
+      hasAccounts &&
+      settingsData &&
+      (settingsData.lastSeenDevice == null || settingsData.lastSeenDevice === undefined)
+    ) {
+      settingsData.lastSeenDevice = { modelId: "nanoSP" };
+    }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     if (extraUserdataFiles) {
       await Promise.all(

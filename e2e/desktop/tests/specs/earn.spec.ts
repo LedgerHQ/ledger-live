@@ -44,7 +44,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
   test.describe("Start ETH staking flow from Earn Dashboard", () => {
     setupEnv(true);
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataWithAddressCommand(account)],
     });
@@ -90,7 +90,7 @@ test.describe("Inline Add Account", () => {
   const account = Account.ETH_1;
   setupEnv(true);
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
   });
 
@@ -171,7 +171,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
   test.describe("Correct Earn page is loaded depending on user's staking situation", () => {
     setupEnv(true);
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {

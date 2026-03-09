@@ -12,7 +12,7 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Activate Private Balance", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
