@@ -1,13 +1,13 @@
 import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
-import { testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
+  testnetPrivateRecord,
   getMockedTransactionDetails,
   getMockedSimpleTransactionDetails,
   getMockedAccountPublicTransactions,
-} from "../__tests__/fixtures/transaction.fixture";
+} from "../__tests__/fixtures/api.fixture";
+import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { apiClient } from "./api";
 
 jest.mock("@ledgerhq/live-network");

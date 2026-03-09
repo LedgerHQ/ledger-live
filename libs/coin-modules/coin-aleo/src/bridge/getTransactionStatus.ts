@@ -64,7 +64,7 @@ async function handleTransferTransaction({
   const config = aleoCoinConfig.getCoinConfig(account.currency);
   const feeEstimation = estimateFees({
     configOrCurrencyId: config,
-    transactionType: transaction.type,
+    transactionType: transaction.mode,
   });
   const estimatedFees = new BigNumber(feeEstimation.value.toString());
   const calculatedAmount = calculateAmount({

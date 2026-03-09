@@ -27,7 +27,7 @@ describe("prepareTransaction", () => {
     useAllAmount: false,
     recipient: "aleo1recipient",
     fees: new BigNumber(0),
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
 
   beforeEach(() => {

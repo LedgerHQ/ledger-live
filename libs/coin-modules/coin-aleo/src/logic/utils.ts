@@ -279,8 +279,8 @@ export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
   return (
-    transaction.type === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
-    transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
   );
 }
 
@@ -358,6 +358,7 @@ export function serializeTransaction(tx: PreparedRequestResponse): string {
 export function deserializeTransaction(txHex: string): PreparedRequestResponse {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
+
 // this function is used to extract the fields that should be displayed in the operation details
 export const getOperationDetailsExtraFields = (
   extra: AleoOperationExtra,
@@ -366,14 +367,14 @@ export const getOperationDetailsExtraFields = (
 };
 
 /**
- * Returns the spendable balance for a given Aleo transaction type.
+ * Returns the spendable balance for a given Aleo transaction mode.
  *
  * Aleo accounts maintain two balances:
  * - public balance, used for public transfers and for converting public funds into private funds
  * - private balance, used for shielded transfers and for converting private funds back into public funds
  */
 export function getAvailableBalance(account: AleoAccount, transaction: Transaction): BigNumber {
-  switch (transaction.type) {
+  switch (transaction.mode) {
     // spending public balance
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
@@ -384,6 +385,6 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       return account.aleoResources?.privateBalance ?? new BigNumber(0);
     default:
       // @ts-expect-error - runtime check to ensure all transaction types are handled
-      throw new Error(`aleo: unsupported tx type for balance calculation: ${transaction.type}`);
+      throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
   }
 }

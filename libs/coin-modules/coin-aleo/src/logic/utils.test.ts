@@ -1007,29 +1007,29 @@ describe("getAvailableBalance", () => {
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, mockTransparentBalance],
     [TRANSACTION_TYPE.TRANSFER_PRIVATE, mockPrivateBalance],
     [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, mockPrivateBalance],
-  ])("should return correct balance for %s", (type, expected) => {
-    const transaction = getMockedTransaction({ type });
+  ])("should return correct balance for %s", (mode, expected) => {
+    const transaction = getMockedTransaction({ mode });
 
     expect(getAvailableBalance(mockAccount, transaction)).toStrictEqual(expected);
   });
 
   it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.TRANSFER_PRIVATE])(
     "should return zero when aleoResources is undefined (%s)",
-    type => {
+    mode => {
       const brokenAccount = getMockedAccount({ aleoResources: undefined });
-      const transaction = getMockedTransaction({ type });
+      const transaction = getMockedTransaction({ mode });
 
       expect(getAvailableBalance(brokenAccount, transaction)).toStrictEqual(new BigNumber(0));
     },
   );
 
-  it("should throw for an unsupported transaction type", () => {
-    const unsupportedType = "unsupported_type";
-    // @ts-expect-error - testing unsupported type
-    const transaction = getMockedTransaction({ type: unsupportedType });
+  it("should throw for an unsupported transaction mode", () => {
+    const unsupportedMode = "unsupported_mode";
+    // @ts-expect-error - testing unsupported mode
+    const transaction = getMockedTransaction({ mode: unsupportedMode });
 
     expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
-      `aleo: unsupported tx type for balance calculation: ${unsupportedType}`,
+      `aleo: unsupported tx mode for balance calculation: ${unsupportedMode}`,
     );
   });
 });
