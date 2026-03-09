@@ -74,7 +74,6 @@ export const LiveAppDrawer = () => {
   const device = useSelector(getCurrentDevice);
   const syncAccountsById = useSyncAccountsById();
 
-
   // @ts-expect-error how to type payload?
   const {
     isOpen,
