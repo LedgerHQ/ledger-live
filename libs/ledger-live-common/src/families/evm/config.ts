@@ -1152,7 +1152,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://evmrpc.0g.ai",
       },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://chainscan.0g.ai/open/api",
       },
       showNfts: false,
     },
