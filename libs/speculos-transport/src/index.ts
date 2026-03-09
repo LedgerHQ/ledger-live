@@ -195,11 +195,28 @@ const MAX_WORKER_SLOTS = Math.floor((65535 - BASE_PORT) / PORTS_PER_WORKER);
 const MAX_PORT_RETRIES = 10;
 let nextPortOffset = 0;
 
+/**
+ * Prefer TEST_PARALLEL_INDEX (Playwright: stable 0..workers-1, same after restart)
+ * so 32 parallel workers get disjoint port ranges and restarted workers don't
+ * collide. Fall back to TEST_WORKER_INDEX (can grow past workers on restart, so
+ * we use % MAX_WORKER_SLOTS) then JEST_WORKER_ID.
+ */
 function getWorkerIndex(): number | undefined {
+  const parallelIndex = process.env.TEST_PARALLEL_INDEX;
+  if (parallelIndex !== undefined && parallelIndex !== "") {
+    const n = parseInt(parallelIndex, 10);
+    if (Number.isFinite(n)) return n;
+  }
   const playwright = process.env.TEST_WORKER_INDEX;
-  if (playwright !== undefined) return parseInt(playwright, 10);
+  if (playwright !== undefined && playwright !== "") {
+    const n = parseInt(playwright, 10);
+    if (Number.isFinite(n)) return n;
+  }
   const jest = process.env.JEST_WORKER_ID;
-  if (jest !== undefined) return parseInt(jest, 10) - 1;
+  if (jest !== undefined && jest !== "") {
+    const n = parseInt(jest, 10) - 1;
+    if (Number.isFinite(n)) return n;
+  }
   return undefined;
 }
 
@@ -222,6 +239,12 @@ async function getNextAvailablePort(exclude: number[] = []): Promise<number> {
     );
   }
 
+  if (process.env.CI) {
+    log(
+      "speculos",
+      "TEST_PARALLEL_INDEX/TEST_WORKER_INDEX/JEST_WORKER_ID unset; using random port (risk of collision with parallel workers)",
+    );
+  }
   for (let attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
     const port = randomInt(BASE_PORT, MAX_PORT + 1);
     if (exclude.includes(port)) continue;
@@ -434,6 +457,12 @@ export async function createSpeculosDevice(
     } else if (data.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
+      );
+    } else if (data.includes("is in use by another program")) {
+      rejectReady(
+        new Error(
+          `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${str.trim()}`,
+        ),
       );
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
