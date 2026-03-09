@@ -188,6 +188,36 @@ async function waitForSpeculosHttpReady(
   );
 }
 
+/** Run a shell command and return stdout+stderr, or empty string on error/timeout. */
+function execCapture(cmd: string, timeoutMs = 5000): Promise<string> {
+  return new Promise(resolve => {
+    const t = setTimeout(() => {
+      resolve(`(command timed out after ${timeoutMs}ms)`);
+    }, timeoutMs);
+    exec(cmd, { timeout: timeoutMs }, (err, stdout, stderr) => {
+      clearTimeout(t);
+      if (err) resolve(`(exit ${err.code}): ${(stderr || stdout || "").trim()}`);
+      else resolve((stdout || stderr || "").trim());
+    });
+  });
+}
+
+/** Try to identify what is using the given port (Linux/CI). */
+async function getPortUsageDiagnostic(port: number): Promise<string> {
+  const lines: string[] = [];
+  const lsof = await execCapture(`lsof -i :${port} 2>/dev/null || true`, 3000);
+  if (lsof && !lsof.startsWith("(")) lines.push(`lsof -i :${port}:\n${lsof}`);
+  const ss = await execCapture(`ss -tlnp 2>/dev/null | grep :${port} || true`, 3000);
+  if (ss && !ss.startsWith("(")) lines.push(`ss -tlnp | grep :${port}:\n${ss}`);
+  const docker = await execCapture(
+    `docker ps -a --format '{{.Names}} {{.Ports}}' 2>/dev/null | grep -E ':${port}[^0-9]|:${port}$' || true`,
+    3000,
+  );
+  if (docker && !docker.startsWith("(")) lines.push(`docker ps (port ${port}):\n${docker}`);
+  if (lines.length === 0) return "(could not run lsof/ss/docker)";
+  return lines.join("\n\n");
+}
+
 const BASE_PORT = 30000;
 const MAX_PORT = 60000;
 const PORTS_PER_WORKER = 1000;
@@ -459,9 +489,12 @@ export async function createSpeculosDevice(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
     } else if (data.includes("is in use by another program")) {
+      const apiPortNum = ports.apiPort as number;
+      const diagnostic = await getPortUsageDiagnostic(apiPortNum);
       rejectReady(
         new Error(
-          `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${str.trim()}`,
+          `Speculos could not bind to port ${apiPortNum} (already in use). ` +
+            `Last stderr: ${str.trim()}\n\nWhat is using the port:\n${diagnostic}`,
         ),
       );
     } else if (data.includes("address already in use")) {
