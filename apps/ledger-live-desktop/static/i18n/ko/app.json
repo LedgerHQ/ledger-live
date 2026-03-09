@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "취소",
-        "description" : "0의 {{ticker}}를 본인 주소로 전송하기."
+        "description" : "내 주소로 0 {{ticker}}를 전송합니다. 취소가 보장되지는 않습니다. 네트워크에서 이 취소 요청보다 기존 트랜잭션을 처리할 경우, 해당 자산은 여전히 기존 트랜잭션의 수령인에게 전송됩니다."
       },
       "steps" : {
         "method" : {
@@ -308,6 +308,7 @@
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "perps" : "무기한 계약",
+    "home" : "홈",
     "refer" : "친구 추천",
     "lend" : "대출",
     "catalog" : "탐색",
@@ -1498,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
+    "continue" : "계속"
+  },
   "currentAddress" : {
     "title" : "현재 주소",
     "for" : "<1><0>{{name}}</0></1> 주소",
@@ -1751,7 +1771,8 @@
       "previousStakingNodeId" : "이전 노드 ID",
       "gasConsumed" : "소모된 가스비",
       "gasUsed" : "사용된 가스비",
-      "gasLimit" : "가스 한도"
+      "gasLimit" : "가스 한도",
+      "functionId" : "함수 ID"
     }
   },
   "operationList" : {
@@ -1939,6 +1960,13 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "installUpdate" : "업데이트 설치",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "OS 업데이트 가능",
+            "manager" : "Ledger OS 최신 업데이트가 있습니다"
+          },
+          "cta" : "업데이트"
+        },
         "warning" : "OS 업데이트 사용 가능",
         "version" : "버전 {{latestFirmware}}",
         "cta" : "내 Ledger로 이동",
@@ -2144,6 +2172,24 @@
         "description" : "확인을 위해 귀하의 거래를 네트워크로 전송했습니다. 거래가 확인되고 공급자가 이를 처리할 때까지 기다려 주세요."
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "Ledger 장치를 연결하세요",
+    "subtitle" : "Ledger 장치를 연결하여 Ledger Wallet의 모든 기능을 온전히 누려보세요.",
+    "0" : {
+      "title" : "완전한 소유권",
+      "desc" : "개인 키는 어떤 경우에도 장치 외부로 유출되지 않습니다."
+    },
+    "1" : {
+      "title" : "안전한 거래",
+      "desc" : "안전한 보안 화면에서 트랜잭션을 명확히 확인하세요."
+    },
+    "2" : {
+      "title" : "가장 강력한 암호화폐 지갑",
+      "desc" : "수천 가지 디지털 자산을 한 곳에서 관리하세요."
+    },
+    "connectCTA" : "연결",
+    "buyCTA" : "Ledger 장치 구매하기"
   },
   "fund" : {
     "title" : "충전",
@@ -2431,17 +2477,26 @@
       "confirm" : "확인",
       "maxFee" : "최대 수수료({{unit}})",
       "maxPriorityFee" : "최대 우선 수수료({{unit}})",
-      "gasLimit" : "가스 한도({{unit}})",
       "feePerByte" : "수수료({{unit}})",
       "suggested" : "추천",
       "nextBlock" : "다음 블록",
       "networkFeesInFiat" : "네트워크 수수료 {{currency}}",
       "invalidValue" : "유효한 숫자를 입력하세요.",
       "belowMinimum" : "최소값은 {{min}}입니다",
-      "maxFeeBelowPriorityFee" : "최대 수수료는 최대 우선 수수료보다 크거나 같아야 합니다."
+      "maxFeeBelowPriorityFee" : "최대 수수료는 최대 우선 수수료보다 크거나 같아야 합니다.",
+      "feeAsset" : "수수료 지불 자산",
+      "feesAmount" : "수수료({{unit}})",
+      "payFeesIn" : "수수료 지불:"
     },
     "coinControl" : {
-      "title" : "코인 컨트롤"
+      "title" : "코인 컨트롤",
+      "strategy" : "전략",
+      "learnMore" : "자세히 알아보기",
+      "coinToSend" : "보낼 코인",
+      "changeToReturn" : "변경하여 돌아가기",
+      "enterAmount" : "금액 입력",
+      "amountToSendInCurrency" : "보낼 수량({{ticker}})",
+      "amountInputLabel" : "전송 금액"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5071,7 @@
     }
   },
   "theme" : {
-    "system" : "시스템 테마 선택",
+    "system" : "시스템",
     "light" : "밝은",
     "dusk" : "새벽",
     "dark" : "어두운"
@@ -7528,7 +7583,8 @@
     },
     "selectAccount" : {
       "title" : "계정 선택",
-      "addAccount" : "기존 계정이나 신규 계정 추가"
+      "addAccount" : "기존 계정이나 신규 계정 추가",
+      "perpetualsBanner" : "현재 아비트럼 체인에서는 USDC만 지원됩니다."
     }
   },
   "customImage" : {
@@ -7583,7 +7639,7 @@
       "skipCTA" : "나중에 할게요"
     },
     "default" : {
-      "title" : "{{ productName }}는 자체 앱을 보유하며 거래 시 필요합니다.",
+      "title" : "{{ productName }} 모델은 자체 앱을 제공하며, 트랜잭션에는 해당 앱이 필요합니다.",
       "subtitle" : "예를 들어, {{productName}}용 비트코인 앱은 비트코인 트랜잭션 서명에 필요합니다.\n기본 앱을 설치하여 사용 중이신 {{productName}} 트랜잭션 전용으로 사용하세요.",
       "installCTA" : "지금 설치",
       "skipCTA" : "나중에 할게요"
@@ -7991,6 +8047,8 @@
     "title" : "시장 탐색하기",
     "genericError" : "연결에 실패했습니다",
     "cta" : "모두 보기",
+    "scrollLeft" : "왼쪽으로 스크롤",
+    "scrollRight" : "오른쪽으로 스크롤",
     "fearAndGreed" : {
       "title" : "시장 심리"
     }
@@ -8017,6 +8075,18 @@
     "connect" : "연결",
     "buyALedger" : "Ledger 구매하기"
   },
+  "assets" : {
+    "cryptos" : "암호화폐",
+    "stablecoins" : "스테이블코인",
+    "columns" : {
+      "name" : "이름",
+      "price" : "가격",
+      "balance" : "잔액",
+      "value" : "가치",
+      "trend" : "1일 트렌드",
+      "trendTooltip" : "24시간 자산 변동"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
     "entry" : {
@@ -8029,12 +8099,7 @@
       "errorToolTip" : "일시적인 네트워크 문제가 발생했습니다. 귀하의 자산은 안전하니 안심하세요. 영향을 받은 계정 목록: {{accounts}}. 탭하여 다시 시도하세요",
       "emptyErrorToolTip" : "일시적인 네트워크 문제가 발생했습니다. 자산은 안전하니 안심하세요. 탭하여 다시 시도하세요",
       "upToDate" : "최신 상태입니다",
-      "minutesAgo_one" : "마지막 동기화: {{count}}분 전. 탭하여 새로고침하세요",
-      "minutesAgo_other" : "마지막 동기화: {{count}}분 전. 탭하여 새로고침하세요",
-      "hoursAgo_one" : "마지막 동기화: {{count}}시간 전. 탭하여 새로고침하세요",
-      "hoursAgo_other" : "마지막 동기화: {{count}}시간 전. 탭하여 새로고침하세요",
-      "daysAgo_one" : "마지막 동기화: {{count}}일 전. 탭하여 새로고침하세요",
-      "daysAgo_other" : "마지막 동기화: {{count}}일 전. 탭하여 새로고침하세요"
+      "lastSync" : "마지막 동기화: {{timeAgo}} 탭하여 새로고침하세요"
     },
     "notificationIndicator" : {
       "tooltip" : "알림"
@@ -8174,5 +8239,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "업데이트 중 오류가 발생했습니다. 다시 시도해 주세요.",
     "installAndRelaunch" : "업데이트 설치 및 재실행"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "내 포트폴리오 한눈에 보기",
+        "description" : "전체 잔액을 한눈에 확인하고, \"오늘(Today)\" 탭에서 자세한 내용을 살펴보세요."
+      },
+      "navigation" : {
+        "title" : "핵심 기능을 더 빠르게",
+        "description" : "스왑, 이체, 매수까지, 즉각적으로. 하단 내비게이션 바에서 수익 창출과 카드 탭을 확인하세요."
+      },
+      "actions" : {
+        "title" : "즉각적인 시장 트렌드 확인",
+        "description" : "포트폴리오에서 시장 동향을 빠르게 확인하고, 인사이트를 바탕으로 빠르게 대응하세요."
+      }
+    },
+    "cta" : {
+      "continue" : "계속",
+      "explore" : "새로워진 포트폴리오 살펴보기"
+    }
   }
 }
