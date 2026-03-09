@@ -124,7 +124,7 @@ async function isPortAvailable(port: number): Promise<boolean> {
 async function waitForPortReady(
   port: number,
   host = "127.0.0.1",
-  timeoutMs = 30_000,
+  timeoutMs = process.env.CI ? 90_000 : 30_000,
   intervalMs = 200,
 ): Promise<void> {
   const deadline = Date.now() + timeoutMs;
