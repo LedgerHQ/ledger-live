@@ -64,7 +64,6 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";
-import { useSyncAccountsById } from "~/renderer/hooks/useSyncAccountsById";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 
 export class UnableToLoadSwapLiveError extends Error {
@@ -202,7 +201,6 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const { isEnabled: isLwd40Enabled } = useWalletFeaturesConfig("desktop");
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-  const syncAccountsById = useSyncAccountsById();
   const customHandlers = useMemo(
     () => ({
       ...loggerHandlers,
@@ -415,29 +413,6 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
           // not a real error, the node just didn't find the transaction yet
           return Promise.resolve({});
         }
-      },
-      "custom.syncAccount": async ({
-        params,
-      }: {
-        params: { fromAccountId: string; toAccountId: string };
-      }) => {
-        const { fromAccountId, toAccountId } = params;
-        if (!fromAccountId || !toAccountId) {
-          return Promise.reject(new Error("Missing fromAccountId or toAccountId parameter"));
-        }
-
-        const syncIds: string[] = [];
-        for (const id of [fromAccountId, toAccountId]) {
-          const realId = getAccountIdFromWalletAccountId(id) ?? id;
-          const account = accounts.find(acc => acc.id === realId);
-          if (!account) continue;
-          const syncId =
-            account.type === "TokenAccount" ? getParentAccount(account, accounts).id : realId;
-          syncIds.push(syncId);
-        }
-        syncAccountsById(syncIds);
-
-        return Promise.resolve();
       },
       "custom.swapRedirectToHistory": async () => {
         redirectToHistory();

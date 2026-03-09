@@ -28,6 +28,7 @@ import {
   decodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 import logger from "~/renderer/logger";
+import { useSyncAccountsById } from "~/renderer/hooks/useSyncAccountsById";
 import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
 import { useNavigate } from "react-router";
@@ -47,6 +48,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const walletState = useSelector(walletSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
+  const syncAccountsById = useSyncAccountsById();
 
   // Helper to get manifest by ID - checks local first, then remote
   const getManifestById = useCallback(
@@ -357,6 +359,25 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           throw error;
         }
       },
+      "custom.syncAccount": async request => {
+        const { fromAccountId, toAccountId } = request.params || {};
+        if (!fromAccountId || !toAccountId) {
+          return Promise.reject(new Error("Missing fromAccountId or toAccountId parameter"));
+        }
+
+        const syncIds: string[] = [];
+        for (const id of [fromAccountId, toAccountId]) {
+          const realId = getAccountIdFromWalletAccountId(id) ?? id;
+          const account = accounts.find(acc => acc.id === realId);
+          if (!account) continue;
+          const syncId =
+            account.type === "TokenAccount" ? getParentAccount(account, accounts).id : realId;
+          syncIds.push(syncId);
+        }
+        syncAccountsById(syncIds);
+
+        return Promise.resolve();
+      },
     };
   }, [
     accounts,
@@ -369,5 +390,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     startStakeFlow,
     getManifestById,
     getAccount,
+    syncAccountsById,
   ]);
 }
