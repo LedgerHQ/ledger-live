@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "取消",
-        "description" : "发送 0 {{ticker}} 到您自己的地址。"
+        "description" : "发送 0 {{ticker}} 到您自己的地址。不保证取消。如果网络在此次取消请求之前处理了您的原始交易，资金仍会发送给接收方。"
       },
       "steps" : {
         "method" : {
@@ -308,6 +308,7 @@
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
     "perps" : "永续合约",
+    "home" : "首页",
     "refer" : "推荐好友",
     "lend" : "借出",
     "catalog" : "探索",
@@ -1498,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
+    "continue" : "继续"
+  },
   "currentAddress" : {
     "title" : "当前地址",
     "for" : "<1><0>{{name}}</0></1> 的地址。",
@@ -1751,7 +1771,8 @@
       "previousStakingNodeId" : "前一节点 ID",
       "gasConsumed" : "Gas 消耗量",
       "gasUsed" : "Gas 使用量",
-      "gasLimit" : "Gas 限值"
+      "gasLimit" : "Gas 限值",
+      "functionId" : "函数标识"
     }
   },
   "operationList" : {
@@ -1939,6 +1960,13 @@
       "updateBtn" : "更新固件",
       "installUpdate" : "安装更新",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "有可用的系统更新",
+            "manager" : "Ledger OS 有可用更新"
+          },
+          "cta" : "更新"
+        },
         "warning" : "操作系统有更新",
         "version" : "版本 {{latestFirmware}}",
         "cta" : "前往 My Ledger（我的 Ledger）",
@@ -2144,6 +2172,24 @@
         "description" : "您的操作已经发送到网络上进行确认。请等待您的交易被确认，并等待提供商进行处理。"
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "连接 Ledger 设备",
+    "subtitle" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
+    "0" : {
+      "title" : "完全所有权",
+      "desc" : "您的私钥永远不会离开设备。"
+    },
+    "1" : {
+      "title" : "安全交易",
+      "desc" : "在安全屏幕上验证交易。"
+    },
+    "2" : {
+      "title" : "使用功能强大的钱包",
+      "desc" : "一站式管理数千种资产。"
+    },
+    "connectCTA" : "连接",
+    "buyCTA" : "购买 Ledger 设备"
   },
   "fund" : {
     "title" : "资金",
@@ -2431,17 +2477,26 @@
       "confirm" : "确认",
       "maxFee" : "最高费用 ({{unit}})",
       "maxPriorityFee" : "最高优先费用 ({{unit}})",
-      "gasLimit" : "Gas 限值 ({{unit}})",
       "feePerByte" : "费用数额 ({{unit}})",
       "suggested" : "建议",
       "nextBlock" : "下一个区块",
       "networkFeesInFiat" : "网络费用为 {{currency}}",
       "invalidValue" : "输入有效的数字",
       "belowMinimum" : "最小值为 {{min}}",
-      "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+      "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用",
+      "feeAsset" : "手续费资产",
+      "feesAmount" : "费用数额 ({{unit}})",
+      "payFeesIn" : "手续费支付资产"
     },
     "coinControl" : {
-      "title" : "币控制（UTXO 管理）"
+      "title" : "币控制（UTXO 管理）",
+      "strategy" : "策略",
+      "learnMore" : "了解更多",
+      "coinToSend" : "发送币种",
+      "changeToReturn" : "要返还的零钱",
+      "enterAmount" : "输入数额",
+      "amountToSendInCurrency" : "发送数额为 ({{ticker}})",
+      "amountInputLabel" : "发送数额"
     }
   },
   "releaseNotes" : {
@@ -5016,7 +5071,7 @@
     }
   },
   "theme" : {
-    "system" : "选择系统主题",
+    "system" : "系统",
     "light" : "亮色",
     "dusk" : "暗蓝",
     "dark" : "深黑"
@@ -7528,7 +7583,8 @@
     },
     "selectAccount" : {
       "title" : "选择账户",
-      "addAccount" : "添加新账户或现有账户"
+      "addAccount" : "添加新账户或现有账户",
+      "perpetualsBanner" : "目前仅支持 Arbitrum 链上的 USDC。"
     }
   },
   "customImage" : {
@@ -7583,7 +7639,7 @@
       "skipCTA" : "我以后再下载"
     },
     "default" : {
-      "title" : "{{ productName }} 有自己的应用程序。 您需要用它们来进行交易。",
+      "title" : "{{ productName }} 有自己的应用程序。您需要用它们来进行交易。",
       "subtitle" : "例如，签署比特币交易需要适用于 {{productName}} 的比特币应用程序。\n\n安装默认应用程序以使您的 {{productName}} 为交易做好准备。",
       "installCTA" : "立即安装",
       "skipCTA" : "我以后再下载"
@@ -7991,6 +8047,8 @@
     "title" : "探索市场",
     "genericError" : "连接失败",
     "cta" : "查看全部",
+    "scrollLeft" : "向左滚动",
+    "scrollRight" : "向右滚动",
     "fearAndGreed" : {
       "title" : "情绪"
     }
@@ -8017,6 +8075,18 @@
     "connect" : "连接",
     "buyALedger" : "购买 Ledger 设备"
   },
+  "assets" : {
+    "cryptos" : "加密货币",
+    "stablecoins" : "稳定币",
+    "columns" : {
+      "name" : "名称",
+      "price" : "价格",
+      "balance" : "余额",
+      "value" : "价值",
+      "trend" : "1 天趋势",
+      "trendTooltip" : "24 小时余额变更"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
     "entry" : {
@@ -8029,12 +8099,7 @@
       "errorToolTip" : "出现临时网络问题。您的资产安全无虞。受影响的账户列表：{{accounts}}点按重试",
       "emptyErrorToolTip" : "出现临时网络问题。您的资产安全无虞。点按重试",
       "upToDate" : "已同步至最新状态",
-      "minutesAgo_one" : "上次同步时间：{{count}} 分钟前。点按刷新",
-      "minutesAgo_other" : "上次同步时间：{{count}} 分钟前。点按刷新",
-      "hoursAgo_one" : "上次同步时间：{{count}} 小时前。点按刷新",
-      "hoursAgo_other" : "上次同步时间：{{count}} 小时前。点按刷新",
-      "daysAgo_one" : "上次同步时间：{{count}} 天前。点按刷新",
-      "daysAgo_other" : "上次同步时间：{{count}} 天前。点按刷新"
+      "lastSync" : "上次同步：{{timeAgo}}点按刷新"
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8174,5 +8239,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "更新时出错，请重试",
     "installAndRelaunch" : "安装更新并重新启动"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "更清楚地展示您的资产组合",
+        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
+      },
+      "navigation" : {
+        "title" : "更快访问关键操作功能",
+        "description" : "快速访问互换、转账和买入功能。“赚取”和您的\"卡\"位于底部导航栏。"
+      },
+      "actions" : {
+        "title" : "快速查看市场趋势",
+        "description" : "在资产组合中快速查看热门趋势，从洞察到行动，一步到位。"
+      }
+    },
+    "cta" : {
+      "continue" : "继续",
+      "explore" : "探索我的全新资产组合"
+    }
   }
 }
