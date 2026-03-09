@@ -152,7 +152,9 @@
     "quote" : "โควตราคา",
     "memoTag" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Tag/Memo"
-    }
+    },
+    "memo" : "Memo",
+    "stake" : "สเตค"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -208,7 +210,11 @@
       "BURN" : "เบิร์น",
       "ASSOCIATE_TOKEN" : "เชื่อมโยงโทเคน",
       "CONTRACT_CALL" : "การเรียกใช้สัญญา",
-      "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต"
+      "UPDATE_ACCOUNT" : "บัญชีที่อัปเดต",
+      "SHIELDED_TX_SAPLING_IN" : "ได้รับแล้ว",
+      "SHIELDED_TX_SAPLING_OUT" : "ส่งแล้ว",
+      "SHIELDED_TX_ORCHARD_IN" : "ได้รับแล้ว",
+      "SHIELDED_TX_ORCHARD_OUT" : "ส่งแล้ว"
     },
     "edit" : {
       "title" : "Speed Up หรือ ยกเลิก",
@@ -267,6 +273,8 @@
     "minute" : "นาที",
     "minute_other" : "นาที",
     "minute_short" : "นาที",
+    "second" : "วินาที",
+    "second_other" : "วินาที",
     "second_short" : "วินาที",
     "hour" : "ชั่วโมง",
     "hour_other" : "ชั่วโมง",
@@ -778,6 +786,7 @@
     }
   },
   "exchange" : {
+    "pageHeader" : "ซื้อหรือขาย",
     "chooseProvider" : "เลือกจากผู้ให้บริการ {{providerCount}} ราย",
     "chooseProviders" : "เลือกจากผู้ให้บริการ {{providerCount}} ราย",
     "title" : "ซื้อและขายคริปโต",
@@ -2380,12 +2389,15 @@
       "walletNotExist" : "ไม่พบวอลเล็ตนี้"
     },
     "skipMemo" : {
-      "title" : "ข้ามการเพิ่ม {{tag}}?",
-      "warning" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{tag}} ในการรับ"
+      "title" : "ข้ามการเพิ่ม {{memoLabel}}?",
+      "description" : "สินทรัพย์อาจหายไป หากผู้รับต้องการ {{memoLabel}} ในการรับ",
+      "notRequired" : "ผู้รับไม่จำเป็นต้องมี {{memoLabel}} ใช่หรือไม่?",
+      "confirm" : "ใช่! ข้ามขั้นตอนนี้",
+      "neverAskAgain" : "ไม่ต้องแสดงการแจ้งเตือนนี้อีก"
     },
     "tagHelp" : {
-      "title" : "{{tag}} คืออะไร?",
-      "description" : "จำเป็นต้องมี {{tag}} เมื่อส่ง {{currency}} ไปยังตลาดซื้อขายคริปโต นี่คือฟีเจอร์ที่ใช้ระบุตัวผู้รับของธุรกรรม หากไม่ใส่ Memo {{tag}} อาจทำให้สูญเสียเงินทุนได้"
+      "inputLabel" : "ป้อน {{memoLabel}}",
+      "description" : "จำเป็นต้องมี {{memoLabel}} เมื่อส่ง {{currency}} ไปยังตลาดซื้อขายคริปโต นี่คือฟีเจอร์ที่ใช้ระบุตัวผู้รับของธุรกรรม หากไม่ใส่ Memo {{memoLabel}} อาจทำให้สูญเสียเงินทุนได้"
     },
     "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
     "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
@@ -2414,11 +2426,29 @@
     "gasOptionsSync" : {
       "warningTitle" : "ไม่สามารถรีเฟรชค่าธรรมเนียมเครือข่าย",
       "warningDescription" : "การตั้งค่าค่าธรรมเนียมล่วงหน้าอาจตกรุ่น"
+    },
+    "customFees" : {
+      "title" : "ค่าธรรมเนียมที่กำหนดเอง",
+      "confirm" : "ยืนยัน",
+      "maxFee" : "ค่าธรรมเนียมสูงสุด ({{unit}})",
+      "maxPriorityFee" : "Priority Fee สูงสุด ({{unit}})",
+      "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
+      "feePerByte" : "ยอดค่าธรรมเนียม {{unit}}",
+      "suggested" : "แนะนำ",
+      "nextBlock" : "บล็อกถัดไป",
+      "networkFeesInFiat" : "ค่าธรรมเนียมเครือข่ายในรูปแบบ {{currency}}",
+      "invalidValue" : "ป้อนตัวเลขที่ถูกต้อง",
+      "belowMinimum" : "ขั้นต่ำคือ {{min}}",
+      "maxFeeBelowPriorityFee" : "Max Fee ต้องมากกว่าหรือเท่ากับ Max Priority Fee"
+    },
+    "coinControl" : {
+      "title" : "Coin Control"
     }
   },
   "releaseNotes" : {
-    "title" : "Release Notes",
-    "version" : "แอป Ledger Wallet {{versionNb}}"
+    "title" : "Release Note",
+    "version" : "แอป Ledger Wallet {{versionNb}}",
+    "gotIt" : "เข้าใจแล้ว"
   },
   "troubleshootNetwork" : {
     "title" : "การแก้ไขปัญหาด้านเครือข่าย",
@@ -4897,6 +4927,10 @@
       "filterTokenOperationsZeroAmount" : {
         "title" : "ซ่อนธุรกรรมโทเคนเมื่อค่าเป็น 0",
         "desc" : "การซ่อนธุรกรรมโทเคนที่ไม่มีค่าสามารถป้องกันการโจมตีด้วยการปลอมแปลงที่อยู่ที่อาจเกิดขึ้น บน ETH, Polygon, BSC, Tron ได้..."
+      },
+      "doNotAskAgainSkipMemo" : {
+        "title" : "ไม่ต้องถามซ้ำ และข้าม Memo เมื่อส่ง",
+        "desc" : "ปิดการแจ้งเตือนเกี่ยวกับการข้าม Memo เมื่อส่งเงินทุน"
       }
     }
   },
@@ -5808,11 +5842,13 @@
     "casper" : {
       "transferIdPlaceholder" : "ไม่บังคับ",
       "transferId" : "ID การโอน (Memo)",
-      "transferIdWarningText" : "เมื่อใช้บันทึก ควรตรวจสอบข้อมูลกับผู้รับอย่างละเอียดรอบคอบ"
+      "transferIdWarningText" : "เมื่อใช้บันทึก ควรตรวจสอบข้อมูลกับผู้รับอย่างละเอียดรอบคอบ",
+      "memo" : "ID การโอน (Memo)"
     },
     "ton" : {
       "commentPlaceholder" : "ไม่บังคับ",
-      "comment" : "ความคิดเห็น"
+      "comment" : "ความคิดเห็น",
+      "memo" : "ความคิดเห็น"
     },
     "canton" : {
       "commentPlaceholder" : "ไม่บังคับ",
@@ -5939,6 +5975,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "เพิ่มบัญชี Concordium",
+        "acknowledge" : {
+          "title" : "การรับทราบ",
+          "description" : "Concordium ต้องมีการยืนยันตัวตนจากภายนอก โปรดอ่านคำเตือนด้านความปลอดภัยที่สำคัญ:",
+          "list" : {
+            "1" : "<0>ไม่มีการตรวจสอบที่อยู่</0> Ledger ของคุณไม่สามารถตรวจสอบที่อยู่ที่ใช้รับ Concordium ได้ ตรวจสอบที่อยู่ด้วยตนเองก่อนยืนยัน",
+            "2" : "<0>แอป Concordium ID ใช้วลีกู้คืนแยกต่างหาก</0> คุณจะต้องสร้างวลีกู้คืน 24 คำในแอป Concordium ห้ามใช้วลีกู้คืนสำหรับ Ledger ของคุณ",
+            "3" : "<0>คุณจะถูกนำออกจากแอป Ledger Wallet</0> การตรวจสอบตัวตนจะเกิดขึ้นในแอป Concordium Wallet ที่อยู่ภายนอก ซึ่งเป็นข้อกำหนดของโพรโตคอลบล็อกเชนของ Concordium",
+            "4" : "<0>การลงนามธุรกรรมจะยังคงปลอดภัย</0> โดยมีเพียงอุปกรณ์ Ledger ของคุณเท่านั้นที่จะสามารถลงนามในธุรกรรมและสร้างบัญชีได้"
+          },
+          "allow" : "ตกลง"
+        },
+        "identity" : {
+          "title" : "เชื่อมต่อ",
+          "account" : "บัญชี",
+          "newAccount" : "บัญชีใหม่",
+          "init" : "การกดปุ่ม 'อนุญาต' หมายความว่าคุณพร้อมที่จะดำเนินการต่อในขั้นตอนการตรวจสอบในระบบ KYC ที่จำเป็นในการยืนยันบัญชีของคุณ",
+          "scanQRCode" : "สแกน QR Code ด้วยอุปกรณ์มือถือเพื่อเชื่อมต่อแอป Concordium ID ของคุณ <0>เรียนรู้เพิ่มเติม</0>",
+          "ledgerSeedWarning" : "<0>ห้าม</0>ใช้วลีกู้คืน Ledger ของคุณกับแอป Concordium ID เด็ดขาด",
+          "downloadApp" : "ดาวน์โหลดแอป Concordium ID",
+          "connecting" : "กำลังเชื่อมต่อกับแอป Concordium ID...",
+          "onboarded" : "บัญชีที่ออนบอร์ดแล้ว",
+          "success" : "เชื่อมต่อกับแอป Concordium ID สำเร็จแล้ว",
+          "error" : "ไม่สามารถออนบอร์ดบัญชีใหม่ได้ โปรดลองอีกครั้ง",
+          "status" : {
+            "prepare" : "กำลังเตรียมออนบอร์ดบัญชี...",
+            "submit" : "กำลังออนบอร์ดบัญชี...",
+            "default" : "กำลังดำเนินการ..."
+          }
+        },
+        "create" : {
+          "title" : "สร้างบัญชี",
+          "init" : {
+            "title" : "เชื่อมต่อกับแอป Concordium ID สำเร็จแล้ว"
+          },
+          "prepare" : {
+            "title" : "ในการสร้างบัญชี ให้จับคู่กับรหัสด้านล่างในแอป Concordium ID",
+            "resendButton" : "ส่งการยืนยันใหม่",
+            "resendDescription" : "สามารถส่งการยืนยันใหม่ในอีก <0>{{count}}</0> {{unit}}"
+          },
+          "success" : "ทำการสร้างบัญชี Concordium ของคุณเรียบร้อยแล้ว",
+          "error" : "ไม่สามารถสร้างบัญชีได้ โปรดลองอีกครั้ง",
+          "error429" : "มีคำขอเข้ามามากเกินไป โปรดรอสักครู่และลองอีกครั้งในภายหลัง",
+          "button" : "สร้าง",
+          "processing" : "กำลังดำเนินการ...",
+          "status" : {
+            "prepare" : "กำลังเตรียมสร้างบัญชี...",
+            "submit" : "กำลังสร้างบัญชี...",
+            "default" : "กำลังดำเนินการ..."
+          }
+        },
+        "finish" : {
+          "title" : "การยืนยัน"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "ไม่สามารถยืนยันที่อยู่ Concordium ของคุณได้ในขณะนี้ โปรดตรวจสอบซ้ำอีกครั้งด้วยการวางที่อยู่ของคุณใน Concordium Explorer",
+        "verifyLink" : "ตรวจสอบ"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -5970,6 +6068,9 @@
     },
     "mina" : {
       "memoPlaceholder" : "Memo (ไม่บังคับ)"
+    },
+    "xrp" : {
+      "memo" : "แท็ก"
     }
   },
   "errors" : {
@@ -6833,6 +6934,13 @@
       "title" : "ขนาด Memo ไม่ถูกต้อง ขนาดสูงสุดที่อนุญาตคือ 64 ตัวอักษร",
       "description" : "ข้อความ Memo ใน Cardano มีข้อจำกัดของขนาดสูงสุด โปรดลดขนาดของ Memo"
     },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo มีความยาวเกินขีดจำกัด",
+      "description" : "Memo มีขนาด {{memoLength}} ไบต์ แต่ขนาดสูงสุดที่อนุญาตคือ {{maxLength}} ไบต์ โปรดลดขนาด Memo"
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "ขออภัย เงินทุนไม่พอ"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
     },
@@ -7199,6 +7307,50 @@
     "memo" : "Memo",
     "memoPlaceholder" : "ป้อน Tag/Memo",
     "memoWarningText" : "เมื่อใช้บันทึก ควรตรวจสอบข้อมูลกับผู้รับอย่างละเอียดรอบคอบ"
+  },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "ค่าธรรมเนียม",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "เปลี่ยนการ Delegate",
+      "earn" : "สร้างรายได้"
+    },
+    "stakeBanner" : {
+      "title" : "รับ Reward จาก MINA",
+      "altTitle" : "จัดการการ Delegate MINA ของคุณ",
+      "description" : "Delegate MINA เป็น Block Producer และรับ Reward จากการสร้างบล็อก Reward จะถูกแจกจ่ายตามจำนวนที่ Delegate",
+      "altDescription" : "เปลี่ยนการตั้งค่าการ Delegate หรือ Undelegate โทเคน MINA ของคุณ ",
+      "changeCTA" : "เปลี่ยน"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Delegate ไปยัง",
+      "stakedBalance" : "จำนวนที่สเตคแล้ว",
+      "producerAddress" : "Address ของผู้สร้าง",
+      "delegatedToTooltip" : "ชื่อของผู้สร้างบล็อกที่คุณ Delegate ให้",
+      "stakedBalanceTooltip" : "จำนวน MINA ทั้งหมดที่สเตคอยู่กับผู้ตรวจสอบรายนี้ในขณะนี้",
+      "producerAddressTooltip" : "Public Address ของผู้สร้างบล็อกที่คุณกำลัง Delegate ให้"
+    },
+    "delegators" : "ผู้ Delegate",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "เลือกผู้ตรวจสอบ",
+        "connectDevice" : "เชื่อมต่ออุปกรณ์",
+        "confirmation" : "การยืนยัน"
+      },
+      "title" : "สเตค MINA",
+      "help" : "เลือกผู้ตรวจสอบจากรายการด้านล่างเพื่อ Delegate โทเคน MINA ของคุณ",
+      "success" : {
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "ประกาศคำขอเปลี่ยนการ Delegate ของคุณแล้ว"
+      },
+      "error" : {
+        "title" : "เกิดข้อผิดพลาดระหว่างประกาศธุรกรรมของคุณ"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "commission" : "คอมมิชชัน"
+    }
   },
   "hedera" : {
     "name" : "Hedera",
@@ -7817,6 +7969,11 @@
           "description" : "ในระบบนิเวศของ {{currency}} มีเพียงผู้บริการบางรายเท่านั้นที่สามารถสร้างบัญชีใหม่ได้ แม้ Ledger จะยังไม่มีบริการดังกล่าวในขณะนี้ แต่คุณยังสามารถใช้ทางเลือกอื่น โดยคุณจะสามารถเพิ่มบัญชี {{currency}} ได้เมื่อสร้างบัญชีบนแอป Ledger Wallet แล้ว",
           "cta" : "วิธีสร้างบัญชี {{currency}} ทำอย่างไร?",
           "close" : "ปิด"
+        },
+        "noAccountsAddedWarning" : {
+          "title" : "ไม่มีการเพิ่มบัญชี {{currency}}",
+          "description" : "คุณยังไม่ได้ทำการติดตั้งที่จำเป็นสำหรับบัญชีที่เลือกอย่างน้อยหนึ่งบัญชีขึ้นไปให้เสร็จสมบูรณ์",
+          "close" : "ปิด"
         }
       },
       "status" : {
@@ -7923,6 +8080,12 @@
       "hoursAgo_other" : "ซิงค์ล่าสุด: {{count}} ชั่วโมงที่แล้ว แตะเพื่อรีเฟรช",
       "daysAgo_one" : "ซิงค์ล่าสุด: {{count}} วันที่แล้ว แตะเพื่อรีเฟรช",
       "daysAgo_other" : "ซิงค์ล่าสุด: {{count}} วันที่แล้ว แตะเพื่อรีเฟรช"
+    },
+    "notificationIndicator" : {
+      "tooltip" : "การแจ้งเตือน"
+    },
+    "myLedger" : {
+      "tooltip" : "Ledger ของฉัน"
     }
   },
   "geoBlocking" : {
@@ -7951,8 +8114,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "แสดงยอดคงเหลือในบัญชี",
-        "pausedAt" : "หยุดชั่วคราวเมื่อ ",
+        "startSync" : "เริ่มซิงค์",
+        "stopSync" : "หยุดการซิงค์",
+        "lastProcessedBlock" : "บล็อกที่ประมวลผลล่าสุด: {{block}} ยังขาดอีก {{missing}} บล็อก",
         "lastSync" : "ซิงค์ล่าสุด: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "ระดับบล็อก (Birthday Height)",
+        "tooltip" : "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ"
       },
       "flows" : {
         "export" : {
@@ -7991,12 +8160,64 @@
             }
           }
         }
+      }
+    },
+    "operationDetails" : {
+      "txType" : "ประเภทธุรกรรม",
+      "transparentTx" : "แบบ Transparent",
+      "shieldedSaplingTx" : "🛡 แบบส่วนตัว (พูล Sapling)",
+      "shieldedOrchardTx" : "🛡 แบบส่วนตัว (พูล Orchard)"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "ตั้งค่ายอดคงเหลือในบัญชีส่วนบุคคล Aleo",
+        "description" : "แอป Ledger Wallet จะจัดเก็บ View Key เพื่อแสดงยอดคงเหลือในบัญชีส่วนบุคคลของคุณและใช้บริการของบุคคลที่สามเพื่อประมวลผลธุรกรรมส่วนบุคคล <0>เรียนรู้เพิ่มเติม</0>",
+        "bullets" : ["การเข้าถึงแบบอ่านได้เพียงอย่างเดียวเพื่อถอดรหัสยอดคงเหลือในบัญชีส่วนบุคคลของคุณ", "Ledger ไม่สามารถส่งหรือใช้จ่ายเงินทุนของคุณได้", "มีเพียงคุณเท่านั้นที่สามารถเซ็นและใช้จ่ายเงินทุนได้", "การสร้างหลักฐานจะดำเนินการโดยบริการตรวจสอบของบุคคลที่สามเพื่อให้มั่นใจถึงกระบวนการที่ฉับไว", "บริการตรวจสอบไม่สามารถเข้าถึงหรือใช้เงินทุนของคุณได้"],
+        "cta" : {
+          "allow" : "อนุญาต",
+          "cancel" : "ยกเลิก"
+        }
       },
-      "startSync" : "เริ่มซิงค์",
-      "datepicker" : {
-        "label" : "ระดับบล็อก (Birthday Height)",
-        "tooltip" : "ระดับบล็อกคือจุดบนบล็อกเชนที่วอลเล็ตเริ่มสแกนเพื่อค้นหาเงินทุนของคุณ"
+      "stepViewKeyApprove" : {
+        "title" : "อนุมัติบน Ledger ของคุณ",
+        "description" : "ยืนยันการแชร์ View Key บนอุปกรณ์ของคุณ",
+        "cancelAlert" : "คุณสามารถปฏิเสธบัญชีแต่ละบัญชีบนอุปกรณ์ของคุณได้ การยกเลิกทั้งหมดจะหยุดการเพิ่มบัญชีใด ๆ เข้าสู่พอร์ตการลงทุนของคุณ",
+        "cancelAllBtn_one" : "ยกเลิก",
+        "cancelAllBtn_other" : "ยกเลิกทั้งหมด"
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "แชร์ View Key",
+          "shareKey_other" : "แชร์ View Key"
+        }
+      },
+      "warnings" : {
+        "noAccountsAddedWarning" : {
+          "description" : "คุณยังไม่ได้แชร์ View Key สำหรับบัญชีที่เลือกใด ๆ จำเป็นต้องใช้ View Key เพื่อแสดงยอดคงเหลือในบัญชีส่วนบุคคลของคุณในแอป Ledger Wallet"
+        }
+      }
+    },
+    "account" : {
+      "availableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
+      "availableBalanceTooltip" : "ยอดคงเหลือในบัญชีที่สามารถโอนได้",
+      "transparentBalance" : "Transparent Balance",
+      "transparentBalanceTooltip" : "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
+      "privateBalance" : "Private Balance",
+      "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "สาธารณะ",
+        "private" : "ส่วนตัว"
       }
     }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "มีการอัปเดตใหม่ที่พร้อมใช้งาน",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "เกิดข้อผิดพลาดระหว่างการอัปเดต ลองอีกครั้ง",
+    "installAndRelaunch" : "ติดตั้งการอัปเดตและเปิดใช้งานใหม่"
   }
 }
