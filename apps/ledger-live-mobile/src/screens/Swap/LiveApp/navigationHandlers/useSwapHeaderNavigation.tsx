@@ -5,6 +5,9 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
 import { useTranslation } from "~/context/Locale";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { SwapLiveAppNavigationParams } from "~/screens/Swap/types";
 import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
@@ -38,7 +41,10 @@ function hasSwapNavigationParams(params: unknown): params is SwapLiveAppNavigati
 }
 
 export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI | null>) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<
+    StackNavigatorNavigation<BaseNavigatorStackParamList> &
+      StackNavigatorNavigation<SwapNavigatorParamList>
+  >();
   const { t } = useTranslation();
   const track = useTrack();
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
