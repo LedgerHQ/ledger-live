@@ -220,6 +220,9 @@ async function getPortUsageDiagnostic(port: number): Promise<string> {
 const BASE_PORT = 30000;
 const MAX_PORT = 60000;
 const PORTS_PER_WORKER = 1000;
+// In CI, use ports above Linux ephemeral range (32768-60999) so the app under test (e.g. Electron) cannot be assigned our ports.
+const CI_PORT_FLOOR = 61000;
+const CI_PORTS_PER_WORKER = Math.floor((65535 - CI_PORT_FLOOR) / 32);
 const MAX_WORKER_SLOTS = Math.floor((65535 - BASE_PORT) / PORTS_PER_WORKER);
 const MAX_PORT_RETRIES = 10;
 let nextPortOffset = 0;
@@ -253,10 +256,14 @@ async function getNextAvailablePort(exclude: number[] = []): Promise<number> {
   const workerIndex = getWorkerIndex();
 
   if (workerIndex !== undefined) {
-    const effectiveIndex = workerIndex % MAX_WORKER_SLOTS;
-    const workerBase = BASE_PORT + effectiveIndex * PORTS_PER_WORKER;
-    for (let i = 0; i < PORTS_PER_WORKER; i++) {
-      const port = workerBase + ((nextPortOffset + i) % PORTS_PER_WORKER);
+    const useHighPorts = !!process.env.CI;
+    const portFloor = useHighPorts ? CI_PORT_FLOOR : BASE_PORT;
+    const portsPerWorker = useHighPorts ? CI_PORTS_PER_WORKER : PORTS_PER_WORKER;
+    const maxSlots = useHighPorts ? 32 : MAX_WORKER_SLOTS;
+    const effectiveIndex = workerIndex % maxSlots;
+    const workerBase = portFloor + effectiveIndex * portsPerWorker;
+    for (let i = 0; i < portsPerWorker; i++) {
+      const port = workerBase + ((nextPortOffset + i) % portsPerWorker);
       if (exclude.includes(port)) continue;
       if (await isPortAvailable(port)) {
         nextPortOffset = nextPortOffset + i + 1;
@@ -264,7 +271,7 @@ async function getNextAvailablePort(exclude: number[] = []): Promise<number> {
       }
     }
     throw new Error(
-      `No available port in worker ${workerIndex} (slot ${effectiveIndex}) range [${workerBase}, ${workerBase + PORTS_PER_WORKER - 1}]`,
+      `No available port in worker ${workerIndex} (slot ${effectiveIndex}) range [${workerBase}, ${workerBase + portsPerWorker - 1}]`,
     );
   }
 
