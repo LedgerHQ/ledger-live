@@ -78,7 +78,7 @@ function toBlockOperations(txInfo: TrongridTxInfo): BlockOperation[] {
   }
 
   const operationType = getOperationType(txInfo.type);
-  return [{ type: "other", operationType, contractType: txInfo.type }];
+  return [{ type: "other", operationType: operationType, contractType: txInfo.type }];
 }
 
 function isTransfer(txInfo: TrongridTxInfo): boolean {
