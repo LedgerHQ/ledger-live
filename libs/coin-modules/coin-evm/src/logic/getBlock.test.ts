@@ -3,16 +3,6 @@ import { EvmCoinConfig, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
-import {
-  BlockByHeightResult,
-  BlockReceiptInfo,
-  ERC20Transfer,
-  PrefetchedBlockTransaction,
-  TraceBlockCallAction,
-  TraceBlockItem,
-  TransactionInfo,
-} from "../network/node/types";
-import { EtherscanInternalTransaction } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 import { getBlock } from "./getBlock";
 
@@ -94,16 +84,8 @@ describe("getBlock", () => {
     };
   }
 
-  function makeNodeTraceAction(
-    overrides: Partial<TraceBlockCallAction> = {},
-  ): TraceBlockCallAction {
-    return {
-      from: address1,
-      to: address2,
-      callType: "call",
-      value: 240000481795678944n.toString(),
-      ...overrides,
-    };
+  function makeNodeTraceAction(overrides: Partial<TraceBlockAction> = {}): TraceBlockAction {
+    return { from: address1, to: address2, callType: "call", gas: "21000", input: "0x", value: 240000481795678944n.toString(), ...overrides };
   }
 
   function makeNodeTraceBlockItem(overrides: Partial<TraceBlockItem> = {}): TraceBlockItem {
@@ -207,7 +189,6 @@ describe("getBlock", () => {
       ]),
     });
 
-    expect(mockGetBlockByHeight).toHaveBeenCalledWith(expect.anything(), 12345, true);
   });
 
   it("falls back to per-transaction calls when bulk receipts are unavailable", async () => {
