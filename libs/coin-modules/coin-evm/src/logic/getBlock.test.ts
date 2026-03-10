@@ -3,16 +3,21 @@ import { EvmCoinConfig, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
+import {
+  BlockByHeightResult,
+  BlockReceiptInfo,
+  ERC20Transfer,
+  PrefetchedBlockTransaction,
+  TraceBlockAction,
+  TraceBlockItem,
+  TransactionInfo,
+} from "../network/node/types";
+import { EtherscanInternalTransaction } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 import { getBlock } from "./getBlock";
-import { Block } from "@ledgerhq/coin-framework/lib-es/api/types";
-import { BlockByHeightResult, BlockReceiptInfo, ERC20Transfer, PrefetchedBlockTransaction, TraceBlockAction, TraceBlockItem, TransactionInfo } from "../network/node/types";
-import { EtherscanInternalTransaction } from "../types";
-
 
 // fixme refactor this test
 // use builder function to build the mocked return values
-
 
 jest.mock("../network/node");
 jest.mock("../network/explorer/etherscan", () => ({
@@ -39,7 +44,9 @@ describe("getBlock", () => {
     };
   }
 
-  function makeNodeBlockTx(overrides: Partial<PrefetchedBlockTransaction> = {}): PrefetchedBlockTransaction {
+  function makeNodeBlockTx(
+    overrides: Partial<PrefetchedBlockTransaction> = {},
+  ): PrefetchedBlockTransaction {
     return {
       hash: "0xtx1",
       value: "1000",
@@ -57,7 +64,7 @@ describe("getBlock", () => {
       status: 1,
       erc20Transfers: [],
       ...overrides,
-    }
+    };
   }
 
   function makeNodeErc20Transfer(overrides: Partial<ERC20Transfer> = {}): ERC20Transfer {
@@ -67,7 +74,7 @@ describe("getBlock", () => {
       to: address2,
       value: "1000000",
       ...overrides,
-    }
+    };
   }
 
   function makeNodeTxInfo(overrides: Partial<TransactionInfo> = {}): TransactionInfo {
@@ -88,7 +95,15 @@ describe("getBlock", () => {
   }
 
   function makeNodeTraceAction(overrides: Partial<TraceBlockAction> = {}): TraceBlockAction {
-    return { from: address1, to: address2, callType: "call", gas: "21000", input: "0x", value: 240000481795678944n.toString(), ...overrides };
+    return {
+      from: address1,
+      to: address2,
+      callType: "call",
+      gas: "21000",
+      input: "0x",
+      value: 240000481795678944n.toString(),
+      ...overrides,
+    };
   }
 
   function makeNodeTraceBlockItem(overrides: Partial<TraceBlockItem> = {}): TraceBlockItem {
@@ -107,12 +122,14 @@ describe("getBlock", () => {
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest.fn();
-    mockGetBlockByHeight.mockResolvedValueOnce(makeNodeBlock({
-      transactions: [
-        makeNodeBlockTx({ hash: "0xtx1", from: address1, to: address2, value: "1000" }),
-        makeNodeBlockTx({ hash: "0xtx2", from: address1, to: address2, value: "0" }),
-      ],
-    }));
+    mockGetBlockByHeight.mockResolvedValueOnce(
+      makeNodeBlock({
+        transactions: [
+          makeNodeBlockTx({ hash: "0xtx1", from: address1, to: address2, value: "1000" }),
+          makeNodeBlockTx({ hash: "0xtx2", from: address1, to: address2, value: "0" }),
+        ],
+      }),
+    );
     const mockGetBlockReceipts = jest.fn().mockResolvedValue([
       makeNodeBlockReceipt({
         hash: "0xtx1",
@@ -147,19 +164,43 @@ describe("getBlock", () => {
           hash: "0xtx1",
           operations: expect.arrayContaining([
             // Check native transfer operations (tx1 has value: 1000)
-            expect.objectContaining({ type: "transfer", address: address1, peer: address2, asset: { type: "native" }, amount: -1000n }),
-            expect.objectContaining({ type: "transfer", address: address2, peer: address1, asset: { type: "native" }, amount: 1000n }),
+            expect.objectContaining({
+              type: "transfer",
+              address: address1,
+              peer: address2,
+              asset: { type: "native" },
+              amount: -1000n,
+            }),
+            expect.objectContaining({
+              type: "transfer",
+              address: address2,
+              peer: address1,
+              asset: { type: "native" },
+              amount: 1000n,
+            }),
             // Check ERC20 transfer operations (tx1 has one ERC20 transfer)
-            expect.objectContaining({ type: "transfer", address: address1, peer: address2, asset: { type: "erc20", assetReference: erc20Address }, amount: -1000000n }),
-            expect.objectContaining({ type: "transfer", address: address2, peer: address1, asset: { type: "erc20", assetReference: erc20Address }, amount: 1000000n }),
+            expect.objectContaining({
+              type: "transfer",
+              address: address1,
+              peer: address2,
+              asset: { type: "erc20", assetReference: erc20Address },
+              amount: -1000000n,
+            }),
+            expect.objectContaining({
+              type: "transfer",
+              address: address2,
+              peer: address1,
+              asset: { type: "erc20", assetReference: erc20Address },
+              amount: 1000000n,
+            }),
           ]),
         }),
         // tx2 has no value and no ERC20 transfers
         expect.objectContaining({
           hash: "0xtx2",
-          operations: []
+          operations: [],
         }),
-      ])
+      ]),
     });
 
     expect(mockGetBlockByHeight).toHaveBeenCalledWith(expect.anything(), 12345, true);
@@ -181,11 +222,9 @@ describe("getBlock", () => {
         rawError: { code: -32601 },
       }),
     );
-    const mockGetTransaction = jest.fn().mockResolvedValueOnce(makeNodeTxInfo(
-      {hash: "0xtx1",
-       value: "1000",
-      }
-    ));
+    const mockGetTransaction = jest
+      .fn()
+      .mockResolvedValueOnce(makeNodeTxInfo({ hash: "0xtx1", value: "1000" }));
 
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: mockGetBlockByHeight,
@@ -213,11 +252,11 @@ describe("getBlock", () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
-    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce(
-      makeNodeBlock({hash: "0xabc123", transactionHashes: ["0xtx1"] }),
-    );
+    const mockGetBlockByHeight = jest
+      .fn()
+      .mockResolvedValueOnce(makeNodeBlock({ hash: "0xabc123", transactionHashes: ["0xtx1"] }));
     const mockGetBlockReceipts = jest.fn();
-    const mockGetTransaction = jest.fn().mockResolvedValueOnce(makeNodeTxInfo({hash: "0xtx1"}));
+    const mockGetTransaction = jest.fn().mockResolvedValueOnce(makeNodeTxInfo({ hash: "0xtx1" }));
 
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: mockGetBlockByHeight,
@@ -246,10 +285,12 @@ describe("getBlock", () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
-    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce(makeNodeBlock({
-      height: 12345,
-      transactions: [makeNodeBlockTx({ hash: "0xtx1" })],
-    }));
+    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce(
+      makeNodeBlock({
+        height: 12345,
+        transactions: [makeNodeBlockTx({ hash: "0xtx1" })],
+      }),
+    );
     const serverError = new Error("timeout");
     const mockGetBlockReceipts = jest.fn().mockRejectedValueOnce(serverError);
     const mockGetTransaction = jest.fn();
@@ -264,7 +305,9 @@ describe("getBlock", () => {
     expect(mockGetTransaction).not.toHaveBeenCalled();
   });
 
-  function makeExplorerInternalTransaction(overrides: Partial<EtherscanInternalTransaction> = {}): EtherscanInternalTransaction {
+  function makeExplorerInternalTransaction(
+    overrides: Partial<EtherscanInternalTransaction> = {},
+  ): EtherscanInternalTransaction {
     return {
       blockNumber: "12345",
       timeStamp: "1635100060",
@@ -284,7 +327,6 @@ describe("getBlock", () => {
     };
   }
 
-
   it("merges internal transactions from explorer into block transactions", async () => {
     setCoinConfig(
       () =>
@@ -302,9 +344,9 @@ describe("getBlock", () => {
         transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
       }),
     );
-    const mockGetBlockReceipts = jest.fn().mockResolvedValue([
-      makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] }),
-    ]);
+    const mockGetBlockReceipts = jest
+      .fn()
+      .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]);
 
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: mockGetBlockByHeight,
@@ -314,7 +356,14 @@ describe("getBlock", () => {
 
     const amount = 240000481795678944n;
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
-    mockGetInternalTransactionsByBlock.mockResolvedValueOnce([makeExplorerInternalTransaction({ hash: "0xtx1", from: address1, to: address2, value: amount.toString() })]);
+    mockGetInternalTransactionsByBlock.mockResolvedValueOnce([
+      makeExplorerInternalTransaction({
+        hash: "0xtx1",
+        from: address1,
+        to: address2,
+        value: amount.toString(),
+      }),
+    ]);
 
     const result = await getBlock({} as CryptoCurrency, 12345);
 
@@ -361,18 +410,20 @@ describe("getBlock", () => {
 
     const amount = 240000481795678944n;
 
-    const mockTraceBlock = jest.fn().mockResolvedValue([makeNodeTraceBlockItem({
-      action: makeNodeTraceAction({ from: address1, to: address2, value: amount.toString() }),
-    })]);
+    const mockTraceBlock = jest.fn().mockResolvedValue([
+      makeNodeTraceBlockItem({
+        action: makeNodeTraceAction({ from: address1, to: address2, value: amount.toString() }),
+      }),
+    ]);
     const mockGetNodeApi = jest.mocked(getNodeApi);
     mockGetNodeApi.mockReturnValue({
-      getBlockByHeight: jest.fn().mockResolvedValue(makeNodeBlock({
-        hash: "0xabc",
-        transactions: [makeNodeBlockTx({ hash: "0xtx1" })],
-      })),
-      getBlockReceipts: jest.fn().mockResolvedValue([
-        makeNodeBlockReceipt({ hash: "0xtx1" }),
-      ]),
+      getBlockByHeight: jest.fn().mockResolvedValue(
+        makeNodeBlock({
+          hash: "0xabc",
+          transactions: [makeNodeBlockTx({ hash: "0xtx1" })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1" })]),
       getTransaction: jest.fn(),
       traceBlock: mockTraceBlock,
     } as any);
@@ -423,11 +474,13 @@ describe("getBlock", () => {
     );
     const mockGetNodeApi = jest.mocked(getNodeApi);
     mockGetNodeApi.mockReturnValue({
-      getBlockByHeight: jest.fn().mockResolvedValue(makeNodeBlock({
-        hash: "0xabc",
-        transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
-      })),
-      getBlockReceipts: jest.fn().mockResolvedValue([ makeNodeBlockReceipt({ hash: "0xtx1" }), ]),
+      getBlockByHeight: jest.fn().mockResolvedValue(
+        makeNodeBlock({
+          hash: "0xabc",
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1" })]),
       getTransaction: jest.fn(),
       traceBlock: mockTraceBlock,
     } as any);
@@ -459,7 +512,9 @@ describe("getBlock", () => {
           transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
     } as any);
 
@@ -492,8 +547,6 @@ describe("getBlock", () => {
         }) as unknown as EvmCoinConfig,
     );
 
-    const from = "0x224d8fd7ab6ad4c6eb4611ce56ef35dec2277f03";
-    const to = "0x9f41fe989c556d8b312ce398b7f7b5ac90919a73";
     const amount = 240000481795678944n;
     const traceBlockItem = makeNodeTraceBlockItem({
       action: makeNodeTraceAction({ from: address1, to: address2, value: amount.toString() }),
@@ -507,7 +560,9 @@ describe("getBlock", () => {
           transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
         }),
       ),
-      getBlockReceipts: jest.fn().mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
       getTransaction: jest.fn(),
       traceBlock: mockTraceBlock,
     } as any);

@@ -142,7 +142,7 @@ export type NodeApi = {
     blockHeight: number | "latest",
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
-  ) => Promise< BlockByHeightResult >;
+  ) => Promise<BlockByHeightResult>;
   getBlockReceipts?: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",

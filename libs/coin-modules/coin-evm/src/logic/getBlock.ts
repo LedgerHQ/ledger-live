@@ -27,7 +27,15 @@ function internalTransactionsFetcher(
   const { explorer } = config || {};
 
   async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {
-    if (nodeApi.traceBlock !== undefined) {
+    if (nodeApi.traceBlock === undefined) {
+      // no support for traceBlock, return empty map,
+      // this could be buggy but we can't just throw an error, that would break consumer app
+      log("coin-evm", "error: no internal transactions support for this currency", {
+        currencyId: currency.id,
+        blockHeight: height,
+      });
+      return new Map();
+    } else {
       return nodeApi
         .traceBlock(currency, height)
         .then(traceBlockItemsToOperationsByHash)
@@ -35,8 +43,6 @@ function internalTransactionsFetcher(
           if (error instanceof UnsupportedRpcMethodError) return new Map();
           throw error;
         });
-    } else {
-      return Promise.resolve(new Map());
     }
   }
 
