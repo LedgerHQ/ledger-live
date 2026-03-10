@@ -13,7 +13,7 @@ import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import invariant from "invariant";
 import { createApi } from "../api";
-import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
+import { HEDERA_TRANSACTION_MODES, STAKING_REWARD_HASH_SUFFIX, TINYBAR_SCALE } from "../constants";
 import { getSyntheticBlock, toEVMAddress } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
@@ -873,6 +873,7 @@ describe("createApi", () => {
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
+      expect(rewardOp?.tx.hash).not.toContain(STAKING_REWARD_HASH_SUFFIX);
       // every staking operation should have a fees payer
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });

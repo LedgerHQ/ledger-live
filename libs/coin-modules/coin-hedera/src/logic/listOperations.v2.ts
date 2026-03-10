@@ -21,6 +21,7 @@ import type {
 import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
+  createStakingRewardOperationHash,
   getMemoFromBase64,
   getSyntheticBlock,
   mergeTransactionsFromDifferentSources,
@@ -87,7 +88,7 @@ function createStakingRewardOperation({
   }
 
   const { hash, date, blockHeight, blockHash } = commonData;
-  const stakingRewardHash = `${hash}-staking-reward`;
+  const stakingRewardHash = createStakingRewardOperationHash(hash);
   const stakingRewardType: OperationType = "REWARD";
   // offset timestamp by +1ms so that, when operations are sorted newest-first, this reward appears just before the operation that triggered it
   const stakingRewardTimestamp = new Date(date.getTime() + 1);

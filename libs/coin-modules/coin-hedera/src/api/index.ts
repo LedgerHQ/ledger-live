@@ -9,7 +9,11 @@ import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import coinConfig, { type HederaConfig } from "../config";
-import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
+import {
+  HARDCODED_BLOCK_HEIGHT,
+  HEDERA_OPERATION_TYPES,
+  STAKING_REWARD_HASH_SUFFIX,
+} from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
@@ -184,6 +188,12 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
           ? extractFeesPayer(liveOp.extra.transactionId)
           : undefined;
 
+        // REWARD operations append a suffix to the tx.hash to ensure uniqueness
+        const hash =
+          liveOp.type === "REWARD"
+            ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
+            : liveOp.hash;
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -200,7 +210,7 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
             }),
           },
           tx: {
-            hash: liveOp.hash,
+            hash,
             fees: BigInt(liveOp.fee.toFixed(0)),
             ...(feesPayer && { feesPayer }),
             date: liveOp.date,
