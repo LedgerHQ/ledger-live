@@ -7,7 +7,7 @@ import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { TrendingAssetsList } from "./components/TrendingAssetsList";
 import { MarketBannerHeader } from "./components/MarketBannerHeader";
 import { track } from "~/renderer/analytics/segment";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "../Portfolio/utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 type MarketBannerViewProps = {
   readonly isLoading: boolean;

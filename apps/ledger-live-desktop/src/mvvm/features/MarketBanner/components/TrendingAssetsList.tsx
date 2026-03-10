@@ -9,7 +9,7 @@ import { track } from "~/renderer/analytics/segment";
 import FearAndGreed from "LLD/features/FearAndGreed";
 import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
 import { ScrollArrowButton } from "./ScrollArrowButton";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "../../Portfolio/utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];

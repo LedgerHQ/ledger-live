@@ -14,7 +14,7 @@ import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 

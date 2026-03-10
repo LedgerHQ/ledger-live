@@ -16,7 +16,7 @@ import {
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "../../utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 export const PerpsEntryPoint = () => {
   const { t } = useTranslation();
