@@ -1,9 +1,11 @@
 import type { Block, BlockInfo, BlockOperation, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
+import BigNumber from "bignumber.js";
 import { getBlock as networkGetBlock, getBlockWithTransactions } from "../network";
-import { formatTrongridTxResponse } from "../network/format";
+import { encode58Check } from "../network/format";
 import { inferAssetInfo } from "../network/trongrid/trongrid-adapters";
-import type { BlockTransactionAPI, TransactionTronAPI } from "../network/types";
-import type { TrongridTxInfo } from "../types";
+import type { BlockTransactionAPI } from "../network/types";
+import { abiDecodeTrc20Transfer } from "../network/utils";
+import type { TrongridTxInfo, TrongridTxType } from "../types";
 
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
   if (height <= 0) {
@@ -49,13 +51,7 @@ function toBlockTransaction(
   blockTimestamp: number,
   blockHeight: number,
 ): BlockTransaction | null {
-  const augmentedTx = {
-    ...tx,
-    block_timestamp: blockTimestamp,
-    blockNumber: blockHeight,
-  } as TransactionTronAPI;
-
-  const txInfo = formatTrongridTxResponse(augmentedTx);
+  const txInfo = formatBlockTransaction(tx, blockTimestamp, blockHeight);
   if (!txInfo) return null;
 
   return {
@@ -64,6 +60,65 @@ function toBlockTransaction(
     fees: BigInt(txInfo.fee?.toFixed(0) ?? "0"),
     feesPayer: txInfo.from,
     operations: toBlockOperations(txInfo),
+  };
+}
+
+function formatBlockTransaction(
+  tx: BlockTransactionAPI,
+  blockTimestamp: number,
+  blockHeight: number,
+): TrongridTxInfo | null {
+  const contract = tx.raw_data.contract[0];
+  if (!contract) return null;
+
+  const type = contract.type as TrongridTxType;
+  const params = contract.parameter.value;
+  const ownerAddress = params.owner_address;
+  if (!ownerAddress) return null;
+
+  const from = encode58Check(ownerAddress);
+  const hasFailed = tx.ret?.[0]?.contractRet !== "SUCCESS";
+  const fee = new BigNumber(tx.ret?.[0]?.fee ?? 0);
+
+  const isTrc20 = type === "TriggerSmartContract" && params.contract_address;
+  const isTrc10 = type === "TransferAssetContract";
+  const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
+
+  let to: string | undefined;
+  let value: BigNumber;
+
+  if (isTrc20 && params.data) {
+    const decoded = abiDecodeTrc20Transfer(params.data);
+    if (decoded) {
+      to = encode58Check(decoded.to);
+      value = decoded.amount;
+    } else {
+      value = new BigNumber(0);
+    }
+  } else {
+    to = params.to_address ? encode58Check(params.to_address) : undefined;
+    value = params.amount ? new BigNumber(params.amount) : new BigNumber(0);
+  }
+
+  const tokenId = isTrc10
+    ? params.asset_name
+    : isTrc20 && params.contract_address
+      ? encode58Check(params.contract_address)
+      : undefined;
+
+  return {
+    txID: tx.txID,
+    date: new Date(blockTimestamp),
+    type,
+    tokenId,
+    tokenType,
+    tokenAddress: isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined,
+    from,
+    to,
+    value,
+    fee,
+    blockHeight,
+    hasFailed,
   };
 }
 

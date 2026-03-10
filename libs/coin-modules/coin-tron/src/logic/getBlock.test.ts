@@ -131,6 +131,87 @@ describe("getBlock", () => {
     });
   });
 
+  it("should map TRC20 transfer to transfer operations", async () => {
+    const recipientHex = "f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5";
+    const amountHex = "00000000000000000000000000000000000000000000000000000000000f4240";
+    const transferData = "a9059cbb" + recipientHex.padStart(64, "0") + amountHex;
+
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TriggerSmartContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    contract_address: "41aabbccdd11223344556677889900aabbccdd1122",
+                    data: transferData,
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS" }],
+        },
+      ],
+    });
+
+    const result = await getBlock(100);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].operations).toHaveLength(2);
+    expect(result.transactions[0].operations[0]).toMatchObject({
+      type: "transfer",
+      asset: { type: "trc20", assetReference: "TRXxrG3UggPp7kvfgiWMaXVpJaqvrENfUj" },
+      amount: BigInt(-1000000),
+    });
+    expect(result.transactions[0].operations[1]).toMatchObject({
+      type: "transfer",
+      asset: { type: "trc20", assetReference: "TRXxrG3UggPp7kvfgiWMaXVpJaqvrENfUj" },
+      amount: BigInt(1000000),
+    });
+  });
+
+  it("should map TriggerSmartContract without transfer data to other operations", async () => {
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TriggerSmartContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    contract_address: "41aabbccdd11223344556677889900aabbccdd1122",
+                    data: "12345678",
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS" }],
+        },
+      ],
+    });
+
+    const result = await getBlock(100);
+
+    expect(result.transactions[0].operations[0]).toMatchObject({
+      type: "other",
+      operationType: "NONE",
+      contractType: "TriggerSmartContract",
+    });
+  });
+
   it("should map non-transfer contracts to other operations", async () => {
     (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
