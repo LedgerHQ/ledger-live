@@ -59,10 +59,11 @@ export const PortfolioView = memo(function PortfolioView({
 
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
-          {shouldDisplayAddAccountCta && <AddAccount />}
+
           <PerpsEntryPoint />
 
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
+          {shouldDisplayAddAccountCta && <AddAccount />}
 
           {totalOperations > 0 && (
             <OperationsList

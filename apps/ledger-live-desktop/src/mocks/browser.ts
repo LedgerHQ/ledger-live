@@ -4,10 +4,11 @@ import { mockAssets } from "./dada/mockAssets";
 import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks/stablecoins.mock";
 import { mockLedgerStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/mocks/ledgerStatus";
 import { mockFearAndGreedLatest } from "@ledgerhq/live-common/cmc-client/__mocks__/fearAndGreed.mock";
+import countervaluesHandlers from "../../tests/handlers/countervalues";
 
 const assetsHandler = ({ request }: { request: Request }) => {
-  const category = new URL(request.url).searchParams.get("category");
-  if (category === "stablecoin") return HttpResponse.json(mockStablecoinsResponse);
+  const category = new URL(request.url).searchParams.get("categories");
+  if (category === "stablecoins") return HttpResponse.json(mockStablecoinsResponse);
   return HttpResponse.json(mockAssets);
 };
 
@@ -20,6 +21,7 @@ const handlers = [
   http.get("https://proxycmc.api.live.ledger.com/v3/fear-and-greed/latest", () => {
     return HttpResponse.json(mockFearAndGreedLatest);
   }),
+  ...countervaluesHandlers,
 ];
 
 const mswWorker = setupWorker(...handlers);

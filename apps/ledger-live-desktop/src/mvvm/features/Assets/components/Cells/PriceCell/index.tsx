@@ -5,8 +5,9 @@ import { usePriceCellViewModel } from "./usePriceCellViewModel";
 
 type PriceCellProps = {
   readonly currency: Currency;
+  readonly placeholderPrice?: number;
 };
 
-export const PriceCell = ({ currency }: PriceCellProps) => (
-  <PriceCellView {...usePriceCellViewModel(currency)} />
+export const PriceCell = ({ currency, placeholderPrice }: PriceCellProps) => (
+  <PriceCellView {...usePriceCellViewModel(currency, placeholderPrice)} />
 );

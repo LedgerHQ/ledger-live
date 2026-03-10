@@ -1,6 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useNavigate } from "react-router";
 import { server } from "tests/server";
@@ -24,20 +23,6 @@ jest.mock("react-router", () => ({
 }));
 
 const mockedUseNavigate = jest.mocked(useNavigate);
-
-jest.mock("~/renderer/hooks/usePrice", () => ({
-  usePrice: () => ({
-    counterValue: null,
-    counterValueCurrency: getCryptoCurrencyById("bitcoin"),
-    effectiveUnit: getCryptoCurrencyById("bitcoin").units[0],
-    valueNum: 100000000,
-  }),
-}));
-
-jest.mock("@ledgerhq/live-countervalues-react", () => ({
-  ...jest.requireActual("@ledgerhq/live-countervalues-react"),
-  useCalculate: () => undefined,
-}));
 
 const MANY_CRYPTO_ACCOUNTS = [
   BTC_ACCOUNT,
@@ -74,7 +59,7 @@ describe("Assets", () => {
   });
 
   it("should render skeleton while loading, then display sections with asset details", async () => {
-    render(<Assets />, {
+    renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
     });
 
@@ -92,7 +77,7 @@ describe("Assets", () => {
   });
 
   it("should always render both sections even when no stablecoin accounts exist", async () => {
-    render(<Assets />, {
+    renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT] },
     });
 
@@ -103,7 +88,7 @@ describe("Assets", () => {
   });
 
   it("should not navigate when section header is clicked with few items", async () => {
-    const { user } = render(<Assets />, {
+    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
     });
 
@@ -116,7 +101,7 @@ describe("Assets", () => {
   });
 
   it("should navigate to /assets when section header is clicked with many items", async () => {
-    const { user } = render(<Assets />, {
+    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...onboardedState, accounts: MANY_CRYPTO_ACCOUNTS },
     });
 
@@ -126,5 +111,31 @@ describe("Assets", () => {
 
     await user.click(screen.getByTestId("cryptos-section-header-button"));
     expect(mockNavigate).toHaveBeenCalledWith("/assets");
+  });
+
+  it("should show placeholder assets when user has no accounts", async () => {
+    renderWithMockedCounterValuesProvider(<Assets />, {
+      initialState: initialState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Cryptos")).toBeVisible();
+    });
+    expect(screen.getByText("Stablecoins")).toBeVisible();
+
+    expect(screen.getByText("Bitcoin")).toBeVisible();
+  });
+
+  it("should navigate to /market when clicking a placeholder asset row", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
+      initialState: initialState,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Bitcoin")).toBeVisible();
+    });
+
+    await user.click(screen.getByText("Bitcoin"));
+    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin");
   });
 });
