@@ -4994,13 +4994,7 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
     devDependencies:
-      '@faker-js/faker':
-        specifier: ^8.4.1
-        version: 8.4.1
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup

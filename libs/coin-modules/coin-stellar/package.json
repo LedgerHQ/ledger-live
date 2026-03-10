@@ -49,7 +49,7 @@
         "lib/api/index"
       ],
       "deviceTransactionConfig": [
-        "lib/bridge/deviceTransactionConfig"
+        "lib/deviceTransactionConfig"
       ],
       "logic": [
         "lib/logic/index"
@@ -81,8 +81,8 @@
       "default": "./lib-es/api/index.js"
     },
     "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./errors": {
       "require": "./lib/types/errors.js",
@@ -132,12 +132,10 @@
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
-    "rxjs": "catalog:",
     "@exodus/patch-broken-hermes-typed-arrays": "1.0.0-alpha.1"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@faker-js/faker": "^8.4.1",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
