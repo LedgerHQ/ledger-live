@@ -1,8 +1,8 @@
+import type { BitcoinJS } from "coininfo";
 import Base from "./base";
 
 class Komodo extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     this.network.bip32.public = 0xf9eee48d;
     this.network.pubKeyHash = 0x3c;

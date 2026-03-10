@@ -3,6 +3,7 @@
 import * as bjs from "bitcoinjs-lib";
 import { address as btcAddress } from "bitcoinjs-lib";
 import bs58check from "bs58check";
+import type { BitcoinJS } from "coininfo";
 import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
 import bs58 from "bs58";
@@ -28,11 +29,11 @@ export function fallbackValidateAddress(address: string): boolean {
 }
 
 class Base implements ICrypto {
-  network: any;
+  network: BitcoinJS;
   private static bip32Cache: Map<string, Promise<BIP32>> = new Map(); // xpub + account + index to publicKey
   public static addressCache: Record<string, Promise<string>> = {}; // derivationMode + xpub + account + index to address
 
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     this.network = network;
     this.network.dustThreshold = 3000;
     this.network.dustPolicy = "PER_KBYTE";

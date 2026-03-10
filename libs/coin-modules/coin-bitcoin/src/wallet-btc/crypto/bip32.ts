@@ -1,22 +1,16 @@
 import invariant from "invariant";
 import createHmac from "create-hmac";
+import type { BitcoinJS } from "coininfo";
 import { getSecp256k1Instance } from "./secp256k1";
 
 // the BIP32 class is inspired from https://github.com/bitcoinjs/bip32/blob/master/src/bip32.js
 class BIP32 {
   publicKey: Buffer;
   chainCode: Buffer;
-  network: any;
+  network: BitcoinJS;
   depth: number;
   index: number;
-  constructor(
-    publicKey: Buffer,
-    chainCode: Buffer,
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    network: any,
-    depth = 0,
-    index = 0,
-  ) {
+  constructor(publicKey: Buffer, chainCode: Buffer, network: BitcoinJS, depth = 0, index = 0) {
     invariant(publicKey && publicKey.length > 0, "publicKey must not be empty");
     invariant(chainCode && chainCode.length > 0, "chainCode must not be empty");
     this.publicKey = publicKey;

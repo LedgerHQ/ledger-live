@@ -4,7 +4,7 @@ import {
   validateEditTransaction,
   getEditTransactionStatus,
 } from "../../../editTransaction/getTransactionStatus";
-import type { Transaction as BtcTransaction, TransactionStatus } from "../../../types";
+import type { Transaction as BtcTransaction, EditType, TransactionStatus } from "../../../types";
 import { bitcoinPickingStrategy } from "../../../types";
 
 const makeTransaction = (overrides: Partial<BtcTransaction> = {}): BtcTransaction => ({
@@ -36,13 +36,13 @@ const makeStatus = (overrides: Partial<TransactionStatus> = {}): TransactionStat
 
 describe("validateEditTransaction", () => {
   it("returns empty errors and warnings when editType is undefined", () => {
-    const transaction: any = { feePerByte: new BigNumber(10) };
-    const transactionToUpdate: any = { rbf: true, feePerByte: new BigNumber(5) };
+    const transaction = { feePerByte: new BigNumber(10) } as BtcTransaction;
+    const transactionToUpdate = { rbf: true, feePerByte: new BigNumber(5) } as BtcTransaction;
 
     const result = validateEditTransaction({
       transaction,
       transactionToUpdate,
-      editType: undefined,
+      editType: undefined as unknown as EditType,
     });
 
     expect(result.errors).toEqual({});
@@ -214,7 +214,7 @@ describe("getEditTransactionStatus", () => {
       transaction,
       transactionToUpdate,
       status: baseStatus,
-      editType: undefined,
+      editType: undefined as unknown as EditType,
     });
 
     expect(result.errors).toEqual(baseStatus.errors);

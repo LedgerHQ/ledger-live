@@ -1,14 +1,11 @@
 import bs58check from "bs58check";
+import type { BitcoinJS } from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import Base from "./base";
 import * as bjs from "bitcoinjs-lib";
 
 class Zen extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  network: any;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     // refer to https://github.com/HorizenOfficial/zen/blob/master/src/chainparams.cpp for the blockchain params
     this.network = network;

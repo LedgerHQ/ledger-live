@@ -24,7 +24,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     cryptoCurrency: getCryptoCurrencyById("litecoin"),
   });
 
-  const network = coininfo.litecoin.test?.toBitcoinJS();
+  const network = coininfo.litecoin.test!.toBitcoinJS();
   const crypto = new Litecoin({ network });
 
   const xpubs = [1, 2, 3].map(i => {

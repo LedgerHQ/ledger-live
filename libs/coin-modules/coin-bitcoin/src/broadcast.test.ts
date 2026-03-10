@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { broadcast } from "./broadcast";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { Account, SignedOperation } from "@ledgerhq/types-live";
@@ -25,8 +26,8 @@ describe("broadcast", () => {
       id: "mock-operation-id",
       hash: "",
       type: "OUT",
-      value: "1000000",
-      fee: "1000",
+      value: new BigNumber("1000000"),
+      fee: new BigNumber("1000"),
       blockHash: null,
       blockHeight: null,
       senders: ["sender-address"],
