@@ -107,7 +107,7 @@ export async function fetchWithRetries<T>(
       // wait the API timeout before trying again
       await delay(ETHERSCAN_TIMEOUT);
       // decrement with prefix here or it won't work
-      return fetchWithRetries<T>(params, --retries);
+      return fetchWithRetries<T>(params, --retries, messageIsAnError);
     }
     throw e;
   }

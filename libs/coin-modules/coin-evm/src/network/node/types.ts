@@ -48,6 +48,15 @@ export type TraceBlockAction = {
 };
 
 /**
+ * Reward action for "reward" type trace_block items (block/ uncle rewards).
+ */
+export type TraceBlockRewardAction = {
+  author: string;
+  rewardType: string;
+  value: string;
+};
+
+/**
  * Result part of a trace_block trace item.
  */
 export type TraceBlockResult = {
@@ -58,14 +67,19 @@ export type TraceBlockResult = {
 
 /**
  * Single trace entry returned by trace_block RPC.
+ * When a call reverts, RPC may omit `result` and set top-level `error` (e.g. "Reverted").
+ * "reward" type items have no transactionHash/transactionPosition and result is null.
  */
 export type TraceBlockItem = {
-  action: TraceBlockAction;
-  result: TraceBlockResult;
+  action: TraceBlockAction | TraceBlockRewardAction;
+  /** null when the trace is a reward */
+  result?: TraceBlockResult | null;
+  /** Present when the trace reverted (no result object). */
+  error?: string;
   blockHash: string;
   blockNumber: number;
-  transactionHash: string;
-  transactionPosition: number;
+  transactionHash: string | null;
+  transactionPosition: number | null;
   traceAddress: number[];
   subtraces: number;
   type: string;

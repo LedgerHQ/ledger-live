@@ -113,6 +113,10 @@ describe("getBlock", () => {
       blockHash: "0xabc",
       blockNumber: 12345,
       transactionHash: "0xtx1",
+      transactionPosition: 0,
+      traceAddress: [],
+      subtraces: 0,
+      type: "call",
       ...overrides,
     };
   }
@@ -314,7 +318,7 @@ describe("getBlock", () => {
       hash: "0xtx1",
       from: address1,
       to: address2,
-      value: "240000481795678944n",
+      value: 240000481795678944n.toString(),
       contractAddress: "",
       input: "",
       type: "call",

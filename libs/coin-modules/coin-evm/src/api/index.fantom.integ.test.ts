@@ -19,7 +19,7 @@ describe("Fantom (etherscan explorer)", () => {
           uri: "https://rpcapi.fantom.network",
         },
         explorer: {
-          type: "etherscan",
+          type: "blockscout",
           uri: "https://ftmscout.com/api",
         },
         showNfts: false,

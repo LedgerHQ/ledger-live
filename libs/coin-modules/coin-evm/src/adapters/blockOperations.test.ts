@@ -1,5 +1,9 @@
 import type { BlockOperation } from "@ledgerhq/coin-framework/api/index";
-import type { TraceBlockAction, TraceBlockItem } from "../network/node/types";
+import type {
+  TraceBlockAction,
+  TraceBlockItem,
+  TraceBlockRewardAction,
+} from "../network/node/types";
 import {
   LedgerExplorerOperation,
   LedgerExplorerERC20TransferEvent,
@@ -169,6 +173,29 @@ describe("EVM Family", () => {
             ...overrides,
           }) as TraceBlockItem;
 
+        const makeRewardAction = (
+          overrides: Partial<TraceBlockRewardAction> = {},
+        ): TraceBlockRewardAction => ({
+          author: "0x8f81e2e3f8b46467523463835f965ffe476e1c9e",
+          rewardType: "block",
+          value: "0x0",
+          ...overrides,
+        });
+
+        const makeRewardTraceItem = (overrides: Partial<TraceBlockItem> = {}): TraceBlockItem =>
+          ({
+            action: makeRewardAction(),
+            blockHash: "0x6c508acd5fb899025f59582d097b7d693e2efd538576d9709747272960e76663",
+            blockNumber: 19500620,
+            result: null,
+            subtraces: 0,
+            traceAddress: [],
+            transactionHash: null,
+            transactionPosition: null,
+            type: "reward",
+            ...overrides,
+          }) as TraceBlockItem;
+
         it("should group native value transfers by transaction hash", () => {
           const items: TraceBlockItem[] = [
             makeTraceItem({ transactionHash: "0xhash1" }),
@@ -228,6 +255,19 @@ describe("EVM Family", () => {
           expect(byHash.size).toBe(0);
         });
 
+        it("should skip traces with error = 'Reverted'", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({
+              transactionHash: "0xhash1",
+              error: "Reverted",
+            }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
+        });
+
         it("should skip traces with zero value", () => {
           const items: TraceBlockItem[] = [
             makeTraceItem({
@@ -254,6 +294,26 @@ describe("EVM Family", () => {
 
           expect(byHash.size).toBe(1);
           expect(byHash.get("0xsame")).toHaveLength(4);
+        });
+
+        it("should skip reward traces", () => {
+          const items: TraceBlockItem[] = [makeRewardTraceItem()];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
+        });
+
+        it("should include only call traces when mixed with reward traces", () => {
+          const items: TraceBlockItem[] = [
+            makeRewardTraceItem(),
+            makeTraceItem({ transactionHash: "0xhash1" }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(1);
+          expect(byHash.get("0xhash1")).toHaveLength(2);
         });
 
         it("should return empty map for empty input", () => {

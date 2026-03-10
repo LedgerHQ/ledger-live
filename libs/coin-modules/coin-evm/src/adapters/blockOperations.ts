@@ -84,13 +84,14 @@ export function traceBlockItemsToOperationsByHash(
 
   for (const item of items) {
     const { action, result } = item;
-    if (result.error) continue;
+    if (result?.error || item.error) continue;
+    if (!item.transactionHash) continue; // skip reward and other non-call traces
 
     const value = BigInt(action.value);
     if (value === 0n) continue;
 
-    const from = action.from || null;
-    const to = action.to || undefined;
+    const from = "from" in action ? action.from || null : null;
+    const to = "to" in action ? action.to : undefined;
     if (!from && !to) continue;
 
     const ops: BlockOperation[] = [];

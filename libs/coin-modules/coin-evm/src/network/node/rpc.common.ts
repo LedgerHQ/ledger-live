@@ -428,7 +428,9 @@ export const traceBlock: Exclude<NodeApi["traceBlock"], undefined> = (
 
     return traces.map((trace, index) => {
       if (!isTraceBlockItem(trace)) {
-        throw new Error(`Malformed trace_block response at index ${index}`);
+        throw new Error(
+          `Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`,
+        );
       }
       return trace;
     });
@@ -436,18 +438,45 @@ export const traceBlock: Exclude<NodeApi["traceBlock"], undefined> = (
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
   // do a "light" check here because we're not sure of all the possible shapes of the trace block item
-  // it depends on the kind of action. In our main use case, we are only interested with "call" type of actions
-  // and this is enough for that use case. Enhance if needed.
+  // it depends on the kind of action (call vs reward). In our main use case, we are only interested in "call" type.
+  // When a call reverts, RPC may return top-level "error" (e.g. "Reverted") and no "result" object.
+  // "reward" type items have author/rewardType/value, transactionHash/transactionPosition null, result null.
   if (typeof value !== "object" || value === null) return false;
   const o = value as Record<string, unknown>;
-  if (!o.action || typeof o.action !== "object") return false;
+  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
   const action = o.action as Record<string, unknown>;
-  return (
+  if (o.error !== undefined && typeof o.error !== "string") return false;
+
+  const isCallAction =
     typeof action.from === "string" &&
     typeof action.to === "string" &&
     typeof action.callType === "string" &&
-    typeof action.value === "string"
-  );
+    typeof action.value === "string";
+  const isRewardAction =
+    typeof action.author === "string" &&
+    typeof action.rewardType === "string" &&
+    typeof action.value === "string";
+
+  if (isCallAction) {
+    if (typeof o.transactionHash !== "string") return false;
+    if (o.result !== undefined && o.result !== null) {
+      if (typeof o.result !== "object") return false;
+      const result = o.result as Record<string, unknown>;
+      if (
+        typeof result.gasUsed !== "string" ||
+        typeof result.output !== "string" ||
+        (result.error !== undefined && typeof result.error !== "string")
+      )
+        return false;
+    }
+    return true;
+  }
+  if (isRewardAction) {
+    if (o.transactionHash !== null || o.transactionPosition !== null) return false;
+    if (o.result !== undefined && o.result !== null) return false;
+    return true;
+  }
+  return false;
 }
 
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
