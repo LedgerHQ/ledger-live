@@ -62,9 +62,11 @@ describe("usePairing", () => {
     });
   });
 
-  it("should transition to ERROR on ERROR event", async () => {
+  it("should transition to ERROR and unsubscribe on ERROR event", async () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
+
+    expect(pairingSubject.observed).toBe(true);
 
     act(() => {
       pairingSubject.next({
@@ -75,6 +77,7 @@ describe("usePairing", () => {
     await waitFor(() => {
       expect(result.current.pairStatus).toBe(PairStatus.ERROR);
     });
+    expect(pairingSubject.observed).toBe(false);
   });
 
   it("should transition to ERROR on observable error", async () => {

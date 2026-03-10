@@ -4,7 +4,10 @@ import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
 import type { ConcordiumPairingProgress } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
+
+const MAX_EXPIRED_RETRIES = 3;
 
 export enum PairStatus {
   CONNECTING = "CONNECTING",
@@ -13,10 +16,16 @@ export enum PairStatus {
   ERROR = "ERROR",
 }
 
+function isPairingExpiredError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.includes("Pairing approval is expired");
+}
+
 export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: string) => void) {
   const [pairStatus, setPairStatus] = useState<PairStatus>(PairStatus.CONNECTING);
   const [walletConnectUri, setWalletConnectUri] = useState<string | null>(null);
   const subscriptionRef = useRef<Subscription | null>(null);
+  const retryCountRef = useRef(0);
 
   const unsubscribe = useCallback(() => {
     if (subscriptionRef.current) {
@@ -27,36 +36,51 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
 
   const startPairing = useCallback(() => {
     unsubscribe();
+    retryCountRef.current = 0;
     setPairStatus(PairStatus.CONNECTING);
     setWalletConnectUri(null);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const bridge = getCurrencyBridge(currency) as ConcordiumCurrencyBridge;
-    subscriptionRef.current = bridge.pairWalletConnect(currency.id, "").subscribe({
-      next: (data: ConcordiumPairingProgress) => {
-        switch (data.status) {
-          case ConcordiumPairingStatus.PREPARE:
-            if (data.walletConnectUri) {
-              setWalletConnectUri(data.walletConnectUri);
-              setPairStatus(PairStatus.QR_READY);
-            }
-            break;
-          case ConcordiumPairingStatus.SUCCESS:
-            if (data.sessionTopic) {
+    startPairingInternal();
+
+    function startPairingInternal() {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const bridge = getCurrencyBridge(currency) as ConcordiumCurrencyBridge;
+      subscriptionRef.current = bridge.pairWalletConnect(currency.id, "").subscribe({
+        next: (data: ConcordiumPairingProgress) => {
+          switch (data.status) {
+            case ConcordiumPairingStatus.PREPARE:
+              if (data.walletConnectUri) {
+                setWalletConnectUri(data.walletConnectUri);
+                setPairStatus(PairStatus.QR_READY);
+              }
+              break;
+            case ConcordiumPairingStatus.SUCCESS:
+              if (data.sessionTopic) {
+                unsubscribe();
+                setPairStatus(PairStatus.SUCCESS);
+                onPaired(data.sessionTopic);
+              }
+              break;
+            case ConcordiumPairingStatus.ERROR:
               unsubscribe();
-              setPairStatus(PairStatus.SUCCESS);
-              onPaired(data.sessionTopic);
-            }
-            break;
-          case ConcordiumPairingStatus.ERROR:
-            setPairStatus(PairStatus.ERROR);
-            break;
-        }
-      },
-      error: () => {
-        setPairStatus(PairStatus.ERROR);
-      },
-    });
+              setPairStatus(PairStatus.ERROR);
+              break;
+          }
+        },
+        error: (error: unknown) => {
+          if (isPairingExpiredError(error) && retryCountRef.current < MAX_EXPIRED_RETRIES) {
+            retryCountRef.current++;
+            log("concordium-onboarding", "pairing expired, retrying", {
+              attempt: retryCountRef.current,
+            });
+            startPairingInternal();
+            return;
+          }
+          unsubscribe();
+          setPairStatus(PairStatus.ERROR);
+        },
+      });
+    }
   }, [currency, onPaired, unsubscribe]);
 
   useEffect(() => {

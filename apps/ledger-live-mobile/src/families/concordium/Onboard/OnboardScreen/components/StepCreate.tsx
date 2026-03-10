@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -6,10 +6,13 @@ import type { Account } from "@ledgerhq/types-live";
 import { Trans } from "~/context/Locale";
 import { CreateStatus, useOnboarding } from "../hooks/useOnboarding";
 
+const RESEND_DELAY_SECONDS = 10;
+
 type Props = Readonly<{
   currency: CryptoCurrency;
   deviceId: string;
   creatableAccount: Account;
+  accountName: string | undefined;
   sessionTopic: string;
   onCreated: () => void;
   onSessionExpired: () => void;
@@ -19,6 +22,7 @@ export default function StepCreate({
   currency,
   deviceId,
   creatableAccount,
+  accountName,
   sessionTopic,
   onCreated,
   onSessionExpired,
@@ -28,17 +32,61 @@ export default function StepCreate({
     deviceId,
     creatableAccount,
     sessionTopic,
-    onCreated,
     onSessionExpired,
   );
+
+  const [resendTimeRemaining, setResendTimeRemaining] = useState(RESEND_DELAY_SECONDS);
+  const startTimeRef = useRef<number>(Date.now());
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const canResend = resendTimeRemaining === 0;
+
+  const startCountdown = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    startTimeRef.current = Date.now();
+    setResendTimeRemaining(RESEND_DELAY_SECONDS);
+
+    intervalRef.current = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const remaining = Math.max(0, RESEND_DELAY_SECONDS - elapsed);
+      setResendTimeRemaining(remaining);
+      if (remaining === 0 && intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    if (createStatus !== CreateStatus.PREPARING) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      return;
+    }
+
+    startCountdown();
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [createStatus, startCountdown]);
+
+  const handleResend = useCallback(() => {
+    startCountdown();
+    startOnboarding();
+  }, [startCountdown, startOnboarding]);
 
   return (
     <Flex flex={1} justifyContent="space-between">
       <ScrollView contentContainerStyle={scrollContent}>
         <Flex alignItems="center">
-          <Text variant="h5" fontWeight="semiBold" mb={6}>
+          <Text variant="h5" fontWeight="semiBold" mb={2}>
             <Trans i18nKey="concordium.onboard.create.title" />
           </Text>
+
+          {accountName && (
+            <Text variant="body" color="neutral.c70" mb={6}>
+              {accountName}
+            </Text>
+          )}
 
           {createStatus === CreateStatus.PREPARING && (
             <Flex alignItems="center" px={4}>
@@ -65,6 +113,21 @@ export default function StepCreate({
                     </Text>
                   </Flex>
                 ))}
+              </Flex>
+
+              <Flex mt={6}>
+                {canResend ? (
+                  <Button type="shade" onPress={handleResend}>
+                    <Trans i18nKey="concordium.onboard.create.prepare.resendButton" />
+                  </Button>
+                ) : (
+                  <Text variant="small" color="neutral.c60">
+                    <Trans
+                      i18nKey="concordium.onboard.create.prepare.resendDescription"
+                      values={{ count: resendTimeRemaining }}
+                    />
+                  </Text>
+                )}
               </Flex>
             </Flex>
           )}
@@ -94,6 +157,14 @@ export default function StepCreate({
           )}
         </Flex>
       </ScrollView>
+
+      {createStatus === CreateStatus.SUCCESS && (
+        <Flex px={6} pb={10}>
+          <Button type="main" onPress={onCreated} size="large">
+            <Trans i18nKey="common.continue" />
+          </Button>
+        </Flex>
+      )}
 
       {createStatus === CreateStatus.ERROR && (
         <Flex px={6} pb={10}>

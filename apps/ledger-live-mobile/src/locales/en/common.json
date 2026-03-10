@@ -8586,11 +8586,24 @@
         "title": "Acknowledgement",
         "description": "Concordium requires external identity verification. Please read these important security warnings:",
         "list": {
-          "1": "No address verification – Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds.",
-          "2": "Concordium ID App uses a separate seed – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
-          "3": "You'll be redirected outside Ledger Live – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
-          "4": "Transaction signing stays secure – Only your Ledger device can sign transactions and create accounts."
+          "1": {
+            "title": "No address verification",
+            "description": "Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds."
+          },
+          "2": {
+            "title": "Concordium ID App uses a separate seed",
+            "description": "You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed."
+          },
+          "3": {
+            "title": "You'll be redirected outside Ledger Live",
+            "description": "Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol."
+          },
+          "4": {
+            "title": "Transaction signing stays secure",
+            "description": "Only your Ledger device can sign transactions and create accounts."
+          }
         },
+        "guide": "Please read the guide before proceeding:",
         "allow": "Agree"
       },
       "pair": {
@@ -8598,18 +8611,21 @@
         "connecting": "Connecting...",
         "scanQRCodeOrDownload": "Scan the QR code with another device, or download the Concordium ID App to continue.",
         "openIdApp": "Open Concordium ID App",
-        "success": "Successfully paired with Concordium ID App.",
-        "error": "Failed to pair with Concordium ID App."
+        "success": "Successfully connected to Concordium ID App.",
+        "continue": "Continue",
+        "error": "Failed to connect to Concordium ID App. Please try again."
       },
       "create": {
         "title": "Create Account",
         "prepare": {
-          "title": "To create an account, match the code below in the Concordium ID App"
+          "title": "To create an account, match the code below in the Concordium ID App",
+          "resendButton": "Resend confirmation",
+          "resendDescription": "Resend available in {{count}}s"
         },
         "submitting": "Creating your account...",
-        "keepDeviceNearby": "Approve the transaction on your Ledger device. Stay in the app and keep your Ledger nearby.",
-        "success": "Account created successfully.",
-        "error": "Failed to create account."
+        "keepDeviceNearby": "Approve the transaction on your Ledger device. Keep your Ledger nearby.",
+        "success": "Your Concordium account has been created successfully.",
+        "error": "Failed to create account. Please try again."
       },
       "finish": {
         "success": "Your Concordium account has been created successfully."

@@ -22,7 +22,10 @@ export function getConfirmationCode(sessionTopic: string): string {
 
 export function isSessionExpiredError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
-  return message.toLowerCase().includes("expired");
+  return (
+    message.includes("No active WalletConnect session") ||
+    message.includes("Pairing approval is expired")
+  );
 }
 
 export function useOnboarding(
@@ -30,12 +33,12 @@ export function useOnboarding(
   deviceId: string,
   creatableAccount: Account,
   sessionTopic: string,
-  onCreated: () => void,
   onSessionExpired: () => void,
 ) {
   const [createStatus, setCreateStatus] = useState<CreateStatus>(CreateStatus.PREPARING);
   const confirmationCode = getConfirmationCode(sessionTopic);
   const subscriptionRef = useRef<Subscription | null>(null);
+  const completedRef = useRef(false);
 
   const unsubscribe = useCallback(() => {
     if (subscriptionRef.current) {
@@ -46,6 +49,7 @@ export function useOnboarding(
 
   const startOnboarding = useCallback(() => {
     unsubscribe();
+    completedRef.current = false;
     setCreateStatus(CreateStatus.PREPARING);
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -54,7 +58,11 @@ export function useOnboarding(
       .onboardAccount(currency.id, deviceId, creatableAccount)
       .subscribe({
         next: data => {
-          log("concordium-onboarding", "onboardAccount progress", { data });
+          if (completedRef.current) return;
+          log("concordium-onboarding", "onboardAccount progress", {
+            status: "status" in data ? data.status : undefined,
+            hasAccount: "account" in data,
+          });
           if ("status" in data) {
             if (
               data.status === AccountOnboardStatus.SIGN ||
@@ -64,12 +72,14 @@ export function useOnboarding(
             }
           }
           if ("account" in data) {
+            completedRef.current = true;
             unsubscribe();
             setCreateStatus(CreateStatus.SUCCESS);
-            onCreated();
           }
         },
         error: error => {
+          if (completedRef.current) return;
+          completedRef.current = true;
           log("concordium-onboarding", "onboardAccount error", {
             message: error instanceof Error ? error.message : String(error),
           });
@@ -81,7 +91,7 @@ export function useOnboarding(
           }
         },
       });
-  }, [currency, deviceId, creatableAccount, unsubscribe, onCreated, onSessionExpired]);
+  }, [currency, deviceId, creatableAccount, unsubscribe, onSessionExpired]);
 
   useEffect(() => {
     startOnboarding();
