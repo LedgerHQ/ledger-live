@@ -34,6 +34,7 @@ import {
 } from "electron-devtools-installer";
 import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 import { openURL } from "./openURL";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -174,11 +175,19 @@ app.on("ready", async () => {
     setTags(tags);
   });
 
+  // Tracks the active will-navigate handler per WebContents id so we can remove only
+  // that specific listener on subsequent dom-ready events, without disturbing any other
+  // will-navigate listeners that may exist on the same WebContents.
+  const willNavigateHandlers = new Map<number, (event: Electron.Event, url: string) => void>();
+
   // To handle opening new windows from webview
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-  ipcMain.on("webview-dom-ready", (_, id) => {
+  ipcMain.on("webview-dom-ready", (_, id: number, domains?: string[]) => {
     const wc = webContents.fromId(id);
-    wc?.setWindowOpenHandler(({ url }) => {
+
+    if (!wc) return;
+
+    wc.setWindowOpenHandler(({ url }) => {
       const protocol = new URL(url).protocol;
       if (["https:", "http:"].includes(protocol)) {
         openURL(url);
@@ -187,6 +196,31 @@ app.on("ready", async () => {
         action: "deny",
       };
     });
+
+    // dom-ready fires on every reload — remove only the previously registered handler
+    // for this WebContents to avoid listener accumulation without touching other listeners.
+    const previousHandler = willNavigateHandlers.get(id);
+    if (previousHandler) {
+      wc.off("will-navigate", previousHandler);
+      willNavigateHandlers.delete(id);
+    }
+
+    // When manifest domains are provided (feature flag on), enforce origin whitelist on navigation
+    if (Array.isArray(domains) && domains.length > 0) {
+      const handler = (event: Electron.Event, url: string) => {
+        if (!isUrlAllowedByManifestDomains(url, domains)) {
+          event.preventDefault();
+        }
+      };
+      wc.on("will-navigate", handler);
+      willNavigateHandlers.set(id, handler);
+
+      // Guard against the WebContents being destroyed before the next dom-ready
+      // (e.g. webview unmounted or window closed) so the Map entry doesn't leak.
+      wc.once("destroyed", () => {
+        willNavigateHandlers.delete(id);
+      });
+    }
   });
   Menu.setApplicationMenu(menu);
 

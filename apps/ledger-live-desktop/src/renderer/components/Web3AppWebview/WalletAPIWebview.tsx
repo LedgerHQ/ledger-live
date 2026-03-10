@@ -40,6 +40,7 @@ import { useModularDrawerVisibility, ModularDrawerLocation } from "LLD/features/
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -319,6 +320,7 @@ function useWebView(
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
+  manifestDomainCheckEnabled?: boolean,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
@@ -341,6 +343,7 @@ function useWebView(
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
+          if (origin === "null") return;
           webview.contentWindow?.postMessage(message, origin);
         }
       },
@@ -399,9 +402,9 @@ function useWebView(
     const id = webview.getWebContentsId();
 
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-    window.api?.openWindow(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
+    globalThis.api?.openWindow(id, manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined);
+  }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
   useEffect(() => {
     const webview = webviewRef.current;
@@ -450,6 +453,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
+    const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
+
     const tracking = useMemo(
       () =>
         trackingWrapper(
@@ -476,7 +481,15 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const serverRef = useRef<WalletAPIServer>(undefined);
 
     const { webviewState, webviewRef, webviewProps, handleRefresh, webviewPartition } =
-      useWebviewState({ manifest, inputs }, ref, serverRef);
+      useWebviewState(
+        {
+          manifest,
+          inputs,
+          manifestDomainCheckEnabled,
+        },
+        ref,
+        serverRef,
+      );
     useEffect(() => {
       if (onStateChange) {
         onStateChange(webviewState);
@@ -494,6 +507,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking,
       serverRef,
       customWebviewStyle,
+      manifestDomainCheckEnabled,
     );
 
     const isDapp = !!manifest.dapp;

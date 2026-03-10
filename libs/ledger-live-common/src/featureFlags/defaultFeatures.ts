@@ -692,6 +692,7 @@ export const DEFAULT_FEATURES: Features = {
       enableDialogDesktop: false,
     },
   },
+  lldWebviewManifestDomainCheck: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
