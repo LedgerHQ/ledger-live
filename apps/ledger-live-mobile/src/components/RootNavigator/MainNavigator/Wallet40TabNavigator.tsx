@@ -16,12 +16,7 @@ function Wallet40SwapTabHeader() {
 export function Wallet40TabNavigator({
   tabBar,
   screenOptions,
-  rebornFlowListener,
-}: Readonly<
-  Wallet40TabNavigatorProps & {
-    rebornFlowListener: (e: { preventDefault: () => void }) => void;
-  }
->): React.JSX.Element {
+}: Readonly<Wallet40TabNavigatorProps>): React.JSX.Element {
   return (
     <Tab.Navigator tabBar={tabBar} screenOptions={screenOptions}>
       <Tab.Screen name={NavigatorName.Portfolio} component={PortfolioNavigator} />
@@ -32,11 +27,8 @@ export function Wallet40TabNavigator({
           header: Wallet40SwapTabHeader,
         }}
         listeners={() => ({
-          tabPress: e => {
-            // Prevent stale opaque header state when re-entering the Swap tab.
-            resetSwapWallet40HeaderState();
-            rebornFlowListener(e);
-          },
+          // Prevent stale opaque header state when re-entering the Swap tab.
+          tabPress: resetSwapWallet40HeaderState,
         })}
       />
       <Tab.Screen name={NavigatorName.Earn} component={EarnLiveAppNavigator} />

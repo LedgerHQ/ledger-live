@@ -21,6 +21,7 @@ import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types"
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useDB } from "../../../db";
 import { NavigatorName, ScreenName } from "~/const";
 import { useBanner } from "~/components/banners/hooks";
@@ -106,6 +107,7 @@ export type Disclaimer = DisclaimerRaw & {
 function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Disclaimer {
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
 
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
 
@@ -130,8 +132,9 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
       }
 
       const isLedgerShopApp = manifest.id === LEDGER_SHOP_ID;
+      const shouldUseLegacyRebornFlow = isReadOnly && !shouldUseLazyOnboarding;
 
-      if (isReadOnly && !hasOrderedNano && !isLedgerShopApp) {
+      if (shouldUseLegacyRebornFlow && !hasOrderedNano && !isLedgerShopApp) {
         navigateToRebornFlow();
         return;
       }
@@ -145,7 +148,7 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
         },
       });
     },
-    [hasOrderedNano, isReadOnly, navigateToRebornFlow, navigation, params],
+    [hasOrderedNano, shouldUseLazyOnboarding, isReadOnly, navigateToRebornFlow, navigation, params],
   );
 
   const toggleCheck = useCallback(() => {
