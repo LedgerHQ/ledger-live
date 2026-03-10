@@ -37,7 +37,7 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
-import { computeIntrinsicGasLimit } from "./computeGasLimit";
+import { computeEIP7623GasLimit } from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -142,10 +142,7 @@ async function validateGas(
     estimatedFees.parameters.customGasLimit;
 
   const callData = getCallData(intent);
-  const intrinsicGasLimit = computeIntrinsicGasLimit(
-    BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
-    callData,
-  );
+  const intrinsicGasLimit = computeEIP7623GasLimit(BigInt(DEFAULT_GAS_LIMIT.toFixed(0)), callData);
 
   // Gas Limit
   if (typeof customGasLimit === "bigint") {

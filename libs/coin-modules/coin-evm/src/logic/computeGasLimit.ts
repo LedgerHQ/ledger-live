@@ -1,21 +1,27 @@
 /**
- * This function is the implementation of the intrinsic gas limit computation as described in this document
- * https://github.com/wolflo/evm-opcodes/blob/main/gas.md#a0-0-intrinsic-gas
+ * Compute gas limit according to https://eips.ethereum.org/EIPS/eip-7623
  *
- * The computation is the following:
- * intrisic gas limit = defaultGasLimit + 4 * null bytes count + 16 * non null bytes count
+ * The formula is:
+ * `gasLimit = defaultGasLimit + 10 * (null bytes count + 4 * non null bytes count)`
  *
- * Null bytes in a Buffer (data type of the calldata parameter) is represented by 0
+ * The EIP specifies we should take the maximum between intrinsic gas limit and EIP7623.
+ * We did not implement that here because mathematically, intrinsic gas limit can never be higher than EIP7623:
+ *
+ * - eip7623   = defaultGasLimit + 10 * (null bytes count + 4 * non null bytes count)
+ *             = defaultGasLimit + 10 * null bytes count + 40 * non null bytes count
+ * - intrinsic = defaultGasLimit + 4 * null bytes count + 16 * non null bytes count
+ *
+ * EIP-7623 adds more value per byte than the intrinsic computation, so the computed value will always be higher
  *
  * @param defaultGasLimit The minimum gas limit to start the computation on (at that time, 21 000)
- * @param callData the calldata of the transaction
- * @returns the intrinsic gas limit for a transaction
+ * @param callData The calldata of the transaction
+ * @returns The gas limit according to EIP-7623
  */
-export function computeIntrinsicGasLimit(defaultGasLimit: bigint, callData: Buffer): bigint {
-  let intrinsicGasLimit = defaultGasLimit;
-  for (let index = 0; index < callData.length; index++) {
-    intrinsicGasLimit += callData[index] === 0 ? 4n : 16n;
+export function computeEIP7623GasLimit(defaultGasLimit: bigint, callData: Buffer): bigint {
+  let tokensInCalldata = 0n;
+  for (const byte of callData) {
+    tokensInCalldata += byte === 0 ? 1n : 4n;
   }
 
-  return intrinsicGasLimit;
+  return defaultGasLimit + 10n * tokensInCalldata;
 }
