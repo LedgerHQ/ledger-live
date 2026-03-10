@@ -408,6 +408,7 @@
     "src/families/aleo/hw/getViewKey/index.ts",
     "src/families/aleo/types.ts",
     "src/families/aleo/utils.ts",
+    "src/families/aleo/constants.ts",
     "src/families/algorand/descriptor.ts",
     "src/families/aptos/config.ts",
     "src/families/aptos/constants.ts",
