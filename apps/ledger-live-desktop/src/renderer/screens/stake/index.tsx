@@ -13,7 +13,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
@@ -128,7 +128,7 @@ const useStakeFlow = () => {
       returnTo,
     }: StakeFlowProps = {}) => {
       dispatch(setFlowValue(DRAWER_FLOW));
-      dispatch(setOriginFlow(DRAWER_FLOW));
+      setOriginFlow(DRAWER_FLOW);
       dispatch(setSourceValue(source || ""));
 
       const cryptoCurrencies = currencies || list;

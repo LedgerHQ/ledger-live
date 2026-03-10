@@ -12,7 +12,7 @@ import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { closeModal } from "~/renderer/actions/modals";
-import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ReceiveOptionsDialog } from "LLD/features/Receive";
@@ -111,8 +111,8 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveModal));
-  }, [dispatch]);
+    setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveModal);
+  }, []);
 
   const openAddAccounts = useCallback(() => {
     openAssetFlow();

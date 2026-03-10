@@ -45,7 +45,7 @@ import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -130,7 +130,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         const flow = manifest.name;
 
         dispatch(setFlowValue(flow));
-        dispatch(setOriginFlow(flow));
+        setOriginFlow(flow);
         dispatch(setSourceValue(source));
 
         return requestAccountLogic(

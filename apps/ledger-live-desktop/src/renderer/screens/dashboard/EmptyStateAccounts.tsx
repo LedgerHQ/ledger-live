@@ -11,16 +11,14 @@ import { useTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import { useDispatch } from "LLD/hooks/redux";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 
 const EmptyStateAccounts = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const urlFaq = useLocalizedUrl(urls.faq);
@@ -34,9 +32,9 @@ const EmptyStateAccounts = () => {
   );
 
   const handleAddAccount = useCallback(() => {
-    dispatch(setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal));
+    setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal);
     openAssetFlow();
-  }, [dispatch, openAssetFlow]);
+  }, [openAssetFlow]);
 
   return (
     <Box

@@ -41,7 +41,7 @@ import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer"
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -88,7 +88,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
-          dispatch(setOriginFlow(flow));
+          setOriginFlow(flow);
           dispatch(setSourceValue(source));
 
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
@@ -159,10 +159,18 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           }),
         );
       },
-      "storage.get": ({ key, storeId }) => {
+      "storage.get": ({ key, storeId }: { key: string; storeId: string }) => {
         return getStoreValue(key, storeId);
       },
-      "storage.set": ({ key, value, storeId }) => {
+      "storage.set": ({
+        key,
+        value,
+        storeId,
+      }: {
+        key: string;
+        value: unknown;
+        storeId: string;
+      }) => {
         setStoreValue(key, value, storeId);
       },
       "transaction.sign": ({
