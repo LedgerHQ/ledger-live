@@ -3,7 +3,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { CLI } from "tests/utils/cliUtils";
-import { LWD_WALLET_40_FLAGS } from "tests/utils/featureFlagUtils";
+import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 test.describe("Portfolio", () => {
   test.use({
@@ -37,7 +37,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     // to-do remove when wallet 4.0 is default
-    featureFlags: LWD_WALLET_40_FLAGS,
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
@@ -84,7 +84,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       },
     ],
     // to-do remove when wallet 4.0 is default
-    featureFlags: LWD_WALLET_40_FLAGS,
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
@@ -117,7 +117,7 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   test.use({
     userdata: "skip-onboarding",
     // to-do remove when wallet 4.0 is default
-    featureFlags: LWD_WALLET_40_FLAGS,
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(

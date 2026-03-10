@@ -16,6 +16,9 @@ inputs:
   shard_total:
     description: "Total number of shards (omit to run all tests)"
     required: false
+  enable_wallet40:
+    description: "Enable Wallet 4.0 features"
+    required: false
 outputs:
   passed:
     description: "Number of passed tests"
@@ -83,6 +86,11 @@ runs:
         SHARD_ARG=""
         if [ -n "${{ inputs.shard_index }}" ] && [ -n "${{ inputs.shard_total }}" ]; then
           SHARD_ARG="--shard=${{ inputs.shard_index }}/${{ inputs.shard_total }}"
+        fi
+
+        if [[ "${{ inputs.enable_wallet40 }}" = "true" ]]; then
+          export E2E_ENABLE_WALLET40=1
+          echo "Wallet 4.0 enabled!"
         fi
 
         set +e
