@@ -7,6 +7,7 @@ type TopBarActionButtonProps = TopBarAction;
 export function TopBarActionButton({
   label,
   tooltip,
+  tooltipClassName,
   isInteractive,
   onClick,
   icon,
@@ -36,7 +37,11 @@ export function TopBarActionButton({
             disabled={!isInteractive}
           />
         </TooltipTrigger>
-        {tooltip && <TooltipContent side="bottom">{tooltip}</TooltipContent>}
+        {tooltip && (
+          <TooltipContent side="bottom" className={tooltipClassName}>
+            {tooltip}
+          </TooltipContent>
+        )}
       </Tooltip>
     </div>
   );

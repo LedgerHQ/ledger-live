@@ -8103,8 +8103,8 @@
   },
   "topBar": {
     "activityIndicator": {
-      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry",
-      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
       "upToDate": "You're up to date",
       "lastSync": "Last sync: {{timeAgo}}. Tap to refresh"
     },

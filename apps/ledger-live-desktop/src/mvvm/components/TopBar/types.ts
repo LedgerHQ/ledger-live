@@ -31,6 +31,8 @@ type TopBarAction = {
   icon: IconComponent;
   /** Visual appearance of the button. Defaults to "gray". */
   appearance?: TopBarActionAppearance;
+  /** Extra CSS class applied to the TooltipContent (e.g. `"max-w-sm"` for multi-line wrapping). */
+  tooltipClassName?: string;
   /** Called when the tooltip is shown (e.g. on hover). Used for analytics when showing error tooltip. */
   onTooltipShow?: () => void;
 };
