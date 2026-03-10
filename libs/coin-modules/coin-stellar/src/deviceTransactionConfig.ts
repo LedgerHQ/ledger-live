@@ -1,6 +1,6 @@
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../types";
+import type { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField =
   | {
@@ -61,7 +61,7 @@ async function getDeviceTransactionConfig({
     label: "Memo",
   });
 
-  //NB device displays [none] for an empty memo
+  // NB device displays [none] for an empty memo
   if (estimatedFees && !estimatedFees.isZero()) {
     fields.push({
       type: "fees",
