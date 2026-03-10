@@ -158,6 +158,11 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.accountsListView)).toBeVisible();
   }
 
+  @Step("Wait for Portfolio with accounts")
+  async waitForPortfolioWithAccounts() {
+    await waitForElementById(this.accountsListView, 10000);
+  }
+
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
     await waitForElementById(this.accountsListView, 10000);
