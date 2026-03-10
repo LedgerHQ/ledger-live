@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFl
 
 const LIST_ITEM_HEIGHT = 73;
 
-jest.mock("~/renderer/screens/market/MarketList/useMarketListVirtualization", () => ({
+jest.mock("LLD/features/Market/hooks/useMarketListVirtualization.ts", () => ({
   useMarketListVirtualization: ({
     itemCount,
     marketData = [],

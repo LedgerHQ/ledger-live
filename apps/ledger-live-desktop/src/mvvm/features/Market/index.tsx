@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import SearchInputComponent from "./components/SearchInputComponent";
 import SideDrawerFilter from "~/renderer/screens/market/components/SideDrawerFilter";
 import CounterValueSelect from "~/renderer/screens/market/components/CountervalueSelect";
-import { useMarketListVirtualization } from "~/renderer/screens/market/MarketList/useMarketListVirtualization";
+import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarketListVirtualization";
 import PageHeader from "LLD/components/PageHeader";
 import { useNavigate } from "react-router";
 import MarketList from "./screens/MarketList";
