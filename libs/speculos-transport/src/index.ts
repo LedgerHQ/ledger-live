@@ -332,11 +332,17 @@ export async function createSpeculosDevice(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
     } else if (data.includes("is in use by another program")) {
-      rejectReady(
-        new Error(
-          `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${latestStderr || ""}`,
-        ),
-      );
+      if (maxRetry > 0) {
+        log("speculos", "port in use by another program, retrying with next port");
+        await destroy();
+        resolveReady(false);
+      } else {
+        rejectReady(
+          new Error(
+            `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${latestStderr || ""}`,
+          ),
+        );
+      }
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
