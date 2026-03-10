@@ -1,6 +1,6 @@
 import coinConfig from "../config";
 import type { SolanaConfig } from "../config";
-import { broadcast, combine } from "../logic";
+import { broadcast, combine, lastBlock } from "../logic";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
 
@@ -17,6 +17,7 @@ jest.mock("../network", () => ({
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
+  lastBlock: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -70,6 +71,14 @@ describe("createApi", () => {
     );
   });
 
+  it("should delegate lastBlock to logic", async () => {
+    const api = createApi(mockConfig);
+
+    await api.lastBlock();
+
+    expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
+  });
+
   it("should delegate combine to logic", () => {
     const api = createApi(mockConfig);
 
@@ -91,7 +100,6 @@ describe("createApi", () => {
 
     expect(() => api.craftRawTransaction("tx", "s", "pk", 0n)).toThrow("not supported");
     expect(() => api.getBalance("addr")).toThrow("not supported");
-    expect(() => api.lastBlock()).toThrow("not supported");
     expect(() => api.getStakes("addr")).toThrow("not supported");
     expect(() => api.getBlock(1)).toThrow("not supported");
     expect(() => api.getBlockInfo(1)).toThrow("not supported");

@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type SolanaConfig } from "../config";
-import { broadcast, combine } from "../logic";
+import { broadcast, combine, lastBlock } from "../logic";
 import { getChainAPI, type Config } from "../network";
 
 export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaApi {
@@ -42,9 +42,7 @@ export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaAp
     getBalance: (_address: string) => {
       throw new Error("getBalance is not supported");
     },
-    lastBlock: () => {
-      throw new Error("lastBlock is not supported");
-    },
+    lastBlock: () => lastBlock(api),
     listOperations: (_address: string, _opts: ListOperationsOptions) => {
       throw new Error("listOperations is not supported");
     },
