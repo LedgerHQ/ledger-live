@@ -23,7 +23,7 @@ function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
       },
       imageContainer: {
         width: "100%",
-        height: 500,
+        aspectRatio: 1,
       },
     }),
     [],
