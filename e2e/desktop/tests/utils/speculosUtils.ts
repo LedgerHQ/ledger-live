@@ -9,25 +9,10 @@ import invariant from "invariant";
 import * as allure from "allure-js-commons";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 
-const BASE_PORT = 30000;
-const MAX_PORT = 65535;
-let portCounter = BASE_PORT;
-
 export async function launchSpeculos(appName: string, testTitle?: string): Promise<SpeculosDevice> {
-  if (portCounter > MAX_PORT) {
-    portCounter = BASE_PORT;
-  }
-
-  const speculosPort = portCounter++;
-
   if (testTitle) {
     testTitle = testTitle.replace(/ /g, "_");
   }
-
-  setEnv(
-    "SPECULOS_PID_OFFSET",
-    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
-  );
 
   const device = await startSpeculos(
     testTitle ?? "cli_speculos",
