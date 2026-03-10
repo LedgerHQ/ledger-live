@@ -28,6 +28,8 @@ import type {
   AleoTransactionIntentData,
   AleoPublicTransaction,
   AleoOperationExtra,
+  TransactionPublic,
+  TransactionPrivate,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -281,6 +283,20 @@ export function isSelfTransferTransaction(
   return (
     transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
     transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  );
+}
+
+export function isPublicTransaction(transaction: Transaction): transaction is TransactionPublic {
+  return (
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC
+  );
+}
+
+export function isPrivateTransaction(transaction: Transaction): transaction is TransactionPrivate {
+  return (
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE
   );
 }
 

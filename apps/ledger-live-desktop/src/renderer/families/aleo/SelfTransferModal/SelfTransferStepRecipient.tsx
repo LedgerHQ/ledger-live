@@ -9,9 +9,11 @@ import SelectAccount from "~/renderer/components/SelectAccount";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useHandleChangeAccount } from "./useHandleChangeAccount";
+import BalanceSelector from "../shared/BalanceSelector";
 
 export const SelfTransferStepRecipient = ({
   t,
+  transaction,
   account,
   parentAccount,
   openedFromAccount,
@@ -24,7 +26,9 @@ export const SelfTransferStepRecipient = ({
   // change account with updating "recipient" field that cannot be controlled manually
   const handleChangeAccount = useHandleChangeAccount({ onChangeAccount, updateTransaction });
 
-  if (!status || !account) return null;
+  if (!status || !account || transaction?.family !== "aleo") {
+    return null;
+  }
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -58,7 +62,16 @@ export const SelfTransferStepRecipient = ({
             filter={accountFilter}
           />
         </Box>
-        <Box>TODO: add proper components and balance selector</Box>
+        <Box>
+          <BalanceSelector
+            transaction={transaction}
+            mainAccount={mainAccount}
+            onChange={value => {
+              // TODO: update transaction type
+              console.log(value);
+            }}
+          />
+        </Box>
       </>
     </Box>
   );

@@ -23,12 +23,14 @@ const Separator = styled.div`
     }
   }
 `;
-const StepRecipientSeparator = () => (
+const StepRecipientSeparator = ({
+  icon = <IconArrowDown size={16} />,
+}: {
+  icon?: React.ReactNode;
+}) => (
   <Separator>
     <div />
-    <div>
-      <IconArrowDown size={16} />
-    </div>
+    <div>{icon}</div>
     <div />
   </Separator>
 );

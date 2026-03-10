@@ -37,6 +37,9 @@ import {
   hasSpecificIntentData,
   getOperationDetailsExtraFields,
   getAvailableBalance,
+  isSelfTransferTransaction,
+  isPublicTransaction,
+  isPrivateTransaction,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -1031,5 +1034,41 @@ describe("getAvailableBalance", () => {
     expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
       `aleo: unsupported tx mode for balance calculation: ${unsupportedMode}`,
     );
+  });
+});
+
+describe("isSelfTransferTransaction", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [false, "other_type"],
+  ])("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isSelfTransferTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isPublicTransaction", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.TRANSFER_PUBLIC],
+    [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    [false, "other_type"],
+  ])("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isPublicTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isPrivateTransaction", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.TRANSFER_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [false, "other_type"],
+  ])("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isPrivateTransaction(transaction)).toBe(expected);
   });
 });
