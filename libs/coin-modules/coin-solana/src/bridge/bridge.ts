@@ -7,19 +7,24 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
-import { broadcastWithAPI } from "../broadcast";
-import { createTransaction } from "../createTransaction";
-import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
-import { getTransactionStatus } from "../getTransactionStatus";
+import type { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import resolver from "../hw-getAddress";
+import { broadcast } from "../logic/broadcast";
 import { ChainAPI, Config } from "../network";
-import nftResolvers from "../nftResolvers";
-import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
-import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
+import { SolanaSigner } from "../signer";
+import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
+import { endpointByCurrencyId } from "../utils";
+import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendableWithAPI } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import nftResolvers from "./nftResolvers";
+import { PRELOAD_MAX_AGE, preloadWithAPI } from "./preload";
+import { prepareTransaction as prepareTransactionWithAPI } from "./prepareTransaction";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
@@ -27,13 +32,10 @@ import {
   toOperationExtraRaw,
   assignFromTokenAccountRaw,
   assignToTokenAccountRaw,
-} from "../serialization";
-import { buildSignOperation } from "../signOperation";
-import { SolanaSigner } from "../signer";
-import { getAccountShapeWithAPI } from "../synchronization";
-import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
-import { endpointByCurrencyId } from "../utils";
-import { validateAddress } from "../validateAddress";
+} from "./serialization";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShapeWithAPI } from "./synchronization";
+import { validateAddress } from "./validateAddress";
 
 function makePrepare(getChainAPI: (config: Config) => ChainAPI) {
   const prepareTransaction: AccountBridge<Transaction, SolanaAccount>["prepareTransaction"] = (
@@ -107,12 +109,20 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
 function makeBroadcast(
   getChainAPI: (config: Config) => ChainAPI,
 ): AccountBridge<Transaction, SolanaAccount>["broadcast"] {
-  return info => {
+  return async ({ account, signedOperation }) => {
     const config: Config = {
-      endpoint: endpointByCurrencyId(info.account.currency.id),
+      endpoint: endpointByCurrencyId(account.currency.id),
     };
     const api = getChainAPI(config);
-    return broadcastWithAPI(info, api);
+    const { signature, operation, rawData } = signedOperation;
+    const txBase64 = Buffer.from(signature, "hex").toString("base64");
+
+    const txSignature = await broadcast(api, txBase64, {
+      recentBlockhash: rawData?.recentBlockhash as BlockhashWithExpiryBlockHeight,
+      hasPendingOperations: account.pendingOperations.length > 0,
+    });
+
+    return patchOperationWithHash(operation, txSignature);
   };
 }
 

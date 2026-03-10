@@ -36,18 +36,17 @@ import {
   SolanaTokenAccountWarning,
   SolanaTokenNonTransferable,
   SolanaRecipientMemoIsRequired,
-} from "./errors";
-import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
-import { calculateToken2022TransferFees } from "./helpers/token";
+} from "../errors";
+import { calculateToken2022TransferFees } from "../helpers/token";
 import {
   decodeAccountIdWithTokenAccountAddress,
   isEd25519Address,
   isValidBase58Address,
-} from "./logic";
-import { MAX_MEMO_LENGTH, validateMemo } from "./logic/validateMemo";
-import { ChainAPI } from "./network";
-import { TokenAccountInfo } from "./network/chain/account/token";
-import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
+} from "../logic";
+import { MAX_MEMO_LENGTH, validateMemo } from "../logic/validateMemo";
+import { ChainAPI } from "../network";
+import { TokenAccountInfo } from "../network/chain/account/token";
+import { MemoTransferExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import {
   getMaybeMintAccount,
   getMaybeTokenAccount,
@@ -57,9 +56,8 @@ import {
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
   ParsedOnChainMintWithInfo,
-} from "./network/chain/web3";
-import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
-import { UserInputType } from "./signer";
+} from "../network/chain/web3";
+import { UserInputType } from "../signer";
 import type {
   CommandDescriptor,
   SolanaAccount,
@@ -81,8 +79,10 @@ import type {
   TransactionModel,
   TransferCommand,
   TransferTransaction,
-} from "./types";
-import { assertUnreachable } from "./utils";
+} from "../types";
+import { assertUnreachable } from "../utils";
+import { estimateFeeAndSpendable, estimateTokenMaxSpendable } from "./estimateMaxSpendable";
+import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -112,7 +112,7 @@ async function deriveCommandDescriptor(
     case "stake.split":
       return deriveStakeSplitCommandDescriptor(mainAccount, tx, model, api);
     case "raw":
-      return deriveRawCommandDescriptor(tx, api);
+      return deriveRawCommandDescriptor(tx, api, mainAccount.freshAddress);
     default:
       return assertUnreachable(model);
   }
@@ -124,7 +124,7 @@ const prepareTransaction = async (
   api: ChainAPI,
 ): Promise<Transaction> => {
   if (tx.raw) {
-    return toLiveTransaction(api, tx.raw);
+    return toLiveTransaction(api, tx.raw, mainAccount.freshAddress);
   }
 
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);

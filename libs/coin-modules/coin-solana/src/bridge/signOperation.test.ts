@@ -2,10 +2,10 @@ import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight, VersionedTransaction } from "@solana/web3.js";
-import { ChainAPI } from "./network";
+import { ChainAPI } from "../network";
+import { SolanaAddress } from "../signer";
+import { Transaction } from "../types";
 import { buildSignOperation } from "./signOperation";
-import { SolanaAddress } from "./signer";
-import { Transaction } from "./types";
 
 const TRANSFER_KINDS = [
   "transfer",
@@ -18,16 +18,15 @@ const TRANSFER_KINDS = [
   "stake.split",
 ];
 
-jest.mock("./buildTransaction", () => {
-  return {
-    buildTransactionWithAPI: (_address: string, _transaction: Transaction, _api: ChainAPI) =>
-      Promise.resolve([
-        versionedTransaction(),
-        blockhashWithExpiryBlockHeight(),
-        (_signature: Buffer) => versionedTransaction(1),
-      ]),
-  };
-});
+jest.mock("../logic/craftTransaction", () => ({
+  ...jest.requireActual("../logic/craftTransaction"),
+  buildTransactionWithAPI: (_address: string, _transaction: Transaction, _api: ChainAPI) =>
+    Promise.resolve([
+      versionedTransaction(),
+      blockhashWithExpiryBlockHeight(),
+      (_signature: Buffer) => versionedTransaction(1),
+    ]),
+}));
 
 describe("Testing signOperation", () => {
   describe("Testing buildSignOperation", () => {

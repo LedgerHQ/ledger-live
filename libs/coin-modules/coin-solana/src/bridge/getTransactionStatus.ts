@@ -6,8 +6,8 @@ import type {
   SolanaAccount,
   Transaction,
   TransactionStatus,
-} from "./types";
-import { assertUnreachable } from "./utils";
+} from "../types";
+import { assertUnreachable } from "../utils";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

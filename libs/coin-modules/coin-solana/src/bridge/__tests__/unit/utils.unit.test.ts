@@ -2,7 +2,7 @@ import {
   LEDGER_VALIDATOR_BY_FIGMENT,
   LEDGER_VALIDATOR_BY_CHORUS_ONE,
   LEDGER_VALIDATOR_DEFAULT,
-} from "../../utils";
+} from "../../../utils";
 
 describe("utils - Default Validators", () => {
   it("should have APY property", () => {

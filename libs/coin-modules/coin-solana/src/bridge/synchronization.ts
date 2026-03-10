@@ -18,20 +18,21 @@ import compact from "lodash/compact";
 import { keyBy, toPairs, pipe, flow, sortBy, sum } from "lodash/fp";
 import groupBy from "lodash/groupBy";
 import head from "lodash/head";
-import coinConfig from "./config";
-import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token";
+import coinConfig from "../config";
+import { getTokenAccountProgramId, tokenIsListedOnLedger } from "../helpers/token";
 import {
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
   withdrawableFromStake,
-} from "./logic";
-import { ChainAPI } from "./network";
-import { tryParseAsMintAccount } from "./network/chain/account";
-import { MintExtensions } from "./network/chain/account/tokenExtensions";
-import { DelegateInfo, WithdrawInfo } from "./network/chain/instruction/stake/types";
-import { parseQuiet } from "./network/chain/program";
-import { PARSED_PROGRAMS } from "./network/chain/program/constants";
-import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
+} from "../logic";
+import { estimateTxFee } from "../logic/estimateFees";
+import { ChainAPI } from "../network";
+import { tryParseAsMintAccount } from "../network/chain/account";
+import { MintExtensions } from "../network/chain/account/tokenExtensions";
+import { DelegateInfo, WithdrawInfo } from "../network/chain/instruction/stake/types";
+import { parseQuiet } from "../network/chain/program";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
+import { getStakeAccounts } from "../network/chain/stake-activation/rpc";
 import {
   getAccountMinimumBalanceForRentExemption,
   getTokenAccruedInterestDelta,
@@ -39,9 +40,8 @@ import {
   ParsedOnChainStakeAccountWithInfo,
   toTokenAccountWithInfo,
   TransactionDescriptor,
-} from "./network/chain/web3";
-import { ParsedOnChainTokenAccountWithInfo } from "./network/chain/web3";
-import { estimateTxFee } from "./tx-fees";
+} from "../network/chain/web3";
+import { ParsedOnChainTokenAccountWithInfo } from "../network/chain/web3";
 import {
   SolanaAccount,
   SolanaOperationExtra,
@@ -49,8 +49,8 @@ import {
   SolanaTokenAccount,
   SolanaTokenAccountExtensions,
   SolanaTokenProgram,
-} from "./types";
-import { isSignaturesForAddressResponse } from "./utils";
+} from "../types";
+import { isSignaturesForAddressResponse } from "../utils";
 
 export async function getAccount(
   address: string,

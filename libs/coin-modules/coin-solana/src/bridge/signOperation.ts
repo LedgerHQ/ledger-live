@@ -4,9 +4,9 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { buildTransactionWithAPI } from "./buildTransaction";
-import { ChainAPI } from "./network";
-import type { Resolution, SolanaSigner } from "./signer";
+import { buildTransactionWithAPI } from "../logic/craftTransaction";
+import { ChainAPI } from "../network";
+import type { Resolution, SolanaSigner } from "../signer";
 import type {
   Command,
   CommandDescriptor,
@@ -23,8 +23,8 @@ import type {
   TokenTransferCommand,
   Transaction,
   TransferCommand,
-} from "./types";
-import { assertUnreachable } from "./utils";
+} from "../types";
+import { assertUnreachable } from "../utils";
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {

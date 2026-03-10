@@ -1,12 +1,12 @@
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { Account, VersionedMessage } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import { SolanaMemoIsTooLong } from "../errors";
+import * as logicValidateMemo from "../logic/validateMemo";
+import { ChainAPI } from "../network";
+import { SolanaAccount, Transaction, TransferTransaction } from "../types";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
-import { SolanaMemoIsTooLong } from "./errors";
-import * as logicValidateMemo from "./logic/validateMemo";
-import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
-import { SolanaAccount, Transaction, TransferTransaction } from "./types";
 
 jest.mock("./estimateMaxSpendable", () => {
   const originalModule = jest.requireActual("./estimateMaxSpendable");
@@ -20,8 +20,8 @@ jest.mock("./estimateMaxSpendable", () => {
     ),
   };
 });
-jest.mock("./logic/validateMemo", () => {
-  const actual = jest.requireActual("./logic/validateMemo");
+jest.mock("../logic/validateMemo", () => {
+  const actual = jest.requireActual("../logic/validateMemo");
   return {
     ...actual,
     validateMemo: jest.fn(actual.validateMemo), // replace with mock
@@ -118,7 +118,7 @@ describe("testing prepareTransaction", () => {
     // When
     const preparedTransaction = await prepareTransaction(
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      {} as SolanaAccount,
+      { freshAddress: "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx" } as SolanaAccount,
       rawTransaction,
       chainAPI,
     );
@@ -268,13 +268,6 @@ describe("testing prepareTransaction", () => {
 function api(estimatedFees?: number) {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
-    getLatestBlockhash: () => {
-      return Promise.resolve({
-        blockhash: "blockhash",
-        lastValidBlockHeight: 1,
-      });
-    },
-
     getFeeForMessage: (_message: VersionedMessage) => Promise.resolve(estimatedFees),
   } as ChainAPI;
 }

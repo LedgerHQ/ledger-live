@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BehaviorSubject, Observable } from "rxjs";
-import { SolanaPreloadDataV1 } from "./types";
+import { SolanaPreloadDataV1 } from "../types";
 
 const initialData: SolanaPreloadDataV1 = {
   version: "1",

@@ -1,7 +1,8 @@
 import { VersionedTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
-import { ChainAPI } from "./network";
-import { Transaction } from "./types";
+import { craftRawTransaction } from "../logic/craftRawTransaction";
+import { ChainAPI } from "../network";
+import { Transaction } from "../types";
 
 function buildRawTransaction(raw: string, estimatedFees: number | null): Transaction {
   return {
@@ -28,22 +29,22 @@ function buildRawTransaction(raw: string, estimatedFees: number | null): Transac
 export async function toLiveTransaction(
   api: ChainAPI,
   serializedTransaction: string,
+  sender: string,
 ): Promise<Transaction> {
-  const solanaTransaction = VersionedTransaction.deserialize(
-    Buffer.from(serializedTransaction, "base64"),
-  );
+  await craftRawTransaction(api, serializedTransaction, sender, "", 0n);
 
-  const estimatedFees = await api.getFeeForMessage(solanaTransaction.message);
+  const tx = VersionedTransaction.deserialize(Buffer.from(serializedTransaction, "base64"));
+  const estimatedFees = await api.getFeeForMessage(tx.message);
 
   return buildRawTransaction(serializedTransaction, estimatedFees);
 }
 
-export async function deriveRawCommandDescriptor(tx: Transaction, api: ChainAPI) {
+export async function deriveRawCommandDescriptor(tx: Transaction, api: ChainAPI, sender: string) {
   if (!tx.raw) {
     throw new Error("Raw transaction is required to derive command descriptor");
   }
 
-  const liveTx = await toLiveTransaction(api, tx.raw);
+  const liveTx = await toLiveTransaction(api, tx.raw, sender);
 
   return (
     liveTx.model.commandDescriptor || {

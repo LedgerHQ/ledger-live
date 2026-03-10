@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import config, { SolanaCoinConfig } from "../config";
-import { ChainAPI } from "../network";
-import * as stakeActivationModule from "../network/chain/stake-activation/rpc";
+import config, { SolanaCoinConfig } from "../../config";
+import { ChainAPI } from "../../network";
+import * as stakeActivationModule from "../../network/chain/stake-activation/rpc";
 import { getAccount, getTokenAccountsTransactions } from "../synchronization";
 import {
   publicKeyOf,
@@ -17,11 +17,11 @@ import {
 
 // Module-level mock for getStakeAccounts
 const actualGetStakeAccounts = jest.requireActual(
-  "../network/chain/stake-activation/rpc",
+  "../../network/chain/stake-activation/rpc",
 ).getStakeAccounts;
-const mockGetStakeAccounts = jest.fn(actualGetStakeAccounts);
-jest.mock("../network/chain/stake-activation/rpc", () => ({
-  ...jest.requireActual("../network/chain/stake-activation/rpc"),
+const mockGetStakeAccounts = jest.fn(actualGetStakeAccounts) as jest.Mock;
+jest.mock("../../network/chain/stake-activation/rpc", () => ({
+  ...jest.requireActual("../../network/chain/stake-activation/rpc"),
   getStakeAccounts: (...args: unknown[]) => mockGetStakeAccounts(...args),
 }));
 

@@ -16,7 +16,7 @@ import type {
   TokenTransferCommand,
   Transaction,
   TransferCommand,
-} from "./types";
+} from "../types";
 
 // do not show fields like 'To', 'Recipient', etc., as per Ledger policy
 

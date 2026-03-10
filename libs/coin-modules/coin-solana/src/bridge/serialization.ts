@@ -16,7 +16,7 @@ import {
   SolanaResourcesRaw,
   SolanaTokenAccount,
   SolanaTokenAccountRaw,
-} from "./types";
+} from "../types";
 
 export function toSolanaResourcesRaw(resources: SolanaResources): SolanaResourcesRaw {
   return {
