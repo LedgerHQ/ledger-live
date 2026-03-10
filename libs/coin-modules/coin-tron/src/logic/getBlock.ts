@@ -62,9 +62,7 @@ export async function getBlock(height: number): Promise<Block> {
   return { info, transactions };
 }
 
-async function fetchMissingFees(
-  txs: BlockTransactionAPI[],
-): Promise<Map<string, number>> {
+async function fetchMissingFees(txs: BlockTransactionAPI[]): Promise<Map<string, number>> {
   const feesById = new Map<string, number>();
 
   const txsMissingFees = txs.filter(tx => tx.ret?.[0]?.fee === undefined);
