@@ -1,5 +1,6 @@
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import {
   safeGetRefValue,
   ExchangeType,
@@ -36,7 +37,11 @@ import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
-import { CacheMode, WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
+import {
+  CacheMode,
+  ShouldStartLoadRequest,
+  WebViewOpenWindowEvent,
+} from "react-native-webview/lib/WebViewTypes";
 import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
@@ -47,7 +52,10 @@ export function useWebView(
     currentAccountHistDb,
     inputs,
     customHandlers,
-  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb">,
+    manifestDomainCheckEnabled,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb"> & {
+    manifestDomainCheckEnabled?: boolean;
+  },
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
@@ -67,15 +75,17 @@ export function useWebView(
     [],
   );
 
-  const { webviewProps, webviewRef } = useWebviewState(
-    {
-      manifest: manifest satisfies AppManifest,
-      inputs,
-    },
-    ref,
-    onStateChange,
-    serverRef,
-  );
+  const { webviewProps, webviewRef, onShouldStartLoadWithRequest, isBlockedByDomainCheck } =
+    useWebviewState(
+      {
+        manifest: manifest satisfies AppManifest,
+        inputs,
+        manifestDomainCheckEnabled,
+      },
+      ref,
+      onStateChange,
+      serverRef,
+    );
 
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
@@ -220,6 +230,8 @@ export function useWebView(
     onLoadError,
     onMessage,
     onOpenWindow,
+    onShouldStartLoadWithRequest,
+    isBlockedByDomainCheck,
     webviewCacheOptions,
     webviewProps,
     webviewRef,
@@ -233,24 +245,54 @@ export const initialWebviewState: WebviewState = {
   canGoForward: false,
   title: "",
   loading: false,
+  isAppUnavailable: false,
 };
 
 export function useWebviewState(
-  params: Pick<WebviewProps, "manifest" | "inputs">,
+  params: Pick<WebviewProps, "manifest" | "inputs"> & { manifestDomainCheckEnabled?: boolean },
   WebviewAPIRef: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
   serverRef?: React.RefObject<WalletAPIServer | undefined>,
 ) {
   const webviewRef = useRef<WebView>(null);
-  const { manifest, inputs } = params;
+  const { manifest, inputs, manifestDomainCheckEnabled } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
-  useEffect(() => {
-    setURI(initialURL);
-  }, [initialURL]);
+  // Mirror desktop's originWhitelist logic: when the flag is on, validate the initial URL
+  // against manifest.domains, falling back to manifest.url.
+  // When neither passes, webviewSrc is "" — the WebView is not navigated and we derive
+  // isBlockedByDomainCheck to push isAppUnavailable directly into state, avoiding any
+  // URL load that could crash (e.g. about:blank on iOS).
+  const webviewSrc = useMemo(() => {
+    if (!manifestDomainCheckEnabled) {
+      return initialURL;
+    }
+    const domains = manifest.domains ?? [];
+    if (isUrlAllowedByManifestDomains(initialURL, domains)) {
+      return initialURL;
+    }
+    if (isUrlAllowedByManifestDomains(manifest.url.toString(), domains)) {
+      return manifest.url.toString();
+    }
+    return "";
+  }, [initialURL, manifest.domains, manifest.url, manifestDomainCheckEnabled]);
 
-  const [currentURI, setURI] = useState(initialURL);
+  const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "";
+
+  useEffect(() => {
+    setURI(webviewSrc);
+  }, [webviewSrc]);
+
+  const [currentURI, setURI] = useState(webviewSrc);
+
+  // When blocked, immediately surface isAppUnavailable without waiting for WebView load
+  // events (which would hang on an empty URI).
+  useEffect(() => {
+    if (isBlockedByDomainCheck) {
+      setState(s => ({ ...s, loading: false, isAppUnavailable: true }));
+    }
+  }, [isBlockedByDomainCheck]);
   const { theme } = useTheme();
 
   const source = useMemo(
@@ -292,6 +334,12 @@ export function useWebviewState(
           webview.goForward();
         },
         loadURL: (url: string): void => {
+          if (
+            manifestDomainCheckEnabled &&
+            !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
+          ) {
+            return;
+          }
           setURI(url);
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -301,48 +349,52 @@ export function useWebviewState(
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [manifest.domains, manifestDomainCheckEnabled],
   );
 
   const onLoad: Required<WebViewProps>["onLoad"] = useCallback(({ nativeEvent }) => {
-    setState({
+    setState(oldState => ({
       title: nativeEvent.title,
       url: nativeEvent.url,
       canGoBack: nativeEvent.canGoBack,
       canGoForward: nativeEvent.canGoForward,
       loading: nativeEvent.loading,
-    });
+      isAppUnavailable: oldState.isAppUnavailable,
+    }));
   }, []);
 
   const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(({ nativeEvent }) => {
-    setState({
+    setState(oldState => ({
       title: nativeEvent.title,
       url: nativeEvent.url,
       canGoBack: nativeEvent.canGoBack,
       canGoForward: nativeEvent.canGoForward,
       loading: nativeEvent.loading,
-    });
+      isAppUnavailable: oldState.isAppUnavailable,
+    }));
   }, []);
 
   const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(({ nativeEvent }) => {
-    setState({
+    setState(oldState => ({
       title: nativeEvent.title,
       url: nativeEvent.url,
       canGoBack: nativeEvent.canGoBack,
       canGoForward: nativeEvent.canGoForward,
       loading: nativeEvent.loading,
-    });
+      isAppUnavailable: oldState.isAppUnavailable,
+    }));
   }, []);
 
   const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
     event => {
-      setState({
+      setState(oldState => ({
         title: event.title,
         url: event.url,
         canGoBack: event.canGoBack,
         canGoForward: event.canGoForward,
         loading: event.loading,
-      });
+        isAppUnavailable: oldState.isAppUnavailable,
+      }));
     },
     [],
   );
@@ -352,6 +404,14 @@ export function useWebviewState(
       onStateChange(state);
     }
   }, [state, onStateChange]);
+
+  const onShouldStartLoadWithRequest = useCallback(
+    (request: ShouldStartLoadRequest): boolean => {
+      if (!manifestDomainCheckEnabled) return true;
+      return isUrlAllowedByManifestDomains(request.url, manifest.domains ?? []);
+    },
+    [manifestDomainCheckEnabled, manifest.domains],
+  );
 
   const props: Partial<WebViewProps> = useMemo(
     () => ({
@@ -367,6 +427,8 @@ export function useWebviewState(
   return {
     webviewProps: props,
     webviewRef,
+    onShouldStartLoadWithRequest,
+    isBlockedByDomainCheck,
   };
 }
 

@@ -36,6 +36,7 @@ import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
@@ -46,6 +47,7 @@ import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { NetworkError } from "./NetworkError";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
@@ -78,14 +80,18 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       [],
     );
 
-    const { webviewProps, webviewRef } = useWebviewState(
-      {
-        manifest,
-        inputs,
-      },
-      ref,
-      onStateChange,
-    );
+    const manifestDomainCheckEnabled = useFeature("llmWebviewManifestDomainCheck")?.enabled;
+
+    const { webviewProps, webviewRef, onShouldStartLoadWithRequest, isBlockedByDomainCheck } =
+      useWebviewState(
+        {
+          manifest,
+          inputs,
+          manifestDomainCheckEnabled,
+        },
+        ref,
+        onStateChange,
+      );
 
     const walletState = useSelector(walletSelector);
 
@@ -478,6 +484,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
 
+    if (isBlockedByDomainCheck) {
+      return <NetworkError handleTryAgain={() => {}} />;
+    }
+
     return (
       <RNWebView
         ref={webviewRef}
@@ -488,7 +498,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
-        originWhitelist={manifest.domains}
+        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+        onShouldStartLoadWithRequest={
+          manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
+        }
         allowsInlineMediaPlayback
         onMessage={handleMessage}
         onError={handleError}
