@@ -18,7 +18,7 @@ import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { createMockCategorizedAssets } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const MOCK_LAST_SEEN_DEVICE: DeviceModelInfoType = {
