@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import OpenOrInstallTrustChainApp from "../openOrInstall";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { setOriginFlow } from "~/renderer/reducers/originFlow";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const mockGoNext = jest.fn();
 const mockDispatch = jest.fn();
