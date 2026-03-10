@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { type RefObject } from "react";
+import React, { useMemo, type RefObject } from "react";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import {
   WebviewAPI,
@@ -10,6 +10,8 @@ import {
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { PerpsLoader } from "LLD/features/Perps/components/PerpsLoader";
 import type { PerpsWebviewInputs } from "../PerpsApp/usePerpsAppViewModel";
+import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 
 export type PerpsWebProps = {
   manifest: LiveAppManifest;
@@ -30,6 +32,12 @@ export const PerpsWebView = ({
   enablePlatformDevTools,
   Loader = PerpsLoader,
 }: PerpsWebProps) => {
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...customDeeplinkHandlers,
+    };
+  }, [customDeeplinkHandlers]);
   return (
     <>
       {enablePlatformDevTools && (
@@ -42,6 +50,7 @@ export const PerpsWebView = ({
           inputs={{
             ...inputs,
           }}
+          customHandlers={customHandlers}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           Loader={Loader}
