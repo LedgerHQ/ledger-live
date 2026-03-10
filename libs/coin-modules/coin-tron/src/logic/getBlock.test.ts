@@ -19,9 +19,12 @@ describe("getBlockInfo", () => {
     jest.clearAllMocks();
   });
 
-  it("should throw for height <= 0", async () => {
+  it("should throw for invalid height", async () => {
     await expect(getBlockInfo(0)).rejects.toThrow("Invalid block height: 0");
     await expect(getBlockInfo(-1)).rejects.toThrow("Invalid block height: -1");
+    await expect(getBlockInfo(1.5)).rejects.toThrow("Invalid block height: 1.5");
+    await expect(getBlockInfo(NaN)).rejects.toThrow("Invalid block height: NaN");
+    await expect(getBlockInfo(Infinity)).rejects.toThrow("Invalid block height: Infinity");
     expect(networkGetBlock).not.toHaveBeenCalled();
   });
 
@@ -49,9 +52,12 @@ describe("getBlock", () => {
     mockFetchTronTxDetail.mockResolvedValue({ fee: 1000 });
   });
 
-  it("should throw for height <= 0", async () => {
+  it("should throw for invalid height", async () => {
     await expect(getBlock(0)).rejects.toThrow("Invalid block height: 0");
     await expect(getBlock(-1)).rejects.toThrow("Invalid block height: -1");
+    await expect(getBlock(1.5)).rejects.toThrow("Invalid block height: 1.5");
+    await expect(getBlock(NaN)).rejects.toThrow("Invalid block height: NaN");
+    await expect(getBlock(Infinity)).rejects.toThrow("Invalid block height: Infinity");
     expect(getBlockWithTransactions).not.toHaveBeenCalled();
   });
 

@@ -3,7 +3,7 @@ import { HttpResponse, http } from "msw";
 import { setupServer, SetupServerApi } from "msw/node";
 import coinConfig from "../config";
 import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
-import { defaultFetchParams, fetchTronAccountTxs } from ".";
+import { defaultFetchParams, fetchTronAccountTxs, getBlock, getBlockWithTransactions } from ".";
 
 const TRON_BASE_URL_TEST = "https://httpbin.org";
 
@@ -313,4 +313,101 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
       "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
     );
   }, 10_000);
+});
+
+describe("getBlock", () => {
+  let capturedRequest: { method: string; url: string; body: unknown } | null = null;
+
+  const getBlockHandler = http.post(
+    `${TRON_BASE_URL_TEST}/wallet/getblock`,
+    async ({ request }) => {
+      capturedRequest = {
+        method: request.method,
+        url: request.url,
+        body: await request.json(),
+      };
+      return HttpResponse.json({
+        blockID: "000000000426763400000000000000000000000000000000000000000000000",
+        block_header: {
+          raw_data: {
+            number: 69629492,
+            timestamp: 1739540559000,
+            parentHash: "00000000042676330000000000000000000000000000000000000000000000",
+          },
+        },
+      });
+    },
+  );
+
+  const mockServer = setupServer(getBlockHandler);
+
+  beforeAll(doBeforeAll(mockServer));
+  beforeEach(() => {
+    capturedRequest = null;
+    mockServer.resetHandlers();
+  });
+  afterAll(doAfterAll(mockServer));
+
+  it("sends POST request with detail: false", async () => {
+    const result = await getBlock(69629492);
+
+    expect(capturedRequest).not.toBeNull();
+    expect(capturedRequest!.method).toBe("POST");
+    expect(capturedRequest!.url).toContain("/wallet/getblock");
+    expect(capturedRequest!.body).toEqual({
+      id_or_num: "69629492",
+      detail: false,
+    });
+    expect(result.height).toBe(69629492);
+    expect(result.hash).toBe("000000000426763400000000000000000000000000000000000000000000000");
+  });
+});
+
+describe("getBlockWithTransactions", () => {
+  let capturedRequest: { method: string; url: string; body: unknown } | null = null;
+
+  const getBlockHandler = http.post(
+    `${TRON_BASE_URL_TEST}/wallet/getblock`,
+    async ({ request }) => {
+      capturedRequest = {
+        method: request.method,
+        url: request.url,
+        body: await request.json(),
+      };
+      return HttpResponse.json({
+        blockID: "000000000426763400000000000000000000000000000000000000000000000",
+        block_header: {
+          raw_data: {
+            number: 69629492,
+            timestamp: 1739540559000,
+            parentHash: "00000000042676330000000000000000000000000000000000000000000000",
+          },
+        },
+        transactions: [],
+      });
+    },
+  );
+
+  const mockServer = setupServer(getBlockHandler);
+
+  beforeAll(doBeforeAll(mockServer));
+  beforeEach(() => {
+    capturedRequest = null;
+    mockServer.resetHandlers();
+  });
+  afterAll(doAfterAll(mockServer));
+
+  it("sends POST request with detail: true", async () => {
+    const result = await getBlockWithTransactions(69629492);
+
+    expect(capturedRequest).not.toBeNull();
+    expect(capturedRequest!.method).toBe("POST");
+    expect(capturedRequest!.url).toContain("/wallet/getblock");
+    expect(capturedRequest!.body).toEqual({
+      id_or_num: "69629492",
+      detail: true,
+    });
+    expect(result.block_header.raw_data.number).toBe(69629492);
+    expect(result.blockID).toBe("000000000426763400000000000000000000000000000000000000000000000");
+  });
 });

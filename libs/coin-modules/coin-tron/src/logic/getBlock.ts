@@ -21,7 +21,7 @@ import type { TrongridTxInfo, TrongridTxType } from "../types";
 type BlockTxInfo = TrongridTxInfo & { fee: BigNumber };
 
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
-  if (height <= 0) {
+  if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
@@ -34,7 +34,7 @@ export async function getBlockInfo(height: number): Promise<BlockInfo> {
 }
 
 export async function getBlock(height: number): Promise<Block> {
-  if (height <= 0) {
+  if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
   }
 
