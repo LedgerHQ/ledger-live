@@ -4,12 +4,14 @@ import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
 import { useFeatureFlags } from "../../featureFlags";
 import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 
 type StartPostOnboardingOptions = {
   deviceModelId: DeviceModelId;
   mock?: boolean;
   fallbackIfNoAction?: () => void;
   resetNavigationStack?: boolean;
+  canShowRecover?: boolean;
 };
 
 /**
@@ -33,7 +35,7 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
       const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
       const actions = getPostOnboardingActionsForDevice(deviceModelId, mock).filter(
         actionWithState =>
-          !actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled,
+          (!actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled) && (actionWithState.id !== PostOnboardingActionId.recover || options.canShowRecover),
       );
       dispatch(
         initPostOnboarding({

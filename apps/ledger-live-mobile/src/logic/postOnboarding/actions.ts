@@ -93,16 +93,6 @@ export const recoverAction: PostOnboardingAction = {
   description: "postOnboarding.actions.recover.description",
   buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
   actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
-  shouldShow: async ({ protectId }) => {
-    const recoverSubscriptionState: LedgerRecoverSubscriptionStateEnum | undefined =
-      await getStoreValue("SUBSCRIPTION_STATE", protectId);
-
-    return (
-      recoverSubscriptionState !== undefined &&
-      (recoverSubscriptionState in LedgerRecoverSubscriptionStateInProgressEnum ||
-        recoverSubscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)
-    );
-  },
   getIsAlreadyCompleted: async ({ protectId }) => {
     const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
 
