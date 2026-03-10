@@ -22,7 +22,7 @@
 import { WalletSyncDataManager } from "../types";
 import { z } from "zod";
 
-const schema = z.record(z.string());
+const schema = z.record(z.string(), z.string());
 
 const manager: WalletSyncDataManager<
   Map<string, string>,

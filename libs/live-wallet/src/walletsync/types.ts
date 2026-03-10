@@ -93,3 +93,6 @@ export type ExtractLocalState<T> = T extends WalletSyncDataManager<infer L, any,
 export type ExtractUpdateEvent<T> = T extends WalletSyncDataManager<any, infer U, any> ? U : never;
 
 export type ExtractSchema<T> = T extends WalletSyncDataManager<any, any, infer S> ? S : never;
+
+export type ExtractDistantState<T> =
+  T extends WalletSyncDataManager<any, any, any, infer D> ? D : never;
