@@ -3,6 +3,9 @@
 This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Mobile** app.  
 Dev teams are responsible for **adding/updating tests** for new features.
 
+> **Cursor users:** Run the `/e2e-mobile-onboard` command for an interactive setup wizard.
+> It checks every prerequisite on your machine, validates environment variables, and guides you through fixes step by step.
+
 ---
 
 ## Quick Start
@@ -30,12 +33,18 @@ Set these before running tests:
 ```bash
 export COINAPPS="/path/to/coin-apps"
 export MOCK="0"
-export SEED="your 24 word ledger recovery phrase here"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 export SPECULOS_DEVICE="nanoX"          # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
 ```
 
-> ⚠️ Replace placeholders with your local paths and credentials.
+**SEED** must also be set but should **never** be printed, logged, or committed.
+Use [1Password CLI](https://developer.1password.com/docs/cli/) to inject it securely:
+
+```bash
+export SEED=$(op read "op://Vault/Item/field")
+```
+
+> ⚠️ Replace placeholders with your local paths. Add these exports to `~/.zshrc` so they persist.
 
 ### 3. Build
 
@@ -46,11 +55,16 @@ pnpm clean
 pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli..." --filter="ledger-live-mobile-e2e-tests"
 pnpm build:llm:deps
 pnpm build:cli
-# Android debug build
-pnpm mobile e2e:build -c android.emu.debug
+# Android release build
+pnpm mobile e2e:build -c android.emu.release
 # iOS debug build
+pnpm mobile pod
 pnpm mobile e2e:build -c ios.sim.debug
 ```
+
+> **Why release for Android?** Android debug builds are broken locally due to a known
+> Detox/Espresso reflection bug (`NoSuchFieldException: eventInjector`). Only release
+> builds work. Release bundles JS into the APK, so no Metro bundler is needed for Android.
 
 ### 4. Simulators / Emulators
 
@@ -61,25 +75,27 @@ Follow the full wiki if you need setup details.
 
 ### 5. Run Tests
 
-- Run all tests:
+All commands below are run from the `e2e/mobile/` directory.
+
+**iOS (debug)** -- requires the Metro bundler running in a separate terminal:
 
 ```bash
-# iOS
-pnpm e2e:mobile test:ios:debug
+# Terminal 1: start the bundler
+pnpm mobile start
 
-# Android
-pnpm e2e:mobile test:android:debug
+# Terminal 2: run tests (from e2e/mobile/)
+pnpm test:ios:debug                      # all tests
+pnpm test:ios:debug <testFileName>       # single file
 ```
 
-- Run a single test file:
+**Android (release)** -- no bundler needed, JS is bundled in the APK:
 
 ```bash
-# iOS
-pnpm e2e:mobile test:ios:debug <testFileName>
-
-# Android
-pnpm e2e:mobile test:android:debug <testFileName>
+pnpm test:android                        # all tests
+pnpm test:android <testFileName>         # single file
 ```
+
+> Android debug (`pnpm test:android:debug`) does not work locally due to a known Detox/Espresso bug. Always use the release configuration.
 
 > For CI, sharding, and advanced flags, see [the full wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
 
