@@ -31,6 +31,7 @@
     "src/counterValues/state-manager/api.ts",
     "src/counterValues/state-manager/onSchemaFailure.ts",
     "src/counterValues/state-manager/schema.ts",
+    "src/counterValues/state-manager/useGetCounterValueIdsPolling.ts",
     "src/cross.ts",
     "src/csvExport.ts",
     "src/currencies/color.ts",

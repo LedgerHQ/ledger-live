@@ -12,6 +12,14 @@ import { State } from "~/reducers/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
+function deferredReject<T = never>() {
+  let reject!: (error: Error) => void;
+  const promise = new Promise<T>((_, rej) => {
+    reject = rej;
+  });
+  return { promise, reject };
+}
+
 const mockGetOrCreateTrustchain = jest.fn();
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
@@ -85,14 +93,15 @@ describe("useAddMember", () => {
   });
 
   it("should set GenericError scene when UserRefusedOnDevice is thrown", async () => {
-    mockGetOrCreateTrustchain.mockRejectedValue(new UserRefusedOnDevice());
+    const { promise, reject } = deferredReject();
+    mockGetOrCreateTrustchain.mockReturnValue(promise);
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
     });
 
-    await jest.advanceTimersByTimeAsync(100);
-    jest.runAllTimers();
+    await jest.advanceTimersByTimeAsync(0);
+    reject(new UserRefusedOnDevice());
     await jest.advanceTimersByTimeAsync(0);
 
     expect(screen.getByTestId("scene-kind").props.children).toBe("GenericError");
@@ -131,14 +140,15 @@ describe("useAddMember", () => {
   });
 
   it("should set KeyError scene without tracking on TrustchainNotAllowed", async () => {
-    mockGetOrCreateTrustchain.mockRejectedValue(new TrustchainNotAllowed());
+    const { promise, reject } = deferredReject();
+    mockGetOrCreateTrustchain.mockReturnValue(promise);
 
     render(<TestHarness device={MOCK_BLE_DEVICE} />, {
       overrideInitialState: INITIAL_STATE,
     });
 
-    await jest.advanceTimersByTimeAsync(100);
-    jest.runAllTimers();
+    await jest.advanceTimersByTimeAsync(0);
+    reject(new TrustchainNotAllowed());
     await jest.advanceTimersByTimeAsync(0);
 
     expect(screen.getByTestId("scene-kind").props.children).toBe("KeyError");

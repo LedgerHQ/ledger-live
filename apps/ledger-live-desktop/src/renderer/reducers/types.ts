@@ -8,9 +8,6 @@ export type Handlers<State, Types, PreciseKey = true> = {
 };
 
 export type CountervaluesHandlersPayloads = {
-  COUNTERVALUES_MARKETCAP_SET_ERROR: string;
-  COUNTERVALUES_MARKETCAP_SET_IDS: string[];
-  COUNTERVALUES_MARKETCAP_SET_LOADING: boolean;
   COUNTERVALUES_POLLING_SET_IS_POLLING: boolean;
   COUNTERVALUES_POLLING_SET_TRIGGER_LOAD: boolean;
   COUNTERVALUES_STATE_SET_ERROR: Error;

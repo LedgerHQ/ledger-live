@@ -27,7 +27,6 @@
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/cryptoassets": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",
