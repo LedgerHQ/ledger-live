@@ -79,4 +79,72 @@ describe("abiDecodeTrc20Transfer", () => {
 
     expect(result).toBeNull();
   });
+
+  it("returns null for empty string", () => {
+    const result = abiDecodeTrc20Transfer("");
+
+    expect(result).toBeNull();
+  });
+
+  it("decodes zero amount correctly", () => {
+    const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const data = "a9059cbb" + recipientHex.padStart(64, "0") + "0".repeat(64);
+
+    const result = abiDecodeTrc20Transfer(data);
+
+    expect(result).not.toBeNull();
+    expect(result!.amount).toEqual(new BigNumber(0));
+  });
+
+  it("handles uppercase selector", () => {
+    const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const amount = new BigNumber("1000000");
+    const data =
+      "A9059CBB" + recipientHex.padStart(64, "0") + amount.toString(16).padStart(64, "0");
+
+    const result = abiDecodeTrc20Transfer(data);
+
+    expect(result).not.toBeNull();
+    expect(result!.amount).toEqual(amount);
+  });
+
+  it("handles data with extra trailing bytes", () => {
+    const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const amount = new BigNumber("1000000");
+    const data =
+      "a9059cbb" +
+      recipientHex.padStart(64, "0") +
+      amount.toString(16).padStart(64, "0") +
+      "deadbeef";
+
+    const result = abiDecodeTrc20Transfer(data);
+
+    expect(result).not.toBeNull();
+    expect(result!.amount).toEqual(amount);
+  });
+
+  it("roundtrip encode/decode preserves data", () => {
+    const address = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const amount = new BigNumber("123456789012345678901234567890");
+    const encoded = "a9059cbb" + abiEncodeTrc20Transfer(address, amount);
+
+    const decoded = abiDecodeTrc20Transfer(encoded);
+
+    expect(decoded).not.toBeNull();
+    expect(decoded!.to).toBe("41" + address);
+    expect(decoded!.amount).toEqual(amount);
+  });
+
+  it("decodes max uint256 value", () => {
+    const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const maxUint256 = new BigNumber(
+      "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    );
+    const data = "a9059cbb" + recipientHex.padStart(64, "0") + "f".repeat(64);
+
+    const result = abiDecodeTrc20Transfer(data);
+
+    expect(result).not.toBeNull();
+    expect(result!.amount).toEqual(maxUint256);
+  });
 });
