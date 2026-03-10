@@ -106,6 +106,15 @@ export type BlockReceiptInfo = Pick<
   "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers"
 >;
 
+export type BlockByHeightResult = {
+  hash: string;
+  height: number;
+  timestamp: number;
+  parentHash: string;
+  transactionHashes?: string[];
+  transactions?: PrefetchedBlockTransaction[];
+};
+
 export type NodeApi = {
   getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
@@ -133,14 +142,7 @@ export type NodeApi = {
     blockHeight: number | "latest",
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
-  ) => Promise<{
-    hash: string;
-    height: number;
-    timestamp: number;
-    parentHash: string;
-    transactionHashes?: string[];
-    transactions?: PrefetchedBlockTransaction[];
-  }>;
+  ) => Promise< BlockByHeightResult >;
   getBlockReceipts?: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
