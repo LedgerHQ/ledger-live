@@ -45,25 +45,7 @@ $HAS_UI_CHANGES
 
 ### Step 2: Create the changeset
 
-Run `npx changeset` interactively OR create a changeset file manually:
-
-```bash
-# Interactive mode (recommended)
-npx changeset
-
-# Or create manually in .changeset/ with format:
-# ---
-# "package-name": minor | major
-# ---
-#
-# Description of the change
-```
-
-**Changeset naming convention:**
-
-- Use the change description from the ticket
-- Keep it concise but descriptive
-- Format: `<verb> <what>` (e.g., "Add dark mode toggle", "Fix transaction signing issue")
+Use the `create-changeset` skill to add a changeset for the modified packages.
 
 ### Step 3: Prepare the PR
 
@@ -179,33 +161,9 @@ Use the `slack-pr-message` skill (`.cursor/skills/slack-pr-message/SKILL.md`) to
    - JIRA: `[LIVE-1234](https://ledgerhq.atlassian.net/browse/LIVE-1234)`
    - GitHub: `#123`
 
-## Changeset Guidelines
-
-From CONTRIBUTING.md:
-
-- Always add a changeset with `pnpm changeset`
-- Package names must match exactly (check package.json):
-  - `live-mobile` for mobile app
-  - `ledger-live-desktop` for desktop app
-  - `@ledgerhq/live-common` for common lib
-- Impact levels:
-  - `minor`: New features, bug fixes, non-breaking changes
-  - `major`: Breaking changes (rare, requires discussion)
-
 ## Example Output
 
 For a feature adding portfolio analytics:
-
-**Changeset** (`.changeset/blue-tigers-smile.md`):
-
-```markdown
----
-"live-mobile": minor
-"ledger-live-desktop": minor
----
-
-Add portfolio analytics dashboard with performance metrics
-```
 
 **PR Title**: `feat(portfolio): add analytics dashboard`
 
