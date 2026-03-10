@@ -1,6 +1,7 @@
 import coinConfig from "../config";
 import type { SolanaConfig } from "../config";
-import { broadcast, combine, getBalance, lastBlock } from "../logic";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { broadcast, combine, craftTransaction, getBalance, lastBlock } from "../logic";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
 
@@ -17,6 +18,7 @@ jest.mock("../network", () => ({
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
+  craftTransaction: jest.fn(),
   getBalance: jest.fn(),
   lastBlock: jest.fn(),
 }));
@@ -70,6 +72,22 @@ describe("createApi", () => {
         getValidators: expect.any(Function),
       }),
     );
+  });
+
+  it("should delegate craftTransaction to logic", async () => {
+    const api = createApi(mockConfig);
+    const intent: TransactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(10),
+      asset: { type: "native" },
+    };
+
+    await api.craftTransaction(intent);
+
+    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
   });
 
   it("should delegate getBalance to logic", async () => {
