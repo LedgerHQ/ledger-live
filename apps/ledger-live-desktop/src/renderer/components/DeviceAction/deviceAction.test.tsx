@@ -8,6 +8,10 @@ import { DmkError } from "@ledgerhq/live-dmk-desktop";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
 
+jest.mock("~/renderer/hooks/useBuyDeviceIntercept", () => ({
+  useBuyDeviceIntercept: () => true,
+}));
+
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 const ETH_ACCOUNT = genAccount("ethereum-1", {
   currency: ethereumCurrency,
