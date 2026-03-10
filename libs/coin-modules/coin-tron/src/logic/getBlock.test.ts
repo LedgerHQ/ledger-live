@@ -3,6 +3,7 @@ import {
   getBlock as networkGetBlock,
   getBlockWithTransactions,
 } from "../network";
+import { encode58Check } from "../network/format";
 import { getBlock, getBlockInfo } from "./getBlock";
 
 jest.mock("../network", () => ({
@@ -135,6 +136,7 @@ describe("getBlock", () => {
   });
 
   it("should map TRC20 transfer to transfer operations", async () => {
+    const contractAddress = "41aabbccdd11223344556677889900aabbccdd1122";
     const recipientHex = "f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5";
     const amountHex = "00000000000000000000000000000000000000000000000000000000000f4240";
     const transferData = "a9059cbb" + recipientHex.padStart(64, "0") + amountHex;
@@ -152,7 +154,7 @@ describe("getBlock", () => {
                 parameter: {
                   value: {
                     owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
-                    contract_address: "41aabbccdd11223344556677889900aabbccdd1122",
+                    contract_address: contractAddress,
                     data: transferData,
                   },
                 },
@@ -165,17 +167,18 @@ describe("getBlock", () => {
     });
 
     const result = await getBlock(100);
+    const expectedAssetReference = encode58Check(contractAddress);
 
     expect(result.transactions).toHaveLength(1);
     expect(result.transactions[0].operations).toHaveLength(2);
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "transfer",
-      asset: { type: "trc20", assetReference: "TRXxrG3UggPp7kvfgiWMaXVpJaqvrENfUj" },
+      asset: { type: "trc20", assetReference: expectedAssetReference },
       amount: BigInt(-1000000),
     });
     expect(result.transactions[0].operations[1]).toMatchObject({
       type: "transfer",
-      asset: { type: "trc20", assetReference: "TRXxrG3UggPp7kvfgiWMaXVpJaqvrENfUj" },
+      asset: { type: "trc20", assetReference: expectedAssetReference },
       amount: BigInt(1000000),
     });
   });

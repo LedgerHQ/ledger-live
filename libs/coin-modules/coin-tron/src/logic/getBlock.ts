@@ -17,6 +17,8 @@ import type { BlockTransactionAPI } from "../network/types";
 import { abiDecodeTrc20Transfer } from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
 
+type BlockTxInfo = TrongridTxInfo & { fee: BigNumber };
+
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
   if (height <= 0) {
     throw new Error(`Invalid block height: ${height}`);
@@ -86,7 +88,7 @@ function toBlockTransaction(
   const txInfo = formatBlockTransaction(tx, blockTimestamp, blockHeight);
   if (!txInfo) return null;
 
-  const fee = txInfo.fee?.gt(0) ? txInfo.fee : new BigNumber(feesById.get(tx.txID) ?? 0);
+  const fee = txInfo.fee.gt(0) ? txInfo.fee : new BigNumber(feesById.get(tx.txID) ?? 0);
 
   return {
     hash: txInfo.txID,
@@ -101,7 +103,7 @@ function formatBlockTransaction(
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
-): TrongridTxInfo | null {
+): BlockTxInfo | null {
   const contract = tx.raw_data.contract[0];
   if (!contract) return null;
 
@@ -158,8 +160,8 @@ function formatBlockTransaction(
   };
 }
 
-function toBlockOperations(txInfo: TrongridTxInfo): BlockOperation[] {
-  if (isTransfer(txInfo) && txInfo.to && txInfo.value) {
+function toBlockOperations(txInfo: BlockTxInfo): BlockOperation[] {
+  if (isTransfer(txInfo) && txInfo.to && txInfo.value && !txInfo.value.isZero()) {
     const asset = inferAssetInfo(txInfo);
     const amount = BigInt(txInfo.value.toFixed(0));
     return [
