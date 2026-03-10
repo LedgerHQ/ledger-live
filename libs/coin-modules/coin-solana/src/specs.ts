@@ -12,8 +12,8 @@ import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import { sample } from "lodash/fp";
+import { getCurrentSolanaPreloadData } from "./bridge/preload-data";
 import { SolanaRecipientAssociatedTokenAccountWillBeFunded } from "./errors";
-import { getCurrentSolanaPreloadData } from "./preload-data";
 import {
   acceptStakeCreateAccountTransaction,
   acceptStakeDelegateTransaction,

@@ -12,19 +12,19 @@ import { PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import cloneDeep from "lodash/cloneDeep";
 import usdcTokenData from "../__fixtures__/solana-spl-epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v.json";
+import getTransactionStatus from "../bridge/getTransactionStatus";
+import { prepareTransaction } from "../bridge/prepareTransaction";
 import {
   SolanaRecipientMemoIsRequired,
   SolanaTokenAccountFrozen,
   SolanaTokenNonTransferable,
 } from "../errors";
-import getTransactionStatus from "../getTransactionStatus";
 import { calculateToken2022TransferFees } from "../helpers/token";
 import { encodeAccountIdWithTokenAccountAddress } from "../logic";
 
 import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../network";
 import { NonTransferableExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { prepareTransaction } from "../prepareTransaction";
 import {
   SolanaAccount,
   SolanaTokenAccount,

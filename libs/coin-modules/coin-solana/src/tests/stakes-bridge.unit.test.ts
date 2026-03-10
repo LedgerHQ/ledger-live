@@ -1,14 +1,14 @@
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import getTransactionStatus from "../bridge/getTransactionStatus";
+import { prepareTransaction } from "../bridge/prepareTransaction";
 import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
 } from "../errors";
-import getTransactionStatus from "../getTransactionStatus";
 import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
-import { prepareTransaction } from "../prepareTransaction";
 import { SolanaAccount, SolanaStake, Transaction, TransactionStatus } from "../types";
 import { testOnChainData } from "./test-onchain-data.fixture";
 

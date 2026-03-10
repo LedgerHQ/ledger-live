@@ -24,7 +24,7 @@ import {
 } from "@solana/web3.js";
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
-import { Awaited } from "../../logic";
+import { Awaited } from "../../logic/utils";
 import { SolanaTokenProgram } from "../../types";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";

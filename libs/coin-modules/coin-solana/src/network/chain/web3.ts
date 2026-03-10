@@ -26,7 +26,7 @@ import BigNumber from "bignumber.js";
 import chunk from "lodash/chunk";
 import uniq from "lodash/uniq";
 import { getTokenAccountProgramId } from "../../helpers/token";
-import { Awaited } from "../../logic";
+import { Awaited } from "../../logic/utils";
 import {
   SolanaTokenProgram,
   StakeCreateAccountCommand,
