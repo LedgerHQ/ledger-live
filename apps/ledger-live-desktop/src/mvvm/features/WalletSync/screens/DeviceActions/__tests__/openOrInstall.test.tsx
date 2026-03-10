@@ -3,14 +3,12 @@ import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import OpenOrInstallTrustChainApp from "../openOrInstall";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import * as originFlow from "~/renderer/analytics/originFlow";
 
 const mockGoNext = jest.fn();
-const mockDispatch = jest.fn();
 
-jest.mock("LLD/hooks/redux", () => ({
-  ...jest.requireActual("LLD/hooks/redux"),
-  useDispatch: () => mockDispatch,
+jest.mock("~/renderer/analytics/originFlow", () => ({
+  setOriginFlow: jest.fn(),
 }));
 
 jest.mock("~/renderer/components/DeviceAction", () => ({
@@ -28,10 +26,12 @@ describe("OpenOrInstallTrustChainApp", () => {
     jest.clearAllMocks();
   });
 
-  it("dispatches setOriginFlow(ledgerSync) on mount", () => {
+  it("calls setOriginFlow(ledgerSync) on mount", () => {
     render(<OpenOrInstallTrustChainApp goNext={mockGoNext} />);
 
-    expect(mockDispatch).toHaveBeenCalledWith(setOriginFlow(HOOKS_TRACKING_LOCATIONS.ledgerSync));
+    expect(originFlow.setOriginFlow).toHaveBeenCalledWith(
+      HOOKS_TRACKING_LOCATIONS.ledgerSync,
+    );
   });
 
   it("renders DeviceAction", () => {
