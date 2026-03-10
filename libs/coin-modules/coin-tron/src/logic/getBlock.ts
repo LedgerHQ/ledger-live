@@ -4,8 +4,13 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import BigNumber from "bignumber.js";
-import { getBlock as networkGetBlock, getBlockWithTransactions } from "../network";
+import {
+  fetchTronTxDetail,
+  getBlock as networkGetBlock,
+  getBlockWithTransactions,
+} from "../network";
 import { encode58Check } from "../network/format";
 import { inferAssetInfo } from "../network/trongrid/trongrid-adapters";
 import type { BlockTransactionAPI } from "../network/types";
@@ -44,27 +49,51 @@ export async function getBlock(height: number): Promise<Block> {
     info.parent = { height: height - 1, hash: header.parentHash };
   }
 
-  const transactions: BlockTransaction[] = (data.transactions ?? [])
-    .map(tx => toBlockTransaction(tx, blockTimestamp, height))
+  const rawTxs = data.transactions ?? [];
+  const feesById = await fetchMissingFees(rawTxs);
+
+  const transactions: BlockTransaction[] = rawTxs
+    .map(tx => toBlockTransaction(tx, blockTimestamp, height, feesById))
     .filter((tx): tx is BlockTransaction => tx !== null);
 
   return { info, transactions };
+}
+
+async function fetchMissingFees(
+  txs: BlockTransactionAPI[],
+): Promise<Map<string, number>> {
+  const feesById = new Map<string, number>();
+
+  const txsMissingFees = txs.filter(tx => tx.ret?.[0]?.fee === undefined);
+  if (txsMissingFees.length === 0) return feesById;
+
+  await promiseAllBatched(3, txsMissingFees, async tx => {
+    const detail = await fetchTronTxDetail(tx.txID);
+    if (detail.fee !== undefined) {
+      feesById.set(tx.txID, detail.fee);
+    }
+  });
+
+  return feesById;
 }
 
 function toBlockTransaction(
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
+  feesById: Map<string, number>,
 ): BlockTransaction | null {
   const txInfo = formatBlockTransaction(tx, blockTimestamp, blockHeight);
   if (!txInfo) return null;
 
+  const fee = txInfo.fee?.gt(0) ? txInfo.fee : new BigNumber(feesById.get(tx.txID) ?? 0);
+
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
-    fees: BigInt(txInfo.fee?.toFixed(0) ?? "0"),
+    fees: BigInt(fee.toFixed(0)),
     feesPayer: txInfo.from,
-    operations: toBlockOperations(txInfo),
+    operations: txInfo.hasFailed ? [] : toBlockOperations(txInfo),
   };
 }
 

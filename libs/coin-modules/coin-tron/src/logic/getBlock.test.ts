@@ -1,10 +1,17 @@
-import { getBlock as networkGetBlock, getBlockWithTransactions } from "../network";
+import {
+  fetchTronTxDetail,
+  getBlock as networkGetBlock,
+  getBlockWithTransactions,
+} from "../network";
 import { getBlock, getBlockInfo } from "./getBlock";
 
 jest.mock("../network", () => ({
   getBlock: jest.fn(),
   getBlockWithTransactions: jest.fn(),
+  fetchTronTxDetail: jest.fn(),
 }));
+
+const mockFetchTronTxDetail = fetchTronTxDetail as jest.Mock;
 
 describe("getBlockInfo", () => {
   beforeEach(() => {
@@ -39,6 +46,7 @@ describe("getBlockInfo", () => {
 describe("getBlock", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFetchTronTxDetail.mockResolvedValue({ fee: 1000 });
   });
 
   it("should return empty block for height <= 0", async () => {
@@ -246,7 +254,7 @@ describe("getBlock", () => {
     });
   });
 
-  it("should handle failed transactions", async () => {
+  it("should handle failed transactions with empty operations but fees set", async () => {
     (getBlockWithTransactions as jest.Mock).mockResolvedValue({
       blockID: "blockhash",
       block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
@@ -267,7 +275,7 @@ describe("getBlock", () => {
               },
             ],
           },
-          ret: [{ contractRet: "FAILED" }],
+          ret: [{ contractRet: "FAILED", fee: 5000 }],
         },
       ],
     });
@@ -275,6 +283,8 @@ describe("getBlock", () => {
     const result = await getBlock(100);
 
     expect(result.transactions[0].failed).toBe(true);
+    expect(result.transactions[0].operations).toHaveLength(0);
+    expect(result.transactions[0].fees).toBe(BigInt(5000));
   });
 
   it("should handle blocks with no transactions", async () => {
@@ -316,5 +326,71 @@ describe("getBlock", () => {
     const result = await getBlock(100);
 
     expect(result.transactions[0].failed).toBe(false);
+  });
+
+  it("should fetch fees for transactions missing fee in ret", async () => {
+    mockFetchTronTxDetail.mockResolvedValue({ fee: 2500 });
+
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TransferContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    to_address: "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
+                    amount: 1000000,
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS" }],
+        },
+      ],
+    });
+
+    const result = await getBlock(100);
+
+    expect(mockFetchTronTxDetail).toHaveBeenCalledWith("tx1");
+    expect(result.transactions[0].fees).toBe(BigInt(2500));
+  });
+
+  it("should not fetch fees when already present in ret", async () => {
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TransferContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    to_address: "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
+                    amount: 1000000,
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS", fee: 3000 }],
+        },
+      ],
+    });
+
+    const result = await getBlock(100);
+
+    expect(mockFetchTronTxDetail).not.toHaveBeenCalled();
+    expect(result.transactions[0].fees).toBe(BigInt(3000));
   });
 });
