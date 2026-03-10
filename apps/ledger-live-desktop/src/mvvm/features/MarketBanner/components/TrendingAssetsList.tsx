@@ -34,7 +34,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
   const getCapitalizedTicker = (item: MarketItemPerformer) => item.ticker.toUpperCase();
 
   return (
-    <div className="relative" data-testid="trending-assets-list">
+    <div className="group relative" data-testid="trending-assets-list">
       {!isAtStart && <ScrollArrowButton direction="left" onClick={scrollLeft} />}
       <div
         ref={scrollContainerRef}
