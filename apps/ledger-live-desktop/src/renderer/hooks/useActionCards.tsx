@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { ClassicCard } from "@braze/web-sdk";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { actionContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import * as braze from "@braze/web-sdk";
 import { setActionCards } from "~/renderer/actions/dynamicContent";
 import { openURL } from "~/renderer/linking";
+import {
+  actionContentCardSelector,
+  desktopContentCardSelector,
+} from "~/renderer/reducers/dynamicContent";
 import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
 import { setDismissedContentCards } from "../actions/settings";
@@ -12,18 +16,18 @@ import { ActionContentCard } from "~/types/dynamicContent";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
-  const [cachedContentCards, setCachedContentCards] = useState(
-    braze.getCachedContentCards()?.cards ?? [],
-  );
+  const desktopCards = useSelector(desktopContentCardSelector);
   const actionCards = useSelector(actionContentCardSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
 
-  useEffect(() => {
-    setCachedContentCards(braze.getCachedContentCards()?.cards ?? []);
-  }, [actionCards]);
-
-  const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);
-  const findActionCard = (cardId: string) => actionCards.find(card => card.id === cardId);
+  const findCard = useCallback(
+    (cardId: string) => desktopCards.find(card => card.id === cardId),
+    [desktopCards],
+  );
+  const findActionCard = useCallback(
+    (cardId: string) => actionCards.find(card => card.id === cardId),
+    [actionCards],
+  );
 
   const onDismiss = (cardId: string, displayedPosition?: number) => {
     const currentCard = findCard(cardId);
@@ -35,12 +39,12 @@ const useActionCards = () => {
       } else if (currentCard.id) {
         dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
       }
-      setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
     }
     dispatch(setActionCards(actionCards.filter((n: ActionContentCard) => n.id !== actionCard?.id)));
 
     if (actionCard && !actionCard.isMock) {
       track("contentcard_dismissed", {
+        ...currentCard?.extras,
         contentcard: actionCard.title,
         campaign: actionCard.id,
         page: "Portfolio",
@@ -57,17 +61,16 @@ const useActionCards = () => {
 
     if (actionCard?.isMock && link) openURL(link);
 
-    if (currentCard) {
+    if (currentCard && currentCard instanceof ClassicCard) {
       // For some reason braze won't log the click event if the card url is empty
       // Setting it as the card id just to have a dummy non empty value
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       currentCard.url = currentCard.id;
-      if (isTrackedUser) braze.logContentCardClick(currentCard as braze.ClassicCard);
+      if (isTrackedUser) braze.logContentCardClick(currentCard);
       if (link) openURL(link);
     }
     if (actionCard) {
       track("contentcard_clicked", {
+        ...currentCard?.extras,
         contentcard: actionCard.title,
         link: actionCard.link,
         campaign: actionCard.id,
