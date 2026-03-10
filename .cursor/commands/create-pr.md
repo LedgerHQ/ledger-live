@@ -135,20 +135,7 @@ open "$PR_URL"
 
 ### Step 5: Generate Slack Message
 
-After creating the PR, use the URL from the `gh pr create` output to generate a Slack message:
-
-```
-:pr-open: {{SLACK_PREFIX}} - {{SHORT_DESCRIPTION}}
-<PR_URL from gh pr create output>
-```
-
-**Slack prefix rules:**
-
-- `LWM` for Ledger Live Mobile changes
-- `LWD` for Ledger Live Desktop changes
-- `Common` for @ledgerhq/live-common or shared libs
-- `Tooling` for CI, scripts, or developer tooling
-- `LWM + LWD` if both apps are impacted
+Use the `slack-pr-message` skill (`.cursor/skills/slack-pr-message/SKILL.md`) to generate the Slack announcement message for the PR.
 
 ## Template Fill Rules
 
@@ -251,9 +238,4 @@ This PR introduces a new analytics dashboard to the portfolio feature, providing
 - **JIRA or GitHub link**: [LIVE-5678](https://ledgerhq.atlassian.net/browse/LIVE-5678)
 ```
 
-**Slack Message**:
-
-```
-:pr-open: LWM + LWD - Add portfolio analytics dashboard
-https://github.com/LedgerHQ/ledger-live/pull/1234
-```
+**Slack Message**: Generated via the `slack-pr-message` skill.
