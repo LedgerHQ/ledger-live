@@ -5068,13 +5068,13 @@
   "FirmwareUpdate": {
     "banner": {
       "wallet40": {
-          "title": {
-            "default": "OS update available",
-            "manager": "Ledger OS update available"
-          },
-          "version": "Version {{firmwareVersion}}",
-          "cta": "Update"
+        "title": {
+          "default": "OS update available",
+          "manager": "Ledger OS update available"
         },
+        "version": "Version {{firmwareVersion}}",
+        "cta": "Update"
+      },
       "title": "OS update available",
       "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
@@ -8605,7 +8605,14 @@
         "title": "Create Account",
         "prepare": {
           "title": "To create an account, match the code below in the Concordium ID App"
-        }
+        },
+        "submitting": "Creating your account...",
+        "keepDeviceNearby": "Approve the transaction on your Ledger device. Stay in the app and keep your Ledger nearby.",
+        "success": "Account created successfully.",
+        "error": "Failed to create account."
+      },
+      "finish": {
+        "success": "Your Concordium account has been created successfully."
       }
     }
   },
