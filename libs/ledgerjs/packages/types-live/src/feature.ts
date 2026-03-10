@@ -296,6 +296,7 @@ export type Features = CurrencyFeatures & {
       profilingSampleRate: number;
     }>;
   };
+  llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   llmHomescreen: DefaultFeature;
