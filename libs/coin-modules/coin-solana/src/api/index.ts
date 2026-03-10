@@ -7,6 +7,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type SolanaConfig } from "../config";
+import { broadcast } from "../logic";
 import { getChainAPI, type Config } from "../network";
 
 export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaApi {
@@ -16,12 +17,10 @@ export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaAp
   }));
 
   const chainApiConfig: Config = { endpoint: config.endpoint };
-  const _api = getChainAPI(chainApiConfig);
+  const api = getChainAPI(chainApiConfig);
 
   return {
-    broadcast: (_tx: string, _broadcastConfig?: BroadcastConfig) => {
-      throw new Error("broadcast is not supported");
-    },
+    broadcast: (tx: string, _broadcastConfig?: BroadcastConfig) => broadcast(api, tx),
     combine: (_tx: string, _signature: string, _pubkey: string) => {
       throw new Error("combine is not supported");
     },
