@@ -5,7 +5,10 @@
         "acceptedTermsVersion": "2042-01-01"
       }
     },
-    "settings": { "hasCompletedOnboarding": true },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "lastSeenDevice": { "modelId": "nanoSP", "deviceInfo": {}, "apps": [] }
+    },
     "accounts": [
       {
         "data": {

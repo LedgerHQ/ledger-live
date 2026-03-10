@@ -32,7 +32,11 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "lastSeenDevice": null,
+      "lastSeenDevice": {
+        "modelId": "nanoSP",
+        "deviceInfo": {},
+        "apps": []
+      },
       "mevProtection": true,
       "devicesModelList": [],
       "lastSeenCustomImage": { "size": 0, "hash": "" },
