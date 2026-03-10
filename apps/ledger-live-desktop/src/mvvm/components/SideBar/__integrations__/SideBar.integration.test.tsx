@@ -2,24 +2,13 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import SideBar from "../index";
-import MainSideBar from "~/renderer/components/MainSideBar";
-import {
-  defaultInitialState,
-  initialStateNoOnboardedDevice,
-  withFeatureFlags,
-} from "../__tests__/testUtils";
+import { defaultInitialState, withFeatureFlags } from "../__tests__/testUtils";
 
 const mockNavigate = jest.fn();
-const mockOpenBuyDeviceModal = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
-}));
-
-jest.mock("LLD/features/BuyDevice/hooks/useBuyDeviceDialog", () => ({
-  __esModule: true,
-  default: () => ({ handleOpen: mockOpenBuyDeviceModal }),
 }));
 
 jest.mock("~/renderer/screens/card/CardPlatformApp", () => ({
@@ -42,61 +31,11 @@ jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
-function withLegacySideBarState(
-  base: typeof defaultInitialState | typeof initialStateNoOnboardedDevice,
-): typeof defaultInitialState | typeof initialStateNoOnboardedDevice {
-  const baseFlags = base.settings.overriddenFeatureFlags ?? {};
-  const nextState = {
-    ...base,
-    settings: {
-      ...base.settings,
-      overriddenFeatureFlags: {
-        ...baseFlags,
-        lwdWallet40: { enabled: false },
-      },
-    },
-  };
-  // Preserve union: spread loses narrow lastOnboardedDevice (null vs Device)
-  /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
-  return nextState as typeof defaultInitialState | typeof initialStateNoOnboardedDevice;
-}
-
-/** True when state has Wallet 4.0 main nav disabled (legacy sidebar with My Ledger entry). */
-function isWallet40MainNavDisabled(
-  state: typeof defaultInitialState | typeof initialStateNoOnboardedDevice,
-): boolean {
-  const flags =
-    state.settings && "overriddenFeatureFlags" in state.settings
-      ? state.settings.overriddenFeatureFlags
-      : undefined;
-  if (!flags || typeof flags !== "object" || Array.isArray(flags) || !("lwdWallet40" in flags)) {
-    return false;
-  }
-  /* eslint-disable @typescript-eslint/consistent-type-assertions -- reading from generic feature flags shape */
-  const flagsRecord = flags as Record<string, unknown>;
-  const lwd = flagsRecord.lwdWallet40;
-  const lwdEnabled =
-    lwd !== null && typeof lwd === "object" && "enabled" in lwd
-      ? (lwd as Record<string, unknown>).enabled
-      : undefined;
-  /* eslint-enable @typescript-eslint/consistent-type-assertions */
-  return lwdEnabled === false;
-}
-
-/**
- * Renders SideBar or legacy MainSideBar depending on initialState.
- * Pass state with lwdWallet40: { enabled: false } (e.g. via withLegacySideBarState) to render
- * the legacy sidebar and get the exact conditions for tests that need the My Ledger entry.
- */
 function renderSideBarWithRoute(
   route: string,
-  initialState:
-    | typeof defaultInitialState
-    | typeof initialStateNoOnboardedDevice = defaultInitialState,
+  initialState: typeof defaultInitialState = defaultInitialState,
 ) {
-  const useLegacySideBar = isWallet40MainNavDisabled(initialState);
-  const SideBarComponent = useLegacySideBar ? MainSideBar : SideBar;
-  return render(<SideBarComponent />, {
+  return render(<SideBar />, {
     initialRoute: route,
     initialState,
   });
@@ -218,19 +157,6 @@ describe("SideBar", () => {
 
       await user.click(screen.getByText("Home"));
 
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
-
-    it("should open buy device modal and not navigate when clicking My Ledger without onboarded device", async () => {
-      const { user } = renderSideBarWithRoute(
-        "/",
-        withLegacySideBarState(initialStateNoOnboardedDevice),
-      );
-
-      const managerButton = screen.getByTestId("drawer-manager-button");
-      await user.click(managerButton);
-
-      expect(mockOpenBuyDeviceModal).toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
