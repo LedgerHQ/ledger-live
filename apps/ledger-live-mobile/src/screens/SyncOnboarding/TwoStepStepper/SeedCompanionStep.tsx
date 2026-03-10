@@ -3,7 +3,7 @@ import { OnboardingState, CharonStatus } from "@ledgerhq/live-common/hw/extractO
 import { Flex, Link, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { TrackScreen, useTrack } from "~/analytics";
 import { Image, Linking } from "react-native";
-import SecretRecoveryPhraseImage from "../assets/srp.webp";
+import SecretRecoveryPhraseImage from "../assets/srp@2x.png";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "~/context/Locale";
