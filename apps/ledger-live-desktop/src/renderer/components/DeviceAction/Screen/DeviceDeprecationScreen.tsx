@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 
 import CheckBox from "~/renderer/components/CheckBox";
@@ -67,7 +67,7 @@ export const DeviceDeprecationScreen = ({
   const shopUrl = useLocalizedUrl(urls.deviceDeprecation.shop);
   const learnMoreUrl = useLocalizedUrl(urls.deviceDeprecation.learnMore);
   const [currentScreenName, setCurrentScreenName] = useState(screenName);
-  const handleUgradeClick = () => {
+  const handleUpgradeClick = () => {
     openURL(shopUrl);
   };
   const handleLearnMoreClick = () => {
@@ -165,7 +165,7 @@ export const DeviceDeprecationScreen = ({
             width: "100%",
           }}
         >
-          <Button variant="main" size="large" onClick={handleUgradeClick}>
+          <Button variant="main" size="large" onClick={handleUpgradeClick}>
             <Trans i18nKey={`deviceDeprecation.update`} />
           </Button>
           {currentScreenName !== DeviceDeprecationScreens.errorScreen ? (

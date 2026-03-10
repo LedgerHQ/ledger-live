@@ -82,7 +82,7 @@ export const DeviceDeprecationScreen = ({
 
   const mapedIcon = {
     [DeviceDeprecationScreens.clearSigningScreen]: (
-      <Icons.WarningFill size="L" color="palette.warning.c70" />
+      <Icons.WarningFill size="L" color="warning.c70" />
     ),
     [DeviceDeprecationScreens.warningScreen]: (
       <Icons.InformationFill size="L" color="primary.c80" />
@@ -187,7 +187,7 @@ export const DeviceDeprecationScreen = ({
         <Text
           mt={4}
           style={{
-            color: "palette.text.shade60",
+            color: "neutral.c60",
             textAlign: "center",
             fontSize: 14,
           }}
