@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -19,6 +19,7 @@ interface UseSellNavigationResult {
 
 export function useSellNavigation(): UseSellNavigationResult {
   const navigate = useNavigate();
+  const location = useLocation();
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
   const { openAssetAndAccount } = useOpenAssetAndAccount();
@@ -29,6 +30,7 @@ export function useSellNavigation(): UseSellNavigationResult {
         const offRampState: SellNavigationOffRampState = {
           mode: "offRamp",
           defaultTicker: ticker?.toUpperCase(),
+          returnTo: location.pathname,
         };
         navigate("/exchange", { state: offRampState });
         return;
@@ -39,7 +41,7 @@ export function useSellNavigation(): UseSellNavigationResult {
 
       if (!hasAccounts) {
         navigate("/exchange", {
-          state: buildSellNavigationState({ ledgerCurrency }),
+          state: buildSellNavigationState({ ledgerCurrency, returnTo: location.pathname }),
         });
         return;
       }
@@ -55,6 +57,7 @@ export function useSellNavigation(): UseSellNavigationResult {
             ledgerCurrency,
             account,
             parentAccount,
+            returnTo: location.pathname,
           }),
         });
         return;
@@ -71,12 +74,13 @@ export function useSellNavigation(): UseSellNavigationResult {
               ledgerCurrency,
               account,
               parentAccount,
+              returnTo: location.pathname,
             }),
           });
         },
       });
     },
-    [navigate, flattenedAccounts, allAccounts, openAssetAndAccount],
+    [navigate, flattenedAccounts, allAccounts, openAssetAndAccount, location.pathname],
   );
 
   return { navigateToSell };

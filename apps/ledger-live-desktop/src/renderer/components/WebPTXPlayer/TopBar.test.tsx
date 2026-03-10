@@ -6,11 +6,18 @@ import { MemoryRouter } from "react-router";
 import { render, screen } from "@testing-library/react";
 import { useSelector } from "LLD/hooks/redux";
 
+const mockNavigate = jest.fn();
+
 jest.mock("LLD/hooks/redux", () => {
   return {
     useSelector: jest.fn(),
   };
 });
+
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
+}));
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -73,6 +80,7 @@ describe("TopBar", () => {
   const setMobileView = jest.fn();
 
   const defaultProps = {
+    basePath: "/card",
     manifest: mockManifest,
     webviewAPIRef: mockWebviewAPIRef,
     webviewState: mockWebviewState,
@@ -116,5 +124,24 @@ describe("TopBar", () => {
     expect(screen.getByText("common.back")).toBeInTheDocument();
     expect(screen.getByText("common.sync.refresh")).toBeInTheDocument();
     expect(screen.queryByText("common.sync.devTools")).toBeNull();
+  });
+
+  it("navigates using basePath prop when webview URL has goToManifest and goToURL", () => {
+    mockNavigate.mockClear();
+    (useSelector as unknown as jest.Mock).mockReturnValue(true);
+
+    const urlWithRedirect =
+      "http://localhost:3000?goToManifest=cl-card&goToURL=https%3A%2F%2Fexample.com";
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <TopBar
+          {...defaultProps}
+          basePath="/card"
+          webviewState={{ ...mockWebviewState, url: urlWithRedirect }}
+        />
+      </MemoryRouter>,
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card?goToURL=https://example.com");
   });
 });

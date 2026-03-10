@@ -44,11 +44,17 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
+    const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
     const { webviewState, webviewRef, webviewProps, webviewPartition } = useWebviewState(
-      { manifest, inputs },
+      {
+        manifest,
+        inputs,
+        manifestDomainCheckEnabled,
+      },
       ref,
     );
 
@@ -366,6 +372,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const webview = webviewRef.current;
       if (webview) {
         const origin = new URL(webview.src).origin;
+        if (origin === "null") return Promise.resolve();
         webview.contentWindow?.postMessage(JSON.stringify(request), origin);
       }
 
@@ -413,9 +420,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const id = webview.getWebContentsId();
 
       // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-      window.api?.openWindow(id);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+      // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
+      globalThis.api?.openWindow(
+        id,
+        manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined,
+      );
+    }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
     useEffect(() => {
       const webview = webviewRef.current;

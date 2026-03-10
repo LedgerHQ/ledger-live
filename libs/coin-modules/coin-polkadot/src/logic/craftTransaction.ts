@@ -173,13 +173,15 @@ export async function craftTransaction(
   address: string,
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
-  forceLatestParams: boolean = false,
   currency?: CryptoCurrency,
 ): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
   const { extrinsics, registry } = await polkadotAPI.getRegistry(currency);
+  // Embedding outdated params inside transactions results in `Transaction has a bad signature`.
+  // We bypass the cache to fetch fresh parameters and avoid the issue, especially since the endpoint
+  // POST /transaction/material?noMeta=true returns a pretty small payload (content-length=284)
   const info = await polkadotAPI.getTransactionParams(currency, {
-    force: forceLatestParams,
+    force: true,
   });
   // Get the correct extrinsics params depending on transaction
   const extrinsicParams = getExtrinsicParams(extractExtrinsicArg);

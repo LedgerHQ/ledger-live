@@ -6,7 +6,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { estimateFees, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
@@ -28,27 +28,37 @@ const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockAleoConfig = jest.mocked(aleoCoinConfig);
 
 describe("getTransactionStatus", () => {
-  const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
-  const mockFees = BigInt(5000);
+  const mockFees = new BigNumber(5000);
   const mockAmount = new BigNumber(500000);
   const mockConfig = getMockedConfig("testnet");
+  const mockTransparentBalance = new BigNumber(1000000);
+  const mockPrivateBalance = new BigNumber(5000);
+  const mockBalance = mockTransparentBalance.plus(mockPrivateBalance);
+  const mockAccount = getMockedAccount({
+    balance: mockBalance,
+    aleoResources: {
+      ...mockAleoResources,
+      transparentBalance: mockTransparentBalance,
+      privateBalance: mockPrivateBalance,
+    },
+  });
   const mockTransaction: Transaction = {
     family: "aleo",
     amount: new BigNumber(500000),
     useAllAmount: false,
     recipient: "aleo1recipient",
     fees: new BigNumber(0),
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
-    mockEstimateFees.mockReturnValue({ value: mockFees });
+    mockEstimateFees.mockReturnValue({ value: BigInt(mockFees.toString()) });
     mockValidateAddress.mockResolvedValue(true);
     mockCalculateAmount.mockReturnValue({
       amount: mockAmount,
-      totalSpent: mockAmount.plus(new BigNumber(mockFees.toString())),
+      totalSpent: mockAmount.plus(mockFees),
     });
   });
 
@@ -57,8 +67,8 @@ describe("getTransactionStatus", () => {
 
     expect(result).toMatchObject({
       amount: mockAmount,
-      totalSpent: mockAmount.plus(new BigNumber(mockFees.toString())),
-      estimatedFees: new BigNumber(mockFees.toString()),
+      totalSpent: mockAmount.plus(mockFees),
+      estimatedFees: mockFees,
       errors: {},
       warnings: {},
     });
@@ -71,7 +81,7 @@ describe("getTransactionStatus", () => {
     expect(mockCalculateAmount).toHaveBeenCalledWith({
       transaction: mockTransaction,
       account: mockAccount,
-      estimatedFees: new BigNumber(mockFees.toString()),
+      estimatedFees: mockFees,
     });
   });
 
@@ -123,7 +133,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         ...mockTransaction,
         recipient: "aleo1sender",
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(account, transaction);
@@ -136,7 +146,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         ...mockTransaction,
         recipient: account.freshAddress,
-        type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+        mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
       };
 
       const result = await getTransactionStatus(account, transaction);
@@ -151,7 +161,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         amount: new BigNumber(0),
         useAllAmount: false,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -164,7 +174,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         amount: new BigNumber(0),
         useAllAmount: true,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -180,7 +190,7 @@ describe("getTransactionStatus", () => {
 
       const transaction: Transaction = {
         ...mockTransaction,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -189,7 +199,18 @@ describe("getTransactionStatus", () => {
     });
 
     it("adds error during transfer with insufficient balance", async () => {
-      const account = getMockedAccount({ balance: new BigNumber(1000) });
+      const mockTransparentBalance = new BigNumber(1000);
+      const mockPrivateBalance = new BigNumber(0);
+      const mockBalance = mockTransparentBalance.plus(mockPrivateBalance);
+      const poorAccount = getMockedAccount({
+        balance: mockBalance,
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockTransparentBalance,
+          privateBalance: mockPrivateBalance,
+        },
+      });
+
       mockCalculateAmount.mockReturnValue({
         amount: new BigNumber(990),
         totalSpent: new BigNumber(1001),
@@ -197,16 +218,26 @@ describe("getTransactionStatus", () => {
 
       const transaction: Transaction = {
         ...mockTransaction,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
-      const result = await getTransactionStatus(account, transaction);
+      const result = await getTransactionStatus(poorAccount, transaction);
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
     it("does not add error when balance equals total spent", async () => {
-      const account = getMockedAccount({ balance: new BigNumber(1000) });
+      const mockTransparentBalance = new BigNumber(1000);
+      const mockPrivateBalance = new BigNumber(0);
+      const mockBalance = mockTransparentBalance.plus(mockPrivateBalance);
+      const sufficientAccount = getMockedAccount({
+        balance: mockBalance,
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockTransparentBalance,
+          privateBalance: mockPrivateBalance,
+        },
+      });
       mockCalculateAmount.mockReturnValue({
         amount: new BigNumber(995),
         totalSpent: new BigNumber(1000),
@@ -214,10 +245,10 @@ describe("getTransactionStatus", () => {
 
       const transaction: Transaction = {
         ...mockTransaction,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
-      const result = await getTransactionStatus(account, transaction);
+      const result = await getTransactionStatus(sufficientAccount, transaction);
 
       expect(result.errors.amount).toBeUndefined();
     });
@@ -231,7 +262,7 @@ describe("getTransactionStatus", () => {
         recipient: "invalid",
         amount: new BigNumber(0),
         useAllAmount: false,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -250,7 +281,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         amount: new BigNumber(0),
         useAllAmount: false,
-        type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);

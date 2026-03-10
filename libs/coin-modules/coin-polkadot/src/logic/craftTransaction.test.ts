@@ -82,7 +82,7 @@ describe("craftTransaction", () => {
 
     expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
     expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
-    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(true);
 
     const expectedResult = {
       address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
@@ -131,7 +131,7 @@ describe("craftTransaction", () => {
 
     expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
     expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
-    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(true);
   });
 
   it.each([
@@ -170,7 +170,7 @@ describe("craftTransaction", () => {
 
       expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
       expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
-      expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
+      expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(true);
     },
   );
 
@@ -204,7 +204,7 @@ describe("craftTransaction", () => {
 
     expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
     expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
-    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(true);
   });
 
   it('returns an unsigned with first validator when transaction has mode "chill"', async () => {
@@ -237,6 +237,6 @@ describe("craftTransaction", () => {
 
     expect(mockGetTransactionParams).toHaveBeenCalledTimes(1);
     expect(mockGetTransactionParams.mock.lastCall[0]).toEqual(undefined);
-    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(false);
+    expect(mockGetTransactionParams.mock.lastCall[1]).toEqual(true);
   });
 });

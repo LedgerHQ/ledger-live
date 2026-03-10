@@ -75,8 +75,8 @@ const AssetSelection = ({
   const listRef = useRef<FlatList>(null);
 
   const expandToFullHeight = () => {
-    snapToIndex(1);
     if (formattedAssets.length > 0) {
+      snapToIndex(1);
       listRef.current?.scrollToIndex({ index: 0 });
     }
   };

@@ -112,9 +112,10 @@ export default function AssetBalanceSummaryHeader({
       state: {
         currency: currency?.id,
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
-  }, [currency.id, navigate, currency?.ticker]);
+  }, [currency.id, navigate, currency?.ticker, location.pathname]);
 
   const onSell = useCallback(() => {
     track("button_clicked2", {
@@ -127,9 +128,10 @@ export default function AssetBalanceSummaryHeader({
       state: {
         currency: currency?.id,
         mode: "sell",
+        returnTo: location.pathname,
       },
     });
-  }, [currency.id, navigate, currency?.ticker]);
+  }, [currency.id, navigate, currency?.ticker, location.pathname]);
 
   const onSwap = useCallback(() => {
     track("button_clicked2", {

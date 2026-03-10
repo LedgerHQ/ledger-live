@@ -50,8 +50,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
 
   const onSend = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "send",
+      button: "send",
+      buttonLocation: "quick_action",
       page: trackingPageName,
     });
     maybeRedirectToAccounts();
@@ -60,8 +60,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
 
   const onReceive = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "receive",
+      button: "receive",
+      buttonLocation: "quick_action",
       page: trackingPageName,
     });
     maybeRedirectToAccounts();
@@ -76,34 +76,36 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
 
   const onBuy = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "buy",
+      button: "buy",
+      buttonLocation: "quick_action",
       page: trackingPageName,
     });
     navigate("/exchange", {
       state: {
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
-  }, [navigate, trackingPageName]);
+  }, [navigate, trackingPageName, location.pathname]);
 
   const onSell = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "sell",
+      button: "sell",
+      buttonLocation: "quick_action",
       page: trackingPageName,
     });
     navigate("/exchange", {
       state: {
         mode: "sell",
+        returnTo: location.pathname,
       },
     });
-  }, [navigate, trackingPageName]);
+  }, [navigate, trackingPageName, location.pathname]);
 
   const onConnect = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "connect",
+      button: "connect",
+      buttonLocation: "quick_action",
       page: trackingPageName,
     });
 
@@ -112,8 +114,8 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
 
   const onBuyALedger = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "buy_ledger",
+      button: "buy_ledger",
+      buttonLocation: "quick_action",
       page: trackingPageName,
     });
     handleBuyDevice();

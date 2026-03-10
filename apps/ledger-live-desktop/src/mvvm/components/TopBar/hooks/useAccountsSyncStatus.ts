@@ -1,6 +1,7 @@
+import { useEffect } from "react";
+import { useLocation } from "react-router";
 import { useBatchAccountsSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { Account } from "@ledgerhq/types-live";
-import { useLocation } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 
 export interface AccountWithUpToDateCheck {
@@ -28,22 +29,25 @@ export function useAccountsSyncStatus(
   );
 
   const batchState = useBatchAccountsSyncState({ accounts: allAccounts });
-  const errorTickersSet = new Set<string>();
+  const errorTickers: string[] = [];
   for (const { syncState, account } of batchState) {
     if (syncState.pending) continue;
     const isUpToDate = isUpToDateByAccountId.get(account.id);
     if (syncState.error || !isUpToDate) {
-      const currency = account.currency.ticker;
-      errorTickersSet.add(currency);
-      track("SyncError", {
-        currency,
-        page: location.pathname,
-      });
+      errorTickers.push(account.currency.ticker);
     }
   }
 
-  const listOfErrorAccountNames = [...errorTickersSet].join("/");
-  const areAllAccountsUpToDate = errorTickersSet.size === 0;
+  const listOfErrorAccountNames = [...new Set(errorTickers)].join("/");
+  const areAllAccountsUpToDate = errorTickers.length === 0;
+
+  const errorTickersKey = errorTickers.join("/");
+  useEffect(() => {
+    if (!errorTickersKey) return;
+    for (const currency of errorTickersKey.split("/")) {
+      track("SyncError", { currency, page: location.pathname });
+    }
+  }, [errorTickersKey, location.pathname]);
 
   return {
     allAccounts,

@@ -2458,17 +2458,26 @@
       "confirm": "Confirm",
       "maxFee": "Max fee ({{unit}})",
       "maxPriorityFee": "Max priority fee ({{unit}})",
-      "gasLimit": "Gas limit ({{unit}})",
       "feePerByte": "Fees amount ({{unit}})",
       "suggested": "Suggested",
       "nextBlock": "Next block",
       "networkFeesInFiat": "Network fees in {{currency}}",
       "invalidValue": "Enter a valid number",
       "belowMinimum": "Minimum is {{min}}",
-      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee",
+      "feeAsset": "Fee asset",
+      "feesAmount": "Fees amount ({{unit}})",
+      "payFeesIn": "Pay fees in"
     },
     "coinControl": {
-      "title": "Coin control"
+      "title": "Coin control",
+      "strategy": "Strategy",
+      "learnMore": "Learn more",
+      "coinToSend": "Coin to send",
+      "changeToReturn": "Change to return",
+      "enterAmount": "Enter amount",
+      "amountToSendInCurrency": "Amount to send in {{ticker}}",
+      "amountInputLabel": "Amount to send"
     }
   },
   "releaseNotes": {
@@ -8045,6 +8054,8 @@
     "title": "Explore market",
     "genericError": "Connection failed",
     "cta": "View all",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
     "fearAndGreed": {
       "title": "Mood"
     }
@@ -8245,16 +8256,16 @@
   "walletV4Tour": {
     "slides": {
       "portfolio": {
-        "title": "Swap effortlessly",
-        "description": "Adapt your portfolio allocation anytime with the security of your Ledger device"
+        "title": "A clearer view of your portfolio",
+        "description": "See your total balance at a glance, and tap \"Today\" to dive deeper."
       },
       "navigation": {
-        "title": "Everything in its right place",
-        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the sidebar for faster access."
+        "title": "Access key actions faster",
+        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
       },
       "actions": {
-        "title": "Actions at market speed",
-        "description": "Spot market trends with the new banner and trade instantly."
+        "title": "View market trends instantly",
+        "description": "Quickly see what's trending directly in your portfolio, and move from insights to action."
       }
     },
     "cta": {

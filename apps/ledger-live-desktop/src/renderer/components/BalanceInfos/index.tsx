@@ -167,10 +167,11 @@ export default function BalanceInfos({
     setTrackingSource("Page Portfolio");
     navigate("/exchange", {
       state: {
-        mode: "buy", // buy or sell
+        mode: "buy",
+        returnTo: location.pathname,
       },
     });
-  }, [navigate]);
+  }, [navigate, location.pathname]);
   const onSwap = useCallback(() => {
     setTrackingSource("Page Portfolio");
     navigate("/swap", {

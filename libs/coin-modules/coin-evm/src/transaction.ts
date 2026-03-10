@@ -9,11 +9,6 @@ import {
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { ethers, Transaction } from "ethers";
-import ERC1155ABI from "./abis/erc1155.abi.json";
-import ERC20ABI from "./abis/erc20.abi.json";
-import ERC721ABI from "./abis/erc721.abi.json";
-import { transactionToEthersTransaction } from "./adapters";
 import type {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -204,53 +199,6 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 };
 
 /**
- * Returns the data necessary to execute smart contracts.
- * As of now, only used to create ERC20 transfers' data
- */
-export const getTransactionData = (
-  account: Account,
-  transaction: EvmTransaction,
-): Buffer | undefined => {
-  switch (transaction.mode) {
-    case "send": {
-      const contract = new ethers.Interface(ERC20ABI);
-      const data = contract.encodeFunctionData("transfer", [
-        transaction.recipient,
-        transaction.amount.toFixed(),
-      ]);
-
-      // removing 0x prefix
-      return Buffer.from(data.slice(2), "hex");
-    }
-    case "erc721": {
-      const contract = new ethers.Interface(ERC721ABI);
-      const data = contract.encodeFunctionData("safeTransferFrom(address,address,uint256,bytes)", [
-        account.freshAddress,
-        transaction.recipient,
-        transaction.nft.tokenId,
-        "0x",
-      ]);
-
-      // removing 0x prefix
-      return Buffer.from(data.slice(2), "hex");
-    }
-    case "erc1155": {
-      const contract = new ethers.Interface(ERC1155ABI);
-      const data = contract.encodeFunctionData("safeTransferFrom", [
-        account.freshAddress,
-        transaction.recipient,
-        transaction.nft.tokenId,
-        transaction.nft.quantity.isFinite() ? transaction.nft.quantity.toFixed() : 0,
-        "0x",
-      ]);
-
-      // removing 0x prefix
-      return Buffer.from(data.slice(2), "hex");
-    }
-  }
-};
-
-/**
  * Returns a transaction with the correct type and entries depending
  * on the network compatiblity.
  */
@@ -279,43 +227,6 @@ export const getTypedTransaction = (
     gasPrice: feeData.gasPrice || new BigNumber(0),
     type: 0,
   } as EvmTransactionLegacy;
-};
-
-/**
- * Serialize a Ledger Live transaction into an hex string
- */
-export const getSerializedTransaction = (
-  tx: EvmTransaction,
-  signature?: Partial<ethers.Signature>,
-): string => {
-  const unsignedEthersTransaction = transactionToEthersTransaction(tx);
-
-  if (!isValidSignatureStructure(signature)) {
-    return Transaction.from(unsignedEthersTransaction).unsignedSerialized;
-  }
-  const txInput = {
-    ...unsignedEthersTransaction,
-    signature: {
-      r: signature?.r ?? "0x0000000000000000000000000000000000000000000000000000000000000000", // Provide default if r is undefined
-      s: signature?.s ?? "0x0000000000000000000000000000000000000000000000000000000000000000", // Provide default if s is undefined
-      v: signature?.v ?? 0, // Provide default if v is undefined
-    } as ethers.Signature,
-  };
-
-  const txSigned = Transaction.from(txInput);
-
-  return txSigned.serialized;
-};
-
-const isValidSignatureStructure = (signature?: Partial<ethers.Signature>): boolean => {
-  return (
-    signature?.r !== null &&
-    signature?.r !== undefined &&
-    signature?.s !== null &&
-    signature?.s !== undefined &&
-    signature?.v !== null &&
-    signature?.v !== undefined
-  );
 };
 
 export const fromTransactionStatusRaw = (

@@ -1,11 +1,9 @@
-import React, { PureComponent } from "react";
+import React, { memo, useCallback, useState } from "react";
 import * as Keychain from "react-native-keychain";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import type { TFunction } from "i18next";
-import { withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { Vibration } from "react-native";
+import { useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
 import { disablePrivacy } from "~/actions/settings";
 import PasswordForm from "./PasswordForm";
 import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
@@ -15,34 +13,20 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 
 type NavigationProps = StackNavigatorProps<PasswordModifyFlowParamList, ScreenName.PasswordRemove>;
 
-type Props = {
-  t: TFunction;
-  disablePrivacy: () => void;
-} & NavigationProps;
+const PasswordRemove = ({ navigation }: NavigationProps) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const [error, setError] = useState<Error | null>(null);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-type State = {
-  error?: Error | null;
-  confirmPassword: string;
-};
+  const onChange = useCallback((password: string) => {
+    setConfirmPassword(password);
+    setError(null);
+  }, []);
 
-const mapDispatchToProps = {
-  disablePrivacy,
-};
-
-class PasswordRemove extends PureComponent<Props, State> {
-  state = {
-    error: null,
-    confirmPassword: "",
-  };
-
-  onChange = (confirmPassword: string) => {
-    this.setState({ confirmPassword, error: null });
-  };
-
-  async submit() {
-    const { confirmPassword } = this.state;
+  const submit = useCallback(async () => {
     if (!confirmPassword) return;
-    const { disablePrivacy, navigation } = this.props;
+
     try {
       const credentials = await Keychain.getGenericPassword();
       if (credentials) {
@@ -50,36 +34,33 @@ class PasswordRemove extends PureComponent<Props, State> {
           Vibration.vibrate(VIBRATION_PATTERN_ERROR);
           throw new PasswordsDontMatchError();
         }
+
         await Keychain.resetGenericPassword();
       }
-      disablePrivacy();
-      const n = navigation.getParent();
-      if (n) n.goBack();
+
+      dispatch(disablePrivacy());
+
+      const parentNavigation = navigation.getParent();
+      if (parentNavigation) parentNavigation.goBack();
     } catch (error) {
-      this.setState({ error: error as Error, confirmPassword: "" });
+      setError(error instanceof Error ? error : new Error("Could not remove password"));
+      setConfirmPassword("");
     }
-  }
+  }, [confirmPassword, dispatch, navigation]);
 
-  onSubmit = () => {
-    this.submit();
-  };
+  const onSubmit = useCallback(() => {
+    submit();
+  }, [submit]);
 
-  render() {
-    const { t } = this.props;
-    const { error, confirmPassword } = this.state;
-    return (
-      <PasswordForm
-        placeholder={t("auth.confirmPassword.placeholder")}
-        onChange={this.onChange}
-        onSubmit={this.onSubmit}
-        error={error}
-        value={confirmPassword}
-      />
-    );
-  }
-}
+  return (
+    <PasswordForm
+      placeholder={t("auth.confirmPassword.placeholder")}
+      onChange={onChange}
+      onSubmit={onSubmit}
+      error={error}
+      value={confirmPassword}
+    />
+  );
+};
 
-export default compose<React.ComponentType<NavigationProps>>(
-  connect(null, mapDispatchToProps),
-  withTranslation(),
-)(PasswordRemove);
+export default memo(PasswordRemove);

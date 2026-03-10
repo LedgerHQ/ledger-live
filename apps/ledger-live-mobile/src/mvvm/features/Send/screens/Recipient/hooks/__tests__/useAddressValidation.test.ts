@@ -3,6 +3,7 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useSelector } from "~/context/hooks";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import {
   getRecentAddressesStore,
   getMainAccount,
@@ -338,6 +339,30 @@ describe("useAddressValidation", () => {
     );
 
     expect(result.current.result.bridgeWarnings?.recipient).toBe(recipientWarning);
+  });
+
+  it("injects a self-transfer error when policy is impossible and recipient is the current account", () => {
+    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
+    mockedUseBridgeRecipientValidation.mockReturnValue({
+      errors: {},
+      warnings: {},
+      isLoading: false,
+      status: null,
+      cleanup: jest.fn(),
+    });
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: mockAccount.freshAddress,
+        currency: mockAccount.currency,
+        account: mockAccount,
+        currentAccountId: mockAccount.id,
+      }),
+    );
+
+    expect(result.current.result.bridgeErrors?.recipient).toBeInstanceOf(
+      InvalidAddressBecauseDestinationIsAlsoSource,
+    );
   });
 
   it("shows loading during bridge validation", () => {

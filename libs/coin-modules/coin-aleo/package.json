@@ -42,8 +42,8 @@
       "default": "./lib-es/api/index.js"
     },
     "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./logic": {
       "require": "./lib/logic/index.js",

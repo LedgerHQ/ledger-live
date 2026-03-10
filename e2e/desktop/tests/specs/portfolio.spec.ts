@@ -3,10 +3,11 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { CLI } from "tests/utils/cliUtils";
+import { LWD_WALLET_40_FLAGS } from "tests/utils/featureFlagUtils";
 
 test.describe("Portfolio", () => {
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "speculos-subAccount",
   });
   test(
     "Charts are displayed when user added his accounts",
@@ -36,17 +37,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     // to-do remove when wallet 4.0 is default
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FLAGS,
   });
 
   test(
@@ -93,17 +84,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       },
     ],
     // to-do remove when wallet 4.0 is default
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FLAGS,
   });
 
   test(
@@ -136,17 +117,7 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   test.use({
     userdata: "skip-onboarding",
     // to-do remove when wallet 4.0 is default
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FLAGS,
   });
 
   test(

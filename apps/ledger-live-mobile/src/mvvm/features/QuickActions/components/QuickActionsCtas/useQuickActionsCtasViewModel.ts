@@ -24,6 +24,8 @@ import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
 import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
 
+const BUTTON_LOCATION = "quick_action";
+
 interface UseQuickActionsCtasViewModelProps {
   sourceScreenName?: string;
 }
@@ -65,8 +67,8 @@ export const useQuickActionsCtasViewModel = ({
   // Handlers for standard CTAs (Transfer, Swap, Buy)
   const handleTransferPress = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "transfer",
+      button: "transfer",
+      buttonLocation: BUTTON_LOCATION,
       page: pageName,
     });
     openTransferDrawer({ sourceScreenName: pageName });
@@ -74,8 +76,8 @@ export const useQuickActionsCtasViewModel = ({
 
   const handleSwapPress = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "swap",
+      button: "swap",
+      buttonLocation: BUTTON_LOCATION,
       page: pageName,
     });
     navigation.navigate(NavigatorName.Swap);
@@ -83,8 +85,8 @@ export const useQuickActionsCtasViewModel = ({
 
   const handleBuyPress = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "buy",
+      button: "buy",
+      buttonLocation: BUTTON_LOCATION,
       page: pageName,
     });
     navigation.navigate(NavigatorName.Exchange, {
@@ -95,8 +97,8 @@ export const useQuickActionsCtasViewModel = ({
   // Handlers for no-signer CTAs (Connect, Buy a Ledger)
   const handleConnectPress = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "connect",
+      button: "connect",
+      buttonLocation: BUTTON_LOCATION,
       page: pageName,
     });
     navigation.navigate(NavigatorName.BaseOnboarding, {
@@ -112,8 +114,8 @@ export const useQuickActionsCtasViewModel = ({
 
   const handleBuyLedgerPress = useCallback(() => {
     track("button_clicked", {
-      button: "quick_action",
-      flow: "buy_ledger",
+      button: "buy_ledger",
+      buttonLocation: BUTTON_LOCATION,
       page: pageName,
     });
     handleBuyDeviceAction();
