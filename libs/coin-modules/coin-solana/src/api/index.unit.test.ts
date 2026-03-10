@@ -1,14 +1,14 @@
+import type { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import type { SolanaConfig } from "../config";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import {
   broadcast,
   combine,
   craftTransaction,
   estimateFees,
   getBalance,
-  lastBlock,
   getStakes,
+  lastBlock,
   listOperations,
 } from "../logic";
 import { ChainAPI } from "../network";
@@ -27,11 +27,12 @@ jest.mock("../network", () => ({
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
   combine: jest.fn(),
+  craftRawTransaction: jest.fn().mockResolvedValue({ transaction: "base64tx" }),
   craftTransaction: jest.fn(),
   estimateFees: jest.fn().mockResolvedValue({ value: 5000n }),
   getBalance: jest.fn(),
-  lastBlock: jest.fn(),
   getStakes: jest.fn().mockResolvedValue({ items: [] }),
+  lastBlock: jest.fn(),
   listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
 }));
 
@@ -86,6 +87,46 @@ describe("createApi", () => {
     );
   });
 
+  it("should pass parameters correctly to logic functions", async () => {
+    const api: AlpacaApi = createApi(mockConfig);
+    const intent: TransactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(10),
+      asset: { type: "native" },
+    };
+
+    await api.broadcast("transaction");
+    api.combine("tx", "signature", "pubkey");
+    await api.craftTransaction(intent);
+    await api.estimateFees(intent);
+    await api.getBalance("address");
+    await api.lastBlock();
+    await api.listOperations("address", { minHeight: 14, order: "asc" });
+
+    expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
+    expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
+    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
+    expect(estimateFees).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
+    expect(getBalance).toHaveBeenCalledWith(mockChainAPI, "address");
+    expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
+    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {
+      minHeight: 14,
+      order: "asc",
+    });
+  });
+
+  it("should throw for unsupported methods", () => {
+    const api = createApi(mockConfig);
+
+    expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
+    expect(() => api.getValidators()).toThrow("getValidators is not supported");
+    expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
+    expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
+  });
+
   it("should delegate getStakes to logic", async () => {
     const api = createApi(mockConfig);
 
@@ -94,88 +135,18 @@ describe("createApi", () => {
     expect(getStakes).toHaveBeenCalledWith(mockChainAPI, "address", undefined);
   });
 
-  it("should delegate listOperations to logic", async () => {
+  it("should delegate craftRawTransaction to logic", async () => {
+    const { craftRawTransaction } = jest.requireMock("../logic");
     const api = createApi(mockConfig);
 
-    await api.listOperations("address", { minHeight: 14, order: "asc" });
+    await api.craftRawTransaction("txBase64", "sender", "pubkey", 42n);
 
-    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {
-      minHeight: 14,
-      order: "asc",
-    });
-  });
-
-  it("should delegate estimateFees to logic", async () => {
-    const api = createApi(mockConfig);
-    const intent: TransactionIntent = {
-      intentType: "transaction",
-      type: "send",
-      sender: "sender",
-      recipient: "recipient",
-      amount: BigInt(10),
-      asset: { type: "native" },
-    };
-
-    await api.estimateFees(intent);
-
-    expect(estimateFees).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
-  });
-
-  it("should delegate craftTransaction to logic", async () => {
-    const api = createApi(mockConfig);
-    const intent: TransactionIntent = {
-      intentType: "transaction",
-      type: "send",
-      sender: "sender",
-      recipient: "recipient",
-      amount: BigInt(10),
-      asset: { type: "native" },
-    };
-
-    await api.craftTransaction(intent);
-
-    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
-  });
-
-  it("should delegate getBalance to logic", async () => {
-    const api = createApi(mockConfig);
-
-    await api.getBalance("address");
-
-    expect(getBalance).toHaveBeenCalledWith(mockChainAPI, "address");
-  });
-
-  it("should delegate lastBlock to logic", async () => {
-    const api = createApi(mockConfig);
-
-    await api.lastBlock();
-
-    expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
-  });
-
-  it("should delegate combine to logic", () => {
-    const api = createApi(mockConfig);
-
-    api.combine("tx", "signature", "pubkey");
-
-    expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
-  });
-
-  it("should delegate broadcast to logic", async () => {
-    const api = createApi(mockConfig);
-
-    await api.broadcast("transaction");
-
-    expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
-  });
-
-  it("should throw for unsupported methods", () => {
-    const api = createApi(mockConfig);
-
-    expect(() => api.craftRawTransaction("tx", "s", "pk", 0n)).toThrow("not supported");
-    expect(() => api.getBlock(1)).toThrow("not supported");
-    expect(() => api.getBlockInfo(1)).toThrow("not supported");
-    expect(() => api.getRewards("addr")).toThrow("not supported");
-    expect(() => api.getValidators()).toThrow("not supported");
+    expect(craftRawTransaction).toHaveBeenCalledWith(
+      mockChainAPI,
+      "txBase64",
+      "sender",
+      "pubkey",
+      42n,
+    );
   });
 });

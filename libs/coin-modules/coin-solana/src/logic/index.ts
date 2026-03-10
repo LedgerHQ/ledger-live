@@ -1,5 +1,6 @@
 export { broadcast } from "./broadcast";
 export { combine } from "./combine";
+export { craftRawTransaction } from "./craftRawTransaction";
 export { craftTransaction, buildTransactionWithAPI } from "./craftTransaction";
 export { estimateFees, estimateTxFee } from "./estimateFees";
 export { getBalance } from "./getBalance";
