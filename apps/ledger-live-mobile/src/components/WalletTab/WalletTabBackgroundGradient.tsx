@@ -45,7 +45,7 @@ function WalletTabBackgroundGradient({ color, visible = true }: Readonly<Props>)
       ...(isWallet40Enabled
         ? {
             width: "100%" as const,
-            height: 500,
+            aspectRatio: 1,
             top: 0,
             left: 0,
           }
