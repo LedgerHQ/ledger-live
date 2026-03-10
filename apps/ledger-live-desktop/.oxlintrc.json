@@ -23,10 +23,19 @@
     "suspicious": "warn",
     "pedantic": "off"
   },
-  "plugins": ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
+  "plugins": [
+    "eslint",
+    "import",
+    "oxc",
+    "unicorn",
+    "typescript",
+    "react",
+    "jest"
+  ],
   "ignorePatterns": [
     "*.min.js",
-    "src/renderer/families/generated.ts"
+    "src/renderer/families/generated.ts",
+    "src/mvvm/hooks/redux.ts"
   ],
   "rules": {
     "eslint/no-unused-vars": "warn",
@@ -44,15 +53,65 @@
     "typescript/no-explicit-any": "error",
     "typescript/no-deprecated": "error",
     "import/no-duplicates": "error",
-    "import/no-named-as-default": "off"
+    "import/no-named-as-default": "off",
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          "lodash",
+          {
+            "name": "react-redux",
+            "importNames": ["useSelector", "useDispatch", "useStore"],
+            "message": "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing."
+          }
+        ],
+        "patterns": [
+          {
+            "group": [
+              "@ledgerhq/live-common/lib/**",
+              "@ledgerhq/live-common/lib-es/**"
+            ],
+            "message": "Please remove the /lib import from live-common import."
+          },
+          {
+            "group": [
+              "~/mvvm/**"
+            ],
+            "message": "Use 'LLD' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLD' in your imports."
+          },
+          {
+            "group": [
+              "**/renderer/families/*/**",
+              "~/renderer/families/*/**"
+            ],
+            "message": "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead."
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["tests/**/*.ts", "tests/**/*.tsx", "**/*.test.ts", "**/*.test.tsx", "**/*.integration.ts", "**/*.integration.tsx"],
+      "files": ["src/renderer/families/**"],
+      "rules": {
+        "eslint/no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": [
+        "tests/**/*.ts",
+        "tests/**/*.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.integration.ts",
+        "**/*.integration.tsx"
+      ],
       "env": {
         "jest": true
       },
-      "plugins": ["jest"],
+      "plugins": [
+        "jest"
+      ],
       "rules": {
         "typescript/no-explicit-any": "warn"
       }

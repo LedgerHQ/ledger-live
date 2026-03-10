@@ -45,6 +45,8 @@ jobs:
           skip_builds: true
       - name: lint
         run: pnpm desktop lint:ci
+      - name: lint (guardrails)
+        run: pnpm desktop lint:guardrails
       - name: typecheck
         run: pnpm desktop typecheck
       - name: check for dead code
