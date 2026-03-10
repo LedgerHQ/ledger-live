@@ -1,6 +1,5 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { useAssetsViewModel, padItems, resolveMarketId } from "../useAssetsViewModel";
 import {
   createMockCategorizedAssets,
@@ -36,13 +35,6 @@ const mockUseAssetsData = jest.fn();
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
   useAssetsData: (...args: unknown[]) => mockUseAssetsData(...args),
 }));
-
-const MOCK_LAST_SEEN_DEVICE = {
-  modelId: DeviceModelId.nanoX,
-  deviceInfo: {},
-  apps: [],
-};
-
 
 const onboardedStateWithAccounts = {
   settings: AFTER_ONBOARDING_STATE,

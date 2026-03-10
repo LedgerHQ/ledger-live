@@ -1,6 +1,5 @@
 import React from "react";
 import { renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/testSetup";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { useNavigate } from "react-router";
 import { server } from "tests/server";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
