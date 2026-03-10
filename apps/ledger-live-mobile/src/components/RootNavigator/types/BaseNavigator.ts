@@ -312,6 +312,9 @@ export type BaseNavigatorStackParamList = {
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
   };
+  [ScreenName.DeeplinkInstallAppDeviceSelection]: {
+    appKey: string;
+  };
   [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 
