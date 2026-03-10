@@ -146,9 +146,9 @@ describe("findShieldedTxsInBlock", () => {
       {
         id: txShieldedOrchard.txid,
         hex: txShieldedOrchard.hex,
-        height: blockWithMyTx.height,
+        blockHeight: blockWithMyTx.height,
         blockHash: blockWithMyTx.hash,
-        time: blockWithMyTx.time,
+        timestamp: blockWithMyTx.time,
         fee: txShieldedOrchard.orchard.valueBalance,
         decryptedData: decryptedOrchardData,
       },
@@ -165,9 +165,9 @@ describe("findShieldedTxsInBlock", () => {
       {
         id: txShieldedNotMine.txid,
         hex: txShieldedNotMine.hex,
-        height: blockWithoutMyTx.height,
+        blockHeight: blockWithoutMyTx.height,
         blockHash: blockWithoutMyTx.hash,
-        time: blockWithoutMyTx.time,
+        timestamp: blockWithoutMyTx.time,
         fee: txShieldedNotMine.orchard.valueBalance,
         decryptedData: {
           orchard_outputs: [],
