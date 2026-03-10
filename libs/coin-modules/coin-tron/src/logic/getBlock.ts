@@ -19,7 +19,7 @@ import type { TrongridTxInfo, TrongridTxType } from "../types";
 
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
   if (height <= 0) {
-    return { height, hash: "", time: new Date(0) };
+    throw new Error(`Invalid block height: ${height}`);
   }
 
   const block = await networkGetBlock(height);
@@ -32,7 +32,7 @@ export async function getBlockInfo(height: number): Promise<BlockInfo> {
 
 export async function getBlock(height: number): Promise<Block> {
   if (height <= 0) {
-    return { info: { height, hash: "", time: new Date(0) }, transactions: [] };
+    throw new Error(`Invalid block height: ${height}`);
   }
 
   const data = await getBlockWithTransactions(height);

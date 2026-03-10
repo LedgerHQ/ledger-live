@@ -18,10 +18,9 @@ describe("getBlockInfo", () => {
     jest.clearAllMocks();
   });
 
-  it("should return empty block info for height <= 0", async () => {
-    const result = await getBlockInfo(0);
-
-    expect(result).toEqual({ height: 0, hash: "", time: new Date(0) });
+  it("should throw for height <= 0", async () => {
+    await expect(getBlockInfo(0)).rejects.toThrow("Invalid block height: 0");
+    await expect(getBlockInfo(-1)).rejects.toThrow("Invalid block height: -1");
     expect(networkGetBlock).not.toHaveBeenCalled();
   });
 
@@ -49,13 +48,9 @@ describe("getBlock", () => {
     mockFetchTronTxDetail.mockResolvedValue({ fee: 1000 });
   });
 
-  it("should return empty block for height <= 0", async () => {
-    const result = await getBlock(0);
-
-    expect(result).toEqual({
-      info: { height: 0, hash: "", time: new Date(0) },
-      transactions: [],
-    });
+  it("should throw for height <= 0", async () => {
+    await expect(getBlock(0)).rejects.toThrow("Invalid block height: 0");
+    await expect(getBlock(-1)).rejects.toThrow("Invalid block height: -1");
     expect(getBlockWithTransactions).not.toHaveBeenCalled();
   });
 
