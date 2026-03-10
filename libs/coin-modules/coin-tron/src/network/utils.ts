@@ -23,6 +23,7 @@ export type Trc20TransferData = {
 export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null => {
   const cleanData = data.startsWith("0x") ? data.slice(2) : data;
   if (cleanData.length < 8 + 64 + 64) return null;
+  if (cleanData.length % 2 !== 0) return null;
   if (!HEX_REGEX.test(cleanData)) return null;
 
   const selector = cleanData.slice(0, 8).toLowerCase();

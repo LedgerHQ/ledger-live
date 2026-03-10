@@ -52,6 +52,18 @@ describe("abiDecodeTrc20Transfer", () => {
     expect(result).toBeNull();
   });
 
+  it("returns null for odd-length hex string", () => {
+    const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+    const amount = new BigNumber("1000000");
+    const validData =
+      "a9059cbb" + recipientHex.padStart(64, "0") + amount.toString(16).padStart(64, "0");
+    const oddLengthData = validData + "f";
+
+    const result = abiDecodeTrc20Transfer(oddLengthData);
+
+    expect(result).toBeNull();
+  });
+
   it("decodes large amounts without precision loss", () => {
     const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
     const amount = new BigNumber("1000000000000000000000000000");

@@ -5,6 +5,7 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import {
   fetchTronTxDetail,
@@ -47,15 +48,15 @@ export async function getBlock(height: number): Promise<Block> {
     time: blockTimestamp ? new Date(blockTimestamp) : new Date(0),
   };
 
-  if (header.parentHash && height > 0) {
-    info.parent = { height: height - 1, hash: header.parentHash };
+  if (header.parentHash && info.height > 1) {
+    info.parent = { height: info.height - 1, hash: header.parentHash };
   }
 
   const rawTxs = data.transactions ?? [];
   const feesById = await fetchMissingFees(rawTxs);
 
   const transactions: BlockTransaction[] = rawTxs
-    .map(tx => toBlockTransaction(tx, blockTimestamp, height, feesById))
+    .map(tx => toBlockTransaction(tx, blockTimestamp, info.height, feesById))
     .filter((tx): tx is BlockTransaction => tx !== null);
 
   return { info, transactions };
@@ -70,9 +71,13 @@ async function fetchMissingFees(
   if (txsMissingFees.length === 0) return feesById;
 
   await promiseAllBatched(3, txsMissingFees, async tx => {
-    const detail = await fetchTronTxDetail(tx.txID);
-    if (detail.fee !== undefined) {
-      feesById.set(tx.txID, detail.fee);
+    try {
+      const detail = await fetchTronTxDetail(tx.txID);
+      if (detail.fee !== undefined) {
+        feesById.set(tx.txID, detail.fee);
+      }
+    } catch (error) {
+      log("warn", `Failed to fetch fee for tx ${tx.txID}, falling back to 0`, { error });
     }
   });
 
