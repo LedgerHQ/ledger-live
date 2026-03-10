@@ -49,6 +49,7 @@ export type Data = {
 };
 
 type OwnProps = {
+  title?: string;
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
@@ -131,6 +132,7 @@ const Body = ({
   closeModal,
   onChangeStepId,
   onClose,
+  title,
   stepId,
   params,
   accounts,
@@ -274,7 +276,7 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : t("send.title"),
+    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
     stepId,
     steps,
     errorSteps,

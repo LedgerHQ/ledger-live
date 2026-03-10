@@ -8232,6 +8232,13 @@
         }
       }
     },
+    "selfTransfer": {
+      "headerAction": "Self transfer",
+      "headerActionTooltip": "You don't have any funds to perform a self transfer",
+      "modal": {
+        "title": "Self transfer"
+      }
+    },
     "account": {
       "availableBalance": "Available balance",
       "availableBalanceTooltip": "Balance that can be transferred",
