@@ -1,5 +1,6 @@
 import type {
   AlpacaApi,
+  Balance,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -8,6 +9,7 @@ import type {
   Reward,
   Stake,
   TransactionIntent,
+  TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
@@ -31,6 +33,7 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
+import { validateAddress } from "../bridge/validateAddress";
 
 export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -58,6 +61,17 @@ export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaA
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 

@@ -33,7 +33,7 @@ export const genericSignRawOperation =
           const sender = account.freshAddress;
 
           // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await alpacaApi.getSequence(sender);
+          const sequenceNumber = await alpacaApi.getNextSequence(sender);
 
           /* Craft unsigned blob via Alpaca */
           const { transaction: unsigned } = await alpacaApi.craftRawTransaction(

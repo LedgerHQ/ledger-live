@@ -10,6 +10,8 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  Balance,
+  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import coinConfig, { type BoilerplateConfig } from "../config";
@@ -57,6 +59,19 @@ export function createApi(config: BoilerplateConfig): AlpacaApi {
     },
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
+    },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress: async (_address: string) => {
+      throw new Error("validateAddress is not supported");
     },
   };
 }
