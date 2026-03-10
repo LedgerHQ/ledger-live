@@ -154,6 +154,7 @@ catalog:
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
   ws: 8.18.3
+  zod: 4.3.6
   semver: 7.7.3
   "@types/semver": 7.7.1
   undici: 7.18.2

@@ -18,6 +18,7 @@ export class Provider {
   static readonly CIC = new Provider("cic", "CIC", false, true, true);
   static readonly NEAR_INTENTS = new Provider("nearintents", "NEAR Intents", false, true, true);
   static readonly OKX = new Provider("okx", "OKX", false, false, false);
+  static readonly SWAPSXYZ = new Provider("swapsxyz", "Swaps.xyz", false, true, true);
 
   // Buy And Sell providers
   static readonly TRANSAK = new Provider("transak", "Transak", true, true, true);

@@ -396,6 +396,9 @@ catalogs:
     ws:
       specifier: 8.18.3
       version: 8.18.3
+    zod:
+      specifier: 4.3.6
+      version: 4.3.6
 
 overrides:
   node-abi: ^4.9.0
@@ -6757,8 +6760,8 @@ importers:
         specifier: ^17.0.0
         version: 17.7.2
       zod:
-        specifier: ^3.22.4
-        version: 3.23.8
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@ledgerhq/device-react':
         specifier: workspace:^
@@ -7034,8 +7037,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       zod:
-        specifier: ^3.22.4
-        version: 3.25.76
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -10016,8 +10019,8 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
       zod:
-        specifier: ^3.22.4
-        version: 3.23.8
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -34861,6 +34864,9 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -69287,6 +69293,8 @@ snapshots:
   zod@3.23.8: {}
 
   zod@3.25.76: {}
+
+  zod@4.3.6: {}
 
   zwitch@2.0.4: {}
 

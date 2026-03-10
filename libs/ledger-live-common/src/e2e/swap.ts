@@ -12,7 +12,7 @@ const SWAP_QUOTE_URL = "https://swap-stg.ledger-test.com/v5/quote";
 const PROBE_AMOUNT = 0.0001;
 const PROBE_NETWORK_FEES = 0.001;
 
-const PROVIDERS_WHITELIST = "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents";
+const PROVIDERS_WHITELIST = "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents,swapsxyz";
 
 type QuoteErrorItem = {
   parameter?: { minAmount?: string };

@@ -173,14 +173,22 @@ const swaps = [
   //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
   //   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aptos", "@solana", "@family-solana","@family-aptos"],
   // },
-  //ToDo: enable once Hedera Swap E2E test issue fixed
-  // Task https://ledgerhq.atlassian.net/browse/LIVE-21744
-  //{
-  //  fromAccount: Account.HEDERA_1,
-  //  toAccount: Account.XRP_1,
-  //  xrayTicket: "B2CQA-3753",
-  //  tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@xrp", "@family-xrp", "@family-hedera"],
-  //},
+  {
+    fromAccount: Account.HEDERA_1,
+    toAccount: Account.XRP_1,
+    xrayTicket: "B2CQA-3753",
+    tag: [
+      "@NanoSP",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@hedera",
+      "@xrp",
+      "@family-xrp",
+      "@family-hedera",
+    ],
+  },
   {
     fromAccount: TokenAccount.SUI_USDC_1,
     toAccount: Account.SOL_1,

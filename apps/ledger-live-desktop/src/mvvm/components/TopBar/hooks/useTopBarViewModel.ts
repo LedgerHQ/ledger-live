@@ -72,6 +72,7 @@ const useTopBarViewModel = () => {
             action: {
               label: "synchronize",
               tooltip: activityIndicatorTooltip,
+              tooltipClassName: "whitespace-pre-line max-w-md text-wrap break-words",
               icon: activityIndicatorIcon,
               isInteractive: !isRotating,
               onClick: handleSync,

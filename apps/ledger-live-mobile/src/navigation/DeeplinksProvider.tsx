@@ -28,6 +28,8 @@ import {
 } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
+import { isValidInstallApp } from "LLM/features/DeeplinkInstallApp";
+import { openDeeplinkInstallAppDrawer } from "~/actions/deeplinkInstallApp";
 import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
@@ -741,7 +743,6 @@ export const DeeplinksProvider = ({
               return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
-
           if (hostname === "swap") {
             const swapParams = new URLSearchParams();
             const fromPath = searchParams.get("fromPath");
@@ -761,6 +762,16 @@ export const DeeplinksProvider = ({
             const swapSearch = swapParams.toString();
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);
+          }
+          // Handle wallet deeplink with installApp param
+          // ledgerlive://wallet?installApp=RecoveryKeyUpdater
+          if (
+            (hostname === "wallet" || hostname === "portfolio") &&
+            installApp &&
+            isValidInstallApp(installApp)
+          ) {
+            dispatch(openDeeplinkInstallAppDrawer({ appToInstall: installApp }));
+            return getStateFromPath("portfolio", config);
           }
 
           if ((hostname === "discover" || hostname === "recover") && platform) {

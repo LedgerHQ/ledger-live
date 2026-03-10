@@ -156,38 +156,36 @@ export const LiveAppManifestDappSchema = z.object({
   dependencies: z.array(z.string()).optional(),
 });
 
-export const LiveAppManifestSchema = z
-  .object({
-    id: z.string().trim().min(1),
-    author: z.string().optional(),
-    private: z.boolean().optional(),
-    cacheBustingId: z.number().optional(),
-    nocache: z.boolean().optional(),
-    name: z.string().trim().min(1),
-    url: z.string().trim().min(1),
-    dapp: LiveAppManifestDappSchema.optional(),
-    homepageUrl: z.string().trim().min(1),
-    supportUrl: z.string().optional(),
-    icon: z.string().nullable().optional(),
-    platforms: z.array(z.enum(["ios", "android", "desktop"])).min(1),
-    apiVersion: z.string().trim().min(1),
-    manifestVersion: z.string().trim().min(1),
-    branch: z.enum(["stable", "experimental", "soon", "debug"]),
-    permissions: z.array(z.string().trim()).optional(),
-    domains: z.array(z.string().trim()).min(1),
-    categories: z.array(z.string().trim()).min(1),
-    currencies: z.union([z.array(z.string().trim()).min(1), z.literal("*")]),
-    visibility: z.enum(["complete", "searchable", "deep"]),
-    highlight: z.boolean().optional(),
-    featureFlags: z.union([z.array(z.string().trim()), z.literal("*")]).optional(),
-    content: z.object({
-      cta: z.record(z.string()).optional(),
-      subtitle: z.record(z.string()).optional(),
-      shortDescription: z.record(z.string().trim().min(1)),
-      description: z.record(z.string().trim().min(1)),
-    }),
-  })
-  .strict();
+export const LiveAppManifestSchema = z.strictObject({
+  id: z.string().trim().min(1),
+  author: z.string().optional(),
+  private: z.boolean().optional(),
+  cacheBustingId: z.number().optional(),
+  nocache: z.boolean().optional(),
+  name: z.string().trim().min(1),
+  url: z.string().trim().min(1),
+  dapp: LiveAppManifestDappSchema.optional(),
+  homepageUrl: z.string().trim().min(1),
+  supportUrl: z.string().optional(),
+  icon: z.string().nullable().optional(),
+  platforms: z.array(z.enum(["ios", "android", "desktop"])).min(1),
+  apiVersion: z.string().trim().min(1),
+  manifestVersion: z.string().trim().min(1),
+  branch: z.enum(["stable", "experimental", "soon", "debug"]),
+  permissions: z.array(z.string().trim()).optional(),
+  domains: z.array(z.string().trim()).min(1),
+  categories: z.array(z.string().trim()).min(1),
+  currencies: z.union([z.array(z.string().trim()).min(1), z.literal("*")]),
+  visibility: z.enum(["complete", "searchable", "deep"]),
+  highlight: z.boolean().optional(),
+  featureFlags: z.union([z.array(z.string().trim()), z.literal("*")]).optional(),
+  content: z.object({
+    cta: z.record(z.string(), z.string()).optional(),
+    subtitle: z.record(z.string(), z.string()).optional(),
+    shortDescription: z.record(z.string(), z.string().trim().min(1)),
+    description: z.record(z.string(), z.string().trim().min(1)),
+  }),
+});
 
 export type LiveAppManifestSchemaType = z.infer<typeof LiveAppManifestSchema>;
 

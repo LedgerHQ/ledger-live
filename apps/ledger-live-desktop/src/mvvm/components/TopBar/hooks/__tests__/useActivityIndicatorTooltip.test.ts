@@ -26,7 +26,7 @@ describe("useActivityIndicatorTooltip", () => {
       }),
     );
     expect(result.current).toBe(
-      "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "There was a temporary network issue. Your assets are safe.\n Tap to retry",
     );
   });
 
@@ -40,7 +40,7 @@ describe("useActivityIndicatorTooltip", () => {
       }),
     );
     expect(result.current).toBe(
-      "There was a temporary network issue. Your assets are safe. List of accounts impacted: BTC/ETH. Tap to retry",
+      "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: BTC/ETH. Tap to retry",
     );
   });
 

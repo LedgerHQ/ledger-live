@@ -255,6 +255,7 @@ export type Features = CurrencyFeatures & {
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   lldWebviewManifestDomainCheck: DefaultFeature;
+  llmWebviewManifestDomainCheck: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
@@ -295,6 +296,7 @@ export type Features = CurrencyFeatures & {
       profilingSampleRate: number;
     }>;
   };
+  llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   llmHomescreen: DefaultFeature;

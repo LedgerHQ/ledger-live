@@ -160,6 +160,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: { record_sessions_percent: 100 },
   }),
+  llmNanoSDeprecation: DEFAULT_FEATURE,
 
   ptxSwapDetailedView: initFeature({
     enabled: false,
@@ -693,6 +694,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   lldWebviewManifestDomainCheck: DEFAULT_FEATURE,
+  llmWebviewManifestDomainCheck: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {

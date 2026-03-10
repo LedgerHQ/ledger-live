@@ -54,3 +54,13 @@ export function getMinVersion(appName: string, model?: DeviceModelId): string | 
   const minVersion = config?.[`${model?.toLowerCase()}MinVersion`] ?? config?.minVersion;
   return minVersion ? semver.coerce(minVersion)?.version : undefined;
 }
+
+export function getDeprecationConfig(appName: string, dependencies?: string[]) {
+  const config =
+    appName === "Exchange" && dependencies && dependencies.length > 0
+      ? LiveConfig.getValueByKey(
+          `config_nanoapp_${dependencies[0].toLowerCase().replace(/ /g, "_")}`,
+        )
+      : LiveConfig.getValueByKey(`config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`);
+  return config?.deviceDeprecated;
+}
