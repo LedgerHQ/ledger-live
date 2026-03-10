@@ -2,7 +2,16 @@ import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { Button as NewButton } from "@ledgerhq/lumen-ui-react";
+import {
+  Card,
+  CardHeader,
+  CardLeading,
+  CardContent,
+  CardContentTitle,
+  CardContentDescription,
+  CardTrailing,
+  Button as NewButton,
+} from "@ledgerhq/lumen-ui-react";
 import { latestFirmwareSelector } from "~/renderer/reducers/settings";
 import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { VISIBLE_STATUS } from "./Updater/Banner";
@@ -33,43 +42,41 @@ const FirmwareUpdateBannerNew = ({
   onClick,
 }: BannerContentProps) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
 
   return (
-    <TopBanner
-      id={"fw-update-banner"}
-      testId="fw-update-banner"
-      containerStyle={{
-        background: `${colors.primary}`,
-        borderRadius: radii[2],
-        padding: "12px 16px",
-      }}
-      content={{
-        message: (
-          <Box>
-            <Text fontFamily="Inter|Bold" fontSize={5} color="neutral.c00">
-              {t(
-                old
-                  ? "manager.firmware.banner.old.warning"
-                  : "manager.firmware.banner.wallet40.warning.manager",
-              )}
-            </Text>
-            {old ? null : (
-              <Text color="neutral.c00">
-                {t("manager.firmware.banner.version", {
-                  latestFirmware: visibleFirmwareVersion,
-                })}
-              </Text>
-            )}
-          </Box>
-        ),
-        right: right ?? (
-          <NewButton size="sm" appearance="gray" onClick={onClick}>
-            {t("manager.firmware.banner.cta")}
-          </NewButton>
-        ),
-      }}
-    />
+    <Card type="info" className="bg-accent" data-testid="fw-update-banner">
+      <CardHeader>
+        <CardLeading>
+          <CardContent>
+            <CardContentTitle>
+              <span className="text-black">
+                {t(
+                  old
+                    ? "manager.firmware.banner.old.warning"
+                    : "manager.firmware.banner.wallet40.warning.manager",
+                )}
+              </span>
+            </CardContentTitle>
+            <CardContentDescription>
+              <span className="text-black">
+                {old
+                  ? null
+                  : t("manager.firmware.banner.version", {
+                      latestFirmware: visibleFirmwareVersion,
+                    })}
+              </span>
+            </CardContentDescription>
+          </CardContent>
+        </CardLeading>
+        <CardTrailing>
+          {right ?? (
+            <NewButton appearance="base" size="sm" onClick={onClick}>
+              {t("manager.firmware.banner.cta")}
+            </NewButton>
+          )}
+        </CardTrailing>
+      </CardHeader>
+    </Card>
   );
 };
 
