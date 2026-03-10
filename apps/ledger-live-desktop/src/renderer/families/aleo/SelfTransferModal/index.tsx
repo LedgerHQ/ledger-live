@@ -53,11 +53,11 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: Props) => {
 
           return (
             <DefaultSendBody
+              title={t("aleo.selfTransfer.modal.title")}
               stepId={stepId}
               onClose={onClose}
               onChangeStepId={handleStepChange}
               params={{
-                title: t("aleo.selfTransfer.modal.title"),
                 account: data.account,
                 transaction: {
                   family: "aleo",
