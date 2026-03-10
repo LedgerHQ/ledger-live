@@ -1,4 +1,9 @@
-import type { Block, BlockInfo, BlockOperation, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Block,
+  BlockInfo,
+  BlockOperation,
+  BlockTransaction,
+} from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { getBlock as networkGetBlock, getBlockWithTransactions } from "../network";
 import { encode58Check } from "../network/format";
@@ -113,7 +118,8 @@ function formatBlockTransaction(
     type,
     tokenId,
     tokenType,
-    tokenAddress: isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined,
+    tokenAddress:
+      isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined,
     from,
     to,
     value,

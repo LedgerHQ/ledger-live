@@ -16,7 +16,8 @@ describe("abiDecodeTrc20Transfer", () => {
   it("decodes TRC20 transfer data correctly", () => {
     const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
     const amount = new BigNumber("1000000");
-    const data = "a9059cbb" + recipientHex.padStart(64, "0") + amount.toString(16).padStart(64, "0");
+    const data =
+      "a9059cbb" + recipientHex.padStart(64, "0") + amount.toString(16).padStart(64, "0");
 
     const result = abiDecodeTrc20Transfer(data);
 
@@ -54,7 +55,8 @@ describe("abiDecodeTrc20Transfer", () => {
   it("decodes large amounts without precision loss", () => {
     const recipientHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
     const amount = new BigNumber("1000000000000000000000000000");
-    const data = "a9059cbb" + recipientHex.padStart(64, "0") + amount.toString(16).padStart(64, "0");
+    const data =
+      "a9059cbb" + recipientHex.padStart(64, "0") + amount.toString(16).padStart(64, "0");
 
     const result = abiDecodeTrc20Transfer(data);
 
