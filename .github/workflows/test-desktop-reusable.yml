@@ -62,6 +62,8 @@ jobs:
           turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: lint
         run: pnpm desktop lint:ci
+      - name: lint (guardrails)
+        run: pnpm desktop lint:guardrails
       - name: typecheck
         run: pnpm desktop typecheck
       - name: check for dead code

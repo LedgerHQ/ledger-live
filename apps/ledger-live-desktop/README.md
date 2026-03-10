@@ -151,9 +151,24 @@ pnpm desktop test
 ### Run code quality checks
 
 ```bash
-pnpm desktop lint
+pnpm desktop lint          # oxlint (main linter)
+pnpm desktop lint:guardrails   # ESLint guardrails (one rule only)
 pnpm desktop typecheck
 ```
+
+### Linting setup
+
+Linting has been migrated from ESLint to **oxlint** for speed and consistency. Almost all rules now live in [`.oxlintrc.json`](.oxlintrc.json) (restricted imports, React/TypeScript/Jest rules, etc.).
+
+**ESLint guardrails** ([`.eslintrc.guardrails.js`](.eslintrc.guardrails.js)) are still run via `pnpm desktop lint:guardrails`. One rule remains there because oxlint does not support it: **`no-restricted-syntax`** with complex AST selectors. That rule forbids direct use of `shell.openExternal()` outside the safe wrappers (`~/renderer/linking` and `src/main/openURL.ts`) for security (RCE prevention). Oxlint’s `no-restricted-syntax` only supports simple node-type selectors, not the property-based selectors needed for this check.
+
+Going forward, when adding or changing lint rules:
+
+- Prefer oxlint; add or adjust rules in `.oxlintrc.json`.
+- If a rule truly requires ESLint-only features (e.g. `excludedFiles` or complex selectors), add it to `.eslintrc.guardrails.js` and document why.
+- Re-evaluate guardrails periodically: as oxlint gains support for more selector types or overrides, rules should be moved from ESLint to oxlint when possible.
+
+The goal is to use oxlint for everything and remove ESLint from this app once the remaining guardrail can be expressed in oxlint or replaced by an equivalent.
 
 ## File structure
 
