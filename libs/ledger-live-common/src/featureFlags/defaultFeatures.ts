@@ -859,6 +859,13 @@ export const DEFAULT_FEATURES: Features = {
       ],
     },
   },
+  lldHideSmallValueTokenOperations: {
+    ...DEFAULT_FEATURE,
+    enabled: true,
+    params: {
+      thresholdUsd: 0.5,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

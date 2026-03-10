@@ -66,6 +66,7 @@ libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/icons/                        @ledgerhq/wallet-xp
 libs/ledger-live-common/src/market/                       @ledgerhq/wallet-xp
+libs/ledger-live-common/src/hideSmallValueTokenOperations/ @ledgerhq/coin-integration
 # Wallet — desktop (WXP has all mvvm; Platform overrides below)
 apps/ledger-live-desktop/src/mvvm/                       @ledgerhq/wallet-xp
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ @ledgerhq/wallet-xp
