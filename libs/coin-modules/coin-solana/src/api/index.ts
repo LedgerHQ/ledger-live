@@ -13,6 +13,7 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getStakes as logicGetStakes,
   lastBlock,
   listOperations as logicListOperations,
 } from "../logic";
@@ -46,9 +47,7 @@ export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaAp
     lastBlock: () => lastBlock(api),
     listOperations: (address: string, opts: ListOperationsOptions) =>
       logicListOperations(api, address, opts),
-    getStakes: (_address: string, _cursor?: Cursor) => {
-      throw new Error("getStakes is not supported");
-    },
+    getStakes: (address: string, cursor?: Cursor) => logicGetStakes(api, address, cursor),
     getBlock: () => {
       throw new Error("getBlock is not supported");
     },

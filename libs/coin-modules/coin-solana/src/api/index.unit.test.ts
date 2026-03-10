@@ -8,6 +8,7 @@ import {
   estimateFees,
   getBalance,
   lastBlock,
+  getStakes,
   listOperations,
 } from "../logic";
 import { ChainAPI } from "../network";
@@ -30,6 +31,7 @@ jest.mock("../logic", () => ({
   estimateFees: jest.fn().mockResolvedValue({ value: 5000n }),
   getBalance: jest.fn(),
   lastBlock: jest.fn(),
+  getStakes: jest.fn().mockResolvedValue({ items: [] }),
   listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
 }));
 
@@ -82,6 +84,14 @@ describe("createApi", () => {
         getValidators: expect.any(Function),
       }),
     );
+  });
+
+  it("should delegate getStakes to logic", async () => {
+    const api = createApi(mockConfig);
+
+    await api.getStakes("address");
+
+    expect(getStakes).toHaveBeenCalledWith(mockChainAPI, "address", undefined);
   });
 
   it("should delegate listOperations to logic", async () => {
@@ -163,7 +173,6 @@ describe("createApi", () => {
     const api = createApi(mockConfig);
 
     expect(() => api.craftRawTransaction("tx", "s", "pk", 0n)).toThrow("not supported");
-    expect(() => api.getStakes("addr")).toThrow("not supported");
     expect(() => api.getBlock(1)).toThrow("not supported");
     expect(() => api.getBlockInfo(1)).toThrow("not supported");
     expect(() => api.getRewards("addr")).toThrow("not supported");
