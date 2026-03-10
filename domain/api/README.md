@@ -1,6 +1,6 @@
 # domain/api/
 
-Domain API composition packages. Each subdirectory is an independent pnpm workspace package that re-exports or composes existing RTK Query `createApi` endpoints under a unified access point for a domain.
+Domain API packages. Each subdirectory is an independent pnpm workspace package that defines RTK Query `createApi` endpoints or re-exports/composes existing ones under a unified access point for a domain.
 
 ## Scope
 
@@ -8,9 +8,9 @@ Domain API composition packages. Each subdirectory is an independent pnpm worksp
 
 ## Responsibility
 
-- **Compose and re-export** existing RTK Query APIs relevant to a domain
+- **Define** new RTK Query `createApi` endpoints for a domain, or **compose and re-export** existing ones
 - Provide a single import path for all API endpoints related to a domain entity
-- No new runtime logic — pure re-export/composition layer
+- Use entity schemas from `@domain/entity-<name>` for request/response typing
 
 ## Conventions
 
@@ -20,3 +20,13 @@ Domain API composition packages. Each subdirectory is an independent pnpm worksp
 - `package.json` must have `"private": true`
 - Must depend on the corresponding `@domain/entity-<name>` package
 - Barrel export via `src/index.ts`
+
+## File Structure
+
+Each package follows this file layout inside `src/`:
+
+```
+api.ts          # createApi definition or re-export (required)
+api.test.ts     # MSW-based endpoint tests (required if new endpoints)
+index.ts        # Barrel exports (required)
+```
