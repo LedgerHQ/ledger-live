@@ -8,6 +8,8 @@ import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sen
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { closeDialog, openDialog } from "~/renderer/reducers/modularDrawer";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION: EnhancedModularDrawerConfiguration = {
   assets: { rightElement: "balance" },
@@ -31,6 +33,8 @@ export function useOpenSendFlow() {
 
   const openSendFlow = useCallback(
     (params?: WorkflowParams) => {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.sendModal);
+
       const openSendFlowImpl = (nextParams?: WorkflowParams) => {
         if (!nextParams?.account) {
           // When there are no accounts, the old modal requires an account and would throw.

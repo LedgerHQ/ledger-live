@@ -8,6 +8,8 @@ import useBuyDeviceDialog from "LLD/features/BuyDevice/hooks/useBuyDeviceDialog"
 import { useTranslation } from "react-i18next";
 import { getDeviceIcon, type DeviceIconComponent } from "LLD/utils/getDeviceIcon";
 import { MANAGER_PATH, MANAGER_TRACK_ENTRY } from "../utils/constants";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export const useMyLedger = (): {
   handleMyLedger: () => void;
@@ -24,6 +26,7 @@ export const useMyLedger = (): {
 
   const handleMyLedger = useCallback(() => {
     if (location.pathname !== MANAGER_PATH) {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.managerDashboard);
       setTrackingSource("topbar");
       if (hasOnboardedDevice) {
         navigate(MANAGER_PATH);
