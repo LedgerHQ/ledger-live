@@ -693,6 +693,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   lldWebviewManifestDomainCheck: DEFAULT_FEATURE,
+  llmWebviewManifestDomainCheck: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
