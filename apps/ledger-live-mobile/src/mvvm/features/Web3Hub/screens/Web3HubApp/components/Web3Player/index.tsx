@@ -1,4 +1,4 @@
-import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -20,7 +20,6 @@ import Header from "../Header";
 type Props = {
   manifest: AppManifest;
   inputs?: Record<string, string | undefined>;
-  onScroll?: ComponentProps<typeof Web3AppWebview>["onScroll"];
   webviewState: WebviewState;
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
   navigation: AppProps["navigation"];
@@ -32,7 +31,6 @@ type Props = {
 const WebPlatformPlayer = ({
   manifest,
   inputs,
-  onScroll,
   webviewState,
   setWebviewState,
   navigation,
@@ -98,7 +96,6 @@ const WebPlatformPlayer = ({
       />
       <Web3AppWebview
         ref={webviewAPIRef}
-        onScroll={onScroll}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}

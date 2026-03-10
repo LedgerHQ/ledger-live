@@ -1,6 +1,4 @@
-import { useCallback, useRef } from "react";
 import { useSharedValue, useAnimatedScrollHandler } from "react-native-reanimated";
-import { WebviewProps } from "~/components/Web3AppWebview/types";
 
 const clamp = (value: number, lowerBound: number, upperBound: number) => {
   "worklet";
@@ -31,46 +29,5 @@ export default function useScrollHandler(clampUpperBound: number) {
   return {
     layoutY,
     scrollHandler,
-  };
-}
-
-type NoOptionals<T> = {
-  [K in keyof T]-?: T[K];
-};
-
-const initialTimeoutRef = {
-  prevY: 0,
-  prevLayoutY: 0,
-};
-
-export function useWebviewScrollHandler(clampUpperBound: number) {
-  const layoutY = useSharedValue(0);
-
-  // Trick until we can properly use reanimated with the webview
-  const timeoutRef = useRef<{ timeout?: NodeJS.Timeout; prevY: number; prevLayoutY: number }>(
-    initialTimeoutRef,
-  );
-
-  const onScroll = useCallback(
-    (event: Parameters<NoOptionals<WebviewProps>["onScroll"]>[0]) => {
-      if (!layoutY) return;
-      clearTimeout(timeoutRef.current.timeout);
-
-      const currentY = event.nativeEvent.contentOffset.y;
-
-      const diff = currentY - timeoutRef.current.prevY;
-      layoutY.value = clamp(timeoutRef.current.prevLayoutY + diff, 0, clampUpperBound);
-
-      timeoutRef.current.timeout = setTimeout(() => {
-        timeoutRef.current.prevY = Math.max(currentY, 0);
-        timeoutRef.current.prevLayoutY = layoutY.value;
-      }, 100);
-    },
-    [clampUpperBound, layoutY],
-  );
-
-  return {
-    layoutY,
-    onScroll,
   };
 }
