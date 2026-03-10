@@ -2759,8 +2759,7 @@
       }
     },
     "refreshStatus": {
-      "refreshing": "Refreshing - Last update {{timeAgo}}",
-      "refreshingInitial": "Refreshing...",
+      "refreshing": "Refreshing...",
       "upToDate": "You're up to date"
     }
   },
