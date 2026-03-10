@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 /**
- * Origin flow context (e.g. "stake", "manager", "send", "receive").
+ * Origin flow context (e.g. "Stake", "Manager Dashboard", "Ledger Sync", "Send", "Receive").
  * Set when entering a flow; used e.g. for Buy Device modal analytics (trigger).
  * Separate from modularDrawer so it is not reset when the drawer/dialog state is cleared.
  */
