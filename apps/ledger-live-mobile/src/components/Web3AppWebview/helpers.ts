@@ -394,6 +394,7 @@ function useUiHook({ manifest }: Props): UiHook {
         onSuccess,
         areCurrenciesFiltered,
         useCase,
+        uiUseCase,
         drawerConfiguration,
       }) => {
         // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
@@ -411,6 +412,7 @@ function useUiHook({ manifest }: Props): UiHook {
           currencies: areCurrenciesFiltered && shouldUseCurrencies ? currencyIds : undefined,
           areCurrenciesFiltered,
           useCase,
+          uiUseCase,
           ...(finalDrawerConfiguration.assets && {
             assetsConfiguration: finalDrawerConfiguration.assets,
           }),
