@@ -8,6 +8,7 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 import { usePortfolioRefreshStatusViewModel } from "./usePortfolioRefreshStatusViewModel";
+import { AnimatedCheckmark } from "./AnimatedCheckmark";
 
 const FADE_DURATION_MS = 300;
 const CONTENT_FADE_MS = 150;
@@ -85,7 +86,12 @@ export const PortfolioRefreshStatus = () => {
     }
 
     if (isVisible) {
-      return <StatusText testID="portfolio-refresh-status-up-to-date">{upToDateLabel}</StatusText>;
+      return (
+        <>
+          <AnimatedCheckmark />
+          <StatusText testID="portfolio-refresh-status-up-to-date">{upToDateLabel}</StatusText>
+        </>
+      );
     }
 
     return null;
