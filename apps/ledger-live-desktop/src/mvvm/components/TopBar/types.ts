@@ -1,4 +1,12 @@
-import { Bell, BellNotification, Eye, EyeCross, Settings } from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  Bell,
+  BellNotification,
+  Eye,
+  EyeCross,
+  Experiment,
+  Settings,
+  Tools,
+} from "@ledgerhq/lumen-ui-react/symbols";
 import { DeviceIconComponent } from "LLD/utils/getDeviceIcon";
 import { ActivityIndicatorIcon } from "./utils/getActivityIndicatorIcon";
 
@@ -7,9 +15,13 @@ type IconComponent =
   | typeof BellNotification
   | typeof Eye
   | typeof EyeCross
+  | typeof Experiment
   | typeof Settings
+  | typeof Tools
   | ActivityIndicatorIcon
   | DeviceIconComponent;
+
+type TopBarActionAppearance = "gray" | "accent";
 
 type TopBarAction = {
   label: string;
@@ -17,6 +29,8 @@ type TopBarAction = {
   isInteractive: boolean;
   onClick: () => void;
   icon: IconComponent;
+  /** Visual appearance of the button. Defaults to "gray". */
+  appearance?: TopBarActionAppearance;
   /** Called when the tooltip is shown (e.g. on hover). Used for analytics when showing error tooltip. */
   onTooltipShow?: () => void;
 };
@@ -29,4 +43,4 @@ type TopBarViewProps = {
   shouldShowFirmwareUpdateBanner: boolean;
 };
 
-export type { TopBarAction, TopBarSlot, TopBarViewProps };
+export type { TopBarAction, TopBarActionAppearance, TopBarSlot, TopBarViewProps };
