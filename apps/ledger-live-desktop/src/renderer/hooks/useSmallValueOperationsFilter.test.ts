@@ -16,7 +16,7 @@ import { useSmallValueOperationsFilter } from "./useSmallValueOperationsFilter";
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
   marketApi: {
     reducerPath: "marketApi",
-    reducer: () => ({}),
+    reducer: (state = {}) => state,
     middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => next(action),
   },
 }));
@@ -87,7 +87,7 @@ const defaultInitialState = {
   settings: {
     filterTokenOperationsZeroAmount: true,
     filterTokenOperationsThreshold: 0.5,
-    counterValue: "USD",
+    counterValue: "EUR",
     overriddenFeatureFlags: {
       ...INITIAL_STATE.overriddenFeatureFlags,
       lldHideSmallValueTokenOperations: {
@@ -266,7 +266,7 @@ describe("useSmallValueOperationsFilter", () => {
     expect(result.current.filterOperations(operation, tokenAccount)).toBe(false);
   });
 
-  it("should hide operation when fiat value is equal to threshold", () => {
+  it("should hide operation when USD value is equal to threshold", () => {
     const tokenAccount = createTokenAccount();
     const operation = createOperation({ type: "IN" });
     mockCalculate.mockReturnValue(50);
@@ -278,7 +278,7 @@ describe("useSmallValueOperationsFilter", () => {
     expect(result.current.filterOperations(operation, tokenAccount)).toBe(false);
   });
 
-  it("should show operation when fiat value is above threshold", () => {
+  it("should show operation when USD value is above threshold", () => {
     const tokenAccount = createTokenAccount();
     const operation = createOperation({ type: "IN" });
     mockCalculate.mockReturnValue(51);
@@ -288,6 +288,30 @@ describe("useSmallValueOperationsFilter", () => {
     });
 
     expect(result.current.filterOperations(operation, tokenAccount)).toBe(true);
+  });
+
+  it("should compare against canonical USD even when another countervalue is selected", () => {
+    const tokenAccount = createTokenAccount();
+    const operation = createOperation({ type: "IN" });
+    mockCalculate.mockReturnValue(49);
+
+    const { result } = renderHook(() => useSmallValueOperationsFilter(), {
+      initialState: {
+        settings: {
+          ...defaultInitialState.settings,
+          counterValue: "JPY",
+        },
+      },
+    });
+
+    expect(result.current.filterOperations(operation, tokenAccount)).toBe(false);
+    expect(mockCalculate).toHaveBeenCalledWith(
+      countervaluesInitialState,
+      expect.objectContaining({
+        from: EVM_TOKEN,
+        to: expect.objectContaining({ ticker: "USD" }),
+      }),
+    );
   });
 
   it("should use threshold 0 when threshold is not finite", () => {

@@ -239,8 +239,8 @@ describe("filterValidSettings", () => {
 });
 
 describe("FETCH_SETTINGS action", () => {
-  it("should default the desktop small-value filter to OFF with a 0.5 threshold", () => {
-    expect(SETTINGS_INITIAL_STATE.filterTokenOperationsZeroAmount).toBe(false);
+  it("should initialize the legacy filter with a canonical 0.5 USD threshold", () => {
+    expect(SETTINGS_INITIAL_STATE.filterTokenOperationsZeroAmount).toBe(true);
     expect(SETTINGS_INITIAL_STATE.filterTokenOperationsThreshold).toBe(0.5);
   });
 
@@ -332,6 +332,21 @@ describe("FETCH_SETTINGS action", () => {
     const newState = reducer(SETTINGS_INITIAL_STATE, action);
 
     expect(newState.filterTokenOperationsThreshold).toBe(0.5);
+  });
+
+  it("should keep the canonical USD threshold independent from the selected countervalue", () => {
+    const action = {
+      type: "FETCH_SETTINGS" as const,
+      payload: {
+        counterValue: "JPY",
+        filterTokenOperationsThreshold: 0.42,
+      } as Partial<SettingsState>,
+    };
+
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+
+    expect(newState.counterValue).toBe("JPY");
+    expect(newState.filterTokenOperationsThreshold).toBe(0.42);
   });
 });
 

@@ -5,6 +5,7 @@ import { createSelector } from "reselect";
 import { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY } from "@ledgerhq/live-common/utils/smallValueOperationsThreshold";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
@@ -113,14 +114,34 @@ export function useCalculateCountervaluesUserSettings() {
   // countervalues for accounts
   const accounts = useSelector(accountsSelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
+  const usdTrackingPairs = useTrackingPairForAccounts(
+    accounts,
+    SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+  );
 
   // countervalues for on demand session tracking pairs
   const extraSessionTrackingPairs = useExtraSessionTrackingPair();
 
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
+  const smallValueOperationsFeatureFlag = useFeature("lldHideSmallValueTokenOperations");
+  const shouldTrackSmallValueOperationsPairs = smallValueOperationsFeatureFlag?.enabled ?? false;
 
   useEffect(() => {
-    const trackingPairs = resolveTrackingPairs(extraSessionTrackingPairs.concat(trPairs));
+    const now = new Date();
+    const smallValueOperationsTrackingPairs = shouldTrackSmallValueOperationsPairs
+      ? [
+          ...usdTrackingPairs,
+          {
+            from: SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+            to: countervalue,
+            startDate: now,
+          },
+        ]
+      : [];
+
+    const trackingPairs = resolveTrackingPairs(
+      extraSessionTrackingPairs.concat(trPairs, smallValueOperationsTrackingPairs),
+    );
 
     const granularitiesRates = granularitiesRatesConfig?.enabled
       ? {
@@ -141,5 +162,14 @@ export function useCalculateCountervaluesUserSettings() {
         selectedTimeRange,
       }),
     );
-  }, [dispatch, granularitiesRatesConfig, extraSessionTrackingPairs, trPairs, selectedTimeRange]);
+  }, [
+    countervalue,
+    dispatch,
+    granularitiesRatesConfig,
+    extraSessionTrackingPairs,
+    selectedTimeRange,
+    shouldTrackSmallValueOperationsPairs,
+    trPairs,
+    usdTrackingPairs,
+  ]);
 }

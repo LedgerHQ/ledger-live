@@ -9,6 +9,10 @@ import {
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
+import {
+  clampSmallValueThresholdUsd,
+  MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD,
+} from "@ledgerhq/live-common/utils/smallValueOperationsThreshold";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
@@ -86,6 +90,7 @@ export type SettingsState = {
   mevProtection: boolean;
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
+  // Canonical threshold stored in USD major units. The UI converts it to the selected countervalue.
   filterTokenOperationsThreshold: number;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
@@ -177,8 +182,8 @@ export const INITIAL_STATE: SettingsState = {
   accountsViewMode: "list",
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
-  filterTokenOperationsZeroAmount: false,
-  filterTokenOperationsThreshold: 0.5,
+  filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
+  filterTokenOperationsThreshold: MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD,
   sidebarCollapsed: false,
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
@@ -312,8 +317,6 @@ export function filterValidSettings(
 }
 
 function migrateSmallValueFilterSettings(settings: Partial<SettingsState>): Partial<SettingsState> {
-  const normalizeThreshold = (threshold: number, fallback: number) =>
-    Number.isFinite(threshold) ? Math.min(0.5, Math.max(0, threshold)) : fallback;
   const hasThreshold = "filterTokenOperationsThreshold" in settings;
   const threshold =
     typeof settings.filterTokenOperationsThreshold === "number"
@@ -323,7 +326,7 @@ function migrateSmallValueFilterSettings(settings: Partial<SettingsState>): Part
   if (hasThreshold) {
     return {
       ...settings,
-      filterTokenOperationsThreshold: normalizeThreshold(
+      filterTokenOperationsThreshold: clampSmallValueThresholdUsd(
         threshold,
         INITIAL_STATE.filterTokenOperationsThreshold,
       ),
@@ -332,7 +335,7 @@ function migrateSmallValueFilterSettings(settings: Partial<SettingsState>): Part
 
   return {
     ...settings,
-    filterTokenOperationsThreshold: normalizeThreshold(
+    filterTokenOperationsThreshold: clampSmallValueThresholdUsd(
       settings.filterTokenOperationsZeroAmount ? 0 : INITIAL_STATE.filterTokenOperationsThreshold,
       INITIAL_STATE.filterTokenOperationsThreshold,
     ),

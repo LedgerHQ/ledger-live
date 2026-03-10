@@ -22,6 +22,7 @@ import {
   SupportedCountervaluesData,
   CurrencySettings,
 } from "~/renderer/reducers/settings";
+import { clampSmallValueThresholdUsd } from "@ledgerhq/live-common/utils/smallValueOperationsThreshold";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import {
@@ -170,13 +171,7 @@ export function useFilterTokenOperationsThreshold(): [
   const value = useSelector(filterTokenOperationsThresholdSelector);
   const setter = useCallback(
     (filterTokenOperationsThreshold: number) => {
-      const FILTER_TOKEN_OPERATIONS_MAX_THRESHOLD = 0.5;
-      const normalizedThreshold = Number.isFinite(filterTokenOperationsThreshold)
-        ? Math.min(
-            FILTER_TOKEN_OPERATIONS_MAX_THRESHOLD,
-            Math.max(0, filterTokenOperationsThreshold),
-          )
-        : 0;
+      const normalizedThreshold = clampSmallValueThresholdUsd(filterTokenOperationsThreshold, 0);
       dispatch(
         saveSettings({
           filterTokenOperationsThreshold: normalizedThreshold,

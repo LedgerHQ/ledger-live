@@ -4,14 +4,16 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import {
+  clampSmallValueThresholdUsd,
+  SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
+} from "@ledgerhq/live-common/utils/smallValueOperationsThreshold";
 import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/operation";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import { useSelector } from "LLD/hooks/redux";
 import {
   useFilterTokenOperationsThreshold,
   useFilterTokenOperationsZeroAmount,
 } from "~/renderer/actions/settings";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 
 function getAccountFamily(account: AccountLike): string {
   return account.type === "TokenAccount"
@@ -27,7 +29,6 @@ export function useSmallValueOperationsFilter() {
   const [isSmallValueFilterEnabled] = useFilterTokenOperationsZeroAmount();
   const [smallValueThreshold] = useFilterTokenOperationsThreshold();
   const smallValueFeatureFlag = useFeature("lldHideSmallValueTokenOperations");
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const countervaluesState = useCountervaluesState();
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
     shouldFilter: isSmallValueFilterEnabled,
@@ -68,7 +69,7 @@ export function useSmallValueOperationsFilter() {
       const currency = getAccountCurrency(account);
       const cvQuery = {
         from: currency,
-        to: counterValueCurrency,
+        to: SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
         value: operationAmount,
         disableRounding: true,
       };
@@ -80,14 +81,13 @@ export function useSmallValueOperationsFilter() {
       if (typeof operationCounterValue !== "number") return true;
 
       // calculate() returns values in the smallest fiat unit (e.g. cents for USD with magnitude=2)
-      const fiatMagnitude = counterValueCurrency.units[0].magnitude;
-      const operationFiatValue = operationCounterValue / Math.pow(10, fiatMagnitude);
+      const usdMagnitude = SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.units[0].magnitude;
+      const operationUsdValue = operationCounterValue / Math.pow(10, usdMagnitude);
 
-      const threshold = Number.isFinite(smallValueThreshold) ? Math.max(0, smallValueThreshold) : 0;
-      return operationFiatValue > threshold;
+      const thresholdUsd = clampSmallValueThresholdUsd(smallValueThreshold, 0);
+      return operationUsdValue > thresholdUsd;
     },
     [
-      counterValueCurrency,
       countervaluesState,
       isSmallValueFeatureEnabled,
       isSmallValueFilterEnabled,
