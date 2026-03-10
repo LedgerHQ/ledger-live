@@ -1,6 +1,6 @@
 import coinConfig from "../config";
 import type { SolanaConfig } from "../config";
-import { broadcast } from "../logic";
+import { broadcast, combine } from "../logic";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
 
@@ -16,6 +16,7 @@ jest.mock("../network", () => ({
 
 jest.mock("../logic", () => ({
   broadcast: jest.fn(),
+  combine: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -69,6 +70,14 @@ describe("createApi", () => {
     );
   });
 
+  it("should delegate combine to logic", () => {
+    const api = createApi(mockConfig);
+
+    api.combine("tx", "signature", "pubkey");
+
+    expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
+  });
+
   it("should delegate broadcast to logic", async () => {
     const api = createApi(mockConfig);
 
@@ -80,7 +89,6 @@ describe("createApi", () => {
   it("should throw for unsupported methods", () => {
     const api = createApi(mockConfig);
 
-    expect(() => api.combine("tx", "sig", "pk")).toThrow("not supported");
     expect(() => api.craftRawTransaction("tx", "s", "pk", 0n)).toThrow("not supported");
     expect(() => api.getBalance("addr")).toThrow("not supported");
     expect(() => api.lastBlock()).toThrow("not supported");
