@@ -16,7 +16,7 @@ export default function StepPair({
   onPaired,
 }: Readonly<{
   currency: CryptoCurrency;
-  onPaired: () => void;
+  onPaired: (sessionTopic: string) => void;
 }>) {
   const { pairStatus, walletConnectUri, startPairing } = usePairing(currency, onPaired);
   const { isInstalled, openIdApp, storeUrl } = useIdAppDetection();

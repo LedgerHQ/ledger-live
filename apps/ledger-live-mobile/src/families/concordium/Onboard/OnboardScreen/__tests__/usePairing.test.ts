@@ -58,7 +58,7 @@ describe("usePairing", () => {
 
     await waitFor(() => {
       expect(result.current.pairStatus).toBe(PairStatus.SUCCESS);
-      expect(onPaired).toHaveBeenCalledTimes(1);
+      expect(onPaired).toHaveBeenCalledWith("test-topic");
     });
   });
 

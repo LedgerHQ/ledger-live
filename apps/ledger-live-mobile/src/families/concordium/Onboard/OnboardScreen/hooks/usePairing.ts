@@ -13,7 +13,7 @@ export enum PairStatus {
   ERROR = "ERROR",
 }
 
-export function usePairing(currency: CryptoCurrency, onPaired: () => void) {
+export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: string) => void) {
   const [pairStatus, setPairStatus] = useState<PairStatus>(PairStatus.CONNECTING);
   const [walletConnectUri, setWalletConnectUri] = useState<string | null>(null);
   const subscriptionRef = useRef<Subscription | null>(null);
@@ -45,7 +45,7 @@ export function usePairing(currency: CryptoCurrency, onPaired: () => void) {
             if (data.sessionTopic) {
               unsubscribe();
               setPairStatus(PairStatus.SUCCESS);
-              onPaired();
+              onPaired(data.sessionTopic);
             }
             break;
           case ConcordiumPairingStatus.ERROR:
