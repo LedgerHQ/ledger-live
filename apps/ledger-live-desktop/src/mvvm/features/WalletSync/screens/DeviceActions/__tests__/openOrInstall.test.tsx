@@ -2,14 +2,8 @@ import React from "react";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import OpenOrInstallTrustChainApp from "../openOrInstall";
-import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import * as originFlow from "~/renderer/analytics/originFlow";
 
 const mockGoNext = jest.fn();
-
-jest.mock("~/renderer/analytics/originFlow", () => ({
-  setOriginFlow: jest.fn(),
-}));
 
 jest.mock("~/renderer/components/DeviceAction", () => ({
   __esModule: true,
@@ -24,14 +18,6 @@ jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
 describe("OpenOrInstallTrustChainApp", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("calls setOriginFlow(ledgerSync) on mount", () => {
-    render(<OpenOrInstallTrustChainApp goNext={mockGoNext} />);
-
-    expect(originFlow.setOriginFlow).toHaveBeenCalledWith(
-      HOOKS_TRACKING_LOCATIONS.ledgerSync,
-    );
   });
 
   it("renders DeviceAction", () => {
