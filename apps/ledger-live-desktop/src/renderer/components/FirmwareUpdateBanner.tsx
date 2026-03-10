@@ -76,6 +76,7 @@ function FirmwareUpdateBannerContent(props: FirmwareUpdateBannerViewModelResult)
       <NewButton
         appearance="transparent"
         size="sm"
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- getDeviceIcon returns { size?: number }, NewButton icon expects IconSize
         icon={DeviceIcon as never}
         onClick={onClick}
         data-testid="topbar-os-update-button"
