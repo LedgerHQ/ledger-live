@@ -10,13 +10,11 @@ import type { BigNumber } from "bignumber.js";
 export type NetworkInfo = {
   family: "xrp";
   serverFee: BigNumber;
-  baseReserve: BigNumber;
 };
 
 export type NetworkInfoRaw = {
   family: "xrp";
   serverFee: string;
-  baseReserve: string;
 };
 
 export type Transaction = TransactionCommon & {

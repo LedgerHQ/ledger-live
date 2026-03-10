@@ -5508,9 +5508,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.13
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
       expect:
         specifier: 'catalog:'
         version: 30.2.0

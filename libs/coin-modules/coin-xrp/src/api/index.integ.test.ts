@@ -1,8 +1,6 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import { decode } from "ripple-binary-codec";
 import { createApi } from ".";
-//import { decode, encodeForSigning } from "ripple-binary-codec";
-//import { sign } from "ripple-keypairs";
 
 describe("Xrp Api (testnet)", () => {
   const SENDER = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";

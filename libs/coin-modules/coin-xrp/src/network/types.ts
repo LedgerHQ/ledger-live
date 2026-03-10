@@ -91,7 +91,6 @@ export function isResponseStatus(obj: object): obj is ResponseStatus {
   return "status" in obj || "error" in obj;
 }
 
-export type NewAccount = "NewAccount";
 export type AccountInfoResponse = {
   account_data: {
     Account: string;
