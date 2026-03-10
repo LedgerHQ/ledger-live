@@ -1,6 +1,5 @@
-import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
-import { SharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -21,8 +20,6 @@ import Header from "../Header";
 type Props = {
   manifest: AppManifest;
   inputs?: Record<string, string | undefined>;
-  onScroll?: ComponentProps<typeof Web3AppWebview>["onScroll"];
-  layoutY: SharedValue<number>;
   webviewState: WebviewState;
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
   navigation: AppProps["navigation"];
@@ -34,8 +31,6 @@ type Props = {
 const WebPlatformPlayer = ({
   manifest,
   inputs,
-  onScroll,
-  layoutY,
   webviewState,
   setWebviewState,
   navigation,
@@ -90,7 +85,6 @@ const WebPlatformPlayer = ({
     <View style={styles.root}>
       <Header
         navigation={navigation}
-        layoutY={layoutY}
         initialLoad={initialLoad}
         secure={secure}
         baseUrl={baseUrl}
@@ -102,7 +96,6 @@ const WebPlatformPlayer = ({
       />
       <Web3AppWebview
         ref={webviewAPIRef}
-        onScroll={onScroll}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}
