@@ -82,6 +82,7 @@ export type SwapProps = {
   toAccountId: string;
   fromAmount: string;
   toAmount?: string;
+  finalAmount?: string;
   quoteId: string;
   rate: string;
   feeStrategy: string;
@@ -95,6 +96,7 @@ export type SwapProps = {
   estimatedFees: string;
   estimatedFeesUnit: string;
   swapId?: string;
+  status?: string;
 };
 
 export type SwapWebProps = {
@@ -446,7 +448,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
         const accountId =
           fromAccount.type === "TokenAccount" ? getParentAccount(fromAccount, accounts).id : fromId;
         const swapOperation: SwapOperation = {
-          status: "pending",
+          status: swap.status ?? "pending",
           provider: swap.provider,
           operationId,
           swapId: swap.swapId,
@@ -460,6 +462,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
             amount: new BigNumber(swap.toAmount),
             account: toAccount,
           })!,
+          finalAmount: swap.finalAmount ? new BigNumber(swap.finalAmount) : undefined,
         };
 
         dispatch(
