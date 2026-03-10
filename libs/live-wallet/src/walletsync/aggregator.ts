@@ -1,4 +1,4 @@
-import { ZodOptional, z } from "zod";
+import { z } from "zod";
 import { ExtractLocalState, ExtractUpdateEvent, UpdateDiff, WalletSyncDataManager } from "./types";
 
 /**
@@ -9,14 +9,10 @@ import { ExtractLocalState, ExtractUpdateEvent, UpdateDiff, WalletSyncDataManage
 export function createAggregator<Mods extends Record<string, WalletSyncDataManager<any, any, any>>>(
   modules: Mods,
 ) {
-  const schema = z.object(
-    mapValues<Mods, { [K in keyof Mods]: ZodOptional<Mods[K]["schema"]> }>(modules, m =>
-      z.optional(m.schema),
-    ),
-  );
+  const schema = z.object(mapValues(modules, m => z.optional(m.schema)));
 
   type Schema = typeof schema;
-  type DistantState = z.infer<Schema>;
+  type DistantState = { [K in keyof Mods]?: z.infer<Mods[K]["schema"]> };
   type LocalState = { [K in keyof Mods]: ExtractLocalState<Mods[K]> };
   type UpdateEvent = { [K in keyof Mods]: UpdateDiff<ExtractUpdateEvent<Mods[K]>> };
 
@@ -30,7 +26,7 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
       const unknownRest: Record<string, unknown> = { ...latestState };
 
       // Aggregate all diffs from each module
-      const nextState = mapValues<Mods, DistantState>(modules, (m, k) => {
+      const nextState = mapValues(modules, (m, k) => {
         const diff = m.diffLocalToDistant(
           localData[k],
           latestState && latestState[k] ? latestState[k] : null,
@@ -53,12 +49,7 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
 
     async resolveIncrementalUpdate(ctx, localData, latestState, incomingState) {
       // Aggregate all promises resulting of each module resolveIncrementalUpdate
-
-      type Resolved = {
-        [K in keyof Mods]: Promise<UpdateDiff<ExtractUpdateEvent<Mods[K]>>>;
-      };
-
-      const resolved = mapValues<Mods, Resolved>(modules, (m, k) =>
+      const resolved = mapValues(modules, (m, k) =>
         m.resolveIncrementalUpdate(
           ctx,
           localData[k],
@@ -71,7 +62,7 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
       const results = await Promise.all(Object.values(resolved));
       const hasChanges = results.some(r => r.hasChanges);
       let index = 0;
-      const update = mapValues<Mods, UpdateEvent>(modules, () => results[index++]);
+      const update = mapValues(modules, () => results[index++]) as UpdateEvent;
 
       // returns the partial updates
       return !hasChanges ? { hasChanges: false } : { hasChanges: true, update };
@@ -79,7 +70,7 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
 
     applyUpdate(localData, update) {
       // apply all updates to each module and aggregate
-      const result = mapValues<Mods, LocalState>(modules, (m, k) => {
+      const result = mapValues(modules, (m, k) => {
         const up = update[k];
         return up.hasChanges ? m.applyUpdate(localData[k], up.update) : localData[k];
       });
@@ -89,13 +80,13 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
   return root;
 }
 
-export function mapValues<T extends object, U extends { [K in keyof T]: unknown }>(
+export function mapValues<T extends object, U>(
   obj: T,
-  fn: <K extends keyof T>(value: T[K], key: K) => any, // U[K], // should be the actual type...
-): U {
-  const result: Partial<U> = {};
+  fn: (value: T[keyof T], key: keyof T) => U,
+): { [K in keyof T]: U } {
+  const result = {} as { [K in keyof T]: U };
   for (const key in obj) {
-    result[key as keyof T] = fn(obj[key], key as keyof T);
+    result[key] = fn(obj[key], key);
   }
-  return result as U;
+  return result;
 }
