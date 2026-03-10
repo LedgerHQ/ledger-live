@@ -1,6 +1,5 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { useAssetsViewModel, padItems, resolveMarketId } from "../useAssetsViewModel";
 import {
   createMockCategorizedAssets,
@@ -13,6 +12,7 @@ import { genAccount } from "@ledgerhq/coin-framework/lib-es/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/index";
 import type { AssetTableItem } from "../../types";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
 
@@ -36,14 +36,8 @@ jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
   useAssetsData: (...args: unknown[]) => mockUseAssetsData(...args),
 }));
 
-const MOCK_LAST_SEEN_DEVICE = {
-  modelId: DeviceModelId.nanoX,
-  deviceInfo: {},
-  apps: [],
-};
-
 const onboardedStateWithAccounts = {
-  settings: { lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+  settings: AFTER_ONBOARDING_STATE,
   accounts: [genAccount("acc-1", { currency: getCryptoCurrencyById("bitcoin") })],
 };
 

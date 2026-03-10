@@ -967,40 +967,42 @@ export const renderInWrongAppForAccount = ({
     stretch: true,
   });
 
-export const renderConnectYourDevice = ({
+export const ConnectYourDevice = ({
   modelId,
   type,
   onRepairModal,
-  device,
+  device = null,
   unresponsive,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
   onRepairModal?: ((open: boolean) => void) | null;
-  device: Device;
+  device?: Device | null;
   unresponsive?: boolean | null;
-}) => (
-  <Wrapper>
-    <Header />
-    <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
-    </AnimationWrapper>
-    <Footer>
-      <Title>
-        <Trans
-          i18nKey={
-            unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
-          }
-        />
-      </Title>
-      {!device && onRepairModal ? (
-        <TroubleshootingWrapper>
-          <ConnectTroubleshooting onRepair={onRepairModal} />
-        </TroubleshootingWrapper>
-      ) : null}
-    </Footer>
-  </Wrapper>
-);
+}) => {
+  return (
+    <Wrapper>
+      <Header />
+      <AnimationWrapper>
+        <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
+      </AnimationWrapper>
+      <Footer>
+        <Title>
+          <Trans
+            i18nKey={
+              unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
+            }
+          />
+        </Title>
+        {!device && onRepairModal ? (
+          <TroubleshootingWrapper>
+            <ConnectTroubleshooting onRepair={onRepairModal} />
+          </TroubleshootingWrapper>
+        ) : null}
+      </Footer>
+    </Wrapper>
+  );
+};
 
 const OpenSwapBtn = () => {
   const { setDrawer } = useContext(context);

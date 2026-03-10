@@ -12,6 +12,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
+  DeviceInfo,
   DeviceModelInfo,
   Feature,
   FeatureId,
@@ -230,6 +231,17 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenWalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
+};
+
+export const AFTER_ONBOARDING_STATE: SettingsState = {
+  ...INITIAL_STATE,
+  hasCompletedOnboarding: true,
+  loaded: true,
+  lastSeenDevice: {
+    modelId: DeviceModelId.nanoS,
+    deviceInfo: {} as DeviceInfo,
+    apps: [],
+  },
 };
 
 /* Handlers */

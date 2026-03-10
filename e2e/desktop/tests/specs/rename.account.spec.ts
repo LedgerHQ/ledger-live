@@ -11,7 +11,7 @@ const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 for (const account of accounts) {
   test.describe("Rename Account", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({

@@ -32,7 +32,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   });
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [
@@ -123,7 +123,7 @@ test.describe("Swap - Rejected on device", () => {
   });
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [
@@ -295,7 +295,7 @@ test.describe("Swap a coin for which you have no account yet - from present to n
   const xrayTicket = "B2CQA-3353";
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account2.currency.speculosApp,
     cliCommandsOnApp: [
       [
@@ -366,7 +366,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
   const xrayTicket = "B2CQA-3354";
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account1.currency.speculosApp,
     cliCommandsOnApp: [
       [

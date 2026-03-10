@@ -6,19 +6,11 @@ import { useNavigate, useLocation } from "react-router";
 import { ArrowDown, Plus, Minus, ArrowUp } from "@ledgerhq/lumen-ui-react/symbols";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
-import type { Account, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const MOCK_LAST_SEEN_DEVICE: DeviceModelInfo = {
-  modelId: DeviceModelId.nanoX,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  deviceInfo: {} as DeviceInfo,
-  apps: [],
-};
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow");
@@ -88,7 +80,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -102,7 +94,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -116,7 +108,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -129,7 +121,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -145,7 +137,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -157,7 +149,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -169,7 +161,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -181,7 +173,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount(), createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -195,7 +187,7 @@ describe("useQuickActions", () => {
       const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -212,7 +204,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -227,7 +219,7 @@ describe("useQuickActions", () => {
       const { result, store } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -244,7 +236,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -261,7 +253,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -278,7 +270,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -297,7 +289,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -316,7 +308,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -333,7 +325,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -351,7 +343,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -367,7 +359,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -379,7 +371,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -391,7 +383,7 @@ describe("useQuickActions", () => {
       const { result } = renderHook(() => useQuickActions(trackingPageName), {
         initialState: {
           accounts: [createEmptyAccount(), createAccountWithFunds()],
-          settings: { hasCompletedOnboarding: true, lastSeenDevice: MOCK_LAST_SEEN_DEVICE },
+          settings: AFTER_ONBOARDING_STATE,
         },
       });
 
@@ -406,7 +398,7 @@ describe("useQuickActions", () => {
         initialState: {
           accounts: [createAccountWithFunds()],
           settings: {
-            hasCompletedOnboarding: true,
+            ...AFTER_ONBOARDING_STATE,
             lastSeenDevice: null,
             lastOnboardedDevice: null,
           },
@@ -424,7 +416,7 @@ describe("useQuickActions", () => {
         initialState: {
           accounts: [createAccountWithFunds()],
           settings: {
-            hasCompletedOnboarding: true,
+            ...AFTER_ONBOARDING_STATE,
             lastSeenDevice: null,
             lastOnboardedDevice: null,
           },
@@ -445,7 +437,7 @@ describe("useQuickActions", () => {
         initialState: {
           accounts: [createAccountWithFunds()],
           settings: {
-            hasCompletedOnboarding: true,
+            ...AFTER_ONBOARDING_STATE,
             lastSeenDevice: null,
             lastOnboardedDevice: null,
           },

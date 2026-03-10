@@ -55,7 +55,7 @@ for (const asset of assets) {
     const { crypto, fiat, operation, amount } = asset.buySell;
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -223,7 +223,7 @@ test.describe("Sell flow - ", () => {
   const { crypto, fiat, amount, operation } = sellAsset.buySell;
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {

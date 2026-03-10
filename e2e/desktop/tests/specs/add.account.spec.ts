@@ -33,7 +33,7 @@ const currencies = [
 for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
       // TODO: this can be removed once Aleo is released on production
       ...(currency.currency === Currency.ALEO && {
