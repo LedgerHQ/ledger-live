@@ -38,7 +38,7 @@ export function useCoinControlAmountInput({
     const amount =
       transaction.useAllAmount && status.amount != null
         ? status.amount
-        : transaction.amount ?? null;
+        : (transaction.amount ?? null);
     return amount ? formatAmountForInput(accountUnit, amount, locale) : null;
   }, [accountUnit, locale, status.amount, transaction.amount, transaction.useAllAmount]);
 
