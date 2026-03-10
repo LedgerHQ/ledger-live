@@ -7,7 +7,15 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type SolanaConfig } from "../config";
-import { broadcast, combine, craftTransaction, estimateFees, getBalance, lastBlock } from "../logic";
+import {
+  broadcast,
+  combine,
+  craftTransaction,
+  estimateFees,
+  getBalance,
+  lastBlock,
+  listOperations as logicListOperations,
+} from "../logic";
 import { getChainAPI, type Config } from "../network";
 
 export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaApi {
@@ -36,9 +44,8 @@ export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaAp
       estimateFees(api, intent, customFeesParameters),
     getBalance: (address: string) => getBalance(api, address),
     lastBlock: () => lastBlock(api),
-    listOperations: (_address: string, _opts: ListOperationsOptions) => {
-      throw new Error("listOperations is not supported");
-    },
+    listOperations: (address: string, opts: ListOperationsOptions) =>
+      logicListOperations(api, address, opts),
     getStakes: (_address: string, _cursor?: Cursor) => {
       throw new Error("getStakes is not supported");
     },

@@ -8,6 +8,7 @@ import {
   estimateFees,
   getBalance,
   lastBlock,
+  listOperations,
 } from "../logic";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
@@ -29,6 +30,7 @@ jest.mock("../logic", () => ({
   estimateFees: jest.fn().mockResolvedValue({ value: 5000n }),
   getBalance: jest.fn(),
   lastBlock: jest.fn(),
+  listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
 }));
 
 describe("createApi", () => {
@@ -80,6 +82,17 @@ describe("createApi", () => {
         getValidators: expect.any(Function),
       }),
     );
+  });
+
+  it("should delegate listOperations to logic", async () => {
+    const api = createApi(mockConfig);
+
+    await api.listOperations("address", { minHeight: 14, order: "asc" });
+
+    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {
+      minHeight: 14,
+      order: "asc",
+    });
   });
 
   it("should delegate estimateFees to logic", async () => {
