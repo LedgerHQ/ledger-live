@@ -1,6 +1,5 @@
 import reducer, {
   setOriginFlow,
-  clearOriginFlow,
   selectOriginFlow,
   type OriginFlowState,
 } from "./originFlow";
@@ -18,16 +17,6 @@ describe("originFlow reducer", () => {
   it("should replace existing origin flow", () => {
     const state = reducer("Send Modal", setOriginFlow("Receive Modal"));
     expect(state).toBe("Receive Modal");
-  });
-
-  it("should clear origin flow with clearOriginFlow", () => {
-    const state = reducer("Manager Dashboard", clearOriginFlow());
-    expect(state).toBe("");
-  });
-
-  it("should handle clearOriginFlow when already empty", () => {
-    const state = reducer("", clearOriginFlow());
-    expect(state).toBe("");
   });
 });
 

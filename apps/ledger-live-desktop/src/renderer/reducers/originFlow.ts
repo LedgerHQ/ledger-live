@@ -14,10 +14,9 @@ const originFlowSlice = createSlice({
   initialState,
   reducers: {
     setOriginFlow: (_, action: PayloadAction<string>) => action.payload,
-    clearOriginFlow: () => "",
   },
 });
 
-export const { setOriginFlow, clearOriginFlow } = originFlowSlice.actions;
+export const { setOriginFlow } = originFlowSlice.actions;
 export const selectOriginFlow = (state: { originFlow: OriginFlowState }) => state.originFlow;
 export default originFlowSlice.reducer;
