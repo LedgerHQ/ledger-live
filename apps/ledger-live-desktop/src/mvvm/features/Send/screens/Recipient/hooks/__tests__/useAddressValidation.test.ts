@@ -1,16 +1,14 @@
+import BigNumber from "bignumber.js";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
-import {
-  getAccountCurrency,
-  getMainAccount,
-  getRecentAddressesStore,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { renderHook, waitFor } from "@testing-library/react";
+import type { Operation } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
-import { useBatchMaybeAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import {
   createMockAccount,
   createMockCurrency,
@@ -30,13 +28,11 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor");
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseDomain = jest.mocked(useDomain);
 const mockedIsAddressSanctioned = jest.mocked(isAddressSanctioned);
-const mockedGetRecentAddressesStore = jest.mocked(getRecentAddressesStore);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedUseBridgeRecipientValidation = jest.mocked(useBridgeRecipientValidation);
 const mockedUseFormattedAccountBalance = jest.mocked(useFormattedAccountBalance);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
-const mockedUseBatchMaybeAccountName = jest.mocked(useBatchMaybeAccountName);
 const mockedSendFeatures = jest.mocked(sendFeatures);
 
 const mockAccount = createMockAccount({ id: "account_1" });
@@ -46,12 +42,20 @@ const mockEthereumAccount = createMockAccount({
   freshAddress: "0x123",
 });
 
-const mockRecentAddressesStore = {
-  addAddress: jest.fn(),
-  removeAddress: jest.fn(),
-  syncAddresses: jest.fn(),
-  getAddresses: jest.fn(() => []),
-};
+const createOutgoingOperation = (recipient: string, date = new Date()): Operation => ({
+  id: `${recipient}-${date.getTime()}`,
+  hash: `${recipient}-hash-${date.getTime()}`,
+  type: "OUT",
+  value: new BigNumber(1000),
+  fee: new BigNumber(100),
+  senders: ["source_address"],
+  recipients: [recipient],
+  blockHeight: 1,
+  blockHash: "block_hash",
+  accountId: "account_1",
+  date,
+  extra: {},
+});
 
 describe("useAddressValidation", () => {
   beforeEach(() => {
@@ -59,7 +63,6 @@ describe("useAddressValidation", () => {
     mockedUseSelector.mockReturnValue([]);
     mockedUseDomain.mockReturnValue({ status: "loaded", resolutions: [], updatedAt: Date.now() });
     mockedIsAddressSanctioned.mockResolvedValue(false);
-    mockedGetRecentAddressesStore.mockReturnValue(mockRecentAddressesStore);
     mockedGetMainAccount.mockImplementation((account, parentAccount) => {
       if (!account) return mockAccount;
       // getMainAccount returns the account itself if it's an Account, otherwise the parentAccount
@@ -82,7 +85,6 @@ describe("useAddressValidation", () => {
       formattedCounterValue: "$50,000",
     });
     mockedUseMaybeAccountName.mockReturnValue("My Account");
-    mockedUseBatchMaybeAccountName.mockReturnValue([]);
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
   });
 
@@ -184,11 +186,10 @@ describe("useAddressValidation", () => {
     });
 
     mockedUseSelector.mockReturnValue([mockAccount, otherAccount]);
-    mockedUseBatchMaybeAccountName.mockReturnValue(["Account 1", "Account 2"]);
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "matching",
+        searchValue: "matching_address",
         currency: mockAccount.currency,
         account: mockAccount,
         currentAccountId: mockAccount.id,
@@ -200,18 +201,15 @@ describe("useAddressValidation", () => {
   });
 
   it("matches recent addresses", () => {
-    mockRecentAddressesStore.getAddresses.mockReturnValue([
-      {
-        address: "recent_matching_address",
-        lastUsed: Date.now(),
-      } as never,
-    ]);
+    const accountWithOperations = createMockAccount({
+      operations: [createOutgoingOperation("recent_matching_address")],
+    });
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "recent_matching",
-        currency: mockAccount.currency,
-        account: mockAccount,
+        searchValue: "recent_matching_address",
+        currency: accountWithOperations.currency,
+        account: accountWithOperations,
       }),
     );
 
@@ -231,7 +229,7 @@ describe("useAddressValidation", () => {
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "address",
+        searchValue: "source_address",
         currency: mockAccount.currency,
         account: mockAccount,
         currentAccountId: mockAccount.id,
@@ -258,9 +256,13 @@ describe("useAddressValidation", () => {
     expect(result.current.result.matchedAccounts?.[0].account.id).toBe(mockAccount.id);
   });
 
-  it("includes current account match by name when self-transfer is allowed", () => {
-    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
-    mockedUseMaybeAccountName.mockReturnValue("Ethereum 3");
+  it("does not search by account name anymore", () => {
+    const namedAccount = createMockAccount({
+      id: "account_2",
+      freshAddress: "named_account_address",
+    });
+
+    mockedUseSelector.mockReturnValue([mockAccount, namedAccount]);
 
     const { result } = renderHook(() =>
       useAddressValidation({
@@ -271,35 +273,23 @@ describe("useAddressValidation", () => {
       }),
     );
 
-    expect(result.current.result.matchedAccounts).toHaveLength(1);
-    expect(result.current.result.matchedAccounts?.[0].account.id).toBe(mockAccount.id);
+    expect(result.current.result.matchedAccounts).toHaveLength(0);
   });
 
-  it("searches by account name", () => {
-    const namedAccount = createMockAccount({
-      id: "account_2",
-      freshAddress: "named_account_address",
+  it("does not match partial recent addresses anymore", () => {
+    const accountWithOperations = createMockAccount({
+      operations: [createOutgoingOperation("recent_matching_address")],
     });
-
-    // Mock the selector to return both accounts
-    mockedUseSelector.mockReturnValue([mockAccount, namedAccount]);
-    // useBatchMaybeAccountName is called with userAccountsForCurrency which excludes currentAccount
-    // So it only receives namedAccount
-    mockedUseBatchMaybeAccountName.mockReturnValue(["My Savings Account"]);
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "savings",
-        currency: mockAccount.currency,
-        account: mockAccount,
-        currentAccountId: mockAccount.id,
+        searchValue: "recent_matching",
+        currency: accountWithOperations.currency,
+        account: accountWithOperations,
       }),
     );
 
-    // The hook filters accounts by currency and excludes current account
-    // Then searches by name in the remaining accounts
-    expect(result.current.result.matchedAccounts).toHaveLength(1);
-    expect(result.current.result.matchedAccounts?.[0].account.id).toBe("account_2");
+    expect(result.current.result.matchedRecentAddress).toBeUndefined();
   });
 
   it("includes bridge validation errors", () => {
@@ -424,18 +414,15 @@ describe("useAddressValidation", () => {
   });
 
   it("marks not first interaction when matches exist", () => {
-    mockRecentAddressesStore.getAddresses.mockReturnValue([
-      {
-        address: "known_address",
-        lastUsed: Date.now(),
-      } as never,
-    ]);
+    const accountWithOperations = createMockAccount({
+      operations: [createOutgoingOperation("known_address")],
+    });
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "known",
-        currency: mockAccount.currency,
-        account: mockAccount,
+        searchValue: "known_address",
+        currency: accountWithOperations.currency,
+        account: accountWithOperations,
       }),
     );
 
@@ -500,7 +487,7 @@ describe("useAddressValidation", () => {
 
     const { result } = renderHook(() =>
       useAddressValidation({
-        searchValue: "eth",
+        searchValue: "0xEth",
         currency: mockAccount.currency,
         account: mockAccount,
         currentAccountId: btcAccount.id,
