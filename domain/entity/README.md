@@ -28,6 +28,8 @@ Business domain entity packages. Each subdirectory is an independent pnpm worksp
 Each package follows this file layout inside `src/`:
 
 ```
+actions.ts         # Actions for mutating state (optional)
+actions.test.ts    # Actions tests (required if actions exist)
 schema.ts          # Zod schemas + branded value objects (required)
 schema.test.ts     # Schema validation tests (required)
 schema.mock.ts     # Mock factories for tests (required)
