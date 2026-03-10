@@ -1,13 +1,14 @@
 import type {
+  AssetInfo,
   Block,
   BlockInfo,
-  BlockTransaction,
   BlockOperation,
+  BlockTransaction,
   Operation as Op,
   Page,
   Stake,
   StakeState,
-  AssetInfo,
+  Cursor,
 } from "@ledgerhq/coin-framework/api/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
@@ -18,20 +19,20 @@ import { getInputObjects } from "@mysten/signers/ledger";
 import {
   BalanceChange,
   Checkpoint,
+  DelegatedStake,
   ExecuteTransactionBlockParams,
   PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  StakeObject,
   SuiCallArg,
   SuiClient,
   SuiHTTPTransport,
-  SuiTransactionBlockResponse,
   SuiTransaction,
   SuiTransactionBlockKind,
-  TransactionEffects,
+  SuiTransactionBlockResponse,
   SuiTransactionBlockResponseOptions,
-  DelegatedStake,
-  StakeObject,
   TransactionBlockData,
+  TransactionEffects,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
@@ -40,11 +41,11 @@ import uniqBy from "lodash/unionBy";
 import coinConfig from "../config";
 import { ONE_SUI } from "../constants";
 import type {
-  Transaction as TransactionType,
+  CoreTransaction,
+  CreateExtrinsicArg,
   Resolution,
   SuiValidator,
-  CreateExtrinsicArg,
-  CoreTransaction,
+  Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
@@ -715,32 +716,107 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
   return ret;
 }
 
-function compareByTimestamp(
+function compareOperations(
   order: "asc" | "desc",
 ): (a: SuiTransactionBlockResponse, b: SuiTransactionBlockResponse) => number {
-  return (a, b) => {
-    const ta = Number(a.timestampMs ?? 0);
-    const tb = Number(b.timestampMs ?? 0);
+  return (a, b) =>
+    compareTimestampAndDigest(
+      order,
+      Number(a.timestampMs ?? 0),
+      a.digest ?? "",
+      Number(b.timestampMs ?? 0),
+      b.digest ?? "",
+    );
+}
 
-    if (ta !== tb) {
-      return order === "asc" ? ta - tb : tb - ta;
-    }
+function compareTimestampAndDigest(
+  order: "asc" | "desc",
+  timestampA: number,
+  digestA: string,
+  timestampB: number,
+  digestB: string,
+): number {
+  if (timestampA !== timestampB)
+    return order === "asc" ? timestampA - timestampB : timestampB - timestampA;
+  if (digestA === digestB) return 0;
+  if (order === "asc") return digestA < digestB ? -1 : 1;
+  return digestA > digestB ? -1 : 1;
+}
 
-    // Deterministic tie-breaker for identical timestamps: use digest
-    const da = a.digest ?? "";
-    const db = b.digest ?? "";
+function isStrictlyAfterCursor(
+  op: SuiTransactionBlockResponse,
+  cursor: ListOperationsCursor,
+  order: "asc" | "desc",
+): boolean {
+  if (op.digest === cursor.digest) return false;
+  return (
+    compareTimestampAndDigest(
+      order,
+      Number(op.timestampMs ?? 0),
+      op.digest ?? "",
+      cursor.timestamp,
+      cursor.digest,
+    ) > 0
+  );
+}
 
-    if (da === db) {
-      return 0;
-    }
+function dropOperationsBeforeCursor(params: {
+  operations: SuiTransactionBlockResponse[];
+  order: "asc" | "desc";
+  cursor: ListOperationsCursor | null;
+}): SuiTransactionBlockResponse[] {
+  const { operations, order, cursor } = params;
+  if (!cursor) return operations;
+  return operations.filter(op => isStrictlyAfterCursor(op, cursor, order));
+}
 
-    if (order === "asc") {
-      return da < db ? -1 : 1;
-    }
+function dropOperationsAfterNextCursor(params: {
+  order: "asc" | "desc";
+  cursor: Cursor | undefined;
+  pageOps: SuiTransactionBlockResponse[];
+  outOps: PaginatedTransactionResponse;
+  inOps: PaginatedTransactionResponse;
+}): {
+  operations: SuiTransactionBlockResponse[];
+  nextCursor: Cursor | undefined;
+} {
+  const { order, cursor, pageOps, outOps, inOps } = params;
 
-    // For descending order, reverse digest comparison
-    return da > db ? -1 : 1;
-  };
+  // if both sides on last page => no filtering or next cursor needed
+  if (!(outOps.hasNextPage || inOps.hasNextPage))
+    return { operations: pageOps, nextCursor: undefined };
+
+  // determine boundary operation for next cursor
+  const lastOps: SuiTransactionBlockResponse[] = [
+    getLastOperation(outOps.data),
+    getLastOperation(inOps.data),
+  ].filter(op => op !== undefined);
+  if (lastOps.length === 0) return { operations: pageOps, nextCursor: undefined };
+  const nextCursorBoundaryOp = lastOps.reduce((selected, current) =>
+    compareOperations(order)(current, selected) < 0 ? current : selected,
+  );
+
+  // drop all operations after next cursor
+  const opsBeforeNextCursor = pageOps.filter(
+    op => compareOperations(order)(op, nextCursorBoundaryOp) <= 0,
+  );
+
+  // serialize next cursor
+  const nextCursorCandidate = serializeListOperationsCursor({
+    digest: nextCursorBoundaryOp.digest,
+    timestamp: Number(nextCursorBoundaryOp.timestampMs ?? 0),
+  });
+
+  // defensive guard to avoid infinite loop in case the API returns unexpected results
+  const nextCursor = nextCursorCandidate === cursor ? undefined : nextCursorCandidate;
+
+  return { operations: opsBeforeNextCursor, nextCursor };
+}
+
+function getLastOperation(
+  operations: SuiTransactionBlockResponse[],
+): SuiTransactionBlockResponse | undefined {
+  return operations.length > 0 ? operations[operations.length - 1] : undefined;
 }
 
 type ListOperationsCursor = {
@@ -798,25 +874,26 @@ export const getListOperations = async (
     ]);
 
     // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
-    // so IN operations and OUT operations are not disjoint. We merge both lists, remove duplicates, and keep
-    // chronological order.
+    // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
     const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest);
-    const sortedOps = [...mergedOps].sort(compareByTimestamp(order));
 
-    // filter out operations before the cursor
-    const pageOps = sortedOps.filter(op => {
-      if (!parsedCursor) return true;
-      // never return the boundary operation itself
-      if (op.digest === parsedCursor.digest) return false;
+    // restore order
+    const sortedOps = [...mergedOps].sort(compareOperations(order));
 
-      const boundaryTs = parsedCursor.timestamp;
-      const boundaryDigest = parsedCursor.digest;
+    // drop operations before the current page start cursor
+    const afterCursorOps = dropOperationsBeforeCursor({
+      operations: sortedOps,
+      order,
+      cursor: parsedCursor,
+    });
 
-      const ts = Number(op.timestampMs ?? 0);
-
-      if (order === "asc")
-        return ts > boundaryTs || (ts === boundaryTs && op.digest > boundaryDigest);
-      return ts < boundaryTs || (ts === boundaryTs && op.digest < boundaryDigest);
+    // compute next cursor, and drop operations after it
+    const { operations: pageOps, nextCursor } = dropOperationsAfterNextCursor({
+      order,
+      cursor,
+      pageOps: afterCursorOps,
+      outOps: opsOut,
+      inOps: opsIn,
     });
 
     // fetch checkpoints for the operations
@@ -846,20 +923,6 @@ export const getListOperations = async (
         t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
       ),
     );
-
-    // compute next cursor: we have one if IN or OUT operations have one, or we have filtered out operations.
-    const lastPageOp = pageOps.length > 0 ? pageOps[pageOps.length - 1] : undefined;
-    const lastSortedOp = sortedOps.length > 0 ? sortedOps[sortedOps.length - 1] : undefined;
-    const lastBoundaryOp = lastPageOp ?? lastSortedOp;
-    const nextCursorCandidate =
-      (opsIn.hasNextPage || opsOut.hasNextPage || pageOps.length < sortedOps.length) &&
-      lastBoundaryOp
-        ? serializeListOperationsCursor({
-            digest: lastBoundaryOp.digest,
-            timestamp: Number(lastBoundaryOp.timestampMs ?? 0),
-          })
-        : "";
-    const nextCursor = nextCursorCandidate === cursor ? "" : nextCursorCandidate;
 
     return {
       items: operations,

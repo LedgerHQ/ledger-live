@@ -127,6 +127,7 @@ describe("Sui Api", () => {
         fetchAllHashes("desc"),
       ]);
 
+      expect(ascHashes.length).toBeGreaterThanOrEqual(54);
       expect(new Set(ascHashes).size).toBe(ascHashes.length);
       expect(new Set(descHashes).size).toBe(descHashes.length);
       expect(ascHashes).toEqual([...descHashes].reverse());
