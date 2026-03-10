@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation } from "react-i18next";
 import { Trans, useTranslation } from "~/context/Locale";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -130,7 +129,6 @@ function EachCurrencySettings({
 
 export default compose<React.ComponentType<NavigationProps>>(
   connect(mapStateToProps, mapDispatchToProps),
-  withTranslation(),
   withTheme,
 )(EachCurrencySettings);
 

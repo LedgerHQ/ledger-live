@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from "react";
-import { withTranslation } from "react-i18next";
+
 import { useTranslation } from "~/context/Locale";
 import { StyleSheet } from "react-native";
 import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import type { TFunction } from "i18next";
 import type { Privacy } from "~/reducers/types";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
@@ -30,7 +29,6 @@ type OwnProps = {
 };
 
 type Props = OwnProps & {
-  t: TFunction;
   colors: Theme["colors"];
 };
 
@@ -89,7 +87,8 @@ const FormFooter = ({
   );
 };
 
-const AuthScreen: React.FC<Props> = ({ t, privacy, biometricsError, lock, unlock, colors }) => {
+const AuthScreen: React.FC<Props> = ({ privacy, biometricsError, lock, unlock, colors }) => {
+  const { t } = useTranslation();
   const [passwordError, setPasswordError] = useState<Error | null | undefined>(null);
   const [password, setPassword] = useState<string>("");
   const [passwordFocused, setPasswordFocused] = useState<boolean>(false);
@@ -193,7 +192,7 @@ const AuthScreen: React.FC<Props> = ({ t, privacy, biometricsError, lock, unlock
   );
 };
 
-export default compose<React.ComponentType<OwnProps>>(withTranslation(), withTheme)(AuthScreen);
+export default compose<React.ComponentType<OwnProps>>(withTheme)(AuthScreen);
 
 const styles = StyleSheet.create({
   root: {
