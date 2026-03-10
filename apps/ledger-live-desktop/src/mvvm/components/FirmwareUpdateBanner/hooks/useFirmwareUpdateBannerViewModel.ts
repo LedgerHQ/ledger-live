@@ -8,13 +8,13 @@ import { track } from "~/renderer/analytics/segment";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";
 import { getEnv } from "@ledgerhq/live-env";
-import { getDeviceIcon } from "LLD/utils/getDeviceIcon";
+import { DeviceIconComponent, getDeviceIcon } from "LLD/utils/getDeviceIcon";
 
 export type FirmwareUpdateBannerViewModelResult =
   | { kind: "hidden" }
   | {
       kind: "topbar-button";
-      deviceIcon: React.ComponentType<{ size?: number }>;
+      deviceIcon: DeviceIconComponent;
       onClick: () => void;
       buttonLabel: string;
     }
@@ -71,10 +71,7 @@ export function useFirmwareUpdateBannerViewModel(props: {
     navigate(`/manager?${search}`);
   }, [navigate, shouldDisplayWallet40MainNav]);
 
-  const deviceIcon = useMemo(
-    () => getDeviceIcon(currentDevice?.modelId),
-    [currentDevice?.modelId],
-  );
+  const deviceIcon = useMemo(() => getDeviceIcon(currentDevice?.modelId), [currentDevice?.modelId]);
 
   const visibleFirmwareVersion =
     process.env.DEBUG_FW_VERSION ??
@@ -92,11 +89,7 @@ export function useFirmwareUpdateBannerViewModel(props: {
     };
   }
 
-  if (
-    !visibleFirmwareVersion ||
-    (!right && inManager) ||
-    hideBannerForMocks
-  ) {
+  if (!visibleFirmwareVersion || (!right && inManager) || hideBannerForMocks) {
     return { kind: "hidden" };
   }
 
