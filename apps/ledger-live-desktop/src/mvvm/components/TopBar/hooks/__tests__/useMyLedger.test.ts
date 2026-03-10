@@ -18,13 +18,6 @@ jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const mockDispatch = jest.fn();
-
-jest.mock("LLD/hooks/redux", () => ({
-  ...jest.requireActual("LLD/hooks/redux"),
-  useDispatch: () => mockDispatch,
-}));
-
 const defaultSettings = {
   discreetMode: false,
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
