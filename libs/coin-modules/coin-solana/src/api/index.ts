@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type SolanaConfig } from "../config";
-import { broadcast, combine, craftTransaction, getBalance, lastBlock } from "../logic";
+import { broadcast, combine, craftTransaction, estimateFees, getBalance, lastBlock } from "../logic";
 import { getChainAPI, type Config } from "../network";
 
 export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaApi {
@@ -32,12 +32,8 @@ export function createApi(config: SolanaConfig & { endpoint: string }): AlpacaAp
     ) => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: (
-      _intent: TransactionIntent,
-      _customFeesParameters?: FeeEstimation["parameters"],
-    ) => {
-      throw new Error("estimateFees is not supported");
-    },
+    estimateFees: (intent: TransactionIntent, customFeesParameters?: FeeEstimation["parameters"]) =>
+      estimateFees(api, intent, customFeesParameters),
     getBalance: (address: string) => getBalance(api, address),
     lastBlock: () => lastBlock(api),
     listOperations: (_address: string, _opts: ListOperationsOptions) => {
