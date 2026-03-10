@@ -35,6 +35,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useStartExchangeAction } from "../hooks/useConnectAppAction";
+import { useSyncAccountsById } from "~/renderer/hooks/useSyncAccountsById";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.neutral.c40};
@@ -71,6 +72,7 @@ export const LiveAppDrawer = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
+  const syncAccountsById = useSyncAccountsById();
 
   // @ts-expect-error how to type payload?
   const {
@@ -211,10 +213,22 @@ export const LiveAppDrawer = () => {
       }
       case "EXCHANGE_COMPLETE": {
         if (data && isCompleteExchangeData(data)) {
-          // Wrap onResult to track completion
           const wrappedData = {
             ...data,
             onResult: (operation: Operation) => {
+              const fromId =
+                data.exchange.fromAccount.type === "TokenAccount"
+                  ? data.exchange.fromParentAccount?.id
+                  : data.exchange.fromAccount.id;
+              const ids = fromId ? [fromId] : [];
+              if ("toAccount" in data.exchange && data.exchange.toAccount) {
+                const toId =
+                  data.exchange.toAccount.type === "TokenAccount"
+                    ? data.exchange.toParentAccount?.id
+                    : data.exchange.toAccount.id;
+                if (toId) ids.push(toId);
+              }
+              syncAccountsById(ids);
               setExchangeCompleted(true);
               data.onResult(operation);
             },
@@ -236,6 +250,7 @@ export const LiveAppDrawer = () => {
     action,
     dispatch,
     setExchangeCompleted,
+    syncAccountsById,
   ]);
 
   return (
