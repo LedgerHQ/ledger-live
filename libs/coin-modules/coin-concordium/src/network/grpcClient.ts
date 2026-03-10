@@ -132,8 +132,8 @@ function createGrpcClient(currencyId: string): GRPCClient {
   const { grpcUrl: address, grpcPort: port } = coinConfig.getCoinConfig(currencyId);
 
   try {
-    const protoPath = join(__dirname, "proto/v2/concordium/service.proto");
-    const protoDir = join(__dirname, "proto");
+    const protoPath = join(__dirname, "../../proto/v2/concordium/service.proto");
+    const protoDir = join(__dirname, "../../proto");
 
     const packageDefinition = protoLoader.loadSync(protoPath, {
       keepCase: false,
