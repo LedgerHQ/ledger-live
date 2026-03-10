@@ -1,5 +1,6 @@
-import {
-  type Api,
+import type {
+  Api,
+  BroadcastConfig,
   Balance,
   Block,
   BlockInfo,
@@ -20,7 +21,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
+import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,

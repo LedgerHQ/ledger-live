@@ -1,5 +1,6 @@
-import {
+import type {
   AlpacaApi,
+  BroadcastConfig,
   Block,
   BlockInfo,
   Cursor,
@@ -13,7 +14,6 @@ import {
   TransactionIntent,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,

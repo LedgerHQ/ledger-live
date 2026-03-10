@@ -1,4 +1,4 @@
-import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
 import { isValidAddress } from "./wallet-btc/utils";
 import { Currency } from "./wallet-btc";
 

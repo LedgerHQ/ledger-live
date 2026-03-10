@@ -1,4 +1,4 @@
-import type { BroadcastConfig } from "@ledgerhq/types-live";
+import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
 import { TX, Address, Block } from "../storage/types";
 
 export type NetworkInfoResponse = {
