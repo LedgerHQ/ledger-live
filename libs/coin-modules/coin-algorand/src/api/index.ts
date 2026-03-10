@@ -59,5 +59,8 @@ export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported for Algorand");
     },
+    validateTransaction: (_signature: string): Promise<{ error: Error | undefined }> => {
+      throw new Error("validateTransaction is not supported");
+    },
   };
 }

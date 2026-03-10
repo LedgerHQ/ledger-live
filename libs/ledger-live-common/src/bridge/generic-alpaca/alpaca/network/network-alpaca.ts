@@ -210,4 +210,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateTransaction: (_signature: string): Promise<{ error: Error | undefined }> => {
+       throw new Error("validateTransaction is not supported");
+    },
   }) satisfies Api<any>;

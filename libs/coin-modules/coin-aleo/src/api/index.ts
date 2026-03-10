@@ -101,5 +101,8 @@ export function createApi(
     getSequence: async (_address: string) => {
       throw new Error("getSequence is not supported");
     },
+    validateTransaction: (_signature: string): Promise<{ error: Error | undefined }> => {
+      throw new Error("validateTransaction is not supported");
+    },
   };
 }

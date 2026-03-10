@@ -675,6 +675,14 @@ export type AlpacaApi<
    * @throws if the transaction is rejected by the network (e.g., invalid signature, insufficient funds)
    */
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
+
+  /**
+   * Validate a transaction signature.
+   *
+   * @param signature the transaction signature
+   * @returns { error: Error | undefined } object with the error if the transaction is invalid, undefined if the transaction is valid
+   */
+  validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
 };
 
 export type ChainSpecificRules = {
@@ -699,7 +707,7 @@ export type BridgeApi<
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-  validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
+  // validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
 };
 
 export type Api<

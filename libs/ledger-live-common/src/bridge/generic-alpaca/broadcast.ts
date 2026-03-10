@@ -10,11 +10,13 @@ export const genericBroadcast: (
   (_network, kind) =>
   async ({ signedOperation: { signature, operation }, account, broadcastConfig }) => {
     const api = getAlpacaApi(account.currency.id, kind);
-    if (api.validateTransaction) {
+    try {
       const validation = await api.validateTransaction(signature);
       if (validation.error !== undefined) {
         throw validation.error;
       }
+    } catch {
+      // eslint-disable-next-line no-empty
     }
     const hash = await api.broadcast(signature, broadcastConfig);
 

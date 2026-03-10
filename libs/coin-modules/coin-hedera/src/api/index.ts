@@ -231,5 +231,8 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
     getSequence: async (_address): Promise<bigint> => {
       throw new Error("getSequence is not supported");
     },
+    validateTransaction: (_signature: string): Promise<{ error: Error | undefined }> => {
+      throw new Error("validateTransaction is not supported");
+    },
   };
 }
