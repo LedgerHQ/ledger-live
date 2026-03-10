@@ -12,4 +12,32 @@ export const abiEncodeTrc20Transfer = (address: string, amount: BigNumber): stri
   return encodedAddress.concat(encodedAmount);
 };
 
+const TRC20_TRANSFER_SELECTOR = "a9059cbb";
+const HEX_REGEX = /^[0-9a-fA-F]+$/;
+
+export type Trc20TransferData = {
+  to: string;
+  amount: BigNumber;
+};
+
+export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null => {
+  const cleanData = data.startsWith("0x") ? data.slice(2) : data;
+  if (cleanData.length < 8 + 64 + 64) return null;
+  if (!HEX_REGEX.test(cleanData)) return null;
+
+  const selector = cleanData.slice(0, 8).toLowerCase();
+  if (selector !== TRC20_TRANSFER_SELECTOR) return null;
+
+  const toHex = cleanData.slice(8, 72);
+  const amountHex = cleanData.slice(72, 136);
+  const addressHex = toHex.slice(24);
+  if (addressHex.length !== 40) return null;
+
+  const to = "41" + addressHex;
+  const amount = new BigNumber(amountHex, 16);
+  if (amount.isNaN()) return null;
+
+  return { to, amount };
+};
+
 export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toString("ascii");
