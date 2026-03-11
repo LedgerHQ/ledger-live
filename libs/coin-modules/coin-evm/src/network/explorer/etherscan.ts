@@ -722,6 +722,7 @@ export const getOperations = makeLRUCache<
             : JSON.stringify(err);
       throw new InvalidExplorerResponse(`${currency.name} - ${message}`, {
         currencyName: currency.name,
+        cause: err,
       });
     }
   },
