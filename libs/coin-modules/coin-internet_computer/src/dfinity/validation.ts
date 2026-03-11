@@ -12,7 +12,7 @@ export function validateAddress(address: string): { isValid: boolean; error?: st
   try {
     // Let the dfinity library handle checksum validation
     const accId = AccountIdentifier.fromHex(address);
-    if (!accId || !accId.toHex()) {
+    if (!accId?.toHex()) {
       return { isValid: false, error: defaultError };
     }
 

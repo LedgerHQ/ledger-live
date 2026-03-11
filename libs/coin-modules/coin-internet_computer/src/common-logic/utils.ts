@@ -7,7 +7,7 @@ const validBase64RegExp = new RegExp(
 );
 
 export const getPath = (path: string): string =>
-  path && path.substring(0, 2) !== "m/" ? `m/${path}` : path;
+  path && !path.startsWith("m/") ? `m/${path}` : path;
 
 export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg);
 export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg);

@@ -1,7 +1,7 @@
 import { AccountIdentifier } from "@icp-sdk/canisters/ledger/icp";
-import { Cbor, Expiry, SubmitRequestType } from "@icp-sdk/core/agent";
+import { Expiry, SubmitRequestType } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
-export { Cbor };
+export { Cbor } from "@icp-sdk/core/agent";
 import { ledgerIdlFactory, getCanisterIdlFunc, encodeCanisterIdlFunc } from "./candid";
 import {
   ICP_FEES,

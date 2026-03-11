@@ -1,8 +1,6 @@
 import type { IcpIndexDid } from "@icp-sdk/canisters/ledger/icp";
 import { IDL } from "@icp-sdk/core/candid";
 import invariant from "invariant";
-import { idlFactory as indexIdlFactory } from "./idl/index.idl";
-import { idlFactory as ledgerIdlFactory } from "./idl/ledger.idl";
 
 /** Extract the value from a Candid optional ([] = None, [v] = Some(v)). */
 export const fromNullable = <T>(value: [] | [T]): T | undefined => value?.[0];
@@ -42,7 +40,8 @@ export const decodeCanisterIdlFunc = <T>(func: IDL.FuncClass, buffer: Uint8Array
   return IDL.decode(func.retTypes, buffer) as T;
 };
 
-export { ledgerIdlFactory, indexIdlFactory };
+export { idlFactory as ledgerIdlFactory } from "./idl/ledger.idl";
+export { idlFactory as indexIdlFactory } from "./idl/index.idl";
 export { Principal } from "@icp-sdk/core/principal";
 export type GetAccountIdentifierTransactionsResponse =
   IcpIndexDid.GetAccountIdentifierTransactionsResponse;

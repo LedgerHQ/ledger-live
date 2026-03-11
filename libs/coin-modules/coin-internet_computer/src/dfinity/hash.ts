@@ -1,7 +1,7 @@
 /**
  * Hash and CBOR encoding utilities for Internet Computer transactions
  */
-import crypto from "crypto";
+import crypto from "node:crypto";
 import cbor from "cbor";
 
 /**

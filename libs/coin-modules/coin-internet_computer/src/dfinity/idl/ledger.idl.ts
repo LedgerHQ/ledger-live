@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/ban-ts-comment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, prettier/prettier */
 // @ts-nocheck
 
 // Vendored from @icp-sdk/canisters/declarations/ledger-icp/ledger.idl.js
