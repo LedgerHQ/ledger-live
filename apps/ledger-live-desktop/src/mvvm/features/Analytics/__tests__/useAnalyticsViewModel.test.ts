@@ -16,7 +16,12 @@ jest.mock("../hooks/useAllocationData", () => ({
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
-const defaultAllocation = { items: [], totalCount: 0 };
+const defaultAllocation = {
+  items: [],
+  hasMore: false,
+  showMore: jest.fn(),
+  onItemClick: jest.fn(),
+};
 
 describe("useAnalyticsViewModel", () => {
   beforeEach(() => {
@@ -61,8 +66,10 @@ describe("useAnalyticsViewModel", () => {
     mockedUseNavigate.mockReturnValue(navigate);
 
     const mockAllocation = {
-      items: [{ currency: { id: "bitcoin" }, balance: 100, value: 50000, distribution: 60 }],
-      totalCount: 1,
+      items: [{ currency: { id: "bitcoin" }, balance: 100, distribution: 60 }],
+      hasMore: false,
+      showMore: jest.fn(),
+      onItemClick: jest.fn(),
     };
     mockUseAllocationData.mockReturnValue(mockAllocation);
 
