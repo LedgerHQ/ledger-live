@@ -1,5 +1,5 @@
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
-import { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
 import { AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
@@ -7,9 +7,11 @@ import { convertAction, type Action } from "./types";
 import { getAccountIdFromWalletAccountId } from "../converters";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "@ledgerhq/coin-framework/account/index";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { AppResult } from "../../hw/actions/app";
 import { Device } from "../../hw/actions/types";
+import { withDevice } from "../../hw/deviceAccess";
+import { isDmkTransport } from "../../hw/dmkUtils";
 
 export type PerpsUiHooks = {
   "device.select": (params: {
@@ -82,37 +84,27 @@ export const handlers = ({
       // CALL Cal Service
       const certificate = await calService.getCertificate(device.modelId, "perps_data");
 
-      // Locate the already-discovered DMK device matching the selected deviceId
-      const availableDevices = await firstValueFrom(dmk.listenToAvailableDevices({}));
-      console.log("PERPS server device:", device, availableDevices);
-      // const discoveredDevice: DiscoveredDevice | undefined = availableDevices.find(
-      //   d => d.id === device.deviceId,
-      // );
-      const discoveredDevice = availableDevices[0];
-      if (!discoveredDevice) {
-        throw new ServerError(createUnknownError({ message: "Selected device not found in DMK" }));
-      }
 
-      // Open a DMK session for the selected device
-      const sessionId = await dmk.connect({
-        device: discoveredDevice,
-        sessionRefresherOptions: { isRefresherDisabled: true },
-      });
+      return firstValueFrom(
+        withDevice(device.deviceId, device.deviceName ?  { matchDeviceByName: device.deviceName } : undefined)(transport => from(
+          (async () => {
+            if (!isDmkTransport(transport)) {
+              throw new Error("Not DMK transport");
+            }
+            const { dmk, sessionId } = transport;
 
-      // CALL HyperLiquid Signer
-      const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
-      try {
-        const signatures = await hyperliquidSigner.signActions(
-          derivationPath,
-          convertCertificateToDeviceData(certificate),
-          new Uint8Array(Buffer.from(params.metadataWithSignature, "hex")),
-          params.actions.map(convertAction),
-        );
+            const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
+            const signatures = await hyperliquidSigner.signActions(
+              derivationPath,
+              convertCertificateToDeviceData(certificate),
+              new Uint8Array(Buffer.from(params.metadataWithSignature, "hex")),
+              params.actions.map(convertAction),
+            );
 
-        return { signatures };
-      } finally {
-        await dmk.disconnect({ sessionId });
-      }
+            return { signatures };
+          })(),
+        ))
+      );
     }),
   };
 };
