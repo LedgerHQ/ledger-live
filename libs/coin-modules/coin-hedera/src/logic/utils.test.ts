@@ -10,6 +10,7 @@ import {
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   OP_TYPES_EXCLUDING_FEES,
+  STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -85,6 +86,7 @@ import {
   millisToSeconds,
   nanosToSeconds,
   secondsToNanos,
+  createStakingRewardOperationHash,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -1659,6 +1661,15 @@ describe("logic utils", () => {
 
     it("preserves nanosecond precision", () => {
       expect(nanosToSeconds(1_000_000_001)).toEqual(new BigNumber(1.000000001));
+    });
+  });
+
+  describe("createStakingRewardOperationHash", () => {
+    it("appends the staking reward suffix to the given hash", () => {
+      const hash = "0.0.12345-1234567890-123456789";
+      const result = createStakingRewardOperationHash(hash);
+
+      expect(result).toBe(`${hash}${STAKING_REWARD_HASH_SUFFIX}`);
     });
   });
 });

@@ -667,7 +667,7 @@ describe("listOperationsV2", () => {
     expect(result.coinOperations).toMatchObject([
       {
         type: "REWARD",
-        hash: `${mockTransaction.transaction_hash}-staking-reward`,
+        hash: utils.createStakingRewardOperationHash(mockTransaction.transaction_hash ?? ""),
         value: new BigNumber(1000000),
         fee: new BigNumber(0),
         senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],
@@ -754,7 +754,7 @@ describe("listOperationsV2", () => {
     expect(result.coinOperations).toEqual([
       expect.objectContaining({
         type: "REWARD",
-        hash: `${mockMirrorTransaction.transaction_hash}-staking-reward`,
+        hash: utils.createStakingRewardOperationHash(mockMirrorTransaction.transaction_hash ?? ""),
         value: new BigNumber(mockRewardAmount),
       }),
       expect.objectContaining({

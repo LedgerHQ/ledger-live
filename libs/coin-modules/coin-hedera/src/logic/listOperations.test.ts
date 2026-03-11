@@ -21,6 +21,9 @@ describe("listOperations", () => {
     (utils.getMemoFromBase64 as jest.Mock).mockImplementation(memo =>
       memo ? `decoded-${memo}` : null,
     );
+    (utils.createStakingRewardOperationHash as jest.Mock).mockImplementation(
+      hash => `${hash}-reward`,
+    );
     (encodeOperationId as jest.Mock).mockImplementation(
       (accountId, hash, type) => `${accountId}-${hash}-${type}`,
     );
@@ -41,7 +44,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "asc",
       mirrorTokens: [],
@@ -93,7 +95,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -167,7 +168,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -227,7 +227,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -289,7 +288,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -315,7 +313,6 @@ describe("listOperations", () => {
     await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 20,
       order: "asc",
       cursor: "1625097500.000000000",
@@ -366,7 +363,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -408,7 +404,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -426,7 +421,7 @@ describe("listOperations", () => {
     expect(result.coinOperations).toMatchObject([
       {
         type: "REWARD",
-        hash: `${mockTransaction.transaction_hash}-staking-reward`,
+        hash: utils.createStakingRewardOperationHash(mockTransaction.transaction_hash ?? ""),
         value: new BigNumber(1000000),
         fee: new BigNumber(0),
         senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],

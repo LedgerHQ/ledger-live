@@ -25,6 +25,7 @@ import {
   TINYBAR_SCALE,
   OP_TYPES_EXCLUDING_FEES,
   HEDERA_TRANSACTION_NAMES,
+  STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -781,4 +782,8 @@ export function secondsToNanos(seconds: number | BigNumber): BigNumber {
 
 export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
   return new BigNumber(nanos).dividedBy(10 ** 9);
+}
+
+export function createStakingRewardOperationHash(hash: string): string {
+  return `${hash}${STAKING_REWARD_HASH_SUFFIX}`;
 }
