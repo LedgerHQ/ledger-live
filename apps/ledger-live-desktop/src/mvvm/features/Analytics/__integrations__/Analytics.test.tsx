@@ -2,6 +2,8 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import Analytics from "../index";
 import useAnalyticsViewModel from "../useAnalyticsViewModel";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { AllocationViewProps } from "../types";
 
 jest.mock("../useAnalyticsViewModel");
 const mockedUseAnalyticsViewModel = useAnalyticsViewModel as jest.Mock;
@@ -13,11 +15,24 @@ jest.mock("~/renderer/screens/dashboard/GlobalSummary", () => ({
 
 const mockNavigateToDashboard = jest.fn();
 
+const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+
+const emptyAllocation: AllocationViewProps = { items: [], totalCount: 0 };
+
+const populatedAllocation: AllocationViewProps = {
+  items: [
+    { currency: bitcoin, balance: 100000, value: 60000, distribution: 60 },
+    { currency: ethereum, balance: 50000, value: 30000, distribution: 30 },
+  ],
+  totalCount: 2,
+};
+
 const defaultViewModel = {
   counterValue: { ticker: "USD", name: "US Dollar" },
   selectedTimeRange: "month",
-  t: (key: string) => key,
   navigateToDashboard: mockNavigateToDashboard,
+  allocation: emptyAllocation,
 };
 
 describe("Analytics", () => {
@@ -29,7 +44,7 @@ describe("Analytics", () => {
   it("should render the Analytics page with header and balance summary", () => {
     render(<Analytics />);
 
-    expect(screen.getByText("analytics.title")).toBeVisible();
+    expect(screen.getByText("Analytics")).toBeVisible();
     expect(screen.getByTestId("analytics-chart")).toBeVisible();
   });
 
@@ -37,10 +52,63 @@ describe("Analytics", () => {
     const { user } = render(<Analytics />);
 
     const backButton = screen.getByRole("button");
-    expect(backButton).toBeInTheDocument();
-
     await user.click(backButton);
 
     expect(mockNavigateToDashboard).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not render allocation section when shouldDisplayAssetSection is false", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: false,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.queryByText("Asset allocation")).not.toBeInTheDocument();
+  });
+
+  it("should render allocation table with asset details when shouldDisplayAssetSection is true", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+      allocation: populatedAllocation,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.getByText("Asset allocation")).toBeVisible();
+    expect(screen.getByText("Bitcoin")).toBeVisible();
+    expect(screen.getByText("BTC")).toBeVisible();
+    expect(screen.getByText("Ethereum")).toBeVisible();
+    expect(screen.getByText("ETH")).toBeVisible();
+  });
+
+  it("should render column headers in allocation table", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+      allocation: populatedAllocation,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.getByText("Name")).toBeVisible();
+    expect(screen.getByText("Balance")).toBeVisible();
+    expect(screen.getByText("Value")).toBeVisible();
+    expect(screen.getByText("Allocation")).toBeVisible();
+  });
+
+  it("should render formatted distribution percentages", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+      allocation: populatedAllocation,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.getByText("60%")).toBeVisible();
+    expect(screen.getByText("30%")).toBeVisible();
   });
 });

@@ -9,13 +9,22 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(),
 }));
 
+const mockUseAllocationData = jest.fn();
+jest.mock("../hooks/useAllocationData", () => ({
+  useAllocationData: (...args: unknown[]) => mockUseAllocationData(...args),
+}));
+
 const mockedUseNavigate = jest.mocked(useNavigate);
+
+const defaultAllocation = { items: [], totalCount: 0 };
+
 describe("useAnalyticsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseAllocationData.mockReturnValue(defaultAllocation);
   });
 
-  it("returns expected values and navigates back to dashboard", () => {
+  it("should return expected values and navigate back to dashboard", () => {
     const navigate = jest.fn();
     mockedUseNavigate.mockReturnValue(navigate);
 
@@ -45,5 +54,22 @@ describe("useAnalyticsViewModel", () => {
     });
 
     expect(navigate).toHaveBeenCalledWith("/");
+  });
+
+  it("should expose allocation data from useAllocationData", () => {
+    const navigate = jest.fn();
+    mockedUseNavigate.mockReturnValue(navigate);
+
+    const mockAllocation = {
+      items: [{ currency: { id: "bitcoin" }, balance: 100, value: 50000, distribution: 60 }],
+      totalCount: 1,
+    };
+    mockUseAllocationData.mockReturnValue(mockAllocation);
+
+    const { result } = renderHook(() => useAnalyticsViewModel(), {
+      initialState: { settings: { ...INITIAL_STATE } },
+    });
+
+    expect(result.current.allocation).toBe(mockAllocation);
   });
 });
