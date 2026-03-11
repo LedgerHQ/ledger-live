@@ -1,17 +1,16 @@
+/**
+ * @jest-environment jsdom
+ */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { renderHook } from "@testing-library/react";
 import { BigNumber } from "bignumber.js";
-import { renderHook } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
-import {
-  useBitcoinUtxoDisplayData,
-  type UseBitcoinUtxoDisplayDataParams,
-} from "../useBitcoinUtxoDisplayData";
-import type { BitcoinAccount, BitcoinOutput } from "@ledgerhq/live-common/families/bitcoin/types";
-import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { createFixtureAccount } from "mock/fixtures/cryptoCurrencies";
+import type { Transaction, TransactionStatus } from "../../generated/types";
+import { useBitcoinUtxoDisplayData, type UseBitcoinUtxoDisplayDataParams } from "./react";
+import type { BitcoinAccount, BitcoinOutput } from "./types";
+import { bitcoinPickingStrategy } from "./types";
 
-jest.mock("@ledgerhq/live-common/families/bitcoin/logic", () => ({
+jest.mock("./logic", () => ({
   getUTXOStatus: jest.fn(),
 }));
 
@@ -19,19 +18,13 @@ jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
 }));
 
-const getUTXOStatus = jest.requireMock(
-  "@ledgerhq/live-common/families/bitcoin/logic",
-).getUTXOStatus;
+const getUTXOStatus = jest.requireMock("./logic").getUTXOStatus;
 
 function createBitcoinAccount(overrides?: Partial<BitcoinAccount>): BitcoinAccount {
-  const currency = getCryptoCurrencyById("bitcoin");
-  const account = createMockAccount({
-    id: "bitcoin-account",
-    currency,
-    blockHeight: 800000,
+  return {
+    ...createFixtureAccount("bitcoin"),
     ...overrides,
-  });
-  return account as BitcoinAccount;
+  } as BitcoinAccount;
 }
 
 function createUtxo(overrides?: Partial<BitcoinOutput>): BitcoinOutput {
@@ -80,10 +73,7 @@ describe("useBitcoinUtxoDisplayData", () => {
   });
 
   it("should return null when account is not Bitcoin-based", () => {
-    const account = createMockAccount({
-      id: "eth-account",
-      currency: getCryptoCurrencyById("ethereum"),
-    });
+    const account = createFixtureAccount("ethereum");
     const params: UseBitcoinUtxoDisplayDataParams = {
       account,
       transaction: createBitcoinTransaction(),
@@ -98,10 +88,7 @@ describe("useBitcoinUtxoDisplayData", () => {
   });
 
   it("should return null when account has no bitcoinResources", () => {
-    const account = createMockAccount({
-      id: "bitcoin-account",
-      currency: getCryptoCurrencyById("bitcoin"),
-    });
+    const account = createFixtureAccount("bitcoin");
     const params: UseBitcoinUtxoDisplayDataParams = {
       account,
       transaction: createBitcoinTransaction(),
@@ -116,9 +103,7 @@ describe("useBitcoinUtxoDisplayData", () => {
 
   it("should return null when transaction has no utxoStrategy", () => {
     const account = createBitcoinAccount({
-      bitcoinResources: {
-        utxos: [createUtxo()],
-      },
+      bitcoinResources: { utxos: [createUtxo()] },
     });
     const transactionWithoutStrategy = {
       ...createBitcoinTransaction(),
@@ -138,9 +123,7 @@ describe("useBitcoinUtxoDisplayData", () => {
 
   it("should return null when status has no txInputs (not Bitcoin transaction status)", () => {
     const account = createBitcoinAccount({
-      bitcoinResources: {
-        utxos: [createUtxo()],
-      },
+      bitcoinResources: { utxos: [createUtxo()] },
     });
     const statusWithoutTxInputs = createBitcoinStatus();
     delete (statusWithoutTxInputs as Record<string, unknown>).txInputs;
@@ -158,9 +141,7 @@ describe("useBitcoinUtxoDisplayData", () => {
 
   it("should return null when bitcoinResources has no utxos", () => {
     const account = createBitcoinAccount({
-      bitcoinResources: {
-        utxos: [],
-      },
+      bitcoinResources: { utxos: [] },
     });
     const params: UseBitcoinUtxoDisplayDataParams = {
       account,
@@ -177,9 +158,7 @@ describe("useBitcoinUtxoDisplayData", () => {
   it("should return display data with correct shape when all conditions are met", () => {
     const utxo = createUtxo();
     const account = createBitcoinAccount({
-      bitcoinResources: {
-        utxos: [utxo],
-      },
+      bitcoinResources: { utxos: [utxo] },
       blockHeight: 800000,
     });
     const transaction = createBitcoinTransaction();
@@ -211,9 +190,7 @@ describe("useBitcoinUtxoDisplayData", () => {
     const utxo1 = createUtxo({ outputIndex: 0 });
     const utxo2 = createUtxo({ hash: "def456", outputIndex: 1 });
     const account = createBitcoinAccount({
-      bitcoinResources: {
-        utxos: [utxo1, utxo2],
-      },
+      bitcoinResources: { utxos: [utxo1, utxo2] },
     });
     (getUTXOStatus as jest.Mock).mockImplementation((u: BitcoinOutput) => ({
       excluded: u.outputIndex === 1,

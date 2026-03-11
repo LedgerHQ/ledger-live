@@ -97,6 +97,11 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     [viewModel, selectorBottomSheetRef],
   );
 
+  const handleSelectCoinControl = useCallback(() => {
+    viewModel.onSelectCoinControl?.();
+    selectorBottomSheetRef.current?.dismiss();
+  }, [viewModel, selectorBottomSheetRef]);
+
   const handleCloseInfo = useCallback(() => {
     infoBottomSheetRef.current?.dismiss();
   }, [infoBottomSheetRef]);
@@ -201,11 +206,8 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
             </Pressable>
           ) : null}
 
-          {viewModel.uiConfig?.hasCoinControl ? (
-            <Pressable
-              style={styles.presetOption}
-              onPress={() => handleSelectStrategy("coinControl")}
-            >
+          {viewModel.uiConfig?.hasCoinControl && viewModel.onSelectCoinControl ? (
+            <Pressable style={styles.presetOption} onPress={handleSelectCoinControl}>
               <View style={styles.presetLeft}>
                 <Text typography="body2SemiBold" lx={{ color: "base" }}>
                   {t("send.fees.coinControl")}

@@ -23,6 +23,7 @@ export function AmountScreen() {
         transactionActions={viewModel.transactionActions}
         onReview={viewModel.onReview}
         onGetFunds={viewModel.onGetFunds}
+        onSelectCoinControl={viewModel.onSelectCoinControl}
       />
     </SendFlowLayout>
   );

@@ -1,12 +1,8 @@
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
-import type { ChangeEvent } from "react";
-import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { useMemo } from "react";
+import { useMaybeAccountUnit } from "~/hooks";
 import { useCoinControlAmountInput as useCoinControlAmountInputCommon } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput";
 
 type UseAmountInputParams = Readonly<{
@@ -33,23 +29,11 @@ export function useCoinControlAmountInput({
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
 
-  const common = useCoinControlAmountInputCommon({
+  return useCoinControlAmountInputCommon({
     transaction,
     status,
     onUpdateTransaction,
     locale,
     accountUnit,
   });
-
-  const onAmountChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      common.onAmountChange(event.target.value);
-    },
-    [common],
-  );
-
-  return {
-    ...common,
-    onAmountChange,
-  };
 }

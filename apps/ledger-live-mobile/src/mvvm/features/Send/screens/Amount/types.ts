@@ -1,3 +1,5 @@
+import { NetworkFeesViewModel } from "../../types";
+
 export type AmountScreenMessage = Readonly<{
   type: "error" | "warning" | "info";
   error: Error;
@@ -28,20 +30,6 @@ export type AmountInputViewModel = Readonly<{
   isTyping: boolean;
   onChangeText: (text: string) => void;
   onToggleMode: () => void;
-}>;
-
-export type NetworkFeesViewModel = Readonly<{
-  label: string;
-  value: string;
-  strategyLabel: string;
-  showFeePresets: boolean;
-  selectedFeeStrategy: string | null;
-  feePresetOptions: readonly FeePresetOption[];
-  onSelectFeeStrategy: (strategy: string) => void;
-  uiConfig?: Readonly<{
-    hasCustomFees: boolean;
-    hasCoinControl: boolean;
-  }>;
 }>;
 
 export type QuickActionsViewModel = Readonly<{

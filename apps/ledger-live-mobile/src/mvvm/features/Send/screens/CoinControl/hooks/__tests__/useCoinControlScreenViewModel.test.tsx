@@ -7,14 +7,14 @@ import { useCoinControlScreenViewModel } from "../useCoinControlScreenViewModel"
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
-import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
+import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/reducers/settings";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
-jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
+jest.mock("@ledgerhq/coin-framework/account/helpers");
 jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
 }));
-jest.mock("~/renderer/hooks/useAccountUnit", () => ({
+jest.mock("LLM/hooks/useAccountUnit", () => ({
   useMaybeAccountUnit: jest.fn(() => ({ magnitude: 8, code: "BTC", name: "Bitcoin" })),
 }));
 const defaultInitialState = {
@@ -24,7 +24,6 @@ const defaultInitialState = {
 const mockUpdateTransaction = jest.fn();
 const mockOnAmountChange = jest.fn();
 
-jest.mock("../../../../hooks/useInitialTransactionPreparation");
 jest.mock("../../../../hooks/useNetworkFees", () => ({
   useNetworkFees: () => ({
     feesRowLabel: "Network Fees",
@@ -65,18 +64,18 @@ jest.mock("@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmou
 jest.mock("~/config/urls", () => ({
   urls: { coinControl: "https://support.ledger.com/coin-control" },
 }));
-jest.mock("~/renderer/linking", () => ({
-  openURL: jest.fn(),
+jest.mock("react-native", () => ({
+  Linking: { openURL: jest.fn() },
 }));
 
 const { getMainAccount, getAccountCurrency } = jest.requireMock(
-  "@ledgerhq/ledger-wallet-framework/account/helpers",
+  "@ledgerhq/coin-framework/account/helpers",
 );
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
 const { useTranslatedBridgeError } = jest.requireMock(
   "../../../Recipient/hooks/useTranslatedBridgeError",
 );
-const { openURL: mockOpenURL } = jest.requireMock("~/renderer/linking");
+const { Linking } = jest.requireMock("react-native");
 
 function createBitcoinTransaction(overrides?: Partial<Transaction>): Transaction {
   return {
@@ -189,7 +188,7 @@ describe("useCoinControlScreenViewModel", () => {
     expect(result.current.enterAmountPlaceholder).toBeDefined();
     expect(result.current.amountToSendLabel).toBeDefined();
     expect(result.current.amountInputLabel).toBeDefined();
-    expect(result.current.networkFees.feesRowLabel).toBe("Network Fees");
+    expect(result.current.networkFees?.feesRowLabel ?? result.current.feesRowLabel).toBe("Network Fees");
   });
 
   it("should set reviewLabel to getCta when hasInsufficientFundsError", () => {
@@ -334,7 +333,7 @@ describe("useCoinControlScreenViewModel", () => {
 
     result.current.onLearnMoreClick();
 
-    expect(mockOpenURL).toHaveBeenCalledWith("https://support.ledger.com/coin-control");
+    expect(Linking.openURL).toHaveBeenCalledWith("https://support.ledger.com/coin-control");
   });
 
   it("should not call updateTransaction when onSelectStrategy receives invalid value", () => {

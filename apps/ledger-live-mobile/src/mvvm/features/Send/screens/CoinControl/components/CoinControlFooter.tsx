@@ -1,10 +1,10 @@
+import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Box, Button, Divider } from "@ledgerhq/lumen-ui-rnative";
 import React from "react";
-import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import { ChangeToReturn } from "./ChangeToReturn";
-import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
+import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { useSendFlowData } from "../../../context/SendFlowContext";
-import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
+import { NetworkFeesViewModel } from "../../../types";
+import { ChangeToReturn } from "./ChangeToReturn";
 
 type AmountFooterProps = Readonly<{
   changeToReturnFormatted: string;
@@ -23,13 +23,13 @@ export function CoinControlFooter({
   changeToReturnFormatted,
   changeToReturnLabel,
   enterAmountPlaceholder,
-  networkFees,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
   reviewLoading,
   onReview,
   onGetFunds,
+  networkFees,
 }: AmountFooterProps) {
   const { state } = useSendFlowData();
   const { account } = state.account;
@@ -39,45 +39,25 @@ export function CoinControlFooter({
     return null;
   }
 
-  const ctaTestId = reviewShowIcon ? "send-review-button" : "send-get-funds-button";
-
   return (
-    <DialogFooter data-testid="send-coin-control-footer" className="flex flex-col">
-      <div className="border-t border-muted-subtle" />
+    <Box lx={{ paddingVertical: "s8" }}>
+      <Divider />
       <ChangeToReturn
         value={changeToReturnFormatted}
         changeToReturnLabel={changeToReturnLabel}
         enterAmountPlaceholder={enterAmountPlaceholder}
       />
-      <NetworkFeesMenu
-        display={{
-          label: networkFees.feesRowLabel,
-          value: networkFees.feesRowValue,
-          strategyLabel: networkFees.feesRowStrategyLabel,
-        }}
-        selection={{
-          selectedStrategy: networkFees.selectedFeeStrategy,
-          onSelectStrategy: networkFees.onSelectFeeStrategy,
-        }}
-        presets={{
-          options: networkFees.feePresetOptions,
-          fiatByPreset: networkFees.fiatByPreset,
-          legendByPreset: networkFees.legendByPreset,
-        }}
-      />
+      <NetworkFeesRow viewModel={networkFees} />
       <Button
         appearance="base"
         size="lg"
-        isFull
-        onClick={reviewShowIcon ? onReview : onGetFunds}
+        onPress={reviewShowIcon ? onReview : onGetFunds}
         disabled={reviewDisabled}
         loading={reviewLoading}
         icon={reviewShowIcon ? LedgerLogo : undefined}
-        data-testid={ctaTestId}
-        className="rounded-full"
       >
         {reviewLoading ? "" : reviewLabel}
       </Button>
-    </DialogFooter>
+    </Box>
   );
 }

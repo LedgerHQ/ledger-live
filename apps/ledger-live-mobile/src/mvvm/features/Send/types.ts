@@ -2,6 +2,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { ReactNativeFlowStepConfig, ReactNativeFlowConfig } from "../FlowWizard/types";
 import type { SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { ScreenName } from "~/const";
+import { FeePresetOption } from "@ledgerhq/live-common/bridge/descriptor";
 
 export type SendStepConfig = ReactNativeFlowStepConfig<SendFlowStep> &
   Readonly<{
@@ -23,3 +24,18 @@ export type SendFlowStackParamList = {
 };
 
 export type SendFlowNavigationProp = NativeStackNavigationProp<SendFlowStackParamList>;
+
+export type NetworkFeesViewModel = Readonly<{
+  label: string;
+  value: string;
+  strategyLabel: string;
+  showFeePresets: boolean;
+  selectedFeeStrategy: string | null;
+  feePresetOptions: readonly FeePresetOption[];
+  onSelectFeeStrategy: (strategy: string) => void;
+  onSelectCoinControl?: () => void;
+  uiConfig?: Readonly<{
+    hasCustomFees: boolean;
+    hasCoinControl: boolean;
+  }>;
+}>;

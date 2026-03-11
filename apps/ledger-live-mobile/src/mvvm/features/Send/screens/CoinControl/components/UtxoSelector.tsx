@@ -8,10 +8,12 @@ import {
   Subheader,
   SubheaderRow,
   SubheaderTitle,
-} from "@ledgerhq/lumen-ui-react";
-import { Check } from "@ledgerhq/lumen-ui-react/symbols";
+  Box,
+} from "@ledgerhq/lumen-ui-rnative";
 import React from "react";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
+import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/flows/send/coinControl";
+import { ScrollView } from "react-native";
 
 type UtxoSelectorProps = Readonly<{
   utxoDisplayData: BitcoinUtxoDisplayData | null;
@@ -22,13 +24,13 @@ export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorP
   const rows = utxoDisplayData?.utxoRows ?? [];
 
   return (
-    <div className="flex flex-col gap-12">
+    <Box lx={{ flexDirection: "column", gap: "s12", flex: 1 }} style={{ minHeight: 0 }}>
       <Subheader>
         <SubheaderRow>
           <SubheaderTitle>{coinToSendLabel}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <div>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         {rows.map(row => (
           <ListItem key={`${row.utxo.hash}-${row.utxo.outputIndex}`} disabled={row.disabled}>
             <ListItemLeading>
@@ -44,7 +46,7 @@ export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorP
             )}
           </ListItem>
         ))}
-      </div>
-    </div>
+      </ScrollView>
+    </Box>
   );
 };
