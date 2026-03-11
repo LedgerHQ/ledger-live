@@ -10,6 +10,8 @@ Work through each phase sequentially. For each check, run the shell command, rep
 
 **CRITICAL SECURITY RULE**: NEVER print, log, or display the value of `SEED` or any secret. Only confirm whether it is set or not.
 
+**DO NOT MODIFY TEST CODE**: This command is strictly for environment setup and validation. Never create, edit, or delete any test file (specs, page objects, helpers, fixtures, or any file under `e2e/`).
+
 ---
 
 ## Phase 0: Platform Selection
@@ -93,7 +95,7 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
   ```
   export JAVA_HOME=$(/usr/libexec/java_home)
   export ANDROID_HOME=$HOME/Library/Android/sdk
-  export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin/sdkmanager:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
+  export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
   ```
 
 **Do not proceed to Phase 2 until all relevant checks pass.**
@@ -384,8 +386,8 @@ You're all set! Run tests from e2e/mobile/:
   # Android (release -- no bundler needed)
   pnpm test:android <testFile.spec.ts>
 
-  # All tests (release)
-  pnpm test:ios
+  # All tests (iOS debug / Android release)
+  pnpm test:ios:debug
   pnpm test:android
 ```
 

@@ -75,12 +75,12 @@ Follow the full wiki if you need setup details.
 
 ### 5. Run Tests
 
-All commands below are run from the `e2e/mobile/` directory.
+Test commands below are run from the `e2e/mobile/` directory.
 
 **iOS (debug)** -- requires the Metro bundler running in a separate terminal:
 
 ```bash
-# Terminal 1: start the bundler
+# Terminal 1: start the bundler (from repo root)
 pnpm mobile start
 
 # Terminal 2: run tests (from e2e/mobile/)
