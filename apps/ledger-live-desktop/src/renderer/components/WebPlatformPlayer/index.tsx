@@ -10,6 +10,7 @@ import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
+import { usePerpsHandlers } from "../WebPTXPlayer/PerpsHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -63,6 +64,8 @@ export default function WebPlatformPlayer({
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const { mobileView, setMobileView } = useMobileView();
 
+  const customPerpsHandlers = usePerpsHandlers(accounts);
+
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
@@ -70,8 +73,15 @@ export default function WebPlatformPlayer({
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
       ...props.customHandlers,
+      ...customPerpsHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers, props.customHandlers, customDeeplinkHandlers]);
+  }, [
+    customACREHandlers,
+    customPTXHandlers,
+    props.customHandlers,
+    customDeeplinkHandlers,
+    customPerpsHandlers,
+  ]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);

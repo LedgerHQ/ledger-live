@@ -10,7 +10,7 @@ import { getCachedNetworks } from "./networks";
 import { getProvidersCDNData, getProvidersData } from "./partners";
 import { findCachedToken } from "./tokens";
 
-export type { Device } from "./certificate";
+export { convertCertificateToDeviceData, type Device } from "./certificate";
 export type { CurrencyData } from "./currencies";
 export type { PartnerType, ExchangeProvider } from "./partners";
 export type { AdditionalProviderConfig } from "./partners/default";

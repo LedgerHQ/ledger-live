@@ -15,8 +15,8 @@ const DeviceModel = {
 } as const;
 export type Device = keyof typeof DeviceModel;
 
-type PublicKeyId = "domain_metadata_key" | "token_metadata_key";
-type PublicKeyUsage = "trusted_name" | "coin_meta";
+type PublicKeyId = "domain_metadata_key" | "token_metadata_key" | "yield";
+type PublicKeyUsage = "trusted_name" | "coin_meta" | "perps_data";
 
 type CertificateResponse = {
   id: string;
@@ -44,9 +44,31 @@ export type CertificateInfo = {
   descriptor: string;
   signature: string;
 };
+function hexToUint8Array(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  }
+  return bytes;
+}
+export function convertCertificateToDeviceData(info: CertificateInfo): Uint8Array {
+  const descriptorBytes = hexToUint8Array(info.descriptor);
+  const signatureBytes = hexToUint8Array(info.signature);
+
+  const result = new Uint8Array(descriptorBytes.length + 2 + signatureBytes.length);
+  let offset = 0;
+  result.set(descriptorBytes, offset);
+  offset += descriptorBytes.length;
+  result[offset++] = 0x15;
+  result[offset++] = signatureBytes.length;
+  result.set(signatureBytes, offset);
+  return result;
+}
 
 function publicKeyIdOf(usage: PublicKeyUsage): PublicKeyId {
   switch (usage) {
+    case "perps_data":
+      return "yield";
     case "trusted_name":
       return "domain_metadata_key";
     case "coin_meta":

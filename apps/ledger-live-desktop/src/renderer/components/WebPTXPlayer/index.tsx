@@ -11,6 +11,7 @@ import { usePTXCustomHandlers } from "./CustomHandlers";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { usePerpsHandlers } from "./PerpsHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -44,15 +45,18 @@ export default function WebPTXPlayer({ manifest, inputs, Loader, basePath }: Web
   const { mobileView, setMobileView } = useMobileView();
 
   const accounts = useSelector(flattenAccountsSelector);
+
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customPerpsHandlers = usePerpsHandlers(accounts);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
+      ...customPerpsHandlers,
     };
-  }, [customDeeplinkHandlers, customPTXHandlers]);
+  }, [customDeeplinkHandlers, customPTXHandlers, customPerpsHandlers]);
 
   return (
     <Container>
