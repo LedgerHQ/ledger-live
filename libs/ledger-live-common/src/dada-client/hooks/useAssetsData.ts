@@ -21,6 +21,7 @@ export function useAssetsData({
   search,
   currencyIds,
   useCase,
+  sortKey,
   areCurrenciesFiltered,
   product,
   version,
@@ -45,6 +46,7 @@ export function useAssetsData({
     {
       search,
       useCase,
+      sortKey,
       currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
       product,
       version,

@@ -4,7 +4,9 @@ import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getL
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import {
   modularDialogAreCurrenciesFilteredSelector,
+  modularDialogConfigurationSelector,
   modularDialogCurrenciesSelector,
+  modularDialogSortKeySelector,
   modularDialogUseCaseSelector,
   modularDrawerSearchedSelector,
 } from "~/renderer/reducers/modularDrawer";
@@ -26,6 +28,11 @@ export function useModularDialogData() {
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
   const useCase = useSelector(modularDialogUseCaseSelector);
   const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
+  const sortKey = useSelector(modularDialogSortKeySelector);
+  const dialogConfiguration = useSelector(modularDialogConfigurationSelector);
+
+  const customTitle = dialogConfiguration?.assets?.customTitle;
+  const customDescription = dialogConfiguration?.assets?.customDescription;
 
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,
@@ -33,6 +40,7 @@ export function useModularDialogData() {
     product: "lld",
     version: __APP_VERSION__,
     useCase,
+    sortKey,
     areCurrenciesFiltered,
     isStaging,
     includeTestNetworks: devMode,
@@ -80,5 +88,7 @@ export function useModularDialogData() {
     assetsSorted,
     sortedCryptoCurrencies,
     loadNext,
+    customTitle,
+    customDescription,
   };
 }

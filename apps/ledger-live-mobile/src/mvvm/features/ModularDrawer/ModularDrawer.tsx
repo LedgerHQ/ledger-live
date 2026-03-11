@@ -36,6 +36,8 @@ export type ModularDrawerProps = {
   readonly assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   /** Configuration for networks display */
   readonly networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  /** Sort key passed to the DADA API for asset ordering */
+  readonly sortKey?: string;
 
   // Account selection
   /** Callback fired when an account is selected */
@@ -59,6 +61,7 @@ export function ModularDrawer({
   currencies,
   assetsConfiguration,
   networksConfiguration,
+  sortKey,
   onAccountSelected,
   useCase,
   uiUseCase,
@@ -81,6 +84,7 @@ export function ModularDrawer({
       currencyIds: currencies,
       searchedValue: searchValue,
       useCase,
+      sortKey,
       areCurrenciesFiltered,
     },
   );

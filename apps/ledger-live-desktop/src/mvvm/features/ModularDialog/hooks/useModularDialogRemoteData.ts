@@ -25,6 +25,8 @@ export function useModularDialogRemoteData({
     loadingStatus,
     loadNext,
     assetsSorted,
+    customTitle,
+    customDescription,
   } = useModularDialogData();
 
   const { assetsToDisplay } = useAssetSelection(sortedCryptoCurrencies);
@@ -69,5 +71,7 @@ export function useModularDialogRemoteData({
     goBackToNetworkSelection,
     loadNext,
     assetsSorted,
+    customTitle,
+    customDescription,
   };
 }

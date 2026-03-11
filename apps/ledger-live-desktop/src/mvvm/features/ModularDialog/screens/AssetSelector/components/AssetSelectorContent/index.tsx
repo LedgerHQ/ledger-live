@@ -90,6 +90,7 @@ export const AssetSelectorContent = ({
         {
           formatAssetConfig: true,
           assetsConfig: assetsConfiguration,
+          // TODO: Check if we want to add custom title tracking at the top level here. Or if the nested title is enough.
         },
       );
 

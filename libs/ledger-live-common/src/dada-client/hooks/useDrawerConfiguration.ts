@@ -1,14 +1,15 @@
 import { useCallback } from "react";
 import useFeature from "../../featureFlags/useFeature";
+import { ModularDrawerConfiguration } from "wallet-api/ModularDrawer/types";
 
 interface DrawerConfiguration {
-  assets?: Record<string, unknown>;
-  networks?: Record<string, unknown>;
+  assets?: ModularDrawerConfiguration["assets"];
+  networks?: ModularDrawerConfiguration["networks"];
 }
 
 interface UseCaseConfig {
-  assets?: Record<string, unknown>;
-  networks?: Record<string, unknown>;
+  assets?: ModularDrawerConfiguration["assets"];
+  networks?: ModularDrawerConfiguration["networks"];
 }
 
 type UseCaseConfigs = Record<string, UseCaseConfig>;
@@ -23,8 +24,8 @@ export function useDrawerConfiguration() {
 
   const createDrawerConfiguration = useCallback(
     (
-      drawerConfiguration: unknown,
-      useCase: string | undefined,
+      drawerConfiguration: DrawerConfiguration,
+      useCase: string | undefined, // FIXME: use the real types from the wallet-api/ModularDrawer/types.ts
       customUseCaseConfigs?: UseCaseConfigs,
     ): DrawerConfiguration => {
       const config: DrawerConfiguration | undefined = drawerConfiguration!;

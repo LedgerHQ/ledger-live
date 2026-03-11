@@ -50,6 +50,7 @@ export const assetsDataApi = createApi({
           ...(queryArg?.includeTestNetworks && {
             includeTestNetworks: queryArg.includeTestNetworks,
           }),
+          ...(queryArg?.sortKey && { sortKey: queryArg.sortKey }),
           additionalData: queryArg.additionalData || [
             AssetsAdditionalData.Apy,
             AssetsAdditionalData.MarketTrend,

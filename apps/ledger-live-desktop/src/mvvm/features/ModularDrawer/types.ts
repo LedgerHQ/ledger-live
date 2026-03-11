@@ -23,6 +23,8 @@ export type ModularDrawerFlowManagerProps = {
   useCase?: string;
   uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
+  customTitle?: string; // String must be translated
+  customDescription?: string;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
 };

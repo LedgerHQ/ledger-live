@@ -12,6 +12,7 @@ export interface ModularDrawerState {
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  sortKey?: string;
   useCase?: string;
   uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
@@ -34,6 +35,7 @@ export const INITIAL_STATE: ModularDrawerState = {
     leftElement: "numberOfAccounts",
     rightElement: "balance",
   },
+  sortKey: undefined,
   useCase: undefined,
   uiUseCase: undefined,
   areCurrenciesFiltered: undefined,
@@ -50,6 +52,7 @@ export const modularDrawerSourceSelector = (state: State) => state.modularDrawer
 export const modularDrawerEnableAccountSelectionSelector = (state: State) =>
   state.modularDrawer.enableAccountSelection;
 export const modularDrawerStepSelector = (state: State) => state.modularDrawer.step;
+export const modularDrawerSortKeySelector = (state: State) => state.modularDrawer.sortKey;
 
 const modularDrawerSlice = createSlice({
   name: MODULAR_DRAWER_KEY,
@@ -65,6 +68,7 @@ const modularDrawerSlice = createSlice({
         source?: string;
         assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
         networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+        sortKey?: string;
         useCase?: string;
         uiUseCase?: string;
         areCurrenciesFiltered?: boolean;
@@ -81,6 +85,7 @@ const modularDrawerSlice = createSlice({
         source,
         assetsConfiguration,
         networksConfiguration,
+        sortKey,
         useCase,
         uiUseCase,
         areCurrenciesFiltered,
@@ -108,6 +113,9 @@ const modularDrawerSlice = createSlice({
       if (networksConfiguration !== undefined) {
         state.networksConfiguration = networksConfiguration;
       }
+      if (sortKey !== undefined) {
+        state.sortKey = sortKey;
+      }
       if (useCase !== undefined) {
         state.useCase = useCase;
       }
@@ -130,6 +138,7 @@ const modularDrawerSlice = createSlice({
       state.source = "";
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
       state.networksConfiguration = INITIAL_STATE.networksConfiguration;
+      state.sortKey = undefined;
       state.useCase = undefined;
       state.uiUseCase = undefined;
       state.areCurrenciesFiltered = undefined;

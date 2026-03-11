@@ -21,6 +21,8 @@ const ModularDrawerFlowManager = ({
   areCurrenciesFiltered,
   onAssetSelected,
   onAccountSelected,
+  customTitle,
+  customDescription,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
@@ -53,6 +55,7 @@ const ModularDrawerFlowManager = ({
     isSelectAccountFlow: Boolean(onAccountSelected),
     useCase,
     areCurrenciesFiltered,
+    // FIXME: we don't actualluy need to pass title and description here. We just use it below.
   });
 
   const { assetsConfiguration, networkConfiguration } = useModularDrawerConfiguration(
@@ -73,6 +76,8 @@ const ModularDrawerFlowManager = ({
             error={!!error}
             refetch={refetch}
             assetsSorted={assetsSorted}
+            customTitle={customTitle}
+            customDescription={customDescription}
           />
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:

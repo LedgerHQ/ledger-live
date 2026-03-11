@@ -194,17 +194,10 @@ const AssetSelection = ({
         <>
           <BottomSheetHeader
             spacing
-            title={
-              assetsConfiguration?.customTitle ||
-              "HELLO. This is the MAD title on mobile. This is truly where it is set." ||
-              t("modularDrawer.selectAsset")
-            }
+            title={assetsConfiguration?.customTitle || t("modularDrawer.selectAsset")}
             testID="modular-drawer-Asset-title"
             appearance="expanded"
-            description={
-              assetsConfiguration?.customDescription ||
-              "HELLO. This is the MAD description on mobile."
-            }
+            description={assetsConfiguration?.customDescription}
           />
           <SearchInputContainer
             source={source}

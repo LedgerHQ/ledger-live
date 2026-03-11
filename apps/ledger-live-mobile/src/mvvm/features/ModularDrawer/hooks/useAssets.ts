@@ -12,6 +12,7 @@ interface AssetsProps {
   currencyIds?: string[];
   searchedValue?: string;
   useCase?: string;
+  sortKey?: string;
   areCurrenciesFiltered?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function useAssets({
   currencyIds,
   searchedValue,
   useCase,
+  sortKey,
   areCurrenciesFiltered,
 }: AssetsProps) {
   const isAcceptedCurrency = useAcceptedCurrency();
@@ -36,6 +38,7 @@ export function useAssets({
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,
+    sortKey,
     areCurrenciesFiltered,
     isStaging,
     includeTestNetworks: devMode,

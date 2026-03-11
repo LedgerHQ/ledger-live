@@ -14,6 +14,8 @@ interface UseModularDrawerRemoteDataProps {
   goToStep: (step: ModularDrawerStep) => void;
   onAssetSelected: ModularDrawerFlowManagerProps["onAssetSelected"];
   isSelectAccountFlow: boolean;
+  customTitle?: string; // String must be translated
+  customDescription?: string;
 }
 
 export function useModularDrawerRemoteData({
@@ -24,6 +26,8 @@ export function useModularDrawerRemoteData({
   goToStep,
   onAssetSelected,
   isSelectAccountFlow,
+  customTitle,
+  customDescription,
 }: UseModularDrawerRemoteDataProps) {
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
@@ -64,7 +68,6 @@ export function useModularDrawerRemoteData({
     refetch,
     loadingStatus,
     assetsToDisplay,
-
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
@@ -75,5 +78,7 @@ export function useModularDrawerRemoteData({
     goBackToNetworkSelection,
     loadNext,
     assetsSorted,
+    customTitle,
+    customDescription,
   };
 }

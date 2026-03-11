@@ -12,6 +12,7 @@ export type ModularDrawerConfiguration = {
     rightElement?: string;
     leftElement?: string;
   };
+  sortKey?: string;
 };
 
 export const filterOptions = ["topNetworks", "undefined"] as const;
@@ -40,6 +41,7 @@ export const EnhancedModularDrawerConfigurationSchema = z.object({
       rightElement: z.enum(networksRightElementOptions).optional(),
     })
     .optional(),
+  sortKey: z.string().optional(),
 });
 
 /**

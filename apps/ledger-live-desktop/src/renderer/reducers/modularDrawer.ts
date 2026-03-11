@@ -81,6 +81,8 @@ export const modularDialogUiUseCaseSelector = (state: State) =>
   state.modularDrawer.dialogParams?.uiUseCase;
 export const modularDialogAreCurrenciesFilteredSelector = (state: State) =>
   state.modularDrawer.dialogParams?.areCurrenciesFiltered;
+export const modularDialogSortKeySelector = (state: State) =>
+  state.modularDrawer.dialogParams?.dialogConfiguration?.sortKey;
 
 export const modularDrawerIsDebuggingDuplicatesSelector = (state: State) =>
   state.modularDrawer.isDebuggingDuplicates;

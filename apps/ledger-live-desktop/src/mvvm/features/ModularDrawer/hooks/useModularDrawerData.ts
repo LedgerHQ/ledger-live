@@ -39,6 +39,7 @@ export function useModularDrawerData({
     includeTestNetworks: devMode,
   });
 
+  // TODO: use the sortKey from the drawer configuration. Default is still marketCap. But earn needs to use earnTrending.
   const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 

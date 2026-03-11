@@ -26,7 +26,7 @@ export type AssetSelectorProps = {
 const AssetSelector = ({
   assetsToDisplay,
   providersLoadingStatus,
-  assetsConfiguration,
+  assetsConfiguration, // FIXME: couldn't we determine the custom title and description here? Otherwise we will have to do it in the parent component right now.
   onAssetSelected,
   loadNext,
   errorInfo,

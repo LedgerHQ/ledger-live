@@ -65,6 +65,8 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
     handleBack,
     loadNext,
     assetsSorted,
+    customTitle,
+    customDescription,
   } = useModularDialogRemoteData({
     currentStep,
     goToStep,
@@ -84,7 +86,7 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
           <AssetSelector
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
-            assetsConfiguration={assetsConfiguration}
+            assetsConfiguration={assetsConfiguration} // Sets customTitle and customDescription? not yet.
             onAssetSelected={handleAssetSelected}
             loadNext={loadNext}
             errorInfo={errorInfo}
@@ -126,12 +128,14 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
           handleClose={handleClose}
           handleBack={handleBack}
           renderStepContent={renderStepContent}
+          title={customTitle}
           description={
-            currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
+            customDescription ||
+            (currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
             selectedNetwork?.name &&
             !hasAccounts
               ? t("dialogs.selectAccount.description", { network: selectedNetwork.name })
-              : undefined
+              : undefined)
           }
         />
       </DialogContent>

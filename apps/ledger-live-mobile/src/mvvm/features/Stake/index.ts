@@ -11,6 +11,16 @@ type Props = {
   currencies?: string[];
 };
 
+const drawerConfiguration = {
+  assetsConfiguration: {
+    customTitle: "Stake",
+    customDescription: "Stake your assets to earn rewards",
+    filter: "stake",
+    leftElement: "apy",
+    rightElement: "balance",
+  },
+};
+
 export function useOpenStakeDrawer({ sourceScreenName, currencies }: Props) {
   const route = useRoute();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -33,6 +43,26 @@ export function useOpenStakeDrawer({ sourceScreenName, currencies }: Props) {
       enableAccountSelection: true,
       onAccountSelected: goToAccountStakeFlow,
       useCase: "earn",
+      ...(stakeDrawerConfiguration.assets && {
+        assetsConfiguration: stakeDrawerConfiguration.assets,
+      }),
+      ...(stakeDrawerConfiguration.networks && {
+        networksConfiguration: stakeDrawerConfiguration.networks,
+      }),
+    });
+  }, [createDrawerConfiguration, openDrawer, currencies, sourceScreenName, goToAccountStakeFlow]);
+
+  const handleOpenStakeByMostPopularDrawer = useCallback(() => {
+    const stakeDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, "earn");
+    return openDrawer({
+      currencies,
+      areCurrenciesFiltered: currencies && currencies.length > 0,
+      flow: "stake",
+      source: sourceScreenName,
+      enableAccountSelection: true,
+      onAccountSelected: goToAccountStakeFlow,
+      useCase: "earn",
+      sortKey: "earnTrending",
       ...(stakeDrawerConfiguration.assets && {
         assetsConfiguration: stakeDrawerConfiguration.assets,
       }),

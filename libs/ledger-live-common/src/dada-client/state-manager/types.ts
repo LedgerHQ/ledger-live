@@ -17,6 +17,7 @@ export interface GetAssetsDataParams {
   search?: string;
   currencyIds?: string[];
   useCase?: string;
+  sortKey?: string;
   product: "llm" | "lld";
   version: string;
   isStaging?: boolean;

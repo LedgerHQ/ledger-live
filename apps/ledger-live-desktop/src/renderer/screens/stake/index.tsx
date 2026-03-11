@@ -159,7 +159,17 @@ const useStakeFlow = () => {
           onSuccess,
           onCancel: handleRequestClose,
           areCurrenciesFiltered: cryptoCurrencies.length > 0,
-          drawerConfiguration: earnDrawerConfiguration,
+          drawerConfiguration: {
+            ...earnDrawerConfiguration,
+            sortKey: "earnTrending",
+            assets: {
+              ...earnDrawerConfiguration?.assets,
+              customTitle: "Crowd favourites",
+              customDescription: "The most popular assets to stak at Ledger.",
+              leftElement: "apy",
+              rightElement: "balance",
+            },
+          },
         });
       } else {
         setDrawer(

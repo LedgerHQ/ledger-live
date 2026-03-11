@@ -12,6 +12,7 @@ export const MODULAR_DRAWER_KEY = "modularDrawer";
 export type DrawerExtras = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  sortKey?: string;
 };
 
 export type DrawerBaseParams = {
