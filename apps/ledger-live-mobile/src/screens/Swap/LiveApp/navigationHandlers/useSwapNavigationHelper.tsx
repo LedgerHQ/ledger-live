@@ -20,9 +20,11 @@ export function useSwapNavigationHelper({ navigation }: { navigation: Navigation
       if (isSwapTabScreen && urlFromEvent !== "") {
         const url = new URL(urlFromEvent);
         const tabParam = url.searchParams.get("tab");
+        const isQuotesListRoute =
+          tabParam === "QUOTES_LIST" || urlFromEvent.includes("quotes");
 
         let page: SwapWebviewAllowedPageNames =
-          tabParam === "QUOTES_LIST"
+          isQuotesListRoute
             ? SwapWebviewAllowedPageNames.QuotesList
             : SwapWebviewAllowedPageNames.AccountSelection;
 
@@ -52,7 +54,7 @@ export function useSwapNavigationHelper({ navigation }: { navigation: Navigation
           canGoBack = false;
         }
 
-        if (urlFromEvent.includes("quotes")) {
+        if (isQuotesListRoute) {
           page = SwapWebviewAllowedPageNames.QuotesList;
           canGoBack = true;
         }
