@@ -346,11 +346,10 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "hash": "1xhiUumIUOljak_LHryZWzRtp9qWA5MOv9xI_Yxudq0owHR0r1Mp-M2_zn5fNo0i",
       "id": "js:2:hedera:0.0.1040977:hederaBip44-1xhiUumIUOljak_LHryZWzRtp9qWA5MOv9xI_Yxudq0owHR0r1Mp-M2_zn5fNo0i-REDELEGATE",
       "recipients": [
-        "0.0.1040977",
         "0.0.3",
       ],
       "senders": [
-        "0.0.800",
+        "0.0.1040977",
       ],
       "type": "REDELEGATE",
       "value": "157370",
@@ -502,7 +501,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.8217344",
-        "0.0.800",
       ],
       "type": "IN",
       "value": "10000",
@@ -977,7 +975,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "100073908",
@@ -1378,7 +1375,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "31025298236",
@@ -1458,11 +1454,10 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "hash": "lDXnoFtP4uY-qU75njaAGqY8Ygm-LVA5uINnRP7ZytcKnLIwCq1EmBWBMFweVg88",
       "id": "js:2:hedera:0.0.1040977:hederaBip44-lDXnoFtP4uY-qU75njaAGqY8Ygm-LVA5uINnRP7ZytcKnLIwCq1EmBWBMFweVg88-UNDELEGATE",
       "recipients": [
-        "0.0.1040977",
         "0.0.3",
       ],
       "senders": [
-        "0.0.800",
+        "0.0.1040977",
       ],
       "type": "UNDELEGATE",
       "value": "167909",
@@ -1486,7 +1481,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "100070763",
@@ -2519,7 +2513,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.7305122",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "107731",
@@ -3689,11 +3682,10 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "hash": "D0THYkg2fTR1QjRmVbGV-N8TcD6nUmBpS0v8M17sJVvJLrrF-MOdF5W5u_Lde7qG",
       "id": "js:2:hedera:0.0.8313485:hederaBip44-D0THYkg2fTR1QjRmVbGV-N8TcD6nUmBpS0v8M17sJVvJLrrF-MOdF5W5u_Lde7qG-REDELEGATE",
       "recipients": [
-        "0.0.8313485",
         "0.0.37",
       ],
       "senders": [
-        "0.0.800",
+        "0.0.8313485",
       ],
       "type": "REDELEGATE",
       "value": "184381",

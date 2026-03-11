@@ -299,6 +299,11 @@ function processCoinTransfers({
     extra.stakedAmount = new BigNumber(stakingAnalysis.stakedAmount.toString());
   }
 
+  // if recipients array is empty, add the node where the transaction was submitted as recipient
+  if (recipients.length === 0 && rawTx.node) {
+    recipients.push(rawTx.node);
+  }
+
   // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
   // this value is used by custom OperationDetails components in Hedera family
   // accounts or contracts must first associate with an HTS token before they can receive or send that token; without association, token transfers fail

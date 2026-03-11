@@ -11,6 +11,7 @@ import {
 } from "@hashgraph/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, STAKING_REWARD_HASH_SUFFIX, TINYBAR_SCALE } from "../constants";
@@ -763,6 +764,8 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
+    const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+
     it("returns empty array for pristine account", async () => {
       const { items: operations } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.pristine.accountId,
@@ -876,6 +879,32 @@ describe("createApi", () => {
       expect(rewardOp?.tx.hash).not.toContain(STAKING_REWARD_HASH_SUFFIX);
       // every staking operation should have a fees payer
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("returns valid senders and recipients for staking operations", async () => {
+      const cursor = "1772617523.000000000";
+      const { items: ops } = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId,
+        { minHeight: 0, cursor, limit: 30, order: "desc" },
+      );
+
+      const delegateHash = "+07jwNyyEDuwngDgoW3sVgfTfDE5qn+HgPsbltlrUIW/n/LYpFSEwSQNOTu/8GLQ";
+      const undelegateHash = "v0jXJwjKaypunqz91EuQDU2mz/ejSb3AvEJ5fgYkftl+DDT2mBlwB5bSRqXWyoth";
+      const redelegateHash = "pm8vFWlcBEEPbB+pkZTUUxs0FfO2KyDtg0KNfOYnnba+rpHT63OIMhFKKNpfDokk";
+
+      const delegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === delegateHash);
+      const undelegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === undelegateHash);
+      const redelegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === redelegateHash);
+      const rewardOp = ops.find(o => o.type === "REWARD");
+
+      expect(delegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(delegateOp?.recipients).toEqual(["0.0.14"]);
+      expect(undelegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(undelegateOp?.recipients).toEqual(["0.0.31"]);
+      expect(redelegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(redelegateOp?.recipients).toEqual(["0.0.23"]);
+      expect(rewardOp?.senders).toEqual([rewardPayerAddress]);
+      expect(rewardOp?.recipients).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
     });
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {

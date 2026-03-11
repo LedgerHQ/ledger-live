@@ -1,5 +1,6 @@
 import { AccountId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -44,19 +45,28 @@ export function parseTransfers(
 
   const senders: string[] = [];
   const recipients: string[] = [];
+  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
   for (const transfer of mirrorTransfers) {
     const amount = new BigNumber(transfer.amount);
     const accountId = AccountId.fromString(transfer.account);
 
     // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
+    const amountWithoutReward = transfer.account === address ? amount.minus(stakingReward) : amount;
+
     if (transfer.account === address) {
-      const amountWithoutReward = amount.minus(stakingReward);
       value = amountWithoutReward.abs();
       type = amountWithoutReward.isNegative() ? "OUT" : "IN";
     }
 
-    if (amount.isNegative()) {
+    if (amountWithoutReward.isNegative()) {
+      // exclude reward payer from senders list, because rewards are shown as separate operations
+      const shouldIgnoreAddress = transfer.account === rewardPayerAddress && stakingReward.gt(0);
+
+      if (shouldIgnoreAddress) {
+        continue;
+      }
+
       senders.push(transfer.account);
     } else if (isValidRecipient(accountId, recipients)) {
       recipients.push(transfer.account);
