@@ -7774,7 +7774,16 @@
     }
   },
   "analytics": {
-    "title": "Analytics"
+    "title": "Analytics",
+    "allocation": {
+      "title": "Asset allocation",
+      "columns": {
+        "name": "Name",
+        "balance": "Balance",
+        "value": "Value",
+        "allocation": "Allocation"
+      }
+    }
   },
   "walletSync": {
     "title": "Ledger Sync",

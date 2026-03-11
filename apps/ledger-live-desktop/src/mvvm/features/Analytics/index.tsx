@@ -4,16 +4,26 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import PortfolioBalanceSummary from "~/renderer/screens/dashboard/GlobalSummary";
 import { colors } from "~/renderer/styles/theme";
 import useAnalyticsViewModel from "./useAnalyticsViewModel";
-import { AnalyticsViewModel } from "./types";
+import type { AnalyticsViewModel } from "./types";
+import { AllocationSection } from "./components/Allocation/AllocationSection";
+import { useTranslation } from "react-i18next";
 
 export default function Analytics() {
   const viewModel = useAnalyticsViewModel();
-  return <AnalyticsContent viewModel={viewModel} />;
+  return <AnalyticsView viewModel={viewModel} />;
 }
 
-function AnalyticsContent({ viewModel }: { readonly viewModel: AnalyticsViewModel }) {
-  const { counterValue, selectedTimeRange, t, navigateToDashboard, shouldDisplayGraphRework } =
-    viewModel;
+function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }) {
+  const {
+    counterValue,
+    selectedTimeRange,
+    navigateToDashboard,
+    shouldDisplayGraphRework,
+    shouldDisplayAssetSection,
+  } = viewModel;
+
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-32">
       <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
@@ -28,6 +38,8 @@ function AnalyticsContent({ viewModel }: { readonly viewModel: AnalyticsViewMode
           shouldDisplayGraphRework={shouldDisplayGraphRework}
         />
       </div>
+
+      {shouldDisplayAssetSection && <AllocationSection />}
     </div>
   );
 }
