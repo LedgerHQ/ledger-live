@@ -1,7 +1,5 @@
 import {
   AlpacaApi,
-  Block,
-  BlockInfo,
   Cursor,
   ListOperationsOptions,
   Page,
@@ -20,6 +18,8 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   listOperations as logicListOperations,
   lastBlock,
   Options,
@@ -45,12 +45,8 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     getBalance,
     lastBlock,
     listOperations,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
