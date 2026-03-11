@@ -20,7 +20,7 @@ const config: PlaywrightTestConfig = {
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
-  workers: "100%",
+  workers: "50%",
   reporter: process.env.CI
     ? [
         ["list"],
