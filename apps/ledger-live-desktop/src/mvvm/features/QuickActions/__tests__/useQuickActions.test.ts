@@ -448,7 +448,7 @@ describe("useQuickActions", () => {
         result.current.actionsList[1].onAction();
       });
 
-      expect(mockOpenURL).toHaveBeenCalledWith(urls.ledgerShop);
+      expect(mockOpenURL).toHaveBeenCalledWith(urls.buyDevice);
     });
   });
 });

@@ -11,13 +11,13 @@ interface LazyOnboardingActions {
 
 export function useLazyOnboardingActions(): LazyOnboardingActions {
   const navigate = useNavigate();
-  const urlLedgerShop = useLocalizedUrl(urls.ledgerShop);
+  const urlBuyDevice = useLocalizedUrl(urls.buyDevice);
 
   const handleConnect = useCallback(() => {
     navigate("/onboarding/select-device", { state: { fromQuickAction: true } });
   }, [navigate]);
 
-  const handleBuyDevice = useCallback(() => openURL(urlLedgerShop), [urlLedgerShop]);
+  const handleBuyDevice = useCallback(() => openURL(urlBuyDevice), [urlBuyDevice]);
 
   return {
     handleConnect,
