@@ -92,11 +92,15 @@ function toBlockTransaction(
   if (!txInfo) return null;
 
   const fee = txInfo.fee.gt(0) ? txInfo.fee : new BigNumber(feesById.get(tx.txID) ?? 0);
+  const fees =
+    fee.isNaN() || !fee.isFinite()
+      ? 0n
+      : BigInt(fee.toFixed(0));
 
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
-    fees: BigInt(fee.toFixed(0)),
+    fees,
     feesPayer: txInfo.from,
     operations: txInfo.hasFailed ? [] : toBlockOperations(txInfo),
   };
