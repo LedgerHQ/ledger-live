@@ -70,20 +70,17 @@ function SendSummary({ navigation, route }: Props) {
   const [utxoWarningOpen, setUtxoWarningOpen] = useState(false);
   const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
   const navigateToNext = useCallback(() => {
-    if (!nextNavigation) return null;
+    const nextScreen = nextNavigation ?? ScreenName.SendSelectDevice;
     return (
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
-        nextNavigation,
-        {
-          ...route.params,
-          transaction,
-          status,
-          selectDeviceLink: true,
-        },
-      )
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(nextScreen, {
+        ...route.params,
+        transaction,
+        status,
+        selectDeviceLink: true,
+      })
     );
   }, [navigation, nextNavigation, route.params, transaction, status]);
   useEffect(() => {

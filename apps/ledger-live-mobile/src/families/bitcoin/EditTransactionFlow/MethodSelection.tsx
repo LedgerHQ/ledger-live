@@ -17,15 +17,13 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Trans, useTranslation } from "~/context/Locale";
-import { Dimensions, Linking } from "react-native";
 import { TrackScreen } from "~/analytics";
-import LText from "~/components/LText";
+import MethodSelectionList from "~/components/EditTransaction/MethodSelectionList";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import type { BitcoinEditTransactionParamList } from "./EditTransactionParamList";
@@ -35,25 +33,7 @@ type Props = StackNavigatorProps<
   ScreenName.BitcoinEditTransactionMethodSelection
 >;
 
-// Re-use editTransaction locale keys (same as EVM)
-const getSpeedUpDescriptionKey = (
-  haveFundToSpeedup: boolean,
-  isOldestEditableOperation: boolean,
-):
-  | "editTransaction.speedUp.description"
-  | "editTransaction.error.notEnoughFundsToSpeedup"
-  | "editTransaction.error.notlowestNonceToSpeedup" => {
-  if (!haveFundToSpeedup) {
-    return "editTransaction.error.notEnoughFundsToSpeedup";
-  }
-  if (!isOldestEditableOperation) {
-    return "editTransaction.error.notlowestNonceToSpeedup";
-  }
-  return "editTransaction.speedUp.description";
-};
-
 function MethodSelectionComponent({ navigation, route }: Props) {
-  const { t } = useTranslation();
   const { operation, account, parentAccount } = route.params;
 
   const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
@@ -199,52 +179,14 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     <Flex flex={1} color="background.main">
       <TrackScreen category="EditTransaction" name="EditTransaction" />
       <Flex p={6}>
-        <SelectableList onChange={onSelect}>
-          <SelectableList.Element
-            disabled={!haveFundToSpeedup || !isOldestEditableOperation}
-            value={"speedup"}
-          >
-            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
-              <LText bold>
-                <Trans i18nKey={"editTransaction.speedUp.title"} />
-              </LText>
-              <Flex>
-                <LText style={{ marginTop: 15, marginBottom: 0 }}>
-                  <Trans
-                    i18nKey={getSpeedUpDescriptionKey(haveFundToSpeedup, isOldestEditableOperation)}
-                  />
-                </LText>
-              </Flex>
-            </Box>
-          </SelectableList.Element>
-
-          <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
-            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
-              <LText bold>
-                <Trans i18nKey={"editTransaction.cancel.title"} />
-              </LText>
-              <LText
-                style={{
-                  marginTop: 15,
-                  marginBottom: 0,
-                  overflow: "hidden",
-                }}
-              >
-                {haveFundToCancel
-                  ? t("editTransaction.cancel.description", {
-                      ticker: mainAccount.currency.ticker,
-                    })
-                  : t("editTransaction.error.notEnoughFundsToCancel")}
-              </LText>
-            </Box>
-          </SelectableList.Element>
-        </SelectableList>
-        <LText
-          style={{ marginTop: 8, textDecorationLine: "underline" }}
-          onPress={() => Linking.openURL(urls.editBitcoinTx.learnMore)}
-        >
-          {t("editTransaction.learnMore")}
-        </LText>
+        <MethodSelectionList<EditType>
+          haveFundToCancel={haveFundToCancel}
+          haveFundToSpeedup={haveFundToSpeedup}
+          isOldestEditableOperation={isOldestEditableOperation}
+          ticker={mainAccount.currency.ticker}
+          learnMoreUrl={urls.editBitcoinTx.learnMore}
+          onSelect={onSelect}
+        />
       </Flex>
     </Flex>
   );
