@@ -1,6 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { useWelcomeNewViewModel } from "../useWelcomeNewViewModel";
+import { useWelcomeViewModel } from "../useWelcomeViewModel";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
@@ -36,7 +36,7 @@ jest.mock("LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer", () => 
 
 const mockedUseNavigate = useNavigate as jest.MockedFunction<typeof useNavigate>;
 
-describe("useWelcomeNewViewModel", () => {
+describe("useWelcomeViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
@@ -44,7 +44,7 @@ describe("useWelcomeNewViewModel", () => {
 
   describe("navigation effect when onboarding is completed", () => {
     it('should navigate to "/" when shouldUseLazyOnboarding is true and onboarding completed', () => {
-      renderHook(() => useWelcomeNewViewModel(), {
+      renderHook(() => useWelcomeViewModel(), {
         initialState: {
           settings: {
             ...INITIAL_STATE,
@@ -63,7 +63,7 @@ describe("useWelcomeNewViewModel", () => {
     });
 
     it('should navigate to "/onboarding/select-device" when shouldUseLazyOnboarding is false and onboarding completed', () => {
-      renderHook(() => useWelcomeNewViewModel(), {
+      renderHook(() => useWelcomeViewModel(), {
         initialState: {
           settings: {
             ...INITIAL_STATE,
@@ -78,7 +78,7 @@ describe("useWelcomeNewViewModel", () => {
 
   describe("handleGetStarted with lazy onboarding", () => {
     it('should set hasCompletedOnboarding to true and navigate to "/" when lazy onboarding is enabled', () => {
-      const { result, store } = renderHook(() => useWelcomeNewViewModel(), {
+      const { result, store } = renderHook(() => useWelcomeViewModel(), {
         initialState: {
           settings: {
             ...INITIAL_STATE,
@@ -102,7 +102,7 @@ describe("useWelcomeNewViewModel", () => {
     });
 
     it('should navigate to "/onboarding/select-device" when lazy onboarding is disabled', () => {
-      const { result } = renderHook(() => useWelcomeNewViewModel(), {
+      const { result } = renderHook(() => useWelcomeViewModel(), {
         initialState: {
           settings: {
             ...INITIAL_STATE,

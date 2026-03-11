@@ -173,7 +173,6 @@ export type CurrencyFeatures = {
 export type Features = CurrencyFeatures & {
   nanoOnboardingFundWallet: DefaultFeature;
   mixpanelAnalytics: DefaultFeature;
-  welcomeScreenVideoCarousel: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;

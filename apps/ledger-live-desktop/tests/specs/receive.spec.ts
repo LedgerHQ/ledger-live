@@ -6,7 +6,6 @@ import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 test.use({
   userdata: "sanctioned-addresses",
   featureFlags: {
-    welcomeScreenVideoCarousel: { enabled: false },
     noah: { enabled: false },
   },
 });

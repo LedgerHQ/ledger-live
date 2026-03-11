@@ -8,7 +8,7 @@ import { EntryPoint as LSEntryPoint } from "LLD/features/LedgerSyncEntryPoints/t
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
-import { useWelcomeNewViewModel } from "./hooks/useWelcomeNewViewModel";
+import { useWelcomeViewModel } from "./hooks/useWelcomeViewModel";
 import { useVideoCarousel } from "./hooks/useVideoCarousel";
 import {
   WelcomeContainer,
@@ -21,10 +21,10 @@ import {
   BottomSection,
   TermsAndConditionsText,
   StyledLink,
-} from "./components/WelcomeNewStyles";
+} from "./components/WelcomeStyles";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
-export function WelcomeNew() {
+export function Welcome() {
   const {
     t,
     accessSettings,
@@ -39,7 +39,7 @@ export function WelcomeNew() {
     isFeatureFlagsAnalyticsPrefDisplayed,
     extendedAnalyticsOptInPromptProps,
     closeDrawer,
-  } = useWelcomeNewViewModel();
+  } = useWelcomeViewModel();
 
   const {
     currentSlide,
@@ -90,7 +90,9 @@ export function WelcomeNew() {
             ))}
           </ProgressBarsContainer>
           {isVisible && (
-            <TitleText key={currentSlide}>{VIDEO_SLIDES[currentSlide].title}</TitleText>
+            <TitleText key={currentSlide} data-testid="onbording-welcome-title">
+              {VIDEO_SLIDES[currentSlide].title}
+            </TitleText>
           )}
         </TopSection>
 
