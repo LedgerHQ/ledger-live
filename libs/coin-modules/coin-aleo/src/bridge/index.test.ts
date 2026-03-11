@@ -92,6 +92,13 @@ describe("Bridge", () => {
       expect(() => accountBridge.signRawOperation()).toThrow("signRawOperation is not supported");
     });
 
+    it("signOperation should throw unsupported error", () => {
+      const signerContext = createMockSignerContext();
+      const accountBridge = buildAccountBridge(signerContext);
+
+      expect(() => accountBridge.signOperation()).toThrow("signOperation is not supported");
+    });
+
     it("createTransaction should return a transaction", () => {
       const signerContext = createMockSignerContext();
       const accountBridge = buildAccountBridge(signerContext);

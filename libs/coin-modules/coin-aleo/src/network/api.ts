@@ -12,6 +12,7 @@ import type {
   AleoRegisterForRecordsResponse,
   AleoGetPublicKeyResponse,
   AleoPrivateRecord,
+  DelegatedProvingResponse,
 } from "../types/api";
 import { getNetworkConfig } from "../logic/utils";
 import { PROGRAM_ID } from "../constants";
@@ -222,6 +223,36 @@ async function getAccountOwnedRecords({
   return res.data;
 }
 
+async function submitDelegatedProvingRequest({
+  currency,
+  authorization,
+  feeAuthorization,
+  broadcast,
+  jwt,
+}: {
+  currency: CryptoCurrency;
+  authorization: Record<string, unknown>;
+  feeAuthorization?: Record<string, unknown>;
+  broadcast: boolean;
+  jwt: string;
+}): Promise<DelegatedProvingResponse> {
+  const { nodeUrl, networkType } = getNetworkConfig(currency);
+  const res = await network<DelegatedProvingResponse>({
+    method: "POST",
+    url: `${nodeUrl}/prove/${networkType}/prove`,
+    headers: {
+      Authorization: jwt,
+    },
+    data: {
+      authorization,
+      ...(feeAuthorization ? { fee_authorization: feeAuthorization } : {}),
+      broadcast,
+    },
+  });
+
+  return res.data;
+}
+
 export const apiClient = {
   getLatestBlock,
   getAccountBalance,
@@ -233,4 +264,5 @@ export const apiClient = {
   getPublicKey,
   getAccountOwnedRecords,
   registerForScanningAccountRecordsEncrypted,
+  submitDelegatedProvingRequest,
 };

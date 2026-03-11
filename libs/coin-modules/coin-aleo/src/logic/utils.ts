@@ -355,7 +355,7 @@ export function serializeTransaction(tx: PreparedRequestResponse): string {
   return Buffer.from(JSON.stringify(tx)).toString("hex");
 }
 
-export function deserializeTransaction(txHex: string): PreparedRequestResponse {
+export function deserializeTransaction<T extends Record<string, unknown>>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
 
