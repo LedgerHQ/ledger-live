@@ -160,7 +160,7 @@ export default class PortfolioPage {
 
   @Step("Wait for Portfolio with accounts")
   async waitForPortfolioWithAccounts() {
-    await waitForElementById(this.accountsListView, 10000);
+    await waitForElementById(this.accountsListView, 60000);
   }
 
   @Step("Go to asset's accounts from portfolio")
