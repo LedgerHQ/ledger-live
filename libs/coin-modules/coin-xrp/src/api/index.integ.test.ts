@@ -1,5 +1,6 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { decode } from "ripple-binary-codec";
+import { decode, encodeForSigning } from "ripple-binary-codec";
+import { deriveKeypair, generateSeed, sign } from "ripple-keypairs";
 import { createApi } from ".";
 
 describe("Xrp Api (testnet)", () => {
@@ -210,6 +211,32 @@ describe("Xrp Api (testnet)", () => {
 
       expect(decode(result)).toMatchObject({
         Fee: customFees.toString(),
+      });
+    });
+  });
+
+  describe("combine", () => {
+    it("returns a signed raw transaction", async () => {
+      // Given
+      const { privateKey, publicKey } = deriveKeypair(generateSeed());
+      const rawTx =
+        "120000228000000024001BCDA6201B001F018161400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98";
+      const signedTx = sign(
+        encodeForSigning({
+          ...decode(rawTx),
+          SigningPubKey: publicKey,
+        }),
+        privateKey,
+      );
+
+      // When
+      const result = await api.combine(rawTx, signedTx, publicKey);
+      const decoded = decode(result);
+
+      // Then
+      expect(decoded).toMatchObject({
+        SigningPubKey: publicKey,
+        TxnSignature: signedTx,
       });
     });
   });
@@ -425,32 +452,3 @@ describe("Xrp Api (mainnet)", () => {
     });
   });
 });
-
-// To enable this test, you need to fill an `.env` file at the root of this package. Example can be found in `.env.integ.test.example`.
-// The value hardcoded here depends on the value filled in the `.env` file.
-/*describe.skip("combine", () => {
-  //const xrpPubKey = process.env["PUB_KEY"]!;
-  //const xrpSecretKey = process.env["SECRET_KEY"]!;
-    it("returns a signed raw transaction", async () => {
-      // Given
-      const rawTx =
-        "120000228000000024001BCDA6201B001F018161400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98";
-      const signedTx = sign(
-        encodeForSigning({
-          ...decode(rawTx),
-          SigningPubKey: xrpPubKey,
-        }),
-        xrpSecretKey,
-      );
-
-      // When
-      const result = await module.combine(rawTx, signedTx);
-
-      // Then
-      expect(result).toEqual(
-        "120000228000000024001BCDA6201B001F018161400000000000000A68400000000000000174473045022100D3B9B37F40961A8DBDE48535F9EF333E87F9D98BE90F7141E133541874826BDB0220065E9CA4D218F16087656BC30D66672F6103B03717A59FFC04C837A2157CE47C8114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
-      );
-    });
-  });
-});
-  */
