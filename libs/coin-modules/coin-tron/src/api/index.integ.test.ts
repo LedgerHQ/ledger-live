@@ -83,11 +83,11 @@ describe("API", () => {
 
     const result = await module.getBlockInfo(blockHeight);
 
-    expect(result.height).toBe(blockHeight);
-    expect(result.hash).toEqual(expect.any(String));
-    expect(result.hash.length).toBeGreaterThan(0);
-    expect(result.time).toBeInstanceOf(Date);
-    expect(result.time.getTime()).toBeGreaterThan(0);
+    expect(result).toMatchObject({
+      height: blockHeight,
+      hash: expect.any(String),
+      time: expect.any(Date),
+    });
   });
 
   it("getBlock returns block with info and transactions", async () => {
@@ -96,14 +96,18 @@ describe("API", () => {
 
     const result = await module.getBlock(blockHeight);
 
-    expect(result.info.height).toBe(blockHeight);
-    expect(result.info.hash).toEqual(expect.any(String));
-    expect(result.info.hash.length).toBeGreaterThan(0);
-    expect(result.info.time).toBeInstanceOf(Date);
-    expect(result.info.parent).not.toBeUndefined();
-    expect(result.info.parent!.height).toBe(blockHeight - 1);
-    expect(result.info.parent!.hash).toEqual(expect.any(String));
-    expect(result.transactions).toBeInstanceOf(Array);
+    expect(result).toMatchObject({
+      info: {
+        height: blockHeight,
+        hash: expect.any(String),
+        time: expect.any(Date),
+        parent: {
+          height: blockHeight - 1,
+          hash: expect.any(String),
+        },
+      },
+      transactions: expect.any(Array),
+    });
   });
 });
 
