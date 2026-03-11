@@ -97,7 +97,7 @@ const AssetSelection = ({
   const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,
   });
-  const formattedAssets = transformAssets(availableAssets);
+  const formattedAssets = transformAssets(availableAssets ?? []);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {

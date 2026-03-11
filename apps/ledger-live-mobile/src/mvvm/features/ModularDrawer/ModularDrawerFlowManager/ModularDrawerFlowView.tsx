@@ -21,13 +21,29 @@ export function ModularDrawerFlowView({
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 
+  const { assetsConfiguration } = assetsViewModel;
+  const assetSelectionKey = `${assetsConfiguration?.rightElement ?? "default"}-${assetsConfiguration?.leftElement ?? "default"}`;
+
+  const { networksConfiguration } = networksViewModel;
+  const networkSelectionKey = `${networksConfiguration?.rightElement ?? "default"}-${networksConfiguration?.leftElement ?? "default"}`;
+
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case ModularDrawerStep.Asset:
-        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={useLumenBottomSheet} />;
+        return (
+          <AssetSelection
+            key={assetSelectionKey}
+            {...assetsViewModel}
+            useLumenBottomSheet={useLumenBottomSheet}
+          />
+        );
       case ModularDrawerStep.Network:
         return (
-          <NetworkSelection {...networksViewModel} useLumenBottomSheet={useLumenBottomSheet} />
+          <NetworkSelection
+            key={networkSelectionKey}
+            {...networksViewModel}
+            useLumenBottomSheet={useLumenBottomSheet}
+          />
         );
       case ModularDrawerStep.Account:
         return (
