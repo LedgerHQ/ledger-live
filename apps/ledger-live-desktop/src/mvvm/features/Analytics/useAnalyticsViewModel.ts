@@ -7,7 +7,6 @@ import {
 } from "~/renderer/reducers/settings";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import type { AnalyticsViewModel } from "./types";
-import { useAllocationData } from "./hooks/useAllocationData";
 
 export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const navigate = useNavigate();
@@ -20,8 +19,6 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
     navigate("/");
   }, [navigate]);
 
-  const allocation = useAllocationData();
-
   return {
     navigateToDashboard,
     counterValue,
@@ -29,6 +26,5 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
 
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
-    allocation,
   };
 }
