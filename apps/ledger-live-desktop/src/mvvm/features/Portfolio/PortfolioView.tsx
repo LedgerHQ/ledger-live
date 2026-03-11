@@ -15,6 +15,7 @@ import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
 import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
 import Assets from "LLD/features/Assets";
+import { CryptoAddressesBanner } from "LLD/components/CryptoAddressesBanner";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -64,6 +65,7 @@ export const PortfolioView = memo(function PortfolioView({
 
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
           {shouldDisplayAddAccountCta && <AddAccount />}
+          {shouldDisplayAssetSection && <CryptoAddressesBanner />}
 
           {totalOperations > 0 && (
             <OperationsList
