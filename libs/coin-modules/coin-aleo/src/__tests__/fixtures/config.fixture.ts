@@ -15,6 +15,7 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
       [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
     },
     feeSafetyMultiplier: 1,
+    isFeeSponsored: true,
     status: { type: "active" },
   };
 };
