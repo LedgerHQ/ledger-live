@@ -1,6 +1,6 @@
 export type UpdaterButtonProps = {
   label: string;
-  appearance: "red" | "base";
+  appearance: "red" | "transparent";
   isLoading: boolean;
   onClick?: () => void;
 };
