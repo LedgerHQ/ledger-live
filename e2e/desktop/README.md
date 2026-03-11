@@ -5,11 +5,20 @@ Dev teams are responsible for **adding/updating tests** when implementing new fe
 
 ---
 
+## Interactive Setup (Recommended)
+
+Use the Cursor command `/e2e-desktop-onboard` for a guided, interactive walkthrough that checks every prerequisite, validates your environment, builds the app, and runs a smoke test.
+
+---
+
 ## Quick Start
+
+All build and test commands below are run from the **repo root** (`ledger-live/`).
 
 ### 1. Prerequisites
 
 - Ledger Live repository (as mentioned in the full wiki)
+- Docker Desktop installed and running (Speculos runs in Docker)
 - Clone the CoinApps repository:
 
 ```bash
