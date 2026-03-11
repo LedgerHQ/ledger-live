@@ -92,7 +92,7 @@ export default class OnboardingStepsPage {
       { id: "nanoS", name: "Nano S" },
     ];
     for (const device of devices) {
-      if (device.id === "nanoS") {
+      if (device.id === "nanoS" || device.id === "nanoSP") {
         await scrollToId(this.deviceCardId(device.id), this.scrollListContainerId, 100, "down");
       }
       await detoxExpect(getElementById(this.deviceCardId(device.id))).toBeVisible();
@@ -117,11 +117,16 @@ export default class OnboardingStepsPage {
     await tapByElement(getStarted);
     await waitForElementById(new RegExp(`${this.setupLedger}|${this.acceptAnalyticsButtonId}`));
     try {
-      const analyticsBtn = this.acceptAnalyticsButton();
-      await tapByElement(analyticsBtn);
+      await this.acceptAnalytics();
     } catch {
       // Analytics prompt not enabled
     }
+  }
+
+  @Step("Accept analytics")
+  async acceptAnalytics(): Promise<void> {
+    const analyticsBtn = this.acceptAnalyticsButton();
+    await tapByElement(analyticsBtn);
   }
 
   @Step("Choose no ledger yet")
