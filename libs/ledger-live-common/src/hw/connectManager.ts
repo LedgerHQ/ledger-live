@@ -10,7 +10,6 @@ import { isCharonSupported } from "@ledgerhq/device-core";
 import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { PrepareConnectManagerDeviceAction } from "@ledgerhq/live-dmk-shared";
 import type { ListAppsEvent } from "../apps";
 import { listAppsUseCase } from "../device/use-cases/listAppsUseCase";

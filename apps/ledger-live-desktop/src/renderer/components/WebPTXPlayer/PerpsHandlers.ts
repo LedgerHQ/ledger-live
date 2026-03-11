@@ -2,7 +2,6 @@ import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perp
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
-import { getDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
@@ -37,7 +36,6 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({
       accounts,
-      dmk: getDeviceManagementKit(),
       uiHooks: {
         "device.select": uiDeviceSelect,
       },

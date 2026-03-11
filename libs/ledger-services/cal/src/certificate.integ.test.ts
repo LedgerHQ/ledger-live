@@ -112,7 +112,7 @@ describe("getCertificate", () => {
     },
   );
 
-  it("retrieves info for perps", async() => {
+  it("retrieves info for perps", async () => {
     // When
     const result = await getCertificate("europa", "perps_data", "latest", {
       env: "test",

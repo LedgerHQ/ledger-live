@@ -19,10 +19,17 @@ export type Action =
       }[];
     }
   | {
+      type: "batchModify";
+      modifies: {
+        oid: number;
+        order: Order;
+      }[];
+    }
+  | {
       type: "cancel";
       cancels: {
-        asset: number; // asset id
-        oid: number; // oid
+        a: number; // asset id
+        o: number; // oid
       }[];
     }
   | {
@@ -37,6 +44,12 @@ export type Action =
       signatureChainId: string; // chainId in hex format. Ex: 0xa4b1 for Arbitrum
       maxFeeRate: string;
       builder: Address;
+    }
+  | {
+      type: "updateIsolatedMargin";
+      asset: number; // index of coin
+      isBuy: boolean; // cross-leverage
+      ntli: number;
     };
 export function convertAction(action: ActionWithNonce) {
   return {

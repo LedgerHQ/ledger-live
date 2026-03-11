@@ -34,7 +34,6 @@ import {
   type ApplicationDependency,
   type ApplicationConstraint,
   type ApplicationVersionConstraint,
-  type DeviceManagementKit,
   DeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";

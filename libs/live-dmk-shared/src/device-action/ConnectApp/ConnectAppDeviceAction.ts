@@ -71,13 +71,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
 
     const unlockTimeout = this.input.unlockTimeout ?? 0;
 
-    console.log("[PERPS] ConnectAppDeviceAction makeStateMachine input:", JSON.stringify({
-      application: this.input.application,
-      dependencies: this.input.dependencies,
-      requireLatestFirmware: this.input.requireLatestFirmware,
-      allowMissingApplication: this.input.allowMissingApplication,
-    }));
-
     const getStatusMachine = new GetDeviceStatusDeviceAction({
       input: {
         unlockTimeout,
@@ -98,11 +91,9 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         application: this.input.application,
         dependencies: this.input.dependencies,
         requireLatestFirmware: this.input.requireLatestFirmware,
-        allowMissingApplication: this.input.allowMissingApplication,
       },
     }).makeStateMachine(internalApi);
 
-    console.log("[PERPS] ConnectAppDeviceAction makeStateMachine InstallOrUpdateAppsDeviceAction:", this.input.dependencies, this.input.allowMissingApplication);
     const installAppsMachine = new InstallOrUpdateAppsDeviceAction({
       input: {
         unlockTimeout,
@@ -240,7 +231,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               actions: assign({
                 _internalState: _ => {
                   const state = internalApi.getDeviceSessionState();
-                  console.log("[PERPS] GetDeviceStatus result:", _.event.output.isLeft() ? "LEFT/error" : "RIGHT/ok", _.event.output);
                   return _.event.output.caseOf<ConnectAppMachineInternalState>({
                     Right: data => ({
                       ..._.context._internalState,
@@ -452,9 +442,8 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             onDone: {
               target: "InstallDependenciesCheck",
               actions: assign({
-                _internalState: _ => {
-                  console.log("[PERPS] InstallDependencies result:", _.event.output.isLeft() ? "LEFT/error" : "RIGHT/ok", _.event.output);
-                  return _.event.output.caseOf<ConnectAppMachineInternalState>({
+                _internalState: _ =>
+                  _.event.output.caseOf<ConnectAppMachineInternalState>({
                     Right: data => ({
                       ..._.context._internalState,
                       installResult: data,
@@ -463,8 +452,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                       ..._.context._internalState,
                       error,
                     }),
-                  });
-                },
+                  }),
               }),
             },
             onError: {
@@ -498,7 +486,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               application: this.input.application,
               dependencies: this.input.dependencies,
               requireLatestFirmware: this.input.requireLatestFirmware,
-              allowMissingApplication: this.input.allowMissingApplication,
             }),
             onSnapshot: {
               actions: assign({
@@ -516,9 +503,8 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             onDone: {
               target: "OpenAppCheck",
               actions: assign({
-                _internalState: _ => {
-                  console.log("[PERPS] OpenApp result:", _.event.output.isLeft() ? "LEFT/error" : "RIGHT/ok", _.event.output);
-                  return _.event.output.caseOf<ConnectAppMachineInternalState>({
+                _internalState: _ =>
+                  _.event.output.caseOf<ConnectAppMachineInternalState>({
                     Right: data => ({
                       ..._.context._internalState,
                       installResult: data.installResult,
@@ -527,8 +513,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                       ..._.context._internalState,
                       error,
                     }),
-                  });
-                },
+                  }),
               }),
             },
             onError: {
@@ -597,14 +582,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
     deviceStatus: GetDeviceStatusDAOutput,
     deviceModel: DeviceModelId,
   ) {
-    console.log("[PERPS] isAppOpened check:", {
-      applicationName: application.name,
-      currentApp: deviceStatus?.currentApp,
-      currentAppVersion: deviceStatus?.currentAppVersion,
-      deviceModel,
-      constraints: application.constraints,
-    });
-
     return (
       deviceStatus.currentApp === application.name &&
       (!application.constraints ||

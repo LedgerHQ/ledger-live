@@ -1,5 +1,4 @@
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
-import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
 import { AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
@@ -41,11 +40,9 @@ export type PerpsSignResult = {
 
 export const handlers = ({
   accounts,
-  dmk,
   uiHooks: { "device.select": uiDeviceSelect },
 }: {
   accounts: AccountLike[];
-  dmk: DeviceManagementKit;
   uiHooks: PerpsUiHooks;
 }) => {
   return {
@@ -84,26 +81,30 @@ export const handlers = ({
       // CALL Cal Service
       const certificate = await calService.getCertificate(device.modelId, "perps_data");
 
-
       return firstValueFrom(
-        withDevice(device.deviceId, device.deviceName ?  { matchDeviceByName: device.deviceName } : undefined)(transport => from(
-          (async () => {
-            if (!isDmkTransport(transport)) {
-              throw new Error("Not DMK transport");
-            }
-            const { dmk, sessionId } = transport;
+        withDevice(
+          device.deviceId,
+          device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
+        )(transport =>
+          from(
+            (async () => {
+              if (!isDmkTransport(transport)) {
+                throw new Error("Not DMK transport");
+              }
+              const { dmk, sessionId } = transport;
 
-            const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
-            const signatures = await hyperliquidSigner.signActions(
-              derivationPath,
-              convertCertificateToDeviceData(certificate),
-              new Uint8Array(Buffer.from(params.metadataWithSignature, "hex")),
-              params.actions.map(convertAction),
-            );
+              const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
+              const signatures = await hyperliquidSigner.signActions(
+                derivationPath,
+                convertCertificateToDeviceData(certificate),
+                new Uint8Array(Buffer.from(params.metadataWithSignature, "hex")),
+                params.actions.map(convertAction),
+              );
 
-            return { signatures };
-          })(),
-        ))
+              return { signatures };
+            })(),
+          ),
+        ),
       );
     }),
   };
