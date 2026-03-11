@@ -6707,6 +6707,9 @@ importers:
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
+      '@ledgerhq/live-signer-zcash':
+        specifier: workspace:^
+        version: link:../live-signer-zcash
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../live-wallet
@@ -10262,6 +10265,67 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@5.9.3)
+
+  libs/live-signer-zcash:
+    dependencies:
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-bitcoin
+      '@ledgerhq/context-module':
+        specifier: 1.15.0
+        version: 1.15.0(@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-develop-20260319001502
+        version: 0.0.0-develop-20260319001502(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-zcash':
+        specifier: 0.0.0-develop-20260319001502
+        version: 0.0.0-develop-20260319001502(@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2))
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-btc':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/zcash-shielded':
+        specifier: workspace:^
+        version: link:../coin-modules/zcash-shielded
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@5.9.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@5.9.3)
+      ws:
+        specifier: 'catalog:'
+        version: 8.18.3
 
   libs/live-wallet:
     dependencies:
@@ -15475,6 +15539,11 @@ packages:
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
 
+  '@ledgerhq/device-management-kit@0.0.0-develop-20260319001502':
+    resolution: {integrity: sha512-GJcI2w1G1cCBB/FI9iqXPTnPGl9mpDsefOmRDpiLMjEeXTFbXIsFquzphZCHgNkGap+shMwzf57Ao+CbiJbxjA==}
+    peerDependencies:
+      rxjs: 7.8.2
+
   '@ledgerhq/device-management-kit@1.2.0':
     resolution: {integrity: sha512-h/rQwHU8fpuPRtmIxPfnFgMmjuC3HhiRYZAeLPs3HqpQ4X7VikjKQVWqcu/9rAuiHVs6ET/L4adFuU3jjR/qFQ==}
     peerDependencies:
@@ -15495,6 +15564,11 @@ packages:
     resolution: {integrity: sha512-VmaWZSPW+9/ISrEsJwhWRT4trVv3kPlGWW6EnYVX54ttuaGCaxducS7QnL2CeYPfegtGSt7LP1gUIzbe/RQy2g==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
+
+  '@ledgerhq/device-signer-kit-zcash@0.0.0-develop-20260319001502':
+    resolution: {integrity: sha512-oa5PQnPQZUureqGz+hTwcYu1FJz2Xd/tt6/ZGYEjXozFW51ptJnMBIjGOgOqF002xjH25A0svEBgFsno3GAeoA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20260319001502
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.2':
     resolution: {integrity: sha512-NX/Ml23AR/8iQ5pUPQqum3qjQpValxNhZSbp+Zm/lSl8W0HETLMFK03w/4lj2nfPjiwBy3U+uPhzYNDzdROYQg==}
@@ -15635,6 +15709,11 @@ packages:
     resolution: {integrity: sha512-ct6OSX5ExBn69pJ3cSBygBJ3SE4DJXV+TCLerqyI+iyO/0L1Mgf0LRmNeSXlFrHXQmmuPw18BISvQA+5J2Cp0w==}
     peerDependencies:
       react: 19.0.0
+
+  '@ledgerhq/signer-utils@0.0.0-develop-20260319001502':
+    resolution: {integrity: sha512-7QXM9WKPlAFJwTz90oZ68XemNoQbSWjJY5yXbueEBOwJDeZMePXLg4kpU0/pmqO1ACtZPfZDaKD6RyoMypmOuw==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20260319001502
 
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
@@ -42420,6 +42499,19 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
+  '@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20260319001502(rxjs@7.8.2)
+      axios: 1.13.5
+      crypto-js: 4.2.0
+      ethers: 6.15.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
@@ -42470,6 +42562,25 @@ snapshots:
     dependencies:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
+
+  '@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2)':
+    dependencies:
+      '@noble/hashes': 1.8.0
+      '@sentry/minimal': 6.19.7
+      axios: 1.13.5
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      isomorphic-ws: 5.0.0(ws@8.18.3)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+      semver: 7.7.2
+      url: 0.11.4
+      uuid: 11.0.3
+      ws: 8.18.3
+      xstate: 5.19.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@ledgerhq/device-management-kit@1.2.0':
     dependencies:
@@ -42556,6 +42667,15 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
       - utf-8-validate
+
+  '@ledgerhq/device-signer-kit-zcash@0.0.0-develop-20260319001502(@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20260319001502(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-develop-20260319001502(@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2))
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
@@ -42788,6 +42908,11 @@ snapshots:
       clsx: 2.1.1
       react: 19.0.0
       tailwind-merge: 2.6.0
+
+  '@ledgerhq/signer-utils@0.0.0-develop-20260319001502(@ledgerhq/device-management-kit@0.0.0-develop-20260319001502(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20260319001502(rxjs@7.8.2)
+      semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:

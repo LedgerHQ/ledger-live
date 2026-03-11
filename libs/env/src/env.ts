@@ -1043,6 +1043,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "bignumber.js decimal places configuration",
   },
+  ZCASH_SIGNER: {
+    def: false,
+    parser: boolParser,
+    desc: "enable zcash signer",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | undefined => {

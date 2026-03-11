@@ -5,6 +5,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Btc from "@ledgerhq/hw-app-btc";
+import { DmkSignerZcash as Zcash } from "@ledgerhq/live-signer-zcash";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
 import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
@@ -17,8 +18,12 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
 import { SignMessage } from "../../hw/signMessage/types";
+import { getEnv } from "@ledgerhq/live-env";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency) => {
+  if (getEnv("ZCASH_SIGNER")) {
+    return new Zcash(transport, currency.id);
+  }
   return new Btc({ transport, currency: currency.id });
 };
 
