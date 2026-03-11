@@ -159,18 +159,10 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           }),
         );
       },
-      "storage.get": ({ key, storeId }: { key: string; storeId: string }) => {
+      "storage.get": ({ key, storeId }) => {
         return getStoreValue(key, storeId);
       },
-      "storage.set": ({
-        key,
-        value,
-        storeId,
-      }: {
-        key: string;
-        value: unknown;
-        storeId: string;
-      }) => {
+      "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
       },
       "transaction.sign": ({
