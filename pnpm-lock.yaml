@@ -1434,6 +1434,9 @@ importers:
       '@ledgerhq/coin-casper':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-casper
+      '@ledgerhq/coin-concordium':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-concordium
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
