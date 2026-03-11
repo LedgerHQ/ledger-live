@@ -11,6 +11,13 @@ jest.mock("./network/node/rpc.common", () => ({
   getScrollAdditionalFees: jest.fn(),
 }));
 
+jest.mock("./network/node/index", () => ({
+  ...jest.requireActual("./network/node/index"),
+  getNodeApi: jest.fn((...args: unknown[]) =>
+    jest.requireActual("./network/node/index").getNodeApi(...args),
+  ),
+}));
+
 const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
 const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import { getCoinConfig } from "./config";
@@ -24,6 +31,9 @@ import {
   getSyncHash,
   mergeSubAccounts,
 } from "./logic";
+import { getNodeApi } from "./network/node/index";
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
 import { getOptimismAdditionalFees, getScrollAdditionalFees } from "./network/node/rpc.common";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
@@ -210,6 +220,13 @@ describe("EVM Family", () => {
 
       beforeEach(() => {
         jest.clearAllMocks();
+        mockGetNodeApi.mockImplementation(
+          () =>
+            ({
+              getOptimismAdditionalFees: mockGetOptimismAdditionalFees,
+              getScrollAdditionalFees: mockGetScrollAdditionalFees,
+            }) as any,
+        );
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {

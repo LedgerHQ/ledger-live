@@ -7,6 +7,7 @@ import { getValidators } from "../staking/validators";
 import { getStakes } from "./getStakes";
 
 jest.mock("../network/node/rpc.common", () => ({
+  ...jest.requireActual("../network/node/rpc.common"),
   withApi: jest.fn(),
 }));
 

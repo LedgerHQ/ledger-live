@@ -127,58 +127,86 @@ export async function withApi<T>(
 /**
  * Get a transaction by hash
  */
-export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
-  withApi(currency, async api => {
-    const [tx, receipt] = await Promise.all([
-      api.getTransaction(txHash),
-      api.getTransactionReceipt(txHash),
-    ]);
+function makeGetTransaction(retries: number): NodeApi["getTransaction"] {
+  return (currency, txHash) =>
+    withApi(
+      currency,
+      async api => {
+        const [tx, receipt] = await Promise.all([
+          api.getTransaction(txHash),
+          api.getTransactionReceipt(txHash),
+        ]);
 
-    if (!tx || !receipt) {
-      throw new Error("Transaction or receipt not found");
-    }
+        if (!tx || !receipt) {
+          throw new Error("Transaction or receipt not found");
+        }
 
-    return {
-      hash: tx.hash,
-      blockHeight: tx.blockNumber ?? undefined,
-      blockHash: tx.blockHash ?? undefined,
-      nonce: tx.nonce,
-      gasUsed: receipt.gasUsed.toString(),
-      gasPrice: receipt.gasPrice.toString(),
-      status: receipt.status,
-      value: tx.value.toString(),
-      from: tx.from,
-      to: tx.to ?? undefined,
-      erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
-    };
-  });
+        return {
+          hash: tx.hash,
+          blockHeight: tx.blockNumber ?? undefined,
+          blockHash: tx.blockHash ?? undefined,
+          nonce: tx.nonce,
+          gasUsed: receipt.gasUsed.toString(),
+          gasPrice: receipt.gasPrice.toString(),
+          status: receipt.status,
+          value: tx.value.toString(),
+          from: tx.from,
+          to: tx.to ?? undefined,
+          erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
+        };
+      },
+      retries,
+    );
+}
+
+// FIXME do not export at root level, make sure everyone uses the exported node
+export const getTransaction = makeGetTransaction(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get the balance of an address
  */
-export const getCoinBalance: NodeApi["getCoinBalance"] = (currency, address) =>
-  withApi(currency, async api => {
-    const balance = await api.getBalance(normalizeAddress(address));
-    return new BigNumber(balance.toString());
-  });
+function makeGetCoinBalance(retries: number): NodeApi["getCoinBalance"] {
+  return (currency, address) =>
+    withApi(
+      currency,
+      async api => {
+        const balance = await api.getBalance(normalizeAddress(address));
+        return new BigNumber(balance.toString());
+      },
+      retries,
+    );
+}
+export const getCoinBalance = makeGetCoinBalance(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get the balance of an address
  */
-export const getTokenBalance: NodeApi["getTokenBalance"] = (currency, address, contractAddress) =>
-  withApi(currency, async api => {
-    const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
-    const balance = await erc20.balanceOf(normalizeAddress(address));
-    return new BigNumber(balance.toString());
-  });
+function makeGetTokenBalance(retries: number): NodeApi["getTokenBalance"] {
+  return (currency, address, contractAddress) =>
+    withApi(
+      currency,
+      async api => {
+        const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
+        const balance = await erc20.balanceOf(normalizeAddress(address));
+        return new BigNumber(balance.toString());
+      },
+      retries,
+    );
+}
+export const getTokenBalance = makeGetTokenBalance(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get account nonce
  */
-export const getTransactionCount: NodeApi["getTransactionCount"] = (currency, address) =>
-  withApi(currency, async api => {
-    return api.getTransactionCount(normalizeAddress(address), "pending");
-  });
+function makeGetTransactionCount(retries: number): NodeApi["getTransactionCount"] {
+  return (currency, address) =>
+    withApi(
+      currency,
+      async api => api.getTransactionCount(normalizeAddress(address), "pending"),
+      retries,
+    );
+}
+export const getTransactionCount = makeGetTransactionCount(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get an estimated gas limit for a transaction
@@ -212,74 +240,83 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 /**
  * Get an estimation of fees on the network
  */
-export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
-  withApi(currency, async api => {
-    const block = await api.getBlock("latest");
-    const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
-      ? false
-      : transaction.type === 2 && Boolean(block?.baseFeePerGas);
+function makeGetFeeData(retries: number): NodeApi["getFeeData"] {
+  return (currency, transaction) =>
+    withApi(
+      currency,
+      async api => {
+        const block = await api.getBlock("latest");
+        const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
+          ? false
+          : transaction.type === 2 && Boolean(block?.baseFeePerGas);
 
-    const feeData = await (async (): Promise<
-      | {
-          maxPriorityFeePerGas: BigNumber;
-          maxFeePerGas: BigNumber;
-          nextBaseFee: BigNumber;
-          gasPrice?: undefined;
-        }
-      | {
-          maxPriorityFeePerGas?: undefined;
-          maxFeePerGas?: undefined;
-          nextBaseFee?: undefined;
-          gasPrice: BigNumber;
-        }
-    > => {
-      if (currencySupports1559) {
-        const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
-          "0x5", // Fetching the history for 5 blocks
-          "latest", // from the latest block
-          [50], // 50% percentile sample
-        ]);
-        // Taking the average priority fee used on the last 5 blocks
-        const maxPriorityFeeAverage = feeHistory.reward
-          ? feeHistory.reward
-              .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
-              .dividedToIntegerBy(feeHistory.reward.length)
-          : new BigNumber(0);
+        const feeData = await (async (): Promise<
+          | {
+              maxPriorityFeePerGas: BigNumber;
+              maxFeePerGas: BigNumber;
+              nextBaseFee: BigNumber;
+              gasPrice?: undefined;
+            }
+          | {
+              maxPriorityFeePerGas?: undefined;
+              maxFeePerGas?: undefined;
+              nextBaseFee?: undefined;
+              gasPrice: BigNumber;
+            }
+        > => {
+          if (currencySupports1559) {
+            const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
+              "0x5", // Fetching the history for 5 blocks
+              "latest", // from the latest block
+              [50], // 50% percentile sample
+            ]);
+            // Taking the average priority fee used on the last 5 blocks
+            const maxPriorityFeeAverage = feeHistory.reward
+              ? feeHistory.reward
+                  .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
+                  .dividedToIntegerBy(feeHistory.reward.length)
+              : new BigNumber(0);
 
-        // A maxPriorityFeePerGas too low might make a transaction stuck forever
-        // As a safety measure, if maxPriorityFeePerGas is zero
-        // we enforce a 1 Gwei value
-        const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
-          ? getMaxPriorityFeePerGas(currency)
-          : maxPriorityFeeAverage;
+            // A maxPriorityFeePerGas too low might make a transaction stuck forever
+            // As a safety measure, if maxPriorityFeePerGas is zero
+            // we enforce a 1 Gwei value
+            const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
+              ? getMaxPriorityFeePerGas(currency)
+              : maxPriorityFeeAverage;
 
-        const nextBaseFee = new BigNumber(
-          feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1],
-        );
+            const nextBaseFee = new BigNumber(
+              feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1],
+            );
+
+            return {
+              maxPriorityFeePerGas,
+              maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
+              nextBaseFee,
+            };
+          } else {
+            const gasPrice = (await api.getFeeData()).gasPrice;
+
+            return {
+              gasPrice: new BigNumber(gasPrice?.toString() ?? "0"),
+            };
+          }
+        })();
 
         return {
-          maxPriorityFeePerGas,
-          maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
-          nextBaseFee,
+          maxFeePerGas: feeData.maxFeePerGas
+            ? new BigNumber(feeData.maxFeePerGas.toString())
+            : null,
+          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
+            ? new BigNumber(feeData.maxPriorityFeePerGas.toString())
+            : null,
+          gasPrice: feeData.gasPrice ? new BigNumber(feeData.gasPrice.toString()) : null,
+          nextBaseFee: feeData.nextBaseFee ? new BigNumber(feeData.nextBaseFee.toString()) : null,
         };
-      } else {
-        const gasPrice = (await api.getFeeData()).gasPrice;
-
-        return {
-          gasPrice: new BigNumber(gasPrice?.toString() ?? "0"),
-        };
-      }
-    })();
-
-    return {
-      maxFeePerGas: feeData.maxFeePerGas ? new BigNumber(feeData.maxFeePerGas.toString()) : null,
-      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
-        ? new BigNumber(feeData.maxPriorityFeePerGas.toString())
-        : null,
-      gasPrice: feeData.gasPrice ? new BigNumber(feeData.gasPrice.toString()) : null,
-      nextBaseFee: feeData.nextBaseFee ? new BigNumber(feeData.nextBaseFee.toString()) : null,
-    };
-  });
+      },
+      retries,
+    );
+}
+export const getFeeData = makeGetFeeData(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Broadcast a serialized transaction and returns its hash
@@ -305,134 +342,153 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, 
 /**
  * Get the informations about a block by block height
  */
-export const getBlockByHeight: NodeApi["getBlockByHeight"] = (
-  currency,
-  blockHeight = "latest",
-  prefetchTxs = false,
-) =>
-  withApi(currency, async api => {
-    const block = await api.getBlock(blockHeight, prefetchTxs);
+function makeGetBlockByHeight(retries: number): NodeApi["getBlockByHeight"] {
+  return (currency, blockHeight = "latest", prefetchTxs = false) =>
+    withApi(
+      currency,
+      async api => {
+        const block = await api.getBlock(blockHeight, prefetchTxs);
 
-    if (!block) {
-      throw new Error(`Block ${blockHeight} not found`);
-    }
+        if (!block) {
+          throw new Error(`Block ${blockHeight} not found`);
+        }
 
-    if (!block.hash) {
-      throw new Error(`Block ${blockHeight} is missing hash`);
-    }
+        if (!block.hash) {
+          throw new Error(`Block ${blockHeight} is missing hash`);
+        }
 
-    const transactionHashes =
-      block.transactions === undefined
-        ? undefined
-        : block.transactions.map((tx, index) => {
-            if (typeof tx !== "string") {
-              throw new TypeError(
-                `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
-              );
-            }
-            return tx;
-          });
+        const transactionHashes =
+          block.transactions === undefined
+            ? undefined
+            : block.transactions.map((tx, index) => {
+                if (typeof tx !== "string") {
+                  throw new TypeError(
+                    `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
+                  );
+                }
+                return tx;
+              });
 
-    const prefetchedTransactions = prefetchTxs ? getPrefetchedBlockTransactions(block) : undefined;
-    const transactions = prefetchedTransactions?.map((tx, index) => {
-      if (!isPrefetchedBlockTransaction(tx))
-        throw new Error(
-          `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
-        );
+        const prefetchedTransactions = prefetchTxs
+          ? getPrefetchedBlockTransactions(block)
+          : undefined;
+        const transactions = prefetchedTransactions?.map((tx, index) => {
+          if (!isPrefetchedBlockTransaction(tx))
+            throw new Error(
+              `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
+            );
 
-      return {
-        hash: tx.hash,
-        value: tx.value.toString(),
-        from: tx.from,
-        to: tx.to ?? undefined,
-      };
-    });
+          return {
+            hash: tx.hash,
+            value: tx.value.toString(),
+            from: tx.from,
+            to: tx.to ?? undefined,
+          };
+        });
 
-    return {
-      hash: block.hash,
-      height: block.number ?? 0,
-      // timestamp is returned in seconds by getBlock, we need milliseconds
-      timestamp: block.timestamp * 1000,
-      parentHash: block.parentHash,
-      ...(transactions !== undefined && { transactions }),
-      ...(transactionHashes !== undefined && { transactionHashes }),
-    };
-  });
+        return {
+          hash: block.hash,
+          height: block.number ?? 0,
+          // timestamp is returned in seconds by getBlock, we need milliseconds
+          timestamp: block.timestamp * 1000,
+          parentHash: block.parentHash,
+          ...(transactions !== undefined && { transactions }),
+          ...(transactionHashes !== undefined && { transactionHashes }),
+        };
+      },
+      retries,
+    );
+}
+export const getBlockByHeight = makeGetBlockByHeight(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get all transaction receipts for a block in one RPC call.
  * This method is not supported by all RPC providers.
  */
-export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> = (
-  currency,
-  blockHeight = "latest",
-) =>
-  withApi(currency, async api => {
-    const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-    let receipts: unknown;
-    try {
-      receipts = await api.send("eth_getBlockReceipts", [blockTag]);
-    } catch (error) {
-      if (isUnsupportedRpcMethodError(error)) {
-        throw new UnsupportedRpcMethodError(
-          "eth_getBlockReceipts is not supported by this RPC provider",
-          {
-            method: "eth_getBlockReceipts",
-            rawError: error,
-          },
-        );
-      }
-      throw error;
-    }
+function makeGetBlockReceipts(retries: number): Exclude<NodeApi["getBlockReceipts"], undefined> {
+  return (currency, blockHeight = "latest") =>
+    withApi(
+      currency,
+      async api => {
+        const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+        let receipts: unknown;
+        try {
+          receipts = await api.send("eth_getBlockReceipts", [blockTag]);
+        } catch (error) {
+          if (isUnsupportedRpcMethodError(error)) {
+            throw new UnsupportedRpcMethodError(
+              "eth_getBlockReceipts is not supported by this RPC provider",
+              {
+                method: "eth_getBlockReceipts",
+                rawError: error,
+              },
+            );
+          }
+          throw error;
+        }
 
-    if (!Array.isArray(receipts)) throw new Error("Invalid eth_getBlockReceipts response");
+        if (!Array.isArray(receipts)) throw new Error("Invalid eth_getBlockReceipts response");
 
-    return receipts.map((receipt, index) => {
-      if (!isTransactionReceipt(receipt))
-        throw new Error(`Malformed eth_getBlockReceipts response at index ${index}`);
+        return receipts.map((receipt, index) => {
+          if (!isTransactionReceipt(receipt))
+            throw new Error(`Malformed eth_getBlockReceipts response at index ${index}`);
 
-      return {
-        hash: receipt.transactionHash,
-        gasUsed: BigInt(receipt.gasUsed).toString(),
-        gasPrice: BigInt(receipt.effectiveGasPrice ?? receipt.gasPrice ?? "0x0").toString(),
-        status: receipt.status === null ? null : Number(receipt.status),
-        erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
-      };
-    });
-  });
+          return {
+            hash: receipt.transactionHash,
+            gasUsed: BigInt(receipt.gasUsed).toString(),
+            gasPrice: BigInt(receipt.effectiveGasPrice ?? receipt.gasPrice ?? "0x0").toString(),
+            status: receipt.status === null ? null : Number(receipt.status),
+            erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
+          };
+        });
+      },
+      retries,
+    );
+}
+export const getBlockReceipts = makeGetBlockReceipts(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get execution traces for a block via trace_block RPC.
  * Not supported by all RPC providers (e.g. Fantom supports it).
  * @see https://www.quicknode.com/docs/ethereum/trace_block
  */
-export const traceBlock: NonNullable<NodeApi["traceBlock"]> = (currency, blockHeight = "latest") =>
-  withApi(currency, async api => {
-    const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-    let traces: unknown;
-    try {
-      traces = await api.send("trace_block", [blockTag]);
-    } catch (error) {
-      if (isUnsupportedRpcMethodError(error)) {
-        throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
-          method: "trace_block",
-          rawError: error,
+function makeTraceBlock(retries: number): NonNullable<NodeApi["traceBlock"]> {
+  return (currency, blockHeight = "latest") =>
+    withApi(
+      currency,
+      async api => {
+        const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+        let traces: unknown;
+        try {
+          traces = await api.send("trace_block", [blockTag]);
+        } catch (error) {
+          if (isUnsupportedRpcMethodError(error)) {
+            throw new UnsupportedRpcMethodError(
+              "trace_block is not supported by this RPC provider",
+              {
+                method: "trace_block",
+                rawError: error,
+              },
+            );
+          }
+          throw error;
+        }
+
+        if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
+
+        return traces.map((trace, index) => {
+          if (!isTraceBlockItem(trace)) {
+            throw new Error(
+              `Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`,
+            );
+          }
+          return trace;
         });
-      }
-      throw error;
-    }
-
-    if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
-
-    return traces.map((trace, index) => {
-      if (!isTraceBlockItem(trace)) {
-        throw new Error(
-          `Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`,
-        );
-      }
-      return trace;
-    });
-  });
+      },
+      retries,
+    );
+}
+export const traceBlock = makeTraceBlock(DEFAULT_RETRIES_RPC_METHODS);
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
   if (typeof value !== "object" || value === null) return false;
@@ -504,37 +560,44 @@ function isTransactionReceipt(value: unknown): value is TransactionReceipt {
  *
  * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
  */
+function makeGetOptimismAdditionalFees(retries: number): NodeApi["getOptimismAdditionalFees"] {
+  return async (currency, transaction) =>
+    withApi(
+      currency,
+      async api => {
+        if (
+          ![
+            "optimism",
+            "optimism_sepolia",
+            "base",
+            "base_sepolia",
+            "blast",
+            "blast_sepolia",
+          ].includes(currency.id)
+        ) {
+          return new BigNumber(0);
+        }
+
+        // Fake signature is added to get the best approximation possible for the gas on L1
+        if (!transaction) {
+          return new BigNumber(0);
+        }
+
+        const optimismGasOracle = new ethers.Contract(
+          // contract address provided here
+          // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
+          "0x420000000000000000000000000000000000000F",
+          OptimismGasPriceOracleAbi,
+          api,
+        );
+        const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
+        return new BigNumber(additionalL1Fees.toString());
+      },
+      retries,
+    );
+}
 export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
-  async (currency, transaction) =>
-    withApi(currency, async api => {
-      if (
-        ![
-          "optimism",
-          "optimism_sepolia",
-          "base",
-          "base_sepolia",
-          "blast",
-          "blast_sepolia",
-        ].includes(currency.id)
-      ) {
-        return new BigNumber(0);
-      }
-
-      // Fake signature is added to get the best approximation possible for the gas on L1
-      if (!transaction) {
-        return new BigNumber(0);
-      }
-
-      const optimismGasOracle = new ethers.Contract(
-        // contract address provided here
-        // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
-        "0x420000000000000000000000000000000000000F",
-        OptimismGasPriceOracleAbi,
-        api,
-      );
-      const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
-      return new BigNumber(additionalL1Fees.toString());
-    }),
+  makeGetOptimismAdditionalFees(DEFAULT_RETRIES_RPC_METHODS),
   (currency, transaction) => {
     return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
   },
@@ -550,29 +613,33 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
  *
  * @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/
  */
-export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
-  currency,
-  transaction,
-) =>
-  withApi(currency, async api => {
-    if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
-      return new BigNumber(0);
-    }
+function makeGetScrollAdditionalFees(retries: number): NodeApi["getScrollAdditionalFees"] {
+  return (currency, transaction) =>
+    withApi(
+      currency,
+      async api => {
+        if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+          return new BigNumber(0);
+        }
 
-    if (!transaction) {
-      return new BigNumber(0);
-    }
+        if (!transaction) {
+          return new BigNumber(0);
+        }
 
-    const scrollGasOracle = new ethers.Contract(
-      // contract address provided here
-      // @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/#estimating-the-l1-data-fee
-      "0x5300000000000000000000000000000000000002",
-      ScrollGasPriceOracleAbi,
-      api,
+        const scrollGasOracle = new ethers.Contract(
+          // contract address provided here
+          // @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/#estimating-the-l1-data-fee
+          "0x5300000000000000000000000000000000000002",
+          ScrollGasPriceOracleAbi,
+          api,
+        );
+        const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
+        return new BigNumber(additionalL1Fees.toString());
+      },
+      retries,
     );
-    const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
-    return new BigNumber(additionalL1Fees.toString());
-  });
+}
+export const getScrollAdditionalFees = makeGetScrollAdditionalFees(DEFAULT_RETRIES_RPC_METHODS);
 
 /* Get default maxPriorityFeePerGas by chain */
 const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
@@ -584,19 +651,23 @@ const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
   }
 };
 
-const node: NodeApi = {
-  getBlockByHeight,
-  getCoinBalance,
-  getTokenBalance,
-  getTransactionCount,
-  getTransaction,
-  getBlockReceipts,
-  traceBlock,
-  getGasEstimation,
-  getFeeData,
-  broadcastTransaction,
-  getOptimismAdditionalFees,
-  getScrollAdditionalFees,
-};
+export function createNodeApi(retries: number): NodeApi {
+  return {
+    getBlockByHeight: makeGetBlockByHeight(retries),
+    getCoinBalance: makeGetCoinBalance(retries),
+    getTokenBalance: makeGetTokenBalance(retries),
+    getTransactionCount: makeGetTransactionCount(retries),
+    getTransaction: makeGetTransaction(retries),
+    getBlockReceipts: makeGetBlockReceipts(retries),
+    traceBlock: makeTraceBlock(retries),
+    getGasEstimation,
+    getFeeData: makeGetFeeData(retries),
+    broadcastTransaction,
+    getOptimismAdditionalFees: makeGetOptimismAdditionalFees(retries),
+    getScrollAdditionalFees: makeGetScrollAdditionalFees(retries),
+  };
+}
 
+const node = createNodeApi(DEFAULT_RETRIES_RPC_METHODS);
+export const nodeWithoutRetry = createNodeApi(0);
 export default node;

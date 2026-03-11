@@ -1,27 +1,25 @@
 import { getCoinConfig } from "../config";
-import { getTransaction } from "../network/node/rpc.common";
+import { getNodeApi } from "../network/node";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
+// FIXME setup to complicated, maybe we could have a factory for tests
+
+const mockGetTransaction = jest.fn();
 jest.mock("../config");
-jest.mock("../network/node/rpc.common", () => ({
-  getTransaction: jest.fn(),
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
 }));
 
 const mockGetConfig = jest.mocked(getCoinConfig);
-const mockGetTransaction = getTransaction as jest.Mock;
+const mockGetNodeApi = jest.mocked(getNodeApi);
 
 describe("isTransactionConfirmed", () => {
   beforeEach(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        info: {
-          node: { type: "external" },
-        },
-      };
-    });
-  });
-
-  beforeEach(() => {
+    mockGetConfig.mockImplementation((): any => ({
+      info: { node: { type: "external" } },
+    }));
+    mockGetNodeApi.mockReturnValue({ getTransaction: mockGetTransaction } as any);
     jest.clearAllMocks();
   });
 

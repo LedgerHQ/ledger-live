@@ -25,6 +25,7 @@ import {
 } from "./types";
 
 jest.mock("./network/node/rpc.common", () => ({
+  ...jest.requireActual("./network/node/rpc.common"),
   getTransactionCount: jest.fn(),
 }));
 

@@ -104,7 +104,10 @@ describe("getBlock", () => {
   }
 
   it("returns block with transactions and ERC20 transfers using bulk receipts", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    setCoinConfig(
+      () =>
+        ({ info: { node: { type: "external" as const, retries: 0 } } }) as unknown as EvmCoinConfig,
+    );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest.fn();
@@ -192,7 +195,10 @@ describe("getBlock", () => {
   });
 
   it("falls back to per-transaction calls when bulk receipts are unavailable", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    setCoinConfig(
+      () =>
+        ({ info: { node: { type: "external" as const, retries: 0 } } }) as unknown as EvmCoinConfig,
+    );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce(
@@ -234,7 +240,10 @@ describe("getBlock", () => {
   });
 
   it("falls back to per-transaction calls when prefetchTxs is not supported", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    setCoinConfig(
+      () =>
+        ({ info: { node: { type: "external" as const, retries: 0 } } }) as unknown as EvmCoinConfig,
+    );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest
@@ -267,7 +276,10 @@ describe("getBlock", () => {
   });
 
   it("does not fallback when getBlockReceipts fails for another reason", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    setCoinConfig(
+      () =>
+        ({ info: { node: { type: "external" as const, retries: 0 } } }) as unknown as EvmCoinConfig,
+    );
 
     const mockGetNodeApi = jest.mocked(getNodeApi);
     const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce(
@@ -317,7 +329,7 @@ describe("getBlock", () => {
       () =>
         ({
           info: {
-            node: { type: "external" },
+            node: { type: "external" as const, retries: 0 },
             explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           },
         }) as unknown as EvmCoinConfig,
@@ -387,7 +399,7 @@ describe("getBlock", () => {
       () =>
         ({
           info: {
-            node: { type: "external" },
+            node: { type: "external" as const, retries: 0 },
             explorer: { type: "ledger" },
           },
         }) as unknown as EvmCoinConfig,
@@ -447,7 +459,7 @@ describe("getBlock", () => {
       () =>
         ({
           info: {
-            node: { type: "external" },
+            node: { type: "external" as const, retries: 0 },
             explorer: { type: "ledger" },
           },
         }) as unknown as EvmCoinConfig,
@@ -486,7 +498,7 @@ describe("getBlock", () => {
       () =>
         ({
           info: {
-            node: { type: "external" },
+            node: { type: "external" as const, retries: 0 },
             explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           },
         }) as unknown as EvmCoinConfig,
@@ -528,7 +540,7 @@ describe("getBlock", () => {
       () =>
         ({
           info: {
-            node: { type: "external" },
+            node: { type: "external" as const, retries: 0 },
             explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
           },
         }) as unknown as EvmCoinConfig,

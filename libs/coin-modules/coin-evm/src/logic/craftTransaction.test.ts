@@ -6,7 +6,8 @@ import {
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import { getNodeApi } from "../network/node";
 import ledgerNode from "../network/node/ledger";
 import {
   getTransactionCount as externalGetTransactionCount,
@@ -16,9 +17,16 @@ import {
 import { craftTransaction } from "./craftTransaction";
 
 jest.mock("../network/node/rpc.common", () => ({
+  ...jest.requireActual("../network/node/rpc.common"),
   getTransactionCount: jest.fn(),
   getGasEstimation: jest.fn(),
   getFeeData: jest.fn(),
+}));
+
+// FIXME setup to complicated
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
 }));
 
 jest.mock("../network/node/ledger", () => ({
@@ -55,9 +63,18 @@ const ledgerMocks: MockNodeFunctions = {
   getFeeData: mockLedgerGetFeeData,
 };
 
+const mockGetNodeApi = jest.mocked(getNodeApi);
+
 describe("craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
+      const c = getCoinConfig(currency) as { info?: { node?: { type?: string } } };
+      if (c?.info?.node?.type === "ledger") {
+        return ledgerNode as any;
+      }
+      return externalMocks as any;
+    });
   });
 
   it("fails to craft an unknown intent type", async () => {

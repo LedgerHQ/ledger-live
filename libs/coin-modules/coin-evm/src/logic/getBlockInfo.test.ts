@@ -1,13 +1,14 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import { getNodeApi } from "../network/node";
 import ledgerNode from "../network/node/ledger";
-import { getBlockByHeight as externalGetBlockByHeight } from "../network/node/rpc.common";
 import { getBlockInfo } from "./getBlockInfo";
 
-jest.mock("../network/node/rpc.common", () => ({
-  getBlockByHeight: jest.fn(),
+const mockGetBlockByHeight = jest.fn();
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
 }));
-
 jest.mock("../network/node/ledger", () => ({
   __esModule: true,
   default: {
@@ -15,16 +16,23 @@ jest.mock("../network/node/ledger", () => ({
   },
 }));
 
-const mockExternalGetBlockByHeight = externalGetBlockByHeight as jest.Mock;
+const mockGetNodeApi = jest.mocked(getNodeApi);
 const mockLedgerGetBlockByHeight = ledgerNode.getBlockByHeight as jest.Mock;
 
 describe("getBlockInfo", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
+      const c = getCoinConfig(currency) as { info?: { node?: { type?: string } } };
+      if (c?.info?.node?.type === "ledger") {
+        return { getBlockByHeight: mockLedgerGetBlockByHeight } as any;
+      }
+      return { getBlockByHeight: mockGetBlockByHeight } as any;
+    });
   });
 
   describe.each([
-    ["an external node", "external", mockExternalGetBlockByHeight],
+    ["an external node", "external", mockGetBlockByHeight],
     ["a ledger node", "ledger", mockLedgerGetBlockByHeight],
   ])("using %s", (_, type, mockGetBlockByHeight) => {
     beforeEach(() => {

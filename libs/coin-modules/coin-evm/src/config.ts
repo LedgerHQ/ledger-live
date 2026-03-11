@@ -6,6 +6,8 @@ export type EvmConfig = {
     | {
         type: "external";
         uri: string;
+        /** Number of retries for RPC calls. Defaults to 3 if not set. Set to 0 for no retries. */
+        retries?: number;
       }
     | {
         type: "ledger";
