@@ -1,15 +1,13 @@
-import { InvalidAddress } from "@ledgerhq/errors";
-import { validateRecipient } from "./cache";
 import { validateAddress } from "./validateAddress";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { isValidAddress } from "./wallet-btc/utils";
 
-jest.mock("./cache");
+jest.mock("./wallet-btc/utils");
 
 describe("validateAddress", () => {
-  const mockedValidateRecipient = jest.mocked(validateRecipient);
+  const mockedIsValidAddress = jest.mocked(isValidAddress);
 
   beforeEach(() => {
-    mockedValidateRecipient.mockClear();
+    mockedIsValidAddress.mockClear();
   });
 
   it("should return throw an error when currency parameter is absent", async () => {
@@ -20,29 +18,23 @@ describe("validateAddress", () => {
       "Missing currency parameter for address validation on Bitcoin",
     );
 
-    expect(mockedValidateRecipient).toHaveBeenCalledTimes(0);
+    expect(mockedIsValidAddress).toHaveBeenCalledTimes(0);
   });
 
   it.each([true, false])(
-    "should call AccountAddress from aptos and return expected value (%s)",
+    "should call isValidAddress from Bitcoin and return expected value (%s)",
     async (expectedValue: boolean) => {
-      mockedValidateRecipient.mockResolvedValueOnce({
-        recipientError: expectedValue ? null : new InvalidAddress(),
-        recipientWarning: null,
-        changeAddressError: null,
-        changeAddressWarning: null,
-      });
+      mockedIsValidAddress.mockResolvedValueOnce(expectedValue);
 
       const address = "some random address";
       const parameters = {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        currency: {} as CryptoCurrency,
+        currencyId: "bitcoin",
       };
       const result = await validateAddress(address, parameters);
       expect(result).toEqual(expectedValue);
 
-      expect(mockedValidateRecipient).toHaveBeenCalledTimes(1);
-      expect(mockedValidateRecipient).toHaveBeenCalledWith(parameters.currency, address);
+      expect(mockedIsValidAddress).toHaveBeenCalledTimes(1);
+      expect(mockedIsValidAddress).toHaveBeenCalledWith(address, parameters.currencyId);
     },
   );
 });

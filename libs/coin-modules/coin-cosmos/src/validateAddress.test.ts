@@ -1,22 +1,17 @@
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as bech32 from "bech32";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
 import { validateAddress } from "./validateAddress";
 
 jest.mock("bech32");
-jest.mock("@ledgerhq/cryptoassets");
 jest.mock("./chain/chain");
 
 describe("validateAddress", () => {
   const mockedDecode = jest.mocked(bech32.decode);
-  const mockedFindCryptoCurrencyById = jest.mocked(findCryptoCurrencyById);
   const mockedCryptoFactory = jest.mocked(cryptoFactory);
 
   beforeEach(() => {
     mockedDecode.mockClear();
-    mockedFindCryptoCurrencyById.mockClear();
     mockedCryptoFactory.mockClear();
   });
 
@@ -32,48 +27,12 @@ describe("validateAddress", () => {
   });
 
   it.each([true, false])(
-    "should only decode address when currency config not found and return expected value (%s)",
-    async (expectedValue: boolean) => {
-      if (!expectedValue) {
-        mockedDecode.mockImplementationOnce(_address => {
-          throw new Error("Mocked Error from unit test");
-        });
-      }
-
-      mockedFindCryptoCurrencyById.mockReturnValueOnce(undefined);
-      const address = "some random address";
-      const parameters = {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        currency: {
-          name: "cosmos",
-        } as CryptoCurrency,
-      };
-
-      const result = await validateAddress(address, parameters);
-
-      expect(result).toEqual(expectedValue);
-
-      expect(mockedDecode).toHaveBeenCalledTimes(1);
-      expect(mockedDecode).toHaveBeenCalledWith(address);
-
-      expect(mockedFindCryptoCurrencyById).toHaveBeenCalledTimes(1);
-      expect(mockedFindCryptoCurrencyById).toHaveBeenCalledWith(parameters.currency.name);
-    },
-  );
-
-  it.each([true, false])(
     "should decode address, check prefix from currency config and return expected value (%s)",
     async (expectedValue: boolean) => {
       const address = "cosmos: some random address";
       const parameters = {
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        currency: {
-          id: "cosmos id",
-          name: "cosmos name",
-        } as CryptoCurrency,
+        currencyId: "cosmos id",
       };
-
-      mockedFindCryptoCurrencyById.mockReturnValueOnce(parameters.currency);
 
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       mockedCryptoFactory.mockReturnValueOnce({
@@ -87,11 +46,8 @@ describe("validateAddress", () => {
       expect(mockedDecode).toHaveBeenCalledTimes(1);
       expect(mockedDecode).toHaveBeenCalledWith(address);
 
-      expect(mockedFindCryptoCurrencyById).toHaveBeenCalledTimes(1);
-      expect(mockedFindCryptoCurrencyById).toHaveBeenCalledWith(parameters.currency.name);
-
       expect(mockedCryptoFactory).toHaveBeenCalledTimes(1);
-      expect(mockedCryptoFactory).toHaveBeenCalledWith(parameters.currency.id);
+      expect(mockedCryptoFactory).toHaveBeenCalledWith(parameters.currencyId);
     },
   );
 
@@ -102,14 +58,8 @@ describe("validateAddress", () => {
 
     const address = "cosmos: some random address";
     const parameters = {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      currency: {
-        id: "cosmos id",
-        name: "cosmos name",
-      } as CryptoCurrency,
+      currencyId: "cosmos id",
     };
-
-    mockedFindCryptoCurrencyById.mockReturnValueOnce(parameters.currency);
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     mockedCryptoFactory.mockReturnValueOnce({
@@ -123,10 +73,7 @@ describe("validateAddress", () => {
     expect(mockedDecode).toHaveBeenCalledTimes(1);
     expect(mockedDecode).toHaveBeenCalledWith(address);
 
-    expect(mockedFindCryptoCurrencyById).toHaveBeenCalledTimes(1);
-    expect(mockedFindCryptoCurrencyById).toHaveBeenCalledWith(parameters.currency.name);
-
     expect(mockedCryptoFactory).toHaveBeenCalledTimes(1);
-    expect(mockedCryptoFactory).toHaveBeenCalledWith(parameters.currency.id);
+    expect(mockedCryptoFactory).toHaveBeenCalledWith(parameters.currencyId);
   });
 });

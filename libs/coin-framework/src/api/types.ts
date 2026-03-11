@@ -1,4 +1,4 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -467,7 +467,7 @@ export type AccountInfo = {
 };
 
 export type AddressValidationCurrencyParameters = {
-  currency: CryptoCurrency;
+  currencyId: string;
   networkId: number;
 };
 
