@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.109.0-next.9
+
+### Minor Changes
+
+- [#15250](https://github.com/LedgerHQ/ledger-live/pull/15250) [`be64f80`](https://github.com/LedgerHQ/ledger-live/commit/be64f80746a61224f5a47d81fd56140ae9358a92) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [LWM] back nav on swap android v40 off
+
 ## 3.109.0-next.8
 
 ### Minor Changes
