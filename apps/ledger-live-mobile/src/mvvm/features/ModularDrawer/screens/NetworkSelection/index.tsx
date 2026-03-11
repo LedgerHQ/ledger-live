@@ -95,7 +95,7 @@ const NetworkSelection = ({
     networksConfig: networksConfiguration,
   });
 
-  const formattedNetworks = transformNetworks(availableNetworks);
+  const formattedNetworks = transformNetworks(availableNetworks ?? []);
 
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
