@@ -2,13 +2,13 @@ import { test } from "tests/fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { LWD_WALLET_40_FLAGS } from "tests/utils/featureFlagUtils";
+import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 test.describe("Market", () => {
   test.use({
     //TODO: remove feature flag when market banner is enabled for all users
     userdata: "speculos-tests-app",
-    featureFlags: LWD_WALLET_40_FLAGS,
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
