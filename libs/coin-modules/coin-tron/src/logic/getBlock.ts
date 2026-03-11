@@ -164,7 +164,7 @@ function formatBlockTransaction(
       hasFailed,
     };
   } catch (error) {
-    log("tron", "formatBlockTransaction error", {
+    log("tron/getBlock", "formatBlockTransaction error", {
       txId: tx.txID,
       error,
     });
