@@ -19,6 +19,7 @@ import { SignatureScreen } from "./screens/Signature";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
+  [SEND_FLOW_STEP.RECENT_HISTORY]: () => <></>,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
   [SEND_FLOW_STEP.CUSTOM_FEES]: () => <></>,
   [SEND_FLOW_STEP.COIN_CONTROL]: () => <></>,

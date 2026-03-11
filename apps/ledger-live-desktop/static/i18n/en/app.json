@@ -1500,25 +1500,24 @@
     }
   },
   "deviceDeprecation": {
-      "warning": {
-        "title": "{{device}}™ can not Clear Sign this transaction",
-        "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
-        "continue": "Proceed at your own risk"
-  
-      },
-      "info": {
-        "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
-        "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
-        "reminder": "Do not remind me again"
-      },
-      "error": {
-        "title": "{{device}}™ does not support this feature",
-        "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
-      },
-      "update": "Discover your Upgrade Program",
-      "learnMore": "Learn more",
-      "continue": "Continue"
+    "warning": {
+      "title": "{{device}}™ can not Clear Sign this transaction",
+      "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
+      "continue": "Proceed at your own risk"
     },
+    "info": {
+      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+      "reminder": "Do not remind me again"
+    },
+    "error": {
+      "title": "{{device}}™ does not support this feature",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+    },
+    "update": "Discover your Upgrade Program",
+    "learnMore": "Learn more",
+    "continue": "Continue"
+  },
   "currentAddress": {
     "title": "Current address",
     "for": "Address for <1><0>{{name}}</0></1>",
@@ -2409,6 +2408,24 @@
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
     "recentSendWillAppear": "Your recent send will appear here",
+    "securityInfo": {
+      "title": "How to send securely?",
+      "items": {
+        "compatibility": "Ensure the recipient address is compatible with the selected network",
+        "review": "Review your transaction details on your Ledger secure screen",
+        "smallAmount": "If in doubt, try sending a small amount first"
+      }
+    },
+    "recentHistory": {
+      "banner": {
+        "description": "This address isn’t in your recent history. In case of doubt try a small amount first."
+      },
+      "dialog": {
+        "title": "Recent send history",
+        "description": "Your recent history allows you to instantly see if you’ve already sent to a specific address or not. This could prevent potential copy/paste errors or hacks. Your history contains the last 12 addresses you sent crypto to using Ledger Wallet.",
+        "cta": "Got it"
+      }
+    },
     "relativeDate": {
       "justNow": "Just now",
       "minutesAgo_one": "1 min ago",
