@@ -565,7 +565,6 @@ function makeGetOptimismAdditionalFees(retries: number): NodeApi["getOptimismAdd
           return new BigNumber(0);
         }
 
-        // Fake signature is added to get the best approximation possible for the gas on L1
         if (!transaction) {
           return new BigNumber(0);
         }

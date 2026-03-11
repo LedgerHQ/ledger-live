@@ -13,10 +13,6 @@ jest.mock("./network/node/index", () => ({
 }));
 
 import { getCoinConfig } from "./config";
-
-const mockGetNodeApi = jest.mocked(getNodeApi);
-const mockGetOptimismAdditionalFees = jest.fn();
-const mockGetScrollAdditionalFees = jest.fn();
 import { makeAccount, makeOperation, makeTokenAccount } from "./fixtures/common.fixtures";
 import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
 import wethTokenData from "./fixtures/ethereum-erc20-weth.json";
@@ -29,6 +25,10 @@ import {
 } from "./logic";
 import { getNodeApi } from "./network/node/index";
 import { Transaction as EvmTransaction } from "./types";
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockGetOptimismAdditionalFees = jest.fn();
+const mockGetScrollAdditionalFees = jest.fn();
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
