@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "677185650562",
-    "project_id": "ledger-live-testing",
-    "storage_bucket": "ledger-live-testing.appspot.com"
+    "project_number": "491405541837",
+    "project_id": "ledger-wallet---prs",
+    "storage_bucket": "ledger-wallet---prs.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:677185650562:android:dadc730f54ee1f7b1c199b",
+        "mobilesdk_app_id": "1:491405541837:android:9393e05c8e88d77368c484",
         "android_client_info": {
-          "package_name": "com.ledger.live.detox"
+          "package_name": "com.ledger.clonetest"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "677185650562-g7mkiri825e0sg7vutbmedbk5dkil2ab.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBjp1KOOY6_iHsJegtqIqKqLexeQwNydOw"
+          "current_key": "AIzaSyCi7gPZE-2T1D28vSfpUy1xRov3T0ay3kU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "677185650562-g7mkiri825e0sg7vutbmedbk5dkil2ab.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

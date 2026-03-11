@@ -2,22 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>677185650562-aojaanc5siijn2idn898h3vpd4n4cvqc.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.677185650562-aojaanc5siijn2idn898h3vpd4n4cvqc</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC9qHOYvQPDXx1d8vWO1r3ke2-G6HqMmhg</string>
+	<string>AIzaSyBGG14MpGp09CeJW06tucoGPZMWPwcAIrw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>677185650562</string>
+	<string>491405541837</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>ledgerlivemobile</string>
+	<string>com.ledger.clonetest</string>
 	<key>PROJECT_ID</key>
-	<string>ledger-live-testing</string>
+	<string>ledger-wallet---prs</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ledger-live-testing.appspot.com</string>
+	<string>ledger-wallet---prs.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:677185650562:ios:adc70105b316c88a1c199b</string>
+	<string>1:491405541837:ios:fb608caf016f0da668c484</string>
 </dict>
 </plist>
