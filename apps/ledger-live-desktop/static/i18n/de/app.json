@@ -308,6 +308,7 @@
     "exchange" : "Kaufen & Verkaufen",
     "swap" : "Swappen",
     "perps" : "Perpetuals",
+    "home" : "Startseite",
     "refer" : "Freunde werben",
     "lend" : "Leihen",
     "catalog" : "Neues entdecken",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "ID des vorherigen Knotens",
       "gasConsumed" : "Verbrauchtes Gas",
       "gasUsed" : "Genutztes Gas",
-      "gasLimit" : "Gaslimit"
+      "gasLimit" : "Gaslimit",
+      "functionId" : "Funktions-ID"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "Firmware aktualisieren",
       "installUpdate" : "Update installieren",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "Betriebssystem-Update verfügbar",
+            "manager" : "Update für Ledger OS verfügbar"
+          },
+          "cta" : "Aktualisieren"
+        },
         "warning" : "Betriebssystem-Update verfügbar",
         "version" : "Version {{latestFirmware}}",
         "cta" : "Zu My Ledger wechseln",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "Konto auswählen",
-      "addAccount" : "Neues oder bestehendes Konto hinzufügen"
+      "addAccount" : "Neues oder bestehendes Konto hinzufügen",
+      "perpetualsBanner" : "Derzeit nur mit USD Coin (USDC) auf der Arbitrum-Chain unterstützt."
     }
   },
   "customImage" : {
@@ -8017,6 +8027,18 @@
     "connect" : "Verbinden",
     "buyALedger" : "Ledger-Gerät kaufen"
   },
+  "assets" : {
+    "cryptos" : "Kryptos",
+    "stablecoins" : "Stablecoins",
+    "columns" : {
+      "name" : "Name",
+      "price" : "Preis",
+      "balance" : "Saldo",
+      "value" : "Wert",
+      "trend" : "1T Trend",
+      "trendTooltip" : "Änderung des Kontostands in den letzten 24 Stunden"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "{{progress}} %",
     "errorTryAgain" : "Fehler beim Update, bitte wiederholen",
     "installAndRelaunch" : "Update installieren und neu starten"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Mühelos Swappen",
+        "description" : "Du kannst die Aufteilung deines Portfolios jederzeit mit der Sicherheit deines Ledger-Geräts anpassen"
+      },
+      "navigation" : {
+        "title" : "Alles ist am richtigen Platz",
+        "description" : "„My Ledger“ und „Entdecken“ sind ganz oben. Swap und Karte wurden für den schnelleren Zugriff in die Seitenleiste verschoben."
+      },
+      "actions" : {
+        "title" : "Maßnahmen im Markttempo",
+        "description" : "Erkenne Markttrends mit dem neuen Banner und trade sofort."
+      }
+    },
+    "cta" : {
+      "continue" : "Weiter",
+      "explore" : "Mein neues Portfolio entdecken"
+    }
   }
 }
