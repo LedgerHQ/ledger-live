@@ -25,6 +25,7 @@ import {
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
+
 import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,
@@ -306,6 +307,10 @@ export const accountScreenSelector =
   };
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
+);
+
+export const accountsWithUpToDateCheckSelector = createSelector(accountsSelector, accounts =>
+  accounts.map(a => ({ account: a, isUpToDate: isUpToDateAccount(a) })),
 );
 
 function accountHasPositiveBalance(account: AccountLike) {

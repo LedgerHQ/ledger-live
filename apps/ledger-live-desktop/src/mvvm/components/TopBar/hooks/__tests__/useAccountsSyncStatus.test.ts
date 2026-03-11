@@ -8,7 +8,6 @@ const createAccountWithUpToDateCheck = (
   ticker: string,
   isUpToDate: boolean,
 ): AccountWithUpToDateCheck => ({
-  // Minimal account mock for tests; hook only reads id and currency.ticker
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   account: {
     id,
@@ -20,12 +19,11 @@ const createAccountWithUpToDateCheck = (
 });
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
-  useBatchAccountsSyncState: jest.fn(),
+  useAccountsSyncStatus: jest.fn(),
 }));
 
-const mockUseBatchAccountsSyncState = jest.requireMock(
-  "@ledgerhq/live-common/bridge/react/index",
-).useBatchAccountsSyncState;
+const mockUseAccountsSyncStatusCommon = jest.requireMock("@ledgerhq/live-common/bridge/react/index")
+  .useAccountsSyncStatus as jest.Mock;
 
 describe("useAccountsSyncStatus", () => {
   beforeEach(() => {
@@ -34,44 +32,36 @@ describe("useAccountsSyncStatus", () => {
 
   it("does not call track when no accounts have problems", () => {
     const trackSpy = jest.spyOn(segment, "track");
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", true),
       createAccountWithUpToDateCheck("a2", "ETH", true),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: null },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: null },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: [],
+      areAllAccountsUpToDate: true,
+      lastSyncMs: Date.now(),
+    });
 
-    renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(trackSpy).not.toHaveBeenCalled();
     trackSpy.mockRestore();
   });
 
   it("returns empty list and areAllAccountsUpToDate true when no accounts have problems", () => {
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", true),
       createAccountWithUpToDateCheck("a2", "ETH", true),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: null },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: null },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: [],
+      areAllAccountsUpToDate: true,
+      lastSyncMs: Date.now(),
+    });
 
-    const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    const { result } = renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(result.current.allAccounts).toHaveLength(2);
     expect(result.current.listOfErrorAccountNames).toBe("");
@@ -79,45 +69,37 @@ describe("useAccountsSyncStatus", () => {
   });
 
   it("returns listOfErrorAccountNames and areAllAccountsUpToDate false when some accounts have sync problems", () => {
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "ETH", true),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: new Error("sync failed") },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: null },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: [accounts[0].account],
+      areAllAccountsUpToDate: false,
+      lastSyncMs: Date.now(),
+    });
 
-    const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    const { result } = renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(result.current.listOfErrorAccountNames).toBe("BTC");
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
-  it("calls track SyncError once per account with sync error", () => {
+  it("calls track SyncError once per unique ticker with sync error", () => {
     const trackSpy = jest.spyOn(segment, "track");
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "ETH", false),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: accounts.map(a => a.account),
+      areAllAccountsUpToDate: false,
+      lastSyncMs: Date.now(),
+    });
 
-    renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(trackSpy).toHaveBeenCalledTimes(2);
     expect(trackSpy).toHaveBeenCalledWith(
@@ -132,76 +114,58 @@ describe("useAccountsSyncStatus", () => {
   });
 
   it("joins multiple error account tickers with /", () => {
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "ETH", false),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: accounts.map(a => a.account),
+      areAllAccountsUpToDate: false,
+      lastSyncMs: Date.now(),
+    });
 
-    const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    const { result } = renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(result.current.listOfErrorAccountNames).toBe("BTC/ETH");
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
   it("de-duplicates tickers when multiple accounts of the same currency have sync problems", () => {
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "BTC", false),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: accounts.map(a => a.account),
+      areAllAccountsUpToDate: false,
+      lastSyncMs: Date.now(),
+    });
 
-    const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    const { result } = renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(result.current.listOfErrorAccountNames).toBe("BTC");
     expect(result.current.areAllAccountsUpToDate).toBe(false);
   });
 
-  it("calls track SyncError twice when two accounts of same currency have sync problems", () => {
+  it("calls track SyncError once per account even when they share the same currency", () => {
     const trackSpy = jest.spyOn(segment, "track");
-    const accountsWithUpToDateCheck = [
+    const accounts = [
       createAccountWithUpToDateCheck("a1", "BTC", false),
       createAccountWithUpToDateCheck("a2", "BTC", false),
     ];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-      {
-        syncState: { pending: false, error: new Error() },
-        account: accountsWithUpToDateCheck[1].account,
-      },
-    ]);
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: accounts.map(a => a.account),
+      areAllAccountsUpToDate: false,
+      lastSyncMs: Date.now(),
+    });
 
-    renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(trackSpy).toHaveBeenCalledTimes(2);
-    expect(trackSpy).toHaveBeenNthCalledWith(
-      1,
-      "SyncError",
-      expect.objectContaining({ currency: "BTC", page: "/" }),
-    );
-    expect(trackSpy).toHaveBeenNthCalledWith(
-      2,
+    expect(trackSpy).toHaveBeenCalledWith(
       "SyncError",
       expect.objectContaining({ currency: "BTC", page: "/" }),
     );
@@ -209,15 +173,15 @@ describe("useAccountsSyncStatus", () => {
   });
 
   it("excludes accounts that are pending from sync problem list", () => {
-    const accountsWithUpToDateCheck = [createAccountWithUpToDateCheck("a1", "BTC", false)];
-    mockUseBatchAccountsSyncState.mockReturnValue([
-      {
-        syncState: { pending: true, error: null },
-        account: accountsWithUpToDateCheck[0].account,
-      },
-    ]);
+    const accounts = [createAccountWithUpToDateCheck("a1", "BTC", false)];
+    mockUseAccountsSyncStatusCommon.mockReturnValue({
+      allAccounts: accounts.map(a => a.account),
+      accountsWithError: [],
+      areAllAccountsUpToDate: true,
+      lastSyncMs: Date.now(),
+    });
 
-    const { result } = renderHook(() => useAccountsSyncStatus(accountsWithUpToDateCheck));
+    const { result } = renderHook(() => useAccountsSyncStatus(accounts));
 
     expect(result.current.listOfErrorAccountNames).toBe("");
     expect(result.current.areAllAccountsUpToDate).toBe(true);

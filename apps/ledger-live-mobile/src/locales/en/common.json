@@ -8633,6 +8633,18 @@
     "earn": "Earn",
     "card": "Card"
   },
+  "syncIndicator": {
+    "accessibilityLabel": {
+      "error": "Sync error",
+      "syncing": "Syncing",
+      "default": "Synchronize"
+    },
+    "bottomSheet": {
+      "title": "Couldn't sync some accounts",
+      "description": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}",
+      "close": "Close"
+    }
+  },
   "deeplinkInstallApp": {
     "confirmation": {
       "title": "Install {{appName}}?",
