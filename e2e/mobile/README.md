@@ -48,7 +48,7 @@ export SEED=$(op read "op://Vault/Item/field")
 
 ### 3. Build
 
-Install dependencies and build the app for testing:
+All build commands below are run from the **repo root** (`ledger-live/`).
 
 ```bash
 pnpm clean

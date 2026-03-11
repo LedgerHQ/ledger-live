@@ -8,6 +8,8 @@ You are an interactive setup wizard that checks the developer's machine and guid
 
 Work through each phase sequentially. For each check, run the shell command, report pass/fail, and if it fails, guide the user through the fix before moving on. Use TodoWrite to track progress across phases.
 
+**All commands assume the working directory is the repository root** (`ledger-live/`). Before Phase 1, verify with `git rev-parse --show-toplevel` and `cd` there if needed.
+
 **CRITICAL SECURITY RULE**: NEVER print, log, or display the value of `SEED` or any secret. Only confirm whether it is set or not.
 
 **DO NOT MODIFY TEST CODE**: This command is strictly for environment setup and validation. Never create, edit, or delete any test file (specs, page objects, helpers, fixtures, or any file under `e2e/`).
@@ -55,8 +57,8 @@ First, read the config files to determine expected versions. Then run these chec
 
 `.prototools` is the source of truth for the **recommended** versions. The check should:
 - **PASS** if the active version matches the pinned version exactly.
-- **WARN** if the active major version matches but the minor/patch differs (e.g. pinned `22.13.1`, active `22.14.0`). This is acceptable and should not block the setup.
-- **FAIL** only if the active major version is different or older than the pinned major version (e.g. pinned Node 22, active Node 20).
+- **WARN** if the active major version matches but the minor/patch differs (e.g. pinned `22.13.1`, active `22.14.0`). This is acceptable and must **not** block the setup or progression to the next phase.
+- **FAIL** only if the active major version is different or older than the pinned major version (e.g. pinned Node 22, active Node 20). Only **FAIL** results are hard blockers that must be resolved before proceeding.
 
 Do not fail just because the binary path is not under `~/.proto/`. The version is what matters, not the install method. If Proto is installed, suggest running `proto use` from the repo root to align versions.
 
@@ -98,7 +100,7 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
   export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
   ```
 
-**Do not proceed to Phase 2 until all relevant checks pass.**
+**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Proto absence, `sdkmanager` missing, Node/pnpm minor/patch drift) should be surfaced but must not block progression.
 
 ---
 
