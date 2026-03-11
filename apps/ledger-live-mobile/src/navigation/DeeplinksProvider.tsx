@@ -396,7 +396,11 @@ export const DeeplinksProvider = ({
                           },
                         },
                       }),
-                      /** When lwmWallet40 is disabled, swap deeplink opens Swap as a direct screen of Base (legacy). When enabled, swap is handled in getStateFromPath and opens Main with Swap tab. */
+                      /**
+                       * ie: "ledgerlive://swap" -> will redirect to the main swap page
+                       * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string
+                       * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
+                       */
                       ...(!shouldDisplayWallet40MainNav && {
                         [NavigatorName.Swap]: {
                           screens: {
@@ -444,7 +448,6 @@ export const DeeplinksProvider = ({
                            * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string
                            * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
                            */
-                          /** When lwmWallet40 is disabled, swap deeplink opens Swap as a direct screen of Base (legacy). When enabled, swap is handled in getStateFromPath and opens Main with Swap tab. */
                           ...(shouldDisplayWallet40MainNav && {
                             [NavigatorName.Swap]: {
                               screens: {
