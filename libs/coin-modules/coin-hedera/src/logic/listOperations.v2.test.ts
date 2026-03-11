@@ -1328,4 +1328,37 @@ describe("listOperationsV2", () => {
       expect.objectContaining({ hash: mockERC20MirrorTransaction.transaction_hash, type: "FEES" }),
     ]);
   });
+
+  it("should use rawTx.node as recipient when recipients array is empty", async () => {
+    const nodeAccountId = "0.0.5";
+    const mockTransaction = getMockedMirrorTransaction({
+      node: nodeAccountId,
+      token_transfers: [],
+      staking_reward_transfers: [],
+      transfers: [{ account: mockMirrorAccount.account, amount: -500000 }],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (utils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      currency: mockCurrency,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      erc20Tokens: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toHaveLength(1);
+    expect(result.coinOperations[0].recipients).toEqual([nodeAccountId]);
+  });
 });

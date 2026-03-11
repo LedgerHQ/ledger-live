@@ -27,6 +27,7 @@ export interface HederaMirrorTransaction {
   consensus_timestamp: string;
   entity_id: string | null;
   result: string;
+  node: string | null;
   name: string;
   memo_base64?: string;
 }
