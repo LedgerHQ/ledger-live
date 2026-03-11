@@ -17,7 +17,7 @@ import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
-const DRAWER_FLOW = "Stake";
+const DRAWER_FLOW = "stake";
 
 export type StakeFlowProps = {
   currencies?: string[];

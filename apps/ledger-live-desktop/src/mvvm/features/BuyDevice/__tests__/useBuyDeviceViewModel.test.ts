@@ -3,9 +3,6 @@ import useBuyDeviceViewModel from "../useBuyDeviceViewModel";
 import * as originFlow from "~/renderer/analytics/originFlow";
 import * as segment from "~/renderer/analytics/segment";
 
-jest.mock("~/renderer/analytics/segment");
-jest.mock("~/renderer/analytics/originFlow");
-
 const mockTrack = jest.mocked(segment.track);
 const mockGetOriginFlow = jest.mocked(originFlow.getOriginFlow);
 

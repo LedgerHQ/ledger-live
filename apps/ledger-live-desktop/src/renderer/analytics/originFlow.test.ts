@@ -1,6 +1,24 @@
-import { getOriginFlow, setOriginFlow } from "./originFlow";
+import type * as OriginFlowModule from "./originFlow";
+
+let getOriginFlow: typeof OriginFlowModule.getOriginFlow;
+let setOriginFlow: typeof OriginFlowModule.setOriginFlow;
 
 describe("originFlow (singleton)", () => {
+  beforeAll(() => {
+    jest.resetModules();
+    jest.isolateModules(() => {
+      const originFlow = jest.requireActual<typeof OriginFlowModule>(
+        "src/renderer/analytics/originFlow",
+      );
+      getOriginFlow = originFlow.getOriginFlow;
+      setOriginFlow = originFlow.setOriginFlow;
+    });
+  });
+
+  afterEach(() => {
+    setOriginFlow("");
+  });
+
   it("returns empty string initially", () => {
     expect(getOriginFlow()).toBe("");
   });
