@@ -43,6 +43,8 @@ export function useSwapCustomHandlers(
             fromAmount: exchangeParams.transaction.amount,
             toAmount: BigNumber(exchangeParams.amountExpectedTo!),
           },
+          isEmbeddedSwap: exchangeParams.isEmbeddedSwap,
+          sponsored: exchangeParams.sponsored,
         },
       });
     },

@@ -42,6 +42,7 @@ export type Data = {
   refundAddress?: string;
   payoutAddress?: string;
   sponsored?: boolean;
+  isEmbeddedSwap?: boolean;
 };
 
 type ResultsState = {
@@ -50,6 +51,8 @@ type ResultsState = {
   provider: string;
   sourceCurrency: Currency;
   targetCurrency?: Currency;
+  isEmbeddedSwap?: boolean;
+  sponsored?: boolean;
 };
 
 export function isCompleteExchangeData(data: unknown): data is Data {
@@ -111,6 +114,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     magnitudeAwareRate,
     refundAddress,
     payoutAddress,
+    isEmbeddedSwap,
     ...exchangeParams
   } = data;
   const { exchange, provider, transaction: transactionParams, sponsored } = exchangeParams;
@@ -230,12 +234,15 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           sourceCurrency: sourceCurrency as Currency,
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           targetCurrency: targetCurrency as Currency,
+          isEmbeddedSwap,
+          sponsored,
         }
       : {
           provider,
           mode,
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
+          sponsored,
         };
   };
 
