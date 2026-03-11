@@ -5,7 +5,7 @@ import PortfolioBalanceSummary from "~/renderer/screens/dashboard/GlobalSummary"
 import { colors } from "~/renderer/styles/theme";
 import useAnalyticsViewModel from "./useAnalyticsViewModel";
 import type { AnalyticsViewModel } from "./types";
-import { AllocationView } from "./components/Allocation/AllocationView";
+import { AllocationSection } from "./components/Allocation/AllocationSection";
 import { useTranslation } from "react-i18next";
 
 export default function Analytics() {
@@ -20,7 +20,6 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
     navigateToDashboard,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
-    allocation,
   } = viewModel;
 
   const { t } = useTranslation();
@@ -40,7 +39,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
         />
       </div>
 
-      {shouldDisplayAssetSection && <AllocationView {...allocation} />}
+      {shouldDisplayAssetSection && <AllocationSection />}
     </div>
   );
 }

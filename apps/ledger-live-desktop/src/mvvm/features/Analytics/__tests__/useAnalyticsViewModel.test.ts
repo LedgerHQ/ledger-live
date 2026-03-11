@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import useAnalyticsViewModel from "../useAnalyticsViewModel";
+import { makeAllocationViewProps } from "../__fixtures__/allocationFixtures";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -16,7 +17,7 @@ jest.mock("../hooks/useAllocationData", () => ({
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
-const defaultAllocation = { items: [], totalCount: 0 };
+const defaultAllocation = makeAllocationViewProps({ items: [] });
 
 describe("useAnalyticsViewModel", () => {
   beforeEach(() => {
@@ -60,10 +61,7 @@ describe("useAnalyticsViewModel", () => {
     const navigate = jest.fn();
     mockedUseNavigate.mockReturnValue(navigate);
 
-    const mockAllocation = {
-      items: [{ currency: { id: "bitcoin" }, balance: 100, value: 50000, distribution: 60 }],
-      totalCount: 1,
-    };
+    const mockAllocation = makeAllocationViewProps();
     mockUseAllocationData.mockReturnValue(mockAllocation);
 
     const { result } = renderHook(() => useAnalyticsViewModel(), {
