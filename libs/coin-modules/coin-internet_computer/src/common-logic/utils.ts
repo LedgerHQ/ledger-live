@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { ICP_SEND_TXN_TYPE, MAX_MEMO_VALUE } from "../consts";
 
-const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
+const validHexRegExp = /^[0-9A-Fa-f]+$/;
 const validBase64RegExp = new RegExp(
   /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
 );
