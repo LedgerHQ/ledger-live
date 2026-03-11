@@ -32,7 +32,7 @@ export type ModularDrawerProps = {
   // Data and configuration
   /** List of preselected currencies to display in the drawer */
   readonly currencies?: string[];
-  /** Configuration for assets display */
+  /** Configuration for assets display. May include custom title and description for the assets screen. */
   readonly assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   /** Configuration for networks display */
   readonly networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];

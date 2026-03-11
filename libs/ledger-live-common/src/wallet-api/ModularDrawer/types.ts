@@ -2,6 +2,8 @@ import { z } from "zod";
 
 export type ModularDrawerConfiguration = {
   assets?: {
+    customTitle?: string;
+    customDescription?: string;
     filter?: string;
     leftElement?: string;
     rightElement?: string;
@@ -25,6 +27,8 @@ export const networksRightElementOptions = ["balance", "undefined"] as const;
 export const EnhancedModularDrawerConfigurationSchema = z.object({
   assets: z
     .object({
+      customTitle: z.string().optional(),
+      customDescription: z.string().optional(),
       filter: z.enum(filterOptions).optional(),
       leftElement: z.enum(assetsLeftElementOptions).optional(),
       rightElement: z.enum(assetsRightElementOptions).optional(),

@@ -90,6 +90,7 @@ const AssetSelection = ({
     useBalanceDeps,
     balanceItem,
     assetsMap,
+    // TODO: Could add custom TAGS here, like :boosted: etc.
   };
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
@@ -193,9 +194,17 @@ const AssetSelection = ({
         <>
           <BottomSheetHeader
             spacing
-            title={t("modularDrawer.selectAsset")}
+            title={
+              assetsConfiguration?.customTitle ||
+              "HELLO. This is the MAD title on mobile. This is truly where it is set." ||
+              t("modularDrawer.selectAsset")
+            }
             testID="modular-drawer-Asset-title"
             appearance="expanded"
+            description={
+              assetsConfiguration?.customDescription ||
+              "HELLO. This is the MAD description on mobile."
+            }
           />
           <SearchInputContainer
             source={source}
