@@ -1,5 +1,22 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
+import type { Operation as LiveOperation } from "@ledgerhq/types-live";
+
+// NOTE: from types-live
+export type BroadcastConfig = {
+  mevProtected: boolean;
+  sponsored?: boolean;
+  source?: TransactionSource;
+};
+
+/**
+ * TransactionSource identifies the origin of a transaction
+ */
+export type TransactionSource = {
+  // Type of the transaction source
+  type: "dApp" | "live-app" | "coin-module" | "swap";
+  // Name/identifier of the source (e.g., manifestId, provider name)
+  name: string;
+};
 
 export type BlockInfo = {
   height: number;

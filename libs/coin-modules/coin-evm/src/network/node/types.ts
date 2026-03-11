@@ -1,5 +1,6 @@
+import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, BroadcastConfig } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
