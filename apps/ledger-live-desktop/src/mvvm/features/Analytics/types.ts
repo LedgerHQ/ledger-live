@@ -4,13 +4,14 @@ import { PortfolioRange } from "@ledgerhq/types-live";
 export type AllocationTableItem = {
   currency: CryptoOrTokenCurrency;
   balance: number;
-  value: number | undefined;
   distribution: number;
 };
 
 export type AllocationViewProps = {
   readonly items: AllocationTableItem[];
-  readonly totalCount: number;
+  readonly hasMore: boolean;
+  readonly showMore: () => void;
+  readonly onItemClick: (item: AllocationTableItem) => void;
 };
 
 export type AnalyticsViewModel = {

@@ -1,9 +1,8 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, act } from "tests/testSetup";
 import Analytics from "../index";
 import useAnalyticsViewModel from "../useAnalyticsViewModel";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { AllocationViewProps } from "../types";
+import { makeAllocationViewProps } from "../__fixtures__/allocationFixtures";
 
 jest.mock("../useAnalyticsViewModel");
 const mockedUseAnalyticsViewModel = useAnalyticsViewModel as jest.Mock;
@@ -13,20 +12,21 @@ jest.mock("~/renderer/screens/dashboard/GlobalSummary", () => ({
   default: () => <div data-testid="portfolio-balance-summary">PortfolioBalanceSummary</div>,
 }));
 
+let intersectionCallback: IntersectionObserverCallback;
+const mockObserve = jest.fn();
+const mockDisconnect = jest.fn();
+
+beforeEach(() => {
+  window.IntersectionObserver = jest.fn(cb => {
+    intersectionCallback = cb;
+    return { observe: mockObserve, disconnect: mockDisconnect, unobserve: jest.fn() };
+  }) as unknown as typeof IntersectionObserver;
+});
+
 const mockNavigateToDashboard = jest.fn();
 
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-
-const emptyAllocation: AllocationViewProps = { items: [], totalCount: 0 };
-
-const populatedAllocation: AllocationViewProps = {
-  items: [
-    { currency: bitcoin, balance: 100000, value: 60000, distribution: 60 },
-    { currency: ethereum, balance: 50000, value: 30000, distribution: 30 },
-  ],
-  totalCount: 2,
-};
+const emptyAllocation = makeAllocationViewProps({ items: [] });
+const populatedAllocation = makeAllocationViewProps();
 
 const defaultViewModel = {
   counterValue: { ticker: "USD", name: "US Dollar" },
@@ -110,5 +110,54 @@ describe("Analytics", () => {
 
     expect(screen.getByText("60%")).toBeVisible();
     expect(screen.getByText("30%")).toBeVisible();
+  });
+
+  it("should render loader and call showMore when sentinel becomes visible", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+      allocation: { ...populatedAllocation, hasMore: true },
+    });
+
+    render(<Analytics />);
+
+    expect(screen.getByTestId("allocation-loader")).toBeInTheDocument();
+    expect(mockObserve).toHaveBeenCalled();
+
+    act(() => {
+      intersectionCallback(
+        [{ isIntersecting: true } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      );
+    });
+
+    expect(populatedAllocation.showMore).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not render loader when hasMore is false", () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+      allocation: populatedAllocation,
+    });
+
+    render(<Analytics />);
+
+    expect(screen.queryByTestId("allocation-loader")).not.toBeInTheDocument();
+    expect(mockObserve).not.toHaveBeenCalled();
+  });
+
+  it("should call onItemClick when a row is clicked", async () => {
+    mockedUseAnalyticsViewModel.mockReturnValue({
+      ...defaultViewModel,
+      shouldDisplayAssetSection: true,
+      allocation: populatedAllocation,
+    });
+
+    const { user } = render(<Analytics />);
+
+    await user.click(screen.getByText("Bitcoin"));
+
+    expect(populatedAllocation.onItemClick).toHaveBeenCalledWith(populatedAllocation.items[0]);
   });
 });

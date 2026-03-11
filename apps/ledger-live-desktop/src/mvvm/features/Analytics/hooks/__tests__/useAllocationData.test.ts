@@ -1,12 +1,17 @@
-import { renderHook } from "tests/testSetup";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { renderHook, act } from "tests/testSetup";
+import { useNavigate } from "react-router";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useAllocationData } from "../useAllocationData";
 import { AssetsDistribution } from "@ledgerhq/types-live";
+import { bitcoin, ethereum, solana } from "../../__fixtures__/allocationFixtures";
 
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-const solana = getCryptoCurrencyById("solana");
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: jest.fn(),
+}));
+
+const mockNavigate = jest.fn();
+const mockedUseNavigate = jest.mocked(useNavigate);
 
 const mockUseDistribution = jest.fn();
 
@@ -39,6 +44,7 @@ function makeDistribution(
 describe("useAllocationData", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseNavigate.mockReturnValue(mockNavigate);
     mockUseDistribution.mockReturnValue(
       makeDistribution([
         { currency: bitcoin, amount: 100000, distribution: 0.6, countervalue: 60000 },
@@ -54,12 +60,11 @@ describe("useAllocationData", () => {
     });
 
     expect(result.current.items).toHaveLength(3);
-    expect(result.current.totalCount).toBe(3);
+    expect(result.current.hasMore).toBe(false);
 
     const btcItem = result.current.items[0];
     expect(btcItem.currency).toBe(bitcoin);
     expect(btcItem.balance).toBe(100000);
-    expect(btcItem.value).toBe(60000);
   });
 
   it("should floor distribution percentage to two decimal places", () => {
@@ -120,15 +125,51 @@ describe("useAllocationData", () => {
     expect(mockUseDistribution).toHaveBeenCalledWith({ hideEmptyTokenAccount: true });
   });
 
-  it("should preserve undefined countervalue", () => {
+  it("should show at most 6 items initially and expose hasMore when there are more", () => {
+    const currencies = [bitcoin, ethereum, solana, bitcoin, ethereum, solana, bitcoin, ethereum];
     mockUseDistribution.mockReturnValue(
-      makeDistribution([{ currency: bitcoin, amount: 100000, distribution: 0.5 }]),
+      makeDistribution(
+        currencies.map((c, i) => ({ currency: c, amount: 1000 * (i + 1), distribution: 0.1 })),
+      ),
     );
 
     const { result } = renderHook(() => useAllocationData(), {
       initialState: { settings: { ...INITIAL_STATE } },
     });
 
-    expect(result.current.items[0].value).toBeUndefined();
+    expect(result.current.items).toHaveLength(6);
+    expect(result.current.hasMore).toBe(true);
+  });
+
+  it("should load the next page when showMore is called", () => {
+    const currencies = [bitcoin, ethereum, solana, bitcoin, ethereum, solana, bitcoin, ethereum];
+    mockUseDistribution.mockReturnValue(
+      makeDistribution(
+        currencies.map((c, i) => ({ currency: c, amount: 1000 * (i + 1), distribution: 0.1 })),
+      ),
+    );
+
+    const { result } = renderHook(() => useAllocationData(), {
+      initialState: { settings: { ...INITIAL_STATE } },
+    });
+
+    act(() => {
+      result.current.showMore();
+    });
+
+    expect(result.current.items).toHaveLength(8);
+    expect(result.current.hasMore).toBe(false);
+  });
+
+  it("should navigate to /asset/{id} when onItemClick is called", () => {
+    const { result } = renderHook(() => useAllocationData(), {
+      initialState: { settings: { ...INITIAL_STATE } },
+    });
+
+    act(() => {
+      result.current.onItemClick(result.current.items[0]);
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/asset/bitcoin");
   });
 });
