@@ -208,16 +208,6 @@ const linkingOptions = () => ({
               [ScreenName.PostOnboardingDeeplinkHandler]: "post-onboarding",
             },
           },
-          /**
-           * ie: "ledgerlive://swap" -> will redirect to the main swap page
-           * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string
-           * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
-           */
-          [NavigatorName.Swap]: {
-            screens: {
-              [ScreenName.SwapTab]: "swap",
-            },
-          },
 
           [NavigatorName.SendFunds]: {
             screens: {
@@ -406,6 +396,18 @@ export const DeeplinksProvider = ({
                           },
                         },
                       }),
+                      /**
+                       * ie: "ledgerlive://swap" -> will redirect to the main swap page
+                       * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string, ?fromCurrency: string, ?toCurrency: string
+                       * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
+                       */
+                      ...(!shouldDisplayWallet40MainNav && {
+                        [NavigatorName.Swap]: {
+                          screens: {
+                            [ScreenName.SwapTab]: "swap",
+                          },
+                        },
+                      }),
                       [NavigatorName.Main]: {
                         initialRouteName: ScreenName.Portfolio,
                         screens: {
@@ -440,6 +442,19 @@ export const DeeplinksProvider = ({
                               },
                             },
                           },
+
+                          /**
+                           * ie: "ledgerlive://swap" -> will redirect to the main swap page
+                           * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string, ?fromCurrency: string, ?toCurrency: string
+                           * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
+                           */
+                          ...(shouldDisplayWallet40MainNav && {
+                            [NavigatorName.Swap]: {
+                              screens: {
+                                [ScreenName.SwapTab]: "swap",
+                              },
+                            },
+                          }),
                           [NavigatorName.Earn]: {
                             screens: {
                               /**
