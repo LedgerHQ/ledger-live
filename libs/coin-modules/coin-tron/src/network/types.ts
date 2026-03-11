@@ -200,13 +200,8 @@ export type BlockHeaderAPI = {
   witness_signature: string;
 };
 
-export type BlockTransactionAPI = {
-  txID: TransactionTronAPI["txID"];
-  raw_data: TransactionTronAPI["raw_data"];
-  raw_data_hex: TransactionTronAPI["raw_data_hex"];
-  signature?: TransactionTronAPI["signature"];
-  ret?: TransactionTronAPI["ret"];
-};
+export type BlockTransactionAPI = Pick<TransactionTronAPI, "txID" | "raw_data" | "raw_data_hex"> &
+  Partial<Pick<TransactionTronAPI, "signature" | "ret">>;
 
 export type BlockWithTransactionsAPI = {
   blockID: string;
