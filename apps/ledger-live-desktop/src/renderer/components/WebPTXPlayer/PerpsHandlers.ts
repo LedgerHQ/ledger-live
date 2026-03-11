@@ -1,4 +1,4 @@
-import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/index";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
