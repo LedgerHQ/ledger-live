@@ -28,12 +28,19 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "api": [
+        "lib/api/index"
+      ],
       "*": [
         "lib/*"
       ]
     }
   },
   "exports": {
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
