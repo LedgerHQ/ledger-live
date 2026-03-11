@@ -423,7 +423,8 @@ describe("getBlock API integration", () => {
         parentHash: "0000000004267633def456789abc123000000000000000000000000000000000",
         txTrieRoot: "0000000000000000000000000000000000000000000000000000000000000000",
         witness_address: "41ffffffffffffffffffffffffffffffffffffffff",
-        witness_signature: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",      },
+        witness_signature: "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+      },
     },
     transactions: [
       {
