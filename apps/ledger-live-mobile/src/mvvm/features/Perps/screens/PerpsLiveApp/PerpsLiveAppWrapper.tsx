@@ -3,7 +3,7 @@ import { PerpsLiveAppView } from ".";
 import { usePerpsLiveAppViewModel } from "LLM/features/Perps/screens/PerpsLiveApp/usePerpsLiveAppViewModel";
 
 export function PerpsLiveAppWrapper() {
-  const { manifest, error, isLoading, webviewRef, onWebviewStateChange, webviewInputs } =
+  const { manifest, error, isLoading, webviewRef, onWebviewStateChange, webviewInputs, accounts } =
     usePerpsLiveAppViewModel();
 
   return (
@@ -14,6 +14,7 @@ export function PerpsLiveAppWrapper() {
       webviewRef={webviewRef}
       onWebviewStateChange={onWebviewStateChange}
       webviewInputs={webviewInputs}
+      accounts={accounts}
     />
   );
 }

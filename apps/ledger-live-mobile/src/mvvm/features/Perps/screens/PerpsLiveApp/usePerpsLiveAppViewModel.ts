@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState, type RefObject } from "react";
+import { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import {
   useRemoteLiveAppContext,
@@ -22,6 +23,7 @@ import {
   hasSeenAnalyticsOptInPromptSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
+import { accountsSelector } from "~/reducers/accounts";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { usePerpsLiveConfig } from "LLM/features/Perps/hooks/usePerpsLiveConfig";
 
@@ -47,6 +49,7 @@ type PerpsLiveAppViewModel = {
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
   webviewInputs: PerpsWebviewInputs;
+  accounts: AccountLike[];
 };
 
 const DEFAULT_MANIFEST_ID =
@@ -60,6 +63,7 @@ export function usePerpsLiveAppViewModel(): PerpsLiveAppViewModel {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const { theme } = useTheme();
   const { language } = useSettings();
+  const accounts = useSelector(accountsSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const exportSettings = useSelector(exportSettingsSelector);
   const shareAnalytics = useSelector(analyticsEnabledSelector).toString();
@@ -145,5 +149,6 @@ export function usePerpsLiveAppViewModel(): PerpsLiveAppViewModel {
     webviewRef,
     onWebviewStateChange,
     webviewInputs,
+    accounts,
   };
 }
