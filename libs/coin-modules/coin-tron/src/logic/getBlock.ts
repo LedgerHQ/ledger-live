@@ -92,10 +92,7 @@ function toBlockTransaction(
   if (!txInfo) return null;
 
   const fee = txInfo.fee.gt(0) ? txInfo.fee : new BigNumber(feesById.get(tx.txID) ?? 0);
-  const fees =
-    fee.isNaN() || !fee.isFinite()
-      ? 0n
-      : BigInt(fee.toFixed(0));
+  const fees = fee.isNaN() || !fee.isFinite() ? 0n : BigInt(fee.toFixed(0));
 
   return {
     hash: txInfo.txID,
@@ -178,7 +175,11 @@ function formatBlockTransaction(
 function toBlockOperations(txInfo: BlockTxInfo): BlockOperation[] {
   if (isTransfer(txInfo) && txInfo.to && txInfo.value && !txInfo.value.isZero()) {
     const asset = inferAssetInfo(txInfo);
-    const amount = BigInt(txInfo.value.toFixed(0));
+    const value = txInfo.value;
+    if (value.isNaN() || !value.isFinite()) {
+      return [{ type: "other", operationType: "NONE", contractType: txInfo.type }];
+    }
+    const amount = BigInt(value.integerValue().toFixed(0));
     return [
       { type: "transfer", address: txInfo.from, peer: txInfo.to, asset, amount: -amount },
       { type: "transfer", address: txInfo.to, peer: txInfo.from, asset, amount },

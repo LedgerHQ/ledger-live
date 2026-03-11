@@ -21,8 +21,7 @@ export type Trc20TransferData = {
 };
 
 export const abiDecodeTrc20Transfer = (data: string): Trc20TransferData | null => {
-  const has0xPrefix =
-    data.length >= 2 && data[0] === "0" && (data[1] === "x" || data[1] === "X");
+  const has0xPrefix = data.length >= 2 && data[0] === "0" && (data[1] === "x" || data[1] === "X");
   const cleanData = has0xPrefix ? data.slice(2) : data;
   if (cleanData.length < 8 + 64 + 64) return null;
   if (cleanData.length % 2 !== 0) return null;
