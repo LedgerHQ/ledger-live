@@ -159,9 +159,6 @@ function makeGetTransaction(retries: number): NodeApi["getTransaction"] {
     );
 }
 
-// FIXME do not export at root level, make sure everyone uses the exported node
-export const getTransaction = makeGetTransaction(DEFAULT_RETRIES_RPC_METHODS);
-
 /**
  * Get the balance of an address
  */
@@ -176,8 +173,6 @@ function makeGetCoinBalance(retries: number): NodeApi["getCoinBalance"] {
       retries,
     );
 }
-export const getCoinBalance = makeGetCoinBalance(DEFAULT_RETRIES_RPC_METHODS);
-
 /**
  * Get the balance of an address
  */
@@ -193,8 +188,6 @@ function makeGetTokenBalance(retries: number): NodeApi["getTokenBalance"] {
       retries,
     );
 }
-export const getTokenBalance = makeGetTokenBalance(DEFAULT_RETRIES_RPC_METHODS);
-
 /**
  * Get account nonce
  */
@@ -206,12 +199,10 @@ function makeGetTransactionCount(retries: number): NodeApi["getTransactionCount"
       retries,
     );
 }
-export const getTransactionCount = makeGetTransactionCount(DEFAULT_RETRIES_RPC_METHODS);
-
 /**
  * Get an estimated gas limit for a transaction
  */
-export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transaction) =>
+const getGasEstimation: NodeApi["getGasEstimation"] = (account, transaction) =>
   withApi(
     account.currency,
     async api => {
@@ -316,12 +307,11 @@ function makeGetFeeData(retries: number): NodeApi["getFeeData"] {
       retries,
     );
 }
-export const getFeeData = makeGetFeeData(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Broadcast a serialized transaction and returns its hash
  */
-export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, signedTxHex) =>
+const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, signedTxHex) =>
   withApi(
     currency,
     async api => {
@@ -399,7 +389,6 @@ function makeGetBlockByHeight(retries: number): NodeApi["getBlockByHeight"] {
       retries,
     );
 }
-export const getBlockByHeight = makeGetBlockByHeight(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get all transaction receipts for a block in one RPC call.
@@ -445,7 +434,6 @@ function makeGetBlockReceipts(retries: number): Exclude<NodeApi["getBlockReceipt
       retries,
     );
 }
-export const getBlockReceipts = makeGetBlockReceipts(DEFAULT_RETRIES_RPC_METHODS);
 
 /**
  * Get execution traces for a block via trace_block RPC.
@@ -488,7 +476,6 @@ function makeTraceBlock(retries: number): NonNullable<NodeApi["traceBlock"]> {
       retries,
     );
 }
-export const traceBlock = makeTraceBlock(DEFAULT_RETRIES_RPC_METHODS);
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
   if (typeof value !== "object" || value === null) return false;
@@ -596,13 +583,6 @@ function makeGetOptimismAdditionalFees(retries: number): NodeApi["getOptimismAdd
       retries,
     );
 }
-export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
-  makeGetOptimismAdditionalFees(DEFAULT_RETRIES_RPC_METHODS),
-  (currency, transaction) => {
-    return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
-  },
-  { ttl: 15 * 1000 }, // preventing rate limit by caching this for at least 15sec
-);
 
 /**
  * ⚠️ Blockchain specific
@@ -639,7 +619,6 @@ function makeGetScrollAdditionalFees(retries: number): NodeApi["getScrollAdditio
       retries,
     );
 }
-export const getScrollAdditionalFees = makeGetScrollAdditionalFees(DEFAULT_RETRIES_RPC_METHODS);
 
 /* Get default maxPriorityFeePerGas by chain */
 const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
@@ -651,7 +630,15 @@ const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
   }
 };
 
+function cacheKeyOptimismL1Fees(
+  currency: CryptoCurrency,
+  transaction: Parameters<NodeApi["getOptimismAdditionalFees"]>[1],
+): string {
+  return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
+}
+
 export function createNodeApi(retries: number): NodeApi {
+  const getOptimismAdditionalFeesUncached = makeGetOptimismAdditionalFees(retries);
   return {
     getBlockByHeight: makeGetBlockByHeight(retries),
     getCoinBalance: makeGetCoinBalance(retries),
@@ -663,11 +650,13 @@ export function createNodeApi(retries: number): NodeApi {
     getGasEstimation,
     getFeeData: makeGetFeeData(retries),
     broadcastTransaction,
-    getOptimismAdditionalFees: makeGetOptimismAdditionalFees(retries),
+    getOptimismAdditionalFees: makeLRUCache(
+      getOptimismAdditionalFeesUncached,
+      cacheKeyOptimismL1Fees,
+      {
+        ttl: 15 * 1000, // prevent rate limit by caching for at least 15s
+      },
+    ),
     getScrollAdditionalFees: makeGetScrollAdditionalFees(retries),
   };
 }
-
-const node = createNodeApi(DEFAULT_RETRIES_RPC_METHODS);
-export const nodeWithoutRetry = createNodeApi(0);
-export default node;

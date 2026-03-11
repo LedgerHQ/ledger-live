@@ -9,21 +9,8 @@ import { ethers } from "ethers";
 import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";
 import ledgerNode from "../network/node/ledger";
-import {
-  getTransactionCount as externalGetTransactionCount,
-  getGasEstimation as externalGetGasEstimation,
-  getFeeData as externalGetFeeData,
-} from "../network/node/rpc.common";
 import { craftTransaction } from "./craftTransaction";
 
-jest.mock("../network/node/rpc.common", () => ({
-  ...jest.requireActual("../network/node/rpc.common"),
-  getTransactionCount: jest.fn(),
-  getGasEstimation: jest.fn(),
-  getFeeData: jest.fn(),
-}));
-
-// FIXME setup to complicated
 jest.mock("../network/node", () => ({
   ...jest.requireActual("../network/node"),
   getNodeApi: jest.fn(),
@@ -38,12 +25,9 @@ jest.mock("../network/node/ledger", () => ({
   },
 }));
 
-const mockExternalGetTransactionCount = externalGetTransactionCount as jest.Mock;
-const mockExternalGetGasEstimation = externalGetGasEstimation as jest.Mock;
-const mockExternalGetFeeData = externalGetFeeData as jest.Mock;
-const mockLedgerGetTransactionCount = ledgerNode.getTransactionCount as jest.Mock;
-const mockLedgerGetGasEstimation = ledgerNode.getGasEstimation as jest.Mock;
-const mockLedgerGetFeeData = ledgerNode.getFeeData as jest.Mock;
+const mockExternalGetTransactionCount = jest.fn();
+const mockExternalGetGasEstimation = jest.fn();
+const mockExternalGetFeeData = jest.fn();
 
 interface MockNodeFunctions {
   getTransactionCount: jest.Mock;
@@ -56,6 +40,10 @@ const externalMocks: MockNodeFunctions = {
   getGasEstimation: mockExternalGetGasEstimation,
   getFeeData: mockExternalGetFeeData,
 };
+
+const mockLedgerGetTransactionCount = ledgerNode.getTransactionCount as jest.Mock;
+const mockLedgerGetGasEstimation = ledgerNode.getGasEstimation as jest.Mock;
+const mockLedgerGetFeeData = ledgerNode.getFeeData as jest.Mock;
 
 const ledgerMocks: MockNodeFunctions = {
   getTransactionCount: mockLedgerGetTransactionCount,

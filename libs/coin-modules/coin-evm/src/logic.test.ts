@@ -5,12 +5,6 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
-jest.mock("./network/node/rpc.common", () => ({
-  ...jest.requireActual("./network/node/rpc.common"),
-  getOptimismAdditionalFees: jest.fn(),
-  getScrollAdditionalFees: jest.fn(),
-}));
-
 jest.mock("./network/node/index", () => ({
   ...jest.requireActual("./network/node/index"),
   getNodeApi: jest.fn((...args: unknown[]) =>
@@ -18,9 +12,11 @@ jest.mock("./network/node/index", () => ({
   ),
 }));
 
-const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
-const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import { getCoinConfig } from "./config";
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockGetOptimismAdditionalFees = jest.fn();
+const mockGetScrollAdditionalFees = jest.fn();
 import { makeAccount, makeOperation, makeTokenAccount } from "./fixtures/common.fixtures";
 import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
 import wethTokenData from "./fixtures/ethereum-erc20-weth.json";
@@ -32,9 +28,6 @@ import {
   mergeSubAccounts,
 } from "./logic";
 import { getNodeApi } from "./network/node/index";
-
-const mockGetNodeApi = jest.mocked(getNodeApi);
-import { getOptimismAdditionalFees, getScrollAdditionalFees } from "./network/node/rpc.common";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
 

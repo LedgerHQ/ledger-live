@@ -10,6 +10,7 @@ import {
   rawLegacyTx,
   rawNftEip1559Tx,
 } from "./fixtures/transaction.fixtures";
+import { getNodeApi } from "./network/node";
 import {
   fromTransactionRaw,
   fromTransactionStatusRaw,
@@ -24,10 +25,16 @@ import {
   FeeData,
 } from "./types";
 
-jest.mock("./network/node/rpc.common", () => ({
-  ...jest.requireActual("./network/node/rpc.common"),
-  getTransactionCount: jest.fn(),
+jest.mock("./network/node", () => ({
+  ...jest.requireActual("./network/node"),
+  getNodeApi: jest.fn(),
 }));
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockGetTransactionCount = jest.fn();
+mockGetNodeApi.mockReturnValue({
+  getTransactionCount: mockGetTransactionCount,
+} as ReturnType<typeof getNodeApi>);
 
 describe("EVM Family", () => {
   describe("transaction.ts", () => {
