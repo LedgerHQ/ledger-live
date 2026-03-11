@@ -8282,8 +8282,8 @@
   "updater": {
     "newUpdateAvailable": "New update available",
     "downloadProgress": "{{progress}}%",
-    "errorTryAgain": "Error during update, try again",
-    "installAndRelaunch": "Install update and relaunch"
+    "errorTryAgain": "Error during update. Try again",
+    "installAndRelaunch": "New update. Install and relaunch"
   },
   "walletV4Tour": {
     "slides": {
