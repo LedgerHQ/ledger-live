@@ -111,60 +111,68 @@ function formatBlockTransaction(
   blockTimestamp: number,
   blockHeight: number,
 ): BlockTxInfo | null {
-  const contract = tx.raw_data.contract[0];
-  if (!contract) return null;
+  try {
+    const contract = tx.raw_data.contract[0];
+    if (!contract) return null;
 
-  const type = contract.type as TrongridTxType;
-  const params = contract.parameter.value;
-  const ownerAddress = params.owner_address;
-  if (!ownerAddress) return null;
+    const type = contract.type as TrongridTxType;
+    const params = contract.parameter.value;
+    const ownerAddress = params.owner_address;
+    if (!ownerAddress) return null;
 
-  const from = encode58Check(ownerAddress);
-  const contractRet = tx.ret?.[0]?.contractRet ?? "SUCCESS";
-  const hasFailed = contractRet !== "SUCCESS";
-  const fee = new BigNumber(tx.ret?.[0]?.fee ?? 0);
+    const from = encode58Check(ownerAddress);
+    const contractRet = tx.ret?.[0]?.contractRet ?? "SUCCESS";
+    const hasFailed = contractRet !== "SUCCESS";
+    const fee = new BigNumber(tx.ret?.[0]?.fee ?? 0);
 
-  const isTrc20 = type === "TriggerSmartContract" && params.contract_address;
-  const isTrc10 = type === "TransferAssetContract";
-  const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
+    const isTrc20 = type === "TriggerSmartContract" && params.contract_address;
+    const isTrc10 = type === "TransferAssetContract";
+    const tokenType = isTrc10 ? "trc10" : isTrc20 ? "trc20" : undefined;
 
-  let to: string | undefined;
-  let value: BigNumber;
+    let to: string | undefined;
+    let value: BigNumber;
 
-  if (isTrc20 && params.data) {
-    const decoded = abiDecodeTrc20Transfer(params.data);
-    if (decoded) {
-      to = encode58Check(decoded.to);
-      value = decoded.amount;
+    if (isTrc20 && params.data) {
+      const decoded = abiDecodeTrc20Transfer(params.data);
+      if (decoded) {
+        to = encode58Check(decoded.to);
+        value = decoded.amount;
+      } else {
+        value = new BigNumber(0);
+      }
     } else {
-      value = new BigNumber(0);
+      to = params.to_address ? encode58Check(params.to_address) : undefined;
+      value = params.amount ? new BigNumber(params.amount) : new BigNumber(0);
     }
-  } else {
-    to = params.to_address ? encode58Check(params.to_address) : undefined;
-    value = params.amount ? new BigNumber(params.amount) : new BigNumber(0);
+
+    const tokenId = isTrc10
+      ? params.asset_name
+      : isTrc20 && params.contract_address
+        ? encode58Check(params.contract_address)
+        : undefined;
+
+    return {
+      txID: tx.txID,
+      date: new Date(blockTimestamp),
+      type,
+      tokenId,
+      tokenType,
+      tokenAddress:
+        isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined,
+      from,
+      to,
+      value,
+      fee,
+      blockHeight,
+      hasFailed,
+    };
+  } catch (error) {
+    log("tron", "formatBlockTransaction error", {
+      txId: tx.txID,
+      error,
+    });
+    return null;
   }
-
-  const tokenId = isTrc10
-    ? params.asset_name
-    : isTrc20 && params.contract_address
-      ? encode58Check(params.contract_address)
-      : undefined;
-
-  return {
-    txID: tx.txID,
-    date: new Date(blockTimestamp),
-    type,
-    tokenId,
-    tokenType,
-    tokenAddress:
-      isTrc20 && params.contract_address ? encode58Check(params.contract_address) : undefined,
-    from,
-    to,
-    value,
-    fee,
-    blockHeight,
-    hasFailed,
-  };
 }
 
 function toBlockOperations(txInfo: BlockTxInfo): BlockOperation[] {
