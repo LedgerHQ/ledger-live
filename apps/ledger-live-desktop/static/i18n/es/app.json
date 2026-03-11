@@ -308,6 +308,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "perps" : "Perpetuos",
+    "home" : "Inicio",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
     "catalog" : "Discover",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "ID del nodo anterior",
       "gasConsumed" : "Gas consumido",
       "gasUsed" : "Gas usado",
-      "gasLimit" : "Límite de gas"
+      "gasLimit" : "Límite de gas",
+      "functionId" : "ID de función"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "Actualizar firmware",
       "installUpdate" : "Instalar actualización",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "Actualización del SO disponible",
+            "manager" : "Actualización de Ledger OS disponible"
+          },
+          "cta" : "Actualizar"
+        },
         "warning" : "Actualización del SO disponible",
         "version" : "Versión {{latestFirmware}}",
         "cta" : "Ir a Mi Ledger",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "elige una cuenta",
-      "addAccount" : "Agregar cuenta nueva o existente"
+      "addAccount" : "Agregar cuenta nueva o existente",
+      "perpetualsBanner" : "Actualmente solo se admite con USDC en la cadena Arbitrum."
     }
   },
   "customImage" : {
@@ -8017,6 +8027,18 @@
     "connect" : "Conectar",
     "buyALedger" : "Compra un Ledger"
   },
+  "assets" : {
+    "cryptos" : "Cripto",
+    "stablecoins" : "Monedas estables",
+    "columns" : {
+      "name" : "Nombre",
+      "price" : "Precio",
+      "balance" : "Saldo",
+      "value" : "Valor",
+      "trend" : "Tendencia 1D",
+      "trendTooltip" : "Cambio de saldo en 24 horas"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Error al actualizar, inténtalo de nuevo",
     "installAndRelaunch" : "Instalar actualización y ejecutar de nuevo"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Permuta sin esfuerzo",
+        "description" : "Adapta la asignación de tu portfolio en cualquier momento con la seguridad de tu dispositivo Ledger"
+      },
+      "navigation" : {
+        "title" : "Todo en su sitio",
+        "description" : "Ahora, Mi Ledger y Discover están en la parte superior. Permutas y Tarjeta se han desplazado a la barra lateral para facilitar el acceso."
+      },
+      "actions" : {
+        "title" : "Actúa a la velocidad del mercado",
+        "description" : "Detecta tendencias del mercado con el nuevo banner y opera al instante."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuar",
+      "explore" : "Explorar mi nuevo portfolio"
+    }
   }
 }

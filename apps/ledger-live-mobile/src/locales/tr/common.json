@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Yenileniyor - Son güncelleme {{timeAgo}}",
+      "refreshingInitial" : "Yenileniyor...",
+      "upToDate" : "Güncelsiniz"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "İşletim sistemi güncellemesi mevcut",
+          "manager" : "Ledger OS güncellemesi mevcut"
+        },
+        "version" : "Sürüm {{firmwareVersion}}",
+        "cta" : "Güncelle"
+      },
       "title" : "İşletim sistemi güncellemesi mevcut",
       "descriptionDeviceName" : "\"{{deviceName}}\" cihazını {{firmwareVersion}} işletim sistemi sürümüne güncellemek için dokunun.",
       "descriptionProductName" : "{{productName}} cihazınızı {{firmwareVersion}} işletim sistemi sürümüne güncellemek için dokunun."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
+    "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir.",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
