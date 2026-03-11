@@ -44,9 +44,6 @@ export function createApi(config: SuiConfig): AlpacaApi {
     getStakes,
     getRewards,
     getValidators: logicGetValidators,
-    validateTransaction: (_signature: string): Promise<{ error: Error | undefined }> => {
-      throw new Error("validateTransaction is not supported");
-    },
   };
 }
 
