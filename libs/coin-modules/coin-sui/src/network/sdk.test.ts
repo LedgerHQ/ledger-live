@@ -973,10 +973,10 @@ describe("Staking Operations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             sender: senderAddress,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: sponsorAddress,
             },
           },
@@ -2772,10 +2772,10 @@ describe("filterOperations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             sender: senderAddress,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: sponsorAddress,
             },
           },
@@ -2794,9 +2794,9 @@ describe("filterOperations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: undefined,
             },
           },
@@ -2807,9 +2807,9 @@ describe("filterOperations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: "",
             },
           },

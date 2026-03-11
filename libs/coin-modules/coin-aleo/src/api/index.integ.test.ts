@@ -59,7 +59,7 @@ describe("createApi", () => {
         recipient: emptyAccountAddress,
       });
 
-      const deserialized = deserializeTransaction(transaction);
+      const deserialized = deserializeTransaction<{ inputs: unknown[] }>(transaction);
 
       expect(typeof transaction).toBe("string");
       expect(transaction.length).toBeGreaterThan(0);
@@ -83,7 +83,7 @@ describe("createApi", () => {
         recipient: testAccountAddress,
       });
 
-      const deserialized = deserializeTransaction(transaction);
+      const deserialized = deserializeTransaction<{ inputs: unknown[] }>(transaction);
 
       expect(typeof transaction).toBe("string");
       expect(transaction.length).toBeGreaterThan(0);

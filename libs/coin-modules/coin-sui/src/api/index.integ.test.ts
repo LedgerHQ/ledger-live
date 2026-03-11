@@ -108,7 +108,7 @@ describe("Sui Api", () => {
           const { items, next } = await module.listOperations(address, {
             minHeight: 0,
             order,
-            cursor,
+            ...(cursor ? { cursor } : {}),
           });
 
           pageCount += 1;

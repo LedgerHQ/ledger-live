@@ -78,6 +78,7 @@ describe("synchronisation", () => {
   it("returns an Observable that errors when deviceId is missing and xpub must be generated", async () => {
     const getAccountShape = makeGetAccountShape(mockSignerContext);
     const observable = getAccountShape(
+      /* @ts-expect-error intentional invalid arg */
       {
         currency: getCryptoCurrencyById("bitcoin"),
         address: "0x123",

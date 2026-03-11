@@ -81,6 +81,7 @@ describe("createApi", () => {
   describe("broadcast", () => {
     it("should call broadcast from logic and return base64 hash", async () => {
       const fakeHash = new Uint8Array([1, 2, 3]);
+      // @ts-expect-error - partial mock
       mockBroadcast.mockResolvedValue({ transactionHash: fakeHash });
 
       const result = await api.broadcast("tx");
@@ -103,8 +104,14 @@ describe("createApi", () => {
 
   describe("craftTransaction", () => {
     it("should call craftTransaction from logic and return serializedTx", async () => {
+      // @ts-expect-error - partial mock
       mockCraftTransaction.mockResolvedValue({ serializedTx: "serialized" });
-      const txIntent = { useAllAmount: false, recipient: "0.0.1234", amount: 100n };
+      // @ts-expect-error - partial intent
+      const txIntent: TransactionIntent<HederaMemo> = {
+        useAllAmount: false,
+        recipient: "0.0.1234",
+        amount: 100n,
+      };
 
       const result = await api.craftTransaction(txIntent);
 
@@ -130,6 +137,7 @@ describe("createApi", () => {
 
   describe("estimateFees", () => {
     it("should call estimateFees from logic and return FeeEstimation for non-ContractCall", async () => {
+      // @ts-expect-error - testing with minimal required fields for TransactionIntent
       mockMapIntentToSDKOperation.mockReturnValue("CRYPTOTRANSFER");
       mockEstimateFees.mockResolvedValue({ tinybars: new BigNumber(5000) });
 
@@ -188,7 +196,7 @@ describe("createApi", () => {
 
   describe("getBlock", () => {
     it("should call getBlockV2 from logic", async () => {
-      const mockBlock = { hash: "h", height: 1, time: new Date() };
+      const mockBlock = { info: { hash: "h", height: 1, time: new Date() }, transactions: [] };
       mockGetBlockV2.mockResolvedValue(mockBlock);
 
       const result = await api.getBlock(1);
@@ -225,7 +233,17 @@ describe("createApi", () => {
 
   describe("getStakes", () => {
     it("should call getStakes from logic", async () => {
-      const mockStakes = { items: [{ uid: "s1", amount: 100n }] };
+      const mockStakes = {
+        items: [
+          {
+            uid: "s1",
+            amount: 100n,
+            address: "0.0.1234",
+            state: "active" as const,
+            asset: { type: "native" as const },
+          },
+        ],
+      };
       mockGetStakes.mockResolvedValue(mockStakes);
 
       const result = await api.getStakes("0.0.1234");
@@ -237,7 +255,11 @@ describe("createApi", () => {
 
   describe("getRewards", () => {
     it("should call getRewards from logic", async () => {
-      const mockRewards = { items: [{ amount: 50n, receivedAt: new Date() }] };
+      const mockRewards = {
+        items: [
+          { amount: 50n, receivedAt: new Date(), stake: "s1", asset: { type: "native" as const } },
+        ],
+      };
       mockGetRewards.mockResolvedValue(mockRewards);
 
       const result = await api.getRewards("0.0.1234", "cursor");
@@ -266,7 +288,7 @@ describe("createApi", () => {
       const token = getMockedHTSTokenCurrency();
       const mockAsset = { type: "token", assetReference: token.id, assetOwner: "0.0.1234" };
 
-      mockGetAssetFromToken.mockResolvedValue(mockAsset);
+      mockGetAssetFromToken.mockReturnValue(mockAsset);
 
       const result = await api.getAssetFromToken?.(token, mockAsset.assetOwner);
 
@@ -282,7 +304,6 @@ describe("createApi", () => {
       limit: 10,
       order: "desc" as const,
       minHeight: 0,
-      cursor: undefined,
     };
     const mockOperation = getMockedOperation({
       id: "op1",
@@ -405,9 +426,9 @@ describe("createApi", () => {
     });
 
     it.each([
-      ["desc", [mockOperationOlder], [mockOperationNewer]],
-      ["asc", [mockOperationNewer], [mockOperationOlder]],
-    ] as const)("should sort by consensusTimestamp %s", async (order, coinOps, tokenOps) => {
+      ["desc" as const, [mockOperationOlder], [mockOperationNewer]],
+      ["asc" as const, [mockOperationNewer], [mockOperationOlder]],
+    ])("should sort by consensusTimestamp %s", async (order, coinOps, tokenOps) => {
       mockListOperationsV2.mockResolvedValue({
         coinOperations: coinOps,
         tokenOperations: tokenOps,

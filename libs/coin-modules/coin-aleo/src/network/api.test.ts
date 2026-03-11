@@ -896,7 +896,7 @@ describe("apiClient", () => {
     const mockDelegatedProvingResponse = getMockedDelegatedProvingResponse();
 
     it("should submit delegated proving request successfully", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       const result = await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,
@@ -927,10 +927,11 @@ describe("apiClient", () => {
     it("should use correct network URL for testnet", async () => {
       const testnetConfig = {
         nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
+        sdkUrl: "https://sdk.testnet.aleo.network",
+        networkType: "testnet" as const,
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,
@@ -964,7 +965,7 @@ describe("apiClient", () => {
     });
 
     it("should submit without broadcast when broadcast is false", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,
@@ -985,7 +986,7 @@ describe("apiClient", () => {
     });
 
     it("should not send fee_authorization when feeAuthorization is not provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,

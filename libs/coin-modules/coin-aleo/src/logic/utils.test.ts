@@ -1023,6 +1023,7 @@ describe("getAvailableBalance", () => {
   it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.TRANSFER_PRIVATE])(
     "should return zero when aleoResources is undefined (%s)",
     mode => {
+      // @ts-expect-error - testing behavior when aleoResources is explicitly undefined
       const brokenAccount = getMockedAccount({ aleoResources: undefined });
       const transaction = getMockedTransaction({ mode });
 

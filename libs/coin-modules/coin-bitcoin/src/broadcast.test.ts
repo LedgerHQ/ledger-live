@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { broadcast } from "./broadcast";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { Account, SignedOperation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 
 jest.mock("./wallet-btc");
 
