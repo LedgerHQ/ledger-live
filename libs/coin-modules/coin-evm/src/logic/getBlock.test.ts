@@ -8,7 +8,7 @@ import {
   BlockReceiptInfo,
   ERC20Transfer,
   PrefetchedBlockTransaction,
-  TraceBlockAction,
+  TraceBlockCallAction,
   TraceBlockItem,
   TransactionInfo,
 } from "../network/node/types";
@@ -94,7 +94,9 @@ describe("getBlock", () => {
     };
   }
 
-  function makeNodeTraceAction(overrides: Partial<TraceBlockAction> = {}): TraceBlockAction {
+  function makeNodeTraceAction(
+    overrides: Partial<TraceBlockCallAction> = {},
+  ): TraceBlockCallAction {
     return {
       from: address1,
       to: address2,

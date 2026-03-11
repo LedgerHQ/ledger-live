@@ -1,8 +1,8 @@
 import type { BlockOperation } from "@ledgerhq/coin-framework/api/index";
 import type {
-  TraceBlockAction,
+  TraceBlockCallAction,
   TraceBlockItem,
-  TraceBlockRewardAction,
+  TraceBlockOtherAction,
 } from "../network/node/types";
 import {
   LedgerExplorerOperation,
@@ -148,7 +148,7 @@ describe("EVM Family", () => {
       });
 
       describe("traceBlockItemsToOperationsByHash", () => {
-        const makeAction = (overrides: Partial<TraceBlockAction>): TraceBlockAction => ({
+        const makeAction = (overrides: Partial<TraceBlockCallAction>): TraceBlockCallAction => ({
           from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
           to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
           callType: "call",
@@ -173,18 +173,17 @@ describe("EVM Family", () => {
             ...overrides,
           }) as TraceBlockItem;
 
-        const makeRewardAction = (
-          overrides: Partial<TraceBlockRewardAction> = {},
-        ): TraceBlockRewardAction => ({
-          author: "0x8f81e2e3f8b46467523463835f965ffe476e1c9e",
-          rewardType: "block",
-          value: "0x0",
+        const makeOtherAction = (overrides: TraceBlockOtherAction = {}): TraceBlockOtherAction => ({
           ...overrides,
         });
 
         const makeRewardTraceItem = (overrides: Partial<TraceBlockItem> = {}): TraceBlockItem =>
           ({
-            action: makeRewardAction(),
+            action: makeOtherAction({
+              author: "0x8f81e2e3f8b46467523463835f965ffe476e1c9e",
+              rewardType: "block",
+              value: "0x0",
+            }),
             blockHash: "0x6c508acd5fb899025f59582d097b7d693e2efd538576d9709747272960e76663",
             blockNumber: 19500620,
             result: null,

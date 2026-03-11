@@ -3,7 +3,7 @@ import type {
   BlockOperation,
   TransferBlockOperation,
 } from "@ledgerhq/coin-framework/api/index";
-import { TransactionInfo, TraceBlockItem } from "../network/node/types";
+import { TransactionInfo, TraceBlockItem, isTraceBlockCallAction } from "../network/node/types";
 import { LedgerExplorerOperation } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 
@@ -73,6 +73,23 @@ export function rpcTransactionToBlockOperations(
   return operations;
 }
 
+function extractActionFields(
+  item: TraceBlockItem,
+): { from: string; to: string; value: bigint; hash: string } | null {
+  const { action, result } = item;
+  if (result?.error || item.error) return null;
+  if (!item.transactionHash) return null;
+  if (!isTraceBlockCallAction(action)) return null;
+
+  const value = BigInt(action.value);
+  if (value === 0n) return null;
+
+  const from = action.from;
+  const to = action.to;
+  if (!from && !to) return null;
+
+  return { from, to, value, hash: item.transactionHash };
+}
 /**
  * Converts trace_block items to BlockOperations grouped by transaction hash.
  * Only includes internal calls with native value transfer (value > 0) and no error.
@@ -83,27 +100,24 @@ export function traceBlockItemsToOperationsByHash(
   const byHash = new Map<string, BlockOperation[]>();
 
   for (const item of items) {
-    const { action, result } = item;
-    if (result?.error || item.error) continue;
-    if (!item.transactionHash) continue; // skip reward and other non-call traces
-
-    const value = BigInt(action.value);
-    if (value === 0n) continue;
-
-    const from = "from" in action ? action.from || null : null;
-    const to = "to" in action ? action.to : undefined;
-    if (!from && !to) continue;
-
-    const ops: BlockOperation[] = [];
-    addTransferOperations(ops, from, to, { type: "native" }, value);
-
-    const hash = item.transactionHash;
-    let arr = byHash.get(hash);
-    if (arr === undefined) {
-      arr = [];
-      byHash.set(hash, arr);
+    const actionFields = extractActionFields(item);
+    if (actionFields) {
+      const ops: BlockOperation[] = [];
+      addTransferOperations(
+        ops,
+        actionFields.from,
+        actionFields.to,
+        { type: "native" },
+        actionFields.value,
+      );
+      const hash = actionFields.hash;
+      let arr = byHash.get(hash);
+      if (arr === undefined) {
+        arr = [];
+        byHash.set(hash, arr);
+      }
+      arr.push(...ops);
     }
-    arr.push(...ops);
   }
 
   return byHash;

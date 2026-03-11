@@ -35,26 +35,32 @@ export type LogWithAddress = {
 };
 
 /**
- * Action part of a trace_block trace item (OpenEthereum/Erigon trace API).
+ * Call action part of a trace_block trace item (OpenEthereum/Erigon trace API).
  * @see https://www.quicknode.com/docs/ethereum/trace_block
  */
-export type TraceBlockAction = {
+export type TraceBlockCallAction = {
   from: string;
   to: string;
   callType: string;
-  gas: string;
-  input: string;
   value: string;
 };
 
+export function isTraceBlockCallAction(
+  action: Record<string, unknown>,
+): action is TraceBlockCallAction {
+  return (
+    typeof action.from === "string" &&
+    typeof action.to === "string" &&
+    typeof action.callType === "string" &&
+    typeof action.value === "string"
+  );
+}
+
 /**
- * Reward action for "reward" type trace_block items (block/ uncle rewards).
+ * Other action types (e.g. reward, or other trace_block action shapes).
+ * No specific fields are prescribed.
  */
-export type TraceBlockRewardAction = {
-  author: string;
-  rewardType: string;
-  value: string;
-};
+export type TraceBlockOtherAction = Record<string, unknown>;
 
 /**
  * Result part of a trace_block trace item.
@@ -71,7 +77,7 @@ export type TraceBlockResult = {
  * "reward" type items have no transactionHash/transactionPosition and result is null.
  */
 export type TraceBlockItem = {
-  action: TraceBlockAction | TraceBlockRewardAction;
+  action: TraceBlockCallAction | TraceBlockOtherAction;
   /** null when the trace is a reward */
   result?: TraceBlockResult | null;
   /** Present when the trace reverted (no result object). */
