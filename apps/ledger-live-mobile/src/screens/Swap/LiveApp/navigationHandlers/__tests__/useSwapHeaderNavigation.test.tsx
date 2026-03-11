@@ -1,6 +1,12 @@
 import React from "react";
 import { fireEvent, render, renderHook } from "@testing-library/react-native";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import {
+  CommonActions,
+  NavigationProp,
+  NavigationState,
+  ParamListBase,
+  useNavigation,
+} from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
 import { useSwapHeaderNavigation } from "../useSwapHeaderNavigation";
@@ -42,20 +48,39 @@ describe("useSwapHeaderNavigation", () => {
   const goBack = jest.fn();
   const dispatch = jest.fn();
   const webviewGoBack = jest.fn();
-  const webviewRef = {
+  const webviewRef: React.RefObject<WebviewAPI | null> = {
     current: {
       goBack: webviewGoBack,
+      goForward: jest.fn(),
+      reload: jest.fn(),
+      loadURL: jest.fn(),
+      notify: jest.fn(),
     },
-  } as React.RefObject<WebviewAPI | null>;
+  };
+  const navigation: Omit<NavigationProp<ParamListBase>, "getState"> & {
+    getState(): NavigationState | undefined;
+  } = {
+    addListener: jest.fn(),
+    canGoBack: jest.fn(),
+    dispatch,
+    getId: jest.fn(),
+    getParent: jest.fn(),
+    goBack,
+    isFocused: jest.fn(),
+    navigate,
+    navigateDeprecated: jest.fn(),
+    preload: jest.fn(),
+    removeListener: jest.fn(),
+    replaceParams: jest.fn(),
+    reset: jest.fn(),
+    setOptions,
+    setParams: jest.fn(),
+    getState: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseNavigation.mockReturnValue({
-      setOptions,
-      navigate,
-      goBack,
-      dispatch,
-    } as never);
+    mockedUseNavigation.mockImplementation(() => navigation);
     mockedUseWalletFeaturesConfig.mockReturnValue({
       isEnabled: false,
       shouldDisplayMarketBanner: false,
@@ -77,7 +102,11 @@ describe("useSwapHeaderNavigation", () => {
   }) {
     mockedUseIsSwapTab.mockReturnValue({
       isSwapTabScreen: true,
-      swapTabScreen: { params: params ? { swapNavigationParams: params } : {} },
+      swapTabScreen: {
+        key: "swap-tab",
+        name: ScreenName.SwapTab,
+        params: params ? { swapNavigationParams: params } : {},
+      },
     });
 
     return renderHook(() => useSwapHeaderNavigation(webviewRef));

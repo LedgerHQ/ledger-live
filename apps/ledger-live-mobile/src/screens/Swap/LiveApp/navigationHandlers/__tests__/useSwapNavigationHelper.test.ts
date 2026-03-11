@@ -1,4 +1,5 @@
 import { act, renderHook } from "@testing-library/react-native";
+import { NavigationProp, NavigationState, ParamListBase } from "@react-navigation/native";
 import { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
 import { useSwapNavigationHelper } from "../useSwapNavigationHelper";
 import { useIsSwapTab } from "../useIsSwapTab";
@@ -11,9 +12,26 @@ const mockedUseIsSwapTab = jest.mocked(useIsSwapTab);
 
 describe("useSwapNavigationHelper", () => {
   const setParams = jest.fn();
-  const navigation = {
+  const navigation: Omit<NavigationProp<ParamListBase>, "getState"> & {
+    getState(): NavigationState | undefined;
+  } = {
+    addListener: jest.fn(),
+    canGoBack: jest.fn(),
+    dispatch: jest.fn(),
+    getId: jest.fn(),
+    getParent: jest.fn(),
+    goBack: jest.fn(),
+    isFocused: jest.fn(),
+    navigate: jest.fn(),
+    navigateDeprecated: jest.fn(),
+    preload: jest.fn(),
+    removeListener: jest.fn(),
+    replaceParams: jest.fn(),
+    reset: jest.fn(),
     setParams,
-  } as never;
+    setOptions: jest.fn(),
+    getState: jest.fn(),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
