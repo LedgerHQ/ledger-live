@@ -8,6 +8,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { setEnv } from "@ledgerhq/live-env";
 import { allure } from "jest-allure2-reporter/api";
+import { isWallet40 } from "../../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -560,9 +561,13 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     tags.forEach(tag => $Tag(tag));
     it("Access Swap from different entry points", async () => {
       await app.portfolio.openViaDeeplink();
-      await app.transferMenuDrawer.open();
       let readyPromise = waitSwapReady();
-      await app.transferMenuDrawer.navigateToSwap();
+      if (isWallet40) {
+        await app.mainNavigation.tapWallet40Tab("swap");
+      } else {
+        await app.transferMenuDrawer.open();
+        await app.transferMenuDrawer.navigateToSwap();
+      }
       await readyPromise;
       await validateSwapAssetsPage(account.currency.ticker, "");
 

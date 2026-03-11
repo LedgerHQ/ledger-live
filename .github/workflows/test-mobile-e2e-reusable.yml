@@ -63,6 +63,11 @@ on:
         required: false
         type: boolean
         default: false
+      enable_wallet40:
+        description: "Enable wallet 4.0 feature flag for tests"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -95,6 +100,11 @@ on:
         default: false
       smoke_tests:
         description: "Run smoke tests"
+        required: false
+        type: boolean
+        default: false
+      enable_wallet40:
+        description: "Enable wallet 4.0 feature flag for tests"
         required: false
         type: boolean
         default: false
@@ -193,6 +203,7 @@ jobs:
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          echo "- **Wallet 4.0:** ${{ inputs.enable_wallet40 }}"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Configure AWS credentials
@@ -552,6 +563,7 @@ jobs:
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
+          E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == true && '1' || '0' }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -800,6 +812,7 @@ jobs:
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
+          E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == true && '1' || '0' }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy

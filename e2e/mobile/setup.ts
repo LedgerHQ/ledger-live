@@ -1,6 +1,6 @@
 import { device } from "detox";
 import { close as closeBridge } from "./bridge/server";
-import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
+import { isWallet40, launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { allure } from "jest-allure2-reporter/api";
 
@@ -14,7 +14,8 @@ beforeAll(
     await device.reverseTcpPort(port);
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     const testFileName = expect.getState().testPath?.replace(/^.*\/(.+?)(?:\.spec)?\.[^.]+$/, "$1");
-    await allure.description("Test file : " + testFileName);
+    const mode = isWallet40 ? "🆕 Wallet 4.0" : "Legacy Wallet";
+    allure.description(`Test file: ${testFileName} \n Test run on: ${mode}`);
   },
   process.env.CI ? 150000 : 120000,
 );

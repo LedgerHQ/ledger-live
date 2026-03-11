@@ -77,6 +77,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       getIdByRegexp: NativeElementHelpers.getIdByRegexp,
       getIdOfElement: NativeElementHelpers.getIdOfElement,
       getTextOfElement: NativeElementHelpers.getTextOfElement,
+      IsIdPresent: NativeElementHelpers.isIdPresent,
       IsIdVisible: NativeElementHelpers.isIdVisible,
       scrollToId: NativeElementHelpers.scrollToId,
       scrollToText: NativeElementHelpers.scrollToText,
