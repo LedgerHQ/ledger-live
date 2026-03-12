@@ -1,5 +1,6 @@
 import React from "react";
 import { Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -29,7 +30,7 @@ const StatusText = ({ testID, children }: { testID: string; children: string }) 
 );
 
 export const PortfolioRefreshStatus = () => {
-  const { isVisible, isRefreshing, refreshingLabel, upToDateLabel } =
+  const { isVisible, isRefreshing, outcome, refreshingLabel, upToDateLabel, syncErrorLabel } =
     usePortfolioRefreshStatusViewModel();
 
   const opacity = useSharedValue(0);
@@ -84,7 +85,16 @@ export const PortfolioRefreshStatus = () => {
       );
     }
 
-    if (isVisible) {
+    if (outcome === "error") {
+      return (
+        <>
+          <Warning size={16} color="error" />
+          <StatusText testID="portfolio-refresh-status-error">{syncErrorLabel}</StatusText>
+        </>
+      );
+    }
+
+    if (outcome === "success") {
       return (
         <>
           <AnimatedCheckmark />

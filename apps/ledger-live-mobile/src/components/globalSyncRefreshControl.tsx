@@ -7,10 +7,12 @@ import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
-import { useDispatch, useStore } from "~/context/hooks";
+import { useDispatch, useSelector, useStore } from "~/context/hooks";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
 import {
   setRefreshStarted,
   setRefreshCompleted,
+  setLastUserSyncClickTimestamp,
   selectLastSyncTimestamp,
 } from "~/reducers/portfolioRefresh";
 
@@ -39,6 +41,7 @@ function globalSyncRefreshControl<P>(
     const dispatch = useDispatch();
     const store = useStore();
     const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
+    const hasNoAccounts = useSelector(hasNoAccountsSelector);
     const route = useRoute();
     const refreshingRef = useRef(refreshing);
     refreshingRef.current = refreshing;
@@ -52,6 +55,9 @@ function globalSyncRefreshControl<P>(
       });
       setRefreshing(true);
       dispatch(setRefreshStarted(selectLastSyncTimestamp(store.getState())));
+      if (shouldDisplayBalanceRefreshRework) {
+        dispatch(setLastUserSyncClickTimestamp(Date.now()));
+      }
       track("button_clicked", {
         button: "pull to refresh",
         page: route.name,
@@ -62,6 +68,7 @@ function globalSyncRefreshControl<P>(
 
     function handleRefresh() {
       if (refreshingRef.current) return;
+      if (shouldDisplayBalanceRefreshRework && hasNoAccounts) return;
       onRefresh();
     }
 
