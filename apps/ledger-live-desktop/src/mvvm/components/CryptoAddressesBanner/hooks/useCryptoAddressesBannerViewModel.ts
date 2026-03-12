@@ -49,14 +49,14 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
   }, [openAssetFlow]);
 
   return {
-    title: t("assets.cryptoAddresses"),
+    title: t("assets.cryptoAccounts"),
     description: hasAccount
-      ? t("assets.addressCount", { count: accountsCount })
-      : t("assets.noCryptoAddresses"),
+      ? t("assets.accountsCount", { count: accountsCount })
+      : t("assets.noCryptoAccounts"),
     icon: Wallet,
     onGoToAccounts,
     onAddAccount,
-    buttonText: hasAccount ? undefined : t("assets.addCryptoAddress"),
+    buttonText: hasAccount ? undefined : t("assets.add"),
     firstThreeCurrencies,
   };
 };
