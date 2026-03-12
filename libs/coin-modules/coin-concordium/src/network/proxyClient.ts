@@ -8,6 +8,8 @@ import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
+  BlockInfoResponse,
+  BlocksAtHeightResponse,
   ConsensusInfoResponse,
   GetOperationsParams,
   GetTransactionCostParams,
@@ -95,6 +97,38 @@ export function getConsensusInfo(currencyId: string): Promise<ConsensusInfoRespo
     client.request<ConsensusInfoResponse>({
       method: "GET",
       url: "/v0/consensusInfo",
+    }),
+  );
+}
+
+/**
+ * Get block info by block hash.
+ * GET /v0/blockInfo/{blockHash}
+ */
+export function getBlockInfoByHash(
+  currencyId: string,
+  blockHash: string,
+): Promise<BlockInfoResponse> {
+  return withClient(currencyId, async client =>
+    client.request<BlockInfoResponse>({
+      method: "GET",
+      url: `/v0/blockInfo/${blockHash}`,
+    }),
+  );
+}
+
+/**
+ * Get block hash(es) at a specific height.
+ * GET /v0/blocksAtHeight/{blockHeight}
+ */
+export function getBlocksAtHeight(
+  currencyId: string,
+  height: number,
+): Promise<BlocksAtHeightResponse> {
+  return withClient(currencyId, async client =>
+    client.request<BlocksAtHeightResponse>({
+      method: "GET",
+      url: `/v0/blocksAtHeight/${height}`,
     }),
   );
 }

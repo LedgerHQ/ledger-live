@@ -302,47 +302,6 @@ async function getBlockInfo(currencyId: string, blockHash: string): Promise<Bloc
 }
 
 /**
- * Get block metadata by height, including parent block reference.
- *
- * Used by: history/getBlockInfo.ts
- *
- * Composes: getBlockHashesAtHeight + getBlockInfo (for block and parent)
- *
- * @param currencyId - The cryptocurrency ID
- * @param height - Block height to query
- * @returns Block metadata with parent block reference (if height > 0)
- */
-export async function getBlockInfoByHeight(currencyId: string, height: number): Promise<BlockInfo> {
-  try {
-    const blockHashes = await getBlockHashesAtHeight(currencyId, height);
-
-    if (blockHashes.length === 0) {
-      throw new Error(`No blocks found at height ${height}`);
-    }
-
-    const blockHash = blockHashes[0];
-    const result = await getBlockInfo(currencyId, blockHash);
-
-    if (height > 0) {
-      const parentHashes = await getBlockHashesAtHeight(currencyId, height - 1);
-
-      if (parentHashes.length > 0) {
-        const parentBlockInfo = await getBlockInfo(currencyId, parentHashes[0]);
-        result.parent = {
-          height: parentBlockInfo.height,
-          hash: parentBlockInfo.hash!,
-        };
-      }
-    }
-
-    return result;
-  } catch (error) {
-    log("concordium-grpc", "getBlockInfoByHeight", { error });
-    throw error;
-  }
-}
-
-/**
  * Internal helper: Stream transaction events from a block.
  *
  * Wraps: GetBlockTransactionEvents gRPC method
