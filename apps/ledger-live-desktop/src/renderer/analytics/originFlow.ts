@@ -6,8 +6,6 @@
  */
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
-export { HOOKS_TRACKING_LOCATIONS };
-
 let originFlow = "";
 
 export type OriginFlowValue = HOOKS_TRACKING_LOCATIONS | string;
