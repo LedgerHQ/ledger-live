@@ -168,6 +168,14 @@ export default class ModularDrawer {
     }
   }
 
+  @Step("Validate account name(s) visible on account list")
+  async validateAccountNames(accounts: string[]): Promise<void> {
+    for (const account of accounts) {
+      const accountItemId = this.accountItemNameId(account);
+      await detoxExpect(getElementById(accountItemId)).toBeVisible();
+    }
+  }
+
   @Step("Validate network(s) present on network list")
   async validateNetworksScreen(networks: string[]): Promise<void> {
     const modularDrawerAttributes = await getAttributesOfElement(this.modularDrawerFlowViewId, 0);

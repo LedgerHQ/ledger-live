@@ -40,6 +40,7 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1858");
   $TmsLink("B2CQA-1860");
+  $TmsLink("B2CQA-1857");
   (isSmokeTestRun ? it.skip : it)(
     "Should display the number of account existing per networks",
     async () => {
@@ -47,24 +48,33 @@ describe("Receive Flow", () => {
       await app.modularDrawer.selectCurrencyByTicker(ticker);
       await app.modularDrawer.selectNetwork(name);
       await app.modularDrawer.validateNumberOfAccounts(3);
+      await app.modularDrawer.validateAccountNames([
+        Account.ETH_1.accountName,
+        Account.ETH_2.accountName,
+        Account.ETH_3.accountName,
+      ]);
 
       await app.modularDrawer.tapDrawerBackButton();
       await app.modularDrawer.selectNetwork(Currency.OP.name);
       await app.modularDrawer.validateNumberOfAccounts(1);
+      await app.modularDrawer.validateAccountNames([Account.OP_1.accountName]);
     },
   );
 
   $TmsLink("B2CQA-1856");
   $TmsLink("B2CQA-1862");
+  $TmsLink("B2CQA-1861");
   (isSmokeTestRun ? it.skip : it)("Should create an account on a network", async () => {
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
-    await app.modularDrawer.selectNetwork(Currency.OP.name);
+    await app.modularDrawer.selectNetwork(Currency.BASE.name);
     await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
 
     await app.receive.continueCreateAccount();
     await app.receive.doNotVerifyAddress();
 
-    await app.receive.expectReceivePageIsDisplayed("ETH", "OP Mainnet 1");
+    await app.receive.expectReceivePageIsDisplayed("ETH", Account.BASE_1.accountName);
+    const address = await CLI.getAddressForAccount(Account.ETH_1);
+    await app.receive.verifyAddress(address);
     await app.common.closePage();
 
     if (isWallet40) {
@@ -76,8 +86,8 @@ describe("Receive Flow", () => {
     }
 
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
-    await app.modularDrawer.selectNetwork(Currency.OP.name);
-    await app.modularDrawer.validateNumberOfAccounts(2);
+    await app.modularDrawer.selectNetwork(Currency.BASE.name);
+    await app.modularDrawer.validateNumberOfAccounts(3);
   });
 
   $TmsLink("B2CQA-650");
@@ -101,10 +111,25 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1859");
   $Tag("@smoke");
-  it("Should access to receive after selecting an existing account", async () => {
+  it("Should access to receive after selecting an existing XRP account", async () => {
     await app.modularDrawer.selectCurrencyByTicker(Currency.XRP.ticker);
     await app.modularDrawer.selectAccount(Account.XRP_2.accountName);
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed(Currency.XRP.ticker, Account.XRP_2.accountName);
+  });
+
+  $TmsLink("B2CQA-1898");
+  $Tag("@smoke");
+  it("Should access to receive after selecting an existing ETH account", async () => {
+    await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
+    await app.modularDrawer.selectNetwork(Account.ETH_1.currency.name);
+    await app.modularDrawer.selectAccount(Account.ETH_1.accountName);
+    await app.receive.doNotVerifyAddress();
+    await app.receive.expectReceivePageIsDisplayed(
+      Account.ETH_1.currency.ticker,
+      Account.ETH_1.accountName,
+    );
+    const address = await CLI.getAddressForAccount(Account.ETH_1);
+    await app.receive.verifyAddress(address);
   });
 });
