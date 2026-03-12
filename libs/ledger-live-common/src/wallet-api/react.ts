@@ -494,10 +494,8 @@ export function useWalletAPIServer({
           [...includedCurrencies, ...specificTokens],
         );
 
-        tracking.currencyListSuccess(manifest);
         return result;
       } catch (err) {
-        tracking.currencyListFail(manifest);
         throw err;
       }
     });
@@ -577,7 +575,7 @@ export function useWalletAPIServer({
         throw err;
       }
     });
-  }, [walletState, manifest, server, tracking, uiAccountRequest, accounts]);
+  }, [walletState, manifest, server, accounts]);
 
   useEffect(() => {
     if (!uiAccountRequest) return;
