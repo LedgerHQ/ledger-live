@@ -31,7 +31,7 @@ import {
   lastBlock,
   listOperations,
   getBalance,
-  getSequence,
+  getNextSequence,
   validateIntent,
   getTokenFromAsset,
   getAssetFromToken,
@@ -41,6 +41,7 @@ import {
   getBlockInfo,
   validateTransaction,
 } from "../logic/index";
+import { validateAddress } from "../logic/validateAddress";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
@@ -97,7 +98,8 @@ export function createApi(
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
+    getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
+    validateAddress,
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],

@@ -692,6 +692,40 @@ export type AlpacaApi<
    * @throws if the transaction is rejected by the network (e.g., invalid signature, insufficient funds)
    */
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
+
+  /**
+   * Validate a transaction intent.
+   *
+   * @param transactionIntent the transaction intent describing what the user wants to do
+   * @param balances current balances of the intent sender
+   * @param customFees optional custom fees to use instead of the default estimation
+   * @returns additional values the intent has been validated with, and optional errors/warnings
+   */
+  validateIntent: (
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    balances: Balance[],
+    customFees?: FeeEstimation,
+  ) => Promise<TransactionValidation>;
+
+  /**
+   * Get the next sequence number (nonce) for an address
+   *
+   * @param address the account address
+   * @returns the next usable sequence number
+   */
+  getNextSequence: (address: string) => Promise<bigint>;
+
+  /**
+   * Validate whether an address is well-formed for the blockchain.
+   *
+   * @param address the address to validate
+   * @param parameters currency-specific validation parameters
+   * @returns `true` if the address is valid, `false` otherwise
+   */
+  validateAddress: (
+    address: string,
+    parameters: Partial<AddressValidationCurrencyParameters>,
+  ) => Promise<boolean>;
 };
 
 export type ChainSpecificRules = {
@@ -701,16 +735,7 @@ export type ChainSpecificRules = {
   };
 };
 
-export type BridgeApi<
-  MemoType extends Memo = MemoNotSupported,
-  TxDataType extends TxData = TxDataNotSupported,
-> = {
-  validateIntent: (
-    transactionIntent: TransactionIntent<MemoType, TxDataType>,
-    balances: Balance[],
-    customFees?: FeeEstimation,
-  ) => Promise<TransactionValidation>;
-  getSequence: (address: string) => Promise<bigint>;
+export type BridgeApi = {
   getChainSpecificRules?: () => ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
@@ -722,4 +747,4 @@ export type BridgeApi<
 export type Api<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
-> = AlpacaApi<MemoType, TxDataType> & BridgeApi<MemoType, TxDataType>;
+> = AlpacaApi<MemoType, TxDataType> & BridgeApi;

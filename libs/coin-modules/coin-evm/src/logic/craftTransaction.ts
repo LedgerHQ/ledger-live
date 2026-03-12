@@ -10,7 +10,7 @@ import { Transaction, TransactionLike } from "ethers";
 import { getNodeApi } from "../network/node";
 import { TransactionTypes } from "../types";
 import { prepareUnsignedTxParams } from "./common";
-import { getSequence } from "./getSequence";
+import { getNextSequence } from "./getNextSequence";
 
 export async function craftTransaction(
   currency: CryptoCurrency,
@@ -34,7 +34,7 @@ export async function craftTransaction(
   const nonce =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? transactionIntent.sequence
-      : await getSequence(currency, transactionIntent.sender);
+      : await getNextSequence(currency, transactionIntent.sender);
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
   const unsignedTransaction: TransactionLike = {

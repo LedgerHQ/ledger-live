@@ -49,10 +49,13 @@ describe("api/index", () => {
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
       getRewards: expect.any(Function),
+      getNextSequence: expect.any(Function),
       getStakes: expect.any(Function),
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
+      validateAddress: expect.any(Function),
+      validateIntent: expect.any(Function),
     });
   });
 

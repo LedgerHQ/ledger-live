@@ -8,6 +8,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { validateAddress } from "../bridge/validateAddress";
 import coinConfig, { type HederaConfig } from "../config";
 import {
   HARDCODED_BLOCK_HEIGHT,
@@ -238,8 +239,9 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getSequence: async (_address): Promise<bigint> => {
-      throw new Error("getSequence is not supported");
+    getNextSequence: async (_address): Promise<bigint> => {
+      throw new Error("getNextSequence is not supported");
     },
+    validateAddress,
   };
 }

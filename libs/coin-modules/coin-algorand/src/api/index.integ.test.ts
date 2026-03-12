@@ -368,8 +368,10 @@ describe("Algorand Api (mainnet)", () => {
       expect(() => api.getBlock(100)).toThrow("getBlock is not supported for Algorand");
     });
 
-    it("getSequence throws not applicable error", () => {
-      expect(() => api.getSequence(SENDER)).toThrow("getSequence is not applicable for Algorand");
+    it("getNextSequence throws not applicable error", () => {
+      expect(() => api.getNextSequence(SENDER)).toThrow(
+        "getNextSequence is not applicable for Algorand",
+      );
     });
 
     it("getStakes throws not supported error", () => {

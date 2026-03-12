@@ -480,9 +480,11 @@ describe("createApi", () => {
     });
   });
 
-  describe("getSequence", () => {
+  describe("getNextSequence", () => {
     it("should throw when called", async () => {
-      await expect(api.getSequence("0.0.1234")).rejects.toThrow("getSequence is not supported");
+      await expect(api.getNextSequence("0.0.1234")).rejects.toThrow(
+        "getNextSequence is not supported",
+      );
     });
   });
 });

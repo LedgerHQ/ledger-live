@@ -10,6 +10,8 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  TransactionValidation,
+  Balance,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
@@ -23,6 +25,7 @@ import {
   listOperations as logicListOperations,
   lastBlock,
   Options,
+  validateAddress,
 } from "../logic";
 import type { TronMemo } from "../types";
 
@@ -56,6 +59,17 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 
