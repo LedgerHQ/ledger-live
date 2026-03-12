@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { track } from "~/renderer/analytics/segment";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { getOriginFlow } from "~/renderer/analytics/originFlow";
 
 export interface BuyDeviceViewProps {
   isOpen: boolean;
@@ -25,6 +26,12 @@ const useBuyDeviceViewModel = (): BuyDeviceViewProps => {
       dispatch(closeBuyDevice());
     }
   }, [hasOnboardedDevice, isOpen, dispatch]);
+
+  useEffect(() => {
+    if (isOpen) {
+      track("modal_shown", { modal: "BuyDeviceModal", trigger: getOriginFlow() });
+    }
+  }, [isOpen]);
 
   const onClose = useCallback(() => {
     dispatch(closeBuyDevice());
