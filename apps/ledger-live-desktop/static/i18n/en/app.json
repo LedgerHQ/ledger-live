@@ -8172,6 +8172,25 @@
       "cta": "Confirm"
     }
   },
+  "cryptos": {
+    "title": "Crypto accounts",
+    "tableActions": {
+      "searchAddress": "Search address",
+      "addAddress": "Add address",
+      "highestBalance": "Highest balance",
+      "showAll": "Show all",
+      "hideEmptyAccounts": "Hide empty accounts"
+    },
+    "table": {
+      "columns": {
+        "name": "Name",
+        "address": "Address",
+        "value": "Value"
+      },
+      "openAccount": "Open account",
+      "emptyState": "No accounts match your search"
+    }
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {

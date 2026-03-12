@@ -1,6 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import useCryptosViewModel from "../useCryptosViewModel";
+import useCryptosViewModel from "../hooks/useCryptosViewModel";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
