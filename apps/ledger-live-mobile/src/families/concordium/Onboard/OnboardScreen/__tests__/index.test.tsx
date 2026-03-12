@@ -53,7 +53,7 @@ jest.mock("../components/StepCreate", () => {
   }: {
     sessionTopic: string;
     onSessionExpired: () => void;
-    onCreated: () => void;
+    onCreated: (account: unknown) => void;
     creatableAccount: unknown;
   }) {
     return (
@@ -61,27 +61,27 @@ jest.mock("../components/StepCreate", () => {
         <Text>StepCreate</Text>
         <Text testID="session-topic">{sessionTopic}</Text>
         <TouchableOpacity testID="session-expired" onPress={onSessionExpired} />
-        <TouchableOpacity testID="account-created" onPress={onCreated} />
+        <TouchableOpacity
+          testID="account-created"
+          onPress={() => onCreated({ id: "completed-account-1", type: "Account", used: true })}
+        />
       </>
     );
   };
 });
 
-jest.mock("../components/StepFinish", () => {
-  const { Text } = require("react-native");
-  return function MockStepFinish() {
-    return <Text>StepFinish</Text>;
-  };
-});
-
 const mockGoBack = jest.fn();
 const mockParentGoBack = jest.fn();
+const mockParentNavigate = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({
     goBack: mockGoBack,
-    getParent: () => ({ goBack: mockParentGoBack }),
+    getParent: () => ({
+      goBack: mockParentGoBack,
+      navigate: mockParentNavigate,
+    }),
   }),
   useRoute: () => ({
     params: {
@@ -112,6 +112,10 @@ const overrideInitialState = (state: State): State => ({
 });
 
 describe("OnboardScreen", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should render StepOnboard initially", () => {
     render(<OnboardScreen />, { overrideInitialState });
     expect(screen.getByText("StepOnboard")).toBeDefined();
@@ -145,7 +149,7 @@ describe("OnboardScreen", () => {
     expect(screen.getByTestId("session-topic").props.children).toBe("ABCD1234sessiontopic");
   });
 
-  it("should transition to StepFinish when account is created", async () => {
+  it("should navigate to AddAccountsSuccess when account is created", async () => {
     render(<OnboardScreen />, { overrideInitialState });
 
     await userEvent.press(screen.getByTestId("step-onboard"));
@@ -153,7 +157,12 @@ describe("OnboardScreen", () => {
     await userEvent.press(screen.getByTestId("step-pair-success"));
     await userEvent.press(screen.getByTestId("account-created"));
 
-    expect(screen.getByText("StepFinish")).toBeDefined();
+    expect(mockParentNavigate).toHaveBeenCalledWith(
+      "AddAccounts",
+      expect.objectContaining({
+        screen: "AddAccountsSuccess",
+      }),
+    );
   });
 
   it("should return to StepPair when session expires", async () => {

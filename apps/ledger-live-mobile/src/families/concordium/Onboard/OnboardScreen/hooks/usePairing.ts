@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
 import type { ConcordiumPairingProgress } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
+import { getConcordiumBridge } from "../../helpers";
 
 const MAX_EXPIRED_RETRIES = 3;
 
@@ -43,8 +42,7 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
     startPairingInternal();
 
     function startPairingInternal() {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      const bridge = getCurrencyBridge(currency) as ConcordiumCurrencyBridge;
+      const bridge = getConcordiumBridge(currency);
       subscriptionRef.current = bridge.pairWalletConnect(currency.id, "").subscribe({
         next: (data: ConcordiumPairingProgress) => {
           switch (data.status) {
