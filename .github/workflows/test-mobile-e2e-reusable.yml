@@ -4,7 +4,8 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 3 * * 1-5"
+    - cron: "0 3 * * 1,3,5" # Mon, Wed, Fri → Wallet 4.0
+    - cron: "0 3 * * 2,4"   # Tue, Thu → Legacy
   workflow_dispatch:
     inputs:
       ref:
@@ -123,6 +124,7 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
+  E2E_ENABLE_WALLET40: ${{ ((github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5') || inputs.enable_wallet40 == true) && '1' || '0' }}
   # Android AVD configuration
   AVD_API: 35
   AVD_ARCH: x86_64
@@ -203,7 +205,7 @@ jobs:
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-          echo "- **Wallet 4.0:** ${{ inputs.enable_wallet40 }}"
+          echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Configure AWS credentials
@@ -563,7 +565,6 @@ jobs:
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
-          E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == true && '1' || '0' }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
 
@@ -812,7 +813,6 @@ jobs:
           INPUT_E2E: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
-          E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == true && '1' || '0' }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
