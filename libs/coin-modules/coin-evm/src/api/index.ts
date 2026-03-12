@@ -39,6 +39,7 @@ import {
   refreshOperations,
   getBlock,
   getBlockInfo,
+  validateTransaction,
 } from "../logic/index";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
@@ -119,5 +120,7 @@ export function createApi(
             refreshOperations(currency, operations),
         }
       : {}),
+    validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
+      validateTransaction(currency, { signature }),
   };
 }
