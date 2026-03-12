@@ -1,7 +1,7 @@
 /**
  * Hash and CBOR encoding utilities for Internet Computer transactions
  */
-import crypto from "node:crypto";
+import crypto from "crypto";
 import cbor from "cbor";
 
 /**
@@ -56,7 +56,7 @@ export function serializeTransaction({
   orderedMap.set(1, memo);
 
   const mapCreatedAtTime = new Map();
-  mapCreatedAtTime.set(0, created_at_time > 0 ? created_at_time : 0);
+  mapCreatedAtTime.set(0, created_at_time > 0n ? created_at_time : 0n);
 
   orderedMap.set(2, mapCreatedAtTime);
 

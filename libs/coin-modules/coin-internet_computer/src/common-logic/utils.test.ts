@@ -25,8 +25,6 @@ describe("getPath", () => {
 
 describe("isValidHex", () => {
   it("should validate hex strings correctly", () => {
-    // The regex uses /g flag, so lastIndex persists between calls.
-    // Testing with a fresh valid string first.
     expect(isValidHex("abcdef")).toBe(true);
   });
 
