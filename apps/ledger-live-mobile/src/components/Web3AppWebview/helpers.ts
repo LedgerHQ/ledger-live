@@ -36,6 +36,11 @@ import getOrCreateUser from "../../user";
 import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { setOriginFlow } from "~/analytics/originFlow";
+import {
+  E2E_WEBVIEW_CONSOLE_LOG_TYPE,
+  E2E_WEBVIEW_NETWORK_LOG_TYPE,
+} from "../../e2e/webviewNetworkLogCapture";
+import { webviewLogStore } from "../../e2e/webviewLogStore";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import {
@@ -176,6 +181,14 @@ export function useWebView(
         try {
           const msg = JSON.parse(e.nativeEvent.data);
 
+          if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+            webviewLogStore.addNetworkLog(msg.payload);
+            return;
+          }
+          if (msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+            webviewLogStore.addConsoleLog(msg.payload);
+            return;
+          }
           if (Config.MOCK && msg.type === "e2eTest") {
             sendWalletAPIResponse(msg.payload);
           } else if (msg.type === "dapp") {
