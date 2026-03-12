@@ -2,7 +2,7 @@ import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
 import { AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
-import { convertAction, type Action } from "./types";
+import { convertAction, type ActionWithNonce } from "./types";
 import { getAccountIdFromWalletAccountId } from "../converters";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "@ledgerhq/coin-framework/account/index";
@@ -20,10 +20,6 @@ export type PerpsUiHooks = {
   }) => void;
 };
 
-export type ActionWithNonce = {
-  action: Action;
-  nonce: number;
-};
 export type PerpsSignParams = {
   accountId: string;
   metadataWithSignature: string;
@@ -48,7 +44,6 @@ export const handlers = ({
   return {
     "custom.perps.signActions": customWrapper<PerpsSignParams, PerpsSignResult>(async params => {
       if (!params) {
-        // tracking. (manifest);
         throw new ServerError(createUnknownError({ message: "params is undefined" }));
       }
 

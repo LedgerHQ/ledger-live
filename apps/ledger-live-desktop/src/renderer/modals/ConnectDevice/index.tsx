@@ -30,8 +30,6 @@ export default function ConnectDevice({
     };
   }, [appName, requireLatestFirmware, allowPartialDependencies, skipAppInstallIfNotFound]);
 
-  console.log("PERPS Data", requireLatestFirmware, allowPartialDependencies);
-
   return (
     <Modal
       name="MODAL_CONNECT_DEVICE"

@@ -47,7 +47,7 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "22.10.1",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "@swc/jest": "catalog:",

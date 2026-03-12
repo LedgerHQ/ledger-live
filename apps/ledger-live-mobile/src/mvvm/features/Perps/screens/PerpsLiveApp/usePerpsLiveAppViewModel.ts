@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, type RefObject } from "react";
-import { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import {
   useRemoteLiveAppContext,

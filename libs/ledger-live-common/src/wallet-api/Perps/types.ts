@@ -1,13 +1,17 @@
-import { ActionWithNonce } from "./server";
-
 type Address = `0x${string}`;
+
+export type ActionWithNonce = {
+  action: Action;
+  nonce: number;
+};
+
 export type Action =
   | {
       type: "order";
       orders: Order[];
       grouping: "na" | "normalTpsl" | "positionTpsl";
       builder?: {
-        b: Address; // Address receiving the additionnal fees
+        b: Address; // Address receiving the additional fees
         f: number; // Fees
       };
     }

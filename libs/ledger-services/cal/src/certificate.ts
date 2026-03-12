@@ -51,6 +51,8 @@ function hexToUint8Array(hex: string): Uint8Array {
   }
   return bytes;
 }
+
+const SIGNATURE_TAG = 0x15;
 export function convertCertificateToDeviceData(info: CertificateInfo): Uint8Array {
   const descriptorBytes = hexToUint8Array(info.descriptor);
   const signatureBytes = hexToUint8Array(info.signature);
@@ -59,7 +61,7 @@ export function convertCertificateToDeviceData(info: CertificateInfo): Uint8Arra
   let offset = 0;
   result.set(descriptorBytes, offset);
   offset += descriptorBytes.length;
-  result[offset++] = 0x15;
+  result[offset++] = SIGNATURE_TAG;
   result[offset++] = signatureBytes.length;
   result.set(signatureBytes, offset);
   return result;

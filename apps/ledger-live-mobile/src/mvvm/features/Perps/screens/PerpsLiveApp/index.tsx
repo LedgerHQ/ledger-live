@@ -5,7 +5,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { PerpsWebView } from "LLM/features/Perps/components/PerpsWebView";
 import type { PerpsWebviewInputs } from "./usePerpsLiveAppViewModel";
-import { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 type PerpsLiveAppViewProps = {
   manifest: LiveAppManifest | undefined;

@@ -6,7 +6,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import type { PerpsWebviewInputs } from "LLM/features/Perps/screens/PerpsLiveApp/usePerpsLiveAppViewModel";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
-import { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { usePerpsHandlers } from "LLM/features/Perps/hooks/usePerpsHandlers";
 
 type Props = {
