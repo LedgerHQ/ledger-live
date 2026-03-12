@@ -130,6 +130,16 @@ pnpm i
 > Note: multiple postinstall steps will be triggered and fail if the applications prerequisites are not met.
 > You can safely ignore the errors if you do not plan to work on those apps.
 
+#### Optional: CLI or Desktop with a Ledger device (USB)
+
+To use the **CLI** or **Desktop** app with a physical Ledger device over USB, the native modules `node-hid` and `usb` must be built. By default they are not built during `pnpm i` (so CI and most devs can install without system deps). Run once after install:
+
+```bash
+pnpm build:device-deps
+```
+
+On **Linux** you need system deps first: `libusb-1.0-0-dev` and `libudev-dev` (e.g. `sudo apt-get install -y libusb-1.0-0-dev libudev-dev` on Debian/Ubuntu).
+
 ## Common setup errors
 
 ### Out of sync Podfile.lock

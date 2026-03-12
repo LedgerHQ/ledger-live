@@ -59,6 +59,13 @@ runs:
       shell: bash
       run: proto use
 
+    - name: Install Linux native build dependencies
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential pkg-config
+
     - uses: pnpm/action-setup@v4
       if: inputs.install-proto == 'true' && startsWith(env.CI_OS, 'windows')
       with:
