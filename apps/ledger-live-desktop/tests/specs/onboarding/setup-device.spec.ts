@@ -8,7 +8,6 @@ test.use({
     hasSeenWalletV4Tour: true,
   },
   featureFlags: {
-    welcomeScreenVideoCarousel: { enabled: false },
     noah: { enabled: false },
   },
 });

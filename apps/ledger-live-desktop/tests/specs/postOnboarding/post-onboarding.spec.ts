@@ -13,7 +13,6 @@ test.use({
     lwdWallet40: {
       enabled: false,
     },
-    welcomeScreenVideoCarousel: { enabled: false },
     noah: { enabled: false },
   },
 });

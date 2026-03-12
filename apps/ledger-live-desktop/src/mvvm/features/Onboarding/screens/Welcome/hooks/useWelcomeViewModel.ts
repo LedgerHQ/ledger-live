@@ -14,7 +14,7 @@ import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/us
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
-export function useWelcomeNewViewModel() {
+export function useWelcomeViewModel() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
