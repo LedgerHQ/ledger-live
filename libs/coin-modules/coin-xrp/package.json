@@ -48,22 +48,27 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
     "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
       "require": "./lib/logic/index.js",
       "default": "./lib-es/logic/index.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },

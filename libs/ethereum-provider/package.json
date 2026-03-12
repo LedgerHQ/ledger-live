@@ -42,5 +42,20 @@
     "test": "jest",
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
     "unimported": "unimported"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib/ethereum-provider.mjs",
+      "require": "./lib/ethereum-provider.js",
+      "default": "./lib/ethereum-provider.js"
+    },
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

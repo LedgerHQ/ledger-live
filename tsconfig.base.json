@@ -12,6 +12,7 @@
     "strict": true,
     "target": "ESNext",
     "moduleResolution": "NodeNext",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "customConditions": ["@ledgerhq/source"]
   }
 }

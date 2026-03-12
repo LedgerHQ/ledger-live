@@ -5,7 +5,6 @@
     "outDir": "lib",
     "strict": true,
     "module": "CommonJS",
-    "moduleResolution": "Node",
   },
   "include": ["src/**/*"]
 }

@@ -24,12 +24,24 @@
     }
   },
   "exports": {
-    ".": "./lib/index.js",
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "default": "./lib/index.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib/*/": "./lib/*/index.js",
-    "./pre-ldls": "./lib/pre-ldls/index.js",
-    "./*": "./lib/*.js",
-    "./*/": "./lib/*/index.js",
+    "./pre-ldls": {
+      "@ledgerhq/source": "./src/pre-ldls/index.ts",
+      "default": "./lib/pre-ldls/index.js"
+    },
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "default": "./lib/*.js"
+    },
+    "./*/": {
+      "@ledgerhq/source": "./src/*/index.ts",
+      "default": "./lib/*/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

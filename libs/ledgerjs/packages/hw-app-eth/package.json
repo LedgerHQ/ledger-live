@@ -73,5 +73,21 @@
     "@ethersproject/providers": {
       "ws": "8.18.3"
     }
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Eth.ts",
+      "import": "./lib-es/Eth.js",
+      "require": "./lib/Eth.js",
+      "default": "./lib/Eth.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

@@ -57,5 +57,21 @@
     "test": "jest",
     "unimported": "unimported"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Aptos.ts",
+      "import": "./lib-es/Aptos.js",
+      "require": "./lib/Aptos.js",
+      "default": "./lib/Aptos.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

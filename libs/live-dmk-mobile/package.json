@@ -65,5 +65,20 @@
     "react-native-ble-plx": ">3.4.0",
     "rxjs": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib-es/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

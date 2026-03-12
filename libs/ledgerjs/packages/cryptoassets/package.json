@@ -83,26 +83,32 @@
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
     "./cal-client": {
+      "@ledgerhq/source": "./src/cal-client/index.ts",
       "require": "./lib/cal-client/index.js",
       "default": "./lib-es/cal-client/index.js"
     },
     "./cal-client/test-helpers": {
+      "@ledgerhq/source": "./src/cal-client/test-helpers.ts",
       "require": "./lib/cal-client/test-helpers.js",
       "default": "./lib-es/cal-client/test-helpers.js"
     },
     "./state": {
+      "@ledgerhq/source": "./src/state.ts",
       "require": "./lib/state.js",
       "default": "./lib-es/state.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./*.js": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },

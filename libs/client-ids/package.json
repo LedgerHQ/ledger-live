@@ -68,16 +68,19 @@
   },
   "exports": {
     "./ids": {
+      "@ledgerhq/source": "./src/ids/index.ts",
       "types": "./lib/ids/index.d.ts",
       "require": "./lib/ids/index.js",
       "default": "./lib-es/ids/index.js"
     },
     "./store": {
+      "@ledgerhq/source": "./src/store/index.ts",
       "types": "./lib/store/index.d.ts",
       "require": "./lib/store/index.js",
       "default": "./lib-es/store/index.js"
     },
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "types": "./lib/api/index.d.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"

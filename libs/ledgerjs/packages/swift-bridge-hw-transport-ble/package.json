@@ -54,5 +54,21 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/TransportBLESwift.ts",
+      "import": "./lib-es/TransportBLESwift.js",
+      "require": "./lib/TransportBLESwift.js",
+      "default": "./lib/TransportBLESwift.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

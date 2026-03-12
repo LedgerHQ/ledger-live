@@ -57,5 +57,21 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/SpeculosTransport.ts",
+      "import": "./lib-es/SpeculosTransport.js",
+      "require": "./lib/SpeculosTransport.js",
+      "default": "./lib/SpeculosTransport.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

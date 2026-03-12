@@ -52,5 +52,21 @@
     "test": "jest",
     "unimported": "unimported"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Sui.ts",
+      "import": "./lib-es/Sui.js",
+      "require": "./lib/Sui.js",
+      "default": "./lib/Sui.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

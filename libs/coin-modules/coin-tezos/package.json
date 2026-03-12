@@ -44,22 +44,27 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/deviceTransactionConfig.ts",
       "require": "./lib/deviceTransactionConfig.js",
       "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./errors": {
+      "@ledgerhq/source": "./src/types/errors.ts",
       "require": "./lib/types/errors.js",
       "default": "./lib-es/types/errors.js"
     },
     "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/transaction.ts",
       "require": "./lib/transaction.js",
       "default": "./lib-es/transaction.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
