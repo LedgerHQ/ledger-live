@@ -25,7 +25,7 @@ test.describe("Portfolio - legacy", () => {
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
-      await app.portfolio.checkSwapButtonVisibility();
+      await app.portfolio.checkEmbeddedSwapContainerVisibility();
       await app.portfolio.checkChartVisibility();
       await app.portfolio.checkAssetAllocationSection();
     },

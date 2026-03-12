@@ -6,7 +6,7 @@ export class PortfolioPage extends AppPage {
   readonly emptyStateTitle = this.page.getByTestId("portfolio-empty-state-title");
   private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
   private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
-  private swapEntryButton = this.page.getByTestId("swap-entry-button");
+  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
   private stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private operationList = this.page.locator("#operation-list");
   private showAllButton = this.page.getByText("Show all");
@@ -23,9 +23,9 @@ export class PortfolioPage extends AppPage {
     await expect(this.buySellEntryButton).toBeVisible();
   }
 
-  @step("Check 'Swap' button visibility")
-  async checkSwapButtonVisibility() {
-    await expect(this.swapEntryButton).toBeVisible();
+  @step("Check embedded swap container visibility")
+  async checkEmbeddedSwapContainerVisibility() {
+    await this.embeddedSwapContainer.waitFor({ state: "visible" });
   }
 
   @step("Check 'Stake' button visibility")
