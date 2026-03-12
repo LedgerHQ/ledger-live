@@ -30,6 +30,8 @@ describe("PageView - TopBar", () => {
     isScrollUpButtonVisible: false,
     isScrollAtUpperBound: true,
     isWallet40Enabled: false,
+    shouldDisplayWallet40MainNav: false,
+    shouldDisplayBrazePlacement: false,
     pathname: "/dashboard",
     onClickScrollUp: jest.fn(),
     shouldRenderRightPanel: false,
