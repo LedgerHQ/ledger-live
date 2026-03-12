@@ -515,8 +515,8 @@ describe("listApps", () => {
     };
 
     mockedHwListApps.mockResolvedValue([
-      { hash: "hash1", name: "Mocked dev app" },
-      { hash: "hash2", name: "Another non dev app" },
+      { hash: "hash1", hash_code_data: "hash_code_data_1", name: "Mocked dev app" },
+      { hash: "hash2", hash_code_data: "hash_code_data_2", name: "Another non dev app" },
     ]);
 
     listApps({

@@ -31,7 +31,7 @@ class MockCantonSigner implements CantonSigner {
   }
 
   async signTransaction(
-    path: string,
+    _path: string,
     data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
   ): Promise<CantonSignature> {
     if (typeof data === "string") {
@@ -80,7 +80,7 @@ describe("buildSignOperation", () => {
   it("should use default expireInSeconds (1 day) when not provided in transaction", async () => {
     // GIVEN
     const mockSigner = new MockCantonSigner();
-    const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
+    const mockSignerContext = jest.fn().mockImplementation(async (_deviceId, callback) => {
       return await callback(mockSigner);
     });
 
@@ -95,10 +95,8 @@ describe("buildSignOperation", () => {
     });
 
     const signOperation = buildSignOperation(mockSignerContext);
-    const transactionWithoutExpiry: Transaction = {
-      ...mockTransaction,
-      expireInSeconds: undefined,
-    };
+    const transactionWithoutExpiry: Transaction = { ...mockTransaction };
+    delete transactionWithoutExpiry.expireInSeconds;
 
     // WHEN
     await new Promise((resolve, reject) => {
@@ -129,7 +127,7 @@ describe("buildSignOperation", () => {
   it("should use custom expireInSeconds when provided in transaction", async () => {
     // GIVEN
     const mockSigner = new MockCantonSigner();
-    const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
+    const mockSignerContext = jest.fn().mockImplementation(async (_deviceId, callback) => {
       return await callback(mockSigner);
     });
 
@@ -179,7 +177,7 @@ describe("buildSignOperation", () => {
   it("should handle prepared transaction signing", async () => {
     // GIVEN
     const mockSigner = new MockCantonSigner();
-    const mockSignerContext = jest.fn().mockImplementation(async (deviceId, callback) => {
+    const mockSignerContext = jest.fn().mockImplementation(async (_deviceId, callback) => {
       return await callback(mockSigner);
     });
 

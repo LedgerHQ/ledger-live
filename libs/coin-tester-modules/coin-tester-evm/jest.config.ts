@@ -19,6 +19,19 @@ const config: Config = {
         },
       },
     ],
+    "^.+\\.(js|jsx|mjs|cjs)$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "es2022",
+          parser: {
+            syntax: "ecmascript",
+            jsx: true,
+            dynamicImport: true,
+          },
+        },
+      },
+    ],
     [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
       "@swc/jest",
       {

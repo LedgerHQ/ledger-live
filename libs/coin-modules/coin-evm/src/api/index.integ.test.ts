@@ -430,7 +430,7 @@ describe.each([
           minHeight: 200,
           order,
           limit,
-          cursor: p1Token,
+          ...(p1Token ? { cursor: p1Token } : {}),
         });
         const p2NbOps = p2Ops.length;
 
@@ -450,7 +450,8 @@ describe.each([
         // Check no page overlapping
         const p1Heights = new Set(p1Ops.map(op => op.tx.block.height));
         const p2Heights = new Set(p2Ops.map(op => op.tx.block.height));
-        expect(p1Heights.intersection(p2Heights).size).toBe(0);
+        const p1p2IntersectionSize = [...p1Heights].filter(height => p2Heights.has(height)).length;
+        expect(p1p2IntersectionSize).toBe(0);
 
         // Check no duplicate operation ids
         expectUniqueOperationIds(allOps);
@@ -502,7 +503,7 @@ describe.each([
           minHeight: 200,
           order: "desc",
           limit: 5,
-          cursor: firstCallToken,
+          ...(firstCallToken ? { cursor: firstCallToken } : {}),
         });
 
         // Same parameters should return same results

@@ -46,15 +46,15 @@ describe("Linea (etherscan explorer)", () => {
       expect(block.info.height).toBe(BLOCK_HEIGHT);
 
       const tx = block.transactions.find(t => t.hash === TX_HASH);
-      expect(tx.hash).toBe(TX_HASH);
-      expect(tx.operations).toContainEqual({
+      expect(tx?.hash).toBe(TX_HASH);
+      expect(tx?.operations).toContainEqual({
         type: "transfer",
         address: FROM,
         peer: TO,
         asset: { type: "native" },
         amount: -EXPECTED_AMOUNT,
       });
-      expect(tx.operations).toContainEqual({
+      expect(tx?.operations).toContainEqual({
         type: "transfer",
         address: TO,
         peer: FROM,

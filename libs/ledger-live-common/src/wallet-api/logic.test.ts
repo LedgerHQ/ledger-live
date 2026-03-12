@@ -1070,7 +1070,7 @@ describe("bitcoinFamilyAccountGetAddressesLogic", () => {
           getAddressUnspentUtxos: mockGetAddressUnspentUtxos,
         },
       },
-    });
+    } as unknown as ReturnType<typeof getWalletAccount>);
 
     const result = await bitcoinFamilyAccountGetAddressesLogic(context, walletAccountId);
 
@@ -1163,10 +1163,10 @@ describe("bitcoinFamilyAccountGetXPubLogic", () => {
 });
 
 describe("protectStorageLogic", () => {
-  const manifestBase: AppManifest = {
+  const manifestBase = {
     id: "my-live-app",
     name: "Test App",
-  };
+  } as AppManifest;
 
   beforeEach(() => {
     jest.clearAllMocks();

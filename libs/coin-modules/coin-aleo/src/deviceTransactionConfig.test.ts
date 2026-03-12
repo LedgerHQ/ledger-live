@@ -21,8 +21,7 @@ describe("getDeviceTransactionConfig", () => {
     ["Transfer Private", TRANSACTION_TYPE.TRANSFER_PRIVATE],
     ["Shield", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
     ["Unshield", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
-    ["Unknown", "invalidMode"],
-  ])("should return method '%s' for mode '%s'", async (expectedMethod, mode) => {
+  ] as const)("should return method '%s' for mode '%s'", async (expectedMethod, mode) => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
       transaction: { ...mockTransaction, mode },
@@ -30,6 +29,17 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     expect(fields).toContainEqual({ type: "text", label: "Method", value: expectedMethod });
+  });
+
+  it("should return method 'Unknown' for an invalid mode", async () => {
+    const fields = await getDeviceTransactionConfig({
+      account: mockAccount,
+      // @ts-expect-error - testing invalid mode
+      transaction: { ...mockTransaction, mode: "invalidMode" },
+      status: mockStatus,
+    });
+
+    expect(fields).toContainEqual({ type: "text", label: "Method", value: "Unknown" });
   });
 
   it("should always include the Amount field", async () => {

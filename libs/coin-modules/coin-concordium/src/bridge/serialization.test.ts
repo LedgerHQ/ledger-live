@@ -58,9 +58,8 @@ describe("serialization", () => {
 
     it("should return false when currency is undefined", () => {
       // GIVEN
-      const account = createTestAccount({
-        currency: undefined,
-      });
+      const account = createTestAccount();
+      delete (account as { currency?: unknown }).currency;
 
       // WHEN
       const result = isConcordiumAccount(account);
@@ -115,14 +114,9 @@ describe("serialization", () => {
 
     it("should handle undefined values in resources", () => {
       // GIVEN
-      const resources: ConcordiumResources = {
+      const resources = {
         isOnboarded: false,
-        credId: undefined,
-        publicKey: undefined,
-        identityIndex: undefined,
-        credNumber: undefined,
-        ipIdentity: undefined,
-      };
+      } as ConcordiumResources;
       const account = createTestConcordiumAccount({ concordiumResources: resources });
       const accountRaw = createTestAccountRaw();
 
@@ -133,7 +127,7 @@ describe("serialization", () => {
       expect("concordiumResources" in accountRaw).toBe(true);
       if ("concordiumResources" in accountRaw) {
         expect(accountRaw.concordiumResources).not.toBeUndefined();
-        expect(accountRaw.concordiumResources?.isOnboarded).toBe(false);
+        expect((accountRaw.concordiumResources as any)?.isOnboarded).toBe(false);
       }
     });
   });

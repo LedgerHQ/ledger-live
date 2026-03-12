@@ -46,19 +46,32 @@ describe("craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     txBuilder.setTimeout.mockReturnValue(txBuilder);
-    (buildTransactionBuilder as jest.Mock).mockReturnValue(txBuilder);
-    (loadAccount as jest.Mock).mockResolvedValue({ id: "source-account" });
-    (getRecipientAccount as jest.Mock).mockResolvedValue({
+    jest
+      .mocked(buildTransactionBuilder)
+      .mockReturnValue(txBuilder as unknown as ReturnType<typeof buildTransactionBuilder>);
+    jest.mocked(loadAccount).mockResolvedValue({ id: "source-account" });
+    jest.mocked(getRecipientAccount).mockResolvedValue({
       id: "GRECIPIENT",
       isMuxedAccount: false,
+      assetIds: [],
     });
-    (buildPaymentOperation as jest.Mock).mockReturnValue("payment-op");
-    (buildCreateAccountOperation as jest.Mock).mockReturnValue("create-account-op");
-    (buildChangeTrustOperation as jest.Mock).mockReturnValue("change-trust-op");
+    jest
+      .mocked(buildPaymentOperation)
+      .mockReturnValue("payment-op" as unknown as ReturnType<typeof buildPaymentOperation>);
+    jest
+      .mocked(buildCreateAccountOperation)
+      .mockReturnValue(
+        "create-account-op" as unknown as ReturnType<typeof buildCreateAccountOperation>,
+      );
+    jest
+      .mocked(buildChangeTrustOperation)
+      .mockReturnValue(
+        "change-trust-op" as unknown as ReturnType<typeof buildChangeTrustOperation>,
+      );
   });
 
   it("throws NetworkDown when source account cannot be loaded", async () => {
-    (loadAccount as jest.Mock).mockResolvedValue(null);
+    jest.mocked(loadAccount).mockResolvedValue(null);
 
     await expect(craftTransaction(account, transaction)).rejects.toThrow(NetworkDown);
   });
@@ -110,7 +123,9 @@ describe("craftTransaction", () => {
   });
 
   it("throws StellarMuxedAccountNotExist when missing muxed recipient account", async () => {
-    (getRecipientAccount as jest.Mock).mockResolvedValue({ id: null, isMuxedAccount: true });
+    jest
+      .mocked(getRecipientAccount)
+      .mockResolvedValue({ id: null, isMuxedAccount: true, assetIds: [] });
 
     await expect(craftTransaction(account, transaction)).rejects.toThrow(
       StellarMuxedAccountNotExist,
@@ -118,7 +133,9 @@ describe("craftTransaction", () => {
   });
 
   it("builds createAccount operation when recipient does not exist and is not muxed", async () => {
-    (getRecipientAccount as jest.Mock).mockResolvedValue({ id: null, isMuxedAccount: false });
+    jest
+      .mocked(getRecipientAccount)
+      .mockResolvedValue({ id: null, isMuxedAccount: false, assetIds: [] });
 
     await craftTransaction(account, transaction);
 

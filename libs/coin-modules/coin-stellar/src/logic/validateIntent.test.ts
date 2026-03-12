@@ -46,7 +46,7 @@ describe("validateIntent", () => {
         memo: { type, value: "random memo for unit test" },
       } as TransactionIntent<{ type: Exclude<StellarMemoKind, "NO_MEMO">; value: string }>;
       const fees = {} as FeeEstimation;
-      const status = await validateIntent(intent, fees);
+      const status = await validateIntent(intent, [], fees);
       expect(status.errors.transaction).not.toBeDefined();
 
       expect(spiedValidateMemo).toHaveBeenCalledWith(intent.memo.value, intent.memo.type);
@@ -63,7 +63,7 @@ describe("validateIntent", () => {
         memo: { type, value: "random memo for unit test" },
       } as TransactionIntent<{ type: Exclude<StellarMemoKind, "NO_MEMO">; value: string }>;
       const fees = {} as FeeEstimation;
-      const status = await validateIntent(intent, fees);
+      const status = await validateIntent(intent, [], fees);
       expect(status.errors.transaction).toBeInstanceOf(StellarWrongMemoFormat);
 
       expect(spiedValidateMemo).toHaveBeenCalledWith(intent.memo.value, intent.memo.type);
@@ -78,7 +78,7 @@ describe("validateIntent", () => {
       memo: { type: "NO_MEMO" },
     } as TransactionIntent<StellarMemo>;
     const fees = {} as FeeEstimation;
-    const status = await validateIntent(intent, fees);
+    const status = await validateIntent(intent, [], fees);
     expect(status.errors.transaction).not.toBeDefined();
 
     expect(spiedValidateMemo).not.toHaveBeenCalled();

@@ -59,7 +59,7 @@ describe("createApi", () => {
         recipient: emptyAccountAddress,
       });
 
-      const deserialized = deserializeTransaction(transaction);
+      const deserialized = deserializeTransaction<{ inputs: unknown[] }>(transaction);
 
       expect(typeof transaction).toBe("string");
       expect(transaction.length).toBeGreaterThan(0);
@@ -83,7 +83,7 @@ describe("createApi", () => {
         recipient: testAccountAddress,
       });
 
-      const deserialized = deserializeTransaction(transaction);
+      const deserialized = deserializeTransaction<{ inputs: unknown[] }>(transaction);
 
       expect(typeof transaction).toBe("string");
       expect(transaction.length).toBeGreaterThan(0);
@@ -143,12 +143,21 @@ describe("createApi", () => {
           order,
         });
 
-        const { items: page2, next: cursor2 } = await api.listOperations(testAccountAddress, {
-          minHeight: 0,
-          limit,
-          order,
-          cursor: cursor1,
-        });
+        const { items: page2, next: cursor2 } = await api.listOperations(
+          testAccountAddress,
+          cursor1
+            ? {
+                minHeight: 0,
+                limit,
+                order,
+                cursor: cursor1,
+              }
+            : {
+                minHeight: 0,
+                limit,
+                order,
+              },
+        );
 
         const firstPage1Timestamp = page1[0]?.tx?.date;
         const firstPage2Timestamp = page2[0]?.tx?.date;

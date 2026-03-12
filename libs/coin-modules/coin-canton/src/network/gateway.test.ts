@@ -24,13 +24,17 @@ jest.mock("@ledgerhq/live-network", () => ({
 const mockBalances: InstrumentBalance[] = [
   {
     instrument_id: "Amulet",
+    admin_id: "admin-amulet",
     amount: "10000000000000000000000000000000000000000",
     locked: false,
+    utxo_count: 1,
   },
   {
     instrument_id: "LockedAmulet",
+    admin_id: "admin-locked-amulet",
     amount: "5000000000000000000000000000000000000000",
     locked: true,
+    utxo_count: 1,
   },
 ];
 

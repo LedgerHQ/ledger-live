@@ -61,9 +61,9 @@ jest.mock("../preload-data", () => ({
 import { getTransactionStatus } from "./getTransactionStatus";
 
 const mockEstimateFees = estimateFees.estimateFees as jest.Mock;
-const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as jest.Mock;
+const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as unknown as jest.Mock;
 const mockCheckAccountTokenAssociationStatus =
-  logicUtils.checkAccountTokenAssociationStatus as jest.Mock;
+  logicUtils.checkAccountTokenAssociationStatus as unknown as jest.Mock;
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 const mockFindSubAccountById = accountHelpers.findSubAccountById as jest.Mock;
 

@@ -100,7 +100,7 @@ describe("onboard (testnet integration)", () => {
       expect(statuses).toContain(AccountOnboardStatus.PREPARE);
       expect(statuses).toContain(AccountOnboardStatus.SIGN);
 
-      const finalEvent = events[events.length - 1];
+      const finalEvent = events[events.length - 1] as any;
       expect(finalEvent).toHaveProperty("account");
       expect(finalEvent.account.concordiumResources).toMatchObject({
         credId: CRED_ID,

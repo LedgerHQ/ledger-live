@@ -156,7 +156,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN
       expect(signedEvent.type).toBe("signed");
@@ -185,7 +185,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN - amount comes from getTransactionStatus mock (5000000)
       expect(signedEvent.signedOperation.operation.value).toEqual(new BigNumber(5000000));
@@ -206,7 +206,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN - fee comes from estimateFees mock (1000)
       expect(signedEvent.signedOperation.operation.fee).toEqual(new BigNumber(1000));
@@ -232,7 +232,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN - should use API nonce (5), not local calculation
       expect(signedEvent.signedOperation.operation.transactionSequenceNumber).toEqual(
@@ -258,7 +258,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN - should use API nonce (5), not local calculation (7 + 1)
       expect(signedEvent.signedOperation.operation.transactionSequenceNumber).toEqual(
@@ -284,7 +284,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN - should use API nonce (5), not local calculation (0 + 1)
       expect(signedEvent.signedOperation.operation.transactionSequenceNumber).toEqual(
@@ -414,7 +414,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
       const afterTime = new Date();
 
       // THEN
@@ -438,7 +438,7 @@ describe("signOperation", () => {
         transaction,
       });
       const events = await firstValueFrom(observable.pipe(toArray()));
-      const signedEvent = events[2];
+      const signedEvent = events[2] as any;
 
       // THEN
       expect(signedEvent.signedOperation.operation.id).toContain("concordium:test-account");

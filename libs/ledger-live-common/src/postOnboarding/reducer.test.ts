@@ -244,6 +244,7 @@ describe("postOnboarding reducer (& action creators)", () => {
     const stateBefore = state;
     state = reducer(state, {
       type: "POST_ONBOARDING_SET_WALLET_ENTRY_POINT_ELIGIBILITY",
+      // @ts-expect-error - testing with null payload
       payload: null,
     });
     expect(state).toBe(stateBefore);
@@ -256,7 +257,8 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toBe(stateBefore);
     state = reducer(state, {
       type: "POST_ONBOARDING_SET_WALLET_ENTRY_POINT_ELIGIBILITY",
-      payload: "true" as any,
+      // @ts-expect-error - testing with string payload
+      payload: "true",
     });
     expect(state).toBe(stateBefore);
   });
@@ -313,7 +315,7 @@ describe("postOnboarding reducer (& action creators)", () => {
 
 describe("postOnboarding selectors", () => {
   it("should keep valid device ids", () => {
-    const stateValidDeviceId = {
+    const stateValidDeviceId: PostOnboardingState = {
       deviceModelId: DeviceModelId.nanoX,
       walletEntryPointDismissed: false,
       entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -321,6 +323,7 @@ describe("postOnboarding selectors", () => {
       actionsCompleted: {},
       lastActionCompleted: null,
       postOnboardingInProgress: false,
+      walletEntryPointEligibleForPortfolio: null,
     };
     const storeState = { postOnboarding: stateValidDeviceId };
 
@@ -341,7 +344,8 @@ describe("postOnboarding selectors", () => {
   });
 
   it('should sanitize "nanoFTS" device ids to "stax"', () => {
-    const stateValidDeviceId = {
+    const stateValidDeviceId: PostOnboardingState = {
+      // @ts-expect-error - testing with "nanoFTS" device id
       deviceModelId: "nanoFTS",
       walletEntryPointDismissed: false,
       entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -349,7 +353,8 @@ describe("postOnboarding selectors", () => {
       actionsCompleted: {},
       lastActionCompleted: null,
       postOnboardingInProgress: false,
-    } as unknown as PostOnboardingState;
+      walletEntryPointEligibleForPortfolio: null,
+    };
     const storeState = { postOnboarding: stateValidDeviceId };
 
     const postOnboarding = postOnboardingSelector(storeState);

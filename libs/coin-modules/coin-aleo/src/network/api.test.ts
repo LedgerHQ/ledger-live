@@ -18,8 +18,9 @@ jest.mock("../logic/utils");
 
 describe("apiClient", () => {
   const mockCurrency = getMockedCurrency();
-  const mockNetworkConfig = {
+  const mockNetworkConfig: ReturnType<typeof getNetworkConfig> = {
     nodeUrl: "https://api.aleo.network",
+    sdkUrl: "https://sdk.aleo.network",
     networkType: "mainnet",
   };
 
@@ -41,7 +42,7 @@ describe("apiClient", () => {
         },
       };
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getLatestBlock(mockCurrency);
 
@@ -62,8 +63,9 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
         nodeUrl: "https://api.testnet.aleo.network",
+        sdkUrl: "https://sdk.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
@@ -79,7 +81,7 @@ describe("apiClient", () => {
         },
       };
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getLatestBlock(mockCurrency);
 
@@ -97,7 +99,7 @@ describe("apiClient", () => {
       const mockTransactionId = "at1abc123def456";
       const mockResponse = getMockedTransactionDetails(mockTransactionId);
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getTransactionById(mockCurrency, mockTransactionId);
 
@@ -120,8 +122,9 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
         nodeUrl: "https://api.testnet.aleo.network",
+        sdkUrl: "https://sdk.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
@@ -132,7 +135,7 @@ describe("apiClient", () => {
         block_timestamp: "1704067200",
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getTransactionById(mockCurrency, mockTransactionId);
 
@@ -151,7 +154,7 @@ describe("apiClient", () => {
     it("should fetch account transactions with default parameters", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress);
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -173,10 +176,9 @@ describe("apiClient", () => {
       const customLimit = 10;
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -195,10 +197,9 @@ describe("apiClient", () => {
     it("should fetch transactions with descending order", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -228,7 +229,7 @@ describe("apiClient", () => {
         },
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -247,10 +248,9 @@ describe("apiClient", () => {
     it("should fetch previous page with direction=prev", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -285,10 +285,9 @@ describe("apiClient", () => {
             program_id: "credits.aleo",
           },
         ],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -322,10 +321,9 @@ describe("apiClient", () => {
     it("should handle empty transaction list", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -336,18 +334,18 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
         nodeUrl: "https://api.testnet.aleo.network",
+        sdkUrl: "https://sdk.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
 
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -368,7 +366,7 @@ describe("apiClient", () => {
 
     it("should fetch the account balance successfully", async () => {
       const mockBalance = "1000000u64";
-      jest.mocked(network).mockResolvedValue({ data: mockBalance });
+      jest.mocked(network).mockResolvedValue({ data: mockBalance, status: 200 });
 
       const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
 
@@ -383,7 +381,7 @@ describe("apiClient", () => {
     });
 
     it("should return null when account has no balance", async () => {
-      jest.mocked(network).mockResolvedValue({ data: null });
+      jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
 
       const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
 
@@ -400,12 +398,13 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+        sdkUrl: "https://sdk.testnet.aleo.network",
         nodeUrl: "https://api.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: "500000u64" });
+      jest.mocked(network).mockResolvedValue({ data: "500000u64", status: 200 });
 
       await apiClient.getAccountBalance(mockCurrency, mockAddress);
 
@@ -427,7 +426,7 @@ describe("apiClient", () => {
         id: "account-uuid-456",
         key: "api-key-789",
       };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.registerNewAccount(mockCurrency, mockUsername);
 
@@ -463,6 +462,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({
         data: { exp: mockExp },
         headers: { authorization: mockToken },
+        status: 200,
       });
 
       const result = await apiClient.getAccountJWT(mockCurrency, mockApiKey, mockConsumerId);
@@ -480,6 +480,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({
         data: { exp: 1700100000 },
         headers: {},
+        status: 200,
       });
 
       const result = await apiClient.getAccountJWT(mockCurrency, mockApiKey, mockConsumerId);
@@ -490,6 +491,7 @@ describe("apiClient", () => {
     it("should return empty token when headers are absent", async () => {
       jest.mocked(network).mockResolvedValue({
         data: { exp: 1700100000 },
+        status: 200,
       });
 
       const result = await apiClient.getAccountJWT(mockCurrency, mockApiKey, mockConsumerId);
@@ -515,7 +517,7 @@ describe("apiClient", () => {
         key_id: "key-id-123",
         public_key: "pubkey-abc-456",
       };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getPublicKey(mockCurrency, mockJwt);
 
@@ -531,12 +533,15 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+        sdkUrl: "https://sdk.testnet.aleo.network",
         nodeUrl: "https://api.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" } });
+      jest
+        .mocked(network)
+        .mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" }, status: 200 });
 
       await apiClient.getPublicKey(mockCurrency, mockJwt);
       expect(network).toHaveBeenCalledTimes(1);
@@ -562,7 +567,7 @@ describe("apiClient", () => {
 
     it("should register for encrypted record scanning successfully", async () => {
       const mockResponse = { uuid: "scan-uuid-789" };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.registerForScanningAccountRecordsEncrypted({
         currency: mockCurrency,
@@ -584,12 +589,13 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+        sdkUrl: "https://sdk.testnet.aleo.network",
         nodeUrl: "https://api.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: { uuid: "scan-uuid-testnet" } });
+      jest.mocked(network).mockResolvedValue({ data: { uuid: "scan-uuid-testnet" }, status: 200 });
 
       await apiClient.registerForScanningAccountRecordsEncrypted({
         currency: mockCurrency,
@@ -628,7 +634,7 @@ describe("apiClient", () => {
 
     it("should fetch the record scanner status successfully", async () => {
       const mockResponse = { synced: true, percentage: 100 };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(
         mockCurrency,
@@ -650,7 +656,7 @@ describe("apiClient", () => {
 
     it("should return partial sync status", async () => {
       const mockResponse = { synced: false, percentage: 42 };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(
         mockCurrency,
@@ -663,12 +669,15 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+        sdkUrl: "https://sdk.testnet.aleo.network",
         nodeUrl: "https://api.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: { synced: true, percentage: 100 } });
+      jest
+        .mocked(network)
+        .mockResolvedValue({ data: { synced: true, percentage: 100 }, status: 200 });
 
       await apiClient.getRecordScannerStatus(mockCurrency, mockAccessToken, mockUuid);
 
@@ -698,7 +707,7 @@ describe("apiClient", () => {
 
     it("should fetch owned records successfully", async () => {
       const mockResponse = [testnetPrivateRecord];
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -723,7 +732,7 @@ describe("apiClient", () => {
     });
 
     it("should include `unspent: true` in the request body when unspent is true", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -742,7 +751,7 @@ describe("apiClient", () => {
     });
 
     it("should include `unspent: false` in the request body when unspent is false", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -761,7 +770,7 @@ describe("apiClient", () => {
     });
 
     it("should omit `unspent` from the request body when not provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -776,7 +785,7 @@ describe("apiClient", () => {
 
     it("should include `filter.start` in the request body when start is provided", async () => {
       const mockStart = 14192648;
-      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -795,7 +804,7 @@ describe("apiClient", () => {
     });
 
     it("should omit `filter` from the request body when start is not provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -810,7 +819,7 @@ describe("apiClient", () => {
 
     it("should include both `unspent` and `filter.start` when both are provided", async () => {
       const mockStart = 14192648;
-      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -830,7 +839,7 @@ describe("apiClient", () => {
     });
 
     it("should return an empty array when no records are found", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       const result = await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -857,12 +866,13 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL for testnet", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+        sdkUrl: "https://sdk.testnet.aleo.network",
         nodeUrl: "https://api.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -886,7 +896,7 @@ describe("apiClient", () => {
     const mockDelegatedProvingResponse = getMockedDelegatedProvingResponse();
 
     it("should submit delegated proving request successfully", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       const result = await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,
@@ -917,10 +927,11 @@ describe("apiClient", () => {
     it("should use correct network URL for testnet", async () => {
       const testnetConfig = {
         nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
+        sdkUrl: "https://sdk.testnet.aleo.network",
+        networkType: "testnet" as const,
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,
@@ -954,7 +965,7 @@ describe("apiClient", () => {
     });
 
     it("should submit without broadcast when broadcast is false", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,
@@ -975,7 +986,7 @@ describe("apiClient", () => {
     });
 
     it("should not send fee_authorization when feeAuthorization is not provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
 
       await apiClient.submitDelegatedProvingRequest({
         currency: mockCurrency,

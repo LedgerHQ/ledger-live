@@ -76,6 +76,7 @@ module.exports = {
     es6: true,
     node: true,
   },
+  ignorePatterns: ["tests/artifacts/**"],
   parser: "@typescript-eslint/parser",
   plugins: ["react", "react-hooks", "import", "better-tailwindcss"],
   extends: [

@@ -3,21 +3,18 @@ import { DatadogId } from "./DatadogId";
 describe("DatadogId", () => {
   describe("constructor", () => {
     it("should throw for null", () => {
-      expect(() => new DatadogId(/* @ts-expect-error intentional invalid arg */ null)).toThrow(
-        "DatadogId must be a non-empty string",
-      );
+      /* @ts-expect-error intentional invalid arg */
+      expect(() => new DatadogId(null)).toThrow("DatadogId must be a non-empty string");
     });
 
     it("should throw for undefined", () => {
-      expect(() => new DatadogId(/* @ts-expect-error intentional invalid arg */ undefined)).toThrow(
-        "DatadogId must be a non-empty string",
-      );
+      /* @ts-expect-error intentional invalid arg */
+      expect(() => new DatadogId(undefined)).toThrow("DatadogId must be a non-empty string");
     });
 
     it("should throw for non-string type", () => {
-      expect(() => new DatadogId(/* @ts-expect-error intentional invalid arg */ 123)).toThrow(
-        "DatadogId must be a non-empty string",
-      );
+      /* @ts-expect-error intentional invalid arg */
+      expect(() => new DatadogId(123)).toThrow("DatadogId must be a non-empty string");
     });
   });
 

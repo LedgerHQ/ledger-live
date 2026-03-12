@@ -103,8 +103,8 @@ describe("craftTransaction", () => {
       const result = await craftTransaction(account, transaction);
 
       expect(result.type).toBe(TransactionType.TransferWithMemo);
-      expect(result.payload.memo).toBeInstanceOf(Buffer);
-      expect(result.payload.memo!.length).toBeGreaterThan(0);
+      expect((result.payload as any).memo).toBeInstanceOf(Buffer);
+      expect((result.payload as any).memo.length).toBeGreaterThan(0);
     });
 
     it("should encode memo correctly", async () => {
@@ -123,7 +123,7 @@ describe("craftTransaction", () => {
 
       const result = await craftTransaction(account, transaction);
 
-      expect(result.payload.memo).toBeInstanceOf(Buffer);
+      expect((result.payload as any).memo).toBeInstanceOf(Buffer);
     });
 
     it("should handle empty memo string", async () => {
@@ -142,7 +142,7 @@ describe("craftTransaction", () => {
       const result = await craftTransaction(account, transaction);
 
       expect(result.type).toBe(TransactionType.Transfer);
-      expect(result.payload.memo).toBeUndefined();
+      expect((result.payload as any).memo).toBeUndefined();
     });
   });
 
