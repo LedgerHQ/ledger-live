@@ -44,8 +44,8 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./errors": {
       "require": "./lib/types/errors.js",
