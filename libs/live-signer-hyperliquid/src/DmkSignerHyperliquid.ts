@@ -68,17 +68,6 @@ export class DmkSignerHyperliquid {
     signedMetadata: Uint8Array,
     actions: Action[],
   ): Promise<Signatures> {
-    console.log(
-      "PERPS Signer signActions:",
-      "\npath",
-      path,
-      "\ncertificate",
-      Buffer.from(certificate).toString("hex"),
-      "\nmetadata",
-      Buffer.from(signedMetadata).toString("hex"),
-      "\nactions",
-      actions,
-    );
     const { observable } = this.dmkSigner.signActions({
       derivationPath: path,
       certificate,
