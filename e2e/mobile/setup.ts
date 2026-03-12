@@ -13,8 +13,11 @@ beforeAll(
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
-    const testFileName = expect.getState().testPath?.replace(/^.*\/(.+?)(?:\.spec)?\.[^.]+$/, "$1");
-    const mode = isWallet40 ? "🆕 Wallet 4.0" : "Legacy Wallet";
+    const testPath = expect.getState().testPath ?? "";
+    const testFileName = testPath.replace(/^.*\/(.+?)(?:\.spec)?\.[^.]+$/, "$1");
+    // Remove when Wallet 4.0
+    const isWallet40Test = isWallet40 || testPath.includes("/wallet40/");
+    const mode = isWallet40Test ? "🆕 Wallet 4.0" : "Legacy Wallet";
     allure.description(`Test file: ${testFileName} \n Test run on: ${mode}`);
   },
   process.env.CI ? 150000 : 120000,
