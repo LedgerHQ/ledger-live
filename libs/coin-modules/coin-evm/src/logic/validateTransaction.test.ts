@@ -1,15 +1,15 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ethers } from "ethers";
 import { getNodeApi } from "../network/node";
-import { getSequence } from "./getSequence";
+import { getNextSequence } from "./getNextSequence";
 import { validateTransaction } from "./validateTransaction";
 
 jest.mock("../network/node", () => ({
   getNodeApi: jest.fn(),
 }));
 
-jest.mock("./getSequence", () => ({
-  getSequence: jest.fn(),
+jest.mock("./getNextSequence", () => ({
+  getNextSequence: jest.fn(),
 }));
 
 jest.mock("ethers", () => ({
@@ -21,7 +21,7 @@ jest.mock("ethers", () => ({
 }));
 
 const mockGetNodeApi = getNodeApi as jest.Mock;
-const mockGetSequence = getSequence as jest.Mock;
+const mockGetNextSequence = getNextSequence as jest.Mock;
 const mockTransactionFrom = ethers.Transaction.from as jest.Mock;
 
 describe("validateTransaction", () => {
@@ -73,12 +73,12 @@ describe("validateTransaction", () => {
       nonce: 2,
     });
     getTransaction.mockRejectedValue(new Error("not found"));
-    mockGetSequence.mockResolvedValue(5n);
+    mockGetNextSequence.mockResolvedValue(5n);
 
     const result = await validateTransaction(mockCurrency, { signature });
 
     expect(result.error?.name).toBe("InvalidTransactionError");
-    expect(mockGetSequence).toHaveBeenCalledWith(mockCurrency, "0xfrom");
+    expect(mockGetNextSequence).toHaveBeenCalledWith(mockCurrency, "0xfrom");
   });
 
   it("returns no error when transaction can be broadcasted", async () => {
@@ -88,7 +88,7 @@ describe("validateTransaction", () => {
       nonce: 7,
     });
     getTransaction.mockRejectedValue(new Error("not found"));
-    mockGetSequence.mockResolvedValue(7n);
+    mockGetNextSequence.mockResolvedValue(7n);
 
     const result = await validateTransaction(mockCurrency, { signature });
 
