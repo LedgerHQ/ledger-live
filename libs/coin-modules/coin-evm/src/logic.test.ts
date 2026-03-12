@@ -25,11 +25,11 @@ import {
 } from "./logic";
 import { getNodeApi } from "./network/node/index";
 import { Transaction as EvmTransaction } from "./types";
+import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
 
 const mockGetNodeApi = jest.mocked(getNodeApi);
 const mockGetOptimismAdditionalFees = jest.fn();
 const mockGetScrollAdditionalFees = jest.fn();
-import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;

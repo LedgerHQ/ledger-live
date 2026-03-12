@@ -5,7 +5,13 @@ import ledgerNodeApi from "./ledger";
 import { createNodeApi } from "./rpc";
 import { NodeApi } from "./types";
 
-/** Memoized NodeApi instances for external nodes: key = `${currency.id}:${retries}` */
+/**
+ * Memoized NodeApi instances for external nodes.
+ * Key = `${currencyId}:${JSON.stringify(node)}` (node includes type, uri, retries).
+ * Unbounded growth is acceptable: the number of entries is at most (currencies × distinct
+ * node configs). In practice there are few EVM chains and config is static per currency,
+ * so the cache stays small.
+ */
 const externalNodeApiCache = new Map<string, NodeApi>();
 
 function cacheKey(
