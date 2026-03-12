@@ -1,3 +1,4 @@
+import { generateMnemonic } from "bip39";
 import { test } from "tests/fixtures/common";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
@@ -15,12 +16,18 @@ const secondAccountId = accounts[1].id;
 const secondAccountName = accountNames[secondAccountId];
 
 function setupSeed() {
-  const prevSeed = getEnv("SEED");
+  let previousSeed: string | undefined;
   test.beforeAll(async () => {
-    process.env.SEED = "Temporary_SEED";
+    previousSeed = getEnv("SEED") || process.env.SEED;
+    const mnemonic = generateMnemonic(256);
+    setEnv("SEED", mnemonic);
+    process.env.SEED = mnemonic;
   });
   test.afterAll(async () => {
-    setEnv("SEED", prevSeed);
+    if (previousSeed !== undefined) {
+      setEnv("SEED", previousSeed);
+      process.env.SEED = previousSeed;
+    }
   });
 }
 

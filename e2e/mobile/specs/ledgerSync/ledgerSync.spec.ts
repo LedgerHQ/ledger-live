@@ -1,3 +1,4 @@
+import { generateMnemonic } from "bip39";
 import { device } from "detox";
 import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../bridge/server";
@@ -80,6 +81,7 @@ async function initializeLedgerSync() {
 describeIfNotNanoS(`Ledger Sync Accounts`, () => {
   beforeAll(async () => {
     await app.init({
+      seed: generateMnemonic(256),
       speculosApp: AppInfos.LS,
       cliCommands: [
         ...initializeThenDeleteTrustChain(),

@@ -26,6 +26,7 @@
   "devDependencies": {
     "@jest/reporters": "catalog:",
     "@jest/types": "^30.2.0",
+    "bip39": "^3.1.0",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",

@@ -1,5 +1,6 @@
 import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
+import { setEnv } from "@ledgerhq/live-env";
 import { log } from "detox";
 import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { isSpeculosRemote } from "../helpers/commonHelpers";
@@ -26,6 +27,7 @@ type CliCommand = (
 ) => Observable<unknown> | Promise<unknown> | string;
 
 export type InitOptions = {
+  seed?: string;
   speculosApp?: SpeculosAppType;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
@@ -273,8 +275,14 @@ export class InitializationManager {
     userdataPath: string,
     userdataSpeculos: string,
   ): Promise<void> {
-    const { speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags } = options;
+    const { seed, speculosApp, cliCommands = [], cliCommandsOnApp = [], featureFlags } = options;
 
+    let previousSeed: string | undefined;
+    if (seed) {
+      previousSeed = process.env.SEED;
+      process.env.SEED = seed;
+      setEnv("SEED", seed);
+    }
     // Group commands by app name
     const commandsByAppMap = new Map<string, { app: SpeculosAppType; cmds: CliCommand[] }>();
     for (const { app, cmd } of cliCommandsOnApp) {
@@ -309,5 +317,10 @@ export class InitializationManager {
     // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
     if (featureFlags) await setFeatureFlags(featureFlags);
+
+    if (previousSeed) {
+      process.env.SEED = previousSeed;
+      setEnv("SEED", previousSeed);
+    }
   }
 }

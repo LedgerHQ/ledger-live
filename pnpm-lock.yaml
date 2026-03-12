@@ -2342,6 +2342,9 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.2
+      bip39:
+        specifier: ^3.1.0
+        version: 3.1.0
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -2467,6 +2470,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      bip39:
+        specifier: ^3.1.0
+        version: 3.1.0
       body-parser:
         specifier: 2.2.2
         version: 2.2.2
