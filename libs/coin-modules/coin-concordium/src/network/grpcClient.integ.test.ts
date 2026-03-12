@@ -1,5 +1,5 @@
 import { setupTestnetCoinConfig } from "../test/fixtures";
-import { getBlockInfoByHeight, getBlockByHeight } from "./grpcClient";
+import { getBlockByHeight } from "./grpcClient";
 
 describe("grpcClient", () => {
   const currencyId = "concordium_testnet";
@@ -9,32 +9,6 @@ describe("grpcClient", () => {
 
   beforeAll(() => {
     setupTestnetCoinConfig();
-  });
-
-  describe("getBlockInfoByHeight", () => {
-    it("should return block info for specific height", async () => {
-      const result = await getBlockInfoByHeight(currencyId, KNOWN_BLOCK_HEIGHT);
-
-      expect(result.height).toBe(KNOWN_BLOCK_HEIGHT);
-      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-      expect(result.time).toBeInstanceOf(Date);
-    });
-
-    it("should return consistent info for same height", async () => {
-      const result1 = await getBlockInfoByHeight(currencyId, KNOWN_BLOCK_HEIGHT);
-      const result2 = await getBlockInfoByHeight(currencyId, KNOWN_BLOCK_HEIGHT);
-
-      expect(result1.height).toBe(result2.height);
-      expect(result1.hash).toBe(result2.hash);
-      expect(result1.time.getTime()).toBe(result2.time.getTime());
-    });
-
-    it("should handle early block", async () => {
-      const result = await getBlockInfoByHeight(currencyId, 1);
-
-      expect(result.height).toBe(1);
-      expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-    });
   });
 
   describe("getBlockByHeight", () => {
@@ -71,22 +45,22 @@ describe("grpcClient", () => {
 
   describe("Network connectivity", () => {
     it("should successfully connect to gRPC endpoint", async () => {
-      const result = await getBlockInfoByHeight(currencyId, 1);
-      expect(result.height).toBe(1);
+      const result = await getBlockByHeight(currencyId, 1);
+      expect(result.info.height).toBe(1);
     });
 
     it("should handle multiple concurrent requests", async () => {
       const promises = [
-        getBlockInfoByHeight(currencyId, 1),
-        getBlockInfoByHeight(currencyId, 2),
-        getBlockInfoByHeight(currencyId, 3),
+        getBlockByHeight(currencyId, 1),
+        getBlockByHeight(currencyId, 2),
+        getBlockByHeight(currencyId, 3),
       ];
 
       const results = await Promise.all(promises);
 
       results.forEach(result => {
-        expect(result.height).toBeGreaterThan(0);
-        expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+        expect(result.info.height).toBeGreaterThan(0);
+        expect(result.info.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
       });
     });
   });
