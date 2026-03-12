@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
+import { lastBlock } from "../logic/lastBlock";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
@@ -42,7 +43,7 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
       throw new Error("getBalance is not supported");
     },
     lastBlock: () => {
-      throw new Error("lastBlock is not supported");
+      return lastBlock(api);
     },
     getBlock: () => {
       throw new Error("getBlock is not supported");

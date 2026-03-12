@@ -3,6 +3,7 @@ import type { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/
 import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
+import { lastBlock } from "../logic/lastBlock";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
 
@@ -14,6 +15,10 @@ jest.mock("../network", () => ({
 
 jest.mock("../logic/broadcast", () => ({
   broadcast: jest.fn(),
+}));
+
+jest.mock("../logic/lastBlock", () => ({
+  lastBlock: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -75,6 +80,13 @@ describe("createApi", () => {
     expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
   });
 
+  it("should pass parameters correctly to lastBlock", async () => {
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    await api.lastBlock();
+
+    expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
+  });
+
   it("should throw for unsupported methods", () => {
     const api = createApi(mockConfig, "solana");
 
@@ -99,7 +111,6 @@ describe("createApi", () => {
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
     expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
     expect(() => api.getValidators()).toThrow("getValidators is not supported");
-    expect(() => api.lastBlock()).toThrow("lastBlock is not supported");
     expect(() => api.listOperations("address", { minHeight: 14, order: "asc" })).toThrow(
       "listOperations is not supported",
     );
