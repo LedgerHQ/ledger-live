@@ -4817,19 +4817,19 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ATOM,
     name: "Mantra",
     managerAppName: "Cosmos",
-    ticker: "OM",
+    ticker: "MANTRA",
     scheme: "mantra",
     color: "#ffb386",
     family: "cosmos",
     units: [
       {
         name: "Mantra",
-        code: "OM",
-        magnitude: 6,
+        code: "MANTRA",
+        magnitude: 18,
       },
       {
         name: "Micro-Mantra",
-        code: "uom",
+        code: "amantra",
         magnitude: 0,
       },
     ],

@@ -3,9 +3,12 @@ import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import { internalTxsToOperationsByHash } from "../adapters/etherscan";
 import { UnsupportedRpcMethodError } from "../errors";
+import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
+import { EtherscanInternalTransaction } from "../types";
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   // Note: to use RPC calls efficiently, the strategy here is:
@@ -13,8 +16,12 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   //  - fetch transaction receipts in one call using eth_getBlockReceipts
   //  - if the RPC does not support prefetchTxs or eth_getBlockReceipts, fall back to fetching the transaction+receipts
   //    one by one
+  //  - in parallel, fetch internal transactions from explorer (etherscan/blockscout) and merge into block transactions
   const nodeApi = getNodeApi(currency);
-  const result = await nodeApi.getBlockByHeight(currency, height, true);
+  const [result, internalTxs] = await Promise.all([
+    nodeApi.getBlockByHeight(currency, height, true),
+    getInternalTransactionsByBlock(currency, height),
+  ]);
 
   const info: BlockInfo = {
     height: result.height,
@@ -37,10 +44,34 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     result.transactions,
   );
 
+  const mergedTransactions = mergeInternalTransactions(transactions, internalTxs);
+
   return {
     info,
-    transactions,
+    transactions: mergedTransactions,
   };
+}
+
+/**
+ * Merges internal transaction operations into block transactions by matching tx hash.
+ */
+function mergeInternalTransactions(
+  transactions: BlockTransaction[],
+  internalTxs: EtherscanInternalTransaction[],
+): BlockTransaction[] {
+  if (internalTxs.length === 0) return transactions;
+
+  const opsByHash = internalTxsToOperationsByHash(internalTxs);
+  if (opsByHash.size === 0) return transactions;
+
+  return transactions.map(tx => {
+    const extraOps = opsByHash.get(tx.hash);
+    if (!extraOps || extraOps.length === 0) return tx;
+    return {
+      ...tx,
+      operations: [...tx.operations, ...extraOps],
+    };
+  });
 }
 
 async function getTransactionsFromNode(

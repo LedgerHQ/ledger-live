@@ -237,7 +237,7 @@
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address."
+        "description": "Sending 0 {{ticker}} to your own address. Cancellation is not guaranteed. If the network processes your original transaction before this cancellation request, the funds will still be sent to the recipient."
       },
       "steps": {
         "method": {
@@ -1499,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation": {
+    "warning": {
+      "title": "{{device}}™ can not Clear Sign this transaction",
+      "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
+      "continue": "Proceed at your own risk"
+    },
+    "info": {
+      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+      "reminder": "Do not remind me again"
+    },
+    "error": {
+      "title": "{{device}}™ does not support this feature",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+    },
+    "update": "Discover your Upgrade Program",
+    "learnMore": "Learn more",
+    "continue": "Continue"
+  },
   "currentAddress": {
     "title": "Current address",
     "for": "Address for <1><0>{{name}}</0></1>",
@@ -2154,6 +2173,24 @@
       }
     }
   },
+  "buyDeviceModal": {
+    "title": "Connect a Ledger device",
+    "subtitle": "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
+    "0": {
+      "title": "Full ownership",
+      "desc": "Your private keys never leave the device."
+    },
+    "1": {
+      "title": "Trade securely",
+      "desc": "Verify transactions on a secure screen."
+    },
+    "2": {
+      "title": "Access the most powerful wallet",
+      "desc": "Manage thousands of assets in one place."
+    },
+    "connectCTA": "Connect",
+    "buyCTA": "Buy your Ledger device"
+  },
   "fund": {
     "title": "Fund",
     "titleCrypto": "Fund {{currency}}",
@@ -2371,6 +2408,24 @@
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
     "recentSendWillAppear": "Your recent send will appear here",
+    "securityInfo": {
+      "title": "How to send securely?",
+      "items": {
+        "compatibility": "Ensure the recipient address is compatible with the selected network",
+        "review": "Review your transaction details on your Ledger secure screen",
+        "smallAmount": "If in doubt, try sending a small amount first"
+      }
+    },
+    "recentHistory": {
+      "banner": {
+        "description": "This address isn’t in your recent history. In case of doubt try a small amount first."
+      },
+      "dialog": {
+        "title": "Recent send history",
+        "description": "Your recent history allows you to instantly see if you’ve already sent to a specific address or not. This could prevent potential copy/paste errors or hacks. Your history contains the last 12 addresses you sent crypto to using Ledger Wallet.",
+        "cta": "Got it"
+      }
+    },
     "relativeDate": {
       "justNow": "Just now",
       "minutesAgo_one": "1 min ago",
@@ -2440,17 +2495,26 @@
       "confirm": "Confirm",
       "maxFee": "Max fee ({{unit}})",
       "maxPriorityFee": "Max priority fee ({{unit}})",
-      "gasLimit": "Gas limit ({{unit}})",
       "feePerByte": "Fees amount ({{unit}})",
       "suggested": "Suggested",
       "nextBlock": "Next block",
       "networkFeesInFiat": "Network fees in {{currency}}",
       "invalidValue": "Enter a valid number",
       "belowMinimum": "Minimum is {{min}}",
-      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
+      "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee",
+      "feeAsset": "Fee asset",
+      "feesAmount": "Fees amount ({{unit}})",
+      "payFeesIn": "Pay fees in"
     },
     "coinControl": {
-      "title": "Coin control"
+      "title": "Coin control",
+      "strategy": "Strategy",
+      "learnMore": "Learn more",
+      "coinToSend": "Coin to send",
+      "changeToReturn": "Change to return",
+      "enterAmount": "Enter amount",
+      "amountToSendInCurrency": "Amount to send in {{ticker}}",
+      "amountInputLabel": "Amount to send"
     }
   },
   "releaseNotes": {
@@ -5050,7 +5114,7 @@
     }
   },
   "theme": {
-    "system": "Select the system theme",
+    "system": "System",
     "light": "Light",
     "dusk": "Dusk",
     "dark": "Dark"
@@ -6658,6 +6722,10 @@
       "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
     },
+    "InvalidTransactionError": {
+      "title": "Invalid transaction",
+      "description": "The transaction doesn't match the blockchain state anymore. Please start the flow again."
+    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -7727,7 +7795,16 @@
     }
   },
   "analytics": {
-    "title": "Analytics"
+    "title": "Analytics",
+    "allocation": {
+      "title": "Asset allocation",
+      "columns": {
+        "name": "Name",
+        "balance": "Balance",
+        "value": "Value",
+        "allocation": "Allocation"
+      }
+    }
   },
   "walletSync": {
     "title": "Ledger Sync",
@@ -8027,6 +8104,8 @@
     "title": "Explore market",
     "genericError": "Connection failed",
     "cta": "View all",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
     "fearAndGreed": {
       "title": "Mood"
     }
@@ -8056,6 +8135,11 @@
   "assets": {
     "cryptos": "Cryptos",
     "stablecoins": "Stablecoins",
+    "cryptoAccounts": "Crypto accounts",
+    "accountsCount_one": "{{count}} account",
+    "accountsCount_other": "{{count}} accounts",
+    "noCryptoAccounts": "No accounts yet",
+    "add": "Add",
     "columns": {
       "name": "Name",
       "price": "Price",
@@ -8074,15 +8158,10 @@
   },
   "topBar": {
     "activityIndicator": {
-      "errorToolTip": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}. Tap to retry",
-      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
       "upToDate": "You're up to date",
-      "minutesAgo_one": "Last sync: {{count}} min ago. Tap to refresh",
-      "minutesAgo_other": "Last sync: {{count}} mins ago. Tap to refresh",
-      "hoursAgo_one": "Last sync: {{count}} hour ago. Tap to refresh",
-      "hoursAgo_other": "Last sync: {{count}} hours ago. Tap to refresh",
-      "daysAgo_one": "Last sync: {{count}} day ago. Tap to refresh",
-      "daysAgo_other": "Last sync: {{count}} days ago. Tap to refresh"
+      "lastSync": "Last sync: {{timeAgo}}. Tap to refresh"
     },
     "notificationIndicator": {
       "tooltip": "Notifications"
@@ -8208,6 +8287,24 @@
         }
       }
     },
+    "selfTransfer": {
+      "headerAction": "Self transfer",
+      "headerActionTooltip": "You don't have any funds to perform a self transfer",
+      "modal": {
+        "title": "Self transfer",
+        "stepRecipient": {
+          "selectLabel": "Transfer from"
+        }
+      }
+    },
+    "shared": {
+      "balanceSelector": {
+        "private": "Private balance",
+        "public": "Public balance",
+        "lastUpdate": "Last update",
+        "switchBalance": "Switch balance source"
+      }
+    },
     "account": {
       "availableBalance": "Available balance",
       "availableBalanceTooltip": "Balance that can be transferred",
@@ -8226,22 +8323,22 @@
   "updater": {
     "newUpdateAvailable": "New update available",
     "downloadProgress": "{{progress}}%",
-    "errorTryAgain": "Error during update, try again",
-    "installAndRelaunch": "Install update and relaunch"
+    "errorTryAgain": "Error during update. Try again",
+    "installAndRelaunch": "New update. Install and relaunch"
   },
   "walletV4Tour": {
     "slides": {
       "portfolio": {
-        "title": "Swap effortlessly",
-        "description": "Adapt your portfolio allocation anytime with the security of your Ledger device"
+        "title": "A clearer view of your portfolio",
+        "description": "See your total balance at a glance, and tap \"Today\" to dive deeper."
       },
       "navigation": {
-        "title": "Everything in its right place",
-        "description": "My Ledger & Discover are now at the top. Swap & Card have moved to the sidebar for faster access."
+        "title": "Access key actions faster",
+        "description": "Access Swap, Transfer, and Buy instantly. Find Earn and your Card in the bottom navigation."
       },
       "actions": {
-        "title": "Actions at market speed",
-        "description": "Spot market trends with the new banner and trade instantly."
+        "title": "View market trends instantly",
+        "description": "Quickly see what's trending directly in your portfolio, and move from insights to action."
       }
     },
     "cta": {
@@ -8250,5 +8347,3 @@
     }
   }
 }
-
-

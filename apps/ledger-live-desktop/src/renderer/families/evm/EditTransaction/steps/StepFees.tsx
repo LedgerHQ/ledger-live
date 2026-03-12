@@ -1,15 +1,11 @@
 import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import React, { Fragment, memo } from "react";
-import { Trans } from "react-i18next";
+import React, { memo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import Alert from "~/renderer/components/Alert";
-import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import BuyButton from "~/renderer/components/BuyButton";
-import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import { SharedFooterContinueButton, SharedStepFees } from "~/renderer/components/SpeedUpCancel";
 import logger from "~/renderer/logger";
-import SendAmountFields, { SendAmountFieldsProps } from "~/renderer/modals/Send/SendAmountFields";
+import { SendAmountFieldsProps } from "~/renderer/modals/Send/SendAmountFields";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
 import { StepProps } from "../types";
@@ -56,23 +52,19 @@ const StepFees = ({
   } = getFormattedFeeFields({ transaction: transactionToUpdate, mainAccount, locale });
 
   return (
-    <Box flow={4}>
-      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
-      <Fragment key={account.id}>
-        <SendAmountFields
-          account={mainAccount}
-          parentAccount={parentAccount}
-          status={status}
-          transaction={transaction}
-          onChange={onChangeTransaction}
-          updateTransaction={updateTransaction}
-          bridgePending={bridgePending}
-          transactionToUpdate={transactionToUpdate}
-        />
-      </Fragment>
-      <Alert type="primary">
-        {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
-        <ul style={{ marginLeft: "5%" }}>
+    <SharedStepFees
+      accountId={account.id}
+      account={mainAccount}
+      parentAccount={parentAccount}
+      status={status}
+      transaction={transaction}
+      onChange={onChangeTransaction}
+      updateTransaction={updateTransaction}
+      bridgePending={bridgePending}
+      transactionToUpdate={transactionToUpdate}
+      pendingFeesInfoTitle={t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
+      feeDetails={
+        <>
           <li>{t("operation.edit.previousFeesInfo.networkfee", { amount: formattedFeeValue })}</li>
           {transactionToUpdate.type === 2 ? (
             <>
@@ -88,9 +80,9 @@ const StepFees = ({
           ) : (
             <li>{t("operation.edit.previousFeesInfo.gasPrice", { amount: formattedGasPrice })}</li>
           )}
-        </ul>
-      </Alert>
-    </Box>
+        </>
+      }
+    />
   );
 };
 
@@ -139,15 +131,12 @@ export const StepFeesFooter = ({
         transactionHasBeenValidated={transactionHasBeenValidated}
         errors={errorsToDisplay}
       />
-      <Button
+      <SharedFooterContinueButton
         id={"send-amount-continue-button"}
         isLoading={bridgePending}
-        primary
         disabled={disabled}
         onClick={onClick}
-      >
-        <Trans i18nKey="common.continue" />
-      </Button>
+      />
     </>
   );
 };

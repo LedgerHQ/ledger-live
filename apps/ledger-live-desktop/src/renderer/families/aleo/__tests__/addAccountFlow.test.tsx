@@ -8,6 +8,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import type { State } from "~/renderer/reducers";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 import ModularDrawerAddAccountFlowManager from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import {
@@ -151,6 +152,7 @@ const mockViewKeyProgressSubscription = async (
 
 const setup = (state?: Partial<State>) => {
   const initialState = {
+    settings: AFTER_ONBOARDING_STATE,
     ...state,
     modularDrawer: {
       source: "MADSource",

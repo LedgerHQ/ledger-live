@@ -34,8 +34,8 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-client": "^1.13.1",
-    "@ledgerhq/wallet-api-core": "^1.29.0"
+    "@ledgerhq/wallet-api-client": "^1.14.0",
+    "@ledgerhq/wallet-api-core": "^1.30.0"
   },
   "devDependencies": {
     "@types/node": "catalog:"

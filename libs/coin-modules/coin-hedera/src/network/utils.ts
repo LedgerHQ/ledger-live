@@ -1,10 +1,11 @@
 import { AccountId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
-import { toEntityId } from "../logic/utils";
+import { nanosToSeconds, toEntityId } from "../logic/utils";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
@@ -44,19 +45,28 @@ export function parseTransfers(
 
   const senders: string[] = [];
   const recipients: string[] = [];
+  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
   for (const transfer of mirrorTransfers) {
     const amount = new BigNumber(transfer.amount);
     const accountId = AccountId.fromString(transfer.account);
 
     // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
+    const amountWithoutReward = transfer.account === address ? amount.minus(stakingReward) : amount;
+
     if (transfer.account === address) {
-      const amountWithoutReward = amount.minus(stakingReward);
       value = amountWithoutReward.abs();
       type = amountWithoutReward.isNegative() ? "OUT" : "IN";
     }
 
-    if (amount.isNegative()) {
+    if (amountWithoutReward.isNegative()) {
+      // exclude reward payer from senders list, because rewards are shown as separate operations
+      const shouldIgnoreAddress = transfer.account === rewardPayerAddress && stakingReward.gt(0);
+
+      if (shouldIgnoreAddress) {
+        continue;
+      }
+
       senders.push(transfer.account);
     } else if (isValidRecipient(accountId, recipients)) {
       recipients.push(transfer.account);
@@ -196,9 +206,8 @@ export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[])
   for (const rawTransfer of erc20Transfers) {
     const payerAddress = toEntityId({ num: rawTransfer.payer_account_id });
     const hash = rawTransfer.transaction_hash;
-    const inaccurateConsensusTimestamp = new BigNumber(rawTransfer.consensus_timestamp)
-      .dividedBy(10 ** 9)
-      .toFixed(9);
+    const inaccurateConsensusTimestampNs = new BigNumber(rawTransfer.consensus_timestamp);
+    const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
 
     const [contractCallResult, mirrorTransaction] = await Promise.all([
       apiClient.getContractCallResult(hash),

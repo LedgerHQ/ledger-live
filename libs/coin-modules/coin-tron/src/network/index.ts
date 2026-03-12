@@ -38,6 +38,7 @@ import {
 import {
   AccountTronAPI,
   Block,
+  BlockWithTransactionsAPI,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -387,16 +388,20 @@ export async function getLastBlock(): Promise<Block> {
 }
 
 export async function getBlock(blockNumber: number): Promise<Block> {
-  const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
-  const ret = toBlock(data);
-  if (!ret.height) {
-    ret.height = blockNumber;
-  }
-  return ret;
+  const data: BlockWithTransactionsAPI = await post(`/wallet/getblock`, {
+    id_or_num: String(blockNumber),
+    detail: false,
+  });
+  return toBlock(data);
 }
 
-function toBlock(data: any): Block {
-  // some old blocks doesn't have a timestamp
+export async function getBlockWithTransactions(
+  blockNumber: number,
+): Promise<BlockWithTransactionsAPI> {
+  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true });
+}
+
+function toBlock(data: BlockWithTransactionsAPI): Block {
   const timestamp = data.block_header.raw_data.timestamp;
   const ret: Block = {
     height: data.block_header.raw_data.number,

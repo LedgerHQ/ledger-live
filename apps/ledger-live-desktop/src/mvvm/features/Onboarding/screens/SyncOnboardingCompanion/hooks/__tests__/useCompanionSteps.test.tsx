@@ -1,6 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import useCompanionSteps, { StepKey } from "../useCompanionSteps";
 
 const mockDevice: Device = {

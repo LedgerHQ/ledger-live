@@ -13,10 +13,13 @@ describe("createApi", () => {
       listOperations: expect.any(Function),
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
+      getNextSequence: expect.any(Function),
       getRewards: expect.any(Function),
       getStakes: expect.any(Function),
       getValidators: expect.any(Function),
       craftRawTransaction: expect.any(Function),
+      validateAddress: expect.any(Function),
+      validateIntent: expect.any(Function),
     });
   });
 });

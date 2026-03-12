@@ -17,11 +17,11 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
   const { theme } = useTheme();
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
-  const onPress = useCallback(() => {
+  const onPress = useCallback(async () => {
     if (!cardProps) return;
     if (!cardProps.link) return;
 
-    trackContentCardEvent("contentcard_clicked", {
+    await trackContentCardEvent("contentcard_clicked", {
       ...cardProps.extras,
       screen: cardProps.location,
       campaign: cardProps.id,
@@ -29,7 +29,7 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
 
     // Notify Braze that the card has been clicked by the user
     logClickCard(cardProps.id);
-    Linking.openURL(cardProps.link);
+    await Linking.openURL(cardProps.link);
   }, [cardProps, logClickCard, trackContentCardEvent]);
 
   const onHide = useCallback(() => {

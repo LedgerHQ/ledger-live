@@ -10,12 +10,13 @@ jest.mock("react-router", () => ({
 }));
 
 const mockedUseNavigate = jest.mocked(useNavigate);
+
 describe("useAnalyticsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("returns expected values and navigates back to dashboard", () => {
+  it("should return expected values and navigate back to dashboard", () => {
     const navigate = jest.fn();
     mockedUseNavigate.mockReturnValue(navigate);
 

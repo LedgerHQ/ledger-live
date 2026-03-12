@@ -1,11 +1,11 @@
 import { address as btcAddress } from "bitcoinjs-lib";
+import type { BitcoinJS } from "coininfo";
 import * as bech32 from "bech32";
 import Base from "./base";
 
 // Todo copy paste from bitcoin.ts. we can merge them later
 class Litecoin extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     this.network.dustThreshold = 10000;
     this.network.dustPolicy = "FIXED";

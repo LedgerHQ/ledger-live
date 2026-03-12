@@ -1,5 +1,4 @@
-import type { ConcordiumCoinConfig } from "../types";
-import { VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import { TESTNET_COIN_CONFIG, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
 import { createApi } from ".";
 
 jest.mock("../logic", () => ({
@@ -10,22 +9,14 @@ jest.mock("../logic", () => ({
 const { craftTransaction: craftTransactionMock, getNextValidSequence: getNextValidSequenceMock } =
   jest.requireMock("../logic");
 
-const mockConfig: ConcordiumCoinConfig = {
-  networkType: "testnet",
-  grpcUrl: "https://grpc.testnet.concordium.com",
-  grpcPort: 20000,
-  proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-  minReserve: 0,
-};
-
 describe("api/craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should craft transaction with memo", async () => {
-    const api = createApi(mockConfig);
-    getNextValidSequenceMock.mockResolvedValue(BigInt(5));
+    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    getNextValidSequenceMock.mockResolvedValue(5);
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -51,10 +42,10 @@ describe("api/craftTransaction", () => {
 
     expect(getNextValidSequenceMock).toHaveBeenCalledWith(
       transactionIntent.sender,
-      expect.objectContaining({ id: "concordium" }),
+      "concordium_testnet",
     );
     expect(craftTransactionMock).toHaveBeenCalledWith(
-      { address: transactionIntent.sender, nextSequenceNumber: BigInt(5) },
+      { address: transactionIntent.sender, nextSequenceNumber: 5 },
       expect.objectContaining({
         recipient: transactionIntent.recipient,
         memo: "test memo",
@@ -65,8 +56,8 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction without memo", async () => {
-    const api = createApi(mockConfig);
-    getNextValidSequenceMock.mockResolvedValue(BigInt(10));
+    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    getNextValidSequenceMock.mockResolvedValue(10);
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {

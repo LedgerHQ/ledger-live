@@ -3,7 +3,14 @@ import coinConfig from "../config";
 import { submitCredential } from "../network/proxyClient";
 import { ConcordiumWalletConnect } from "../network/walletConnect";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import { CRED_ID, createFixtureAccount, createFixtureCurrency, PUBLIC_KEY } from "../test/fixtures";
+import {
+  CRED_ID,
+  createFixtureAccount,
+  createFixtureCurrency,
+  PUBLIC_KEY,
+  setupTestnetCoinConfig,
+  TESTNET_COIN_CONFIG,
+} from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
 import {
   createFixtureIdAppResponse,
@@ -66,16 +73,7 @@ jest.mock("../network/proxyClient", () => ({
  */
 describe("onboard (testnet integration)", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-      status: {
-        type: "active",
-      },
-    }));
+    setupTestnetCoinConfig();
   });
 
   beforeEach(() => {
@@ -94,7 +92,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       const statuses = events.filter(e => "status" in e).map(e => e.status);
@@ -120,7 +118,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
         "No active WalletConnect session",
@@ -140,7 +138,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
         "IDApp create_account failed",
@@ -160,7 +158,7 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       await firstValueFrom(observable.pipe(toArray()));
 
       expect(getPublicKey).toHaveBeenCalled();
@@ -179,7 +177,7 @@ describe("onboard (testnet integration)", () => {
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       const statuses = events.filter(e => "status" in e).map(e => e.status);
@@ -207,7 +205,7 @@ describe("onboard (testnet integration)", () => {
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
         "WalletConnect connect() returned no URI",
@@ -228,7 +226,7 @@ describe("onboard (testnet integration)", () => {
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow();
     }, 15000);
@@ -268,20 +266,20 @@ describe("onboard (testnet integration)", () => {
       const currency = createFixtureCurrency();
       const mockData = { v: 0, value: {} } as never;
 
-      const result = await submitCredential(currency, mockData);
+      const result = await submitCredential(currency.id, mockData);
 
       expect(result).toEqual({ submissionId: "test-submission-123" });
-      expect(mockSubmitCredential).toHaveBeenCalledWith(currency, mockData);
+      expect(mockSubmitCredential).toHaveBeenCalledWith(currency.id, mockData);
     }, 15000);
 
     it("should use correct testnet configuration", () => {
       const config = coinConfig.getCoinConfig();
 
-      expect(config.networkType).toBe("testnet");
-      expect(config.grpcUrl).toBe("grpc.testnet.concordium.com");
-      expect(config.grpcPort).toBe(20000);
-      expect(config.proxyUrl).toBe("https://wallet-proxy.testnet.concordium.com");
-      expect(config.minReserve).toBe(100000);
+      expect(config.networkType).toBe(TESTNET_COIN_CONFIG.networkType);
+      expect(config.grpcUrl).toBe(TESTNET_COIN_CONFIG.grpcUrl);
+      expect(config.grpcPort).toBe(TESTNET_COIN_CONFIG.grpcPort);
+      expect(config.proxyUrl).toBe(TESTNET_COIN_CONFIG.proxyUrl);
+      expect(config.minReserve).toBe(TESTNET_COIN_CONFIG.minReserve);
     });
   });
 });

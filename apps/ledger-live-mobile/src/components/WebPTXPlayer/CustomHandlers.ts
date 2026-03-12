@@ -46,6 +46,7 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
 const unknownSwapError = new Error("Unknown swap error");
+const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
 
 type CustomExchangeHandlersHookType = {
   manifest: WebviewProps["manifest"];
@@ -440,6 +441,11 @@ export function useCustomExchangeHandlers({
                   if (result.error) {
                     safeOnCancel(result.error);
                     navigation.pop();
+                    if (shouldRestartFlow(result.error)) {
+                      setDevice(undefined);
+                      deviceRef.current = undefined;
+                      return;
+                    }
                     onCompleteError?.(result.error);
                   }
                   if (result.operation && exchangeParams.swapId) {

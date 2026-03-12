@@ -1125,11 +1125,11 @@ export const expectedCurrencyList = [
   {
     type: "CryptoCurrency",
     id: "mantra",
-    ticker: "OM",
+    ticker: "MANTRA",
     name: "Mantra",
     family: "cosmos",
     color: "#ffb386",
-    decimals: 6,
+    decimals: 18,
   },
   {
     type: "CryptoCurrency",

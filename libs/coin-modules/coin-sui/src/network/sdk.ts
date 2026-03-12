@@ -1,13 +1,14 @@
 import type {
+  AssetInfo,
   Block,
   BlockInfo,
-  BlockTransaction,
   BlockOperation,
+  BlockTransaction,
   Operation as Op,
   Page,
   Stake,
   StakeState,
-  AssetInfo,
+  Cursor,
 } from "@ledgerhq/coin-framework/api/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
@@ -18,20 +19,20 @@ import { getInputObjects } from "@mysten/signers/ledger";
 import {
   BalanceChange,
   Checkpoint,
+  DelegatedStake,
   ExecuteTransactionBlockParams,
   PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  StakeObject,
   SuiCallArg,
   SuiClient,
   SuiHTTPTransport,
-  SuiTransactionBlockResponse,
   SuiTransaction,
   SuiTransactionBlockKind,
-  TransactionEffects,
+  SuiTransactionBlockResponse,
   SuiTransactionBlockResponseOptions,
-  DelegatedStake,
-  StakeObject,
   TransactionBlockData,
+  TransactionEffects,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
@@ -40,11 +41,11 @@ import uniqBy from "lodash/unionBy";
 import coinConfig from "../config";
 import { ONE_SUI } from "../constants";
 import type {
-  Transaction as TransactionType,
+  CoreTransaction,
+  CreateExtrinsicArg,
   Resolution,
   SuiValidator,
-  CreateExtrinsicArg,
-  CoreTransaction,
+  Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
@@ -341,6 +342,13 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
   return new Date(parseInt(transaction.timestampMs!));
 };
 
+/**
+ * Extract the fees payer from transaction (gasData.owner).
+ * For sponsored transactions this is the sponsor; otherwise it is the sender.
+ */
+export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string | undefined =>
+  transaction.transaction?.data?.gasData?.owner || undefined;
+
 export const getStakesRaw = (owner: string) =>
   withApi(async api => {
     return api.getStakes({ owner });
@@ -449,9 +457,7 @@ export function alpacaTransactionToOp(
   const blockHash =
     checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
-  // SUI supports sponsored transactions where gasData.owner can differ from sender.
-  // If sponsored transactions need to be supported in the future, use gasData.owner instead.
-  const feesPayer = transaction.transaction?.data.sender || undefined;
+  const feesPayer = getFeesPayer(transaction);
 
   const op: Op = {
     id: hash,
@@ -522,6 +528,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  */
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   const operationFee = getOperationFee(transaction);
+  const feesPayer = getFeesPayer(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
@@ -530,7 +537,7 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
         toBlockOperation(transaction, change, operationFee),
       ) || [],
     fees: BigInt(operationFee.toString()),
-    feesPayer: transaction.transaction?.data.sender || "",
+    ...(feesPayer ? { feesPayer } : {}),
   };
 }
 
@@ -709,14 +716,135 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
   return ret;
 }
 
-/**
- * Fetch operations for Alpaca
- * It fetches separately the "OUT" and "IN" operations and then merge them.
- * The cursor is composed of the last "OUT" and "IN" operation cursors.
- *
- * @returns the operations.
- *
- */
+function compareOperations(
+  order: "asc" | "desc",
+): (a: SuiTransactionBlockResponse, b: SuiTransactionBlockResponse) => number {
+  return (a, b) =>
+    compareTimestampAndDigest(
+      order,
+      Number(a.timestampMs ?? 0),
+      a.digest ?? "",
+      Number(b.timestampMs ?? 0),
+      b.digest ?? "",
+    );
+}
+
+function compareTimestampAndDigest(
+  order: "asc" | "desc",
+  timestampA: number,
+  digestA: string,
+  timestampB: number,
+  digestB: string,
+): number {
+  if (timestampA !== timestampB)
+    return order === "asc" ? timestampA - timestampB : timestampB - timestampA;
+  if (digestA === digestB) return 0;
+  if (order === "asc") return digestA < digestB ? -1 : 1;
+  return digestA > digestB ? -1 : 1;
+}
+
+function isStrictlyAfterCursor(
+  op: SuiTransactionBlockResponse,
+  cursor: ListOperationsCursor,
+  order: "asc" | "desc",
+): boolean {
+  if (op.digest === cursor.digest) return false;
+  return (
+    compareTimestampAndDigest(
+      order,
+      Number(op.timestampMs ?? 0),
+      op.digest ?? "",
+      cursor.timestamp,
+      cursor.digest,
+    ) > 0
+  );
+}
+
+function dropOperationsBeforeCursor(params: {
+  operations: SuiTransactionBlockResponse[];
+  order: "asc" | "desc";
+  cursor: ListOperationsCursor | null;
+}): SuiTransactionBlockResponse[] {
+  const { operations, order, cursor } = params;
+  if (!cursor) return operations;
+  return operations.filter(op => isStrictlyAfterCursor(op, cursor, order));
+}
+
+function dropOperationsAfterNextCursor(params: {
+  order: "asc" | "desc";
+  cursor: Cursor | undefined;
+  pageOps: SuiTransactionBlockResponse[];
+  outOps: PaginatedTransactionResponse;
+  inOps: PaginatedTransactionResponse;
+}): {
+  operations: SuiTransactionBlockResponse[];
+  nextCursor: Cursor | undefined;
+} {
+  const { order, cursor, pageOps, outOps, inOps } = params;
+
+  // if both sides on last page => no filtering or next cursor needed
+  if (!(outOps.hasNextPage || inOps.hasNextPage))
+    return { operations: pageOps, nextCursor: undefined };
+
+  // determine boundary operation for next cursor
+  const lastOps: SuiTransactionBlockResponse[] = [
+    getLastOperation(outOps.data),
+    getLastOperation(inOps.data),
+  ].filter(op => op !== undefined);
+  if (lastOps.length === 0) return { operations: pageOps, nextCursor: undefined };
+  const nextCursorBoundaryOp = lastOps.reduce((selected, current) =>
+    compareOperations(order)(current, selected) < 0 ? current : selected,
+  );
+
+  // drop all operations after next cursor
+  const opsBeforeNextCursor = pageOps.filter(
+    op => compareOperations(order)(op, nextCursorBoundaryOp) <= 0,
+  );
+
+  // serialize next cursor
+  const nextCursorCandidate = serializeListOperationsCursor({
+    digest: nextCursorBoundaryOp.digest,
+    timestamp: Number(nextCursorBoundaryOp.timestampMs ?? 0),
+  });
+
+  // defensive guard to avoid infinite loop in case the API returns unexpected results
+  const nextCursor = nextCursorCandidate === cursor ? undefined : nextCursorCandidate;
+
+  return { operations: opsBeforeNextCursor, nextCursor };
+}
+
+function getLastOperation(
+  operations: SuiTransactionBlockResponse[],
+): SuiTransactionBlockResponse | undefined {
+  return operations.length > 0 ? operations[operations.length - 1] : undefined;
+}
+
+type ListOperationsCursor = {
+  digest: string;
+  timestamp: number;
+};
+
+function serializeListOperationsCursor(cursor: ListOperationsCursor): string {
+  return `${cursor.timestamp}:${cursor.digest}`;
+}
+
+function parseListOperationsCursor(cursor: string | undefined): ListOperationsCursor | null {
+  if (!cursor) return null;
+
+  const sepIdx = cursor.indexOf(":");
+  if (sepIdx <= 0 || sepIdx === cursor.length - 1) {
+    throw new Error("Invalid list operations cursor format: missing timestamp or digest");
+  }
+
+  const ts = Number(cursor.slice(0, sepIdx));
+  const digest = cursor.slice(sepIdx + 1);
+  if (!Number.isFinite(ts) || !digest) {
+    throw new Error("Invalid list operations cursor format: invalid timestamp or digest");
+  }
+
+  return { digest, timestamp: ts };
+}
+
 export const getListOperations = async (
   addr: string,
   order: "asc" | "desc",
@@ -725,34 +853,53 @@ export const getListOperations = async (
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
+    const parsedCursor = parseListOperationsCursor(cursor);
+    const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
 
     const [opsOut, opsIn] = await Promise.all([
       queryTransactions({
         api,
         addr,
         type: "OUT",
-        cursor: toSdkCursor(cursor),
+        cursor: rpcCursor,
         order: rpcOrder,
       }),
       queryTransactions({
         api,
         addr,
         type: "IN",
-        cursor: toSdkCursor(cursor),
+        cursor: rpcCursor,
         order: rpcOrder,
       }),
     ]);
 
-    const ops = dedupOperations(opsOut, opsIn, order);
+    // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+    // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
+    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest);
 
-    const sortedOps = [...ops.operations].sort(
-      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
-    );
+    // restore order
+    const sortedOps = [...mergedOps].sort(compareOperations(order));
 
+    // drop operations before the current page start cursor
+    const afterCursorOps = dropOperationsBeforeCursor({
+      operations: sortedOps,
+      order,
+      cursor: parsedCursor,
+    });
+
+    // compute next cursor, and drop operations after it
+    const { operations: pageOps, nextCursor } = dropOperationsAfterNextCursor({
+      order,
+      cursor,
+      pageOps: afterCursorOps,
+      outOps: opsOut,
+      inOps: opsIn,
+    });
+
+    // fetch checkpoints for the operations
     const uniqueCheckpoints = new Set(
-      sortedOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
+      pageOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
     );
-
     const checkpointHashMap = new Map<string, string>();
     await Promise.all(
       Array.from(uniqueCheckpoints).map(async checkpoint => {
@@ -768,7 +915,8 @@ export const getListOperations = async (
       }),
     );
 
-    const operations = sortedOps.map(t =>
+    // convert operations to alpaca model
+    const operations = pageOps.map(t =>
       alpacaTransactionToOp(
         addr,
         t,
@@ -778,68 +926,9 @@ export const getListOperations = async (
 
     return {
       items: operations,
-      next: ops.cursor ?? "",
+      next: nextCursor,
     };
   });
-
-const oldestOpTime = (ops: PaginatedTransactionResponse) =>
-  Number(ops.data[ops.data.length - 1]?.timestampMs ?? 0);
-const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0]?.timestampMs ?? 0);
-
-/**
- * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
- * So IN operations and OUT operations are not disjoint
- * This function will takes the logical lowest operation of the two lists (according so sort order)
- * and remove any higher operation of the other list.
- *
- * Most of the logic have been duplicated from filterOperations (used by bridge).
- *
- * Warning:
- * This function removes some results, so it's not very efficient
- * What we want is the FromOrToAddress filter from SUI RPC, but it's not supported yet
- *
- * Note: I think it's possible to detect duplicated IN oprations:
- * - if the address is the sender of the tx
- * - and there is some transfer to other address
- * - and the address is the single only owner of mutated or deleted object
- * when all that conditions are met, the transaction will be fetched as an OUT operation,
- * and it can be filtered out from the IN operations results.
- *
- * @returns a chronologically sorted list of operations without duplicates and
- *          a cursor that guarantee to not return any operation that was already returned in previous calls
- *
- */
-export const dedupOperations = (
-  outOps: PaginatedTransactionResponse,
-  inOps: PaginatedTransactionResponse,
-  order: "asc" | "desc",
-): LoadOperationResponse => {
-  // in asc order, the operations are sorted by timestamp in ascending order
-  // in desc order, the operations are sorted by timestamp in descending order
-
-  let lastOpTime: number = 0;
-  let nextCursor: string | null | undefined = undefined;
-  const findLastOpTime = order === "asc" ? newestOpTime : oldestOpTime;
-
-  // When we've reached the limit for either sent or received operations,
-  // we filter out extra operations to maintain correct chronological order
-  if (outOps.hasNextPage || inOps.hasNextPage) {
-    const lastOut = findLastOpTime(outOps);
-    const lastIn = findLastOpTime(inOps);
-    if (lastOut >= lastIn) {
-      nextCursor = outOps.nextCursor;
-      lastOpTime = lastOut;
-    } else {
-      nextCursor = inOps.nextCursor;
-      lastOpTime = lastIn;
-    }
-  }
-  const operations = [...outOps.data, ...inOps.data]
-    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= lastOpTime);
-
-  return { operations: uniqBy(operations, tx => tx.digest), cursor: nextCursor };
-};
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata.
@@ -1143,8 +1232,8 @@ export const queryTransactions = async (params: {
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
   const { api, addr, type, cursor, order } = params;
-  // what we really want is te  FromOrToAddress filter, but it's not supported yet
-  // it would relieve a lot of complexity (see dedupOperations)
+  // what we really want is a FromOrToAddress filter, but it's not supported yet
+  // it would relieve a lot of complexity in the merged/sorted pagination and cursor boundary filtering logic above
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 

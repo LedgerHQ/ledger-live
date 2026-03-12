@@ -1,5 +1,6 @@
+import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, BroadcastConfig } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
@@ -107,14 +108,8 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
-  getOptimismAdditionalFees: (
-    currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
-  getScrollAdditionalFees: (
-    currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
+  getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
+  getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];

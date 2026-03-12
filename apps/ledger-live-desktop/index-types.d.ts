@@ -53,7 +53,7 @@ interface Window {
     appDirname: string;
     appLoaded: () => void;
     reloadRenderer: () => void;
-    openWindow: (id: number) => void;
+    openWindow: (id: number, domains?: string[]) => void;
   };
 
   // for debugging purposes

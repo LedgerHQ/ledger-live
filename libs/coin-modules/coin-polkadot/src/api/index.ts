@@ -1,5 +1,6 @@
-import {
+import type {
   AlpacaApi,
+  BroadcastConfig,
   Block,
   BlockInfo,
   Cursor,
@@ -12,8 +13,9 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  Balance,
+  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
-import type { BroadcastConfig } from "@ledgerhq/types-live";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,
@@ -25,6 +27,7 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
+import { validateAddress } from "../logic/validateAddress";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -63,6 +66,17 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 

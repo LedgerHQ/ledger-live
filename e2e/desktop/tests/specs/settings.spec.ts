@@ -44,7 +44,7 @@ test.describe("Settings", () => {
 test.describe("Password", () => {
   const account = Account.ETH_1;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
@@ -82,7 +82,7 @@ test.describe("Password", () => {
 test.describe("counter value selection", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
@@ -124,7 +124,7 @@ test.describe("counter value selection", () => {
 
 test.describe("Ledger Support (web link)", () => {
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
   });
 
   test(

@@ -62,6 +62,10 @@ on:
         required: false
         type: boolean
         default: false
+      enable_wallet40:
+        description: "Enable Wallet 4.0 feature"
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -99,6 +103,10 @@ on:
       smoke_tests:
         description: "Run smoke tests"
         required: false
+        type: boolean
+        default: false
+      enable_wallet40:
+        description: "Enable Wallet 4.0 feature"
         type: boolean
         default: false
 
@@ -242,6 +250,7 @@ jobs:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
+          enable_wallet40: ${{ inputs.enable_wallet40 || false }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: ${{ inputs.export_to_xray }}

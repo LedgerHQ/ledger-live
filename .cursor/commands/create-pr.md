@@ -45,25 +45,7 @@ $HAS_UI_CHANGES
 
 ### Step 2: Create the changeset
 
-Run `npx changeset` interactively OR create a changeset file manually:
-
-```bash
-# Interactive mode (recommended)
-npx changeset
-
-# Or create manually in .changeset/ with format:
-# ---
-# "package-name": minor | major
-# ---
-#
-# Description of the change
-```
-
-**Changeset naming convention:**
-
-- Use the change description from the ticket
-- Keep it concise but descriptive
-- Format: `<verb> <what>` (e.g., "Add dark mode toggle", "Fix transaction signing issue")
+Use the `create-changeset` skill to add a changeset for the modified packages.
 
 ### Step 3: Prepare the PR
 
@@ -135,20 +117,7 @@ open "$PR_URL"
 
 ### Step 5: Generate Slack Message
 
-After creating the PR, use the URL from the `gh pr create` output to generate a Slack message:
-
-```
-:pr-open: {{SLACK_PREFIX}} - {{SHORT_DESCRIPTION}}
-<PR_URL from gh pr create output>
-```
-
-**Slack prefix rules:**
-
-- `LWM` for Ledger Live Mobile changes
-- `LWD` for Ledger Live Desktop changes
-- `Common` for @ledgerhq/live-common or shared libs
-- `Tooling` for CI, scripts, or developer tooling
-- `LWM + LWD` if both apps are impacted
+Use the `slack-pr-message` skill (`.cursor/skills/slack-pr-message/SKILL.md`) to generate the Slack announcement message for the PR.
 
 ## Template Fill Rules
 
@@ -192,33 +161,9 @@ After creating the PR, use the URL from the `gh pr create` output to generate a 
    - JIRA: `[LIVE-1234](https://ledgerhq.atlassian.net/browse/LIVE-1234)`
    - GitHub: `#123`
 
-## Changeset Guidelines
-
-From CONTRIBUTING.md:
-
-- Always add a changeset with `pnpm changeset`
-- Package names must match exactly (check package.json):
-  - `live-mobile` for mobile app
-  - `ledger-live-desktop` for desktop app
-  - `@ledgerhq/live-common` for common lib
-- Impact levels:
-  - `minor`: New features, bug fixes, non-breaking changes
-  - `major`: Breaking changes (rare, requires discussion)
-
 ## Example Output
 
 For a feature adding portfolio analytics:
-
-**Changeset** (`.changeset/blue-tigers-smile.md`):
-
-```markdown
----
-"live-mobile": minor
-"ledger-live-desktop": minor
----
-
-Add portfolio analytics dashboard with performance metrics
-```
 
 **PR Title**: `feat(portfolio): add analytics dashboard`
 
@@ -251,9 +196,4 @@ This PR introduces a new analytics dashboard to the portfolio feature, providing
 - **JIRA or GitHub link**: [LIVE-5678](https://ledgerhq.atlassian.net/browse/LIVE-5678)
 ```
 
-**Slack Message**:
-
-```
-:pr-open: LWM + LWD - Add portfolio analytics dashboard
-https://github.com/LedgerHQ/ledger-live/pull/1234
-```
+**Slack Message**: Generated via the `slack-pr-message` skill.

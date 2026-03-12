@@ -145,7 +145,10 @@ export interface CurrencyBridge {
 }
 
 export type AddressValidationCurrencyParameters = {
-  currency: CryptoCurrency;
+  // ID of the `CryptoCurrency`, as present in the CAL, related to the address that is being validated.
+  // Eg: "ethereum", "bitcoin"
+  currencyId: string;
+  // ID of the network the address belongs to. Can represent a chain ID or a discrimination between testnet and mainnet.
   networkId: number;
 };
 

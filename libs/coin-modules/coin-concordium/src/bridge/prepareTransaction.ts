@@ -7,7 +7,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   account,
   transaction,
 ) => {
-  const estimation = await estimateFees(account.currency, transaction.memo);
+  const estimation = await estimateFees(account.currency.id, transaction.memo);
 
   if (!transaction.fee?.isEqualTo(new BigNumber(estimation.cost.toString()))) {
     return { ...transaction, fee: new BigNumber(estimation.cost.toString()) };

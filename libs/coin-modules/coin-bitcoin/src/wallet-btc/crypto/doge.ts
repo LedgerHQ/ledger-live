@@ -1,8 +1,8 @@
+import type { BitcoinJS } from "coininfo";
 import Base from "./base";
 
 class Doge extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     // https://github.com/dogecoin/dogecoin/blob/master/doc/fee-recommendation.md
     // set 0.01 DOGE as dustThreshold

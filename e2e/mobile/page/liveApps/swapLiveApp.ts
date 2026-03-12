@@ -26,7 +26,6 @@ export default class SwapLiveAppPage {
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
-  liveAppTitle = "live-app-title";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
 
@@ -145,11 +144,14 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.executeSwapButtonStepApproval);
     await waitForWebElementToBeEnabled(this.executeSwapButtonStepApproval);
     await tapWebElementByTestId(this.executeSwapButtonStepApproval);
+    await waitForElement(app.send.summaryRecipient());
   }
 
   @Step("Get minimum amount for swap")
-  async getMinimumAmount(fromAccount: Account, toAccount: Account) {
-    return (await getMinimumSwapAmount(fromAccount, toAccount))?.toString() ?? "";
+  async getMinimumAmount(fromAccount: Account, toAccount: Account, providersWhitelist?: string[]) {
+    return (
+      (await getMinimumSwapAmount(fromAccount, toAccount, providersWhitelist))?.toString() ?? ""
+    );
   }
 
   @Step("Get provider list")
@@ -332,14 +334,5 @@ export default class SwapLiveAppPage {
       await waitForElement(summaryContinueButton);
       await tapByElement(summaryContinueButton);
     }
-  }
-
-  @Step("Verify live app title contains $0")
-  async verifyLiveAppTitle(provider: string) {
-    await waitForElementById(this.liveAppTitle, undefined, {
-      errorElementId: app.common.errorPage.genericErrorModalId,
-    });
-    const liveApp = await getTextOfElement(this.liveAppTitle);
-    jestExpect(liveApp?.toLowerCase()).toContain(provider);
   }
 }

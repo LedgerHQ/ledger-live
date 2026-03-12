@@ -22,7 +22,7 @@ import type { State } from "~/renderer/reducers";
  * export const closeMyNewDialog = () => closeDialog(DIALOG_ID);
  * export const selectIsMyNewDialogOpen = (state: State) => selectIsDialogOpen(state, DIALOG_ID);
  */
-export const DIALOG_IDS = ["RELEASE_NOTES"] as const;
+export const DIALOG_IDS = ["RELEASE_NOTES", "BUY_DEVICE"] as const;
 export type DialogId = (typeof DIALOG_IDS)[number];
 
 export type DialogsState = Partial<Record<DialogId, boolean>>;

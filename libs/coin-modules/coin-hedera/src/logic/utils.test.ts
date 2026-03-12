@@ -10,6 +10,7 @@ import {
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   OP_TYPES_EXCLUDING_FEES,
+  STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -82,6 +83,10 @@ import {
   calculateUncommittedBalanceChange,
   toEntityId,
   mergeTransactionsFromDifferentSources,
+  millisToSeconds,
+  nanosToSeconds,
+  secondsToNanos,
+  createStakingRewardOperationHash,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -1306,7 +1311,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [mockEnrichedERC20Transfer],
         order: "desc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("3000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("3000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1353,7 +1358,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [mockERC20_1, mockERC20_2],
         order: "desc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("4000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("4000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1375,7 +1380,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [mockEnrichedERC20Transfer],
         order: "desc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("3000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("3000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1403,7 +1408,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [mockEnrichedERC20Transfer],
         order: "asc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("3000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("3000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1429,7 +1434,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [],
         order: "asc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("2000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1456,9 +1461,9 @@ describe("logic utils", () => {
       });
 
       // hgraph is stuck on 1000, but mirror node returned 3000 already
-      const latestHgraphIndexedTimestampNs = new BigNumber(
-        mirrorTx1.consensus_timestamp,
-      ).multipliedBy(10 ** 9);
+      const latestHgraphIndexedTimestampNs = secondsToNanos(
+        new BigNumber(mirrorTx1.consensus_timestamp),
+      );
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mirrorTx1, mirrorTx2],
@@ -1488,9 +1493,9 @@ describe("logic utils", () => {
       });
 
       // hgraph is stuck on 1000, but mirror node returned 3000 already
-      const latestHgraphIndexedTimestampNs = new BigNumber(
-        mockMirrorTx1.consensus_timestamp,
-      ).multipliedBy(10 ** 9);
+      const latestHgraphIndexedTimestampNs = secondsToNanos(
+        new BigNumber(mockMirrorTx1.consensus_timestamp),
+      );
 
       const result = mergeTransactionsFromDifferentSources({
         mirrorTransactions: [mockMirrorTx1, mockMirrorTx2],
@@ -1523,7 +1528,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [],
         order: "desc",
         limit: 2,
-        latestHgraphIndexedTimestampNs: new BigNumber("5000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1548,7 +1553,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [],
         order: "desc",
         limit: 2,
-        latestHgraphIndexedTimestampNs: new BigNumber("5000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
         fetchAllPages: true,
       });
 
@@ -1574,7 +1579,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [],
         order: "desc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("5000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1591,7 +1596,7 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [],
         order: "asc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("5000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
         fetchAllPages: false,
       });
 
@@ -1604,12 +1609,67 @@ describe("logic utils", () => {
         enrichedERC20Transfers: [],
         order: "desc",
         limit: 10,
-        latestHgraphIndexedTimestampNs: new BigNumber("5000.000000000").multipliedBy(10 ** 9),
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
         fetchAllPages: false,
       });
 
       expect(result.nextCursor).toBeNull();
       expect(result.merged).toEqual([]);
+    });
+  });
+
+  describe("millisToSeconds", () => {
+    it("converts milliseconds to seconds", () => {
+      expect(millisToSeconds(1_000)).toEqual(new BigNumber(1));
+      expect(millisToSeconds(1_500)).toEqual(new BigNumber(1.5));
+      expect(millisToSeconds(0)).toEqual(new BigNumber(0));
+    });
+
+    it("accepts BigNumber input", () => {
+      expect(millisToSeconds(new BigNumber(2_000))).toEqual(new BigNumber(2));
+    });
+
+    it("preserves sub-second precision", () => {
+      expect(millisToSeconds(1_001)).toEqual(new BigNumber(1.001));
+    });
+  });
+
+  describe("secondsToNanos", () => {
+    it("converts seconds to nanoseconds", () => {
+      expect(secondsToNanos(1)).toEqual(new BigNumber(1_000_000_000));
+      expect(secondsToNanos(0)).toEqual(new BigNumber(0));
+    });
+
+    it("accepts BigNumber input", () => {
+      expect(secondsToNanos(new BigNumber(2))).toEqual(new BigNumber(2_000_000_000));
+    });
+
+    it("preserves sub-second precision", () => {
+      expect(secondsToNanos(1.5)).toEqual(new BigNumber(1_500_000_000));
+    });
+  });
+
+  describe("nanosToSeconds", () => {
+    it("converts nanoseconds to seconds", () => {
+      expect(nanosToSeconds(1_000_000_000)).toEqual(new BigNumber(1));
+      expect(nanosToSeconds(0)).toEqual(new BigNumber(0));
+    });
+
+    it("accepts BigNumber input", () => {
+      expect(nanosToSeconds(new BigNumber(1_500_000_000))).toEqual(new BigNumber(1.5));
+    });
+
+    it("preserves nanosecond precision", () => {
+      expect(nanosToSeconds(1_000_000_001)).toEqual(new BigNumber(1.000000001));
+    });
+  });
+
+  describe("createStakingRewardOperationHash", () => {
+    it("appends the staking reward suffix to the given hash", () => {
+      const hash = "0.0.12345-1234567890-123456789";
+      const result = createStakingRewardOperationHash(hash);
+
+      expect(result).toBe(`${hash}${STAKING_REWARD_HASH_SUFFIX}`);
     });
   });
 });

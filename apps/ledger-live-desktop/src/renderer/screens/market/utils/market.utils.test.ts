@@ -7,10 +7,11 @@ import {
   REFETCH_TIME_ONE_MINUTE,
   getCurrentPage,
   isAvailableOnBuy,
+  isAvailableOnSell,
   isAvailableOnSwap,
   isDataStale,
 } from "../utils";
-import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { createMockMarketCurrencyData } from "@ledgerhq/live-common/market/utils/fixtures";
 
 describe("Market utils", () => {
   describe("isDataStale", () => {
@@ -76,10 +77,7 @@ describe("Market utils", () => {
 
       it("Should return true when ledgerIds is available and isCurrencyAvailable returns true", () => {
         const isAvailable = isAvailableOnBuy(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["btc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
           () => true,
         );
         expect(isAvailable).toBeTruthy();
@@ -87,10 +85,7 @@ describe("Market utils", () => {
 
       it("Should return false when ledgerIds is available but isCurrencyAvailable returns false", () => {
         const isAvailable = isAvailableOnBuy(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["btc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
           () => false,
         );
         expect(isAvailable).toBeFalsy();
@@ -98,10 +93,7 @@ describe("Market utils", () => {
 
       it("Should return true when one of the ledgerIds is available and isCurrencyAvailable returns true", () => {
         const isAvailable = isAvailableOnBuy(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["btc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
           () => true,
         );
         expect(isAvailable).toBeTruthy();
@@ -109,10 +101,46 @@ describe("Market utils", () => {
 
       it("Should return false when no ledgerIds are available", () => {
         const isAvailable = isAvailableOnBuy(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["ltc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["ltc"] }),
+          () => false,
+        );
+        expect(isAvailable).toBeFalsy();
+      });
+    });
+
+    describe("Should test availability for Sell action", () => {
+      it("Should return false when currency is null or undefined", () => {
+        expect(isAvailableOnSell(null, () => true)).toBeFalsy();
+        expect(isAvailableOnSell(undefined, () => true)).toBeFalsy();
+      });
+
+      it("Should return true when ledgerIds is available and isCurrencyAvailable returns true", () => {
+        const isAvailable = isAvailableOnSell(
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
+          () => true,
+        );
+        expect(isAvailable).toBeTruthy();
+      });
+
+      it("Should return false when ledgerIds is available but isCurrencyAvailable returns false", () => {
+        const isAvailable = isAvailableOnSell(
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
+          () => false,
+        );
+        expect(isAvailable).toBeFalsy();
+      });
+
+      it("Should return true when one of the ledgerIds is available and isCurrencyAvailable returns true", () => {
+        const isAvailable = isAvailableOnSell(
+          createMockMarketCurrencyData({ ledgerIds: ["btc", "btc-false"] }),
+          () => true,
+        );
+        expect(isAvailable).toBeTruthy();
+      });
+
+      it("Should return false when no ledgerIds are available", () => {
+        const isAvailable = isAvailableOnSell(
+          createMockMarketCurrencyData({ ledgerIds: ["ltc"] }),
           () => false,
         );
         expect(isAvailable).toBeFalsy();
@@ -128,10 +156,7 @@ describe("Market utils", () => {
 
       it("Should return true when ledgerIds is in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["btc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
           new Set(["btc"]),
         );
         expect(isAvailable).toBeTruthy();
@@ -139,10 +164,7 @@ describe("Market utils", () => {
 
       it("Should return false when ledgerIds is not in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["btc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
           new Set(["ltc"]),
         );
         expect(isAvailable).toBeFalsy();
@@ -150,10 +172,7 @@ describe("Market utils", () => {
 
       it("Should return true when one of the ledgerIds is in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["btc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["btc"] }),
           new Set(["btc"]),
         );
         expect(isAvailable).toBeTruthy();
@@ -161,10 +180,7 @@ describe("Market utils", () => {
 
       it("Should return false when no ledgerIds are in the swap set", () => {
         const isAvailable = isAvailableOnSwap(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          {
-            ledgerIds: ["ltc"],
-          } as MarketCurrencyData,
+          createMockMarketCurrencyData({ ledgerIds: ["ltc"] }),
           new Set(["btc"]),
         );
         expect(isAvailable).toBeFalsy();

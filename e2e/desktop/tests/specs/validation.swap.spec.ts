@@ -67,7 +67,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     });
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
       cliCommandsOnApp: [
@@ -166,7 +166,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
   });
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [

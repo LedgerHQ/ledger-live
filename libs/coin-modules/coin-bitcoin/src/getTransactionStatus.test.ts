@@ -27,9 +27,9 @@ import * as cache from "./cache";
 import * as sanction from "@ledgerhq/coin-framework/sanction/index";
 import getTransactionStatus, { MAX_BLOCK_HEIGHT_FOR_TAPROOT } from "./getTransactionStatus";
 
-const calculateFeesSpy = cache.calculateFees as jest.Mock;
-const validateRecipientSpy = cache.validateRecipient as jest.Mock;
-const isAddressSanctionedSpy = sanction.isAddressSanctioned as jest.Mock;
+const calculateFeesSpy = jest.mocked(cache.calculateFees);
+const validateRecipientSpy = jest.mocked(cache.validateRecipient);
+const isAddressSanctionedSpy = jest.mocked(sanction.isAddressSanctioned);
 
 describe("getTransactionStatus on Bitcoin", () => {
   it("should return as sender error only sanctioned utxo addresses", async () => {

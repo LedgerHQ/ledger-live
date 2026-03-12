@@ -7,6 +7,7 @@ import {
   readOnlyModeEnabledSelector,
 } from "~/reducers/settings";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 /**
  * Get options to spread in a Stack.Screen you want to have a wall preventing
@@ -18,31 +19,40 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
       options: NativeStackNavigationOptions;
     }
   | object => {
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
+  const shouldUseLegacyRebornFlow = readOnlyModeEnabled && !shouldUseLazyOnboarding;
+
   if (!hasCompletedOnboarding || !readOnlyModeEnabled) return {};
-  if (hasOrderedNano) {
+
+  if (!shouldUseLegacyRebornFlow) return {};
+
+  if (!hasOrderedNano) {
     return {
-      component: PostBuyDeviceSetupNanoWallScreen,
+      component: BuyDeviceNavigator,
       options: {
         headerShown: false,
         presentation: "transparentModal",
-        contentStyle: { opacity: 1 },
-        gestureEnabled: true,
-        headerTitle: "",
-        headerRight: () => null,
-        headerBackButtonDisplayMode: "minimal",
-        title: undefined,
+        animation: "slide_from_bottom",
       },
     };
   }
+
   return {
-    component: BuyDeviceNavigator,
+    component: PostBuyDeviceSetupNanoWallScreen,
     options: {
       headerShown: false,
       presentation: "transparentModal",
-      animation: "slide_from_bottom",
+      contentStyle: { opacity: 1 },
+      gestureEnabled: true,
+      headerTitle: "",
+      headerRight: () => null,
+      headerBackButtonDisplayMode: "minimal",
+      title: undefined,
     },
   };
 };

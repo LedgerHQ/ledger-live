@@ -17,6 +17,7 @@ import type {
 import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
+  createStakingRewardOperationHash,
   getMemoFromBase64,
   getSyntheticBlock,
 } from "./utils";
@@ -194,7 +195,7 @@ function processTransfers({
 
   // add REWARD operation representing staking reward transfers
   if (stakingReward.gt(0)) {
-    const stakingRewardHash = `${hash}-staking-reward`;
+    const stakingRewardHash = createStakingRewardOperationHash(hash);
     const stakingRewardType: OperationType = "REWARD";
     // offset timestamp by +1ms to ensure it appears just before the operation that triggered it
     const stakingRewardTimestamp = new Date(timestamp.getTime() + 1);

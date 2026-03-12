@@ -87,6 +87,7 @@ export type CompleteExchangeUiRequest = {
   refundAddress?: string;
   payoutAddress?: string;
   sponsored?: boolean;
+  isEmbeddedSwap?: boolean;
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
@@ -607,6 +608,7 @@ export const handlers = ({
               refundAddress,
               payoutAddress,
               sponsored,
+              isEmbeddedSwap: isEmbedded,
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
               tracking.completeExchangeSuccess({

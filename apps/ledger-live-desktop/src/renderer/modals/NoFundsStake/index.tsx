@@ -78,6 +78,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
         account: isTokenAccount(account) ? parentAccount?.id : account.id,
         currency: currency.id,
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
   }, [location, dispatch, navigate, account, parentAccount?.id, currency.id]);

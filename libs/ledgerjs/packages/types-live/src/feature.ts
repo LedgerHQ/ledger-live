@@ -203,6 +203,7 @@ export type Features = CurrencyFeatures & {
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
   editEvmTx: Feature_EditEvmTx;
+  editBitcoinTx: Feature_EditBitcoinTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
@@ -253,6 +254,8 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
+  lldWebviewManifestDomainCheck: DefaultFeature;
+  llmWebviewManifestDomainCheck: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
@@ -293,6 +296,7 @@ export type Features = CurrencyFeatures & {
       profilingSampleRate: number;
     }>;
   };
+  llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   llmHomescreen: DefaultFeature;
@@ -563,6 +567,10 @@ export type Feature_EditEvmTx = Feature<{
   supportedCurrencyIds: string[];
 }>;
 
+export type Feature_EditBitcoinTx = Feature<{
+  supportedCurrencyIds: string[];
+}>;
+
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
@@ -825,11 +833,11 @@ type Feature_Wallet40_Params = {
   assetSection: boolean;
 
   // Specifics
+  brazePlacement?: boolean;
   newReceiveDialog?: boolean;
-  background?: boolean;
 };
 
-export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
+export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;

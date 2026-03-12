@@ -3,6 +3,7 @@ import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 
 export interface BalanceViewProps {
   readonly balance: number;
+  readonly balanceAvailable: boolean;
   readonly formatter: (value: number) => FormattedValue;
   readonly discreet: boolean;
   readonly valueChange: ValueChange;
@@ -11,6 +12,7 @@ export interface BalanceViewProps {
   readonly isColdStart: boolean;
   readonly isLoading: boolean;
   readonly shouldDisplayBalanceRefreshRework: boolean;
+  readonly theme: "light" | "dark";
 }
 
 export type BalanceViewModelResult = BalanceViewProps & {

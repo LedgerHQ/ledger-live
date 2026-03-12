@@ -44,7 +44,11 @@ export default function SelectAccountModal({ isOpened, ...params }: Props) {
   return (
     <QueuedDrawer
       containerStyle={styles.drawerContainer}
-      CustomHeader={selectedCurrency ? AccountHeader(resetSelectedCurrency) : NetworkHeader}
+      CustomHeader={
+        selectedCurrency
+          ? AccountHeader(resetSelectedCurrency, handleClose)
+          : NetworkHeader(handleClose)
+      }
       isRequestingToBeOpened={isOpened}
       onClose={handleClose}
     >

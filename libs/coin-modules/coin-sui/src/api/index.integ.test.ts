@@ -85,6 +85,53 @@ describe("Sui Api", () => {
 
       expect(cursor).toBeUndefined();
     });
+
+    it("should return asc results equal to reversed desc results", async () => {
+      const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+      const maxPages = 20;
+
+      const fetchAllHashes = async (order: "asc" | "desc"): Promise<string[]> => {
+        const hashes: string[] = [];
+        let cursor: string | undefined;
+        let pageCount = 0;
+
+        for (let page = 0; page < maxPages; page++) {
+          const { items, next } = await module.listOperations(address, {
+            minHeight: 0,
+            order,
+            cursor,
+          });
+
+          pageCount += 1;
+          hashes.push(...items.map(operation => operation.tx.hash));
+          if (!next) {
+            if (pageCount === 1) {
+              throw new Error(
+                `Fetched only one page for ${order} operations on ${address}. ` +
+                  "This account is too small for this test, setup a bigger one to cover pagination.",
+              );
+            }
+            return hashes;
+          }
+          cursor = next;
+        }
+
+        throw new Error(
+          `Exceeded max pages (${maxPages}) while fetching ${order} operations for ${address}. ` +
+            "This account is too big for this test, setup a smaller one to keep test fast.",
+        );
+      };
+
+      const [ascHashes, descHashes] = await Promise.all([
+        fetchAllHashes("asc"),
+        fetchAllHashes("desc"),
+      ]);
+
+      expect(ascHashes.length).toBeGreaterThanOrEqual(54);
+      expect(new Set(ascHashes).size).toBe(ascHashes.length);
+      expect(new Set(descHashes).size).toBe(descHashes.length);
+      expect(ascHashes).toEqual([...descHashes].reverse());
+    });
   });
 
   describe("listOperations (staking)", () => {
@@ -127,14 +174,18 @@ describe("Sui Api", () => {
       expect(checkSet.size).toBeLessThanOrEqual(txs.length);
     });
 
-    it("at least operation should be IN", async () => {
+    it("at least one operation should be IN", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
       expect(txs.some(t => t.type === "IN")).toBe(true);
     });
 
-    it("at least operation should be OUT", async () => {
+    it("at least one operation should be OUT", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "OUT")).toBe(true);
+      const outTxs = txs.filter(t => t.type === "OUT");
+      expect(outTxs.length).toBeGreaterThanOrEqual(1);
+      expect(outTxs.every(t => t.tx.feesPayer !== undefined)).toBe(true);
+      // this expectation holds unless all txs are "sponsored"
+      expect(outTxs.some(t => t.tx.feesPayer === SENDER)).toBe(true);
     });
 
     it("uses the minHeight to filter", async () => {

@@ -24,6 +24,15 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  [SEND_FLOW_STEP.RECENT_HISTORY]: {
+    id: SEND_FLOW_STEP.RECENT_HISTORY,
+    canGoBack: true,
+    showHeaderRight: false,
+    screenOptions: {
+      ...TransparentHeaderNavigationOptions,
+      title: "",
+    },
+  },
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
     canGoBack: true,

@@ -186,6 +186,51 @@ describe("useSendHeaderModel", () => {
     });
   });
 
+  describe("descriptionText — showAvailable flag", () => {
+    it("shows the available description when showAvailable is not set", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.AMOUNT,
+        currentStepConfig: { showTitle: true },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+      });
+
+      renderHook("1 ETH");
+
+      expect(latestVM?.descriptionText).not.toBe("");
+    });
+
+    it("suppresses the available description when showAvailable is false", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.AMOUNT,
+        currentStepConfig: { showTitle: true, showAvailable: false },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+      });
+
+      renderHook("1 ETH");
+
+      expect(latestVM?.descriptionText).toBe("");
+    });
+
+    it("keeps the title visible when showAvailable is false", () => {
+      mockNavigation();
+      mockActions();
+      (useFlowWizard as jest.Mock).mockReturnValue({
+        currentStep: SEND_FLOW_STEP.AMOUNT,
+        currentStepConfig: { showTitle: true, showAvailable: false },
+        navigation: { goToStep: jest.fn(), goToPreviousStep: jest.fn(), canGoBack: () => true },
+      });
+
+      renderHook("1 ETH");
+
+      expect(latestVM?.title).not.toBe("");
+      expect(latestVM?.descriptionText).toBe("");
+    });
+  });
+
   describe("handleBack — state cleanup", () => {
     it("resets amount-related fields and calls resetViewState when on AMOUNT step then navigates", () => {
       const { goToPreviousStep } = mockNavigation();

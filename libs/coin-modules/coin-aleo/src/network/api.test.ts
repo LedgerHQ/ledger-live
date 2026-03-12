@@ -1,13 +1,16 @@
 import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
-import { testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
+  testnetPrivateRecord,
   getMockedTransactionDetails,
   getMockedSimpleTransactionDetails,
   getMockedAccountPublicTransactions,
-} from "../__tests__/fixtures/transaction.fixture";
+  getMockedAuthorization,
+  getMockedFeeAuthorization,
+  getMockedDelegatedProvingResponse,
+} from "../__tests__/fixtures/api.fixture";
+import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { apiClient } from "./api";
 
 jest.mock("@ledgerhq/live-network");
@@ -873,6 +876,121 @@ describe("apiClient", () => {
         expect.objectContaining({
           method: "POST",
           url: "https://api.testnet.aleo.network/scanner/testnet/records/owned",
+        }),
+      );
+    });
+  });
+  describe("submitDelegatedProvingRequest", () => {
+    const mockAuthorization = getMockedAuthorization();
+    const mockFeeAuthorization = getMockedFeeAuthorization();
+    const mockDelegatedProvingResponse = getMockedDelegatedProvingResponse();
+
+    it("should submit delegated proving request successfully", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+
+      const result = await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: true,
+        jwt: "jwt_token",
+      });
+
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: "https://api.aleo.network/prove/mainnet/prove",
+        headers: {
+          Authorization: "jwt_token",
+        },
+        data: {
+          authorization: mockAuthorization,
+          fee_authorization: mockFeeAuthorization,
+          broadcast: true,
+        },
+      });
+      expect(result).toEqual(mockDelegatedProvingResponse);
+    });
+
+    it("should use correct network URL for testnet", async () => {
+      const testnetConfig = {
+        nodeUrl: "https://api.testnet.aleo.network",
+        networkType: "testnet",
+      };
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+
+      await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: true,
+        jwt: "jwt_token",
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: "https://api.testnet.aleo.network/prove/testnet/prove",
+        }),
+      );
+    });
+
+    it("should throw error when network request fails", async () => {
+      const mockError = new Error("Proving request failed");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        apiClient.submitDelegatedProvingRequest({
+          currency: mockCurrency,
+          authorization: mockAuthorization,
+          feeAuthorization: mockFeeAuthorization,
+          broadcast: true,
+          jwt: "jwt_token",
+        }),
+      ).rejects.toThrow("Proving request failed");
+    });
+
+    it("should submit without broadcast when broadcast is false", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+
+      await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: false,
+        jwt: "jwt_token",
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            broadcast: false,
+          }),
+        }),
+      );
+    });
+
+    it("should not send fee_authorization when feeAuthorization is not provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse });
+
+      await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        broadcast: true,
+        jwt: "jwt_token",
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            authorization: mockAuthorization,
+            broadcast: true,
+          },
         }),
       );
     });

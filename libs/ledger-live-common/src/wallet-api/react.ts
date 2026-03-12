@@ -96,6 +96,7 @@ export interface UiHook {
     currencyIds?: string[];
     areCurrenciesFiltered?: boolean;
     useCase?: string;
+    uiUseCase?: string;
     drawerConfiguration?: ModularDrawerConfiguration;
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
@@ -589,7 +590,7 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "account.request",
-      async ({ currencyIds, drawerConfiguration, areCurrenciesFiltered, useCase }) => {
+      async ({ currencyIds, drawerConfiguration, areCurrenciesFiltered, useCase, uiUseCase }) => {
         tracking.requestAccountRequested(manifest);
         return new Promise((resolve, reject) => {
           let done = false;
@@ -599,6 +600,7 @@ export function useWalletAPIServer({
               drawerConfiguration,
               areCurrenciesFiltered,
               useCase,
+              uiUseCase,
               onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
                 if (done) return;
                 done = true;

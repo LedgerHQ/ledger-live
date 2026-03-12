@@ -4,33 +4,14 @@ import {
   insertAccountOwnershipProofs,
 } from "@ledgerhq/concordium-core";
 import type { SerializedCredentialDeploymentTransaction } from "../types";
-import { createTestCryptoCurrency, createTestCommitmentsRandomness } from "../test/testHelpers";
+import { createTestCommitmentsRandomness } from "../test/testHelpers";
 import {
-  getConcordiumNetwork,
   buildSubmitTransferData,
   buildSubmitCredentialData,
   deserializeCredentialDeploymentTransaction,
 } from "./utils";
 
 describe("network/utils", () => {
-  describe("getConcordiumNetwork", () => {
-    it("should return Mainnet for mainnet currency", () => {
-      const currency = createTestCryptoCurrency({
-        isTestnetFor: undefined,
-      });
-
-      expect(getConcordiumNetwork(currency)).toBe("Mainnet");
-    });
-
-    it("should return Testnet for testnet currency", () => {
-      const currency = createTestCryptoCurrency({
-        isTestnetFor: "concordium",
-      });
-
-      expect(getConcordiumNetwork(currency)).toBe("Testnet");
-    });
-  });
-
   describe("buildSubmitTransferData", () => {
     it("should build correct submit transfer request", () => {
       const result = buildSubmitTransferData("aabbccdd", "11223344");

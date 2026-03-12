@@ -62,14 +62,18 @@ export type CustomFeeInputDescriptor = Readonly<{
   key: string;
   /** Input type (currently only "number") */
   type: "number";
-  /** Display unit for the input, e.g. "Gwei", "sat/vbyte" */
-  unitLabel: string;
+  /** Display unit for the input, e.g. "Gwei", "sat/vbyte". Omit for unitless fields (e.g. gas limit). */
+  unitLabel?: string;
   /** Optional suggested range displayed below the input */
   suggestedRange?: {
     getRange: (transaction: unknown) => { min: string; max: string } | null;
   };
   /** Optional helper info displayed below the input (e.g. "Next block: 0 Gwei") */
   helperInfo?: {
+    getValue: (transaction: unknown) => string | null;
+  };
+  /** Optional minimum value constraint (e.g. system-estimated gas limit) */
+  minValue?: {
     getValue: (transaction: unknown) => string | null;
   };
 }>;
@@ -88,11 +92,31 @@ export type CustomFeeConfig = Readonly<{
 }>;
 
 /**
+ * Option for a fee-paying asset (for Celo WIP)
+ */
+export type FeeAssetOption = Readonly<{
+  id: string;
+  ticker: string;
+  label: string;
+  /** Unit label to display in the fee input when this asset is selected (ex: "Gwei", "sat") */
+  unitLabel?: string;
+}>;
+
+/**
+ * Configuration for coins that support paying fees with alternative assets/tokens.
+ */
+export type FeeAssetsConfig = Readonly<{
+  options: readonly FeeAssetOption[];
+  defaultId: string;
+}>;
+
+/**
  * Fee input options
  */
 export type FeeDescriptor = {
   hasPresets: boolean;
   hasCustom: boolean;
+  hasCustomAssets?: boolean;
   hasCoinControl?: boolean;
   presets?: {
     /**
@@ -129,6 +153,13 @@ export type FeeDescriptor = {
    * in the Custom Fees dialog and how to map them to transaction fields.
    */
   custom?: CustomFeeConfig;
+  /**
+   * Configuration for fee asset selection.
+   * When `hasCustomAssets` is true, this describes which assets can be used
+   * to pay transaction fees (e.g. Celo's cUSD, cEUR).
+   * (Not yet implemented)
+   */
+  customAssets?: FeeAssetsConfig;
 };
 
 export type FeePresetOption = Readonly<{
@@ -332,6 +363,14 @@ export const sendFeatures = {
   getCustomFeeConfig: (currency: CryptoOrTokenCurrency | undefined): CustomFeeConfig | null => {
     const descriptor = getSendDescriptor(currency);
     return descriptor?.fees.custom ?? null;
+  },
+  hasCustomAssets: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.fees.hasCustomAssets ?? false;
+  },
+  getCustomAssetsConfig: (currency: CryptoOrTokenCurrency | undefined): FeeAssetsConfig | null => {
+    const descriptor = getSendDescriptor(currency);
+    return descriptor?.fees.customAssets ?? null;
   },
   hasCoinControl: (currency: CryptoOrTokenCurrency | undefined): boolean => {
     const descriptor = getSendDescriptor(currency);

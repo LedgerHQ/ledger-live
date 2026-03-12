@@ -5,7 +5,7 @@ export const descriptor: CoinDescriptor = {
     inputs: {},
     fees: {
       hasPresets: false,
-      hasCustom: true,
+      hasCustom: false,
     },
     selfTransfer: "free",
   },

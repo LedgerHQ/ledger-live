@@ -113,6 +113,8 @@ export type Props = {
   webviewState: WebviewState;
   mobileView: MobileView;
   setMobileView?: React.Dispatch<React.SetStateAction<MobileView>>;
+  /** Base route path (e.g. "/card", "/exchange"). Used for redirect navigation. */
+  basePath: string;
 };
 
 export const TopBar = ({
@@ -121,6 +123,7 @@ export const TopBar = ({
   webviewState,
   mobileView,
   setMobileView,
+  basePath,
 }: Props) => {
   const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
@@ -164,11 +167,7 @@ export const TopBar = ({
         flow: flowName,
       });
 
-      // Extract base path from current location (remove appId segment)
-      const pathParts = location.pathname.split("/");
-      pathParts.pop(); // Remove the appId
-      const pathname = pathParts.join("/") || "/";
-      navigate(`${pathname}?referrer=isExternal`, {
+      navigate(`${basePath}?referrer=isExternal`, {
         state: {
           mode: flowName,
         },
@@ -200,7 +199,7 @@ export const TopBar = ({
         }
       }
     }
-  }, [localStorage, navigate, location.pathname, location.state, webviewAPIRef, webviewState.url]);
+  }, [basePath, localStorage, navigate, location.state, webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     const lastScreen = localStorage.getItem("last-screen") || "";
@@ -248,13 +247,13 @@ export const TopBar = ({
             url.searchParams.get("lastScreen") || url.searchParams.get("flowName") || "",
           );
 
-          navigate(`${location.pathname}/${manifestId}?goToURL=${goToURL}`);
+          navigate(`${basePath}/${manifestId}?goToURL=${goToURL}`);
         }
       } else {
         lastMatchingURL.current = webviewState.url;
       }
     }
-  }, [localStorage, navigate, isInternalApp, location.pathname, webviewState.url]);
+  }, [basePath, localStorage, navigate, isInternalApp, webviewState.url]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 

@@ -291,6 +291,7 @@ export type SettingsState = {
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
+  deprecationDoNotRemind: string[];
 };
 
 export type NotificationsSettings = {
@@ -369,6 +370,14 @@ export type LargeMoverState = {
   tutorial: boolean;
 };
 
+// === DEEPLINK INSTALL APP STATE ===
+
+export type DeeplinkInstallAppState = {
+  isDrawerOpen: boolean;
+  appToInstall: string | null;
+  selectedDevice: Device | null;
+};
+
 // === ROOT STATE ===
 
 export type State = LLMRTKApiState & {
@@ -377,6 +386,7 @@ export type State = LLMRTKApiState & {
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
+  deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
   identities: IdentitiesState;

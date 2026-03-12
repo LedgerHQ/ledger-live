@@ -4,7 +4,6 @@ import type {
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
-  PaginatedTransactionResponse,
   SuiObjectResponse,
 } from "@mysten/sui/client";
 import { BigNumber } from "bignumber.js";
@@ -269,6 +268,7 @@ function mockStakingTx(address: string, amount: string) {
     transaction: {
       data: {
         sender: address,
+        gasData: { owner: address },
         transaction: {
           kind: "ProgrammableTransaction",
           inputs: [],
@@ -309,6 +309,7 @@ function mockUnstakingTx(address: string, amount: string) {
     transaction: {
       data: {
         sender: address,
+        gasData: { owner: address },
         transaction: {
           kind: "ProgrammableTransaction",
           inputs: [],
@@ -963,6 +964,32 @@ describe("Staking Operations", () => {
         },
       });
     });
+
+    test("transactionToOp should use gasData.owner as feesPayer for sponsored transactions", () => {
+      const senderAddress = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const sponsorAddress = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      const sponsoredTx = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            sender: senderAddress,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: sponsorAddress,
+            },
+          },
+        },
+      };
+      const operation = sdk.alpacaTransactionToOp(
+        senderAddress,
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        sponsoredTx as unknown as SuiTransactionBlockResponse,
+        "mockCheckpointHash",
+      );
+      expect(operation.tx.feesPayer).toBe(sponsorAddress);
+    });
   });
 });
 
@@ -1489,6 +1516,674 @@ describe("getOperations filtering logic", () => {
     expect(operations[0].hash).toBe("sent1"); // First one should be the first sent
     expect(operations[operations.length - 1].hash).toBe("received2"); // Last one should be the last received
   });
+});
+
+describe("listOperations", () => {
+  const ADDRESS = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+  type QueryBlocksParams = Parameters<SuiClient["queryTransactionBlocks"]>[0];
+  type QueryBlocksResult = Awaited<ReturnType<SuiClient["queryTransactionBlocks"]>>;
+
+  const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+    ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+
+  const apiCall = async <T>(execute: (api: SuiClient) => Promise<T>) => execute(mockApi);
+
+  const setupListOperationsMocks = (
+    handler: (params: QueryBlocksParams) => Promise<QueryBlocksResult> | QueryBlocksResult,
+  ) => {
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+    mockApi.queryTransactionBlocks.mockImplementation(async params => handler(params));
+  };
+
+  const isOutQuery = (params: QueryBlocksParams) => "FromAddress" in (params.filter || {});
+
+  const collectHashesAcrossPages = async (
+    order: "asc" | "desc",
+    maxPages = 5,
+    initialCursor?: string,
+  ) => {
+    const hashes: string[] = [];
+    let cursor = initialCursor;
+    for (let i = 0; i < maxPages; i++) {
+      const page = await sdk.getListOperations(ADDRESS, order, apiCall, cursor);
+      hashes.push(...page.items.map(op => op.tx.hash));
+      if (!page.next) break;
+      cursor = page.next;
+    }
+    return hashes;
+  };
+
+  test("throws on malformed list operations cursor", async () => {
+    await expect(sdk.getListOperations(ADDRESS, "asc", apiCall, "not-a-v3-cursor")).rejects.toThrow(
+      "Invalid list operations cursor format",
+    );
+  });
+
+  test("throws when cursor timestamp is invalid", async () => {
+    await expect(sdk.getListOperations(ADDRESS, "asc", apiCall, "abc:txhash")).rejects.toThrow(
+      "Invalid list operations cursor format: invalid timestamp or digest",
+    );
+  });
+
+  test("throws when cursor digest is missing", async () => {
+    await expect(sdk.getListOperations(ADDRESS, "asc", apiCall, "1234:")).rejects.toThrow(
+      "Invalid list operations cursor format: missing timestamp or digest",
+    );
+  });
+
+  test.each(["asc", "desc"] as const)(
+    "returns cursor when only OUT hasNextPage (%s)",
+    async order => {
+      setupListOperationsMocks(async params =>
+        isOutQuery(params)
+          ? {
+              data: [tx("out-1", "1", "100")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [],
+              hasNextPage: false,
+              nextCursor: null,
+            },
+      );
+
+      const page = await sdk.getListOperations(ADDRESS, order, apiCall);
+      expect(page.items.map(op => op.tx.hash)).toEqual(["out-1"]);
+      expect(page.next).not.toEqual("");
+    },
+  );
+
+  test.each(["asc", "desc"] as const)(
+    "returns cursor when only IN hasNextPage (%s)",
+    async order => {
+      setupListOperationsMocks(async params =>
+        isOutQuery(params)
+          ? {
+              data: [],
+              hasNextPage: false,
+              nextCursor: null,
+            }
+          : {
+              data: [tx("in-1", "2", "100")],
+              hasNextPage: true,
+              nextCursor: "in-next",
+            },
+      );
+
+      const page = await sdk.getListOperations(ADDRESS, order, apiCall);
+      expect(page.items.map(op => op.tx.hash)).toEqual(["in-1"]);
+      expect(page.next).not.toEqual("");
+    },
+  );
+
+  test("stops when page is fully filtered by boundary and RPC has no continuation", async () => {
+    const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+    const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+      ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+
+      if (!params.cursor) {
+        return isOut
+          ? {
+              data: [tx("zzzz", "1", "200")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      if (params.cursor === "zzzz") {
+        return isOut
+          ? { data: [tx("same-1", "2", "200")], hasNextPage: false, nextCursor: null }
+          : { data: [tx("same-2", "3", "200")], hasNextPage: false, nextCursor: null };
+      }
+
+      return {
+        data: [],
+        hasNextPage: false,
+        nextCursor: null,
+      };
+    });
+
+    const page1 = await sdk.getListOperations(address, "asc", apiCall);
+    const page2 = await sdk.getListOperations(address, "asc", apiCall, page1.next);
+
+    expect(page1.items.map(op => op.tx.hash)).toEqual(["zzzz"]);
+    expect(page2.items).toEqual([]);
+    expect(page2.next).toBeUndefined();
+  });
+
+  test("does not return cursor when only boundary-filtered ops remain in desc order", async () => {
+    const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+    const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+      ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+
+    // cursor timestamp is 200, desc keeps only timestamps < 200.
+    // Both streams return ts=200 => fully filtered page, but next cursor should still be emitted.
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+      return isOut
+        ? { data: [tx("out-same-ts", "1", "200")], hasNextPage: false, nextCursor: null }
+        : { data: [tx("in-same-ts", "2", "200")], hasNextPage: false, nextCursor: null };
+    });
+
+    const page = await sdk.getListOperations(address, "desc", apiCall, "200:boundary");
+    expect(page.items).toEqual([]);
+    expect(page.next).toBeUndefined();
+  });
+
+  test("uses sorted fallback boundary when filtered page has no items", async () => {
+    const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+    const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+      ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+      return isOut
+        ? {
+            data: [tx("filtered-tail", "1", "400")],
+            hasNextPage: true,
+            nextCursor: "out-next",
+          }
+        : {
+            data: [],
+            hasNextPage: false,
+            nextCursor: null,
+          };
+    });
+
+    const page = await sdk.getListOperations(address, "asc", apiCall, "500:boundary");
+    expect(page.items).toEqual([]);
+    expect(page.next).toEqual("400:filtered-tail");
+  });
+
+  test.each(["asc", "desc"] as const)(
+    "does not return cursor when no hasNext and no filtered ops (%s)",
+    async order => {
+      const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+      const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+        ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+      const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+      mockApi.queryTransactionBlocks.mockReset();
+      mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+        digest: `checkpoint-${id}`,
+      }));
+
+      mockApi.queryTransactionBlocks.mockImplementation(async params => {
+        const isOut = "FromAddress" in (params.filter || {});
+        return isOut
+          ? { data: [tx("out-end", "1", "100")], hasNextPage: false, nextCursor: null }
+          : { data: [tx("in-end", "2", "150")], hasNextPage: false, nextCursor: null };
+      });
+
+      const page = await sdk.getListOperations(address, order, apiCall);
+      expect(page.items.length).toBeGreaterThan(0);
+      expect(page.next).toBeUndefined();
+    },
+  );
+
+  test("stops pagination when continuation cursor would be unchanged", async () => {
+    const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+    const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+      ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+      if (!params.cursor) {
+        return isOut
+          ? {
+              data: [tx("boundary", "1", "200")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : { data: [], hasNextPage: false, nextCursor: null };
+      }
+      return isOut
+        ? { data: [tx("boundary", "1", "200")], hasNextPage: false, nextCursor: null }
+        : { data: [], hasNextPage: false, nextCursor: null };
+    });
+
+    const page1 = await sdk.getListOperations(address, "asc", apiCall);
+    const page2 = await sdk.getListOperations(address, "asc", apiCall, page1.next);
+
+    expect(page1.items.map(op => op.tx.hash)).toEqual(["boundary"]);
+    expect(page2.items).toEqual([]);
+    expect(page2.next).toBeUndefined();
+  });
+
+  test("should not repeat boundary operation across two pages", async () => {
+    const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+    const boundaryDigest = "HdJAXgAA94Q8njwnmX1YT6RDu6s3HvUrdTgDRGNNFwm";
+    const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+      ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+      if (!params.cursor) {
+        return isOut
+          ? {
+              data: [tx(boundaryDigest, "2", "2000")],
+              hasNextPage: true,
+              nextCursor: "out-after-boundary",
+            }
+          : {
+              data: [tx(boundaryDigest, "2", "2000")],
+              hasNextPage: true,
+              nextCursor: "in-after-boundary",
+            };
+      }
+      if (isOut) {
+        return params.cursor === "out-after-boundary"
+          ? { data: [tx("tx-c", "4", "4000")], hasNextPage: false, nextCursor: null }
+          : {
+              data: [tx(boundaryDigest, "2", "2000"), tx("tx-c", "4", "4000")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+      return params.cursor === "in-after-boundary"
+        ? { data: [tx("tx-d", "5", "5000")], hasNextPage: false, nextCursor: null }
+        : {
+            data: [tx(boundaryDigest, "2", "2000"), tx("tx-d", "5", "5000")],
+            hasNextPage: false,
+            nextCursor: null,
+          };
+    });
+
+    const firstPage = await sdk.getListOperations(address, "asc", apiCall);
+    const secondPage = await sdk.getListOperations(address, "asc", apiCall, firstPage.next);
+
+    expect(firstPage.items.some(op => op.tx.hash === boundaryDigest)).toBe(true);
+    expect(secondPage.items.some(op => op.tx.hash === boundaryDigest)).toBe(false);
+  });
+
+  test("respects timestamp order across pages", async () => {
+    const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+    const tx = (digest: string, checkpoint: string, timestampMs: string) =>
+      ({ ...mockTransaction, digest, checkpoint, timestampMs }) as SuiTransactionBlockResponse;
+    const apiCall = async (execute: (api: SuiClient) => Promise<any>) => execute(mockApi);
+
+    mockApi.getCheckpoint = jest.fn().mockImplementation(async ({ id }) => ({
+      digest: `checkpoint-${id}`,
+    }));
+
+    // Ascending
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+      if (!params.cursor) {
+        return isOut
+          ? {
+              data: [tx("out-100", "1", "100"), tx("out-200", "2", "200")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [tx("in-150", "3", "150")],
+              hasNextPage: true,
+              nextCursor: "in-next",
+            };
+      }
+      return isOut
+        ? {
+            data: [tx("out-200", "2", "200"), tx("out-300", "4", "300")],
+            hasNextPage: false,
+            nextCursor: null,
+          }
+        : {
+            data: [tx("in-250", "5", "250"), tx("in-350", "6", "350")],
+            hasNextPage: false,
+            nextCursor: null,
+          };
+    });
+
+    const ascPage1 = await sdk.getListOperations(address, "asc", apiCall);
+    const ascPage2 = await sdk.getListOperations(address, "asc", apiCall, ascPage1.next);
+    const ascTimes1 = ascPage1.items.map(op => op.tx.date.getTime());
+    const ascTimes2 = ascPage2.items.map(op => op.tx.date.getTime());
+    expect(ascTimes1).toEqual([100, 150]);
+    expect(ascTimes2).toEqual([200, 250, 300, 350]);
+    expect(ascTimes1).toEqual([...ascTimes1].sort((a, b) => a - b));
+    expect(ascTimes2).toEqual([...ascTimes2].sort((a, b) => a - b));
+    expect(ascTimes1[ascTimes1.length - 1]).toBeLessThanOrEqual(ascTimes2[0]);
+
+    // Descending
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.queryTransactionBlocks.mockImplementation(async params => {
+      const isOut = "FromAddress" in (params.filter || {});
+      if (!params.cursor) {
+        return isOut
+          ? {
+              data: [tx("out-400", "1", "400"), tx("out-300", "2", "300")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [tx("in-350", "3", "350")],
+              hasNextPage: true,
+              nextCursor: "in-next",
+            };
+      }
+      return isOut
+        ? {
+            data: [tx("out-300", "2", "300"), tx("out-200", "4", "200")],
+            hasNextPage: false,
+            nextCursor: null,
+          }
+        : {
+            data: [tx("in-250", "5", "250"), tx("in-150", "6", "150")],
+            hasNextPage: false,
+            nextCursor: null,
+          };
+    });
+
+    const descPage1 = await sdk.getListOperations(address, "desc", apiCall);
+    const descPage2 = await sdk.getListOperations(address, "desc", apiCall, descPage1.next);
+    const descTimes1 = descPage1.items.map(op => op.tx.date.getTime());
+    const descTimes2 = descPage2.items.map(op => op.tx.date.getTime());
+    expect(descTimes1).toEqual([400, 350]);
+    expect(descTimes2).toEqual([300, 250, 200, 150]);
+    expect(descTimes1).toEqual([...descTimes1].sort((a, b) => b - a));
+    expect(descTimes2).toEqual([...descTimes2].sort((a, b) => b - a));
+    expect(descTimes1[descTimes1.length - 1]).toBeGreaterThanOrEqual(descTimes2[0]);
+  });
+
+  test("does not skip asc operations when IN/OUT pages are unbalanced", async () => {
+    setupListOperationsMocks(async params => {
+      if (!params.cursor) {
+        return isOutQuery(params)
+          ? {
+              data: [tx("out-100", "1", "100"), tx("out-200", "2", "200")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [tx("in-1000", "3", "1000")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      if (params.cursor === "out-200") {
+        return isOutQuery(params)
+          ? {
+              data: [tx("out-300", "4", "300")],
+              hasNextPage: false,
+              nextCursor: null,
+            }
+          : {
+              data: [tx("in-1000", "3", "1000")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      return {
+        data: [],
+        hasNextPage: false,
+        nextCursor: null,
+      };
+    });
+
+    const firstPage = await sdk.getListOperations(ADDRESS, "asc", apiCall);
+    const secondPage = await sdk.getListOperations(ADDRESS, "asc", apiCall, firstPage.next);
+
+    expect(firstPage.items.map(op => op.tx.hash)).toEqual(["out-100", "out-200"]);
+    expect(firstPage.next).toEqual("200:out-200");
+
+    expect(secondPage.items.map(op => op.tx.hash)).toEqual(["out-300", "in-1000"]);
+    expect(secondPage.next).toBeUndefined();
+  });
+
+  test("does not skip desc operations when IN/OUT pages are unbalanced", async () => {
+    setupListOperationsMocks(async params => {
+      if (!params.cursor) {
+        return isOutQuery(params)
+          ? {
+              data: [tx("out-1000", "1", "1000"), tx("out-900", "2", "900")],
+              hasNextPage: true,
+              nextCursor: "out-next",
+            }
+          : {
+              data: [tx("in-100", "3", "100")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      if (params.cursor === "out-900") {
+        return isOutQuery(params)
+          ? {
+              data: [tx("out-800", "4", "800")],
+              hasNextPage: false,
+              nextCursor: null,
+            }
+          : {
+              data: [tx("in-100", "3", "100")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      return {
+        data: [],
+        hasNextPage: false,
+        nextCursor: null,
+      };
+    });
+
+    const firstPage = await sdk.getListOperations(ADDRESS, "desc", apiCall);
+    const secondPage = await sdk.getListOperations(ADDRESS, "desc", apiCall, firstPage.next);
+
+    expect(firstPage.items.map(op => op.tx.hash)).toEqual(["out-1000", "out-900"]);
+    expect(firstPage.next).toEqual("900:out-900");
+
+    expect(secondPage.items.map(op => op.tx.hash)).toEqual(["out-800", "in-100"]);
+    expect(secondPage.next).toBeUndefined();
+  });
+
+  test("handles several extra pages when IN has more pages than OUT", async () => {
+    setupListOperationsMocks(async params => {
+      if (!params.cursor) {
+        return isOutQuery(params)
+          ? {
+              data: [tx("out-100", "1", "100"), tx("out-200", "2", "200")],
+              hasNextPage: false,
+              nextCursor: null,
+            }
+          : {
+              data: [tx("in-110", "3", "110"), tx("in-120", "4", "120")],
+              hasNextPage: true,
+              nextCursor: "in-page-2",
+            };
+      }
+
+      if (params.cursor === "in-120") {
+        return isOutQuery(params)
+          ? { data: [], hasNextPage: false, nextCursor: null }
+          : {
+              data: [tx("in-130", "5", "130"), tx("in-140", "6", "140")],
+              hasNextPage: true,
+              nextCursor: "in-page-3",
+            };
+      }
+
+      if (params.cursor === "in-140") {
+        return isOutQuery(params)
+          ? { data: [], hasNextPage: false, nextCursor: null }
+          : {
+              data: [tx("in-150", "7", "150")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      return { data: [], hasNextPage: false, nextCursor: null };
+    });
+
+    const hashes = await collectHashesAcrossPages("asc");
+
+    expect(hashes).toEqual(["out-100", "in-110", "in-120", "in-130", "in-140", "in-150"]);
+    expect(new Set(hashes).size).toBe(hashes.length);
+  });
+
+  test("handles several extra pages when OUT has more pages than IN", async () => {
+    let outContinuationPage = 0;
+
+    setupListOperationsMocks(async params => {
+      if (!params.cursor) {
+        return isOutQuery(params)
+          ? {
+              data: [tx("out-100", "1", "100"), tx("out-120", "2", "120")],
+              hasNextPage: true,
+              nextCursor: "out-page-2",
+            }
+          : {
+              data: [tx("in-110", "3", "110"), tx("in-115", "4", "115")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      }
+
+      if (!isOutQuery(params)) {
+        return { data: [], hasNextPage: false, nextCursor: null };
+      }
+
+      outContinuationPage += 1;
+      if (outContinuationPage === 1) {
+        return {
+          data: [tx("out-120", "2", "120"), tx("out-130", "5", "130"), tx("out-140", "6", "140")],
+          hasNextPage: true,
+          nextCursor: "out-page-3",
+        };
+      }
+      if (outContinuationPage === 2) {
+        return {
+          data: [tx("out-150", "7", "150")],
+          hasNextPage: false,
+          nextCursor: null,
+        };
+      }
+      return { data: [], hasNextPage: false, nextCursor: null };
+    });
+
+    const hashes = await collectHashesAcrossPages("asc");
+
+    expect(hashes).toEqual([
+      "out-100",
+      "in-110",
+      "in-115",
+      "out-120",
+      "out-130",
+      "out-140",
+      "out-150",
+    ]);
+    expect(new Set(hashes).size).toBe(hashes.length);
+  });
+
+  test.each(["asc", "desc"] as const)(
+    "handles same-timestamp IN/OUT frontier operation (%s)",
+    async order => {
+      setupListOperationsMocks(async params => {
+        if (!params.cursor) {
+          if (order === "asc") {
+            return isOutQuery(params)
+              ? {
+                  data: [tx("out-a", "1", "100"), tx("out-b", "2", "200")],
+                  hasNextPage: true,
+                  nextCursor: "out-next",
+                }
+              : {
+                  data: [tx("in-a", "3", "150"), tx("in-b", "4", "200")],
+                  hasNextPage: true,
+                  nextCursor: "in-next",
+                };
+          }
+          return isOutQuery(params)
+            ? {
+                data: [tx("out-z", "1", "400"), tx("out-y", "2", "300")],
+                hasNextPage: true,
+                nextCursor: "out-next",
+              }
+            : {
+                data: [tx("in-z", "3", "350"), tx("in-y", "4", "300")],
+                hasNextPage: true,
+                nextCursor: "in-next",
+              };
+        }
+
+        if (order === "asc") {
+          return isOutQuery(params)
+            ? {
+                data: [tx("out-b", "5", "200"), tx("out-c", "6", "250")],
+                hasNextPage: false,
+                nextCursor: null,
+              }
+            : { data: [tx("in-c", "7", "260")], hasNextPage: false, nextCursor: null };
+        }
+
+        return isOutQuery(params)
+          ? { data: [tx("out-x", "5", "250")], hasNextPage: false, nextCursor: null }
+          : {
+              data: [tx("in-y", "6", "300"), tx("in-x", "7", "240")],
+              hasNextPage: false,
+              nextCursor: null,
+            };
+      });
+
+      const page1 = await sdk.getListOperations(ADDRESS, order, apiCall);
+      const page2 = await sdk.getListOperations(ADDRESS, order, apiCall, page1.next);
+      const hashes = [...page1.items.map(op => op.tx.hash), ...page2.items.map(op => op.tx.hash)];
+
+      if (order === "asc") {
+        expect(hashes).toEqual(["out-a", "in-a", "in-b", "out-b", "out-c", "in-c"]);
+      } else {
+        expect(hashes).toEqual(["out-z", "in-z", "out-y", "in-y", "out-x", "in-x"]);
+      }
+      expect(new Set(hashes).size).toBe(hashes.length);
+    },
+  );
 });
 
 describe("filterOperations", () => {
@@ -2069,6 +2764,71 @@ describe("filterOperations", () => {
       });
     });
 
+    test("toBlockTransaction should use gasData.owner as feesPayer for sponsored transactions", () => {
+      const sponsorAddress = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      const senderAddress = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const sponsoredTx = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            sender: senderAddress,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: sponsorAddress,
+            },
+          },
+        },
+      };
+      const result = sdk.toBlockTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        sponsoredTx as unknown as SuiTransactionBlockResponse,
+      );
+      expect(result.feesPayer).toBe(sponsorAddress);
+    });
+
+    test("toBlockTransaction should not include feesPayer when gasData.owner is missing or empty", () => {
+      const txWithoutOwner = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: undefined,
+            },
+          },
+        },
+      };
+      const txWithEmptyOwner = {
+        ...mockTransaction,
+        transaction: {
+          ...mockTransaction.transaction,
+          data: {
+            ...mockTransaction.transaction.data,
+            gasData: {
+              ...mockTransaction.transaction.data.gasData,
+              owner: "",
+            },
+          },
+        },
+      };
+
+      const resultWithoutOwner = sdk.toBlockTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        txWithoutOwner as unknown as SuiTransactionBlockResponse,
+      );
+      const resultWithEmptyOwner = sdk.toBlockTransaction(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        txWithEmptyOwner as unknown as SuiTransactionBlockResponse,
+      );
+
+      expect(resultWithoutOwner).not.toHaveProperty("feesPayer");
+      expect(resultWithEmptyOwner).not.toHaveProperty("feesPayer");
+    });
+
     test("toSuiAsset should map native coin correctly", () => {
       expect(sdk.toSuiAsset(sdk.DEFAULT_COIN_TYPE)).toEqual({ type: "native" });
     });
@@ -2184,27 +2944,6 @@ describe("getCoinsForAmount", () => {
 
       expect(result).toHaveLength(0);
       expect(result).toEqual([]);
-    });
-  });
-
-  describe("dedup", () => {
-    const outs: PaginatedTransactionResponse = {
-      data: [],
-      hasNextPage: false,
-    };
-    const ins: PaginatedTransactionResponse = {
-      data: [],
-      hasNextPage: true,
-    };
-
-    test("handles no data in asc mode", () => {
-      const r = sdk.dedupOperations(outs, ins, "asc");
-      expect(r).toEqual({ operations: [] });
-    });
-
-    test("handles no data in desc mode", () => {
-      const r = sdk.dedupOperations(outs, ins, "desc");
-      expect(r).toEqual({ operations: [] });
     });
   });
 

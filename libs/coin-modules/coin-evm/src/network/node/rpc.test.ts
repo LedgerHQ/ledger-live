@@ -2,15 +2,17 @@ import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { JsonRpcProvider, TransactionReceipt, TransactionResponse, ethers } from "ethers";
+import {
+  JsonRpcProvider,
+  Transaction,
+  TransactionReceipt,
+  TransactionResponse,
+  ethers,
+} from "ethers";
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
-import {
-  EvmTransactionLegacy,
-  Transaction as EvmTransaction,
-  EvmTransactionEIP1559,
-} from "../../types";
+import { EvmTransactionLegacy, EvmTransactionEIP1559 } from "../../types";
 import * as RPC_API from "./rpc.common";
 
 jest.useFakeTimers();
@@ -802,19 +804,22 @@ describe("EVM Family", () => {
       expect(
         await RPC_API.getOptimismAdditionalFees(
           { ...fakeCurrency, id: "optimism" } as CryptoCurrency,
-          {
-            mode: "send",
-            family: "evm",
-            recipient: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
-            maxFeePerGas: new BigNumber("0x777159126"),
-            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
-            amount: new BigNumber("0x38d7ea4c68000"),
-            gasLimit: new BigNumber(0),
-            data: Buffer.from(""),
+          // Build a serialized transaction, the exact same way we do in `estimateFees`
+          Transaction.from({
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            maxFeePerGas: BigInt(new BigNumber("0x777159126").toFixed()),
+            maxPriorityFeePerGas: BigInt(new BigNumber("0x10c388d00").toFixed()),
+            value: BigInt(new BigNumber("0x38d7ea4c68000").toFixed()),
+            gasLimit: 0n,
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction,
+            signature: {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            },
+          }).serialized,
         ),
       ).toEqual(new BigNumber(42069));
     });
@@ -823,40 +828,22 @@ describe("EVM Family", () => {
       expect(
         await RPC_API.getOptimismAdditionalFees(
           fakeCurrency as CryptoCurrency,
-          {
-            mode: "send",
-            family: "evm",
-            recipient: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
-            maxFeePerGas: new BigNumber("0x777159126"),
-            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
-            amount: new BigNumber("0x38d7ea4c68000"),
-            gasLimit: new BigNumber(0),
-            data: Buffer.from(""),
+          // Build a serialized transaction, the exact same way we do in `estimateFees`
+          Transaction.from({
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            maxFeePerGas: BigInt(new BigNumber("0x777159126").toFixed()),
+            maxPriorityFeePerGas: BigInt(new BigNumber("0x10c388d00").toFixed()),
+            value: BigInt(new BigNumber("0x38d7ea4c68000").toFixed()),
+            gasLimit: 0n,
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction,
-        ),
-      ).toEqual(new BigNumber(0));
-    });
-
-    it("should return 0 if the transaction is invalid", async () => {
-      expect(
-        await RPC_API.getOptimismAdditionalFees(
-          fakeCurrency as CryptoCurrency,
-          {
-            mode: "send",
-            family: "evm",
-            recipient: "", // no recipient for example
-            maxFeePerGas: new BigNumber("0x777159126"),
-            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
-            amount: new BigNumber("0x38d7ea4c68000"),
-            gasLimit: new BigNumber(0),
-            data: Buffer.from(""),
-            type: 2,
-            chainId: 1,
-            nonce: 52,
-          } as EvmTransaction,
+            signature: {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            },
+          }).serialized,
         ),
       ).toEqual(new BigNumber(0));
     });
@@ -867,19 +854,22 @@ describe("EVM Family", () => {
       expect(
         await RPC_API.getScrollAdditionalFees(
           { ...fakeCurrency, id: "scroll" } as CryptoCurrency,
-          {
-            mode: "send",
-            family: "evm",
-            recipient: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
-            maxFeePerGas: new BigNumber("0x777159126"),
-            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
-            amount: new BigNumber("0x38d7ea4c68000"),
-            gasLimit: new BigNumber(0),
-            data: Buffer.from(""),
+          // Build a serialized transaction, the exact same way we do in `estimateFees`
+          Transaction.from({
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            maxFeePerGas: BigInt(new BigNumber("0x777159126").toFixed()),
+            maxPriorityFeePerGas: BigInt(new BigNumber("0x10c388d00").toFixed()),
+            value: BigInt(new BigNumber("0x38d7ea4c68000").toFixed()),
+            gasLimit: 0n,
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction,
+            signature: {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            },
+          }).serialized,
         ),
       ).toEqual(new BigNumber(42069));
     });
@@ -888,40 +878,22 @@ describe("EVM Family", () => {
       expect(
         await RPC_API.getScrollAdditionalFees(
           fakeCurrency as CryptoCurrency,
-          {
-            mode: "send",
-            family: "evm",
-            recipient: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
-            maxFeePerGas: new BigNumber("0x777159126"),
-            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
-            amount: new BigNumber("0x38d7ea4c68000"),
-            gasLimit: new BigNumber(0),
-            data: Buffer.from(""),
+          // Build a serialized transaction, the exact same way we do in `estimateFees`
+          Transaction.from({
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            maxFeePerGas: BigInt(new BigNumber("0x777159126").toFixed()),
+            maxPriorityFeePerGas: BigInt(new BigNumber("0x10c388d00").toFixed()),
+            value: BigInt(new BigNumber("0x38d7ea4c68000").toFixed()),
+            gasLimit: 0n,
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction,
-        ),
-      ).toEqual(new BigNumber(0));
-    });
-
-    it("should return 0 if the transaction is invalid", async () => {
-      expect(
-        await RPC_API.getScrollAdditionalFees(
-          fakeCurrency as CryptoCurrency,
-          {
-            mode: "send",
-            family: "evm",
-            recipient: "", // no recipient for example
-            maxFeePerGas: new BigNumber("0x777159126"),
-            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
-            amount: new BigNumber("0x38d7ea4c68000"),
-            gasLimit: new BigNumber(0),
-            data: Buffer.from(""),
-            type: 2,
-            chainId: 1,
-            nonce: 52,
-          } as EvmTransaction,
+            signature: {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            },
+          }).serialized,
         ),
       ).toEqual(new BigNumber(0));
     });

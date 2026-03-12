@@ -11,7 +11,6 @@ import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.jso
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
-import { getSerializedTransaction } from "../../transaction";
 import { FeeHistory } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
@@ -468,25 +467,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       }
 
       // Fake signature is added to get the best approximation possible for the gas on L1
-      const serializedTransaction =
-        typeof transaction === "string"
-          ? transaction
-          : ((): string | null => {
-              try {
-                return getSerializedTransaction(transaction, {
-                  r: "0xffffffffffffffffffffffffffffffffffffffff",
-                  s: "0xffffffffffffffffffffffffffffffffffffffff",
-                  v: 27,
-                });
-              } catch (error) /* istanbul ignore next: just logs */ {
-                log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", {
-                  error,
-                });
-                return null;
-              }
-            })();
-
-      if (!serializedTransaction) {
+      if (!transaction) {
         return new BigNumber(0);
       }
 
@@ -497,22 +478,11 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
         OptimismGasPriceOracleAbi,
         api,
       );
-      const additionalL1Fees = await optimismGasOracle.getL1Fee(serializedTransaction);
+      const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
       return new BigNumber(additionalL1Fees.toString());
     }),
   (currency, transaction) => {
-    const serializedTransaction =
-      typeof transaction === "string"
-        ? transaction
-        : ((): string | null => {
-            try {
-              return getSerializedTransaction(transaction);
-            } catch {
-              return null;
-            }
-          })();
-
-    return "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction;
+    return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
   },
   { ttl: 15 * 1000 }, // preventing rate limit by caching this for at least 15sec
 );
@@ -535,24 +505,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
       return new BigNumber(0);
     }
 
-    // Fake signature is added to get the best approximation possible for the gas on L1
-    const serializedTransaction =
-      typeof transaction === "string"
-        ? transaction
-        : ((): string | null => {
-            try {
-              return getSerializedTransaction(transaction, {
-                r: "0xffffffffffffffffffffffffffffffffffffffff",
-                s: "0xffffffffffffffffffffffffffffffffffffffff",
-                v: 27,
-              });
-            } catch (error) /* istanbul ignore next: just logs */ {
-              log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
-              return null;
-            }
-          })();
-
-    if (!serializedTransaction) {
+    if (!transaction) {
       return new BigNumber(0);
     }
 
@@ -563,7 +516,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
       ScrollGasPriceOracleAbi,
       api,
     );
-    const additionalL1Fees = await scrollGasOracle.getL1Fee(serializedTransaction);
+    const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
     return new BigNumber(additionalL1Fees.toString());
   });
 

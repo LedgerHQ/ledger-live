@@ -160,6 +160,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: { record_sessions_percent: 100 },
   }),
+  llmNanoSDeprecation: DEFAULT_FEATURE,
 
   ptxSwapDetailedView: initFeature({
     enabled: false,
@@ -190,6 +191,11 @@ export const DEFAULT_FEATURES: Features = {
   editEvmTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
+  editBitcoinTx: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["bitcoin"] },
   },
 
   referralProgramDesktopSidebar: {
@@ -687,6 +693,8 @@ export const DEFAULT_FEATURES: Features = {
       enableDialogDesktop: false,
     },
   },
+  lldWebviewManifestDomainCheck: DEFAULT_FEATURE,
+  llmWebviewManifestDomainCheck: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
@@ -801,6 +809,8 @@ export const DEFAULT_FEATURES: Features = {
       lazyOnboarding: true,
       balanceRefreshRework: true,
       assetSection: true,
+      onboardingWidget: true,
+      brazePlacement: true,
     },
   },
   lwdWallet40: {

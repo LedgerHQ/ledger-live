@@ -76,6 +76,39 @@ describe("API", () => {
       expect(operation.tx.feesPayer).toBe(operation.senders[0]);
     });
   });
+
+  it("getBlockInfo returns valid block info", async () => {
+    const lastBlockInfo = await module.lastBlock();
+    const blockHeight = lastBlockInfo.height - 10;
+
+    const result = await module.getBlockInfo(blockHeight);
+
+    expect(result).toMatchObject({
+      height: blockHeight,
+      hash: expect.any(String),
+      time: expect.any(Date),
+    });
+  });
+
+  it("getBlock returns block with info and transactions", async () => {
+    const lastBlockInfo = await module.lastBlock();
+    const blockHeight = lastBlockInfo.height - 10;
+
+    const result = await module.getBlock(blockHeight);
+
+    expect(result).toMatchObject({
+      info: {
+        height: blockHeight,
+        hash: expect.any(String),
+        time: expect.any(Date),
+        parent: {
+          height: blockHeight - 1,
+          hash: expect.any(String),
+        },
+      },
+      transactions: expect.any(Array),
+    });
+  });
 });
 
 /**

@@ -13,7 +13,9 @@ import {
   Balance,
   ListOperationsOptions,
   CraftedTransaction,
+  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
+import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
 import coinConfig, { type CantonConfig } from "../config";
 
@@ -63,5 +65,16 @@ export function createApi(config: CantonConfig): AlpacaApi {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }

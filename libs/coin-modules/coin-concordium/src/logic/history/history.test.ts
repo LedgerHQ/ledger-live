@@ -1,34 +1,28 @@
 import { VALID_ADDRESS } from "../../test/fixtures";
-import { createTestCryptoCurrency } from "../../test/testHelpers";
 import { lastBlock } from "./lastBlock";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 import { listOperations } from "./listOperations";
 
 jest.mock("../../network/grpcClient", () => ({
-  getLastBlock: jest.fn(),
   getBlockByHeight: jest.fn(),
   getBlockInfoByHeight: jest.fn(),
   getOperations: jest.fn(),
 }));
 
 jest.mock("../../network/proxyClient", () => ({
+  getConsensusInfo: jest.fn(),
   getOperations: jest.fn(),
 }));
 
 const {
-  getLastBlock: getLastBlockMock,
   getBlockByHeight: getBlockByHeightMock,
   getBlockInfoByHeight: getBlockInfoByHeightMock,
   getOperations: getOperationsGrpcMock,
 } = jest.requireMock("../../network/grpcClient");
 
-const { getOperations: getOperationsProxyMock } = jest.requireMock("../../network/proxyClient");
-
-const mockCurrency = createTestCryptoCurrency({
-  id: "concordium",
-  name: "Concordium",
-});
+const { getConsensusInfo: getConsensusInfoMock, getOperations: getOperationsProxyMock } =
+  jest.requireMock("../../network/proxyClient");
 
 describe("history", () => {
   beforeEach(() => {
@@ -36,20 +30,20 @@ describe("history", () => {
   });
 
   describe("lastBlock", () => {
-    it("should return block info from grpc client", async () => {
+    it("should return block info from proxy client consensusInfo", async () => {
       // GIVEN
-      const mockTimestamp = "2024-01-15T10:30:00Z";
-      getLastBlockMock.mockResolvedValue({
-        height: 12345,
-        hash: "abc123hash",
-        time: new Date(mockTimestamp),
+      const mockTimestamp = "2024-01-15T10:30:00.000Z";
+      getConsensusInfoMock.mockResolvedValue({
+        lastFinalizedBlockHeight: 12345,
+        lastFinalizedBlock: "abc123hash",
+        lastFinalizedTime: mockTimestamp,
       });
 
       // WHEN
-      const result = await lastBlock(mockCurrency);
+      const result = await lastBlock("concordium_testnet");
 
       // THEN
-      expect(getLastBlockMock).toHaveBeenCalledWith(mockCurrency);
+      expect(getConsensusInfoMock).toHaveBeenCalledWith("concordium_testnet");
       expect(result).toEqual({
         height: 12345,
         hash: "abc123hash",
@@ -70,10 +64,10 @@ describe("history", () => {
       getBlockByHeightMock.mockResolvedValue(mockBlock);
 
       // WHEN
-      const result = await getBlock(1000, mockCurrency);
+      const result = await getBlock(1000, "concordium_testnet");
 
       // THEN
-      expect(getBlockByHeightMock).toHaveBeenCalledWith(mockCurrency, 1000);
+      expect(getBlockByHeightMock).toHaveBeenCalledWith("concordium_testnet", 1000);
       expect(result).toEqual(mockBlock);
     });
   });
@@ -89,10 +83,10 @@ describe("history", () => {
       getBlockInfoByHeightMock.mockResolvedValue(mockBlockInfo);
 
       // WHEN
-      const result = await getBlockInfo(2000, mockCurrency);
+      const result = await getBlockInfo(2000, "concordium_testnet");
 
       // THEN
-      expect(getBlockInfoByHeightMock).toHaveBeenCalledWith(mockCurrency, 2000);
+      expect(getBlockInfoByHeightMock).toHaveBeenCalledWith("concordium_testnet", 2000);
       expect(result).toEqual(mockBlockInfo);
     });
   });
@@ -111,16 +105,16 @@ describe("history", () => {
           recipients: ["recipient1"],
         },
       ];
-      getOperationsGrpcMock.mockResolvedValue([mockOperations, ""]);
+      getOperationsGrpcMock.mockResolvedValue({ items: mockOperations, next: undefined });
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 100 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 100 }, "concordium_testnet");
 
       // THEN
-      expect(getOperationsGrpcMock).toHaveBeenCalledWith(mockCurrency, VALID_ADDRESS, {
+      expect(getOperationsGrpcMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
         minHeight: 100,
       });
-      expect(result).toEqual([mockOperations, ""]);
+      expect(result).toEqual({ items: mockOperations, next: undefined });
     });
 
     it("should use proxy client when minHeight is 0", async () => {
@@ -142,10 +136,10 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue(mockLiveOperations);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
-      expect(getOperationsProxyMock).toHaveBeenCalledWith(mockCurrency, {
+      expect(getOperationsProxyMock).toHaveBeenCalledWith("concordium_testnet", {
         address: VALID_ADDRESS,
         accountId: expect.stringContaining("concordium"),
       });
@@ -177,7 +171,7 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue(mockLiveOperations);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
       const { items: operations } = result;
@@ -222,7 +216,7 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue(mockLiveOperations);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
       const { items: operations } = result;
@@ -238,7 +232,7 @@ describe("history", () => {
       getOperationsProxyMock.mockResolvedValue([]);
 
       // WHEN
-      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
+      const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
       // THEN
       expect(result).toEqual({ items: [], next: undefined });

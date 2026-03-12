@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { BodyContent } from "./BodyContent";
 
@@ -25,6 +24,8 @@ export enum ExchangeModeEnum {
 }
 
 export type ExchangeMode = "sell" | "swap" | "fund" | "legacy";
+
+const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
 
 export type Data = {
   provider: string;
@@ -42,6 +43,7 @@ export type Data = {
   refundAddress?: string;
   payoutAddress?: string;
   sponsored?: boolean;
+  isEmbeddedSwap?: boolean;
 };
 
 type ResultsState = {
@@ -50,6 +52,8 @@ type ResultsState = {
   provider: string;
   sourceCurrency: Currency;
   targetCurrency?: Currency;
+  isEmbeddedSwap?: boolean;
+  sponsored?: boolean;
 };
 
 export function isCompleteExchangeData(data: unknown): data is Data {
@@ -111,6 +115,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     magnitudeAwareRate,
     refundAddress,
     payoutAddress,
+    isEmbeddedSwap,
     ...exchangeParams
   } = data;
   const { exchange, provider, transaction: transactionParams, sponsored } = exchangeParams;
@@ -230,12 +235,15 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           sourceCurrency: sourceCurrency as Currency,
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           targetCurrency: targetCurrency as Currency,
+          isEmbeddedSwap,
+          sponsored,
         }
       : {
           provider,
           mode,
           // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
           sourceCurrency: sourceCurrency as Currency,
+          sponsored,
         };
   };
 
@@ -325,9 +333,16 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (broadcastRef.current || !signedOperation) return;
     broadcast(signedOperation)
-      .then(onBroadcastSuccess, setError)
+      .then(onBroadcastSuccess, error => {
+        if (shouldRestartFlow(error)) {
+          onCancel(error);
+          onClose?.();
+          return;
+        }
+        setError(error);
+      })
       .finally(() => (broadcastRef.current = true));
-  }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
+  }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef, onCancel, onClose]);
 
   return (
     <Root>

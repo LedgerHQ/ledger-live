@@ -179,6 +179,13 @@ export const MOCK_MARKET_CURRENCY_DATA: MarketCurrencyData[] = [
   },
 ];
 
+export const createMockMarketCurrencyData = (
+  overrides: Partial<MarketCurrencyData> = {},
+): MarketCurrencyData => ({
+  ...MOCK_MARKET_CURRENCY_DATA[0],
+  ...overrides,
+});
+
 /**
  * Create a mock market performer with optional overrides
  */

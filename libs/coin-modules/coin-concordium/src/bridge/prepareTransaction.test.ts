@@ -67,7 +67,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       // THEN
-      expect(estimateFees).toHaveBeenCalledWith(account.currency, undefined);
+      expect(estimateFees).toHaveBeenCalledWith(account.currency.id, undefined);
     });
 
     it("should call estimateFees with memo when memo is present", async () => {
@@ -79,7 +79,7 @@ describe("prepareTransaction", () => {
       await prepareTransaction(account, tx);
 
       // THEN
-      expect(estimateFees).toHaveBeenCalledWith(account.currency, "test memo");
+      expect(estimateFees).toHaveBeenCalledWith(account.currency.id, "test memo");
     });
   });
 

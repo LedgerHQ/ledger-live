@@ -20,6 +20,7 @@ import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
 import { useOpenBuy } from "LLM/features/Buy";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export type QuickAction = {
   disabled: boolean;
@@ -110,7 +111,11 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
   const { handleOpenBuy } = useOpenBuy({ currency, sourceScreenName: route.name });
 
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
+
   const quickActionsList = useMemo(() => {
+    const isLegacyRebornFlow = readOnlyModeEnabled && !shouldUseLazyOnboarding;
+
     const list: Partial<Record<Actions, QuickAction>> = {
       SEND: {
         disabled: readOnlyModeEnabled || !hasCurrency,
@@ -124,12 +129,12 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
         icon: IconsLegacy.ArrowTopMedium,
       },
       RECEIVE: {
-        disabled: readOnlyModeEnabled,
+        disabled: isLegacyRebornFlow,
         customHandler: handleOpenReceiveDrawer,
         icon: IconsLegacy.ArrowBottomMedium,
       },
       SWAP: {
-        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasFunds,
+        disabled: isPtxServiceCtaExchangeDrawerDisabled || isLegacyRebornFlow || !hasFunds,
         customHandler: handleOpenSwap,
         icon: IconsLegacy.BuyCryptoMedium,
       },
@@ -137,7 +142,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     if (canBeBought) {
       list.BUY = {
-        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
+        disabled: isPtxServiceCtaExchangeDrawerDisabled || isLegacyRebornFlow,
         customHandler: handleOpenBuy,
         icon: IconsLegacy.PlusMedium,
       };
@@ -145,7 +150,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     if (canBeSold) {
       list.SELL = {
-        disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled || !hasCurrency,
+        disabled: isPtxServiceCtaExchangeDrawerDisabled || isLegacyRebornFlow || !hasCurrency,
         route: [
           NavigatorName.Exchange,
           {
@@ -161,7 +166,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     if (partnerStakeRoute) {
       const { screen, params } = partnerStakeRoute;
       list.STAKE = {
-        disabled: readOnlyModeEnabled,
+        disabled: isLegacyRebornFlow,
         // @ts-expect-error - cannot infer screen & params type correctly. But this will go away if we do not return the NoFundsFlow when account is empty, or narrow the conditions of the return type.
         route: [screen, params],
         icon: IconsLegacy.CoinsMedium,
@@ -170,14 +175,14 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     if (canStakeCurrencyUsingLedgerLive || !currency) {
       list.STAKE = {
-        disabled: readOnlyModeEnabled,
+        disabled: isLegacyRebornFlow,
         customHandler: handleOpenStakeDrawer,
         icon: IconsLegacy.CoinsMedium,
       };
     }
 
     list.WALLET_CONNECT = {
-      disabled: readOnlyModeEnabled,
+      disabled: isLegacyRebornFlow,
       route: [
         NavigatorName.WalletConnect,
         {
@@ -190,7 +195,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     if (canBeRecovered) {
       list.RECOVER = {
-        disabled: readOnlyModeEnabled,
+        disabled: isLegacyRebornFlow,
         route: [
           NavigatorName.Main,
           {
@@ -205,6 +210,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     return list;
   }, [
     readOnlyModeEnabled,
+    shouldUseLazyOnboarding,
     hasCurrency,
     currency,
     handleOpenReceiveDrawer,

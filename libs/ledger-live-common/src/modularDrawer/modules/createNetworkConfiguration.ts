@@ -27,7 +27,7 @@ const getLeftElement =
             params,
             NetworkConfigurationDeps.useAccountData,
             NetworkConfigurationDeps.accountsCountAndApy,
-            NetworkConfigurationDeps.accountsApy,
+            NetworkConfigurationDeps.ApyIndicator,
           );
       case "numberOfAccounts":
       default:

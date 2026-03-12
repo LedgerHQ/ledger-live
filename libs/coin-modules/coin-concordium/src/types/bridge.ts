@@ -1,4 +1,3 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountRaw,
@@ -18,11 +17,11 @@ import type {
 
 export interface ConcordiumCurrencyBridge extends CurrencyBridge {
   pairWalletConnect: (
-    currency: CryptoCurrency,
+    currencyId: string,
     deviceId: string,
   ) => Observable<ConcordiumPairingProgress>;
   onboardAccount: (
-    currency: CryptoCurrency,
+    currencyId: string,
     deviceId: string,
     creatableAccount: Account,
   ) => Observable<ConcordiumOnboardProgress | ConcordiumOnboardResult>;

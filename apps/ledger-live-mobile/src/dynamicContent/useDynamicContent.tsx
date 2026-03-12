@@ -19,7 +19,7 @@ import {
   LandingPageUseCase,
   WalletContentCard,
 } from "./types";
-import { track } from "../analytics";
+import { flush, track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
 import { setDynamicContentMobileCards, removeLocalCard } from "~/actions/dynamicContent";
 
@@ -87,13 +87,22 @@ const useDynamicContent = () => {
   );
 
   const trackContentCardEvent = useCallback(
-    (
+    async (
       event: "contentcard_clicked" | "contentcard_dismissed",
       params: Record<string, string | number | undefined>,
     ) => {
       const cardId = params.campaign;
       if (typeof cardId === "string" && localMobileCards.some(c => c.id === cardId)) return;
-      track(event, params);
+      try {
+        await track(event, params);
+        if (event === "contentcard_clicked") {
+          // Flush immediately because content card clicks often open a link
+          // and background the app before Segment flushes queued events itself.
+          await flush();
+        }
+      } catch {
+        // Analytics must never block the user action that follows.
+      }
     },
     [localMobileCards],
   );

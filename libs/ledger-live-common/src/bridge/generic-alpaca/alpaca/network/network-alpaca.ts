@@ -123,8 +123,8 @@ const buildGetBalance = (networkFamily: string) =>
     ];
   };
 
-const buildGetSequence = (networkFamily: string) =>
-  async function getSequence(address: string): Promise<bigint> {
+const buildGetNextSequence = (networkFamily: string) =>
+  async function getNextSequence(address: string): Promise<bigint> {
     const { data } = await network<bigint, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
@@ -183,7 +183,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
-    getSequence: buildGetSequence(networkFamily),
+    getNextSequence: buildGetNextSequence(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
@@ -209,5 +209,8 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     },
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
+    },
+    validateAddress(_address: string): Promise<boolean> {
+      throw new Error("validateAddress is not supported");
     },
   }) satisfies Api<any>;

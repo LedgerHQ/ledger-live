@@ -13,7 +13,7 @@ describe("buildOptimisticOperation", () => {
       amount: new BigNumber(5_000_000),
       fees: new BigNumber(34_060),
       recipient: "aleo1recipient123",
-      type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     });
 
     const operation = buildOptimisticOperation({ account, transaction });

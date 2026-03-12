@@ -365,6 +365,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Aleo: {
+    currency: getCryptoCurrencyById("aleo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Aleo",
+    },
+    dependencies: [],
+  },
 };
 
 export async function startSpeculos(
@@ -1072,3 +1080,14 @@ export const exportUfvk = withDeviceController(
       }
     },
 );
+
+export const shareViewKey = withDeviceController(({ getButtonsController }) => async () => {
+  const buttons = getButtonsController();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONFIRM);
+  } else {
+    await buttons.both();
+  }
+});

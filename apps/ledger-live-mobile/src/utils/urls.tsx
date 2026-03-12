@@ -158,6 +158,10 @@ export const urls = {
         main: "https://www.near.org/intents",
         tos: "https://swapkit.dev/terms-of-service/",
       },
+      swapsxyz: {
+        main: "https://swaps.xyz/",
+        tos: "https://docs.swaps.xyz/resources/terms-of-service",
+      },
       oneinch: {
         main: "https://1inch.com/",
         tos: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
@@ -275,6 +279,10 @@ export const urls = {
   editEvmTx: {
     learnMore: "https://support.ledger.com/article/9756122596765-zd",
   },
+  editBitcoinTx: {
+    learnMore:
+      "https://support.ledger.com/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
+  },
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
   },
@@ -291,4 +299,8 @@ export const urls = {
   },
   nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
   nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  },
 };

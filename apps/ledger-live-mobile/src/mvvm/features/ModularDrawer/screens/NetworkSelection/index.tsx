@@ -19,7 +19,7 @@ import { useTranslation } from "~/context/Locale";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
-import { accountsApy } from "../../components/AccountApy";
+import { ApyIndicator } from "../../components/ApyIndicator";
 import { balanceItem } from "../../components/Balance";
 import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
@@ -84,7 +84,7 @@ const NetworkSelection = ({
     useAccountData,
     accountsCount,
     accountsCountAndApy,
-    accountsApy,
+    ApyIndicator,
     useBalanceDeps,
     balanceItem,
   };
@@ -95,7 +95,7 @@ const NetworkSelection = ({
     networksConfig: networksConfiguration,
   });
 
-  const formattedNetworks = transformNetworks(availableNetworks);
+  const formattedNetworks = transformNetworks(availableNetworks ?? []);
 
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 

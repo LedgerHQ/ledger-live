@@ -4,6 +4,7 @@ import type { SendStepConfig, SendFlowConfig } from "./types";
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
   SEND_FLOW_STEP.RECIPIENT,
   SEND_FLOW_STEP.AMOUNT,
+  SEND_FLOW_STEP.RECENT_HISTORY,
   SEND_FLOW_STEP.CUSTOM_FEES,
   SEND_FLOW_STEP.COIN_CONTROL,
   SEND_FLOW_STEP.SIGNATURE,
@@ -15,6 +16,16 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     id: SEND_FLOW_STEP.RECIPIENT,
     canGoBack: true,
     addressInput: true,
+    height: "hug",
+  },
+  [SEND_FLOW_STEP.RECENT_HISTORY]: {
+    id: SEND_FLOW_STEP.RECENT_HISTORY,
+    canGoBack: true,
+    floating: true,
+    showTitle: false,
+    showAvailable: false,
+    backTarget: SEND_FLOW_STEP.RECIPIENT,
+    height: "hug",
   },
   [SEND_FLOW_STEP.AMOUNT]: {
     id: SEND_FLOW_STEP.AMOUNT,
@@ -28,6 +39,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     floating: true,
     titleKey: "newSendFlow.customFees.title",
     backTarget: SEND_FLOW_STEP.AMOUNT,
+    showAvailable: false,
   },
   [SEND_FLOW_STEP.COIN_CONTROL]: {
     id: SEND_FLOW_STEP.COIN_CONTROL,

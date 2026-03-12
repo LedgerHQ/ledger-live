@@ -46,12 +46,12 @@ export class ConcordiumWalletConnect {
     const chains = session.namespaces[this.namespace]?.chains;
     const networks: ConcordiumNetwork[] = [];
 
-    if (chains?.includes(CONCORDIUM_CHAIN_IDS.Mainnet)) {
-      networks.push("Mainnet");
+    if (chains?.includes(CONCORDIUM_CHAIN_IDS.mainnet)) {
+      networks.push("mainnet");
     }
 
-    if (chains?.includes(CONCORDIUM_CHAIN_IDS.Testnet)) {
-      networks.push("Testnet");
+    if (chains?.includes(CONCORDIUM_CHAIN_IDS.testnet)) {
+      networks.push("testnet");
     }
 
     return networks;

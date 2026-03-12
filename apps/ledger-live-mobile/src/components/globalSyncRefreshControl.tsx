@@ -55,7 +55,7 @@ function globalSyncRefreshControl<P>(
       track("button_clicked", {
         button: "pull to refresh",
         page: route.name,
-        triggered_after_sync_error: isError ?? false,
+        triggeredAfterSyncError: isError ?? false,
       });
       onUserRefresh();
     }

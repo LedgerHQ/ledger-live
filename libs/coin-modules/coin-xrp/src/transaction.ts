@@ -46,7 +46,6 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       serverFee: new BigNumber(networkInfo.serverFee),
-      baseReserve: new BigNumber(networkInfo.baseReserve),
     },
   };
 };
@@ -64,7 +63,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       serverFee: networkInfo.serverFee.toString(),
-      baseReserve: networkInfo.baseReserve.toString(),
     },
   };
 };

@@ -32,7 +32,7 @@
         "lib/api/index"
       ],
       "deviceTransactionConfig": [
-        "lib/bridge/deviceTransactionConfig"
+        "lib/deviceTransactionConfig"
       ],
       "logic": [
         "lib/logic/index"
@@ -64,8 +64,8 @@
       "default": "./lib-es/api/index.js"
     },
     "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./logic": {
       "require": "./lib/logic/index.js",
@@ -118,7 +118,6 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
-    "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
     "ripple-keypairs": "^2.0.0",
@@ -139,8 +138,8 @@
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-watch": "jest --watch",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
-    "test-integ:debug": "DOTENV_CONFIG_PATH=.env.integ.test node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
+    "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }

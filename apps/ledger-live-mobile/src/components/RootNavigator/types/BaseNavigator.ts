@@ -33,6 +33,7 @@ import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/Del
 import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
 import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
+import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
@@ -44,6 +45,7 @@ import type { TezosDelegationFlowParamList } from "../../../families/tezos/Deleg
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
+import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
 import type { HederaUndelegationFlowParamList } from "../../../families/hedera/UndelegationFlow/types";
 import type { HederaRedelegationFlowParamList } from "../../../families/hedera/RedelegationFlow/types";
@@ -281,6 +283,9 @@ export type BaseNavigatorStackParamList = {
   // EVM
   [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
+  // Bitcoin edit transaction (RBF)
+  [NavigatorName.BitcoinEditTransaction]: NavigatorScreenParams<BitcoinEditTransactionParamList>;
+
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
 
@@ -303,10 +308,16 @@ export type BaseNavigatorStackParamList = {
   // Canton
   [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
 
+  // Concordium
+  [NavigatorName.ConcordiumOnboard]: NavigatorScreenParams<ConcordiumOnboardAccountParamList>;
+
   [ScreenName.DeviceConnect]: {
     appName?: string;
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
+  };
+  [ScreenName.DeeplinkInstallAppDeviceSelection]: {
+    appKey: string;
   };
   [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;

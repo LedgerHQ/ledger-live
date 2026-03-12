@@ -46,7 +46,7 @@ describe("genericSignOperation", () => {
       craftTransaction: jest.fn().mockResolvedValue({ transaction: "unsignedTx" }),
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),
-      getSequence: jest.fn().mockResolvedValue(1n),
+      getNextSequence: jest.fn().mockResolvedValue(1n),
     });
 
     (transactionToIntent as jest.Mock).mockReturnValue(txIntent);

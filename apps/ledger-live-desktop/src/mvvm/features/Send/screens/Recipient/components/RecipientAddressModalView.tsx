@@ -109,7 +109,7 @@ export function RecipientAddressModalView({
           onSelect={onAddressSelect}
           isSanctioned={isSanctioned}
           isAddressComplete={isAddressComplete}
-          hasBridgeError={showBridgeRecipientError || showBridgeRecipientWarning}
+          hasBridgeError={showBridgeRecipientError}
         />
       )}
 

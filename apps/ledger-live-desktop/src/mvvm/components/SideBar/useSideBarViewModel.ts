@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
+import { useNavigateToMyLedger } from "~/renderer/hooks/useNavigateToMyLedger";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -185,6 +186,7 @@ export function useSideBarViewModel(): SideBarViewModel {
   );
 
   const navHandlers = useMemo(() => createNavHandlers(push, trackEntry), [push, trackEntry]);
+  const handleClickManager = useNavigateToMyLedger(push, trackEntry);
 
   const openSendFlow = useOpenSendFlow();
 
@@ -317,6 +319,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     push,
     trackEntry,
     ...navHandlers,
+    handleClickManager,
     handleClickRefer,
     handleClickRecover,
     handleOpenSendModal,

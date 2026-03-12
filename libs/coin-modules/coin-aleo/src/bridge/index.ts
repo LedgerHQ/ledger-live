@@ -19,6 +19,7 @@ import type { AleoAccount, Transaction as AleoTransaction } from "../types/index
 import type { AleoSigner } from "../types/signer";
 import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";
+import { broadcast } from "./broadcast";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getAccountShape, sync } from "./sync";
 import { createTransaction } from "./createTransaction";
@@ -60,9 +61,7 @@ export function buildAccountBridge(
     signRawOperation: (): Observable<SignOperationEvent> => {
       throw new Error("signRawOperation is not supported");
     },
-    broadcast: () => {
-      throw new Error("broadcast is not supported");
-    },
+    broadcast,
     estimateMaxSpendable,
     assignFromAccountRaw,
     assignToAccountRaw,

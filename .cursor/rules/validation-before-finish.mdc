@@ -1,0 +1,30 @@
+---
+description: Run typecheck and unit tests for the changed scope before finishing agentic code changes; prefer watch mode and reuse terminals.
+alwaysApply: true
+---
+
+# Validation Before Finishing Agentic Tasks
+
+Before finishing any agentic task that makes code changes, run these validation steps:
+
+1. **Typecheck**
+2. **Unit tests**
+
+## Scope
+
+- Run tasks for the **given lib, app, or feature** — not the entire monorepo.
+- From repo root use `pnpm --filter <package-name>` or the `desktop` / `mobile` shorthands. From the package directory run scripts directly.
+
+**Examples (from repo root):**
+
+- Mobile: `pnpm mobile typecheck`, `pnpm mobile test:jest:watch`
+- Desktop: `pnpm desktop typecheck`, `pnpm desktop test:jest:watch`
+- Lib (e.g. live-countervalues-react): `pnpm --filter live-countervalues-react typecheck` and `pnpm --filter live-countervalues-react test --watch`
+
+## Watch Mode and Terminals
+
+- **Prefer watch tasks** when available (e.g. `pnpm mobile test:jest:watch` or a package’s `test --watch` / `jest --watch`).
+- **Reuse an existing terminal** that already has a watch task running before starting a new one.
+- **When starting a new terminal** for validation, start in watch mode when the script supports it.
+
+Fix any failing typecheck or test before considering the task complete.

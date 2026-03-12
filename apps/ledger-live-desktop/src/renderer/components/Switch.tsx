@@ -94,8 +94,14 @@ export default function Switch({
       }}
       forceBgColor={forceBgColor}
     >
-      <input type="checkbox" disabled={disabled || false} checked={isChecked} readOnly />
-      <Ball small={small} medium={medium} isChecked={isChecked} />
+      <input
+        key="switch-input"
+        type="checkbox"
+        disabled={disabled || false}
+        checked={isChecked}
+        readOnly
+      />
+      <Ball key="switch-ball" small={small} medium={medium} isChecked={isChecked} />
     </Base>
   );
 }

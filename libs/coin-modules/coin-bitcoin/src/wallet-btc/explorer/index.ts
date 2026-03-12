@@ -1,4 +1,4 @@
-import type { BroadcastConfig } from "@ledgerhq/types-live";
+import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
 import { IExplorer, NetworkInfoResponse } from "./types";
@@ -99,6 +99,15 @@ class BitcoinLikeExplorer implements IExplorer {
     const pendingsTxs = await this.fetchPendingTxs(address, params);
     pendingsTxs.forEach(tx => this.hydrateTx(address, tx));
     return pendingsTxs;
+  }
+
+  async getTxBlockHeight(hash: string): Promise<number | null> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/tx/${hash}`,
+      params: { verbosity: "Minimal" },
+    });
+    return data.block ? data.block.height : null;
   }
 
   async fetchTxs(

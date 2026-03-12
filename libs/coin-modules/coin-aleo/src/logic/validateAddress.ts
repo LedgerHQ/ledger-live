@@ -1,4 +1,4 @@
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
 import { bech32m } from "./bech32m";
 
 /**
