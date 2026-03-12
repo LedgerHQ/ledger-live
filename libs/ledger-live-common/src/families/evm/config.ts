@@ -1183,7 +1183,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://explorer.adifoundation.ai/api",
+        uri: "https://explorer-bls.adifoundation.ai/api",
       },
       showNfts: false,
     },
