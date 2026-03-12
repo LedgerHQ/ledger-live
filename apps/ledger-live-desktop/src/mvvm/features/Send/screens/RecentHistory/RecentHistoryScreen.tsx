@@ -19,14 +19,14 @@ export function RecentHistoryScreen() {
           <h1 className="-mt-24 mb-6 heading-2-semi-bold text-base">
             {t("newSendFlow.recentHistory.dialog.title")}
           </h1>
-          <p className="m-0 body-1 text-base whitespace-normal break-words">
+          <p className="m-0 body-1 wrap-break-word whitespace-normal text-base">
             {t("newSendFlow.recentHistory.dialog.description")}
           </p>
         </div>
       </DialogBody>
       <DialogFooter className="justify-center px-24">
         <Button
-          className="w-full mt-12"
+          className="mt-12 w-full"
           appearance="base"
           size="lg"
           onClick={goBackToRecipient}
