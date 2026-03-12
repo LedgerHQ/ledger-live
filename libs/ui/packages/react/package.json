@@ -31,7 +31,10 @@
       "default": "./lib/*.js"
     },
     "./*.js": {
-      "@ledgerhq/source": "./src/*.ts",
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/cjs/*.js",
       "default": "./lib/*.js"
     },

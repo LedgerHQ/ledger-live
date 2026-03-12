@@ -1,22 +1,8 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "pretty": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "ESNext",
-    "declaration": true,
-    "outDir": "lib",
-    "module": "CommonJS",
-    "moduleResolution": "Node"
+    "customConditions": []
   },
-  "include": ["src/**/*"],
   "exclude": [
     "**/*.test.ts",
     "**/*.test.tsx",

@@ -55,6 +55,7 @@
     "./lib/*": "./lib/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
       "require": "./lib/*.js",
       "default": "./lib/*.js"
     },

@@ -41,7 +41,7 @@
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
-      "default": "./lib/*.js"
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },

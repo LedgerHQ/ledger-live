@@ -27,6 +27,10 @@ function compile() {
   let nbOfFilteredDiagnostics = 0;
 
   const allDiagnostics = ts.getPreEmitDiagnostics(program).filter(diag => {
+    if (!diag.file) {
+      nbOfFilteredDiagnostics++;
+      return false;
+    }
     // Exclude non ts(x) files and files in non-typed zones
     const fileName = diag.file.fileName;
     const isAppSource = appSourcePrefixes.some(prefix => fileName.startsWith(prefix));

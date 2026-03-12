@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/openTransportReplayer";
+import { TransportReplayer } from "@ledgerhq/hw-transport-mocker";
 // Using @noble/curves instead of tiny-secp256k1
 import { secp256k1 } from "@noble/curves/secp256k1";
 

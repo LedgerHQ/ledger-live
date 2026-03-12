@@ -1045,7 +1045,7 @@ const envDefinitions = {
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> => {
+export const getDefinition = (name: string): EnvDef<any> | undefined => {
   if (name in envDefinitions) {
     return envDefinitions[name as EnvName];
   }

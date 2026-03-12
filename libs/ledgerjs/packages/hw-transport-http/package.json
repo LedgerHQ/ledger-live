@@ -32,8 +32,13 @@
     "./lib/*": "./lib/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
       "require": "./lib/*.js",
       "default": "./lib/*.js"
+    },
+    "./WebSocketTransport": {
+      "import": "./lib-es/WebSocketTransport.js",
+      "require": "./lib/WebSocketTransport.js"
     },
     "./package.json": "./package.json"
   },
