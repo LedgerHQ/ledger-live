@@ -2,7 +2,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ethers } from "ethers";
 import { InvalidTransactionError } from "../errors";
 import { getNodeApi } from "../network/node";
-import { getSequence } from "./getSequence";
+import { getNextSequence } from "./getNextSequence";
 
 export async function validateTransaction(
   currency: CryptoCurrency,
@@ -23,7 +23,7 @@ export async function validateTransaction(
   }
 
   if (transaction.from) {
-    const currentNonce = await getSequence(currency, transaction.from);
+    const currentNonce = await getNextSequence(currency, transaction.from);
     if (typeof transaction.nonce === "number") {
       const txNonce = BigInt(transaction.nonce);
       if (txNonce < currentNonce) {
