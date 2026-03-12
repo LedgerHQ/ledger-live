@@ -18,7 +18,7 @@ export function ModularDrawerFlowView({
 }: ModularDrawerFlowProps) {
   const currentStep = useSelector(modularDrawerStepSelector);
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
-  
+
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case ModularDrawerStep.Asset:
