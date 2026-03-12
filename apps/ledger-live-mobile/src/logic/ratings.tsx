@@ -32,7 +32,7 @@ export type RatingsHappyMoment = {
 
 export type RatingsDataOfUser = {
   /** Date of the first time the user oppened the app */
-  appFirstStartDate?: Date;
+  appFirstStartDate?: Date | string;
   /** Number of times the user oppened the application */
   numberOfAppStarts?: number;
   /** Number of times the user oppened the application since the last time his app crashed */
@@ -126,12 +126,11 @@ const useRatings = () => {
     const minimumDurationSinceAppFirstStart: Duration =
       ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
 
+    const firstStartDate =
+      ratingsDataOfUser.appFirstStartDate && new Date(ratingsDataOfUser.appFirstStartDate);
     if (
-      ratingsDataOfUser.appFirstStartDate &&
-      isBefore(
-        Date.now(),
-        add(ratingsDataOfUser.appFirstStartDate, minimumDurationSinceAppFirstStart),
-      )
+      firstStartDate &&
+      isBefore(Date.now(), add(firstStartDate, minimumDurationSinceAppFirstStart))
     ) {
       return false;
     }
