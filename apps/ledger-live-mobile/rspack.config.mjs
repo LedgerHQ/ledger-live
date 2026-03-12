@@ -117,7 +117,7 @@ const detoxAliases = isDetoxBuild
     }
   : {};
 
-const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
+const hermesNonCompatibleDependencies = ["@polkadot/types-codec", "@icp-sdk", "@dfinity"];
 
 /**
  * Checks if the specified resource file is compatible with hermes-parser following
