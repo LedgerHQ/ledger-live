@@ -9,7 +9,8 @@
     "src/serialization.ts",
     "src/specs.ts",
     "src/transaction.ts",
-    "src/hw-signMessage.ts"
+    "src/hw-signMessage.ts",
+    "src/api/index.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",

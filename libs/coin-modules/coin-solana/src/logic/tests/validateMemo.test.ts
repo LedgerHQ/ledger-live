@@ -1,4 +1,4 @@
-import { MAX_MEMO_LENGTH, validateMemo } from "./validateMemo";
+import { MAX_MEMO_LENGTH, validateMemo } from "../validateMemo";
 
 describe("validateMemo", () => {
   it("should return false when memo exceed maximum allowed size", () => {
