@@ -35,8 +35,8 @@ describe("useCryptoAddressesBannerViewModel", () => {
   it("should return title, description, icon, onGoToAccounts and onAddAccount", () => {
     const { result } = renderHook(() => useCryptoAddressesBannerViewModel());
 
-    expect(result.current.title).toBe("Crypto addresses");
-    expect(result.current.description).toBe("No addresses yet");
+    expect(result.current.title).toBe("Crypto accounts");
+    expect(result.current.description).toBe("No accounts yet");
     expect(result.current.icon).toBe(Wallet);
     expect(result.current.onGoToAccounts).toBeDefined();
     expect(typeof result.current.onGoToAccounts).toBe("function");
