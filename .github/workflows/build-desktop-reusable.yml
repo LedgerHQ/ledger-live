@@ -53,10 +53,10 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@support/bump-node-24
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/bump-node-24
         id: setup-caches
         with:
           install-proto: true
@@ -68,7 +68,7 @@ jobs:
 
       - name: Build desktop
         id: build-desktop
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@support/bump-node-24
         with:
           os: ${{ matrix.config.output-name }}
 
@@ -144,7 +144,7 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@support/bump-node-24
         if: ${{ !cancelled() && github.event.number != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -152,7 +152,7 @@ jobs:
           prNumber: ${{ github.event.number}}
           mode: desktop
 
-      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@support/bump-node-24
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}

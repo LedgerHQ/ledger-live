@@ -40,7 +40,7 @@ jobs:
           git fetch origin develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@support/bump-node-24
         id: setup-caches
         with:
           install-proto: false
