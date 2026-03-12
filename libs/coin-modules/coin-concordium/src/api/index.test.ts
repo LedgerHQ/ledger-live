@@ -1,5 +1,4 @@
-import type { ConcordiumCoinConfig } from "../types";
-import { VALID_ADDRESS } from "../test/fixtures";
+import { TESTNET_COIN_CONFIG, VALID_ADDRESS } from "../test/fixtures";
 import { createApi } from ".";
 
 jest.mock("../logic", () => ({
@@ -25,21 +24,13 @@ const {
   listOperations: listOperationsMock,
 } = jest.requireMock("../logic");
 
-const mockConfig: ConcordiumCoinConfig = {
-  networkType: "testnet",
-  grpcUrl: "https://grpc.testnet.concordium.com",
-  grpcPort: 20000,
-  proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-  minReserve: 0,
-};
-
 describe("api/index", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should return every api methods", () => {
-    expect(createApi(mockConfig, "concordium_testnet")).toEqual({
+    expect(createApi(TESTNET_COIN_CONFIG, "concordium_testnet")).toEqual({
       broadcast: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
@@ -61,7 +52,7 @@ describe("api/index", () => {
 
   describe("broadcast", () => {
     it("should call broadcast with transaction and currency", async () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       broadcastMock.mockResolvedValue("tx-hash-123");
 
       const result = await api.broadcast("signed-tx-data");
@@ -73,7 +64,7 @@ describe("api/index", () => {
 
   describe("getBalance", () => {
     it("should call getBalance with address and currency", async () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockBalances = [{ asset: { type: "native" }, value: BigInt(5000000) }];
       getBalanceMock.mockResolvedValue(mockBalances);
 
@@ -86,7 +77,7 @@ describe("api/index", () => {
 
   describe("lastBlock", () => {
     it("should call lastBlock with currency", async () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockBlockInfo = { height: 1000, hash: "block-hash", time: new Date() };
       lastBlockMock.mockResolvedValue(mockBlockInfo);
 
@@ -99,7 +90,7 @@ describe("api/index", () => {
 
   describe("listOperations", () => {
     it("should call listOperations with address, pagination and currency", async () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockPage = { items: [{ id: "op1" }, { id: "op2" }], next: undefined };
       listOperationsMock.mockResolvedValue(mockPage);
       const pagination = { minHeight: 100 };
@@ -117,7 +108,7 @@ describe("api/index", () => {
 
   describe("getBlock", () => {
     it("should call getBlock with height and currency", async () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockBlock = { height: 500, hash: "block-500", transactions: [] };
       getBlockMock.mockResolvedValue(mockBlock);
 
@@ -130,7 +121,7 @@ describe("api/index", () => {
 
   describe("getBlockInfo", () => {
     it("should call getBlockInfo with height and currency", async () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockBlockInfo = { height: 600, hash: "block-600", time: new Date() };
       getBlockInfoMock.mockResolvedValue(mockBlockInfo);
 
@@ -143,17 +134,17 @@ describe("api/index", () => {
 
   describe("unsupported methods", () => {
     it("should throw error for getStakes", () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
     });
 
     it("should throw error for getRewards", () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getRewards("address")).toThrow("getRewards is not supported");
     });
 
     it("should throw error for getValidators", () => {
-      const api = createApi(mockConfig, "concordium_testnet");
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getValidators()).toThrow("getValidators is not supported");
     });
   });

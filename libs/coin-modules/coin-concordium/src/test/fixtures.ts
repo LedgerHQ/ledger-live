@@ -8,7 +8,8 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Transaction } from "../types";
+import type { ConcordiumCoinConfig, ConcordiumConfig, Transaction } from "../types";
+import coinConfig from "../config";
 
 // Valid Concordium addresses for testing
 export const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
@@ -19,6 +20,22 @@ export const PUBLIC_KEY = "aa".repeat(32);
 
 // 96 hex characters (48 bytes) - standard credential ID length
 export const CRED_ID = "cc".repeat(48);
+
+export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
+  networkType: "testnet",
+  grpcUrl: "grpc.testnet.concordium.com",
+  grpcPort: 20000,
+  proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
+  minReserve: 100000,
+};
+
+export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>): void {
+  coinConfig.setCoinConfig(() => ({
+    status: { type: "active" },
+    ...TESTNET_COIN_CONFIG,
+    ...overrides,
+  }));
+}
 
 export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
   return {

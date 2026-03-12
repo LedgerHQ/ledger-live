@@ -1,5 +1,6 @@
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import type { ConcordiumMemo } from "../types";
+import { TESTNET_COIN_CONFIG } from "../test/fixtures";
 import { createApi } from ".";
 
 /**
@@ -15,19 +16,9 @@ describe("Concordium Api (testnet)", () => {
   // https://testnet.ccdscan.io/
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
-  const PUBLIC_KEY = "aa".repeat(32);
 
   beforeAll(() => {
-    api = createApi(
-      {
-        networkType: "testnet",
-        grpcUrl: "grpc.testnet.concordium.com",
-        grpcPort: 20000,
-        proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-        minReserve: 100000,
-      },
-      "concordium_testnet",
-    );
+    api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
   });
 
   describe("estimateFees", () => {

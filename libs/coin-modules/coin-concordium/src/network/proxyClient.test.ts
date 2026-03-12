@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import {
   withClient,
+  getConsensusInfo,
   getAccountsByPublicKey,
   getAccountBalance,
   getAccountNonce,
@@ -22,7 +23,7 @@ jest.mock("../config", () => ({
   __esModule: true,
   default: {
     getCoinConfig: jest.fn().mockReturnValue({
-      proxyUrl: "https://wallet-proxy.concordium.com",
+      proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
     }),
   },
 }));
@@ -97,8 +98,42 @@ describe("proxyClient", () => {
 
       // Both calls should use same base URL (client was cached)
       expect(mockNetwork).toHaveBeenCalledTimes(2);
-      expect(mockNetwork.mock.calls[0][0].url).toBe("https://wallet-proxy.concordium.com/test1");
-      expect(mockNetwork.mock.calls[1][0].url).toBe("https://wallet-proxy.concordium.com/test2");
+      expect(mockNetwork.mock.calls[0][0].url).toBe(
+        "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/test1",
+      );
+      expect(mockNetwork.mock.calls[1][0].url).toBe(
+        "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/test2",
+      );
+    });
+  });
+
+  describe("getConsensusInfo", () => {
+    it("should fetch consensus info", async () => {
+      const mockResponse = {
+        bestBlock: "abc123",
+        bestBlockHeight: 1000,
+        genesisBlock: "genesis123",
+        genesisTime: "2021-06-09T10:00:00Z",
+        lastFinalizedBlock: "def456",
+        lastFinalizedBlockHeight: 999,
+        lastFinalizedTime: "2024-01-15T10:30:00Z",
+        epochDuration: 3600000,
+        protocolVersion: 6,
+        genesisIndex: 0,
+        currentEraGenesisBlock: "era123",
+        currentEraGenesisTime: "2021-06-09T10:00:00Z",
+      };
+      mockNetwork.mockResolvedValue({ data: mockResponse });
+
+      const result = await getConsensusInfo(currencyId);
+
+      expect(result).toEqual(mockResponse);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/consensusInfo",
+        }),
+      );
     });
   });
 
@@ -113,7 +148,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "GET",
-          url: `https://wallet-proxy.concordium.com/v0/keyAccounts/${"aa".repeat(32)}`,
+          url: `https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/keyAccounts/${"aa".repeat(32)}`,
         }),
       );
     });
@@ -135,7 +170,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "GET",
-          url: "https://wallet-proxy.concordium.com/v2/accBalance/test-address",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v2/accBalance/test-address",
         }),
       );
     });
@@ -152,7 +187,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "GET",
-          url: "https://wallet-proxy.concordium.com/v0/accNonce/test-address",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/accNonce/test-address",
         }),
       );
     });
@@ -169,7 +204,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "GET",
-          url: "https://wallet-proxy.concordium.com/v3/accTransactions/test-address",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v3/accTransactions/test-address",
         }),
       );
     });
@@ -198,7 +233,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "GET",
-          url: "https://wallet-proxy.concordium.com/v0/transactionCost",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/transactionCost",
           params: { type: "simpleTransfer", numSignatures: 1 },
         }),
       );
@@ -218,7 +253,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "PUT",
-          url: "https://wallet-proxy.concordium.com/v0/submitTransfer/",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/submitTransfer/",
           data: {
             transaction: "transaction-body-hex",
             signatures: {
@@ -245,7 +280,7 @@ describe("proxyClient", () => {
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "PUT",
-          url: "https://wallet-proxy.concordium.com/v0/submitCredential/",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/submitCredential/",
           data: credentialData,
         }),
       );

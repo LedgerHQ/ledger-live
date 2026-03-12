@@ -8,6 +8,7 @@ import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
+  ConsensusInfoResponse,
   GetOperationsParams,
   GetTransactionCostParams,
   TransactionsResponse,
@@ -83,6 +84,19 @@ export async function withClient<T>(
     interval: RETRY_DELAY,
     intervalMultiplicator: 1,
   });
+}
+
+/**
+ * Get consensus info from the Concordium network.
+ * GET /v0/consensusInfo
+ */
+export function getConsensusInfo(currencyId: string): Promise<ConsensusInfoResponse> {
+  return withClient(currencyId, async client =>
+    client.request<ConsensusInfoResponse>({
+      method: "GET",
+      url: "/v0/consensusInfo",
+    }),
+  );
 }
 
 /**

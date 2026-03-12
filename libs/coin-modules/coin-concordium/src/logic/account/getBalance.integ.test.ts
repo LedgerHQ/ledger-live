@@ -1,18 +1,9 @@
-import coinConfig from "../../config";
+import { setupTestnetCoinConfig } from "../../test/fixtures";
 import { getBalance } from "./getBalance";
 
 describe("getBalance", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
   });
 
   it("fetches native balance for account with funds", async () => {

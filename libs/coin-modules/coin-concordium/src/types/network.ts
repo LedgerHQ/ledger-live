@@ -1,3 +1,29 @@
+/**
+ * Response from /v0/consensusInfo
+ * Subset of Concordium node's GetConsensusInfo relevant for wallet operations
+ */
+export interface ConsensusInfoResponse {
+  bestBlock: string;
+  bestBlockHeight: number;
+  genesisBlock: string;
+  genesisTime: string;
+  lastFinalizedBlock: string;
+  lastFinalizedBlockHeight: number;
+  lastFinalizedTime?: string;
+  epochDuration: number;
+  protocolVersion: number;
+  genesisIndex: number;
+  currentEraGenesisBlock: string;
+  currentEraGenesisTime: string;
+  slotDuration?: number;
+  concordiumBFTStatus?: {
+    currentTimeoutDuration: number;
+    currentRound: number;
+    currentEpoch: number;
+    triggerBlockTime: string;
+  };
+}
+
 export interface TransactionQueryParams {
   limit?: number;
   order?: "a" | "d"; // ascending or descending

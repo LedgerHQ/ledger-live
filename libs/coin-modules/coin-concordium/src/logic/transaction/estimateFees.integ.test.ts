@@ -1,18 +1,9 @@
-import coinConfig from "../../config";
+import { setupTestnetCoinConfig } from "../../test/fixtures";
 import { estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
   });
 
   describe("Simple transfer", () => {
@@ -84,34 +75,19 @@ describe("estimateFees", () => {
 
   describe("Error handling", () => {
     it("should return fallback values on network error", async () => {
-      coinConfig.setCoinConfig(() => ({
-        status: {
-          type: "active",
-        },
-        networkType: "testnet",
-        grpcUrl: "invalid.url",
-        grpcPort: 1,
+      // Use a distinct currencyId to avoid hitting the cached proxyClient
+      setupTestnetCoinConfig({
         proxyUrl: "https://invalid-proxy.invalid",
-        minReserve: 100000,
-      }));
+      });
 
-      const result = await estimateFees("concordium_testnet");
+      const result = await estimateFees("concordium_testnet_invalid");
 
       expect(typeof result.cost).toBe("bigint");
       expect(typeof result.energy).toBe("bigint");
       expect(result.cost).toBeGreaterThan(BigInt(0));
       expect(result.energy).toBeGreaterThan(BigInt(0));
 
-      coinConfig.setCoinConfig(() => ({
-        status: {
-          type: "active",
-        },
-        networkType: "testnet",
-        grpcUrl: "grpc.testnet.concordium.com",
-        grpcPort: 20000,
-        proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-        minReserve: 100000,
-      }));
+      setupTestnetCoinConfig();
     });
   });
 });
