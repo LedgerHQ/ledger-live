@@ -54,6 +54,13 @@ import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
+import Config from "react-native-config";
+import {
+  E2E_WEBVIEW_CONSOLE_LOG_TYPE,
+  E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT,
+  E2E_WEBVIEW_NETWORK_LOG_TYPE,
+} from "~/e2e/webviewNetworkLogCapture";
+import { webviewLogStore } from "~/e2e/webviewLogStore";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -456,18 +463,46 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [receive] = useJSONRPCServer(handlers, handleSend);
     const handleMessage = useCallback(
       (e: WebViewMessageEvent) => {
-        // FIXME: event isn't the same on desktop & mobile
-        // if (e.isTrusted && e.origin === manifest.url.origin && e.data) {
         if (e.nativeEvent?.data) {
-          receive(JSON.parse(e.nativeEvent.data));
+          try {
+            const msg = JSON.parse(e.nativeEvent.data);
+            if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+              webviewLogStore.addNetworkLog(msg.payload);
+              return;
+            }
+            if (msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+              webviewLogStore.addConsoleLog(msg.payload);
+              return;
+            }
+            receive(msg);
+          } catch {
+            try {
+              receive(JSON.parse(e.nativeEvent.data));
+            } catch {
+              // ignore malformed messages
+            }
+          }
         }
       },
       [receive],
     );
 
-    const handleError = useCallback(() => {
-      tracking.platformLoadFail(manifest);
-    }, [manifest, tracking]);
+    const handleError = useCallback(
+      (event?: { nativeEvent?: { description?: string; code?: number } }) => {
+        if (Config.DETOX) {
+          const desc = event?.nativeEvent?.description;
+          const code = event?.nativeEvent?.code;
+          webviewLogStore.addLoadError({
+            timestamp: new Date().toISOString(),
+            source: "PlatformAPIWebview",
+            message: desc ?? "WebView onError fired",
+            details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
+          });
+        }
+        tracking.platformLoadFail(manifest);
+      },
+      [manifest, tracking],
+    );
 
     const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
       const { targetUrl } = event.nativeEvent;
@@ -515,6 +550,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         webviewDebuggingEnabled={__DEV__}
         applicationNameForUserAgent={APPLICATION_NAME}
+        injectedJavaScriptBeforeContentLoaded={
+          Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
+        }
         {...webviewProps}
       />
     );

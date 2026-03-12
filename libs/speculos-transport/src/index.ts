@@ -68,6 +68,20 @@ const getSpeculosModel = (model: DeviceModelId): string => {
       return model.toLowerCase();
   }
 };
+
+function enrichSpeculosError(err: Error, stdout: string, stderr: string): Error {
+  const extra = [
+    stdout && `--- Speculos stdout ---\n${stdout}`,
+    stderr && `--- Speculos stderr ---\n${stderr}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  if (extra) {
+    err.message = `${err.message}\n\n${extra}`;
+  }
+  return err;
+}
+
 /**
  * Release a speculos device
  */
@@ -285,6 +299,7 @@ export async function createSpeculosDevice(
 
   const p = spawn("docker", [...params, "--seed", `${seed}`]);
 
+  let stdoutAccumulator = "";
   let resolveReady: (value: boolean) => void;
   let rejectReady: (e: Error) => void;
   const ready = new Promise((resolve, reject) => {
@@ -313,23 +328,30 @@ export async function createSpeculosDevice(
 
   p.stdout.on("data", data => {
     if (data) {
-      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
+      const s = String(data).trim();
+      stdoutAccumulator += (stdoutAccumulator ? "\n" : "") + s;
+      log("speculos-stdout", `${speculosID}: ${s}`);
     }
   });
-  let latestStderr: string | undefined;
+  let stderrAccumulator = "";
   p.stderr.on("data", async data => {
     if (!data) return;
-    latestStderr = data;
+    const s = String(data);
+    stderrAccumulator += (stderrAccumulator ? "\n" : "") + s.trim();
 
     if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
+      log("speculos-stderr", `${speculosID}: ${s.trim()}`);
     }
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by")) {
       rejectReady(
-        new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
+        enrichSpeculosError(
+          new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
+          stdoutAccumulator,
+          stderrAccumulator,
+        ),
       );
     } else if (data.includes("is in use by another program")) {
       if (maxRetry > 0) {
@@ -338,8 +360,12 @@ export async function createSpeculosDevice(
         resolveReady(false);
       } else {
         rejectReady(
-          new Error(
-            `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${latestStderr || ""}`,
+          enrichSpeculosError(
+            new Error(
+              "Speculos could not bind to port (already in use). Another container or process may be holding it.",
+            ),
+            stdoutAccumulator,
+            stderrAccumulator,
           ),
         );
       }
@@ -356,7 +382,13 @@ export async function createSpeculosDevice(
 
     if (!destroyed) {
       await destroy();
-      rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
+      rejectReady(
+        enrichSpeculosError(
+          new Error("Speculos process exited unexpectedly."),
+          stdoutAccumulator,
+          stderrAccumulator,
+        ),
+      );
     }
   });
   const hasSucceed = await ready;

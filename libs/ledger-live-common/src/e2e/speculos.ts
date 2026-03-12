@@ -464,6 +464,7 @@ export async function startSpeculos(
   } catch (e: unknown) {
     console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
+    throw sanitizeError(e);
   }
 }
 

@@ -15,6 +15,7 @@ import { addKnownDevice, importBle, removeKnownDevice, removeKnownDevices } from
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
+import { webviewLogStore } from "../../src/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
@@ -135,7 +136,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
       case "getLogs": {
-        const payload = JSON.stringify(logReport.getLogs());
+        const payload = JSON.stringify({
+          appLogs: logReport.getLogs(),
+          webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
+          webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
+          webviewLoadErrors: webviewLogStore.getLoadErrors(),
+        });
         postMessage({
           type: "appLogs",
           payload,
