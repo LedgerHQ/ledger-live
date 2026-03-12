@@ -3,7 +3,14 @@ import coinConfig from "../config";
 import { submitCredential } from "../network/proxyClient";
 import { ConcordiumWalletConnect } from "../network/walletConnect";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import { CRED_ID, createFixtureAccount, createFixtureCurrency, PUBLIC_KEY } from "../test/fixtures";
+import {
+  CRED_ID,
+  createFixtureAccount,
+  createFixtureCurrency,
+  PUBLIC_KEY,
+  setupTestnetCoinConfig,
+  TESTNET_COIN_CONFIG,
+} from "../test/fixtures";
 import { buildOnboardAccount, buildPairWalletConnect } from "./onboard";
 import {
   createFixtureIdAppResponse,
@@ -66,16 +73,7 @@ jest.mock("../network/proxyClient", () => ({
  */
 describe("onboard (testnet integration)", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-      status: {
-        type: "active",
-      },
-    }));
+    setupTestnetCoinConfig();
   });
 
   beforeEach(() => {
@@ -277,11 +275,11 @@ describe("onboard (testnet integration)", () => {
     it("should use correct testnet configuration", () => {
       const config = coinConfig.getCoinConfig();
 
-      expect(config.networkType).toBe("testnet");
-      expect(config.grpcUrl).toBe("grpc.testnet.concordium.com");
-      expect(config.grpcPort).toBe(20000);
-      expect(config.proxyUrl).toBe("https://wallet-proxy.testnet.concordium.com");
-      expect(config.minReserve).toBe(100000);
+      expect(config.networkType).toBe(TESTNET_COIN_CONFIG.networkType);
+      expect(config.grpcUrl).toBe(TESTNET_COIN_CONFIG.grpcUrl);
+      expect(config.grpcPort).toBe(TESTNET_COIN_CONFIG.grpcPort);
+      expect(config.proxyUrl).toBe(TESTNET_COIN_CONFIG.proxyUrl);
+      expect(config.minReserve).toBe(TESTNET_COIN_CONFIG.minReserve);
     });
   });
 });

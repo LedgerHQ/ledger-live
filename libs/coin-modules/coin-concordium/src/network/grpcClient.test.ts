@@ -1,7 +1,6 @@
 import {
   getClient,
   withClient,
-  getLastBlock,
   getBlockInfoByHeight,
   getBlockByHeight,
   getOperations,
@@ -73,8 +72,8 @@ jest.mock("../config", () => ({
   __esModule: true,
   default: {
     getCoinConfig: jest.fn().mockReturnValue({
-      grpcUrl: "https://grpc.concordium.com",
-      grpcPort: 20000,
+      grpcUrl: "https://ccd-node-testnet.coin.ledger-test.com",
+      grpcPort: 443,
     }),
   },
 }));
@@ -135,37 +134,6 @@ describe("grpcClient", () => {
 
       await expect(withClient(currencyId, mockFn)).rejects.toThrow("Fails");
       expect(mockFn).toHaveBeenCalledTimes(2); // DEFAULT_RETRIES = 1
-    });
-  });
-
-  describe("getLastBlock", () => {
-    it("should return last finalized block info", async () => {
-      const mockHash = "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: mockHash,
-        lastFinalizedTime: { value: "1700000000000" },
-      });
-
-      const result = await getLastBlock(currencyId);
-
-      expect(result).toEqual({
-        height: 1000,
-        hash: mockHash,
-        time: new Date(1700000000000),
-      });
-    });
-
-    it("should call getConsensusStatus on client", async () => {
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        lastFinalizedTime: { value: "1000" },
-      });
-
-      await getLastBlock(currencyId);
-
-      expect(mockGetConsensusStatusResponse).toHaveBeenCalled();
     });
   });
 
@@ -364,7 +332,7 @@ describe("grpcClient", () => {
     beforeEach(() => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
     });
@@ -455,7 +423,7 @@ describe("grpcClient", () => {
     it("should return empty cursor when at chain tip", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -476,7 +444,7 @@ describe("grpcClient", () => {
     it("should return next block height as cursor when more blocks exist", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "2000",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -499,7 +467,7 @@ describe("grpcClient", () => {
     it("should return correct cursor when scan ends before MAX_BLOCKS_TO_SCAN", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "150",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -521,12 +489,6 @@ describe("grpcClient", () => {
   });
 
   describe("error handling", () => {
-    it("should handle and throw getLastBlock errors", async () => {
-      mockGetConsensusStatusResponse.mockReturnValue(new Error("Connection failed"));
-
-      await expect(getLastBlock(currencyId)).rejects.toThrow("Connection failed");
-    });
-
     it("should handle and throw getBlockInfoByHeight errors when GetBlocksAtHeight fails", async () => {
       mockGetBlocksAtHeightResponse.mockReturnValue(new Error("Network error"));
 
@@ -561,11 +523,6 @@ describe("grpcClient", () => {
 
   describe("transaction type parsing", () => {
     beforeEach(() => {
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "hash",
-        lastFinalizedTime: { value: "1700000000000" },
-      });
       mockGetBlocksAtHeightResponse.mockReturnValue([
         { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
       ]);

@@ -198,35 +198,30 @@ async function streamToList<T>(stream: AsyncIterable<T>): Promise<T[]> {
 /**
  * Get the last finalized block information.
  *
- * Used by: history/lastBlock.ts
+ * Used exclusively by getOperations to determine the current blockchain height and validate minHeight.
  *
  * @param currencyId - The cryptocurrency ID
  * @returns Block metadata (height, hash, time) of the last finalized block
  */
-export async function getLastBlock(currencyId: string): Promise<BlockInfo> {
-  try {
-    return await withClient(currencyId, async client => {
-      return new Promise<BlockInfo>((resolve, reject) => {
-        client.GetConsensusInfo({}, (error, response) => {
-          if (error) {
-            reject(error);
-            return;
-          }
+async function getLastBlock(currencyId: string): Promise<BlockInfo> {
+  return withClient(currencyId, async client => {
+    return new Promise<BlockInfo>((resolve, reject) => {
+      client.GetConsensusInfo({}, (error, response) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-          const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
+        const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
 
-          resolve({
-            height: Number(lastFinalizedBlockHeight?.value || 0),
-            hash: lastFinalizedBlock?.value?.toString("hex") || "",
-            time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
-          });
+        resolve({
+          height: Number(lastFinalizedBlockHeight?.value || 0),
+          hash: lastFinalizedBlock?.value?.toString("hex") || "",
+          time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
         });
       });
     });
-  } catch (error) {
-    log("concordium-grpc", "getLastBlock", { error });
-    throw error;
-  }
+  });
 }
 
 function handleBlocksResponse(

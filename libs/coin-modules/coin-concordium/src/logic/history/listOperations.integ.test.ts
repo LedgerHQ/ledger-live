@@ -1,5 +1,5 @@
 import type { Operation } from "@ledgerhq/coin-framework/api/types";
-import coinConfig from "../../config";
+import { setupTestnetCoinConfig } from "../../test/fixtures";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
@@ -7,16 +7,7 @@ describe("listOperations", () => {
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
   });
 
   describe("Account with no transactions", () => {

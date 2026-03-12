@@ -1,5 +1,4 @@
-import type { ConcordiumCoinConfig } from "../types";
-import { VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import { TESTNET_COIN_CONFIG, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
 import { createApi } from ".";
 
 jest.mock("../logic", () => ({
@@ -10,21 +9,13 @@ jest.mock("../logic", () => ({
 const { craftTransaction: craftTransactionMock, estimateFees: estimateFeesMock } =
   jest.requireMock("../logic");
 
-const mockConfig: ConcordiumCoinConfig = {
-  networkType: "testnet",
-  grpcUrl: "https://grpc.testnet.concordium.com",
-  grpcPort: 20000,
-  proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-  minReserve: 0,
-};
-
 describe("api/estimateFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should estimate fees for transaction with memo", async () => {
-    const api = createApi(mockConfig, "concordium_testnet");
+    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -54,7 +45,7 @@ describe("api/estimateFees", () => {
   });
 
   it("should estimate fees for transaction without memo", async () => {
-    const api = createApi(mockConfig, "concordium_testnet");
+    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {

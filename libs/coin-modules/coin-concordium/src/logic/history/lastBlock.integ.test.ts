@@ -1,18 +1,9 @@
-import coinConfig from "../../config";
+import { setupTestnetCoinConfig } from "../../test/fixtures";
 import { lastBlock } from "./lastBlock";
 
 describe("lastBlock", () => {
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
   });
 
   it("returns last block info", async () => {

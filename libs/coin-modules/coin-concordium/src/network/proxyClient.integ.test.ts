@@ -1,5 +1,6 @@
-import coinConfig from "../config";
+import { setupTestnetCoinConfig } from "../test/fixtures";
 import {
+  getConsensusInfo,
   getAccountsByPublicKey,
   getAccountBalance,
   getAccountNonce,
@@ -16,16 +17,21 @@ describe("proxyClient", () => {
   const ACCOUNT_ID = "js:2:concordium:test:";
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
+  });
+
+  describe("getConsensusInfo", () => {
+    it("should return consensus info", async () => {
+      const result = await getConsensusInfo(currencyId);
+
+      expect(result).toHaveProperty("lastFinalizedBlockHeight");
+      expect(result).toHaveProperty("lastFinalizedBlock");
+      expect(result).toHaveProperty("bestBlock");
+      expect(result).toHaveProperty("bestBlockHeight");
+      expect(result).toHaveProperty("protocolVersion");
+      expect(result.lastFinalizedBlockHeight).toBeGreaterThan(0);
+      expect(result.lastFinalizedBlock).toMatch(/^[A-Fa-f0-9]{64}$/);
+    });
   });
 
   describe("getAccountsByPublicKey", () => {

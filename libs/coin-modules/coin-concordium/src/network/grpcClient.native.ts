@@ -28,10 +28,6 @@ export async function withClient<T>(
   throw new Error("gRPC client is not available in React Native");
 }
 
-export async function getLastBlock(_currencyId: string): Promise<BlockInfo> {
-  throw new Error("gRPC getLastBlock() method is not available in React Native");
-}
-
 export async function getBlockInfoByHeight(
   _currencyId: string,
   _height: number,
