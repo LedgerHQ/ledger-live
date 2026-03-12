@@ -60,12 +60,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     color: colors[statusColorKey as keyof typeof colors],
   };
 
-  const fromParentCurrency =
-    fromCurrency?.type === "CryptoCurrency"
-      ? fromCurrency
-      : fromCurrency?.type === "TokenCurrency"
-        ? fromCurrency.parentCurrency
-        : undefined;
+  const fromCryptoCurrency =
+    fromCurrency?.type === "TokenCurrency" ? fromCurrency.parentCurrency : fromCurrency;
 
   const getProviderExplorerUrl = () => {
     switch (provider.toLowerCase()) {
@@ -76,8 +72,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
       // fallthrough to default if fromCurrency or fromCurrency.id is undefined
       default:
         return (
-          fromParentCurrency &&
-          getTransactionExplorer(getDefaultExplorerView(fromParentCurrency), operation.hash)
+          fromCryptoCurrency &&
+          getTransactionExplorer(getDefaultExplorerView(fromCryptoCurrency), operation.hash)
         );
     }
   };
