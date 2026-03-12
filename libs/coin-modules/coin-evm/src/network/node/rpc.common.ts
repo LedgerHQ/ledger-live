@@ -9,14 +9,13 @@ import { ethers, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
-import { getCoinConfig } from "../../config";
+import { ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
 import {
   NodeApi,
-  isExternalNodeConfig,
   ERC20Transfer,
   PrefetchedBlockTransaction,
   LogWithAddress,
@@ -97,18 +96,13 @@ const PROVIDERS_BY_RPC: Record<string, JsonRpcProvider> = {};
 export async function withApi<T>(
   currency: CryptoCurrency,
   execute: (api: JsonRpcProvider) => Promise<T>,
-  retries = DEFAULT_RETRIES_RPC_METHODS,
+  nodeConfig: ExternalNodeConfig,
 ): Promise<T> {
-  const config = getCoinConfig(currency).info;
-
-  const { node } = config || /* istanbul ignore next: catched right after if empty */ {};
-  if (!isExternalNodeConfig(node)) {
-    throw new Error("Currency doesn't have an RPC node provided");
-  }
+  const retries = nodeConfig.retries ?? DEFAULT_RETRIES_RPC_METHODS;
   try {
     if (!PROVIDERS_BY_RPC[currency.id]) {
       const chainId = currency.ethereumLikeInfo?.chainId;
-      PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(node.uri, chainId);
+      PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(nodeConfig.uri, chainId);
     }
 
     const provider = PROVIDERS_BY_RPC[currency.id];
@@ -117,8 +111,7 @@ export async function withApi<T>(
     if (retries) {
       // wait the RPC timeout before trying again
       await delay(RPC_TIMEOUT);
-      // decrement with prefix here or it won't work
-      return withApi<T>(currency, execute, --retries);
+      return withApi<T>(currency, execute, { ...nodeConfig, retries: retries - 1 });
     }
     throw e;
   }
@@ -127,7 +120,7 @@ export async function withApi<T>(
 /**
  * Get a transaction by hash
  */
-function makeGetTransaction(retries: number): NodeApi["getTransaction"] {
+function makeGetTransaction(nodeConfig: ExternalNodeConfig): NodeApi["getTransaction"] {
   return (currency, txHash) =>
     withApi(
       currency,
@@ -155,14 +148,14 @@ function makeGetTransaction(retries: number): NodeApi["getTransaction"] {
           erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
         };
       },
-      retries,
+      nodeConfig,
     );
 }
 
 /**
  * Get the balance of an address
  */
-function makeGetCoinBalance(retries: number): NodeApi["getCoinBalance"] {
+function makeGetCoinBalance(nodeConfig: ExternalNodeConfig): NodeApi["getCoinBalance"] {
   return (currency, address) =>
     withApi(
       currency,
@@ -170,13 +163,13 @@ function makeGetCoinBalance(retries: number): NodeApi["getCoinBalance"] {
         const balance = await api.getBalance(normalizeAddress(address));
         return new BigNumber(balance.toString());
       },
-      retries,
+      nodeConfig,
     );
 }
 /**
  * Get the balance of an address
  */
-function makeGetTokenBalance(retries: number): NodeApi["getTokenBalance"] {
+function makeGetTokenBalance(nodeConfig: ExternalNodeConfig): NodeApi["getTokenBalance"] {
   return (currency, address, contractAddress) =>
     withApi(
       currency,
@@ -185,53 +178,56 @@ function makeGetTokenBalance(retries: number): NodeApi["getTokenBalance"] {
         const balance = await erc20.balanceOf(normalizeAddress(address));
         return new BigNumber(balance.toString());
       },
-      retries,
+      nodeConfig,
     );
 }
 /**
  * Get account nonce
  */
-function makeGetTransactionCount(retries: number): NodeApi["getTransactionCount"] {
+function makeGetTransactionCount(nodeConfig: ExternalNodeConfig): NodeApi["getTransactionCount"] {
   return (currency, address) =>
     withApi(
       currency,
       async api => api.getTransactionCount(normalizeAddress(address), "pending"),
-      retries,
+      nodeConfig,
     );
 }
+
 /**
- * Get an estimated gas limit for a transaction
+ * Get an estimated gas limit for a transaction.
+ * Uses retries: 0 so we don't retry when estimation fails for valid reasons (e.g. insufficient funds).
  */
-const getGasEstimation: NodeApi["getGasEstimation"] = (account, transaction) =>
-  withApi(
-    account.currency,
-    async api => {
-      const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
-      const value = BigInt(transaction.amount.toFixed(0));
-      const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
+function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEstimation"] {
+  return (account, transaction) =>
+    withApi(
+      account.currency,
+      async api => {
+        const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
+        const value = BigInt(transaction.amount.toFixed(0));
+        const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
 
-      try {
-        const gasEstimation = await api.estimateGas({
-          ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
-          from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
-          value,
-          data,
-        });
+        try {
+          const gasEstimation = await api.estimateGas({
+            ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
+            from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
+            value,
+            data,
+          });
 
-        return new BigNumber(gasEstimation.toString());
-      } catch (e) {
-        log("error", "EVM Family: Gas Estimation Error", e);
-        throw new GasEstimationError();
-      }
-    },
-    // we don't want to retry this method because it can fail for valid reasons
-    0,
-  );
+          return new BigNumber(gasEstimation.toString());
+        } catch (e) {
+          log("error", "EVM Family: Gas Estimation Error", e);
+          throw new GasEstimationError();
+        }
+      },
+      { ...nodeConfig, retries: 0 },
+    );
+}
 
 /**
  * Get an estimation of fees on the network
  */
-function makeGetFeeData(retries: number): NodeApi["getFeeData"] {
+function makeGetFeeData(nodeConfig: ExternalNodeConfig): NodeApi["getFeeData"] {
   return (currency, transaction) =>
     withApi(
       currency,
@@ -304,35 +300,38 @@ function makeGetFeeData(retries: number): NodeApi["getFeeData"] {
           nextBaseFee: feeData.nextBaseFee ? new BigNumber(feeData.nextBaseFee.toString()) : null,
         };
       },
-      retries,
+      nodeConfig,
     );
 }
 
 /**
- * Broadcast a serialized transaction and returns its hash
+ * Broadcast a serialized transaction and returns its hash.
+ * Uses retries: 0 so we don't retry on broadcast failures (e.g. insufficient funds).
  */
-const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, signedTxHex) =>
-  withApi(
-    currency,
-    async api => {
-      try {
-        const { hash } = await api.broadcastTransaction(signedTxHex);
-        return hash;
-      } catch (e) {
-        if (hasErrorCode(e, "INSUFFICIENT_FUNDS")) {
-          log("error", "EVM Family: Wrong estimation of fees", e);
-          throw new InsufficientFunds();
+function makeBroadcastTransaction(nodeConfig: ExternalNodeConfig): NodeApi["broadcastTransaction"] {
+  return (currency, signedTxHex) =>
+    withApi(
+      currency,
+      async api => {
+        try {
+          const { hash } = await api.broadcastTransaction(signedTxHex);
+          return hash;
+        } catch (e) {
+          if (hasErrorCode(e, "INSUFFICIENT_FUNDS")) {
+            log("error", "EVM Family: Wrong estimation of fees", e);
+            throw new InsufficientFunds();
+          }
+          throw e;
         }
-        throw e;
-      }
-    },
-    0,
-  );
+      },
+      { ...nodeConfig, retries: 0 },
+    );
+}
 
 /**
  * Get the informations about a block by block height
  */
-function makeGetBlockByHeight(retries: number): NodeApi["getBlockByHeight"] {
+function makeGetBlockByHeight(nodeConfig: ExternalNodeConfig): NodeApi["getBlockByHeight"] {
   return (currency, blockHeight = "latest", prefetchTxs = false) =>
     withApi(
       currency,
@@ -386,7 +385,7 @@ function makeGetBlockByHeight(retries: number): NodeApi["getBlockByHeight"] {
           ...(transactionHashes !== undefined && { transactionHashes }),
         };
       },
-      retries,
+      nodeConfig,
     );
 }
 
@@ -394,7 +393,9 @@ function makeGetBlockByHeight(retries: number): NodeApi["getBlockByHeight"] {
  * Get all transaction receipts for a block in one RPC call.
  * This method is not supported by all RPC providers.
  */
-function makeGetBlockReceipts(retries: number): Exclude<NodeApi["getBlockReceipts"], undefined> {
+function makeGetBlockReceipts(
+  nodeConfig: ExternalNodeConfig,
+): Exclude<NodeApi["getBlockReceipts"], undefined> {
   return (currency, blockHeight = "latest") =>
     withApi(
       currency,
@@ -431,7 +432,7 @@ function makeGetBlockReceipts(retries: number): Exclude<NodeApi["getBlockReceipt
           };
         });
       },
-      retries,
+      nodeConfig,
     );
 }
 
@@ -440,7 +441,7 @@ function makeGetBlockReceipts(retries: number): Exclude<NodeApi["getBlockReceipt
  * Not supported by all RPC providers (e.g. Fantom supports it).
  * @see https://www.quicknode.com/docs/ethereum/trace_block
  */
-function makeTraceBlock(retries: number): NonNullable<NodeApi["traceBlock"]> {
+function makeTraceBlock(nodeConfig: ExternalNodeConfig): NonNullable<NodeApi["traceBlock"]> {
   return (currency, blockHeight = "latest") =>
     withApi(
       currency,
@@ -473,7 +474,7 @@ function makeTraceBlock(retries: number): NonNullable<NodeApi["traceBlock"]> {
           return trace;
         });
       },
-      retries,
+      nodeConfig,
     );
 }
 
@@ -547,7 +548,9 @@ function isTransactionReceipt(value: unknown): value is TransactionReceipt {
  *
  * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
  */
-function makeGetOptimismAdditionalFees(retries: number): NodeApi["getOptimismAdditionalFees"] {
+function makeGetOptimismAdditionalFees(
+  nodeConfig: ExternalNodeConfig,
+): NodeApi["getOptimismAdditionalFees"] {
   return async (currency, transaction) =>
     withApi(
       currency,
@@ -579,7 +582,7 @@ function makeGetOptimismAdditionalFees(retries: number): NodeApi["getOptimismAdd
         const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
         return new BigNumber(additionalL1Fees.toString());
       },
-      retries,
+      nodeConfig,
     );
 }
 
@@ -592,7 +595,9 @@ function makeGetOptimismAdditionalFees(retries: number): NodeApi["getOptimismAdd
  *
  * @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/
  */
-function makeGetScrollAdditionalFees(retries: number): NodeApi["getScrollAdditionalFees"] {
+function makeGetScrollAdditionalFees(
+  nodeConfig: ExternalNodeConfig,
+): NodeApi["getScrollAdditionalFees"] {
   return (currency, transaction) =>
     withApi(
       currency,
@@ -615,7 +620,7 @@ function makeGetScrollAdditionalFees(retries: number): NodeApi["getScrollAdditio
         const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
         return new BigNumber(additionalL1Fees.toString());
       },
-      retries,
+      nodeConfig,
     );
 }
 
@@ -636,19 +641,19 @@ function cacheKeyOptimismL1Fees(
   return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
 }
 
-export function createNodeApi(retries: number): NodeApi {
-  const getOptimismAdditionalFeesUncached = makeGetOptimismAdditionalFees(retries);
+export function createNodeApi(config: ExternalNodeConfig): NodeApi {
+  const getOptimismAdditionalFeesUncached = makeGetOptimismAdditionalFees(config);
   return {
-    getBlockByHeight: makeGetBlockByHeight(retries),
-    getCoinBalance: makeGetCoinBalance(retries),
-    getTokenBalance: makeGetTokenBalance(retries),
-    getTransactionCount: makeGetTransactionCount(retries),
-    getTransaction: makeGetTransaction(retries),
-    getBlockReceipts: makeGetBlockReceipts(retries),
-    traceBlock: makeTraceBlock(retries),
-    getGasEstimation,
-    getFeeData: makeGetFeeData(retries),
-    broadcastTransaction,
+    getBlockByHeight: makeGetBlockByHeight(config),
+    getCoinBalance: makeGetCoinBalance(config),
+    getTokenBalance: makeGetTokenBalance(config),
+    getTransactionCount: makeGetTransactionCount(config),
+    getTransaction: makeGetTransaction(config),
+    getBlockReceipts: makeGetBlockReceipts(config),
+    traceBlock: makeTraceBlock(config),
+    getGasEstimation: makeGetGasEstimation(config),
+    getFeeData: makeGetFeeData(config),
+    broadcastTransaction: makeBroadcastTransaction(config),
     getOptimismAdditionalFees: makeLRUCache(
       getOptimismAdditionalFeesUncached,
       cacheKeyOptimismL1Fees,
@@ -656,6 +661,6 @@ export function createNodeApi(retries: number): NodeApi {
         ttl: 15 * 1000, // prevent rate limit by caching for at least 15s
       },
     ),
-    getScrollAdditionalFees: makeGetScrollAdditionalFees(retries),
+    getScrollAdditionalFees: makeGetScrollAdditionalFees(config),
   };
 }

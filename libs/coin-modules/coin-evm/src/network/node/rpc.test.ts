@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import {
   JsonRpcProvider,
@@ -20,7 +20,11 @@ import {
   parseERC20TransfersFromLogs,
 } from "./rpc.common";
 
-const nodeApi = createNodeApi(DEFAULT_RETRIES_RPC_METHODS);
+const nodeApi = createNodeApi({
+  type: "external",
+  uri: "http://test",
+  retries: DEFAULT_RETRIES_RPC_METHODS,
+});
 
 jest.useFakeTimers();
 
@@ -37,13 +41,6 @@ const fakeCurrency: Partial<CryptoCurrency> = {
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 
-const fakeCurrencyWithoutRPC: Partial<CryptoCurrency> = {
-  id: "my_new_chain" as CryptoCurrencyId,
-  ethereumLikeInfo: {
-    chainId: 1,
-  } as EthereumLikeInfo,
-  units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
-};
 const account = makeAccount(
   "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
   fakeCurrency as CryptoCurrency,
@@ -156,22 +153,6 @@ describe("EVM Family", () => {
 
   describe("network/rpc/rpc.common.ts", () => {
     describe("withApi", () => {
-      it("should throw if the currency doesn't have an RPC node", async () => {
-        mockGetConfig.mockImplementationOnce((): any => {
-          return { info: {} };
-        });
-
-        try {
-          await withApi(fakeCurrencyWithoutRPC as CryptoCurrency, (() => Promise.resolve()) as any);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect((e as Error).message).toEqual("Currency doesn't have an RPC node provided");
-        }
-      });
-
       it("should retry on fail", async () => {
         let retries = 2;
         const spy = jest.fn(async () => {
@@ -181,7 +162,8 @@ describe("EVM Family", () => {
           }
           return true;
         });
-        const response = await withApi(fakeCurrency as CryptoCurrency, spy, retries);
+        const nodeConfig = { type: "external" as const, uri: "my-rpc.com", retries: 2 };
+        const response = await withApi(fakeCurrency as CryptoCurrency, spy, nodeConfig);
 
         expect(response).toBe(true);
         // it should fail 2 times and succeed on the next try
@@ -200,8 +182,14 @@ describe("EVM Family", () => {
           return true;
         });
 
+        const nodeConfig = {
+          type: "external" as const,
+          uri: "my-rpc.com",
+          retries: DEFAULT_RETRIES_RPC_METHODS,
+        };
+
         try {
-          await withApi(fakeCurrency as CryptoCurrency, spy);
+          await withApi(fakeCurrency as CryptoCurrency, spy, nodeConfig);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {

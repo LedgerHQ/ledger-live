@@ -36,6 +36,8 @@ export type EvmConfig = {
   showNfts: boolean;
 };
 
+export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;
+
 export type EvmConfigInfo = CurrencyConfig & EvmConfig;
 
 export type EvmCoinConfig = {

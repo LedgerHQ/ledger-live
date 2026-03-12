@@ -2,14 +2,17 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCoinConfig } from "../../config";
 import { UnknownNode } from "../../errors";
 import ledgerNodeApi from "./ledger";
-import { createNodeApi, DEFAULT_RETRIES_RPC_METHODS } from "./rpc";
+import { createNodeApi } from "./rpc";
 import { NodeApi } from "./types";
 
 /** Memoized NodeApi instances for external nodes: key = `${currency.id}:${retries}` */
 const externalNodeApiCache = new Map<string, NodeApi>();
 
-function cacheKey(currencyId: string, retries: number): string {
-  return `${currencyId}:${retries}`;
+function cacheKey(
+  currencyId: string,
+  node: { type: string; uri: string; retries?: number },
+): string {
+  return `${currencyId}:${JSON.stringify(node)}`;
 }
 
 export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
@@ -19,11 +22,10 @@ export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
     case "ledger":
       return ledgerNodeApi;
     case "external": {
-      const retries = config.node.retries ?? DEFAULT_RETRIES_RPC_METHODS;
-      const key = cacheKey(currency.id, retries);
+      const key = cacheKey(currency.id, config.node);
       let api = externalNodeApiCache.get(key);
       if (api === undefined) {
-        api = createNodeApi(retries);
+        api = createNodeApi(config.node);
         externalNodeApiCache.set(key, api);
       }
       return api;

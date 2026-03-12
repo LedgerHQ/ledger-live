@@ -1,10 +1,16 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { JsonRpcProvider } from "ethers";
+import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { encodeStakingData, decodeStakingResult } from "../staking/encoder";
 import { getValidators } from "../staking/validators";
 import { getStakes } from "./getStakes";
+
+jest.mock("../config", () => ({
+  ...jest.requireActual("../config"),
+  getCoinConfig: jest.fn(),
+}));
 
 jest.mock("../network/node/rpc.common", () => ({
   ...jest.requireActual("../network/node/rpc.common"),
@@ -20,10 +26,13 @@ jest.mock("../staking/validators", () => ({
   getValidators: jest.fn(),
 }));
 
+const mockGetCoinConfig = getCoinConfig as jest.Mock;
 const mockWithApi = withApi as jest.Mock;
 const mockEncodeStakingData = encodeStakingData as jest.Mock;
 const mockDecodeStakingResult = decodeStakingResult as jest.Mock;
 const mockGetValidators = getValidators as jest.Mock;
+
+const externalNodeConfig = { type: "external" as const, uri: "https://test" };
 
 describe("EVM Staking - getStakes", () => {
   const address = "0x1234567890abcdef1234567890abcdef12345678";
@@ -31,6 +40,7 @@ describe("EVM Staking - getStakes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.spyOn(console, "error").mockImplementation(() => {});
+    mockGetCoinConfig.mockReturnValue({ info: { node: externalNodeConfig } });
   });
 
   it("should return stake objects with positive amounts for supported currencies", async () => {
