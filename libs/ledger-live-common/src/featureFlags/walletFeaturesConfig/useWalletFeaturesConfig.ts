@@ -43,6 +43,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
       shouldDisplayOnboardingWidget:
         isEnabled && Boolean(params && "onboardingWidget" in params && params.onboardingWidget),
+      shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
     };
   }, [walletFeatureFlag]);
 };

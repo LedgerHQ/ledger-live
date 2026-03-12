@@ -43,6 +43,7 @@ const DISABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayTour: false,
   shouldDisplayAssetSection: false,
   shouldDisplayOnboardingWidget: false,
+  shouldDisplayBrazePlacement: false,
 };
 
 const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
@@ -57,6 +58,7 @@ const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
   shouldDisplayTour: false,
   shouldDisplayAssetSection: false,
   shouldDisplayOnboardingWidget: false,
+  shouldDisplayBrazePlacement: false,
 };
 
 const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
@@ -71,6 +73,7 @@ const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
   shouldDisplayTour: true,
   shouldDisplayAssetSection: true,
   shouldDisplayOnboardingWidget: true,
+  shouldDisplayBrazePlacement: true,
 };
 
 const ALL_PARAMS_ENABLED: Wallet40Params = {
@@ -84,6 +87,7 @@ const ALL_PARAMS_ENABLED: Wallet40Params = {
   tour: true,
   assetSection: true,
   onboardingWidget: true,
+  brazePlacement: true,
 };
 
 describe("useWalletFeaturesConfig hook", () => {
@@ -137,6 +141,7 @@ describe("useWalletFeaturesConfig hook", () => {
         ["tour", { tour: true }, { shouldDisplayTour: true }],
         ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
         ["onboardingWidget", { onboardingWidget: true }, { shouldDisplayOnboardingWidget: true }],
+        ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),

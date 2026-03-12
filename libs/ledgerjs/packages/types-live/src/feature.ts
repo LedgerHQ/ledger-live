@@ -833,6 +833,7 @@ type Feature_Wallet40_Params = {
   assetSection: boolean;
 
   // Specifics
+  brazePlacement?: boolean;
   newReceiveDialog?: boolean;
 };
 

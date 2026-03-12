@@ -110,6 +110,7 @@ export function buildSampleActionCarousel(): {
     cardsType: ContentCardsType.action,
     type: ContentCardsType.category,
     title: "Sample actions",
+    isDismissable: true,
   };
 
   const cards = ACTION_SAMPLES.map((item, index) =>
