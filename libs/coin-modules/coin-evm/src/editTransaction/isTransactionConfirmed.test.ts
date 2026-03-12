@@ -1,5 +1,5 @@
 import { getNodeApi } from "../network/node";
-import { mockNodeApi } from "../network/node/test.utils";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
 jest.mock("../network/node", () => ({

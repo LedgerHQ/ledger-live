@@ -1,5 +1,5 @@
 import { getNodeApi } from "../network/node/index";
-import { mockNodeApi } from "../network/node/test.utils";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { broadcast } from "./broadcast";
 
 jest.mock("../network/node/index", () => ({

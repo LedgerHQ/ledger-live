@@ -11,7 +11,7 @@ import {
   rawNftEip1559Tx,
 } from "./fixtures/transaction.fixtures";
 import { getNodeApi } from "./network/node";
-import { mockNodeApi } from "./network/node/test.utils";
+import { mockNodeApi } from "./network/node/node.fixtures";
 import {
   fromTransactionRaw,
   fromTransactionStatusRaw,

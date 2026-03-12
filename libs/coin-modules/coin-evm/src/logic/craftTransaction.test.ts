@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";
-import { mockNodeApi } from "../network/node/test.utils";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { craftTransaction } from "./craftTransaction";
 
 jest.mock("../network/node", () => ({

@@ -11,7 +11,7 @@ import { EvmCoinConfig, setCoinConfig } from "../config";
 import { GasEstimationError } from "../errors";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
-import { mockNodeApi } from "../network/node/test.utils";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("../network/node", () => ({
