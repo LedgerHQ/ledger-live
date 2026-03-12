@@ -1,42 +1,34 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";
-import ledgerNode from "../network/node/ledger";
+import { mockNodeApi } from "../network/node/test.utils";
 import { lastBlock } from "./lastBlock";
 
-const mockGetBlockByHeight = jest.fn();
 jest.mock("../network/node", () => ({
   ...jest.requireActual("../network/node"),
   getNodeApi: jest.fn(),
 }));
-jest.mock("../network/node/ledger", () => ({
-  __esModule: true,
-  default: {
-    getBlockByHeight: jest.fn(),
-  },
-}));
 
 const mockGetNodeApi = jest.mocked(getNodeApi);
-const mockLedgerGetBlockByHeight = ledgerNode.getBlockByHeight as jest.Mock;
 
 describe("lastBlock", () => {
+  const externalMocks = mockNodeApi();
+  const ledgerMocks = mockNodeApi();
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const c = getCoinConfig(currency) as { info?: { node?: { type?: string } } };
-      if (c?.info?.node?.type === "ledger") {
-        return { getBlockByHeight: mockLedgerGetBlockByHeight } as any;
-      }
-      return { getBlockByHeight: mockGetBlockByHeight } as any;
+      const config = getCoinConfig(currency);
+      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
   it.each([
-    ["an external node", "external", mockGetBlockByHeight],
-    ["a ledger node", "ledger", mockLedgerGetBlockByHeight],
-  ])("returns last block info using %s", async (_, type, mockBlockByHeight) => {
+    ["an external node", "external", externalMocks],
+    ["a ledger node", "ledger", ledgerMocks],
+  ])("returns last block info using %s", async (_, type, nodeApiMock) => {
     setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-    mockBlockByHeight.mockResolvedValue({
+    nodeApiMock.getBlockByHeight.mockResolvedValue({
       hash: "hash",
       height: 33,
       timestamp: new Date("2025-12-31").getTime(),

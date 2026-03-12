@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";
-import ledgerNode from "../network/node/ledger";
+import { mockNodeApi } from "../network/node/test.utils";
 import { craftTransaction } from "./craftTransaction";
 
 jest.mock("../network/node", () => ({
@@ -16,52 +16,16 @@ jest.mock("../network/node", () => ({
   getNodeApi: jest.fn(),
 }));
 
-jest.mock("../network/node/ledger", () => ({
-  __esModule: true,
-  default: {
-    getTransactionCount: jest.fn(),
-    getGasEstimation: jest.fn(),
-    getFeeData: jest.fn(),
-  },
-}));
-
-const mockExternalGetTransactionCount = jest.fn();
-const mockExternalGetGasEstimation = jest.fn();
-const mockExternalGetFeeData = jest.fn();
-
-interface MockNodeFunctions {
-  getTransactionCount: jest.Mock;
-  getGasEstimation: jest.Mock;
-  getFeeData: jest.Mock;
-}
-
-const externalMocks: MockNodeFunctions = {
-  getTransactionCount: mockExternalGetTransactionCount,
-  getGasEstimation: mockExternalGetGasEstimation,
-  getFeeData: mockExternalGetFeeData,
-};
-
-const mockLedgerGetTransactionCount = ledgerNode.getTransactionCount as jest.Mock;
-const mockLedgerGetGasEstimation = ledgerNode.getGasEstimation as jest.Mock;
-const mockLedgerGetFeeData = ledgerNode.getFeeData as jest.Mock;
-
-const ledgerMocks: MockNodeFunctions = {
-  getTransactionCount: mockLedgerGetTransactionCount,
-  getGasEstimation: mockLedgerGetGasEstimation,
-  getFeeData: mockLedgerGetFeeData,
-};
-
 const mockGetNodeApi = jest.mocked(getNodeApi);
 
 describe("craftTransaction", () => {
+  const externalMocks = mockNodeApi();
+  const ledgerMocks = mockNodeApi();
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const c = getCoinConfig(currency) as { info?: { node?: { type?: string } } };
-      if (c?.info?.node?.type === "ledger") {
-        return ledgerNode as any;
-      }
-      return externalMocks as any;
+      const config = getCoinConfig(currency);
+      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
@@ -257,13 +221,10 @@ describe("craftTransaction", () => {
 
   it("preserves passed calldata", async () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
-    mockExternalGetTransactionCount.mockResolvedValue(18);
-    mockExternalGetGasEstimation.mockResolvedValue(new BigNumber(2300));
-    mockExternalGetFeeData.mockResolvedValue({
+    externalMocks.getTransactionCount.mockResolvedValue(18);
+    externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
+    externalMocks.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
-      maxFeePerGas: null,
-      maxPriorityFeePerGas: null,
-      nextBaseFee: null,
     });
 
     const { transaction } = await craftTransaction(
@@ -296,12 +257,9 @@ describe("craftTransaction", () => {
 
   it("preserves passed sequence", async () => {
     setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
-    mockExternalGetGasEstimation.mockResolvedValue(new BigNumber(2300));
-    mockExternalGetFeeData.mockResolvedValue({
+    externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
+    externalMocks.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
-      maxFeePerGas: null,
-      maxPriorityFeePerGas: null,
-      nextBaseFee: null,
     });
 
     const { transaction } = await craftTransaction(
