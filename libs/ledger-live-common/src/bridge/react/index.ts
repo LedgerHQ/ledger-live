@@ -8,3 +8,4 @@ export * from "./useAccountsSyncStatus";
 export * from "./useStablePending";
 export * from "./useSyncLifecycle";
 export * from "./useManualRefresh";
+export * from "./useBalanceSyncState";
