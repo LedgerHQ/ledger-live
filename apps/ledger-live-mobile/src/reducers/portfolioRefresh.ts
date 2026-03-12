@@ -2,14 +2,22 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "~/context/selectors";
 import { State } from "~/reducers/types";
 
+export type SyncPhase = "syncing" | "synced" | "failed";
+
 export interface PortfolioRefreshState {
   isRefreshing: boolean;
   lastSyncTimestampSnapshot: number | null;
+  hasCompletedInitialSync: boolean;
+  lastUserSyncClickTimestamp: number;
+  syncPhase: SyncPhase;
 }
 
 export const INITIAL_STATE: PortfolioRefreshState = {
   isRefreshing: false,
   lastSyncTimestampSnapshot: null,
+  hasCompletedInitialSync: false,
+  lastUserSyncClickTimestamp: 0,
+  syncPhase: "synced",
 };
 
 const portfolioRefreshSlice = createSlice({
@@ -24,15 +32,38 @@ const portfolioRefreshSlice = createSlice({
       state.isRefreshing = false;
       state.lastSyncTimestampSnapshot = null;
     },
+    setHasCompletedInitialSync: (state, action: PayloadAction<boolean>) => {
+      state.hasCompletedInitialSync = action.payload;
+    },
+    setLastUserSyncClickTimestamp: (state, action: PayloadAction<number>) => {
+      state.lastUserSyncClickTimestamp = action.payload;
+    },
+    setSyncPhase: (state, action: PayloadAction<SyncPhase>) => {
+      state.syncPhase = action.payload;
+    },
   },
 });
 
-export const { setRefreshStarted, setRefreshCompleted } = portfolioRefreshSlice.actions;
+export const {
+  setRefreshStarted,
+  setRefreshCompleted,
+  setHasCompletedInitialSync,
+  setLastUserSyncClickTimestamp,
+  setSyncPhase,
+} = portfolioRefreshSlice.actions;
 
 export const selectIsRefreshing = (state: State) => state.portfolioRefresh.isRefreshing;
 
 export const selectLastSyncTimestampSnapshot = (state: State) =>
   state.portfolioRefresh.lastSyncTimestampSnapshot;
+
+export const selectHasCompletedInitialSync = (state: State) =>
+  state.portfolioRefresh.hasCompletedInitialSync;
+
+export const selectLastUserSyncClickTimestamp = (state: State) =>
+  state.portfolioRefresh.lastUserSyncClickTimestamp;
+
+export const selectSyncPhase = (state: State) => state.portfolioRefresh.syncPhase;
 
 export const selectLastSyncTimestamp = createSelector(
   (state: State) => state.accounts.active,

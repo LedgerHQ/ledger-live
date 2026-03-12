@@ -11,6 +11,7 @@ import { useDispatch, useStore } from "~/context/hooks";
 import {
   setRefreshStarted,
   setRefreshCompleted,
+  setLastUserSyncClickTimestamp,
   selectLastSyncTimestamp,
 } from "~/reducers/portfolioRefresh";
 
@@ -52,6 +53,9 @@ function globalSyncRefreshControl<P>(
       });
       setRefreshing(true);
       dispatch(setRefreshStarted(selectLastSyncTimestamp(store.getState())));
+      if (shouldDisplayBalanceRefreshRework) {
+        dispatch(setLastUserSyncClickTimestamp(Date.now()));
+      }
       track("button_clicked", {
         button: "pull to refresh",
         page: route.name,
