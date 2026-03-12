@@ -17,6 +17,7 @@ const ModularDrawerFlowManager = ({
   currencies,
   drawerConfiguration,
   useCase,
+  uiUseCase,
   areCurrenciesFiltered,
   onAssetSelected,
   onAccountSelected,
@@ -85,7 +86,13 @@ const ModularDrawerFlowManager = ({
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return <AccountSelection asset={selectedAsset} onAccountSelected={onAccountSelected} />;
+          return (
+            <AccountSelection
+              asset={selectedAsset}
+              onAccountSelected={onAccountSelected}
+              uiUseCase={uiUseCase}
+            />
+          );
         }
         return null;
       default:

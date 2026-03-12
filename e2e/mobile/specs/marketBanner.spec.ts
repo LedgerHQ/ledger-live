@@ -20,7 +20,7 @@ describe("Market Banner", () => {
 
   beforeAll(async () => {
     await app.init({
-      userdata: "speculos-subAccount",
+      userdata: "1AccountBTC1AccountETHReadOnlyFalse",
       featureFlags: {
         //todo: remove feature flag when market banner is enabled for all users
         lwmWallet40: {

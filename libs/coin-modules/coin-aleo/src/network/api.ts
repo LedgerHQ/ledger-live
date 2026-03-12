@@ -72,6 +72,7 @@ async function getAccountPublicTransactions({
 }): Promise<AleoPublicTransactionsResponse> {
   const { nodeUrl, networkType } = getNetworkConfig(currency);
   const params = new URLSearchParams({
+    metadata: "true",
     limit: limit.toString(),
     sort: order,
     direction,

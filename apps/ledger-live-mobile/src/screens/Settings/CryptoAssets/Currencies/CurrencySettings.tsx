@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withTranslation } from "react-i18next";
 import { Trans, useTranslation } from "~/context/Locale";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Box, Flex, Slider, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import Slider from "@react-native-community/slider";
+import { useTheme } from "@react-navigation/native";
 import SettingsRow from "~/components/SettingsRow";
 import { confirmationsNbForCurrencySelector } from "~/reducers/settings";
 import { State } from "~/reducers/types";
@@ -59,6 +61,18 @@ function EachCurrencySettings({
 }: Props & NavigationProps) {
   const [value, setValue] = useState(confirmationsNb);
   const { t } = useTranslation();
+  const { colors } = useTheme();
+
+  const handleValueChange = useCallback((val: number) => setValue(val), []);
+  const handleSlidingComplete = useCallback(
+    (val: number) => {
+      updateCurrencySettings({
+        ticker: currency.ticker,
+        patch: { confirmationsNb: val },
+      });
+    },
+    [currency.ticker, updateCurrencySettings],
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -84,19 +98,23 @@ function EachCurrencySettings({
           <Box mt={7}>
             <Slider
               step={1}
-              min={defaults.confirmationsNb.min}
-              max={defaults.confirmationsNb.max}
+              minimumValue={defaults.confirmationsNb.min}
+              maximumValue={defaults.confirmationsNb.max}
               value={value}
-              onChange={(val: number) => setValue(val)}
-              onTouchEnd={(val: number) =>
-                updateCurrencySettings({
-                  ticker: currency.ticker,
-                  patch: {
-                    confirmationsNb: val,
-                  },
-                })
-              }
+              onValueChange={handleValueChange}
+              onSlidingComplete={handleSlidingComplete}
+              thumbTintColor={colors.primary}
+              minimumTrackTintColor={colors.primary}
+              style={{ width: "100%", height: 40 }}
             />
+            <Flex flexDirection="row" justifyContent="space-between" px={2} mt={2}>
+              <Text variant="small" fontWeight="medium" color="neutral.c70">
+                {defaults.confirmationsNb.min}
+              </Text>
+              <Text variant="small" fontWeight="medium" color="neutral.c70">
+                {defaults.confirmationsNb.max}
+              </Text>
+            </Flex>
           </Box>
         </>
       ) : (

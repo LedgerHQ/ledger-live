@@ -1,11 +1,10 @@
-import { BigNumber } from "bignumber.js";
-
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { IconAccount } from "../../types";
-import { buildTransaction } from "../../buildTransaction";
+import { BigNumber } from "bignumber.js";
 import { getFees, getStepPrice } from "../../api/node";
+import { buildTransaction } from "../../buildTransaction";
 import getEstimatedFees from "../../getFeesForTransaction";
 import * as logic from "../../logic";
+import { IconAccount } from "../../types";
 
 jest.mock("../../buildTransaction");
 jest.mock("../../api/node");

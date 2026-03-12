@@ -1,15 +1,15 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { BigNumber } from "bignumber.js";
-import type { CeloAccount, RevokeTxo, Transaction } from "../types";
-import { celoKit } from "../network/sdk";
-import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import buildTransaction from "./buildTransaction";
 import {
   CELO_STABLE_TOKENS,
   getStableTokenEnum,
   MAX_FEES_THRESHOLD_MULTIPLIER,
   MIN_GAS_FOR_NATIVE_TRANSFER,
 } from "../constants";
+import { getPendingStakingOperationAmounts, getVote } from "../logic";
+import { celoKit } from "../network/sdk";
+import type { CeloAccount, RevokeTxo, Transaction } from "../types";
+import buildTransaction from "./buildTransaction";
 import { valueToHex } from "./utils";
 
 const getFeesForTransaction = async ({

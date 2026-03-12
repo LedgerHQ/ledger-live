@@ -1,8 +1,8 @@
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
-import { Observable } from "rxjs";
-import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import type { Account, AccountBridge, DerivationMode } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { Transaction } from "../types";
 
 /*  this is due to libs/coin-modules/coin-hedera/src/hw-getAddress.ts

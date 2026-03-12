@@ -1,3 +1,5 @@
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import {
   isCeloOperationExtra,
   isCeloOperationExtraRaw,
@@ -8,8 +10,6 @@ import {
   type CeloResources,
   type CeloResourcesRaw,
 } from "../types";
-import { BigNumber } from "bignumber.js";
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
   const {

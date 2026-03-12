@@ -234,11 +234,11 @@ describe("getTransactionStatus", () => {
 
           // Check only specific known error keys
           if ("recipient" in testCase.expectedStatus.errors) {
-            expect(status.errors.recipient).toBeTruthy();
+            expect(status.errors.recipient).toBeInstanceOf(Error);
           }
 
           if ("amount" in testCase.expectedStatus.errors) {
-            expect(status.errors.amount).toBeTruthy();
+            expect(status.errors.amount).toBeInstanceOf(Error);
           }
         } else {
           expect(Object.keys(status.errors).length).toBe(0);
@@ -251,7 +251,7 @@ describe("getTransactionStatus", () => {
 
           // Check only specific known warning keys
           if ("amount" in testCase.expectedStatus.warnings) {
-            expect(status.warnings.amount).toBeTruthy();
+            expect(status.warnings.amount).toBeInstanceOf(Error);
           }
         } else {
           expect(Object.keys(status.warnings).length).toBe(0);

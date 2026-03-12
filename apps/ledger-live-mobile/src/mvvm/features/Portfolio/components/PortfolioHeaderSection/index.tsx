@@ -1,9 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import { PortfolioBalanceSection } from "../PortfolioBalanceSection";
+import { PortfolioRefreshStatus } from "../PortfolioRefreshStatus";
 import { ScreenHeroSectionView } from "LLM/components/ScreenHeroSection/ScreenHeroSectionView";
 import { usePortfolioHeaderSectionViewModel } from "./usePortfolioHeaderSectionViewModel";
 
@@ -23,10 +25,12 @@ export const PortfolioHeaderSection = ({
   ctas,
 }: PortfolioHeaderSectionProps) => {
   const { safeAreaTop } = usePortfolioHeaderSectionViewModel();
+  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   if (hideGraph) {
     return (
       <View key="portfolioHeaderElements" style={{ paddingTop: safeAreaTop }}>
+        {shouldDisplayBalanceRefreshRework && <PortfolioRefreshStatus />}
         <Flex px={6} key="FirmwareUpdateBanner">
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>

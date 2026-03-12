@@ -14,8 +14,13 @@ export default class SettingsGeneralPage {
 
   @Step("Toggle password")
   async togglePassword() {
-    const password = this.passwordSettingsSwitch();
-    await password.tap();
+    await tapByElement(this.passwordSettingsSwitch());
+  }
+
+  @Step("Expect password toggle to be $0")
+  async expectPasswordToggleValue(value: "ON" | "OFF") {
+    const expected = value === "ON";
+    await detoxExpect(this.passwordSettingsSwitch()).toHaveToggleValue(expected);
   }
 
   @Step("Enter new password")

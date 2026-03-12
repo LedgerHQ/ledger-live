@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
-import type { Transaction } from "@ledgerhq/concordium-core";
-import { encodeMemoToCbor, AccountAddress, TransactionType } from "@ledgerhq/concordium-core";
+import {
+  type Transaction,
+  encodeMemoToCbor,
+  AccountAddress,
+  TransactionType,
+} from "@ledgerhq/concordium-core";
 
 /**
  * Crafts a Concordium transaction for signing.

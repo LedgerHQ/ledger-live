@@ -207,7 +207,7 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { cost: "1000", energy: "500" } });
       const currency = createMockCurrency();
 
-      const result = await getTransactionCost(currency, 1);
+      const result = await getTransactionCost(currency, { numSignatures: 1 });
 
       expect(result).toEqual({ cost: "1000", energy: "500" });
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -225,7 +225,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { submissionId: "tx-123" } });
       const currency = createMockCurrency();
 
-      const result = await submitTransfer(currency, "transaction-body-hex", "signature-hex");
+      const result = await submitTransfer(currency, {
+        transaction: "transaction-body-hex",
+        signatures: { "0": { "0": "signature-hex" } },
+      });
 
       expect(result).toEqual({ submissionId: "tx-123" });
       expect(mockNetwork).toHaveBeenCalledWith(
@@ -271,7 +274,10 @@ describe("proxyClient", () => {
       mockNetwork.mockRejectedValue(new Error("Network error"));
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toEqual([]);
     });
@@ -280,7 +286,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { error: "something" } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toEqual([]);
     });
@@ -302,7 +311,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].type).toBe("IN");
@@ -327,7 +339,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].type).toBe("OUT");
@@ -354,7 +369,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].extra).not.toBeUndefined();
@@ -392,7 +410,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: mockTxs } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -420,7 +441,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toEqual([]);
     });
@@ -442,7 +466,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toEqual([]);
     });
@@ -451,7 +478,7 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [] } });
       const currency = createMockCurrency();
 
-      await getOperations(currency, "test-address", "account-id");
+      await getOperations(currency, { address: "test-address", accountId: "account-id" });
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -464,7 +491,7 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [] } });
       const currency = createMockCurrency();
 
-      await getOperations(currency, "test-address", "account-id", { size: 50 });
+      await getOperations(currency, { address: "test-address", accountId: "account-id", size: 50 });
 
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -489,7 +516,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].fee).toEqual(new BigNumber(0));
@@ -511,7 +541,10 @@ describe("proxyClient", () => {
       mockNetwork.mockResolvedValue({ data: { transactions: [mockTx] } });
       const currency = createMockCurrency();
 
-      const result = await getOperations(currency, "test-address", "account-id");
+      const result = await getOperations(currency, {
+        address: "test-address",
+        accountId: "account-id",
+      });
 
       expect(result).toHaveLength(1);
       expect(result[0].value).toEqual(new BigNumber(0));

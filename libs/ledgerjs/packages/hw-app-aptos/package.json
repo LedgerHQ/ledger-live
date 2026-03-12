@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-aptos",
-  "version": "6.35.0",
+  "version": "6.36.0",
   "description": "Ledger Hardware Wallet Aptos Application API",
   "keywords": [
     "Ledger",
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
     "rimraf": "^4.4.1",

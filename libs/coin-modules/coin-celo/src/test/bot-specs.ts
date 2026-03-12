@@ -1,5 +1,7 @@
-import { DeviceModelId } from "@ledgerhq/devices";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { DeviceModelId } from "@ledgerhq/devices";
+import type { Transaction } from "../types";
 import {
   minimalAmount,
   createLockMutation,
@@ -12,8 +14,6 @@ import {
   createRevokeVoteMutation,
   createWithdrawMutation,
 } from "./specs/index";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "../types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("celo");

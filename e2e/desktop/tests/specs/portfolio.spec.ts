@@ -6,7 +6,7 @@ import { CLI } from "tests/utils/cliUtils";
 
 test.describe("Portfolio", () => {
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "speculos-subAccount",
   });
   test(
     "Charts are displayed when user added his accounts",

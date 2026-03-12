@@ -1,7 +1,7 @@
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { CardanoAccount, Transaction } from "./types";
 
 const options = [

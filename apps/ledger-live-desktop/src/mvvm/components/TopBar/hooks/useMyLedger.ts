@@ -5,7 +5,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
-import { getDeviceIcon, type DeviceIconComponent } from "../utils/getDeviceIcon";
+import { getDeviceIcon, type DeviceIconComponent } from "LLD/utils/getDeviceIcon";
 import { MANAGER_PATH, MANAGER_TRACK_ENTRY } from "../utils/constants";
 
 export const useMyLedger = (): {

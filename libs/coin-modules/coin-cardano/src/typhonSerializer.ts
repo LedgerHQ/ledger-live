@@ -3,9 +3,9 @@ import {
   address as TyphonAddress,
   Transaction as TyphonTransaction,
 } from "@stricahq/typhonjs";
+import { CertificateType } from "@stricahq/typhonjs/dist/types";
 import groupBy from "lodash/groupBy";
 import { getBipPathString } from "./logic";
-import { CertificateType } from "@stricahq/typhonjs/dist/types";
 import {
   CardanoTxOutputFormat,
   DelegationCertificate,

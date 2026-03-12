@@ -158,7 +158,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     <>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
-      <Animated.View style={{ flex: 1 }}>
+      <Animated.View testID="portfolio-screen" style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
           data={data}
           renderItem={renderItem<React.JSX.Element>}

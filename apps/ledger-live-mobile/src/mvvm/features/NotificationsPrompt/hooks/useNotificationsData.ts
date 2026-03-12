@@ -78,6 +78,11 @@ export const useNotificationsData = () => {
       osPermissionStatus: (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus],
       storedUserData: DataOfUser | null,
     ) => {
+      // user has just been onboarded but is quickly redirected to the recover upsell screen.
+      // So ignore the sync of permissions state.
+      if (storedUserData == null) {
+        return;
+      }
       const isAuthorized = osPermissionStatus === AuthorizationStatus.AUTHORIZED;
       // Handle legacy users who opted out before the new drawer system
       const hasLegacyOptOutData =

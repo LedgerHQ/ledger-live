@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { AmountDisplay, Box, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
 import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
@@ -23,6 +22,8 @@ export const PortfolioBalanceSectionView = ({
   countervalueChange,
   unit,
   isBalanceAvailable,
+  isLoading,
+  shouldDisplayBalanceRefreshRework,
   onToggleDiscreetMode,
 }: PortfolioBalanceSectionViewProps) => {
   const { t } = useTranslation();
@@ -65,28 +66,26 @@ export const PortfolioBalanceSectionView = ({
           <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
             <AmountDisplay
               key={unit.code}
-              value={isBalanceAvailable ? balance : 0}
+              value={balance}
               formatter={formatter}
-              hidden={!isBalanceAvailable || discreet}
+              hidden={discreet || (!shouldDisplayBalanceRefreshRework && !isBalanceAvailable)}
+              loading={shouldDisplayBalanceRefreshRework && isLoading}
               testID="portfolio-balance-amount"
             />
             {discreet && <DiscreetModeIcon />}
           </Box>
         </Pressable>
-        <Box
-          lx={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginTop: "s12",
-            minHeight: isBalanceAvailable ? undefined : "s24",
-          }}
-        >
-          {isBalanceAvailable ? (
+        {isBalanceAvailable && (
+          <Box
+            lx={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: "s12",
+            }}
+          >
             <AnalyticPill valueChange={countervalueChange} />
-          ) : (
-            <InfiniteLoader size={20} />
-          )}
-        </Box>
+          </Box>
+        )}
       </>
     );
   };

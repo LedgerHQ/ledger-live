@@ -1,6 +1,6 @@
+import { AccountRaw, Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { IconResourcesRaw, IconResources, IconAccount, IconAccountRaw } from "./types";
-import { AccountRaw, Account } from "@ledgerhq/types-live";
 
 export function toIconResourcesRaw(resources: IconResources): IconResourcesRaw {
   const { nonce, votingPower, totalDelegated } = resources;

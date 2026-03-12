@@ -2,6 +2,7 @@ import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useSideBarViewModel } from "../useSideBarViewModel";
 import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_VALUE_TO_TRACK_ENTRY } from "../utils/constants";
+import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
 import * as segment from "~/renderer/analytics/segment";
 import type { SideBarViewModel } from "../types";
 import { defaultInitialState, withFeatureFlags } from "./testUtils";
@@ -236,6 +237,24 @@ describe("useSideBarViewModel", () => {
       act(() => result.current.handleActiveChange("unknown-value"));
 
       expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("should dispatch SCROLL_TO_TOP_EVENT when clicking Home while already on home and Wallet 4.0 main nav is enabled", () => {
+      const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
+      const { result } = renderViewModel(
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { mainNavigation: true } },
+        }),
+      );
+
+      act(() => result.current.handleActiveChange("home"));
+
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: SCROLL_TO_TOP_EVENT,
+        }),
+      );
+      dispatchEventSpy.mockRestore();
     });
   });
 });

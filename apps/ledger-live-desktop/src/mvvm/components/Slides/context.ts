@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 export interface SlidesContextValue {
   currentIndex: number;
   totalSlides: number;
+  initialIndex: number;
   goToNext: () => void;
   goToPrevious: () => void;
   goToSlide: (index: number) => void;

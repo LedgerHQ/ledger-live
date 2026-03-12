@@ -3,6 +3,7 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
+import { deserializeTransaction } from "../logic/utils";
 
 describe("createApi", () => {
   const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
@@ -42,6 +43,56 @@ describe("createApi", () => {
       });
 
       expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
+  });
+
+  describe("craftTransaction", () => {
+    it("should craft valid transfer_public transaction", async () => {
+      const { transaction } = await api.craftTransaction({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "transfer_public",
+        amount: 100n,
+        sender: testAccountAddress,
+        recipient: emptyAccountAddress,
+      });
+
+      const deserialized = deserializeTransaction(transaction);
+
+      expect(typeof transaction).toBe("string");
+      expect(transaction.length).toBeGreaterThan(0);
+      expect(deserialized).toMatchObject({
+        is_root: true,
+        network_id: expect.any(Number),
+        program_id: expect.any(String),
+        function_name: expect.any(String),
+        inputs: expect.any(Array),
+      });
+      expect(deserialized.inputs.length).toBeGreaterThan(0);
+    });
+
+    it("should craft valid transfer_public_to_private transaction", async () => {
+      const { transaction } = await api.craftTransaction({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "transfer_public_to_private",
+        amount: 100n,
+        sender: testAccountAddress,
+        recipient: testAccountAddress,
+      });
+
+      const deserialized = deserializeTransaction(transaction);
+
+      expect(typeof transaction).toBe("string");
+      expect(transaction.length).toBeGreaterThan(0);
+      expect(deserialized).toMatchObject({
+        is_root: true,
+        network_id: expect.any(Number),
+        program_id: expect.any(String),
+        function_name: expect.any(String),
+        inputs: expect.any(Array),
+      });
+      expect(deserialized.inputs.length).toBeGreaterThan(0);
     });
   });
 

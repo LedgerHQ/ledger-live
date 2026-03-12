@@ -1,13 +1,13 @@
-import BigNumber from "bignumber.js";
 import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import type { AccountRaw, CurrenciesData, TransactionStatusCommon } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import TransactionModule from "../bridge/transaction";
 import { CeloAllFundsWarning } from "../errors";
-import type { AccountRaw, CurrenciesData, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { Transaction } from "../types/types";
 
 // This account is registered for staking and has available funds, locked voting funds,

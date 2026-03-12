@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Button, Text as LText } from "@ledgerhq/native-ui";
 import { useWelcomeNavigation } from "../hooks/useWelcomeNavigation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 /**
  * WelcomeFooter component to display the footer with a button and disclaimer text.
@@ -15,9 +16,10 @@ import { useWelcomeNavigation } from "../hooks/useWelcomeNavigation";
 export function WelcomeFooter() {
   const { t } = useTranslation();
   const { onGetStarted, onPrivacyPolicy, onTermsAndConditions } = useWelcomeNavigation();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(0, 27 - insets.bottom) }]}>
       <Button
         type="main"
         size="large"
@@ -43,7 +45,6 @@ export function WelcomeFooter() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingBottom: 30,
     marginTop: "auto",
     zIndex: 1,
     backgroundColor: "transparent",

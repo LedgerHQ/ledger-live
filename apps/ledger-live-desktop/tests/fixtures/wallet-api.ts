@@ -377,6 +377,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "polygon_amoy",
+    ticker: "POL",
+    name: "Polygon Amoy",
+    family: "ethereum",
+    color: "#6d29de",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
     id: "bitcoin_cash",
     ticker: "BCH",
     name: "Bitcoin Cash",
@@ -707,6 +716,15 @@ export const expectedCurrencyList = [
     family: "aptos",
     color: "#FFCD29",
     decimals: 8,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "adi",
+    ticker: "ADI",
+    name: "Adi",
+    family: "ethereum",
+    color: "#0066CC",
+    decimals: 18,
   },
   {
     type: "CryptoCurrency",

@@ -148,6 +148,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  adi: {
+    type: "CryptoCurrency",
+    id: "adi",
+    coinType: CoinType.ETH,
+    name: "Adi",
+    managerAppName: "Ethereum",
+    ticker: "ADI",
+    scheme: "adi",
+    color: "#0066CC",
+    family: "evm",
+    units: [
+      {
+        name: "ADI",
+        code: "ADI",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 36900,
+    },
+    explorerViews: [blockscoutExplorerView("https://explorer.adifoundation.ai")],
+    keywords: ["adi", "adi chain"],
+    tokenTypes: ["erc20"],
+  },
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -2478,6 +2502,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["matic", "polygon"],
     explorerId: "matic",
     tokenTypes: ["erc20"],
+  },
+  polygon_amoy: {
+    type: "CryptoCurrency",
+    id: "polygon_amoy",
+    coinType: CoinType.ETH,
+    name: "Polygon Amoy",
+    managerAppName: "Ethereum",
+    ticker: "POL",
+    deviceTicker: "POL",
+    scheme: "polygon_amoy",
+    color: "#6d29de",
+    family: "evm",
+    isTestnetFor: "polygon",
+    disableCountervalue: true,
+    ethereumLikeInfo: {
+      chainId: 80002,
+    },
+    units: ethereumUnits("POL", "POL"),
+    explorerViews: [
+      {
+        tx: "https://amoy.polygonscan.com/tx/$hash",
+        address: "https://amoy.polygonscan.com/address/$address",
+        token: "https://amoy.polygonscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+    explorerId: "matic_amoy",
   },
   poswallet: {
     type: "CryptoCurrency",

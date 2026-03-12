@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import * as accountHelpers from "@ledgerhq/coin-framework/account";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -7,7 +7,7 @@ import {
   ClaimRewardsFeesWarning,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import * as accountHelpers from "@ledgerhq/coin-framework/account";
+import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaInsufficientFundsForAssociation,
@@ -20,8 +20,11 @@ import {
   HederaRedundantStakingNodeIdError,
   HederaMemoExceededSizeError,
 } from "../errors";
+import * as estimateFees from "../logic/estimateFees";
+import * as logicUtils from "../logic/utils";
 import { HEDERA_MAX_MEMO_SIZE } from "../logic/validateMemo";
 import { rpcClient } from "../network/rpc";
+import * as preloadData from "../preload-data";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
   getMockedERC20TokenCurrency,
@@ -55,9 +58,6 @@ jest.mock("../preload-data", () => ({
   getCurrentHederaPreloadData: jest.fn(),
 }));
 
-import * as estimateFees from "../logic/estimateFees";
-import * as logicUtils from "../logic/utils";
-import * as preloadData from "../preload-data";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 const mockEstimateFees = estimateFees.estimateFees as jest.Mock;

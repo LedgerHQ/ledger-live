@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type {
+  AleoAccount,
   Transaction as AleoTransaction,
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
@@ -52,7 +53,7 @@ async function handleTransferTransaction({
   transaction,
   allowSelfTransfer,
 }: {
-  account: Account;
+  account: AleoAccount;
   transaction: TransactionSelfTransfer | TransactionTransfer;
   allowSelfTransfer: boolean;
 }): Promise<AleoTransactionStatus> {
@@ -100,7 +101,7 @@ async function handleTransferTransaction({
 
 export const getTransactionStatus: AccountBridge<
   AleoTransaction,
-  Account,
+  AleoAccount,
   AleoTransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
   const allowSelfTransfer = isSelfTransferTransaction(transaction);

@@ -58,9 +58,14 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     async (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      setTrackingSource(page);
-
       const ledgerCurrency = await getLedgerCurrency();
+      track("button_clicked2", {
+        button: "buy",
+        currency: ledgerCurrency ? ledgerCurrency.ticker : currency?.ticker,
+        page,
+        flow: "buy",
+      });
+      setTrackingSource(page);
 
       navigateToBuy(ledgerCurrency, currency?.ticker);
     },

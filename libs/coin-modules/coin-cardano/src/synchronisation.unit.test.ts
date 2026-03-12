@@ -1,17 +1,17 @@
-import BigNumber from "bignumber.js";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
 
-import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
+import { APINetworkInfo, APITransaction } from "./api/api-types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
-import { makeGetAccountShape, mapTxToAccountOperation } from "./synchronisation";
+import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
-import { fetchNetworkInfo } from "./api/getNetworkInfo";
-import { APINetworkInfo, APITransaction } from "./api/api-types";
 import { CardanoSigner } from "./signer";
+import { makeGetAccountShape, mapTxToAccountOperation } from "./synchronisation";
+import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
 
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
@@ -306,10 +306,13 @@ describe("mapTxToAccountOperation", () => {
         { stakeKeyDeposit: "1" } as any,
       );
 
-      expect(op).toBeDefined();
-      expect(op.type).toBe("DELEGATE");
-      expect(op.value.toString()).toBe((3e6).toString()); // fee + deposit spent
-      expect(op.extra.deposit).toMatch(/^2\s*ADA$/);
+      expect(op).toMatchObject({
+        type: "DELEGATE",
+        value: new BigNumber(3e6),
+        extra: {
+          deposit: expect.stringMatching(/^2\s*ADA$/),
+        },
+      });
     });
 
     it("should correctly map the deregistration with withdrawal transaction", async () => {
@@ -370,11 +373,14 @@ describe("mapTxToAccountOperation", () => {
         { stakeKeyDeposit: "1" } as any,
       );
 
-      expect(op).toBeDefined();
-      expect(op.type).toBe("UNDELEGATE");
-      expect(op.value.toString()).toBe((1e6).toString()); // only fee is spent
-      expect(op.extra.refund).toMatch(/^2\s*ADA$/);
-      expect(op.extra.rewards).toMatch(/^10\s*ADA$/);
+      expect(op).toMatchObject({
+        type: "UNDELEGATE",
+        value: new BigNumber(1e6),
+        extra: {
+          refund: expect.stringMatching(/^2\s*ADA$/),
+          rewards: expect.stringMatching(/^10\s*ADA$/),
+        },
+      });
     });
   });
 });

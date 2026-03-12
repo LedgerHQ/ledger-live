@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
-import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../transaction";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import {
   getMockedTransaction,
   getMockedTransactionRaw,
 } from "../test/fixtures/transaction.fixture";
+import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../transaction";
 
 describe("transaction", () => {
   const mockedAccount = getMockedAccount();

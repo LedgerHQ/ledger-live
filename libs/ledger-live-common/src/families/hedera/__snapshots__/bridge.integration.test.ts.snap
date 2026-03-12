@@ -167,7 +167,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "333985159",
         "nodeId": 18,
-        "pendingReward": "878751",
+        "pendingReward": "999480",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
@@ -194,12 +194,12 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "balance": "40094",
+    "balance": "40101",
     "id": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "operationsCount": 4,
     "parentId": "js:2:hedera:0.0.8313485:hederaBip44",
     "pendingOperations": [],
-    "spendableBalance": "40094",
+    "spendableBalance": "40101",
     "swapHistory": [],
     "tokenId": "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "type": "TokenAccountRaw",
@@ -3025,6 +3025,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44",
       "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
         "gasConsumed": 271278,
@@ -3218,6 +3219,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c4128",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992359.883350234",
         "gasConsumed": 271278,
@@ -3243,6 +3245,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
         "gasConsumed": 271278,
@@ -3890,6 +3893,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
       "blockHash": "0xe2cbd241357c4e302918a92401868d6c52508724ec2dee80f5475af1c35d56a6",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766063963.625248000",
         "gasConsumed": 202934,
@@ -3962,6 +3966,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
       "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c4128",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992359.883350234",
         "gasConsumed": 271278,
@@ -4748,6 +4753,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0xe2cbd241357c4e302918a92401868d6c52508724ec2dee80f5475af1c35d56a6",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766063963.625248000",
         "gasConsumed": 202934,
@@ -4775,6 +4781,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c4128",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992359.883350234",
         "gasConsumed": 271278,
@@ -4801,6 +4808,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0x93a5f12cb50c6091a9435f9b0619b825eb43e62307ad638c4498bba54f4b7be5",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992000.873157685",
         "gasConsumed": 266997,
@@ -4826,6 +4834,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
         "gasConsumed": 248195,
@@ -4927,6 +4936,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.10096785:hederaBip44",
       "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
         "gasConsumed": 248195,
@@ -5002,6 +5012,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.10096785:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
         "gasConsumed": 271278,
@@ -5027,6 +5038,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "accountId": "js:2:hedera:0.0.10096785:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7",
       "blockHeight": 5,
+      "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
         "gasConsumed": 248195,

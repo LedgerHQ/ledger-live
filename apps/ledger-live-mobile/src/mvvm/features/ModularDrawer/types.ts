@@ -21,6 +21,7 @@ export type DrawerBaseParams = {
   source?: string;
   areCurrenciesFiltered?: boolean;
   useCase?: string;
+  uiUseCase?: string;
 };
 
 export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {

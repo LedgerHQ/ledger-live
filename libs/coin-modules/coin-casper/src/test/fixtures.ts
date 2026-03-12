@@ -1,13 +1,13 @@
-import BigNumber from "bignumber.js";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
-import type { Transaction, CasperOperation } from "../types";
-import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CASPER_MINIMUM_VALID_AMOUNT_MOTES } from "../consts";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { ITxnHistoryData } from "../api/types";
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { DerivationMode } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { ITxnHistoryData } from "../api/types";
+import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";
+import { CASPER_MINIMUM_VALID_AMOUNT_MOTES } from "../consts";
+import type { Transaction, CasperOperation } from "../types";
 
 /**
  * Sample Casper addresses for testing

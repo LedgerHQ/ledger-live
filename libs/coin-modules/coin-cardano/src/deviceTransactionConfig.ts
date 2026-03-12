@@ -1,18 +1,18 @@
-import BigNumber from "bignumber.js";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
-import { CardanoAccount, Transaction, TransactionStatus } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
+import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 import {
   decodeTokenName,
   getAccountStakeCredential,
   getBech32PoolId,
   getBipPathString,
 } from "./logic";
-import { CARDANO_MAX_SUPPLY } from "./constants";
+import { CardanoAccount, Transaction, TransactionStatus } from "./types";
 
 async function getDeviceTransactionConfig({
   account,

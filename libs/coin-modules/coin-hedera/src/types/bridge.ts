@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
@@ -9,6 +8,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { HEDERA_DELEGATION_STATUS, HEDERA_TRANSACTION_MODES } from "../constants";
 
 export type NetworkInfo = {

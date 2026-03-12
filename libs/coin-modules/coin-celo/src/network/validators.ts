@@ -1,1 +1,0 @@
-export { getValidatorGroups } from ".";

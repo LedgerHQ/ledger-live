@@ -7,11 +7,19 @@ export const PortfolioBalanceSection = ({
   showAssets,
   isReadOnlyMode = false,
 }: PortfolioBalanceSectionProps) => {
-  const { state, balance, countervalueChange, unit, isBalanceAvailable, onToggleDiscreetMode } =
-    usePortfolioBalanceSectionViewModel({
-      showAssets,
-      isReadOnlyMode,
-    });
+  const {
+    state,
+    balance,
+    countervalueChange,
+    unit,
+    isBalanceAvailable,
+    isLoading,
+    shouldDisplayBalanceRefreshRework,
+    onToggleDiscreetMode,
+  } = usePortfolioBalanceSectionViewModel({
+    showAssets,
+    isReadOnlyMode,
+  });
 
   return (
     <PortfolioBalanceSectionView
@@ -20,6 +28,8 @@ export const PortfolioBalanceSection = ({
       countervalueChange={countervalueChange}
       unit={unit}
       isBalanceAvailable={isBalanceAvailable}
+      isLoading={isLoading}
+      shouldDisplayBalanceRefreshRework={shouldDisplayBalanceRefreshRework}
       onToggleDiscreetMode={onToggleDiscreetMode}
     />
   );

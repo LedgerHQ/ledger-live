@@ -1,7 +1,7 @@
-import { BigNumber } from "bignumber.js";
-import { CardanoAccount, CardanoDelegation } from "../types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BalanceHistoryCache } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { CardanoAccount, CardanoDelegation } from "../types";
 
 export const getCardanoAccountFixture = (params: {
   delegation?: Partial<CardanoDelegation>;

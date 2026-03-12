@@ -10,7 +10,7 @@ describe("listOperations", () => {
   const currency = {} as CryptoCurrency;
   const address = "address";
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
   const buildOperationsSpy = (explorer: ExplorerApi) =>
     jest.spyOn(explorer, "getOperations").mockResolvedValue({
@@ -162,7 +162,7 @@ describe("listOperations", () => {
       lastNftOperations: [],
       lastInternalOperations: [
         // Internal operation WITH matching parent coin operation (coin-op-5).
-        // Should be enriched with parent's fee (20) and blockHash ("coin-op-3-block-hash").
+        // Should be enriched with parent's fee (20), feesPayer (address), and blockHash ("coin-op-3-block-hash").
         {
           id: "internal-op-1",
           accountId: "",
@@ -179,7 +179,7 @@ describe("listOperations", () => {
           extra: {},
         },
         // Internal operation WITH matching parent coin operation (coin-op-6).
-        // Should be enriched with parent's fee (15) and blockHash ("coin-op-6-block-hash").
+        // Should be enriched with parent's fee (0) and blockHash ("coin-op-6-block-hash").
         {
           id: "internal-op-2",
           accountId: "",
@@ -198,6 +198,7 @@ describe("listOperations", () => {
         // Internal operation with no matching parent coin operation.
         // This happens when the parent transaction was paid for by another
         // account (e.g., swapping to a fresh address via smart contract).
+        // Should not be enriched with feesPayer (some-other-contract),
         {
           id: "internal-op-3",
           accountId: "",
@@ -255,6 +256,7 @@ describe("listOperations", () => {
                 time: new Date("2025-02-12"),
               },
               fees: 20n,
+              feesPayer: "address1", // feesPayer is always the sender of the native operation
               date: new Date("2025-02-12"),
               failed: false,
             },
@@ -275,6 +277,7 @@ describe("listOperations", () => {
                 time: new Date("2025-02-20"),
               },
               fees: 20n,
+              feesPayer: "address", // feesPayer is always the sender of the native operation
               date: new Date("2025-02-20"),
               failed: true,
             },
@@ -295,6 +298,7 @@ describe("listOperations", () => {
                 time: new Date("2025-02-20"),
               },
               fees: 15n,
+              feesPayer: "contract-address", // feesPayer is always the sender of the native operation
               date: new Date("2025-02-20"),
               failed: false,
             },
@@ -315,6 +319,7 @@ describe("listOperations", () => {
                 time: new Date("2025-02-20"),
               },
               fees: 20n,
+              feesPayer: "address", // feesPayer is the parent sender of the token operation
               date: new Date("2025-02-20"),
               failed: false,
             },
@@ -348,6 +353,7 @@ describe("listOperations", () => {
               },
               date: new Date("2025-02-20"),
               fees: 20n,
+              feesPayer: "address1", // feesPayer is the parent sender of the token operation
               failed: false,
             },
             details: {
@@ -375,6 +381,7 @@ describe("listOperations", () => {
                 time: new Date("2025-02-20"),
               },
               fees: 20n,
+              feesPayer: "address", // feesPayer is the parent sender of the token operation
               date: new Date("2025-02-20"),
               failed: true,
             },
@@ -405,6 +412,7 @@ describe("listOperations", () => {
               date: new Date("2025-02-20"),
               failed: false,
               fees: 20n, // from parent coin-op-5
+              feesPayer: "address", // feesPayer is the parent sender of the internal operation
               hash: "token-op-3-tx-hash",
             },
             details: {
@@ -429,6 +437,7 @@ describe("listOperations", () => {
               date: new Date("2025-02-20"),
               failed: false,
               fees: 15n, // from parent coin-op-6 (internal-op-2 has fee=0)
+              feesPayer: "contract-address", // feesPayer is the parent sender of the internal operation
               hash: "coin-op-6-tx-hash",
             },
             details: {
@@ -454,6 +463,7 @@ describe("listOperations", () => {
               date: new Date("2025-02-25"),
               failed: false,
               fees: 0n,
+              // no feesPayer for orphan internal operation
               hash: "orphan-internal-tx-hash",
             },
             details: {
@@ -480,8 +490,8 @@ describe("listOperations", () => {
     });
   });
 
-  // here is the table of behavior:
-  const behaviors: {
+  // here is the table of behavior for pagination:
+  const paginationBehaviors: {
     limit: number | undefined;
     order: "asc" | "desc" | undefined;
     expectedExplorerOrder: "asc" | "desc";
@@ -502,7 +512,7 @@ describe("listOperations", () => {
     { limit: 10, order: undefined, expectedExplorerOrder: "desc", expectedResultOrder: "desc" },
   ];
 
-  it.each(behaviors)(
+  it.each(paginationBehaviors)(
     "etherscan explorer sort parameter is respected %s",
     async ({ limit, order, expectedExplorerOrder, expectedResultOrder }) => {
       setCoinConfig(
@@ -535,4 +545,64 @@ describe("listOperations", () => {
       }
     },
   );
+
+  it("should not enrich feePayer with ambiguous sender", async () => {
+    const address = "address";
+    const ambiguousParentSenders = {
+      id: "coin-op-1",
+      accountId: "",
+      type: "IN",
+      senders: [address, "address2"],
+      recipients: ["address"],
+      value: new BigNumber(4),
+      hash: "coin-op-1-tx-hash",
+      blockHeight: 10,
+      blockHash: "coin-op-1-block-hash",
+      fee: new BigNumber(20),
+      date: new Date("2025-02-12"),
+      transactionSequenceNumber: new BigNumber(1),
+      hasFailed: false,
+      extra: {},
+    };
+    const relatedTokenOp = {
+      ...ambiguousParentSenders, // inherit parent properties
+      id: "token-op-1",
+      accountId: "",
+      type: "OUT",
+      senders: ["token-op-sender"],
+      recipients: [address], // address must be involved for op to pass isAddressInvolved filter
+      contract: "contract-address",
+      value: new BigNumber(1),
+      extra: {},
+    };
+    const relatedInternalOp = {
+      ...ambiguousParentSenders, // inherit parent properties
+      id: "internal-op-1",
+      accountId: "",
+      type: "IN",
+      senders: ["internal-op-sender"],
+      recipients: [address], // address must be involved for op to pass isAddressInvolved filter
+      value: new BigNumber(1),
+      extra: {},
+    };
+
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [ambiguousParentSenders],
+      lastTokenOperations: [relatedTokenOp],
+      lastNftOperations: [],
+      lastInternalOperations: [relatedInternalOp],
+      nextPagingToken: "",
+    });
+
+    const { items: result } = await listOperations({} as CryptoCurrency, address, {
+      minHeight: 1,
+      order: "asc",
+    });
+    expect(result.map(op => ({ id: op.id, tx: { feesPayer: op.tx.feesPayer } }))).toEqual([
+      // { id: "coin-op-1", tx: { feesPayer: undefined } }, // should be returned with BACK-10510
+      { id: "token-op-1", tx: { feesPayer: undefined } },
+      { id: "internal-op-1", tx: { feesPayer: undefined } },
+    ]);
+  });
 });

@@ -1,17 +1,17 @@
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import type { Result } from "@ledgerhq/coin-framework/derivation";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account";
 import type {
   GetAccountShape,
   IterateResultBuilder,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account";
+import type { Result } from "@ledgerhq/coin-framework/derivation";
+import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import type { Account, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import { HARDCODED_BLOCK_HEIGHT } from "../constants";
-import { toEVMAddress } from "../logic/utils";
 import { listOperations } from "../logic";
+import { toEVMAddress } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { thirdwebClient } from "../network/thirdweb";
 import { getERC20BalancesForAccount } from "../network/utils";
@@ -193,6 +193,7 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
   };
 };
 
+// TODO: remove once migration to new API is complete
 // it might be necessary to remove pending operations after ERC20 patching done by `integrateERC20Operations`
 export const postSync = (_initial: Account, synced: Account): Account => {
   const erc20Operations = synced.operations.filter(op => op.standard === "erc20");

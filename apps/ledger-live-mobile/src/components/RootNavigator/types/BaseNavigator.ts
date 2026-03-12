@@ -5,11 +5,8 @@ import type {
   DeviceInfo,
   FirmwareUpdateContext,
   Operation,
-  SwapOperation,
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams } from "@react-navigation/native";
-// eslint-disable-next-line no-restricted-imports
-import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -80,6 +77,7 @@ import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator"
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
+import type { SwapSubScreensNavigatorParamList } from "./SwapSubScreensNavigator";
 import type { PerpsNavigatorParamList } from "./PerpsNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
@@ -140,9 +138,6 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
-  };
-  [ScreenName.SwapOperationDetails]: {
-    swapOperation: MappedSwapOperation;
   };
   [ScreenName.VerifyAccount]: {
     account: AccountLike;
@@ -206,10 +201,6 @@ export type BaseNavigatorStackParamList = {
     currencyId: string;
     resetSearchOnUmount?: boolean;
   };
-  [ScreenName.SwapCustomError]: {
-    error: SwapLiveError | Error;
-  };
-
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
@@ -346,9 +337,7 @@ export type BaseNavigatorStackParamList = {
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
-  [ScreenName.SwapHistory]: undefined;
-  [ScreenName.SwapLoading]: undefined;
-  [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
+  [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };
 

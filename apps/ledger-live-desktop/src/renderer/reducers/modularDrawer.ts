@@ -8,6 +8,7 @@ export interface ModularDialogParams {
   currencies?: string[];
   dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
+  uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
@@ -76,6 +77,8 @@ export const modularDialogCurrenciesSelector = (state: State) =>
   state.modularDrawer.dialogParams?.currencies;
 export const modularDialogUseCaseSelector = (state: State) =>
   state.modularDrawer.dialogParams?.useCase;
+export const modularDialogUiUseCaseSelector = (state: State) =>
+  state.modularDrawer.dialogParams?.uiUseCase;
 export const modularDialogAreCurrenciesFilteredSelector = (state: State) =>
   state.modularDrawer.dialogParams?.areCurrenciesFiltered;
 

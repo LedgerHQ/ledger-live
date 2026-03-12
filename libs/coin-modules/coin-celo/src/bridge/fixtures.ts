@@ -1,10 +1,10 @@
-import { CeloAccount, Transaction } from "../types";
+import { faker } from "@faker-js/faker";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
-import BigNumber from "bignumber.js";
-import { faker } from "@faker-js/faker";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { CeloAccount, Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("celo");
 

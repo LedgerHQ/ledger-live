@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import BigNumber from "bignumber.js";
 import { hydrate } from "./preload";
 import { setHederaPreloadData } from "./preload-data";
 

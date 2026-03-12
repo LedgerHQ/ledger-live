@@ -10,13 +10,15 @@ export const BalanceView = ({
   valueChange,
   navigateToAnalytics,
   handleKeyDown,
+  isLoading,
+  isColdStart,
+  shouldDisplayBalanceRefreshRework,
 }: BalanceViewProps) => {
   return (
-    <div
-      className="flex cursor-pointer items-baseline gap-12"
+    <button
+      type="button"
+      className="flex cursor-pointer items-baseline gap-12 border-0 bg-transparent p-0 text-inherit"
       data-testid="portfolio-balance"
-      role="button"
-      tabIndex={0}
       onClick={navigateToAnalytics}
       onKeyDown={handleKeyDown}
       aria-label="View portfolio analytics"
@@ -25,9 +27,11 @@ export const BalanceView = ({
         value={balance}
         formatter={formatter}
         hidden={discreet}
+        animate={shouldDisplayBalanceRefreshRework}
+        loading={shouldDisplayBalanceRefreshRework && isLoading}
         data-testid="portfolio-total-balance"
       />
-      <Trend valueChange={valueChange} />
-    </div>
+      {!isColdStart && <Trend valueChange={valueChange} />}
+    </button>
   );
 };

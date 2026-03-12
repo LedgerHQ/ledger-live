@@ -11,11 +11,12 @@ describe("splitTransaction", () => {
     const transactionData = prepareTransferMock;
     const result = splitTransaction(transactionData);
 
-    expect(result).toBeDefined();
-    expect(result.damlTransaction).toBeInstanceOf(Uint8Array);
-    expect(result.nodes).toBeInstanceOf(Array);
-    expect(result.metadata).toBeInstanceOf(Uint8Array);
-    expect(result.inputContracts).toBeInstanceOf(Array);
+    expect(result).toMatchObject({
+      damlTransaction: expect.any(Uint8Array),
+      nodes: expect.any(Array),
+      metadata: expect.any(Uint8Array),
+      inputContracts: expect.any(Array),
+    });
   });
 
   it("should properly serialize damlTransaction", () => {

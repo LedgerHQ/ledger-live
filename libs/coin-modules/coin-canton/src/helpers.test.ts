@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
 import { TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { isAccountEmpty } from "./helpers";
-import { CantonAccount } from "./types";
 import { createMockAccount } from "./test/fixtures";
+import { CantonAccount } from "./types";
 
 describe("isAccountEmpty", () => {
   const createCantonAccount = (overrides: Partial<CantonAccount> = {}): CantonAccount => {

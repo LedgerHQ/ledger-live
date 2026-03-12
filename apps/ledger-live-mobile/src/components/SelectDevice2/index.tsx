@@ -218,7 +218,8 @@ export default function SelectDevice({
   const checkDeviceStatus = useCallback(
     (device: Device) => {
       const isMockEnv = getEnv("MOCK");
-      if (performDeviceLockedCheck && !isMockEnv) {
+      const isSpeculos = device.deviceId.startsWith("speculos|");
+      if (performDeviceLockedCheck && !isMockEnv && !isSpeculos) {
         setDeviceToCheckLockedStatus(device);
       } else {
         notifyDeviceSelected(device);
@@ -246,12 +247,11 @@ export default function SelectDevice({
         connectionType: wired ? "USB" : "BLE",
       });
 
-      // Skip bluetooth requirements in mock/test environments or for proxy-debug devices
       const isMockEnv = getEnv("MOCK");
-      const isProxyDebug = deviceId.includes("httpdebug");
+      const isNonBleDebugDevice =
+        deviceId.includes("httpdebug") || deviceId.startsWith("speculos|");
 
-      // If neither wired nor in mock/debug mode, it's a BLE device
-      if (!wired && !isMockEnv && !isProxyDebug) {
+      if (!wired && !isMockEnv && !isNonBleDebugDevice) {
         setSelectedBleDevice(device);
       } else {
         setSelectedBleDevice(null);
@@ -302,7 +302,7 @@ export default function SelectDevice({
   ]);
 
   /**
-   * Discover proxy devices (NB: currently needed for Speculos testing)
+   * Discover debug HTTP proxy devices
    */
   useEffect(() => {
     const filter = ({ id }: { id: string }) => ["httpdebug"].includes(id);

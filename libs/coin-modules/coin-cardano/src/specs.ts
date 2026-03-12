@@ -1,17 +1,17 @@
-import expect from "expect";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import type { CardanoAccount, CardanoOperationExtra, CardanoResources, Transaction } from "./types";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { mergeTokens } from "./logic";
-import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
 import { CARDANO_MAX_SUPPLY } from "./constants";
+import { mergeTokens } from "./logic";
+import { acceptTransaction } from "./speculos-deviceActions";
+import type { CardanoAccount, CardanoOperationExtra, CardanoResources, Transaction } from "./types";
 
 const maxAccounts = 5;
 const currency = getCryptoCurrencyById("cardano");

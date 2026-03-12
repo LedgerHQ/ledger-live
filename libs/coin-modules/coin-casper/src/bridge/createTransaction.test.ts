@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
-import { createTransaction } from "./createTransaction";
-import { Transaction } from "../types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { Transaction } from "../types";
+import { createTransaction } from "./createTransaction";
 
 describe("createTransaction", () => {
   it("should create a transaction with default values", () => {

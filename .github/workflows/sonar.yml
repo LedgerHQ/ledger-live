@@ -18,7 +18,7 @@ jobs:
     name: Scan LLM && LLD & Libs
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -32,7 +32,7 @@ jobs:
         id: caches
         with:
           skip-turbo-cache: "false"
-          install-proto: true
+          install-proto: false
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -43,6 +43,7 @@ jobs:
           LANG: en_US.UTF-8
         run: |
           pnpm i --filter="./libs/**" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="./features/**" --no-frozen-lockfile --unsafe-perm
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
           pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
@@ -68,7 +69,7 @@ jobs:
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
             echo "Processing library at path: $lib"
-            
+
             if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json"; then
               if [ -f "$lib/coverage/lcov.info" ] && [ -f "$lib/coverage/sonar-executionTests-report.xml" ]; then
                 echo "Appending coverage files for $lib"
@@ -82,10 +83,33 @@ jobs:
             fi
           done
 
+      - name: Generate Unit test coverage for features
+        run: |
+          mkdir -p features/coverage
+          touch features/coverage/lcov.info
+          touch features/coverage/sonar-executionTests-report.xml
+
+          pnpm turbo run coverage --filter="./features/**" --concurrency=4 -- --runInBand=1
+
+          for package_json in $(find ./features -name "package.json" -not -path "*/node_modules/*"); do
+            pkg=$(dirname "$package_json")
+            echo "Processing feature at path: $pkg"
+
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json" > /dev/null 2>&1; then
+              if [ -f "$pkg/coverage/lcov.info" ] && [ -f "$pkg/coverage/sonar-executionTests-report.xml" ]; then
+                echo "Appending coverage files for $pkg"
+                cat "$pkg/coverage/lcov.info" >> features/coverage/lcov.info
+                cat "$pkg/coverage/sonar-executionTests-report.xml" >> features/coverage/sonar-executionTests-report.xml
+              fi
+            else
+              echo "No coverage script found for $pkg, skipping."
+            fi
+          done
+
       - name: Merge coverage files
         run: |
-          cat libs/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
-          cat libs/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
+          cat libs/coverage/lcov.info features/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
+          cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - name: Sonarqube Scan
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6

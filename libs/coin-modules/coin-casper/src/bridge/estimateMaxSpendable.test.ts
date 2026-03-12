@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
-import { Transaction } from "../types";
 import { createMockAccount } from "../test/fixtures";
+import { Transaction } from "../types";
+import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 // Mock the fee helper
 jest.mock("./bridgeHelpers/fee", () => ({

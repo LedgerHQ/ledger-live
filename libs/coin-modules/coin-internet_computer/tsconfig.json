@@ -7,9 +7,10 @@
     "declarationMap": true,
     "downlevelIteration": true,
     "lib": [
-      "es2020",
+      "es2022",
       "dom"
     ],
+    "types": ["node", "jest"],
     "rootDir": "./src",
     "outDir": "lib",
     "exactOptionalPropertyTypes": true

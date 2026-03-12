@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-vault",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Ledger Vault transport",
   "keywords": [
     "Ledger",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
     "rimraf": "^4.4.1",

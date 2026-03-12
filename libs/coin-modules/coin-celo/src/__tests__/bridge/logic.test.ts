@@ -1,3 +1,4 @@
+import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { accountFixture } from "../../bridge/fixtures";
 import {
@@ -20,7 +21,6 @@ import {
   withdrawableBalance,
 } from "../../logic";
 import { CeloAccount } from "../../types";
-import { Operation } from "@ledgerhq/types-live";
 
 jest.useFakeTimers().setSystemTime(new Date("2020-01-01"));
 
@@ -79,26 +79,26 @@ describe("logic", () => {
     };
 
     expect(withdrawableBalance(account)).toEqual(BigNumber(246246246));
-    expect(hasWithdrawableBalance(account)).toBeTruthy();
+    expect(hasWithdrawableBalance(account)).toBe(true);
   });
 
   it("isDefaultValidatorGroupAddress", () => {
-    expect(isDefaultValidatorGroupAddress("other_address")).toBeFalsy();
-    expect(isDefaultValidatorGroupAddress(defaultValidatorGroupAddress())).toBeTruthy();
+    expect(isDefaultValidatorGroupAddress("other_address")).toBe(false);
+    expect(isDefaultValidatorGroupAddress(defaultValidatorGroupAddress())).toBe(true);
     expect(
       isDefaultValidatorGroup({
         address: "validator_address",
         name: "validator1",
         votes: BigNumber(8484848),
       }),
-    ).toBeFalsy();
+    ).toBe(false);
     expect(
       isDefaultValidatorGroup({
         address: defaultValidatorGroupAddress(),
         name: "validator1",
         votes: BigNumber(8484848),
       }),
-    ).toBeTruthy();
+    ).toBe(true);
   });
 
   it("activatableVotes", () => {
@@ -154,7 +154,7 @@ describe("logic", () => {
         index: 0,
       },
     ]);
-    expect(hasActivatableVotes(account)).toBeTruthy();
+    expect(hasActivatableVotes(account)).toBe(true);
     expect(revokableVotes(account)).toMatchObject([
       {
         validatorGroup: "2",
@@ -165,7 +165,7 @@ describe("logic", () => {
         index: 0,
       },
     ]);
-    expect(hasRevokableVotes(account)).toBeTruthy();
+    expect(hasRevokableVotes(account)).toBe(true);
   });
 
   it("getVote", () => {
@@ -269,7 +269,7 @@ describe("logic", () => {
       },
     } as CeloAccount;
 
-    expect(isAccountRegistrationPending(account)).toBeTruthy();
+    expect(isAccountRegistrationPending(account)).toBe(true);
   });
 
   it("getPendingStakingOperationAmounts", () => {

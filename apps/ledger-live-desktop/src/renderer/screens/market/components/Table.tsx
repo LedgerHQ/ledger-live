@@ -8,6 +8,7 @@ import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 export const listItemHeight = 73;
 export const miniChartThreshold = 900;
 export const miniMarketCapThreshold = 1100;
+export const actionsIconOnlyThreshold = 1300;
 
 const TableCellBaseStyled = styled((props: FlexBoxProps & { disabled?: boolean }) => (
   <Flex alignItems="center" {...props} />
@@ -61,27 +62,31 @@ const TableRowBase = styled((props: FlexBoxProps & { header?: boolean; disabled?
     padding-left: 5px;
   }
   ${TableCellBaseStyled}:nth-child(2) {
-    flex: 1 0 230px;
+    flex: 0 0 150px;
     justify-content: flex-start;
   }
   ${TableCellBaseStyled}:nth-child(3) {
-    flex: 1 0 80px;
-    justify-content: flex-end;
+    flex: 1;
+    justify-content: flex-start;
   }
   ${TableCellBaseStyled}:nth-child(4) {
-    flex: 1 0 30px;
+    flex: 0 0 90px;
     justify-content: flex-end;
   }
   ${TableCellBaseStyled}:nth-child(5) {
-    flex: 1 0 90px;
+    flex: 0 0 80px;
     justify-content: flex-end;
   }
   ${TableCellBaseStyled}:nth-child(6) {
-    flex: 1 0 70px;
+    flex: 0 0 110px;
+    justify-content: flex-end;
+  }
+  ${TableCellBaseStyled}:nth-child(7) {
+    flex: 0 0 100px;
     justify-content: flex-end;
   }
 
-  ${TableCellBaseStyled}:nth-child(7) {
+  ${TableCellBaseStyled}:nth-child(8) {
     flex: 0 0 40px;
     justify-content: flex-end;
     padding-right: 5px;
@@ -91,16 +96,16 @@ const TableRowBase = styled((props: FlexBoxProps & { header?: boolean; disabled?
   }
 
   @media (max-width: ${miniChartThreshold}px) {
-    ${TableCellBaseStyled}:nth-child(6) {
+    ${TableCellBaseStyled}:nth-child(7) {
       display: none;
     }
   }
 
   @media (max-width: ${miniMarketCapThreshold}px) {
-    ${TableCellBaseStyled}:nth-child(3) {
+    ${TableCellBaseStyled}:nth-child(4) {
       flex: inherit;
     }
-    ${TableCellBaseStyled}:nth-child(1), ${TableCellBaseStyled}:nth-child(5) {
+    ${TableCellBaseStyled}:nth-child(1), ${TableCellBaseStyled}:nth-child(6) {
       display: none;
     }
   }

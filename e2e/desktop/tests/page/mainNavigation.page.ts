@@ -12,7 +12,7 @@ type NavigationTarget = {
 };
 
 export type TargetName =
-  | "portfolio"
+  | "home"
   | "accounts"
   | "swap"
   | "earn"
@@ -36,9 +36,9 @@ export class MainNavigationPage extends AppPage {
 
   private get sidebarTargets(): Readonly<Record<TargetName, NavigationTarget>> {
     return {
-      portfolio: {
+      home: {
         expectActive: true,
-        selector: () => this.sideBarButton("portfolio"),
+        selector: () => this.sideBarButton("home"),
       },
       accounts: {
         expectActive: true,

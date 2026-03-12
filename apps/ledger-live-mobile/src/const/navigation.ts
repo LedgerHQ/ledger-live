@@ -603,6 +603,7 @@ export enum NavigatorName {
   Settings = "Settings",
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
+  SwapSubScreens = "SwapSubScreensNavigator",
   Perps = "PerpsNavigator",
   Earn = "EarnNavigator",
   Fees = "FeesNavigator",

@@ -71,7 +71,7 @@ export default class TransportWebHID extends Transport {
   inputCallback: ((arg0: Buffer) => void) | null | undefined;
   read = (): Promise<Buffer> => {
     if (this.inputs.length) {
-      return Promise.resolve(this.inputs.shift() as unknown as Buffer);
+      return Promise.resolve(this.inputs.shift()!);
     }
 
     return new Promise(success => {

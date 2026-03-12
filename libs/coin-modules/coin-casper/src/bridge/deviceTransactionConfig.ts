@@ -1,10 +1,10 @@
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { Transaction, TransactionStatus } from "../types";
-import { methodToString } from "../common-logic";
 import BigNumber from "bignumber.js";
+import { methodToString } from "../common-logic";
 import { CASPER_NETWORK } from "../consts";
+import { Transaction, TransactionStatus } from "../types";
 
 export type ExtraDeviceTransactionField = {
   type: "casper.extendedAmount";

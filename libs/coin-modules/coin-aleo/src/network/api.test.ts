@@ -126,7 +126,7 @@ describe("apiClient", () => {
       const mockTransactionId = "at1testnet123";
       const mockResponse = getMockedSimpleTransactionDetails(mockTransactionId, {
         block_height: 100,
-        block_timestamp: "2024-01-01T00:00:00Z",
+        block_timestamp: "1704067200",
       });
 
       jest.mocked(network).mockResolvedValue({ data: mockResponse });
@@ -160,7 +160,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=next`,
+        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
       });
       expect(result).toEqual(mockResponse);
       expect(result.transactions).toHaveLength(2);
@@ -185,7 +185,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=10&sort=asc&direction=next`,
+        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?metadata=true&limit=10&sort=asc&direction=next`,
       });
     });
 
@@ -207,7 +207,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=desc&direction=next`,
+        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?metadata=true&limit=50&sort=desc&direction=next`,
       });
     });
 
@@ -237,7 +237,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
+        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
       });
     });
 
@@ -259,7 +259,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=prev`,
+        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=prev`,
       });
     });
 
@@ -270,11 +270,13 @@ describe("apiClient", () => {
           {
             transaction_id: "at1custom",
             transition_id: "au1custom",
-            transaction_status: "accepted",
+            transaction_status: "Accepted",
             block_number: 999999,
-            block_timestamp: "2024-03-01T12:00:00Z",
+            block_hash: "ab1blockcustom",
+            block_timestamp: "1709294400",
             function_id: "transfer_public",
             amount: 75000000,
+            fee: 5000000,
             sender_address: mockAddress,
             recipient_address: "aleo1recipient789",
             program_id: "credits.aleo",
@@ -298,7 +300,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
+        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?metadata=true&limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -353,7 +355,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.testnet.aleo.network/v2/testnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=next`,
+        url: `https://api.testnet.aleo.network/v2/testnet/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
       });
     });
   });

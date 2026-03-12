@@ -1,7 +1,7 @@
 import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { SCROLL_UP_BUTTON_THRESHOLD } from "./constants";
+import { SCROLL_UP_BUTTON_THRESHOLD, SCROLL_TO_TOP_EVENT } from "./constants";
 import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
 import { useRightPanelViewModel } from "LLD/components/RightPanel/useRightPanelViewModel";
 
@@ -45,6 +45,13 @@ export const usePageViewModel = (): PageViewModelResult => {
   );
 
   const onClickScrollUp = useCallback(() => scrollToTop(), [scrollToTop]);
+
+  // When sidebar (or elsewhere) dispatches SCROLL_TO_TOP_EVENT, scroll the page scroller to top
+  useLayoutEffect(() => {
+    const handler = () => scrollToTop(true);
+    globalThis.addEventListener(SCROLL_TO_TOP_EVENT, handler);
+    return () => globalThis.removeEventListener(SCROLL_TO_TOP_EVENT, handler);
+  }, [scrollToTop]);
 
   // Scroll to top when pathname changes
   useLayoutEffect(() => {

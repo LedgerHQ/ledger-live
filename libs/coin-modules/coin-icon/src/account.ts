@@ -1,6 +1,6 @@
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { IconAccount } from "./types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { IconAccount } from "./types";
 
 function formatAccountSpecifics(account: IconAccount): string {
   const { iconResources } = account;

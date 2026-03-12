@@ -17,11 +17,8 @@ import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openModal } from "~/renderer/actions/modals";
 import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
-import type {
-  ZcashAccount,
-  ZcashPrivateInfo,
-  ZcashSyncState,
-} from "@ledgerhq/live-common/families/bitcoin/types";
+import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
+import { ZcashPrivateInfo, ZcashSyncState } from "@ledgerhq/zcash-shielded/types";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES } from "@ledgerhq/zcash-shielded/constants";

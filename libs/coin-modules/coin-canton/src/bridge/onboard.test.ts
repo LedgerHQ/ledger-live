@@ -1,12 +1,12 @@
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
-import * as gateway from "../network/gateway";
 import * as signTransactionModule from "../common-logic/transaction/sign";
+import * as gateway from "../network/gateway";
 import { createMockAccount } from "../test/fixtures";
 import type { CantonSigner, CantonSignature } from "../types";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
+import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 
 jest.mock("../network/gateway");
 jest.mock("../common-logic/transaction/sign");
@@ -104,9 +104,12 @@ describe("onboard", () => {
 
       // THEN
       const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
-      expect(result).toBeDefined();
-      expect(result?.partyId).toBe(mockPartyId);
-      expect(result?.account.xpub).toBe(mockPartyId);
+      expect(result).toMatchObject({
+        partyId: mockPartyId,
+        account: expect.objectContaining({
+          xpub: mockPartyId,
+        }),
+      });
 
       // Should NOT call prepareOnboarding or submitOnboarding
       expect(mockedGateway.prepareOnboarding).not.toHaveBeenCalled();
@@ -158,8 +161,9 @@ describe("onboard", () => {
       );
 
       const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
-      expect(result).toBeDefined();
-      expect(result?.partyId).toBe(newPartyId);
+      expect(result).toMatchObject({
+        partyId: newPartyId,
+      });
     });
   });
 });

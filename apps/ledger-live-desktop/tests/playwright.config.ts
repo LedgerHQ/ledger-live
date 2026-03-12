@@ -21,6 +21,8 @@ const config: PlaywrightTestConfig = {
        * configure it for specific screenshots
        * */
       maxDiffPixelRatio: 0.005,
+      /** Disable CSS/JS animations to prevent flaky screenshot tests from mid-animation captures */
+      animations: "disabled",
     },
   },
   globalTimeout: 0,

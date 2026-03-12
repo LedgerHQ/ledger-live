@@ -310,8 +310,9 @@ describe("getTransactionStatus", () => {
 
       const result = await getTransactionStatus(accountWithTooManyUtxos, transaction);
 
-      expect(result.warnings.tooManyUtxos).toBeDefined();
-      expect(result.warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosCritical);
+      expect(result.warnings).toMatchObject({
+        tooManyUtxos: new TooManyUtxosCritical(),
+      });
     });
 
     it("should show warning when UTXO count exceeds TO_MANY_UTXOS_WARNING_COUNT", async () => {
@@ -335,11 +336,9 @@ describe("getTransactionStatus", () => {
 
       const result = await getTransactionStatus(accountWithManyUtxos, transaction);
 
-      expect(result.warnings.tooManyUtxos).toBeDefined();
-      expect(result.warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosWarning);
-      expect(result.warnings.tooManyUtxos?.message).toContain(
-        "families.canton.tooManyUtxos.warning",
-      );
+      expect(result.warnings).toMatchObject({
+        tooManyUtxos: new TooManyUtxosWarning("families.canton.tooManyUtxos.warning"),
+      });
     });
 
     it("should not show warning or error when UTXO count is less than TO_MANY_UTXOS_WARNING_COUNT", async () => {

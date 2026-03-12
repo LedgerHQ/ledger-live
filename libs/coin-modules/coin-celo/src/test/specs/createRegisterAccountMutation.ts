@@ -1,7 +1,7 @@
-import invariant from "invariant";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import invariant from "invariant";
 import type { CeloAccount, Transaction } from "../../types";
 
 const currency = getCryptoCurrencyById("celo");

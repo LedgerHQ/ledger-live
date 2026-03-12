@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import type {
   ERC20TokenAccount,
   ERC20TokenTransfer,

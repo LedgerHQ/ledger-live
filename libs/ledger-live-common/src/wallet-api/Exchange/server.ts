@@ -33,7 +33,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
-import { ExchangeSwap } from "../../exchange/swap/types";
+import { ExchangeSwap, FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../generated/types";
 import {
@@ -146,6 +146,7 @@ export const handlers = ({
   accounts,
   tracking,
   manifest,
+  flags,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -157,6 +158,7 @@ export const handlers = ({
   accounts: AccountLike[];
   tracking: TrackingAPI;
   manifest: AppManifest;
+  flags?: FeatureFlags;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -496,6 +498,7 @@ export const handlers = ({
           amountInAtomicUnit: fromAmountAtomic,
           quoteId,
           toNewTokenId,
+          flags,
         }).catch((error: Error) => {
           const wrappedError = createStepError({
             error: get(error, "response.data.error", error),
@@ -621,6 +624,7 @@ export const handlers = ({
                 fromAccountAddress,
                 toAccountAddress,
                 fromAmount,
+                flags,
               });
 
               resolve({ operationHash, swapId });
@@ -661,6 +665,7 @@ export const handlers = ({
                 data: (transaction as EvmTransaction).data
                   ? `0x${padHexString((transaction as EvmTransaction).data?.toString("hex") || "")}`
                   : "0x",
+                flags,
               });
 
               reject(completeExchangeError);

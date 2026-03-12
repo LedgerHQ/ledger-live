@@ -1,5 +1,13 @@
 import { renderHook } from "@tests/test-renderer";
 import { usePortfolioBalanceSectionViewModel } from "../usePortfolioBalanceSectionViewModel";
+import { State } from "~/reducers/types";
+
+const defaultProps = { showAssets: true, isReadOnlyMode: false };
+
+const withRefreshing = (state: State): State => ({
+  ...state,
+  portfolioRefresh: { isRefreshing: true, lastSyncTimestampSnapshot: null },
+});
 
 describe("usePortfolioBalanceSectionViewModel", () => {
   describe("state determination", () => {
@@ -45,6 +53,22 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       );
 
       expect(result.current.state).toBe("noSigner");
+    });
+  });
+
+  describe("isLoading", () => {
+    it("should be false when balance is available and not refreshing", () => {
+      const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps));
+
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    it("should be true when refreshing", () => {
+      const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps), {
+        overrideInitialState: withRefreshing,
+      });
+
+      expect(result.current.isLoading).toBe(true);
     });
   });
 });

@@ -37,7 +37,7 @@ export const countervaluesApi = createApi({
       transformResponse: (response: MarketItemResponse[]) => response.map(formatPerformer),
       keepUnusedDataFor: REFETCH_TIME_ONE_MINUTE / 1000,
     }),
-    getCurrencyData: build.query<MarketCurrencyData, MarketCurrencyRequestParams>({
+    getCurrencyData: build.query<MarketCurrencyData | undefined, MarketCurrencyRequestParams>({
       query: ({ id, counterCurrency }) => ({
         url: "/v3/markets",
         params: {
@@ -48,7 +48,8 @@ export const countervaluesApi = createApi({
         },
       }),
       providesTags: [MarketDataTags.CurrencyData],
-      transformResponse: (response: MarketItemResponse[]) => format(response[0]),
+      transformResponse: (response: MarketItemResponse[]) =>
+        response?.[0] ? format(response[0]) : undefined,
       keepUnusedDataFor: (REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH) / 1000,
     }),
   }),

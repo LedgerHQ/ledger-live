@@ -47,7 +47,12 @@ export const decryptData = (raw: string, encryptionKey: string) => {
   }
   log("db/crypto", "fallback to deprecated API");
 
-  // if not, then we fallback to the deprecated API
-  const decipher = crypto.createDecipher(ENCRYPTION_ALGORITHM, encryptionKey);
+  // createDecipher removed from @types/node 22 (deprecated in Node) but still exists at runtime
+  // for now, we accept the legacy usage (production code) but we prioritize fixing it via ticket LIVE-27113
+  const decipher = (
+    crypto as unknown as {
+      createDecipher: (alg: string, key: string) => ReturnType<typeof crypto.createDecipheriv>;
+    }
+  ).createDecipher(ENCRYPTION_ALGORITHM, encryptionKey);
   return Buffer.concat([decipher.update(data), decipher.final()]).toString("utf8");
 };

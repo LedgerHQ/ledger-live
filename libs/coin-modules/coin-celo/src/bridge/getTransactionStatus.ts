@@ -1,3 +1,5 @@
+import { isValidAddress } from "@celo/utils/lib/address";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -6,14 +8,12 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { BigNumber } from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { isValidAddress } from "@celo/utils/lib/address";
-import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { CeloAccount, Transaction, TransactionStatus } from "../types";
+import { BigNumber } from "bignumber.js";
 import { CeloAllFundsWarning } from "../errors";
+import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoKit } from "../network/sdk";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { CeloAccount, Transaction, TransactionStatus } from "../types";
 
 const kit = celoKit();
 

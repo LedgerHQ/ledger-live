@@ -37,4 +37,5 @@ export const isInvalidGetFirmwareMetadataResponseError = (error: unknown): boole
   return false;
 };
 
-export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
+export const isDmkError = (error: unknown): error is DmkError =>
+  !!error && typeof error === "object" && error !== null && "_tag" in error;

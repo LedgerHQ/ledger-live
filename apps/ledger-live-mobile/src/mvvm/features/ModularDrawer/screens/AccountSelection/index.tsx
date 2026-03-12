@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet } from "react-native";
-import { BottomSheetVirtualizedList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetVirtualizedList, BottomSheetHeader, Banner } from "@ledgerhq/lumen-ui-rnative";
 import {
   TrackDrawerScreen,
   EVENTS_NAME,
@@ -21,6 +21,7 @@ export type AccountSelectionStepProps = {
   asset?: CryptoOrTokenCurrency | null;
   onAddNewAccount: () => void;
   useLumenBottomSheet?: boolean;
+  uiUseCase?: string;
 };
 
 const HEADER_HEIGHT = 64;
@@ -32,6 +33,7 @@ const AccountSelectionContent = ({
   onAddNewAccount,
   onAccountSelected,
   useLumenBottomSheet = false,
+  uiUseCase,
 }: Readonly<AccountSelectionStepProps> & { asset: CryptoOrTokenCurrency }) => {
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -69,12 +71,21 @@ const AccountSelectionContent = ({
 
   const renderFooter = useCallback(() => {
     return (
-      <AddAccountButton
-        label={t("addAccounts.addNewOrExisting")}
-        onClick={onAddNewAccountOnClick}
-      />
+      <>
+        {uiUseCase === "perpetuals" && (
+          <Banner
+            appearance="info"
+            title={t("modularDrawer.perpetualsBanner")}
+            lx={{ marginTop: "s16" }}
+          />
+        )}
+        <AddAccountButton
+          label={t("addAccounts.addNewOrExisting")}
+          onClick={onAddNewAccountOnClick}
+        />
+      </>
     );
-  }, [onAddNewAccountOnClick, t]);
+  }, [onAddNewAccountOnClick, t, uiUseCase]);
 
   return (
     <>

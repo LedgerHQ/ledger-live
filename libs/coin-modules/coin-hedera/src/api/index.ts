@@ -5,7 +5,8 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig from "../config";
+import invariant from "invariant";
+import coinConfig, { type HederaConfig } from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import {
   broadcast as logicBroadcast,
@@ -23,13 +24,18 @@ import {
   getStakes,
   getRewards,
 } from "../logic/index";
-import { mapIntentToSDKOperation, getOperationValue, getBlockHash } from "../logic/utils";
+import {
+  extractFeesPayer,
+  mapIntentToSDKOperation,
+  getOperationValue,
+  getBlockHash,
+} from "../logic/utils";
 import { apiClient } from "../network/api";
-import type { HederaMemo } from "../types";
+import type { EstimateFeesParams, HederaMemo } from "../types";
 
-export function createApi(config: Record<string, never>): Api<HederaMemo> {
+export function createApi(config: HederaConfig, currencyId: string): Api<HederaMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-  const currency = getCryptoCurrencyById("hedera");
+  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     broadcast: async tx => {
@@ -39,6 +45,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     combine,
     craftTransaction: async (txIntent, customFees) => {
+      invariant(!txIntent.useAllAmount, "useAllAmount is not supported");
       const { serializedTx } = await craftTransaction(txIntent, customFees);
 
       return {
@@ -53,14 +60,17 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: async transactionIntent => {
-      const operationType = mapIntentToSDKOperation(transactionIntent);
+    estimateFees: async txIntent => {
+      let estimateFeesParams: EstimateFeesParams;
+      const operationType = mapIntentToSDKOperation(txIntent);
 
       if (operationType === HEDERA_OPERATION_TYPES.ContractCall) {
-        throw new Error("hedera: estimateFees for ContractCall is not supported yet");
+        estimateFeesParams = { operationType, txIntent };
+      } else {
+        estimateFeesParams = { currency, operationType };
       }
 
-      const estimatedFee = await logicEstimateFees({ currency, operationType });
+      const estimatedFee = await logicEstimateFees(estimateFeesParams);
 
       return {
         value: BigInt(estimatedFee.tinybars.toString()),
@@ -70,10 +80,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     getBlock: height => getBlock(height),
     getBlockInfo: height => getBlockInfo(height),
     lastBlock,
-    listOperations: async (address, { cursor, limit, order }) => {
-      // FIXME This listOperations implementation ignores the required minHeight option entirely.
-      //  Implementations must error when minHeight != 0 is not supported, this should either filter
-      //  by minHeight or explicitly throw a "not supported" error when minHeight is non-zero.
+    listOperations: async (address, { cursor, limit, order, minHeight }) => {
+      invariant(minHeight === 0, "minHeight is not supported");
+
       const mirrorTokens = await apiClient.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
@@ -108,6 +117,10 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
             }
           : { type: "native" };
 
+        const feesPayer = liveOp.extra?.transactionId
+          ? extractFeesPayer(liveOp.extra.transactionId)
+          : undefined;
+
         return {
           id: liveOp.id,
           type: liveOp.type,
@@ -126,6 +139,8 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
           tx: {
             hash: liveOp.hash,
             fees: BigInt(liveOp.fee.toFixed(0)),
+
+            ...(feesPayer && { feesPayer }),
             date: liveOp.date,
             block: {
               height: liveOp.blockHeight ?? HARDCODED_BLOCK_HEIGHT,

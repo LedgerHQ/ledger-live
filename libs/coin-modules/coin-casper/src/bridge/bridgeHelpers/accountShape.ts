@@ -1,11 +1,11 @@
-import flatMap from "lodash/flatMap";
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../api/index";
-import { mapTxToOps } from "./txn";
 import { ITxnHistoryData } from "../../api/types";
+import { mapTxToOps } from "./txn";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode } = info;

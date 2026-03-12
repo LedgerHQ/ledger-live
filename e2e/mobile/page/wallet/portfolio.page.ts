@@ -118,7 +118,7 @@ export default class PortfolioPage {
 
   @Step("Expect balance diff to be visible")
   async expectBalanceDiffToBeVisible() {
-    await detoxExpect(getElementById(this.graphCardBalanceDiffId)).toBeVisible();
+    await waitForElementById(this.graphCardBalanceDiffId);
   }
 
   @Step("Expect balance diff to have the correct counter value")

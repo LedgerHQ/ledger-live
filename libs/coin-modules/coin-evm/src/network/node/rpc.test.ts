@@ -4,7 +4,7 @@ import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/ty
 import BigNumber from "bignumber.js";
 import { JsonRpcProvider, TransactionReceipt, TransactionResponse, ethers } from "ethers";
 import { getCoinConfig } from "../../config";
-import { GasEstimationError, InsufficientFunds } from "../../errors";
+import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   EvmTransactionLegacy,
@@ -17,6 +17,8 @@ jest.useFakeTimers();
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
+
+const now = Math.floor(Date.now() / 1000);
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -77,7 +79,7 @@ describe("EVM Family", () => {
       gasUsed: BigInt(2),
       extraData: "0x",
       baseFeePerGas: BigInt(123),
-      timestamp: Math.floor(Date.now() / 1000),
+      timestamp: now,
     } as Partial<ethers.Block> as ethers.Block);
 
     jest.spyOn(JsonRpcProvider.prototype, "getTransactionCount").mockResolvedValue(5);
@@ -662,10 +664,134 @@ describe("EVM Family", () => {
         // for this specific assertion we can't use Date.now() directly because
         // the timestamp returned by ethers (and mocked at the beginning of
         // thetestsuite) is rounded to the second
-        timestamp: Math.floor(Date.now() / 1000) * 1000,
+        timestamp: now * 1000,
         height: 1,
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
       });
+    });
+
+    it("should prefetch block transactions when requested", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockResolvedValueOnce({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        number: 1,
+        timestamp: now,
+        transactions: ["0xtx1"],
+        prefetchedTransactions: [
+          {
+            hash: "0xtx1",
+            value: 1n,
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+          },
+        ],
+      } as any);
+
+      expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        timestamp: now * 1000,
+        height: 1,
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        transactions: [
+          {
+            hash: "0xtx1",
+            value: "1",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+          },
+        ],
+        transactionHashes: ["0xtx1"],
+      });
+    });
+
+    it("should fallback to transaction hashes when prefetched transactions are unavailable", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockResolvedValueOnce({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        number: 1,
+        timestamp: now,
+        transactions: ["0xtx1"],
+        get prefetchedTransactions() {
+          const error = new Error("transactions were not prefetched with block request");
+          (error as Error & { code?: string }).code = "UNSUPPORTED_OPERATION";
+          throw error;
+        },
+      } as any);
+
+      expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 1, true)).toEqual({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        timestamp: now * 1000,
+        height: 1,
+        parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+        transactionHashes: ["0xtx1"],
+      });
+    });
+  });
+
+  describe("getBlockReceipts", () => {
+    it("should return receipts mapped to node transaction payload", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_getBlockReceipts") {
+          return [
+            {
+              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              gasUsed: "0x7a120",
+              effectiveGasPrice: "0x3b9aca00",
+              status: "0x1",
+              logs: [],
+            },
+          ];
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      expect(await RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1)).toEqual([
+        {
+          hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+          gasUsed: "500000",
+          gasPrice: "1000000000",
+          status: 1,
+          erc20Transfers: [],
+        },
+      ]);
+    });
+
+    it("should throw UnsupportedRpcMethodError for RPC -32601", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+        if (method === "eth_chainId") {
+          return "0x1";
+        }
+        if (method === "eth_getBlockReceipts") {
+          throw { code: -32601, message: "method not found" };
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      await expect(
+        RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
+      ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
+    });
+
+    it("should throw UnsupportedRpcMethodError for nested responseBody code", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async method => {
+        if (method === "eth_chainId") {
+          return "0x1";
+        }
+        if (method === "eth_getBlockReceipts") {
+          throw {
+            code: "SERVER_ERROR",
+            info: {
+              responseBody:
+                '{"jsonrpc":"2.0","error":{"code":-32601,"message":"rpc method is unsupported"},"id":1}',
+            },
+          };
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      await expect(
+        RPC_API.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
+      ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
     });
   });
 

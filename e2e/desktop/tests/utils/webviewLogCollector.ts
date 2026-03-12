@@ -46,14 +46,23 @@ export class WebviewLogCollector {
     const logEntry = this.requestsMap.get(request);
 
     if (logEntry) {
-      logEntry.pending = false;
       logEntry.status = response.status();
+    }
+  };
+
+  private readonly onRequestFinished = async (request: Request) => {
+    const response = await request.response();
+    const logEntry = this.requestsMap.get(request);
+
+    if (logEntry) {
+      logEntry.pending = false;
+      logEntry.status = response?.status();
       logEntry.duration = Date.now() - new Date(logEntry.timestamp).getTime();
 
-      if (response.status() >= 400) {
-        // capture data for 4xx and 5xx for debugging
-        logEntry.postData = request.postData() ?? "";
+      if (response && response.status() >= 400) {
         try {
+          // capture data for 4xx and 5xx for debugging
+          logEntry.postData = request.postData() ?? "";
           logEntry.responseBody = await response.text();
         } catch (error) {
           logEntry.responseBody = `Failed to get response body: ${error}`;
@@ -71,6 +80,16 @@ export class WebviewLogCollector {
       logEntry.status = response?.status();
       logEntry.duration = Date.now() - new Date(logEntry.timestamp).getTime();
       logEntry.failureText = request.failure()?.errorText ?? "";
+
+      if (response && response.status() >= 400) {
+        try {
+          // capture data for 4xx and 5xx for debugging
+          logEntry.postData = request.postData() ?? "";
+          logEntry.responseBody = await response.text();
+        } catch (error) {
+          logEntry.responseBody = `Failed to get response body: ${error}`;
+        }
+      }
     }
   };
 
@@ -79,6 +98,7 @@ export class WebviewLogCollector {
     page.on("console", this.onConsole);
     page.on("request", this.onRequest);
     page.on("response", this.onResponse);
+    page.on("requestfinished", this.onRequestFinished);
     page.on("requestfailed", this.onRequestFailed);
   }
 

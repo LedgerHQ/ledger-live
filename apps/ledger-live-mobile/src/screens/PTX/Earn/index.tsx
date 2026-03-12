@@ -142,7 +142,7 @@ function Earn({ route }: Props) {
   /** V1: no background */
   if (manifest) {
     return (
-      <View style={{ flex: 1 }}>
+      <View testID="earn-screen" style={{ flex: 1 }}>
         <Container>
           <TrackScreen category="EarnDashboard" name="Earn" />
           <EarnWebview manifest={manifest} inputs={webviewInputs} />

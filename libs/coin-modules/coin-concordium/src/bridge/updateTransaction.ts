@@ -1,5 +1,5 @@
 import { updateTransaction as defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AccountBridge } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 
 // NOTE: this method is optional, use defaultUpdateTransaction

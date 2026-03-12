@@ -1,10 +1,11 @@
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
+import { broadcast as broadcastLogic } from "../common-logic";
 import { broadcast } from "./broadcast";
+
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../common-logic");
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { broadcast as broadcastLogic } from "../common-logic";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockCurrency = {
   id: "canton_network",

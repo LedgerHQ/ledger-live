@@ -64,6 +64,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
+  currencyPolygonAmoy: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
   currencyQuicksilver: DEFAULT_FEATURE,
@@ -117,6 +118,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZeroGravity: DEFAULT_FEATURE,
   currencyConcordium: DEFAULT_FEATURE,
   currencyConcordiumTestnet: DEFAULT_FEATURE,
+  currencyAdi: DEFAULT_FEATURE,
   currencyUnichain: DEFAULT_FEATURE,
   currencyUnichainSepolia: DEFAULT_FEATURE,
 };
@@ -387,8 +389,7 @@ export const DEFAULT_FEATURES: Features = {
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
-          supportLinkURI:
-            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
+          supportLinkURI: "https://support.ledger.com",
         },
       },
       protectId: "protect-simu",
@@ -733,6 +734,17 @@ export const DEFAULT_FEATURES: Features = {
       trackWatchdogTerminations: false,
       uploadFrequency: "AVERAGE",
       vitalsUpdateFrequency: "AVERAGE",
+    },
+  },
+  lldDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      sessionSamplingRate: 100,
+      sessionReplaySampleRate: 0,
+      defaultPrivacyLevel: "mask-user-input",
+      traceSampleRate: 100,
+      allowedTracingUrls: ["/^https:\\/\\/[^/]+\\.ledger\\.com(\\/|$)/"],
+      profilingSampleRate: 25,
     },
   },
   llmSentry: { enabled: true },

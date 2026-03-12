@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-helium",
-  "version": "6.35.0",
+  "version": "6.36.0",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
     "Ledger",
@@ -40,7 +40,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "axios": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",

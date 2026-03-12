@@ -1,5 +1,3 @@
-import type { BigNumber } from "bignumber.js";
-import { types as TyphonTypes } from "@stricahq/typhonjs";
 import type {
   Account,
   AccountRaw,
@@ -10,6 +8,8 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { types as TyphonTypes } from "@stricahq/typhonjs";
+import type { BigNumber } from "bignumber.js";
 
 export enum PaymentChain {
   external = 0,

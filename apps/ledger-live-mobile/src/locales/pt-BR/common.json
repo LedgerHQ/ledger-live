@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "O acesso à sua carteira ainda não tem backup"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Atualizando - Última atualização {{timeAgo}}",
+      "refreshingInitial" : "Atualizando…",
+      "upToDate" : "Você está em dia"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Atualização do OS disponível",
+          "manager" : "Atualização do Ledger OS disponível"
+        },
+        "version" : "Versão {{firmwareVersion}}",
+        "cta" : "Atualizar"
+      },
       "title" : "Atualização do sistema operacional disponível",
       "descriptionDeviceName" : "Toque para atualizar a “{{deviceName}}” para a versão {{firmwareVersion}} do sistema operacional.",
       "descriptionProductName" : "Toque para atualizar sua {{productName}} para a versão {{firmwareVersion}} do sistema operacional."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "Nenhum ativo encontrado",
     "accountCount_one" : "{{count}} conta",
     "accountCount_other" : "{{count}} contas",
+    "perpetualsBanner" : "Atualmente, é compatível apenas com USDC na cadeia Arbitrum.",
     "errors" : {
       "title" : "Falha de conexão",
       "backend" : "Algo deu errado. Tente novamente mais tarde",

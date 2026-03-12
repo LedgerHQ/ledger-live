@@ -1,18 +1,20 @@
-import BigNumber from "bignumber.js";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { createBridges } from ".";
+import BigNumber from "bignumber.js";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { Transaction } from "../types";
+import { createBridges } from ".";
 
 describe("js-transaction", () => {
   let bridge: ReturnType<typeof createBridges>;
   const mockedAccount = getMockedAccount();
   const mockedTransaction = getMockedTransaction();
+  const mockCoinConfig = () => getMockedConfig();
 
   beforeAll(() => {
     const signer = jest.fn();
-    bridge = createBridges(signer);
+    bridge = createBridges(signer, mockCoinConfig);
   });
 
   test("createTransaction", () => {

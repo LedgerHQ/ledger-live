@@ -7,11 +7,6 @@ jest.mock("../logic", () => ({
   estimateFees: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/concordium-core", () => ({
-  ...jest.requireActual("@ledgerhq/concordium-core"),
-  encodeMemoToCbor: jest.fn((memo: string) => Buffer.from([0x68, ...Buffer.from(memo, "utf-8")])),
-}));
-
 const { craftTransaction: craftTransactionMock, estimateFees: estimateFeesMock } =
   jest.requireMock("../logic");
 
@@ -56,8 +51,7 @@ describe("api/estimateFees", () => {
 
     expect(estimateFeesMock).toHaveBeenCalledWith(
       expect.objectContaining({ id: "concordium" }),
-      22, // TransactionType.TransferWithMemo
-      9, // memoSize: "fee test" = 9 bytes CBOR-encoded (1 byte header + 8 bytes string)
+      "fee test",
     );
     expect(result).toEqual({ value: BigInt(1500) });
   });

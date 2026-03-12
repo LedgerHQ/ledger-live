@@ -40,8 +40,8 @@ test.describe("Main navigation", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.mainNavigation.openTargetFromMainNavigation("portfolio");
-      await app.mainNavigation.validateTargetFromMainNavigation("portfolio");
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.mainNavigation.validateTargetFromMainNavigation("home");
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.mainNavigation.validateTargetFromMainNavigation("accounts");
       await app.mainNavigation.openTargetFromMainNavigation("swap");

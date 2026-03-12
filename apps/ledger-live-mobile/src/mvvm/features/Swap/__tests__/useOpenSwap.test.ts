@@ -28,6 +28,22 @@ function createBitcoinAccount(id: string): Account {
   return { ...account, id: `mock:1:bitcoin:${id}:` };
 }
 
+const withWallet40MainNav =
+  (show: boolean) =>
+  (state: State): State => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      overriddenFeatureFlags: {
+        ...state.settings.overriddenFeatureFlags,
+        lwmWallet40: {
+          enabled: show,
+          ...(show && { params: { mainNavigation: true } }),
+        },
+      },
+    },
+  });
+
 describe("useOpenSwap (Market / QuickActions origin)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -39,7 +55,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withWallet40MainNav(false)(state),
           accounts: { ...state.accounts, active: [account] },
         }),
       },
@@ -72,7 +88,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withWallet40MainNav(false)(state),
           accounts: { ...state.accounts, active: [ethAccount] },
         }),
       },
@@ -96,7 +112,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withWallet40MainNav(false)(state),
           accounts: { ...state.accounts, active: [] },
         }),
       },
@@ -123,7 +139,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withWallet40MainNav(false)(state),
           accounts: { ...state.accounts, active: [] },
         }),
       },
@@ -151,7 +167,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withWallet40MainNav(false)(state),
           accounts: { ...state.accounts, active: [account] },
         }),
       },
@@ -179,7 +195,7 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withWallet40MainNav(false)(state),
           accounts: { ...state.accounts, active: [account1, account2] },
         }),
       },
@@ -200,5 +216,118 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  describe("when shouldDisplayWallet40MainNav is true", () => {
+    test("should navigate via Main → Swap when account for currency exists", () => {
+      const account = createBitcoinAccount("account-1");
+      const { result } = renderHook(
+        () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+        {
+          overrideInitialState: (state: State) => ({
+            ...withWallet40MainNav(true)(state),
+            accounts: { ...state.accounts, active: [account] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
+        screen: NavigatorName.Swap,
+        params: {
+          screen: ScreenName.SwapTab,
+          params: expect.objectContaining({
+            defaultCurrency: bitcoin,
+            fromPath: SOURCE_SCREEN,
+            defaultAccount: account,
+            defaultParentAccount: undefined,
+          }),
+        },
+      });
+      expect(mockOpenDrawer).not.toHaveBeenCalled();
+    });
+
+    test("should navigate via Main → Swap when no account for currency", () => {
+      const { result } = renderHook(
+        () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+        {
+          overrideInitialState: (state: State) => ({
+            ...withWallet40MainNav(true)(state),
+            accounts: { ...state.accounts, active: [] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
+        screen: NavigatorName.Swap,
+        params: {
+          screen: ScreenName.SwapTab,
+          params: expect.objectContaining({
+            defaultCurrency: bitcoin,
+            fromPath: SOURCE_SCREEN,
+          }),
+        },
+      });
+      expect(mockNavigate.mock.calls[0][1].params.params.defaultAccount).toBeUndefined();
+      expect(mockOpenDrawer).not.toHaveBeenCalled();
+    });
+
+    test("should navigate via Main → Swap with toTokenId when no account for token", () => {
+      const { result } = renderHook(
+        () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
+        {
+          overrideInitialState: (state: State) => ({
+            ...withWallet40MainNav(true)(state),
+            accounts: { ...state.accounts, active: [] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
+        screen: NavigatorName.Swap,
+        params: {
+          screen: ScreenName.SwapTab,
+          params: expect.objectContaining({
+            defaultCurrency: usdcToken,
+            fromPath: SOURCE_SCREEN,
+            toTokenId: usdcToken.id,
+          }),
+        },
+      });
+      expect(mockOpenDrawer).not.toHaveBeenCalled();
+    });
+
+    test("should open drawer for account selection when multiple accounts (no direct nav)", () => {
+      const account1 = createBitcoinAccount("btc-1");
+      const account2 = createBitcoinAccount("btc-2");
+      const { result } = renderHook(
+        () => useOpenSwap({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+        {
+          overrideInitialState: (state: State) => ({
+            ...withWallet40MainNav(true)(state),
+            accounts: { ...state.accounts, active: [account1, account2] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
   });
 });

@@ -12,7 +12,7 @@ export const InfoContent = ({ titleKey, descriptionKey }: InfoContentProps) => {
 
   return (
     <div
-      className="flex flex-col items-center gap-24 -mt-12"
+      className="-mt-12 flex flex-col items-center gap-24"
       data-testid="send-confirmation-info-content"
     >
       <Spot appearance="info" size={72} />

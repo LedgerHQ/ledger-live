@@ -47,7 +47,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
         )}
         <SendHeader />
         {StepComponent && (
-          <div key={wizard.currentStep} className="animate-fade-in flex min-h-0 flex-1 flex-col">
+          <div key={wizard.currentStep} className="flex min-h-0 flex-1 animate-fade-in flex-col">
             <StepComponent />
           </div>
         )}

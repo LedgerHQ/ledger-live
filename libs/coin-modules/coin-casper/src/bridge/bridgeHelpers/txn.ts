@@ -1,17 +1,17 @@
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { CasperNetwork, PublicKey, Transaction } from "casper-js-sdk";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { CASPER_DEFAULT_TTL, CASPER_NETWORK } from "../../consts";
-import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
-import { ITxnHistoryData } from "../../api/types";
-import { getEstimatedFees } from "./fee";
-import { CasperOperation } from "../../types";
 import invariant from "invariant";
 import { getCasperNodeRpcClient } from "../../api";
+import { ITxnHistoryData } from "../../api/types";
+import { CASPER_DEFAULT_TTL, CASPER_NETWORK } from "../../consts";
+import { CasperOperation } from "../../types";
+import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
+import { getEstimatedFees } from "./fee";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 

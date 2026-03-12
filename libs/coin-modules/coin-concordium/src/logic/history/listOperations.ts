@@ -2,7 +2,10 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { Operation, ListOperationsOptions, Page } from "@ledgerhq/coin-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getOperations as getOperationsGrpc } from "../../network/grpcClient";
-import { getOperations as getOperationsProxy, ProxyOperation } from "../../network/proxyClient";
+import {
+  getOperations as getOperationsProxy,
+  type ProxyOperation,
+} from "../../network/proxyClient";
 
 /**
  * Returns list of operations associated to an account.
@@ -28,7 +31,7 @@ export async function listOperations(
     return getOperationsGrpc(currency, address, options);
   }
 
-  const operations = await getOperationsProxy(currency, address, accountId);
+  const operations = await getOperationsProxy(currency, { address, accountId });
 
   return {
     items: operations.map(

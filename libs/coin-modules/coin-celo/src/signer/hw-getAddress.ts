@@ -1,7 +1,7 @@
-import eip55 from "eip55";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import eip55 from "eip55";
 import { CeloSigner } from ".";
 
 /*

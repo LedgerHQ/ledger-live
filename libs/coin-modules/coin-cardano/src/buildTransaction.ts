@@ -1,3 +1,4 @@
+import type { TokenAccount } from "@ledgerhq/types-live";
 import {
   Transaction as TyphonTransaction,
   address as TyphonAddress,
@@ -5,7 +6,9 @@ import {
   utils as TyphonUtils,
 } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
+import { CARDANO_MAX_SUPPLY } from "./constants";
+import { CardanoInvalidProtoParams } from "./errors";
 import {
   getAccountStakeCredential,
   getBaseAddress,
@@ -14,7 +17,6 @@ import {
   isProtocolParamsValid,
   isTestnet,
 } from "./logic";
-import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 import { getNetworkParameters } from "./networks";
 import {
   CardanoAccount,
@@ -24,8 +26,6 @@ import {
   Token,
   Transaction,
 } from "./types";
-import { CARDANO_MAX_SUPPLY } from "./constants";
-import { CardanoInvalidProtoParams } from "./errors";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   const address = TyphonUtils.getAddressFromHex(

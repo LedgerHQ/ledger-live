@@ -145,11 +145,10 @@ describe("history", () => {
       const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, mockCurrency);
 
       // THEN
-      expect(getOperationsProxyMock).toHaveBeenCalledWith(
-        mockCurrency,
-        VALID_ADDRESS,
-        expect.stringContaining("concordium"),
-      );
+      expect(getOperationsProxyMock).toHaveBeenCalledWith(mockCurrency, {
+        address: VALID_ADDRESS,
+        accountId: expect.stringContaining("concordium"),
+      });
       expect(result.items).toHaveLength(1);
       expect(result.items[0]).toMatchObject({
         id: "encoded-op-id-1",

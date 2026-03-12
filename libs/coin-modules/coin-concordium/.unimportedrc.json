@@ -24,7 +24,8 @@
     "src/test/fixtures.ts",
     "src/test/testHelpers.ts",
     "src/test/walletConnectFixtures.ts",
-    "src/types/errors.ts"
+    "src/types/errors.ts",
+    "src/network/grpcClient.native.ts"
   ],
   "ignoreUnused": []
 }

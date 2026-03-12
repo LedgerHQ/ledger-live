@@ -16,7 +16,7 @@ export function pathnameToActive(
   referPath: string | undefined,
 ): SideBarActiveValue {
   if (referPath && pathname.startsWith(referPath)) return SIDEBAR_SPECIAL_VALUES.refer;
-  if (pathname === "/" || pathname.startsWith("/asset/")) return "home";
+  if (pathname === "/") return "home";
   if (pathname.startsWith("/account")) return "accounts";
   if (pathname.startsWith("/swap")) return "swap";
   if (pathname === "/earn") return "earn";

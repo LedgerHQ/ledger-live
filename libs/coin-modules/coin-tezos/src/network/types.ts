@@ -42,6 +42,20 @@ type CommonOperationType = {
 export type APITransactionType = CommonOperationType & {
   type: "transaction";
   amount: number;
+  /**
+   * The account that initiated the whole operation group (i.e. the account that signed and paid fees).
+   *
+   * - For top-level transactions: `null` (the `sender` is the initiator).
+   * - For internal transactions (emitted by a smart contract): set to the original user account.
+   *   In that case `sender` is the contract that emitted the internal operation.
+   *
+   *
+   * Example (real mainnet tx opK5rnDgd4ipyeS3JnFrENMpeu7xY44AMcke9u9GDku7Udt8sYd):
+   *   initiator: { address: "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV" }  // user account, fee payer
+   *   sender:    { address: "KT1WPEis2WhAc2FciM2tZVn8qe6pCBe9HkDp" }  // smart contract "Vested funds 1"
+   *   target:    { address: "tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk" }  // recipient
+   *   bakerFee:  0  (fees are on the top-level operation, not on internal ones)
+   */
   initiator: { address: string } | undefined | null;
   sender: { address: string } | undefined | null;
   target: { address: string } | undefined | null;

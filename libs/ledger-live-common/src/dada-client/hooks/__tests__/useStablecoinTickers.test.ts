@@ -11,6 +11,11 @@ jest.mock("../../state-manager/api", () => ({
   useGetAssetsByCategoryQuery: jest.fn(),
 }));
 
+const hookParams = {
+  product: "lld" as const,
+  version: "1.0.0" as const,
+};
+
 const mockUseGetAssetsByCategoryQuery = jest.mocked(useGetAssetsByCategoryQuery);
 
 const defaultMockValues = {
@@ -43,7 +48,9 @@ describe("useStablecoinTickers", () => {
       status: "pending" as const,
     });
 
-    const { result } = renderHook(() => useStablecoinTickers("lld"));
+    const { result } = renderHook(() =>
+      useStablecoinTickers(hookParams.product, hookParams.version),
+    );
 
     expect(result.current.tickers.size).toBe(0);
     expect(result.current.isLoading).toBe(true);
@@ -55,7 +62,9 @@ describe("useStablecoinTickers", () => {
       data: ["usdt", "usdc", "Dai"],
     });
 
-    const { result } = renderHook(() => useStablecoinTickers("lld"));
+    const { result } = renderHook(() =>
+      useStablecoinTickers(hookParams.product, hookParams.version),
+    );
 
     expect(result.current.tickers).toEqual(new Set(["USDT", "USDC", "DAI"]));
     expect(result.current.isLoading).toBe(false);
@@ -64,7 +73,9 @@ describe("useStablecoinTickers", () => {
   it("should return stable reference for empty set across renders", () => {
     mockUseGetAssetsByCategoryQuery.mockReturnValue(defaultMockValues);
 
-    const { result, rerender } = renderHook(() => useStablecoinTickers("lld"));
+    const { result, rerender } = renderHook(() =>
+      useStablecoinTickers(hookParams.product, hookParams.version),
+    );
     const firstRef = result.current.tickers;
 
     rerender();
@@ -75,11 +86,12 @@ describe("useStablecoinTickers", () => {
   it("should pass AssetCategory.Stablecoin to the query", () => {
     mockUseGetAssetsByCategoryQuery.mockReturnValue(defaultMockValues);
 
-    renderHook(() => useStablecoinTickers("lld"));
+    renderHook(() => useStablecoinTickers(hookParams.product, hookParams.version));
 
     expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith({
       category: AssetCategory.Stablecoin,
-      product: "lld",
+      product: hookParams.product,
+      version: hookParams.version,
     });
   });
 });

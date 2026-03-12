@@ -25,7 +25,6 @@ const transformIncludePatterns = [
   "(jest-)?react-native",
   "@react-native(-community)?",
   "@react-navigation",
-  "rn-range-slider",
   "react-native-worklets",
   "react-native-reanimated",
   "react-native-modal",

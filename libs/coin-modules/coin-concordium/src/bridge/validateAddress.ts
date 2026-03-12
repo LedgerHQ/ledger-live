@@ -1,4 +1,4 @@
-import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
 import { AccountAddress } from "@ledgerhq/concordium-core";
 
 export async function validateAddress(

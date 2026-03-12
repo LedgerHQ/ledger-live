@@ -36,12 +36,14 @@ import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helper
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
   const { getRouteToPlatformApp } = useStake();
   const navigate = useNavigate();
+  const { isEnabled } = useWalletFeaturesConfig("desktop");
   const walletState = useSelector(walletSelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
@@ -84,6 +86,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
       ),
     [],
   );
+  const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
 
   const getAccount = useCallback(
     async (accountId: string): Promise<AccountLike | null> => {
@@ -159,6 +162,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         accounts,
         tracking,
         manifest,
+        flags,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             dispatch(
@@ -359,6 +363,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     accounts,
     tracking,
     manifest,
+    flags,
     dispatch,
     setDrawer,
     navigate,

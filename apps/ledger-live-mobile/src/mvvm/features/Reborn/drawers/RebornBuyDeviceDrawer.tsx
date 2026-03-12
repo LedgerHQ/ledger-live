@@ -3,7 +3,6 @@ import { TrackScreen } from "~/analytics";
 import useRebornBuyDeviceViewModel from "./useRebornBuyDeviceViewModel";
 import {
   Text,
-  ListItem,
   ListItemLeading,
   ListItemContent,
   ListItemTitle,
@@ -11,8 +10,9 @@ import {
   Button,
   BottomSheetView,
   BottomSheetHeader,
+  Box,
 } from "@ledgerhq/lumen-ui-rnative";
-import { HandCoins, ShieldLock, Share2 } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { HandCoins, ShieldLock, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import QueuedDrawerGorhom, {
@@ -38,7 +38,7 @@ const items = [
     id: "access",
     title: "rebornBuyDevice.2.title",
     desc: "rebornBuyDevice.2.desc",
-    Icon: Share2,
+    Icon: Wallet,
   },
 ];
 
@@ -50,7 +50,7 @@ function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" |
       <TrackScreen category="RebornDrawer" name="Upsell Flex" type="drawer" />
 
       <Image
-        source={require("../assets/ConnectDevice.png")}
+        source={require("../assets/ConnectDevice.webp")}
         style={{ height: 200, width: "100%", marginTop: 6, borderRadius: 6 }}
         accessibilityLabel="ledger devices showcase"
         resizeMode="cover"
@@ -64,7 +64,20 @@ function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" |
       </Text>
 
       {items.map(item => (
-        <ListItem key={item.id}>
+        <Box
+          key={item.id}
+          lx={{
+            flexDirection: "row",
+            alignItems: "center",
+            height: "s64",
+            width: "full",
+            gap: "s16",
+            borderRadius: "md",
+            backgroundColor: "baseTransparent",
+            paddingHorizontal: "s8",
+            paddingVertical: "s12",
+          }}
+        >
           <ListItemLeading>
             <item.Icon size={24} />
 
@@ -73,7 +86,7 @@ function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" |
               <ListItemDescription>{t(item.desc)}</ListItemDescription>
             </ListItemContent>
           </ListItemLeading>
-        </ListItem>
+        </Box>
       ))}
 
       <Button

@@ -8,7 +8,7 @@ import {
 import { signTransaction } from "./sign";
 
 class MockCantonSigner implements CantonSigner {
-  async getAddress(path: string, display?: boolean) {
+  async getAddress(path: string) {
     return {
       publicKey: "mock-public-key",
       address: "mock-address",

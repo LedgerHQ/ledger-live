@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import { type GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import {
   getAccountBalance,
   getOperations,
   getAccountsByPublicKey,
-  ProxyOperation,
+  type ProxyOperation,
 } from "../network/proxyClient";
 import type { ConcordiumAccount, ConcordiumResources } from "../types";
 
@@ -112,7 +112,9 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
 
     const oldOperations = initialAccount?.operations ?? [];
 
-    const proxyOperations = await getOperations(currency, account.address, accountId, {
+    const proxyOperations = await getOperations(currency, {
+      address: account.address,
+      accountId,
       size: 100,
     }).catch((error): ProxyOperation[] => {
       // If operations request fails, log the error and return an empty array,

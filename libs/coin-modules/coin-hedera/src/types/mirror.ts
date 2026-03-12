@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 type FreezeStatus = "NOT_APPLICABLE" | "FROZEN" | "UNFROZEN";
 
@@ -88,6 +88,7 @@ export interface HederaMirrorNetworkFees {
 
 export interface HederaMirrorContractCallResult {
   contract_id: string;
+  block_hash: string;
   block_gas_used: number;
   gas_consumed: number;
   gas_limit: number;

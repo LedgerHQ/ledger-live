@@ -7,12 +7,18 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { mkdir, readFile, rename } from "fs/promises";
+import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
 export class SwapPage extends AppPage {
+  private static readonly EXPORT_SOURCE_PATH = path.resolve("./ledgerwallet-swap-history.csv");
+  private static readonly EXPORT_ARTIFACT_PATH = path.resolve(
+    __dirname,
+    "../artifacts/ledgerwallet-swap-history.csv",
+  );
+
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
@@ -550,22 +556,15 @@ export class SwapPage extends AppPage {
 
   @step("Click on export operations")
   async clickExportOperations() {
+    await expect(this.operationRows.first()).toBeVisible();
     await this.exportOperationsButton.click();
 
-    const originalFilePath = path.resolve("./ledgerwallet-swap-history.csv");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
-
-    const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
-    expect(fileExists).toBeTruthy();
-    const targetDir = path.dirname(targetFilePath);
-    await mkdir(targetDir, { recursive: true });
-    await rename(originalFilePath, targetFilePath);
+    await FileUtils.waitForFileAndMove(SwapPage.EXPORT_SOURCE_PATH, SwapPage.EXPORT_ARTIFACT_PATH);
   }
 
   @step("Check contents of exported operations file")
   async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
-    const fileContents = await readFile(targetFilePath, "utf-8");
+    const fileContents = await readFile(SwapPage.EXPORT_ARTIFACT_PATH, "utf-8");
 
     expect(fileContents).toContain(provider.name);
     expect(fileContents).toContain(id);

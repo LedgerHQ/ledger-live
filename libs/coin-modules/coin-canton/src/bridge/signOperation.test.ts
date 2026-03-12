@@ -1,4 +1,7 @@
 import { BigNumber } from "bignumber.js";
+import { craftTransaction } from "../common-logic";
+import { createMockAccount } from "../test/fixtures";
+import prepareTransferMock from "../test/prepare-transfer.json";
 import {
   CantonSigner,
   CantonPreparedTransaction,
@@ -6,10 +9,7 @@ import {
   CantonUntypedVersionedMessage,
 } from "../types";
 import { Transaction } from "../types";
-import { craftTransaction } from "../common-logic";
-import prepareTransferMock from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
-import { createMockAccount } from "../test/fixtures";
 
 jest.mock("../common-logic", () => {
   const actual = jest.requireActual("../common-logic");
@@ -22,7 +22,7 @@ jest.mock("../common-logic", () => {
 const mockCraftTransaction = craftTransaction as jest.MockedFunction<typeof craftTransaction>;
 
 class MockCantonSigner implements CantonSigner {
-  async getAddress(path: string, display?: boolean) {
+  async getAddress(path: string) {
     return {
       publicKey: "mock-public-key",
       address: "mock-address",

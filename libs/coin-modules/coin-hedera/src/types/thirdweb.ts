@@ -1,3 +1,4 @@
+// TODO: remove once migration to new API is complete
 export interface HederaThirdwebDecodedTransferParams {
   from: string;
   to: string;

@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "الوصول إلى محفظتك لم يتم نسخه احتياطياً بعد"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "جارٍ التحديث - آخر تحديث {{timeAgo}}",
+      "refreshingInitial" : "جارٍ التحديث...",
+      "upToDate" : "أنت على أحدث إصدار"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "تحديث نظام التشغيل متاح",
+          "manager" : "تحديث نظام تشغيل Ledger OS متاح"
+        },
+        "version" : "إصدار {{firmwareVersion}}",
+        "cta" : "تحديث"
+      },
       "title" : "تحديث متاح لنظام التشغيل",
       "descriptionDeviceName" : "انقر لتحديث \"{{deviceName}}\" إلى الإصدار {{firmwareVersion}} من نظام التشغيل.",
       "descriptionProductName" : "انقر لتحديث جهازك {{productName}} إلى الإصدار {{firmwareVersion}} من نظام التشغيل."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "لم يتم العثور على أصول",
     "accountCount_one" : "{{count}} حساب",
     "accountCount_other" : "{{count}} حساب",
+    "perpetualsBanner" : "حالياً مدعوم فقط مع USDC على سلسلة Arbitrum.",
     "errors" : {
       "title" : "فشل الاتصال",
       "backend" : "حدث خطأ ما من جانبنا. يُرجى إعادة المحاولة لاحقاً",

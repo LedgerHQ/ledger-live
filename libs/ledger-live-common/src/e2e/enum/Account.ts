@@ -151,7 +151,7 @@ export class Account {
     1,
     "44'/60'/1'/0/0",
     undefined,
-    "speculos.eth",
+    "speculos-qaa.eth",
   );
   static readonly ETH_2_LOWER_CASE = new Account(Currency.ETH, "Ethereum 2", 1, "44'/60'/1'/0/0");
   static readonly ETH_3 = new Account(Currency.ETH, "Ethereum 3", 3, "44'/60'/2'/0/0");
@@ -167,7 +167,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10285205",
+    "0.0.10310433",
   );
   static readonly HEDERA_2 = new Account(
     Currency.HBAR,
@@ -178,7 +178,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10285245",
+    "0.0.10337251",
   );
 
   static readonly INJ_1 = new Account(Currency.INJ, "Injective 1", 0, "44'/60'/0'/0/0");

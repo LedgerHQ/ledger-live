@@ -1,9 +1,9 @@
-import type { IconAccount, Transaction } from "./types";
+import BigNumber from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { IcxTransaction } from "icon-sdk-js";
-import { getNid, getNonce } from "./logic";
-import BigNumber from "bignumber.js";
 import { RPC_VERSION } from "./constants";
+import { getNid, getNonce } from "./logic";
+import type { IconAccount, Transaction } from "./types";
 
 const { IconBuilder, IconConverter } = IconService;
 

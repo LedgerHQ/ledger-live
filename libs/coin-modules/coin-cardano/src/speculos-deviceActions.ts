@@ -1,11 +1,11 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
-import { getAccountStakeCredential, getBipPathString } from "./logic";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { getAccountStakeCredential, getBipPathString } from "./logic";
+import type { Transaction } from "./types";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [

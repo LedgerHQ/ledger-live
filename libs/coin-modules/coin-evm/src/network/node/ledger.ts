@@ -308,6 +308,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
 export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   currency,
   blockHeight = "latest",
+  _prefetchTxs = false,
 ) => {
   const config = getCoinConfig(currency).info;
   const { node } = config || /* istanbul ignore next */ {};

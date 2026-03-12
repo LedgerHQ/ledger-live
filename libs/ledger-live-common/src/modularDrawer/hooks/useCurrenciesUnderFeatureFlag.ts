@@ -7,6 +7,7 @@ import useEnv from "../../hooks/useEnv";
 export function useCurrenciesUnderFeatureFlag() {
   const mock = useEnv("MOCK");
 
+  const adi = useFeature("currencyAdi");
   const aleo = useFeature("currencyAleo");
   const aleoTestnet = useFeature("currencyAleoTestnet");
   const aptos = useFeature("currencyAptos");
@@ -38,6 +39,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
+  const polygonAmoy = useFeature("currencyPolygonAmoy");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
@@ -95,6 +97,7 @@ export function useCurrenciesUnderFeatureFlag() {
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      adi,
       aleo,
       aleo_testnet: aleoTestnet,
       aptos,
@@ -129,6 +132,7 @@ export function useCurrenciesUnderFeatureFlag() {
       berachain: berachain,
       hyperevm: hyperevm,
       coreum,
+      polygon_amoy: polygonAmoy,
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
@@ -182,6 +186,7 @@ export function useCurrenciesUnderFeatureFlag() {
       unichain_sepolia: unichainSepolia,
     }),
     [
+      adi,
       aleo,
       aleoTestnet,
       aptos,
@@ -216,6 +221,7 @@ export function useCurrenciesUnderFeatureFlag() {
       berachain,
       hyperevm,
       coreum,
+      polygonAmoy,
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,

@@ -1,7 +1,6 @@
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
-
-import type { IconAccount, Transaction } from "./types";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { FeeNotLoaded } from "@ledgerhq/errors";
 import type {
   Account,
   AccountBridge,
@@ -9,15 +8,14 @@ import type {
   Operation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { BigNumber } from "bignumber.js";
+import IconService, { IcxTransaction } from "icon-sdk-js";
+import { Observable } from "rxjs";
 
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount, getNonce } from "./logic";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import IconService, { IcxTransaction } from "icon-sdk-js";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { IconSignature, IconSigner } from "./signer";
+import type { IconAccount, Transaction } from "./types";
 const { IconUtil, IconConverter } = IconService;
 
 const buildOptimisticOperation = (

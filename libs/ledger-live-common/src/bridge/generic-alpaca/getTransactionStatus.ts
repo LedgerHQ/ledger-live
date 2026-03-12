@@ -50,6 +50,7 @@ export function genericGetTransactionStatus(
       value: transaction.fees ?? new BigNumber(0),
       parameters: {
         gasLimit: transaction.gasLimit,
+        customGasLimit: transaction.customGasLimit,
         gasPrice: transaction.gasPrice,
         maxFeePerGas: transaction.maxFeePerGas,
         maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,

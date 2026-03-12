@@ -8,9 +8,11 @@ export class MarketPage extends AppPage {
   private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
   private buyButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-buy-button`).first();
-  readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
-  private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
+    this.page.locator(`[data-testid="market-${ticker}-buy-button"]:visible`).first();
+  readonly swapButton = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-swap-button"]:visible`).first();
+  private stakeButton = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-stake-button"]:visible`).first();
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
 
   // Filter controls - using text selector because react-select doesn't forward data-testid

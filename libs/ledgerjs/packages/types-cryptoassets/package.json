@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-cryptoassets",
-  "version": "7.33.0",
+  "version": "7.34.0",
   "description": "Ledger types for crypto assets and tokens",
   "keywords": [
     "Ledger"
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",

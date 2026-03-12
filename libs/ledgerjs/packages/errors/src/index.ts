@@ -322,9 +322,7 @@ export const StatusCodes = {
   INVALID_RESTORE_STATE: 0x6643,
   INVALID_CHUNK_LENGTH: 0x6734,
   INVALID_BACKUP_HEADER: 0x684a,
-
-  // Not documented:
-  TRUSTCHAIN_WRONG_SEED: 0xb007,
+  SW_BAD_STATE: 0xb007,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
@@ -344,6 +342,8 @@ export function getAltStatusMessage(code: number): string | undefined | null {
       return "Invalid parameter received";
     case 0x5515:
       return "Locked device";
+    case 0xb007:
+      return "Unexpected state on the device";
   }
   if (0x6f00 <= code && code <= 0x6fff) {
     return "Internal error, please report";

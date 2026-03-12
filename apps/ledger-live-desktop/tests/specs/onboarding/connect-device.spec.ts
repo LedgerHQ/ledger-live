@@ -38,7 +38,6 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.hoverDevice(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
-          animations: "disabled",
         });
       });
 
@@ -53,6 +52,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}] Device genuine check`, async () => {
+        await onboardingPage.waitForGenuineCheckPage();
         await expect(page).toHaveScreenshot("v3-genuine-check.png");
         await onboardingPage.checkDevice();
         await onboardingPage.continueButton.isEnabled({ timeout: 10000 });

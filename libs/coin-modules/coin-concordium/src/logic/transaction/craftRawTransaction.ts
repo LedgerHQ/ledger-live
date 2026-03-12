@@ -1,6 +1,7 @@
 import { log } from "@ledgerhq/logs";
-import type { Transaction } from "@ledgerhq/concordium-core";
+import type { CraftedTransaction } from "@ledgerhq/coin-framework/api/index";
 import {
+  type Transaction,
   AccountAddress,
   deserializeTransaction,
   serializeTransaction,
@@ -20,10 +21,7 @@ export async function craftRawTransaction(
   sender: string,
   _publicKey: string,
   sequence: bigint,
-): Promise<{
-  nativeTransaction: Transaction;
-  serializedTransaction: string;
-}> {
+): Promise<CraftedTransaction> {
   try {
     const deserializedTransaction = deserializeTransaction(Buffer.from(transaction, "hex"));
     const senderAddress = AccountAddress.fromBase58(sender);
@@ -43,12 +41,7 @@ export async function craftRawTransaction(
       payload: deserializedTransaction.payload,
     };
 
-    const serializedTransaction = serializeTransaction(updatedTransaction).toString("hex");
-
-    return {
-      nativeTransaction: updatedTransaction,
-      serializedTransaction,
-    };
+    return { transaction: serializeTransaction(updatedTransaction).toString("hex") };
   } catch (error) {
     log("concordium", "craftRawTransaction", { error });
     throw new Error(

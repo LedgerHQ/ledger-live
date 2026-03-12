@@ -1,94 +1,47 @@
-import BigNumber from "bignumber.js";
 import { Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook, act } from "tests/testSetup";
 import { useActivityIndicator } from "../useActivityIndicator";
+import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import * as segment from "~/renderer/analytics/segment";
 
-jest.mock("../useAccountsSyncStatus");
-jest.mock("../useActivityIndicatorTooltip");
-jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
-  useBridgeSync: () => jest.fn(),
-  useGlobalSyncState: () => ({ pending: false, error: null }),
-}));
-jest.mock("@ledgerhq/live-countervalues-react", () => {
-  const actual = jest.requireActual<typeof import("@ledgerhq/live-countervalues-react")>(
-    "@ledgerhq/live-countervalues-react",
-  );
-  return {
-    ...actual,
-    useCountervaluesPolling: () => ({ pending: false, error: null, poll: jest.fn() }),
-  };
-});
-jest.mock("LLD/features/WalletSync/components/WalletSyncContext", () => ({
-  useWalletSyncUserState: () => ({
-    visualPending: false,
-    walletSyncError: null,
-    onUserRefresh: jest.fn(),
-  }),
-}));
+const mockTriggerRefresh = jest.fn();
 
-const mockUseAccountsSyncStatus = jest.requireMock(
-  "../useAccountsSyncStatus",
-).useAccountsSyncStatus;
-const mockUseActivityIndicatorTooltip = jest.requireMock(
-  "../useActivityIndicatorTooltip",
-).useActivityIndicatorTooltip;
-
-const getDefaultInitialState = (overrides: Record<string, unknown> = {}) => ({
-  accounts: [],
-  ...overrides,
-});
-
-const mockAccount = {
-  id: "a1",
-  balance: new BigNumber(0),
-  spendableBalance: new BigNumber(0),
-  swapHistory: [],
-  operations: [],
-  operationsCount: 0,
-  pendingOperations: [],
-  lastSyncDate: new Date(),
-  currency: {
-    id: "bitcoin",
-    type: "CryptoCurrency",
-    ticker: "BTC",
-    name: "Bitcoin",
-    family: "bitcoin",
-    blockAvgTime: 10 * 60,
-  },
+const defaultPortfolioBalanceSync = {
+  isBalanceLoading: false,
+  stableSyncPending: false,
+  hasCvOrBridgeError: false,
+  hasWalletSyncError: false,
+  triggerRefresh: mockTriggerRefresh,
 };
 
-describe("useActivityIndicator", () => {
-  const mockBridgeSync = jest.fn();
-  const mockCvPoll = jest.fn();
-  const mockOnUserRefresh = jest.fn();
+jest.mock("LLD/hooks/usePortfolioBalanceSync", () => ({
+  usePortfolioBalanceSync: jest.fn(() => defaultPortfolioBalanceSync),
+}));
 
+const mockUsePortfolioBalanceSync = jest.requireMock(
+  "LLD/hooks/usePortfolioBalanceSync",
+).usePortfolioBalanceSync;
+
+// Bridge: useActivityIndicator + useAccountsSyncStatus both use this package
+jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
+  useBridgeSync: jest.fn(),
+  useGlobalSyncState: jest.fn(() => ({ pending: false, error: null })),
+  useBatchAccountsSyncState: jest.fn(({ accounts }: { accounts: { id: string }[] }) =>
+    accounts.map(account => ({ syncState: { pending: false, error: null }, account })),
+  ),
+}));
+
+const defaultInitialState: { accounts: unknown[] } = { accounts: [] };
+
+describe("useActivityIndicator", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.requireMock("@ledgerhq/live-common/bridge/react/index").useBridgeSync = () =>
-      mockBridgeSync;
-    jest.requireMock("@ledgerhq/live-countervalues-react").useCountervaluesPolling = () => ({
-      pending: false,
-      error: null,
-      poll: mockCvPoll,
-    });
-    jest.requireMock(
-      "LLD/features/WalletSync/components/WalletSyncContext",
-    ).useWalletSyncUserState = () => ({
-      visualPending: false,
-      walletSyncError: null,
-      onUserRefresh: mockOnUserRefresh,
-    });
-    mockUseAccountsSyncStatus.mockReturnValue({
-      allAccounts: [{ id: "a1", lastSyncDate: new Date(), currency: { ticker: "BTC" } }],
-      listOfErrorAccountNames: "",
-      areAllAccountsUpToDate: true,
-    });
-    mockUseActivityIndicatorTooltip.mockReturnValue("Tap to refresh");
+    mockUsePortfolioBalanceSync.mockReturnValue(defaultPortfolioBalanceSync);
   });
 
-  it("returns hasAccounts, handleSync, isError, isRotating, isDisabled, tooltip, icon", () => {
+  it("returns correct values", () => {
     const { result } = renderHook(() => useActivityIndicator(), {
-      initialState: getDefaultInitialState({ accounts: [mockAccount] }),
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
     });
 
     expect(result.current).toMatchObject({
@@ -96,15 +49,118 @@ describe("useActivityIndicator", () => {
       isError: false,
       isRotating: false,
       isDisabled: false,
-      tooltip: "Tap to refresh",
     });
+    expect(result.current.tooltip).toBeDefined();
+    expect(typeof result.current.tooltip).toBe("string");
     expect(result.current.handleSync).toBeDefined();
     expect(result.current.icon).toBe(Refresh);
+    expect(result.current.onTooltipShow).toBeUndefined();
   });
 
-  it("handleSync calls onUserRefresh, poll, bridgeSync and track", () => {
+  it("returns onTooltipShow when isError is true", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      hasWalletSyncError: true,
+    });
+
     const { result } = renderHook(() => useActivityIndicator(), {
-      initialState: getDefaultInitialState({ accounts: [mockAccount] }),
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isError).toBe(true);
+    expect(typeof result.current.onTooltipShow).toBe("function");
+  });
+
+  it("onTooltipShow tracks SyncErrorList with currencies as array", () => {
+    const trackSpy = jest.spyOn(segment, "track");
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      hasWalletSyncError: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    act(() => {
+      result.current.onTooltipShow?.();
+    });
+
+    expect(trackSpy).toHaveBeenCalledWith(
+      "SyncErrorList",
+      expect.objectContaining({
+        currencies: expect.any(Array),
+      }),
+    );
+    trackSpy.mockRestore();
+  });
+
+  it("returns isRotating and isDisabled true when balance is loading (e.g. countervalues polling)", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isRotating).toBe(true);
+    expect(result.current.isDisabled).toBe(true);
+  });
+
+  it("returns isRotating true on cold start when portfolio balance is not available", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isRotating).toBe(true);
+    expect(result.current.tooltip).toBeNull();
+  });
+
+  it("returns isRotating true when sync is pending", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      stableSyncPending: true,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isRotating).toBe(true);
+  });
+
+  it("returns isRotating true after user click when sync is pending", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultPortfolioBalanceSync,
+      stableSyncPending: true,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isRotating).toBe(true);
+
+    act(() => {
+      result.current.handleSync();
+    });
+
+    expect(result.current.isRotating).toBe(true);
+    expect(result.current.isDisabled).toBe(true);
+  });
+
+  it("handleSync calls triggerRefresh and track", () => {
+    const { result } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
     });
     const { track } = jest.requireMock("~/renderer/analytics/segment");
 
@@ -112,13 +168,25 @@ describe("useActivityIndicator", () => {
       result.current.handleSync();
     });
 
-    expect(mockOnUserRefresh).toHaveBeenCalledTimes(1);
-    expect(mockCvPoll).toHaveBeenCalledTimes(1);
-    expect(mockBridgeSync).toHaveBeenCalledWith({
-      type: "SYNC_ALL_ACCOUNTS",
-      priority: 5,
-      reason: "user-click",
+    expect(mockTriggerRefresh).toHaveBeenCalledTimes(1);
+    expect(track).toHaveBeenCalledWith("SyncRefreshClick", {
+      triggered_after_sync_error: false,
     });
-    expect(track).toHaveBeenCalledWith("SyncRefreshClick");
+  });
+
+  it("handleSync dispatches setLastUserSyncClickTimestamp", () => {
+    const before = Date.now();
+    const { result, store } = renderHook(() => useActivityIndicator(), {
+      initialState: { ...defaultInitialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    act(() => {
+      result.current.handleSync();
+    });
+
+    const after = Date.now();
+    const lastUserSyncClickTimestamp = store.getState().syncRefresh.lastUserSyncClickTimestamp;
+    expect(lastUserSyncClickTimestamp).toBeGreaterThanOrEqual(before);
+    expect(lastUserSyncClickTimestamp).toBeLessThanOrEqual(after);
   });
 });

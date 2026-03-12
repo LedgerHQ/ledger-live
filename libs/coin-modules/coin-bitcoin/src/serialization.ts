@@ -10,10 +10,12 @@ import type {
   BitcoinAccount,
   ZcashAccount,
   ZcashAccountRaw,
+} from "./types";
+import {
   ZcashPrivateInfo,
   ZcashPrivateInfoRaw,
   ZcashSyncState,
-} from "./types";
+} from "@ledgerhq/zcash-shielded/types";
 import wallet from "./wallet-btc";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 

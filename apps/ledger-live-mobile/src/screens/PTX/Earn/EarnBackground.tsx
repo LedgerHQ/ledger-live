@@ -22,15 +22,12 @@ function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
         backgroundColor: theme.colors.bg.base,
       },
       imageContainer: {
-        aspectRatio: 25 / 32,
+        width: "100%",
+        height: 500,
       },
     }),
     [],
   );
-
-  const isDark = useMemo(() => {
-    return colorScheme === "dark";
-  }, [colorScheme]);
 
   const opacity = useMemo(
     () =>
@@ -44,15 +41,18 @@ function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
     [scrollY, fadeDistance],
   );
 
-  const source = require("~/images/liveApps/earn/background-dark.webp");
+  const source = useMemo(() => {
+    if (colorScheme === "dark") {
+      return require("~/images/liveApps/earn/background-dark.webp");
+    }
+    return require("~/images/portfolio/v4-light.webp");
+  }, [colorScheme]);
 
   return (
     <View style={styles.container} pointerEvents="none">
-      {isDark && (
-        <Animated.View style={{ opacity }}>
-          <ImageBackground source={source} style={styles.imageContainer} />
-        </Animated.View>
-      )}
+      <Animated.View style={{ opacity }}>
+        <ImageBackground source={source} style={styles.imageContainer} />
+      </Animated.View>
     </View>
   );
 }

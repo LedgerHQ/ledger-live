@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import type { ConcordiumAccount, ConcordiumSigner, Transaction } from "../types";

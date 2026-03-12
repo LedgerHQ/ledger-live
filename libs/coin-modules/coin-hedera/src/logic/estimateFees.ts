@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import {
   BASE_USD_FEE_BY_OPERATION_TYPE,
   DEFAULT_GAS_LIMIT,

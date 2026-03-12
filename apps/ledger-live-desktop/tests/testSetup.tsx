@@ -18,8 +18,8 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
-import type { ReduxStore } from "~/renderer/createStore";
-import createStore from "~/renderer/createStore";
+import type { ReduxStore } from "~/state-manager/configureStore";
+import createStore from "~/state-manager/configureStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import i18n from "~/renderer/i18n/init";
 import dbMiddleware from "~/renderer/middlewares/db";

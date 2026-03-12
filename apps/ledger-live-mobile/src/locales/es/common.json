@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "Todavía no se ha hecho una copia de respaldo del acceso a tu billetera"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Actualizando - Última actualización {{timeAgo}}",
+      "refreshingInitial" : "Actualizando...",
+      "upToDate" : "Estás al día"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Actualización del SO disponible",
+          "manager" : "Actualización de Ledger OS disponible"
+        },
+        "version" : "Versión {{firmwareVersion}}",
+        "cta" : "Actualizar"
+      },
       "title" : "Actualización del SO disponible",
       "descriptionDeviceName" : "Toca para actualizar “{{deviceName}}” a la versión {{firmwareVersion}} del SO.",
       "descriptionProductName" : "Toca para actualizar tu {{productName}} a la versión {{firmwareVersion}} del SO."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "No se encontraron activos",
     "accountCount_one" : "{{count}} cuenta",
     "accountCount_other" : "{{count}} cuentas",
+    "perpetualsBanner" : "Actualmente solo se admite con USDC en la cadena Arbitrum.",
     "errors" : {
       "title" : "La conexión ha fallado",
       "backend" : "Algo ha salido mal en nuestro sistema. Inténtalo de nuevo más tarde",

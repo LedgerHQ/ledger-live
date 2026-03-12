@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/disable-network-setup",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Disable network hook, util for tests",
   "keywords": [
@@ -25,6 +25,6 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "10.9.2",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
   }
 }

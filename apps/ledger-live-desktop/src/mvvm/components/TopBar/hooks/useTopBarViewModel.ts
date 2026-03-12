@@ -1,3 +1,4 @@
+import { useLocation } from "react-router";
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
@@ -9,12 +10,15 @@ const useTopBarViewModel = () => {
   const {
     hasAccounts,
     handleSync,
-    isDisabled,
+    isRotating,
     icon: activityIndicatorIcon,
     tooltip: activityIndicatorTooltip,
+    onTooltipShow: activityIndicatorOnTooltipShow,
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
   const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
+  const location = useLocation();
+  const inManager = location.pathname === "/manager";
 
   const topBarSlots: TopBarSlot[] = [
     ...(hasAccounts
@@ -25,8 +29,9 @@ const useTopBarViewModel = () => {
               label: "synchronize",
               tooltip: activityIndicatorTooltip,
               icon: activityIndicatorIcon,
-              isInteractive: !isDisabled,
+              isInteractive: !isRotating,
               onClick: handleSync,
+              onTooltipShow: activityIndicatorOnTooltipShow,
             },
           },
         ]
@@ -66,6 +71,7 @@ const useTopBarViewModel = () => {
 
   return {
     topBarSlots,
+    inManager,
   };
 };
 

@@ -109,6 +109,14 @@ const withRozeniteUrlFix = rozeniteConfig => {
   };
 };
 
+const isDetoxBuild = process.env.DETOX === "1" || (process.env.ENVFILE || "").includes("mock");
+
+const detoxAliases = isDetoxBuild
+  ? {
+      "@sbaiahmed1/react-native-blur": path.resolve(__dirname, "e2e/mocks/react-native-blur.js"),
+    }
+  : {};
+
 const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
 
 /**
@@ -140,6 +148,7 @@ export default withRozeniteUrlFix(
           modules: nodeModulesPaths,
           alias: {
             ...buildTsAlias(tsconfig.compilerOptions.paths),
+            ...detoxAliases,
             // Packages with malformed exports field (missing "." subpath) - resolve to browser entry
             "@aptos-labs/aptos-client": resolvePackageFile(
               "@aptos-labs/aptos-client",

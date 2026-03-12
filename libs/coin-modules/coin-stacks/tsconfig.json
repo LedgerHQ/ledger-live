@@ -9,6 +9,7 @@
       "es2021",
       "dom"
     ],
+    "types": ["node", "jest"],
     "outDir": "lib",
     "typeRoots": [
       "./types",

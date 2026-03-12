@@ -25,10 +25,6 @@ export const getSerializedAddressParameters = (
   invariant(Object.keys(addressFormatMap).includes(format), "unsupported format %s", format);
   const buffer = bip32asBuffer(path);
   const formatByte = Buffer.from([addressFormatMap[format]]);
-  // TypeScript 5.6.3 requires explicit Uint8Array conversion for Buffer.concat
-  const addressParameters = Buffer.concat([
-    formatByte as unknown as Uint8Array,
-    buffer as unknown as Uint8Array,
-  ] as Uint8Array[]);
+  const addressParameters = Buffer.concat([formatByte, buffer]);
   return addressParameters;
 };

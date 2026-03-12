@@ -19,7 +19,7 @@ import {
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
@@ -647,7 +647,12 @@ const OperationD = (props: Props) => {
       {uniqueSenders.length ? (
         <OpDetailsSection data-testid="operation-from">
           <OpDetailsTitle>{t("operationDetails.from")}</OpDetailsTitle>
-          <DataList lines={uniqueSenders} t={t} />
+          <DataList
+            lines={uniqueSenders}
+            t={t}
+            cryptoCurrency={cryptoCurrency}
+            operation={operation}
+          />
         </OpDetailsSection>
       ) : null}
       {recipients.length ? (
@@ -670,7 +675,12 @@ const OperationD = (props: Props) => {
                 </FakeLink>
               </Link>
             ) : null}
-            <DataList lines={recipients} t={t} />
+            <DataList
+              lines={recipients}
+              t={t}
+              cryptoCurrency={cryptoCurrency}
+              operation={operation}
+            />
           </Box>
         </OpDetailsSection>
       ) : null}
@@ -738,6 +748,8 @@ const More = styled(Text).attrs<TextProps>(p => ({
 export class DataList extends Component<{
   lines: string[];
   t: TFunction;
+  cryptoCurrency?: CryptoCurrency;
+  operation?: Operation;
 }> {
   state = {
     numToShow: 2,
@@ -752,14 +764,17 @@ export class DataList extends Component<{
   };
 
   render() {
-    const { lines, t } = this.props;
+    const { lines, t, cryptoCurrency, operation } = this.props;
     const { showMore, numToShow } = this.state;
     // Hardcoded for now
     const shouldShowMore = lines.length > 3;
+    const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+    const SplitAddressComponent =
+      specific?.operationDetails?.splitAddress?.[operation?.type as OperationType] || SplitAddress;
     const renderLine = (line: string, index: number) => (
       <OpDetailsData relative horizontal key={line + index}>
         <HashContainer>
-          <SplitAddress value={line} />
+          <SplitAddressComponent value={line} />
         </HashContainer>
         <GradientHover>
           <CopyWithFeedback text={line} />

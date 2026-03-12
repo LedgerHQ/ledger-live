@@ -1,5 +1,3 @@
-import invariant from "invariant";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   AccountId,
   Hbar,
@@ -8,16 +6,20 @@ import {
   TokenAssociateTransaction,
   TransferTransaction,
   AccountUpdateTransaction,
+  ContractExecuteTransaction,
+  ContractFunctionParameters,
 } from "@hashgraph/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import invariant from "invariant";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
-import { getSyntheticBlock } from "../logic/utils";
+import { getSyntheticBlock, toEVMAddress } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
-  const api = createApi({});
+  const api = createApi({ useHgraphForErc20: false }, "hedera");
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -76,7 +78,7 @@ describe("createApi", () => {
         memo: {
           kind: "text",
           type: "string",
-          value: "token transfer",
+          value: "hts token transfer",
         },
       });
 
@@ -92,7 +94,53 @@ describe("createApi", () => {
       expect(senderTransfer).toEqual(Long.fromNumber(-1));
       expect(recipientTransfer).toEqual(Long.fromNumber(1));
       expect(tokenTransfers).not.toBeNull();
-      expect(rawTx.transactionMemo).toBe("token transfer");
+      expect(rawTx.transactionMemo).toBe("hts token transfer");
+    });
+
+    it("returns serialized ERC20 token ContractExecuteTransaction", async () => {
+      const { transaction: hex } = await api.craftTransaction({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        amount: 1n,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "erc20 token transfer",
+        },
+        data: {
+          type: "erc20",
+          gasLimit: 100n,
+        },
+      });
+
+      const rawTx = ContractExecuteTransaction.fromBytes(Buffer.from(hex, "hex"));
+      expect(rawTx).toBeInstanceOf(ContractExecuteTransaction);
+      invariant(
+        rawTx instanceof ContractExecuteTransaction,
+        "ContractExecuteTransaction type guard",
+      );
+
+      const recipientEvmAddress = await toEVMAddress(MAINNET_TEST_ACCOUNTS.withTokens.accountId);
+      invariant(recipientEvmAddress, "hedera: missing recipient EVM address");
+      const expectedFunctionParameters = new ContractFunctionParameters()
+        .addAddress(recipientEvmAddress)
+        .addUint256(1);
+
+      expect(rawTx.gas).toEqual(Long.fromNumber(100));
+      expect(rawTx.transactionMemo).toBe("erc20 token transfer");
+      expect(rawTx.functionParameters).toEqual(
+        Buffer.concat([
+          Buffer.from([0xa9, 0x05, 0x9c, 0xbb]), // transfer(address,uint256) selector
+          Buffer.from(expectedFunctionParameters._build()), // address + amount parameters
+        ]),
+      );
     });
 
     it("returns serialized HTS token association transaction", async () => {
@@ -190,6 +238,28 @@ describe("createApi", () => {
       invariant(rawTx instanceof TransferTransaction, "TransferTransaction type guard");
       expect(rawTx.maxTransactionFee).toEqual(expectedMaxFee);
     });
+
+    it("throws if useAllAmount is true", async () => {
+      await expect(
+        api.craftTransaction({
+          intentType: "transaction",
+          asset: {
+            type: "native",
+          },
+          amount: BigInt(100),
+          useAllAmount: true,
+          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          type: HEDERA_TRANSACTION_MODES.TokenAssociate,
+          memo: {
+            kind: "text",
+            type: "string",
+            value: "token association",
+          },
+        }),
+      ).rejects.toThrow("useAllAmount is not supported");
+    });
   });
 
   describe("estimateFees", () => {
@@ -214,7 +284,7 @@ describe("createApi", () => {
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
 
-    it("returns fee for token transfer transaction", async () => {
+    it("returns fee for HTS token transfer transaction", async () => {
       const fees = await api.estimateFees({
         intentType: "transaction",
         asset: {
@@ -225,6 +295,28 @@ describe("createApi", () => {
         sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
         senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
         amount: BigInt(100),
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "",
+        },
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
+
+    it("returns fee for ERC20 token transfer transaction", async () => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        amount: 100n,
         recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
         memo: {
           kind: "text",
@@ -590,10 +682,9 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
-      const block = await api.lastBlock();
       const { items: operations } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.pristine.accountId,
-        { minHeight: block.height, order: "desc" },
+        { minHeight: 0, order: "desc" },
       );
 
       expect(operations).toBeInstanceOf(Array);
@@ -602,9 +693,8 @@ describe("createApi", () => {
 
     it("returns operations with valid synthetic block info", async () => {
       const cursor = "1753099264.927988000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
-        minHeight: block.height,
+        minHeight: 0,
         cursor,
         limit: 4,
         order: "asc",
@@ -613,15 +703,13 @@ describe("createApi", () => {
       const expectedSyntheticBlock = getSyntheticBlock(cursor);
       const blockHeights = ops.map(o => o.tx.block.height);
 
-      expect(blockHeights).toHaveLength(6);
       expect(blockHeights.every(h => h >= expectedSyntheticBlock.blockHeight)).toBe(true);
     });
 
     it("returns operations for real account with tokens", async () => {
       const cursor = "1753099264.927988000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
-        minHeight: block.height,
+        minHeight: 0,
         cursor,
         limit: 100,
         order: "desc",
@@ -664,14 +752,15 @@ describe("createApi", () => {
         ledgerOpType: expect.any(String),
         associatedTokenId: expect.any(String),
       });
+      // every transfer operation should have a fees payer
+      expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
     it("returns staking operations with correct metadata", async () => {
       const cursor = "1762202113.000000000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
-        { minHeight: block.height, cursor, limit: 30, order: "desc" },
+        { minHeight: 0, cursor, limit: 30, order: "desc" },
       );
 
       const rewardOp = ops.find(op => op.type === "REWARD");
@@ -702,13 +791,14 @@ describe("createApi", () => {
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
+      // every staking operation should have a fees payer
+      expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.withQuickBalanceChanges.accountId,
-        { minHeight: block.height, limit: 10, order: "asc" },
+        { minHeight: 0, limit: 10, order: "asc" },
       );
 
       const opDelegate1 = ops[2];

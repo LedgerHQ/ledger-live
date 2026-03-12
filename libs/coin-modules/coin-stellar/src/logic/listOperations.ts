@@ -39,6 +39,7 @@ const convertToCoreOperation = (operation: StellarOperation): Operation => {
         height: operation.blockHeight!,
       },
       fees: BigInt(operation.fee.toString()),
+      ...(operation.extra.feeAccount ? { feesPayer: operation.extra.feeAccount } : {}),
       date: operation.date,
       failed: operation.hasFailed ?? false,
     },

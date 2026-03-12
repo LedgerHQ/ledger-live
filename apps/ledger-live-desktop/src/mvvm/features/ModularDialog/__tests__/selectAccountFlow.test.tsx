@@ -408,6 +408,48 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
   });
 
+  it("should display perpetuals banner when uiUseCase is perpetuals", async () => {
+    const { user } = render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDrawer: {
+          ...defaultModularDrawerState,
+          dialogParams: {
+            ...defaultModularDrawerState.dialogParams,
+            uiUseCase: "perpetuals",
+          },
+        },
+      },
+    });
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await user.click(screen.getByText(/ethereum/i));
+    await user.click(screen.getByText(/ethereum/i));
+
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
+    expect(screen.getByText(/currently only supported with usdc on arbitrum chain/i)).toBeVisible();
+  });
+
+  it("should not display perpetuals banner when uiUseCase is not set", async () => {
+    const { user } = render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDrawer: defaultModularDrawerState,
+      },
+    });
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await user.click(screen.getByText(/ethereum/i));
+    await user.click(screen.getByText(/ethereum/i));
+
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
+    expect(
+      screen.queryByText(/currently only supported with usdc on arbitrum chain/i),
+    ).not.toBeInTheDocument();
+  });
+
   it("should auto focus on search input when autoFocus is true", async () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,

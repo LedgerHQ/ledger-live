@@ -7,6 +7,7 @@ import {
   openRebornBuyDeviceDrawer,
   rebornBuyDeviceDrawerStateSelector,
 } from "~/reducers/rebornBuyDeviceDrawer";
+import { REBORN_BUY_DRAWER_ANALYTICS_PAGE } from "../consts/analytics";
 /**
  * Hook to manage the global state of the Reborn Buy Device Drawer.
  *
@@ -26,14 +27,14 @@ export const useRebornBuyDeviceDrawerController = () => {
           sourceScreenName: params?.sourceScreenName ?? "",
         }),
       );
-      track("drawer_opened", { page: "UpsellFlex", flow: "reborn" });
+      track("drawer_opened", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
     },
     [dispatch],
   );
 
   const closeDrawer = useCallback(() => {
     dispatch(closeRebornBuyDeviceDrawer());
-    track("drawer_closed", { page: "UpsellFlex", flow: "reborn" });
+    track("drawer_closed", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
   }, [dispatch]);
 
   return {

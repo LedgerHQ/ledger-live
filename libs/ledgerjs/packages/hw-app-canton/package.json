@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-canton",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
     "Ledger",
@@ -33,7 +33,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
     "rimraf": "^4.4.1",

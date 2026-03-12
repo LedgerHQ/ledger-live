@@ -3,8 +3,8 @@ import useTopBarViewModel from "./hooks/useTopBarViewModel";
 import TopBarView from "./TopBarView";
 
 const TopBar = () => {
-  const { topBarSlots } = useTopBarViewModel();
+  const { topBarSlots, inManager } = useTopBarViewModel();
 
-  return <TopBarView slots={topBarSlots} />;
+  return <TopBarView slots={topBarSlots} shouldShowFirmwareUpdateBanner={!inManager} />;
 };
 export default TopBar;

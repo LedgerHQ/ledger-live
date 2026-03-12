@@ -1,6 +1,6 @@
 // myModule.test.ts
-import { getLedgerEnd, generateJWT } from "./node";
 import coinConfig from "../config";
+import { getLedgerEnd, generateJWT } from "./node";
 
 jest.mock("@ledgerhq/live-network", () => jest.fn().mockResolvedValue({ data: { offset: 12345 } }));
 

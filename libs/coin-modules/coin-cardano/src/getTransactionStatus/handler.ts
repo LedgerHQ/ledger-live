@@ -1,7 +1,7 @@
+import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
 import { getDelegateTransactionStatus } from "./delegate";
 import { getSendTransactionStatus } from "./send";
 import { getUndelegateTransactionStatus } from "./undelegate";
-import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
 
 type StatusHandler = (
   account: CardanoAccount,

@@ -56,7 +56,7 @@ test("Updater", async ({ page }) => {
 
   await test.step("[error] state (any) should be visible, without the carousel", async () => {
     await layout.goToPortfolio();
-    await layout.appUpdateBanner.isVisible();
+    await expect(layout.appUpdateBanner).toBeVisible();
     await expect.soft(page).toHaveScreenshot("app-updater-error-without-carousel.png", {
       mask: [page.locator("canvas")],
     });

@@ -1,11 +1,15 @@
 import { renderHook } from "tests/testSetup";
 import { useBalanceViewModel } from "../useBalanceViewModel";
-import * as portfolioModule from "@ledgerhq/live-countervalues-react/portfolio";
+import * as usePortfolioBalanceSyncModule from "LLD/hooks/usePortfolioBalanceSync";
 import { Portfolio } from "@ledgerhq/types-live";
+import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
-jest.mock("@ledgerhq/live-countervalues-react/portfolio");
+jest.mock("LLD/hooks/usePortfolioBalanceSync");
 
-const mockUsePortfolio = jest.mocked(portfolioModule.usePortfolio);
+const mockUsePortfolioBalanceSync = jest.mocked(
+  usePortfolioBalanceSyncModule.usePortfolioBalanceSync,
+);
 
 const mockCounterValue = {
   type: "FiatCurrency" as const,
@@ -27,60 +31,123 @@ const mockPortfolio: Portfolio = {
   countervalueChange: { percentage: 5.5, value: 100 },
 };
 
+const wallet40WithBalanceRefreshRework = {
+  ...INITIAL_STATE.overriddenFeatureFlags,
+  lwdWallet40: {
+    enabled: true,
+    params: { balanceRefreshRework: true },
+  },
+};
+
+const defaultBalanceSyncReturn = {
+  portfolio: mockPortfolio,
+  counterValue: mockCounterValue,
+  balanceAvailable: true,
+  isColdStart: false,
+  isBalanceLoading: false,
+  isManualRefreshLoading: false,
+  stableSyncPending: false,
+  hasCvOrBridgeError: false,
+  hasWalletSyncError: false,
+  triggerRefresh: jest.fn(),
+};
+
 const initialState = {
   settings: {
+    ...INITIAL_STATE,
     counterValue: "USD",
     counterValueCurrency: mockCounterValue,
     selectedTimeRange: "week" as const,
+    overriddenFeatureFlags: wallet40WithBalanceRefreshRework,
   },
 };
 
 describe("useBalanceViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolio.mockReturnValue(mockPortfolio);
+    mockUsePortfolioBalanceSync.mockReturnValue(defaultBalanceSyncReturn);
   });
 
-  it("should return portfolio data correctly", () => {
+  it("returns balance data and flags when balance is available", () => {
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(result.current.formatter).toBeDefined();
     expect(result.current.balance).toBe(1500);
-    const formatted = result.current.formatter(result.current.balance);
-    expect(formatted.integerPart).toContain("15");
+    expect(result.current.formatter).toBeDefined();
+    expect(result.current.formatter(result.current.balance).integerPart).toContain("15");
     expect(result.current.valueChange).toEqual(mockPortfolio.countervalueChange);
+    expect(result.current.isColdStart).toBe(false);
+    expect(result.current.shouldDisplayBalanceRefreshRework).toBe(true);
+    expect(result.current.hasAccount).toBeDefined();
+    expect(result.current.hasOnboardedDevice).toBeDefined();
   });
 
-  it("should return 0 when balance history is empty", () => {
-    mockUsePortfolio.mockReturnValue({
-      ...mockPortfolio,
-      balanceHistory: [],
+  it("returns balance 0 when balance history is empty", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      portfolio: { ...mockPortfolio, balanceHistory: [] },
     });
 
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
 
     expect(result.current.balance).toBe(0);
-    const formatted = result.current.formatter(result.current.balance);
-    expect(formatted.integerPart).toContain("0");
+    expect(result.current.formatter(result.current.balance).integerPart).toContain("0");
   });
 
-  it("should use 'day' range by default", () => {
+  it("uses day range by default (legacyRange false)", () => {
     renderHook(() => useBalanceViewModel(), { initialState });
 
-    expect(portfolioModule.usePortfolio).toHaveBeenCalledWith(
-      expect.objectContaining({ range: "day" }),
-    );
+    expect(mockUsePortfolioBalanceSync).toHaveBeenCalledWith({ legacyRange: false });
   });
 
-  it("should use selected time range when useLegacyRange is true", () => {
-    renderHook(() => useBalanceViewModel({ useLegacyRange: true }), {
+  it("uses selected time range when legacyRange is true", () => {
+    renderHook(() => useBalanceViewModel({ legacyRange: true }), {
       initialState: {
         settings: { ...initialState.settings, selectedTimeRange: "month" as const },
       },
     });
 
-    expect(portfolioModule.usePortfolio).toHaveBeenCalledWith(
-      expect.objectContaining({ range: "month" }),
-    );
+    expect(mockUsePortfolioBalanceSync).toHaveBeenCalledWith({ legacyRange: true });
+  });
+
+  it("returns isLoading true when isBalanceLoading is true", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isBalanceLoading: true,
+    });
+
+    const { result } = renderHook(() => useBalanceViewModel(), { initialState });
+
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  it("returns isLoading true on cold start when portfolio balance is not yet available", () => {
+    mockUsePortfolioBalanceSync.mockReturnValue({
+      ...defaultBalanceSyncReturn,
+      isColdStart: true,
+      isBalanceLoading: true,
+      balanceAvailable: false,
+    });
+
+    const { result } = renderHook(() => useBalanceViewModel(), {
+      initialState: { ...initialState, accounts: [BTC_ACCOUNT] },
+    });
+
+    expect(result.current.isColdStart).toBe(true);
+  });
+
+  it("returns shouldDisplayBalanceRefreshRework false when lwdWallet40 has balanceRefreshRework false", () => {
+    const { result } = renderHook(() => useBalanceViewModel(), {
+      initialState: {
+        settings: {
+          ...initialState.settings,
+          overriddenFeatureFlags: {
+            ...wallet40WithBalanceRefreshRework,
+            lwdWallet40: { enabled: true, params: { balanceRefreshRework: false } },
+          },
+        },
+      },
+    });
+
+    expect(result.current.shouldDisplayBalanceRefreshRework).toBe(false);
   });
 });

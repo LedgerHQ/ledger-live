@@ -38,7 +38,6 @@ import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
-import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
@@ -69,7 +68,12 @@ import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCh
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
-import backgroundImg from "~/renderer/images/background.png";
+import {
+  getPageBackground,
+  BACKGROUND_SIZE,
+  preloadBackgrounds,
+} from "LLD/components/Page/backgrounds";
+import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -225,8 +229,8 @@ const MainAppContent = ({
 
     <Page>
       <TopBannerContainer>
+        {shouldDisplayWallet40MainNav ? null : <FirmwareUpdateBanner />}
         {!shouldDisplayWallet40MainNav && <UpdateBanner />}
-        <FirmwareUpdateBanner />
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
@@ -274,10 +278,14 @@ export const MainAppLayout = () => {
   //TODO: Remove this once testing is done
   const walletFeatureFlag = useFeature("lwdWallet40");
   const walletParams = walletFeatureFlag?.params;
-  const shouldDisplayBackground =
-    isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
+  const backgroundEnabled = isWallet40Enabled && Boolean(walletParams?.background);
+  const backgroundImage = backgroundEnabled ? getPageBackground(pathname, theme) : undefined;
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+
+  useEffect(() => {
+    if (backgroundEnabled) preloadBackgrounds();
+  }, [backgroundEnabled]);
 
   return (
     <>
@@ -292,10 +300,10 @@ export const MainAppLayout = () => {
 
       {useWallet40Layout ? (
         <div
-          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat"
+          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat transition-[background-image] duration-200"
           style={
-            shouldDisplayBackground
-              ? { backgroundImage: `url(${backgroundImg})`, backgroundSize: "45% 70%" }
+            backgroundImage
+              ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: BACKGROUND_SIZE }
               : undefined
           }
         >

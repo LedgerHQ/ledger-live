@@ -244,7 +244,7 @@
     "prettier": "3.2.5",
     "rimraf": "4.4.1",
     "turbo": "2.1.3",
-    "typescript": "5.4.3",
+    "typescript": "catalog:",
     "unimported": "1.30.0",
     "zx": "8.8.5"
   },

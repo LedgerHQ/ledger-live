@@ -8,6 +8,15 @@ import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();
 
+jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
+  useNavigationBarHeights: () => ({
+    top: 0,
+    bottom: 0,
+    bottomBarHeight: 0,
+    topBarHeight: 48,
+  }),
+}));
+
 jest.mock("@react-navigation/core", () => {
   const actual = jest.requireActual("@react-navigation/core");
   return {

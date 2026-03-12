@@ -1,10 +1,11 @@
+/* eslint-disable no-restricted-imports */
 import {
   useDispatch as useDispatchBase,
   useSelector as useSelectorBase,
   useStore as useStoreBase,
 } from "react-redux";
 import type { State } from "~/reducers/types";
-import type { store } from "./store";
+import { store } from "~/state-manager/configureStore";
 
 type AppDispatch = typeof store.dispatch;
 type StoreType = typeof store;

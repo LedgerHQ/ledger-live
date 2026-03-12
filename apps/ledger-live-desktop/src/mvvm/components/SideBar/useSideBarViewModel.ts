@@ -23,6 +23,7 @@ import {
   SIDEBAR_SPECIAL_VALUES,
   isSideBarNavValue,
 } from "./utils";
+import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
 import type { SideBarViewModel } from "./types";
 
 const MAX_STARRED_ACCOUNTS_DISPLAYED_IN_SMALL_SCREEN = 3;
@@ -187,6 +188,11 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const openSendFlow = useOpenSendFlow();
 
+  /** Notifies the Page to scroll the main content to top (e.g. when user clicks Home while already on home). */
+  const handleScrollToTop = useCallback(() => {
+    globalThis.dispatchEvent(new CustomEvent(SCROLL_TO_TOP_EVENT));
+  }, []);
+
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig.params.path);
@@ -265,11 +271,26 @@ export function useSideBarViewModel(): SideBarViewModel {
         return;
       }
       if (isSideBarNavValue(value)) {
+        if (
+          isWallet40MainNavEnabled &&
+          value === "home" &&
+          location.pathname === SIDEBAR_VALUE_TO_PATH.home
+        ) {
+          handleScrollToTop();
+        }
         push(SIDEBAR_VALUE_TO_PATH[value]);
         trackEntry(SIDEBAR_VALUE_TO_TRACK_ENTRY[value]);
       }
     },
-    [handleClickRefer, handleClickRecover, push, trackEntry],
+    [
+      handleClickRefer,
+      handleClickRecover,
+      handleScrollToTop,
+      push,
+      trackEntry,
+      location.pathname,
+      isWallet40MainNavEnabled,
+    ],
   );
 
   return {

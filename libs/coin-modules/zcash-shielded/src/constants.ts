@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { ZcashPrivateInfo } from "@ledgerhq/coin-bitcoin/types";
+import { ZcashPrivateInfo } from "./types";
 
 export const LOG_TYPE = "zcash-shielded";
 export const JSON_RPC_SERVER =

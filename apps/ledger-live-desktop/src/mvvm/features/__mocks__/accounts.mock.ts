@@ -8,6 +8,7 @@ import {
   hederaCurrency,
   scrollCurrency,
   usdcToken,
+  solanaCurrency,
 } from "./useSelectAssetFlow.mock";
 
 type Mock = ((...args: unknown[]) => unknown) & {
@@ -98,6 +99,11 @@ export const SCROLL_ACCOUNT = genAccount("scroll-1", {
 });
 export const HEDERA_ACCOUNT = genAccount("hedera-1", {
   currency: hederaCurrency,
+  operationsSize: 100,
+});
+
+export const SOL_ACCOUNT = genAccount("solana-1", {
+  currency: solanaCurrency,
   operationsSize: 100,
 });
 
