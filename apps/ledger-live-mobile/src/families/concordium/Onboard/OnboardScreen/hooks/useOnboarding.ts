@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
+import { getConcordiumBridge } from "../../helpers";
 
 const CONFIRMATION_CODE_LENGTH = 4;
 
@@ -36,6 +35,7 @@ export function useOnboarding(
   onSessionExpired: () => void,
 ) {
   const [createStatus, setCreateStatus] = useState<CreateStatus>(CreateStatus.PREPARING);
+  const [completedAccount, setCompletedAccount] = useState<Account | null>(null);
   const confirmationCode = getConfirmationCode(sessionTopic);
   const subscriptionRef = useRef<Subscription | null>(null);
   const completedRef = useRef(false);
@@ -52,8 +52,7 @@ export function useOnboarding(
     completedRef.current = false;
     setCreateStatus(CreateStatus.PREPARING);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const bridge = getCurrencyBridge(currency) as ConcordiumCurrencyBridge;
+    const bridge = getConcordiumBridge(currency);
     subscriptionRef.current = bridge
       .onboardAccount(currency.id, deviceId, creatableAccount)
       .subscribe({
@@ -74,6 +73,7 @@ export function useOnboarding(
           if ("account" in data) {
             completedRef.current = true;
             unsubscribe();
+            setCompletedAccount(data.account);
             setCreateStatus(CreateStatus.SUCCESS);
           }
         },
@@ -98,5 +98,5 @@ export function useOnboarding(
     return unsubscribe;
   }, [startOnboarding, unsubscribe]);
 
-  return { createStatus, confirmationCode, startOnboarding };
+  return { createStatus, confirmationCode, completedAccount, startOnboarding };
 }

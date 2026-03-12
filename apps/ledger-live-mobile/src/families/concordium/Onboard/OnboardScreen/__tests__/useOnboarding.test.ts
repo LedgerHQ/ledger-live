@@ -15,6 +15,7 @@ let onboardSubject: Subject<unknown>;
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: () => ({
     onboardAccount: () => onboardSubject.asObservable(),
+    pairWalletConnect: jest.fn(),
   }),
 }));
 
@@ -100,7 +101,7 @@ describe("useOnboarding", () => {
     });
   });
 
-  it("should transition to SUCCESS when result arrives", async () => {
+  it("should transition to SUCCESS and expose completed account when result arrives", async () => {
     const onSessionExpired = jest.fn();
     const { result } = renderHook(() =>
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
@@ -112,6 +113,7 @@ describe("useOnboarding", () => {
 
     await waitFor(() => {
       expect(result.current.createStatus).toBe(CreateStatus.SUCCESS);
+      expect(result.current.completedAccount).toBe(creatableAccount);
     });
   });
 

@@ -8616,7 +8616,7 @@
         "error": "Failed to connect to Concordium ID App. Please try again."
       },
       "create": {
-        "title": "Create Account",
+        "title": "Add Concordium Account",
         "prepare": {
           "title": "To create an account, match the code below in the Concordium ID App",
           "resendButton": "Resend confirmation",
@@ -8626,9 +8626,6 @@
         "keepDeviceNearby": "Approve the transaction on your Ledger device. Keep your Ledger nearby.",
         "success": "Your Concordium account has been created successfully.",
         "error": "Failed to create account. Please try again."
-      },
-      "finish": {
-        "success": "Your Concordium account has been created successfully."
       }
     }
   },

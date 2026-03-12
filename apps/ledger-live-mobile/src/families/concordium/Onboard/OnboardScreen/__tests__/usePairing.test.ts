@@ -9,6 +9,7 @@ let pairingSubject: Subject<unknown>;
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: () => ({
     pairWalletConnect: () => pairingSubject.asObservable(),
+    onboardAccount: jest.fn(),
   }),
 }));
 
