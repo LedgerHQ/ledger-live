@@ -367,8 +367,6 @@ export function useWalletAPIServer({
   // TODO: refactor each handler into its own logic function for clarity
   useEffect(() => {
     server.setHandler("currency.list", async ({ currencyIds }) => {
-      tracking.currencyListRequested(manifest);
-
       try {
         // 1. Parse manifest currency patterns to determine what to include
         const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
@@ -507,8 +505,6 @@ export function useWalletAPIServer({
 
   useEffect(() => {
     server.setHandler("account.list", ({ currencyIds }) => {
-      tracking.accountListRequested(manifest);
-
       try {
         // 1. Parse manifest currency patterns to determine what to include
         const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
@@ -576,10 +572,8 @@ export function useWalletAPIServer({
           return acc;
         }, []);
 
-        tracking.accountListSuccess(manifest);
         return wapiAccounts;
       } catch (err) {
-        tracking.accountListFail(manifest);
         throw err;
       }
     });
