@@ -174,16 +174,17 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "warn",
       },
     },
-    {
-      // Enable type-aware linting for TypeScript files only
-      files: ["*.ts", "*.tsx"],
-      parserOptions: {
-        project: true,
-      },
-      rules: {
-        "@typescript-eslint/no-deprecated": "error",
-      },
-    },
+    // Disabled as it takes too much ram on CI (1gb vs 8gb) and we're migrating to oxlint
+    // {
+    //   // Enable type-aware linting for TypeScript files only
+    //   files: ["*.ts", "*.tsx"],
+    //   parserOptions: {
+    //     project: true,
+    //   },
+    //   rules: {
+    //     "@typescript-eslint/no-deprecated": "error",
+    //   },
+    // },
   ],
   settings: {
     react: {
