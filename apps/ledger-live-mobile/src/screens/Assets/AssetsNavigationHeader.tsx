@@ -6,6 +6,7 @@ import AddAccount from "../Accounts/AddAccount";
 import Touchable from "~/components/Touchable";
 import { track } from "~/analytics";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   readOnly?: boolean;
@@ -15,11 +16,14 @@ function AssetsNavigationHeader({ readOnly }: Props) {
   const navigation = useNavigation();
   const { navigateToRebornFlow } = useRebornFlow();
 
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
+  const shouldUseLegacyRebornFlow = readOnly && !shouldUseLazyOnboarding;
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
     track("button_clicked", {
       button: "Add Account '+'",
       page: "Assets",
     });
+
     navigateToRebornFlow();
   }, [navigateToRebornFlow]);
 
@@ -39,7 +43,7 @@ function AssetsNavigationHeader({ readOnly }: Props) {
         </TouchableOpacity>
       </Flex>
       <Flex flexDirection="row" alignItems={"center"}>
-        {readOnly ? (
+        {shouldUseLegacyRebornFlow ? (
           <Touchable onPress={handleOnReadOnlyAddAccountPress}>
             <Flex
               bg={"neutral.c100"}
