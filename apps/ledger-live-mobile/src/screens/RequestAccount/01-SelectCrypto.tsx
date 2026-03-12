@@ -15,7 +15,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import VersionNumber from "react-native-version-number";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import { Flex, InfiniteLoader, SearchInput } from "@ledgerhq/native-ui";
-import { useMarketcapIds } from "@ledgerhq/live-countervalues-react";
+import { useGetCounterValueIdsSortedByMarketCapQuery } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
 type Navigation = StackNavigatorProps<
   RequestAccountNavigatorParamList,
@@ -62,7 +62,7 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
 
   // Pagination is a bit strange with this because we order by market cap
   // but it works fine and keeps the old/expected order as much as possible
-  const ids = useMarketcapIds();
+  const { data: ids = [] } = useGetCounterValueIdsSortedByMarketCapQuery();
 
   // TODO: Make sure we don't have delisted tokens here too
   const assetsToDisplay = useMemo(() => {
