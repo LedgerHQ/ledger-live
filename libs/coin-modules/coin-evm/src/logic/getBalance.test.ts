@@ -2,10 +2,12 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node";
+import { mockNodeApi } from "../network/node/test.utils";
 import { getStakes } from "./getStakes";
 import { getBalance } from ".";
 
 jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
   getNodeApi: jest.fn(),
 }));
 
@@ -17,13 +19,16 @@ jest.mock("./getStakes", () => ({
   getStakes: jest.fn(),
 }));
 
-const mockGetNodeApi = getNodeApi as jest.Mock;
-const mockGetExplorerApi = getExplorerApi as jest.Mock;
-const mockGetStakes = getStakes as jest.Mock;
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockGetExplorerApi = jest.mocked(getExplorerApi);
+const mockGetStakes = jest.mocked(getStakes);
 
 describe("getBalance", () => {
+  const nodeApiMock = mockNodeApi();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetNodeApi.mockReturnValue(nodeApiMock);
   });
 
   it.each([
@@ -83,16 +88,13 @@ describe("getBalance", () => {
       ], // expected
     ],
   ])("returns %s", async (_, operations, tokenBalances, expected) => {
-    const mockGetTokenBalance = jest
-      .fn()
-      .mockImplementation((_currency, _address, contractAddress) => {
-        return new BigNumber((tokenBalances as any)[contractAddress] || "0");
-      });
-
-    mockGetNodeApi.mockReturnValue({
-      getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("10000000000000000000000")),
-      getTokenBalance: mockGetTokenBalance,
-    });
+    nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("10000000000000000000000"));
+    nodeApiMock.getTokenBalance.mockImplementation(
+      (_currency: unknown, _address: string, contractAddress: string) =>
+        Promise.resolve(
+          new BigNumber((tokenBalances as Record<string, string>)[contractAddress] || "0"),
+        ),
+    );
 
     mockGetExplorerApi.mockReturnValue({
       getOperations: jest.fn().mockResolvedValue(operations),
@@ -115,15 +117,15 @@ describe("getBalance", () => {
   });
 
   it("is resilient when failing to fetch token balances", async () => {
-    mockGetNodeApi.mockReturnValue({
-      getCoinBalance: () => new BigNumber(10),
-      getTokenBalance: (_currency: string, _address: string, contract: string) => {
+    nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(10));
+    nodeApiMock.getTokenBalance.mockImplementation(
+      (_currency: unknown, _address: string, contract: string) => {
         if (contract === "contract2") {
-          throw new Error("Scam token");
+          return Promise.reject(new Error("Scam token"));
         }
-        return new BigNumber(2);
+        return Promise.resolve(new BigNumber(2));
       },
-    });
+    );
     mockGetExplorerApi.mockReturnValue({
       getOperations: () => ({
         lastTokenOperations: [
@@ -153,9 +155,7 @@ describe("getBalance", () => {
   });
 
   it("returns empty stake when balance is zero", async () => {
-    mockGetNodeApi.mockReturnValue({
-      getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("0")),
-    });
+    nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(0));
 
     mockGetExplorerApi.mockReturnValue({
       getOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [], nextPagingToken: "" }),

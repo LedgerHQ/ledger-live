@@ -11,6 +11,7 @@ import {
   rawNftEip1559Tx,
 } from "./fixtures/transaction.fixtures";
 import { getNodeApi } from "./network/node";
+import { mockNodeApi } from "./network/node/test.utils";
 import {
   fromTransactionRaw,
   fromTransactionStatusRaw,
@@ -31,12 +32,14 @@ jest.mock("./network/node", () => ({
 }));
 
 const mockGetNodeApi = jest.mocked(getNodeApi);
-const mockGetTransactionCount = jest.fn();
-mockGetNodeApi.mockReturnValue({
-  getTransactionCount: mockGetTransactionCount,
-} as ReturnType<typeof getNodeApi>);
 
 describe("EVM Family", () => {
+  const nodeApiMock = mockNodeApi();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetNodeApi.mockReturnValue(nodeApiMock);
+  });
   describe("transaction.ts", () => {
     describe("fromTransactionRaw", () => {
       describe("without customGasLimit", () => {

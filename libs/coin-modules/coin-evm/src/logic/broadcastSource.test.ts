@@ -1,22 +1,22 @@
 import { getNodeApi } from "../network/node/index";
+import { mockNodeApi } from "../network/node/test.utils";
 import { broadcast } from "./broadcast";
 
 jest.mock("../network/node/index", () => ({
+  ...jest.requireActual("../network/node/index"),
   getNodeApi: jest.fn(),
 }));
 
-const mockGetNodeApi = getNodeApi as jest.Mock;
+const mockGetNodeApi = jest.mocked(getNodeApi);
 
 describe("EVM broadcast with source", () => {
+  const nodeApiMock = mockNodeApi();
   const mockCurrency = { id: "ethereum" } as any;
-  const mockBroadcastTransaction = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockReturnValue({
-      broadcastTransaction: mockBroadcastTransaction,
-    });
-    mockBroadcastTransaction.mockResolvedValue("0xhash123");
+    mockGetNodeApi.mockReturnValue(nodeApiMock);
+    nodeApiMock.broadcastTransaction.mockResolvedValue("0xhash123");
   });
 
   it("should broadcast with source headers from broadcastConfig", async () => {
@@ -31,7 +31,7 @@ describe("EVM broadcast with source", () => {
       },
     });
 
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(
+    expect(nodeApiMock.broadcastTransaction).toHaveBeenCalledWith(
       mockCurrency,
       "0xsignature",
       expect.objectContaining({
@@ -58,7 +58,7 @@ describe("EVM broadcast with source", () => {
       },
     });
 
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(
+    expect(nodeApiMock.broadcastTransaction).toHaveBeenCalledWith(
       mockCurrency,
       "0xsignature",
       expect.objectContaining({
@@ -79,7 +79,7 @@ describe("EVM broadcast with source", () => {
       },
     });
 
-    expect(mockBroadcastTransaction).toHaveBeenCalledWith(
+    expect(nodeApiMock.broadcastTransaction).toHaveBeenCalledWith(
       mockCurrency,
       "0xsignature",
       expect.objectContaining({
