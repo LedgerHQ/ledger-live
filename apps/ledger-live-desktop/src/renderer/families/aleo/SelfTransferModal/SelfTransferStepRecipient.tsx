@@ -9,9 +9,13 @@ import SelectAccount from "~/renderer/components/SelectAccount";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useHandleChangeAccount } from "./useHandleChangeAccount";
+import BalanceSelector from "../shared/BalanceSelector";
+import { Trans } from "react-i18next";
+import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 
 export const SelfTransferStepRecipient = ({
   t,
+  transaction,
   account,
   parentAccount,
   openedFromAccount,
@@ -24,7 +28,9 @@ export const SelfTransferStepRecipient = ({
   // change account with updating "recipient" field that cannot be controlled manually
   const handleChangeAccount = useHandleChangeAccount({ onChangeAccount, updateTransaction });
 
-  if (!status || !account) return null;
+  if (!status || !account || transaction?.family !== "aleo") {
+    return null;
+  }
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -58,7 +64,25 @@ export const SelfTransferStepRecipient = ({
             filter={accountFilter}
           />
         </Box>
-        <Box>TODO: add proper components and balance selector</Box>
+        <Box>
+          <Label mb={5}>
+            <Trans i18nKey="aleo.selfTransfer.modal.stepRecipient.selectLabel" />
+          </Label>
+          <BalanceSelector
+            transaction={transaction}
+            mainAccount={mainAccount}
+            onChange={value => {
+              updateTransaction(t => {
+                if (t.family !== "aleo") return t;
+                const nextMode =
+                  value === "public"
+                    ? TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
+                    : TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+                return { ...t, mode: nextMode };
+              });
+            }}
+          />
+        </Box>
       </>
     </Box>
   );
