@@ -79,7 +79,7 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
-    "typecheck": "tsc --p . --noEmit",
+    "typecheck": "tsc --p . --noEmit --customConditions node",
     "test": "pnpm -w -F ui build-and-test",
     "test:jest": "jest --maxWorkers=50%",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",

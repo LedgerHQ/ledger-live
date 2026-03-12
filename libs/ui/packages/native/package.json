@@ -68,7 +68,7 @@
     "release": "yarn publish ./lib --access public",
     "expo-start": "expo start",
     "storybook": "NODE_PATH=./node_modules storybook dev  -c .storybook-web -p 6006",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json  --customConditions node",
     "test": "exit 0",
     "web": "expo start --web",
     "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/native",

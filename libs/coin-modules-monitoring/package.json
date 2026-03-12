@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "typecheck": "tsc --project ./tsconfig.json --noEmit",
+    "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
     "start": "node lib/src/cli.js",
     "start:debug": "node --inspect-brk lib/src/cli.js"
   },
