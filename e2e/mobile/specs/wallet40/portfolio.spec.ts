@@ -1,3 +1,5 @@
+import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+
 const testConfig = {
   tmsLinks: ["B2CQA-4345", "B2CQA-4339", "B2CQA-4346", "B2CQA-4343", "B2CQA-4341", "B2CQA-4340"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
@@ -14,10 +16,7 @@ describe("Wallet 4.0 - Portfolio", () => {
       speculosApp: CURRENCY.speculosApp,
       // to-do remove when wallet 4.0 is default
       featureFlags: {
-        lwmWallet40: {
-          enabled: true,
-          params: { marketBanner: true, graphRework: true, quickActionCtas: true },
-        },
+        ...WALLET_40_FEATURE_FLAGS,
         llmAccountListUI: {
           enabled: true,
         },
@@ -29,7 +28,7 @@ describe("Wallet 4.0 - Portfolio", () => {
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));
 
-  it("is the zero balance portfolio state", async () => {
+  it("check quick action buttons visibility and no balance title", async () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
     await app.portfolio.checkQuickActionSwapButtonVisibility();
     await app.portfolio.checkQuickActionBuyButtonVisibility();
@@ -46,7 +45,7 @@ describe("Wallet 4.0 - Portfolio", () => {
     await app.common.tapCloseWithConfirmationButton();
   });
 
-  it("is the funded portfolio state", async () => {
+  it("check quick action buttons visibility and normal balance title", async () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
     await app.portfolio.checkQuickActionSwapButtonVisibility();
     await app.portfolio.checkQuickActionBuyButtonVisibility();

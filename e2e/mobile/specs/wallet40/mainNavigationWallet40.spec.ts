@@ -1,23 +1,15 @@
+import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+
 $TmsLink("B2CQA-4383");
 $TmsLink("B2CQA-4385");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 
-describe("Main Navigation", () => {
+describe("Wallet 4.0 - Main Navigation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
-      featureFlags: {
-        lwmWallet40: {
-          enabled: true,
-          params: {
-            mainNavigation: true,
-            marketBanner: true,
-            graphRework: true,
-            quickActionCtas: true,
-          },
-        },
-      },
+      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.mainNavigation.waitForWallet40Ready();
   });

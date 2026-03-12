@@ -1,3 +1,5 @@
+import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+
 const testConfig = {
   tmsLinks: [
     "B2CQA-4302",
@@ -14,20 +16,15 @@ const testConfig = {
 
 const TICKER = "BTC";
 
-describe("Market Banner", () => {
+describe("Wallet 4.0 - Market Banner", () => {
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));
 
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
-      featureFlags: {
-        //todo: remove feature flag when market banner is enabled for all users
-        lwmWallet40: {
-          enabled: true,
-          params: { marketBanner: true, graphRework: true, quickActionCtas: true },
-        },
-      },
+      //todo: remove feature flag when market banner is enabled for all users
+      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
