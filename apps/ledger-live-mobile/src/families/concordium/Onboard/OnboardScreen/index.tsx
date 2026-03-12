@@ -69,7 +69,12 @@ export default function OnboardScreen() {
   }, []);
 
   const handleCancel = useCallback(() => {
-    navigation.getParent()?.goBack();
+    const parent = navigation.getParent();
+    if (parent) {
+      parent.goBack();
+    } else {
+      navigation.goBack();
+    }
   }, [navigation]);
 
   const handleAgree = useCallback(() => {
@@ -107,6 +112,12 @@ export default function OnboardScreen() {
     setSessionTopic(null);
     setStep(Step.PAIR);
   }, []);
+
+  useEffect(() => {
+    if (step === Step.CREATE && (!sessionTopic || !device || !creatableAccount)) {
+      handleSessionExpired();
+    }
+  }, [step, sessionTopic, device, creatableAccount, handleSessionExpired]);
 
   const renderStep = () => {
     switch (step) {

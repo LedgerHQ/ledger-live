@@ -73,6 +73,8 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
             log("concordium-onboarding", "pairing expired, retrying", {
               attempt: retryCountRef.current,
             });
+            setPairStatus(PairStatus.CONNECTING);
+            setWalletConnectUri(null);
             startPairingInternal();
             return;
           }

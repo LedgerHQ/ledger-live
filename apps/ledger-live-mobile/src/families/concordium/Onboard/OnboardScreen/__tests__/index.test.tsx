@@ -74,8 +74,15 @@ jest.mock("../components/StepFinish", () => {
   };
 });
 
+const mockGoBack = jest.fn();
+const mockParentGoBack = jest.fn();
+
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({
+    goBack: mockGoBack,
+    getParent: () => ({ goBack: mockParentGoBack }),
+  }),
   useRoute: () => ({
     params: {
       currency: { id: "concordium", type: "CryptoCurrency" },

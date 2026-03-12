@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, userEvent } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import StepCreate from "../components/StepCreate";
 import { CreateStatus } from "../hooks/useOnboarding";
 

@@ -2,7 +2,7 @@ import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { Subject } from "rxjs";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
   CreateStatus,
   getConfirmationCode,

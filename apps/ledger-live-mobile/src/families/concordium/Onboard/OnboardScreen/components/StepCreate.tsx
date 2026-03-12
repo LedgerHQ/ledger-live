@@ -134,25 +134,25 @@ export default function StepCreate({
 
           {createStatus === CreateStatus.SUBMITTING && (
             <Alert type="info">
-              <Text>
+              <Alert.BodyText>
                 <Trans i18nKey="concordium.onboard.create.keepDeviceNearby" />
-              </Text>
+              </Alert.BodyText>
             </Alert>
           )}
 
           {createStatus === CreateStatus.SUCCESS && (
             <Alert type="success">
-              <Text>
+              <Alert.BodyText>
                 <Trans i18nKey="concordium.onboard.create.success" />
-              </Text>
+              </Alert.BodyText>
             </Alert>
           )}
 
           {createStatus === CreateStatus.ERROR && (
             <Alert type="error">
-              <Text>
+              <Alert.BodyText>
                 <Trans i18nKey="concordium.onboard.create.error" />
-              </Text>
+              </Alert.BodyText>
             </Alert>
           )}
         </Flex>
