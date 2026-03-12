@@ -2,14 +2,11 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "~/context/selectors";
 import { State } from "~/reducers/types";
 
-export type SyncPhase = "syncing" | "synced" | "failed";
-
 export interface PortfolioRefreshState {
   isRefreshing: boolean;
   lastSyncTimestampSnapshot: number | null;
   hasCompletedInitialSync: boolean;
   lastUserSyncClickTimestamp: number;
-  syncPhase: SyncPhase;
 }
 
 export const INITIAL_STATE: PortfolioRefreshState = {
@@ -17,7 +14,6 @@ export const INITIAL_STATE: PortfolioRefreshState = {
   lastSyncTimestampSnapshot: null,
   hasCompletedInitialSync: false,
   lastUserSyncClickTimestamp: 0,
-  syncPhase: "synced",
 };
 
 const portfolioRefreshSlice = createSlice({
@@ -38,9 +34,6 @@ const portfolioRefreshSlice = createSlice({
     setLastUserSyncClickTimestamp: (state, action: PayloadAction<number>) => {
       state.lastUserSyncClickTimestamp = action.payload;
     },
-    setSyncPhase: (state, action: PayloadAction<SyncPhase>) => {
-      state.syncPhase = action.payload;
-    },
   },
 });
 
@@ -49,7 +42,6 @@ export const {
   setRefreshCompleted,
   setHasCompletedInitialSync,
   setLastUserSyncClickTimestamp,
-  setSyncPhase,
 } = portfolioRefreshSlice.actions;
 
 export const selectIsRefreshing = (state: State) => state.portfolioRefresh.isRefreshing;
@@ -62,8 +54,6 @@ export const selectHasCompletedInitialSync = (state: State) =>
 
 export const selectLastUserSyncClickTimestamp = (state: State) =>
   state.portfolioRefresh.lastUserSyncClickTimestamp;
-
-export const selectSyncPhase = (state: State) => state.portfolioRefresh.syncPhase;
 
 export const selectLastSyncTimestamp = createSelector(
   (state: State) => state.accounts.active,

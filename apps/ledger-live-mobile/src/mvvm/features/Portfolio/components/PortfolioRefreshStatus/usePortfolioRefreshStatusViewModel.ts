@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { selectIsRefreshing, selectSyncPhase } from "~/reducers/portfolioRefresh";
+import { selectIsRefreshing } from "~/reducers/portfolioRefresh";
+import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 
 export const UP_TO_DATE_VISIBLE_DURATION_MS = 3_000;
 
@@ -21,7 +22,7 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
   const { t } = useTranslation();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
   const legacyIsRefreshing = useSelector(selectIsRefreshing);
-  const syncPhase = useSelector(selectSyncPhase);
+  const { syncPhase } = usePortfolioBalance();
 
   const isSyncing = shouldDisplayBalanceRefreshRework
     ? syncPhase === "syncing"
@@ -47,8 +48,6 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
     return () => clearTimeout(timer);
   }, [isSyncing, syncPhase]);
 
-  // Late error detection: if syncPhase becomes "failed" after we showed "success",
-  // switch to error immediately.
   useEffect(() => {
     if (!shouldDisplayBalanceRefreshRework) return;
     if (outcome === "success" && syncPhase === "failed") {
