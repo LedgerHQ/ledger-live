@@ -5,7 +5,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
@@ -322,6 +322,7 @@ function SendSummary({ navigation, route }: Props) {
             bridgePending ||
             !!transactionError ||
             (!!error && error instanceof NotEnoughGas) ||
+            (!!error && error instanceof NotEnoughBalance) ||
             !!displayedError
           }
           pending={bridgePending}
