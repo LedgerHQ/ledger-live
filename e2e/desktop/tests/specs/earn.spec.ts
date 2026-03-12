@@ -74,7 +74,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
 
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.goToEarnMoreTab();
-        await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
+        await app.earnDashboard.clickStakeCurrencyButton(account);
         const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
           provider.uiName,
           account,
