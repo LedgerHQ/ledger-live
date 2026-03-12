@@ -3,6 +3,7 @@ import type { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/
 import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
 import { lastBlock } from "../logic/lastBlock";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
@@ -19,6 +20,10 @@ jest.mock("../logic/broadcast", () => ({
 
 jest.mock("../logic/lastBlock", () => ({
   lastBlock: jest.fn(),
+}));
+
+jest.mock("../logic/combine", () => ({
+  combine: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -73,7 +78,7 @@ describe("createApi", () => {
     );
   });
 
-  it("should pass parameters correctly to logic functions", async () => {
+  it("should pass parameters correctly to broadcast", async () => {
     const api: AlpacaApi = createApi(mockConfig, "solana");
     await api.broadcast("transaction");
 
@@ -85,6 +90,13 @@ describe("createApi", () => {
     await api.lastBlock();
 
     expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
+  });
+
+  it("should pass parameters correctly to combine", async () => {
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    await api.combine("transaction", "signature");
+
+    expect(combine).toHaveBeenCalledWith("transaction", "signature");
   });
 
   it("should throw for unsupported methods", () => {
@@ -99,7 +111,6 @@ describe("createApi", () => {
       asset: { type: "native" },
     };
 
-    expect(() => api.combine("tx", "signature", "pubkey")).toThrow("combine is not supported");
     expect(() => api.craftTransaction(intent)).toThrow("craftTransaction is not supported");
     expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 42n)).toThrow(
       "craftRawTransaction is not supported",

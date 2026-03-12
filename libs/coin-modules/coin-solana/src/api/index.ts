@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
 import { lastBlock } from "../logic/lastBlock";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
@@ -24,8 +25,8 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     broadcast: (tx: string, _broadcastConfig?: BroadcastConfig) => {
       return broadcast(api, tx);
     },
-    combine: () => {
-      throw new Error("combine is not supported");
+    combine: (tx: string, signature: string, _pubkey?: string) => {
+      return combine(tx, signature);
     },
     craftTransaction: (_intent: TransactionIntent, _customFees?: FeeEstimation) => {
       throw new Error("craftTransaction is not supported");
