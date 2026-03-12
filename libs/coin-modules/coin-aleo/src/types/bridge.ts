@@ -106,3 +106,21 @@ export type TransactionSelfTransfer = Extract<
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
   }
 >;
+
+export type TransactionPublic = Extract<
+  Transaction,
+  {
+    mode:
+      | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
+      | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+  }
+>;
+
+export type TransactionPrivate = Extract<
+  Transaction,
+  {
+    mode:
+      | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+      | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+  }
+>;

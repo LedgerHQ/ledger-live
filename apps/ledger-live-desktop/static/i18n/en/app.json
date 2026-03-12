@@ -8291,7 +8291,18 @@
       "headerAction": "Self transfer",
       "headerActionTooltip": "You don't have any funds to perform a self transfer",
       "modal": {
-        "title": "Self transfer"
+        "title": "Self transfer",
+        "stepRecipient": {
+          "selectLabel": "Transfer from"
+        }
+      }
+    },
+    "shared": {
+      "balanceSelector": {
+        "private": "Private balance",
+        "public": "Public balance",
+        "lastUpdate": "Last update",
+        "switchBalance": "Switch balance source"
       }
     },
     "account": {
