@@ -70,8 +70,11 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+<<<<<<< HEAD
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
+=======
+>>>>>>> cb18bd0289 (fix(lwd): await swap)
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToPortfolio());
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
