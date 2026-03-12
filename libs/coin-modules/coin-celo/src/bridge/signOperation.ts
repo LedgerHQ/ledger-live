@@ -1,9 +1,9 @@
 import { CeloTx } from "@celo/connect";
 import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
 import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";

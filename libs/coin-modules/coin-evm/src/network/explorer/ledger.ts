@@ -1,4 +1,4 @@
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { Operation } from "@ledgerhq/types-live";

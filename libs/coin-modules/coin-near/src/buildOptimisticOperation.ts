@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 

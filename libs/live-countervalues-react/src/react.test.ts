@@ -1,5 +1,5 @@
 import { useTrackingPairForAccounts } from ".";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, act } from "@testing-library/react";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { inferTrackingPairForAccounts } from "@ledgerhq/live-countervalues/logic";

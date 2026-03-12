@@ -1,7 +1,10 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/bridge";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 

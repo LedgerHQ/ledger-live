@@ -320,8 +320,8 @@ console.log = (...args) => {
 };
 
 // Mock isCurrencySupported globally for tests
-jest.mock("@ledgerhq/coin-framework/currencies/support", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-framework/currencies/support");
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies/support");
   return {
     ...actual,
     isCurrencySupported: jest.fn(() => true),

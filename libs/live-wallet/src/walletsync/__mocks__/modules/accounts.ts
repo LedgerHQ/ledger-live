@@ -1,4 +1,4 @@
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Account } from "@ledgerhq/types-live";
 import { accountDataToAccount } from "../../../liveqr/cross";
 import { NonImportedAccountInfo } from "../../modules/accounts";

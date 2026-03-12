@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Body, { StepId } from "./Body";

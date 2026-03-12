@@ -1,4 +1,4 @@
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React from "react";

@@ -1,5 +1,9 @@
-import { genAccount, genOperation, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import {
+  genAccount,
+  genOperation,
+  genTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

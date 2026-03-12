@@ -7,7 +7,10 @@ import {
   formatAmountForInput,
   processRawInput,
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;

@@ -1,5 +1,4 @@
 import type {
-  Api,
   BroadcastConfig,
   Balance,
   Block,
@@ -18,8 +17,10 @@ import type {
   AssetInfo,
   CraftedTransaction,
   BufferTxData,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
@@ -51,7 +52,10 @@ const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): Api<MemoNotSupported, BufferTxData> {
+): AlpacaApi<MemoNotSupported, BufferTxData> &
+  BridgeApi & {
+    validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
+  } {
   configs[currencyId] = config;
   setCoinConfig(c => {
     const evmConfig = configs[c.id];

@@ -492,7 +492,7 @@ describe("Alpaca utils", () => {
     });
   });
 
-  jest.mock("@ledgerhq/coin-framework/operation", () => ({
+  jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
     encodeOperationId: jest.fn((accountId, txHash, opType) => `${accountId}-${txHash}-${opType}`),
   }));
 

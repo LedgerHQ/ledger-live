@@ -5,7 +5,7 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,

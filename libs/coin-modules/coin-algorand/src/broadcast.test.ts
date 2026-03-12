@@ -3,7 +3,7 @@ import { broadcast } from "./broadcast";
 import * as network from "./network";
 
 jest.mock("./network");
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   patchOperationWithHash: jest.fn((op, hash) => ({ ...op, hash })),
 }));
 

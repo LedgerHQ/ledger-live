@@ -4,8 +4,11 @@ import {
   type GetAccountShape,
   makeSync,
   mergeOps,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import {
+  decodeAccountId,
+  encodeAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { log } from "@ledgerhq/logs";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import {

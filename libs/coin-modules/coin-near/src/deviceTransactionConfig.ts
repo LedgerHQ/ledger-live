@@ -1,4 +1,4 @@
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Transaction } from "./types";
 
 async function getDeviceTransactionConfig({

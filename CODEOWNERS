@@ -91,6 +91,7 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Wallet
 apps/**/families/                                                   @ledgerhq/coin-integration
 apps/cli/src/commands/blockchain                                    @ledgerhq/coin-integration
 libs/coin-*/                                                        @ledgerhq/coin-integration
+libs/ledger-wallet-framework/                                       @ledgerhq/coin-integration
 libs/domain-service/                                                @ledgerhq/coin-integration
 libs/evm-tools/                                                     @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                                    @ledgerhq/coin-integration

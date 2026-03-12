@@ -1,5 +1,5 @@
 import { extractHashFromScriptPubKey } from "@ledgerhq/psbtv2";
-import { pathStringToArray } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { buildKnownAddressDerivationsMap } from "../../knownAddressDerivations";
 
 // ---- Helpers ---------------------------------------------------------------

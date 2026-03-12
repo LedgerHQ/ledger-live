@@ -1,6 +1,6 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";

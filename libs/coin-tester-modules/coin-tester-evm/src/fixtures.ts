@@ -1,6 +1,9 @@
 import BigNumber from "bignumber.js";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 

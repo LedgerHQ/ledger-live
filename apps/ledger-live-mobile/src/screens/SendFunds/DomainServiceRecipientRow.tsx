@@ -15,7 +15,7 @@ import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = {

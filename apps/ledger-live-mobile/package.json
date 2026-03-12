@@ -109,6 +109,7 @@
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",

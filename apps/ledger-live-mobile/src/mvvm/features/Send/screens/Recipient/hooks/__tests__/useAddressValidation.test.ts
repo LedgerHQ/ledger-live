@@ -2,7 +2,7 @@ import { renderHook, waitFor } from "@testing-library/react-native";
 import { useAddressValidation } from "../useAddressValidation";
 import { useSelector } from "~/context/hooks";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import {
   getRecentAddressesStore,
@@ -18,7 +18,7 @@ import { createMockAccount, createMockCurrency } from "./accounts";
 jest.mock("~/context/hooks");
 jest.mock("~/reducers/wallet");
 jest.mock("@ledgerhq/domain-service/hooks/index");
-jest.mock("@ledgerhq/coin-framework/sanction/index");
+jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
 jest.mock("../useFormattedAccountBalance");

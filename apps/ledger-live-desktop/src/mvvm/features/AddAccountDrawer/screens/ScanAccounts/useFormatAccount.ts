@@ -1,4 +1,4 @@
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";

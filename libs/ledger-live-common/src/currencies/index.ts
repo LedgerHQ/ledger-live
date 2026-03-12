@@ -19,7 +19,7 @@ export {
   isCurrencySupported,
   listSupportedCurrencies,
   setSupportedCurrencies,
-} from "@ledgerhq/coin-framework/currencies";
+} from "@ledgerhq/ledger-wallet-framework/currencies";
 export {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,

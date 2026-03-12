@@ -627,6 +627,9 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../libs/ledger-wallet-framework
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -857,6 +860,9 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../libs/ledger-wallet-framework
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -1494,6 +1500,9 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../libs/ledger-wallet-framework
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
@@ -2167,6 +2176,9 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../libs/ledger-wallet-framework
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -2701,109 +2713,43 @@ importers:
 
   libs/coin-framework:
     dependencies:
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../live-config
       '@ledgerhq/live-currency-format':
         specifier: workspace:^
         version: link:../live-currency-format
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../live-network
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-cryptoassets
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-live
-      axios:
-        specifier: 'catalog:'
-        version: 1.13.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      bip32-path:
-        specifier: ^0.4.2
-        version: 0.4.2
-      eip55:
-        specifier: ^2.1.0
-        version: 2.1.1
       expect:
         specifier: 'catalog:'
         version: 30.2.0
-      imurmurhash:
-        specifier: ^0.1.4
-        version: 0.1.4
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      prando:
-        specifier: ^6.0.1
-        version: 6.0.1
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      uuid:
-        specifier: 11.1.0
-        version: 11.1.0
     devDependencies:
-      '@ledgerhq/hw-transport-node-speculos':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport-node-speculos
-      '@ledgerhq/live-dmk-speculos':
-        specifier: workspace:^
-        version: link:../live-dmk-speculos
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
-      '@types/imurmurhash':
-        specifier: ^0.1.4
-        version: 0.1.4
-      '@types/invariant':
-        specifier: ^2.2.2
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: ^4.14.191
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      '@types/numeral':
-        specifier: ^2.0.2
-        version: 2.0.5
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
-      timemachine:
-        specifier: ^0.3.2
-        version: 0.3.2
 
   libs/coin-modules-monitoring:
     dependencies:
@@ -2813,6 +2759,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
@@ -2880,6 +2829,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -2953,6 +2905,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3035,6 +2990,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3126,6 +3084,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3280,6 +3241,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3356,6 +3320,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3435,6 +3402,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -3532,6 +3502,9 @@ importers:
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
@@ -3623,6 +3596,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3714,6 +3690,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
@@ -3814,6 +3793,9 @@ importers:
       '@ledgerhq/evm-tools':
         specifier: workspace:^
         version: link:../../evm-tools
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3926,6 +3908,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4011,6 +3996,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../live-countervalues
@@ -4096,6 +4084,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4175,6 +4166,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
@@ -4245,6 +4239,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4345,6 +4342,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -4418,6 +4418,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4485,6 +4488,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4570,6 +4576,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -4643,6 +4652,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -4758,6 +4770,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4867,6 +4882,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -4973,6 +4991,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -5043,6 +5064,9 @@ importers:
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -5122,6 +5146,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -5210,6 +5237,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -5292,6 +5322,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -5380,6 +5413,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -5462,6 +5498,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -5603,9 +5642,6 @@ importers:
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../coin-modules/coin-bitcoin
-      '@ledgerhq/coin-framework':
-        specifier: workspace:^
-        version: link:../../coin-framework
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -5615,6 +5651,9 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
@@ -5682,15 +5721,15 @@ importers:
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../coin-modules/coin-evm
-      '@ledgerhq/coin-framework':
-        specifier: workspace:^
-        version: link:../../coin-framework
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../ledger-live-common
@@ -5758,6 +5797,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -5828,6 +5870,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -6528,6 +6573,9 @@ importers:
       '@ledgerhq/ledger-trust-service':
         specifier: workspace:^
         version: link:../ledger-services/trust
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-app-sdk':
         specifier: ^0.8.1
         version: 0.8.2
@@ -6984,6 +7032,115 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@5.8.3)
+
+  libs/ledger-wallet-framework:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../live-config
+      '@ledgerhq/live-currency-format':
+        specifier: workspace:^
+        version: link:../live-currency-format
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      axios:
+        specifier: 'catalog:'
+        version: 1.13.2
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+      eip55:
+        specifier: ^2.1.0
+        version: 2.1.1
+      expect:
+        specifier: 'catalog:'
+        version: 30.2.0
+      imurmurhash:
+        specifier: ^0.1.4
+        version: 0.1.4
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      prando:
+        specifier: ^6.0.1
+        version: 6.0.1
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
+    devDependencies:
+      '@ledgerhq/hw-transport-node-speculos':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/live-dmk-speculos':
+        specifier: workspace:^
+        version: link:../live-dmk-speculos
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/imurmurhash':
+        specifier: ^0.1.4
+        version: 0.1.4
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.37
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.17.21
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/numeral':
+        specifier: ^2.0.2
+        version: 2.0.5
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      timemachine:
+        specifier: ^0.3.2
+        version: 0.3.2
 
   libs/ledgerjs:
     dependencies:
@@ -9274,12 +9431,12 @@ importers:
 
   libs/live-countervalues:
     dependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:*
-        version: link:../coin-framework
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../env
@@ -9320,12 +9477,12 @@ importers:
 
   libs/live-countervalues-react:
     dependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:*
-        version: link:../coin-framework
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-countervalues':
         specifier: workspace:*
         version: link:../live-countervalues
@@ -9976,15 +10133,15 @@ importers:
 
   libs/live-wallet:
     dependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:*
-        version: link:../coin-framework
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:*
         version: link:../ledger-key-ring-protocol
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../env
@@ -20055,9 +20212,6 @@ packages:
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
-
-  '@types/node@24.10.13':
-    resolution: {integrity: sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==}
 
   '@types/node@24.12.0':
     resolution: {integrity: sha512-GYDxsZi3ChgmckRT9HPU0WEhKLP08ev/Yfcq2AstjrDASOYCSXeyjDsHg4v5t4jOj7cyDX3vmprafKlWIG9MXQ==}
@@ -39102,7 +39256,7 @@ snapshots:
   '@datadog/datadog-api-client@2.0.0-beta.1':
     dependencies:
       '@types/buffer-from': 1.1.3
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
       '@types/pako': 1.0.7
       buffer-from: 1.1.2
       cross-fetch: 3.1.8
@@ -48890,7 +49044,7 @@ snapshots:
 
   '@types/adm-zip@0.5.7':
     dependencies:
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
 
   '@types/aria-query@5.0.4': {}
 
@@ -49185,7 +49339,7 @@ snapshots:
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
 
   '@types/geojson@7946.0.16': {}
 
@@ -49369,10 +49523,6 @@ snapshots:
   '@types/node@22.7.5':
     dependencies:
       undici-types: 6.19.8
-
-  '@types/node@24.10.13':
-    dependencies:
-      undici-types: 7.16.0
 
   '@types/node@24.12.0':
     dependencies:
@@ -49568,11 +49718,11 @@ snapshots:
 
   '@types/stream-chain@2.0.4':
     dependencies:
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
 
   '@types/stream-json@1.7.7':
     dependencies:
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
       '@types/stream-chain': 2.0.4
 
   '@types/styled-components@5.1.34(@types/react@19.0.14)':
@@ -49606,13 +49756,13 @@ snapshots:
 
   '@types/tunnel@0.0.3':
     dependencies:
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
 
   '@types/unist@2.0.10': {}
 
   '@types/unzipper@0.10.9':
     dependencies:
-      '@types/node': 24.10.13
+      '@types/node': 24.12.0
 
   '@types/use-sync-external-store@0.0.6': {}
 
@@ -53509,7 +53659,7 @@ snapshots:
 
   cross-env@7.0.3:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
 
   cross-fetch@3.1.8:
     dependencies:

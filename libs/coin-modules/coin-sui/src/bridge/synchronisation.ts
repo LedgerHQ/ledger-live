@@ -1,14 +1,14 @@
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   encodeAccountId,
   encodeTokenAccountId,
   emptyHistoryCache,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   makeSync,
   mergeOps,
   type GetAccountShape,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { type Operation } from "@ledgerhq/types-live";

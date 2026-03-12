@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { log } from "@ledgerhq/logs";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import {

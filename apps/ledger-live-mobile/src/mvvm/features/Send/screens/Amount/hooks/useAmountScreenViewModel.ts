@@ -8,7 +8,10 @@ import type {
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import type { AmountScreenMessage, AmountScreenViewModel } from "../types";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { useAmountInputController } from "./useAmountInputController";

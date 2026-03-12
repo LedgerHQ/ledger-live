@@ -27,7 +27,7 @@ import {
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { isAccountDelegating } from "../staking";
 import { validateAddress } from "../../../bridge/validateAddress";
 

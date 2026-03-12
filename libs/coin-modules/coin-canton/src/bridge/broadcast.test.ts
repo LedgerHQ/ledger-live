@@ -1,10 +1,10 @@
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
 import { broadcast as broadcastLogic } from "../common-logic";
 import { broadcast } from "./broadcast";
 
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../common-logic");
 
 const mockCurrency = {

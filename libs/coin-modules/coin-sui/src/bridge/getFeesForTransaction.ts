@@ -1,5 +1,5 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { BigNumber } from "bignumber.js";
 import { estimateFees } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";

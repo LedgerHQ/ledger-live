@@ -1,6 +1,6 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Builder, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports

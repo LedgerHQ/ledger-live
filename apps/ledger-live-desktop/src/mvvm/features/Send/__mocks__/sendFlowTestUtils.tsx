@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import BigNumber from "bignumber.js";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -209,7 +209,7 @@ jest.mock("@ledgerhq/domain-service/hooks/index", () => ({
   useDomain: jest.fn(() => ({ status: "idle", resolutions: [] })),
 }));
 
-jest.mock("@ledgerhq/coin-framework/sanction/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
   isAddressSanctioned: jest.fn(() => Promise.resolve(false)),
 }));
 

@@ -1,11 +1,11 @@
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   encodeTokenAccountId,
   findSubAccountById,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type {
   Account,
   AccountLike,

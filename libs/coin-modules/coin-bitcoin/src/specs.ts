@@ -13,13 +13,17 @@ import type {
 } from "./types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type {
   MutationSpec,
   AppSpec,
   TransactionTestInput,
-} from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";

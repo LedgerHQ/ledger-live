@@ -1,5 +1,5 @@
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 
 export type LegacySigner = {
   signTransaction: (path: string, rawTxHex: string) => Promise<string>;

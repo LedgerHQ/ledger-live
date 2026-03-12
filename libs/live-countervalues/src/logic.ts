@@ -3,7 +3,7 @@ import {
   flattenAccounts,
   getAccountCurrency,
   isAccountEmpty,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type {
   CounterValuesState,

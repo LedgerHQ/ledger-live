@@ -1,12 +1,12 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { DeviceModelId } from "@ledgerhq/devices";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
-} from "@ledgerhq/coin-framework/bot/specs";
-import { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { DeviceModelId } from "@ledgerhq/devices";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import { AppSpec, TransactionTestInput } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import expect from "expect";

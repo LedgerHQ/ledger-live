@@ -4,7 +4,10 @@ import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import Button from "~/components/Button";

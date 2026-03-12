@@ -2,9 +2,9 @@ import {
   getSerializedAddressParameters,
   makeScanAccounts,
   makeSync,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { CoinConfig } from "@ledgerhq/coin-framework/config";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import concordiumCoinConfig from "../config";
 import resolver from "../signer";

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";

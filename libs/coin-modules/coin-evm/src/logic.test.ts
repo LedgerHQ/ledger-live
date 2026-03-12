@@ -1,6 +1,6 @@
-import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/sync";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -36,7 +36,7 @@ const WETH_TOKEN = wethTokenData as unknown as TokenCurrency;
 jest.mock("./config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
-jest.mock("@ledgerhq/coin-framework/account/sync");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/sync");
 const mockedBaseGetSyncHash = jest.mocked(baseGetSyncHash);
 
 mockGetConfig.mockImplementation((currency: { id: string }): any => {

@@ -7,7 +7,10 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import logger from "~/renderer/logger";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 /**
  * Valid URLs that this hook will listen for and handle:

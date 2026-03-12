@@ -1,4 +1,4 @@
-import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account";
+import { findSubAccountById, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getFees } from "./api";

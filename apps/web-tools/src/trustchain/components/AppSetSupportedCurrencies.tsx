@@ -4,7 +4,7 @@ import { Input } from "./Input";
 import {
   listSupportedCurrencies,
   setSupportedCurrencies,
-} from "@ledgerhq/coin-framework/currencies/support";
+} from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 function asCryptoCurrencyId(id: string): CryptoCurrencyId {

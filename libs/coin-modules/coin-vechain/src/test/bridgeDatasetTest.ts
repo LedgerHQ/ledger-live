@@ -10,7 +10,6 @@ import { fromTransactionRaw } from "../bridge/transaction";
 import { MAINNET_CHAIN_TAG } from "../types";
 import { vechain1, vechain3 } from "../datasets";
 import { generateNonce } from "../common-logic";
-
 import vechainScanAccounts1 from "../datasets/vechain.scanAccounts.1";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
@@ -18,7 +17,7 @@ import { NotEnoughVTHO } from "../errors";
 import {
   listSupportedCurrencies,
   setSupportedCurrencies,
-} from "@ledgerhq/coin-framework/currencies/index";
+} from "@ledgerhq/ledger-wallet-framework/currencies/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { ABIContract, VIP180_ABI } from "@vechain/sdk-core";
 

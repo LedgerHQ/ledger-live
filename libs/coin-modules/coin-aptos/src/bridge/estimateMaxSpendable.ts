@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../constants";

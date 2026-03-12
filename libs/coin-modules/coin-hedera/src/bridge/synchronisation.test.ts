@@ -1,5 +1,5 @@
-import * as coinFrameworkAccount from "@ledgerhq/coin-framework/account";
-import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import * as coinFrameworkAccount from "@ledgerhq/ledger-wallet-framework/account";
+import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import hederaCoinConfig from "../config";
 import * as logic from "../logic";
@@ -22,8 +22,8 @@ jest.mock("../logic/utils", () => ({
   ...jest.requireActual("../logic/utils"),
   toEVMAddress: jest.fn(),
 }));
-jest.mock("@ledgerhq/coin-framework/account", () => ({
-  ...jest.requireActual("@ledgerhq/coin-framework/account"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account"),
   getSyncHash: jest.fn(),
   encodeAccountId: jest.fn(),
 }));

@@ -1,14 +1,14 @@
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 import {
   botTest,
   expectSiblingsHaveSpendablePartGreaterThan,
   genericTestDestination,
   pickSiblings,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { toOperationRaw } from "@ledgerhq/coin-framework/serialization";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { DeviceModelId } from "@ledgerhq/devices";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
+import { toOperationRaw } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";

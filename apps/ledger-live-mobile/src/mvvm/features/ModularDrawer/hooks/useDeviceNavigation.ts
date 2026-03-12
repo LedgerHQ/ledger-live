@@ -9,7 +9,7 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "~/context/hooks";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { makeEmptyTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { ModularDrawerProps } from "../ModularDrawer";
 import { modularDrawerStateSelector } from "~/reducers/modularDrawer";
 

@@ -5,14 +5,14 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type {
   AccountShapeInfo,
   GetAccountShapeStream,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId, decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeAccountId, decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   isSegwitDerivationMode,
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
-} from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   DerivationMode,
   SYNC_TYPE_TRANSPARENT,
@@ -32,7 +32,7 @@ import {
   ZCASH_SHIELDED_TX_OUT_TYPES,
   ShieldedSyncResult,
 } from "@ledgerhq/zcash-shielded/types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";

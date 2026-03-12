@@ -3,7 +3,7 @@ import { of, throwError } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
 import manager, { NonImportedAccountInfo } from "../../modules/accounts";
 import { WalletSyncDataManagerResolutionContext } from "../../types";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { accountDataToAccount } from "../../../liveqr/cross";
 
 timemachine.config({

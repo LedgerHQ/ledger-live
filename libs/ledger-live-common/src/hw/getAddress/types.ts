@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import type { GetAddressOptions, Result } from "@ledgerhq/coin-framework/derivation";
+import type { GetAddressOptions, Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 
 export type { GetAddressOptions, Result };
 

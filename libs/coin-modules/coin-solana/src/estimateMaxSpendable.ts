@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { calculateToken2022TransferFees } from "./helpers/token";

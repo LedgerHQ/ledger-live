@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CustomFeeConfig } from "@ledgerhq/live-common/bridge/descriptor";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import BigNumber from "bignumber.js";
 import { hasInsufficientBalanceErrorName } from "../utils/customFeeUtils";
 

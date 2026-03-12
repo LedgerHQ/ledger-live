@@ -20,7 +20,7 @@ import {
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";

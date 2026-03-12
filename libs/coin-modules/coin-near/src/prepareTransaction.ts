@@ -1,5 +1,5 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { NearAccount, Transaction } from "./types";
 import getEstimatedFees from "./getFeesForTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";

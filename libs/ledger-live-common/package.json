@@ -206,6 +206,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",

@@ -3,11 +3,17 @@ import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/coin-evm/logic";
 import { getTokenFromAsset } from "@ledgerhq/coin-evm/logic/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  encodeTokenAccountId,
+  emptyHistoryCache,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
-import type { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type {
+  GetAccountShape,
+  AccountShapeInfo,
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
 import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

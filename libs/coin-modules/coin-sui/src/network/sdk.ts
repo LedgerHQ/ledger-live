@@ -10,7 +10,7 @@ import type {
   StakeState,
   Cursor,
 } from "@ledgerhq/coin-framework/api/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";

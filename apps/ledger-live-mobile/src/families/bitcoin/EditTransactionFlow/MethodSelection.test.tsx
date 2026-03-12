@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/coin-bitcoin/editTransaction/index", () => ({
   isTransactionConfirmed: jest.fn().mockResolvedValue(true),
 }));
 
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   isOldestBitcoinPendingOperation: jest.fn().mockReturnValue(true),
 }));
 

@@ -1,6 +1,9 @@
-import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import {
+  emptyHistoryCache,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

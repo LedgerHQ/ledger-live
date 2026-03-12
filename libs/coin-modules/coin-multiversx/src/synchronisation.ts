@@ -1,7 +1,7 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";
 import MultiversXBuildESDTTokenAccounts from "./buildSubAccounts";

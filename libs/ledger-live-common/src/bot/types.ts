@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/bot/types";
+export * from "@ledgerhq/ledger-wallet-framework/bot/types";

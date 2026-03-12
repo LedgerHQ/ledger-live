@@ -1,9 +1,9 @@
 import { renderHook } from "@tests/test-renderer";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useEditTxFeatureFlag } from "./useEditTxFeatureFlag";
 
-jest.mock("@ledgerhq/coin-framework/account/helpers", () => ({
-  ...jest.requireActual("@ledgerhq/coin-framework/account/helpers"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/helpers"),
   getMainAccount: jest.fn(),
 }));
 

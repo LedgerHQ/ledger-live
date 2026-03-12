@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { isAccount, isAccountEmpty } from "@ledgerhq/coin-framework/account/helpers";
+import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
