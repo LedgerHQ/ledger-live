@@ -50,6 +50,7 @@
       "require": "./lib/ethereum-provider.js",
       "default": "./lib/ethereum-provider.js"
     },
+    "./lib/ethereum-provider.umd.json": "./lib/ethereum-provider.umd.json",
     "./lib/*": "./lib/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

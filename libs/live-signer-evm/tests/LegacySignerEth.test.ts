@@ -2,7 +2,7 @@ import Eth from "@ledgerhq/hw-app-eth";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { lastValueFrom } from "rxjs";
 import { LegacySignerEth } from "../src/LegacySignerEth";
-import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/services/types";
 
 jest.mock("@ledgerhq/hw-app-eth");
 

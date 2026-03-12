@@ -1,5 +1,5 @@
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import { Theme } from "@ledgerhq/native-ui/lib/styles/theme";
+import { Theme } from "@ledgerhq/native-ui/styles/theme";
 import { useRoute, NavigationProp, ParamListBase } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";

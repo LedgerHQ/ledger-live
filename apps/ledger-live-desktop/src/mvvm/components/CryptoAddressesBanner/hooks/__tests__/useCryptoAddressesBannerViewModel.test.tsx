@@ -4,7 +4,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 

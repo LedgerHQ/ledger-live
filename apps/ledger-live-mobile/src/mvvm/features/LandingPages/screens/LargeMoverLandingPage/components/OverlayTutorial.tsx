@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/index";
+import { PromisableButton } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { setTutorial } from "~/actions/largeMoverLandingPage";
 import { track, TrackScreen } from "~/analytics";

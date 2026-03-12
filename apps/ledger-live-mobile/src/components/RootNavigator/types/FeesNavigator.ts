@@ -1,4 +1,4 @@
-import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
+import { Strategy } from "@ledgerhq/coin-evm/types/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

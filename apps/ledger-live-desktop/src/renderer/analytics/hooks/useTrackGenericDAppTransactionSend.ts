@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
 import {
   UserRefusedAllowManager,
   UserRefusedOnDevice,

@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import uniq from "lodash/uniq";
 import { CurrenciesPerProvider, RampCatalog } from "./types";
-import { CryptoCurrency } from "@ledgerhq/wallet-api-core/lib/currencies/types";
+import type { CryptoCurrency } from "@ledgerhq/wallet-api-core/lib/currencies/types";
 
 /** Flatten all providers' currencies into a single array */
 export function getCryptoCurrencyIds(entries: CurrenciesPerProvider): Array<string> | null {

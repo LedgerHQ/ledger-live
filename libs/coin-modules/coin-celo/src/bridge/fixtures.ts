@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TokenAccount } from "@ledgerhq/types-live";

@@ -1,4 +1,4 @@
-import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
+import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import type { ComponentType, ReactNode, ReactElement } from "react";

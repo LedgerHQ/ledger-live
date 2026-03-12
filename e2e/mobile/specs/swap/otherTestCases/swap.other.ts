@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { waitSwapReady } from "../../../bridge/server";
-import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
+import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";

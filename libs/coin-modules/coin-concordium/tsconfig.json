@@ -7,8 +7,6 @@
     "lib": ["es2020", "dom"],
     "types": ["node", "jest"],
     "outDir": "lib",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "exactOptionalPropertyTypes": true
   },
   "include": ["src/**/*"]

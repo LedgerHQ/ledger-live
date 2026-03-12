@@ -1,11 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  AssetType,
-  NetworkItem,
-  Network as NetworkType,
-} from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import { AssetType, NetworkItem, Network as NetworkType } from "@ledgerhq/native-ui/pre-ldls/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {

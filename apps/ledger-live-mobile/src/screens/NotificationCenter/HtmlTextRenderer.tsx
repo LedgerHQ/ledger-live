@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/live-common/hooks/useHtmlLinkSegments";
 import { useTheme } from "styled-components/native";
 import uniqueId from "lodash/uniqueId";
-import { TextVariants } from "@ledgerhq/native-ui/lib/styles/theme";
+import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
 
 type HtmlTextRendererProps = {
   html: string;

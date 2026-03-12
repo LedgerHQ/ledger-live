@@ -1,4 +1,4 @@
-import { AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
+import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 
 export function isNative(asset: AssetInfo): asset is { type: "native" } {
   return asset.type === "native";

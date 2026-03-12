@@ -1,4 +1,4 @@
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/lib/accountName";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useState, useCallback } from "react";

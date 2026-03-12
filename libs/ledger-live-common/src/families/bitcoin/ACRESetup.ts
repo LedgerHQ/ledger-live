@@ -15,7 +15,7 @@ import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { getCurrencyConfiguration } from "../../config";
-import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
+import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
 import { SignMessage } from "../../hw/signMessage/types";
 import { AcreMessageSignIn, AcreMessageWithdraw } from "@ledgerhq/wallet-api-acre-module";
 

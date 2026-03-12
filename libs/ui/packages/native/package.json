@@ -35,11 +35,17 @@
       "default": "./lib/pre-ldls/index.js"
     },
     "./*": {
-      "@ledgerhq/source": "./src/*.ts",
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "default": "./lib/*.js"
     },
     "./*/": {
-      "@ledgerhq/source": "./src/*/index.ts",
+      "@ledgerhq/source": [
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
       "default": "./lib/*/index.js"
     },
     "./package.json": "./package.json"

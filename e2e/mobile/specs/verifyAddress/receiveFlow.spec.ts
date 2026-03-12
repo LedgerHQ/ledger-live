@@ -1,6 +1,6 @@
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ReceiveFundsOptions } from "@ledgerhq/live-common/lib/e2e/enum/ReceiveFundsOptions";
+import { ReceiveFundsOptions } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 import { isWallet40 } from "../../helpers/commonHelpers";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");

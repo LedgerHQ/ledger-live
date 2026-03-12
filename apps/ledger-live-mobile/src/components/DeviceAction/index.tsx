@@ -67,7 +67,7 @@ import {
   UnsupportedFeatureComponent,
 } from "./rendering";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
-import { WalletState } from "@ledgerhq/live-wallet/lib/store";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { SettingsState } from "~/reducers/types";
