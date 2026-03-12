@@ -11,8 +11,6 @@ const excluded = [].map(p => path.resolve(projectDirectory, p));
 
 const appSourcePrefixes = [
   path.resolve(projectDirectory, "src") + path.sep,
-  path.resolve(projectDirectory, "e2e") + path.sep,
-  path.resolve(projectDirectory, "services") + path.sep,
 ];
 
 function compile() {

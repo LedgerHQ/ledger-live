@@ -432,7 +432,7 @@ function txModelByDelegationAction(
         },
       };
     default:
-      assertUnreachable(stakeAction);
+      return assertUnreachable(stakeAction);
   }
 }
 

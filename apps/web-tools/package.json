@@ -13,7 +13,7 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node scripts/typecheck.js"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

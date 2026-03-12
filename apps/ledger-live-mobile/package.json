@@ -61,7 +61,7 @@
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src e2e --ext .js,.json,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit",
+    "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 node scripts/typecheck.js",
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "test": "pnpm test:jest:coverage && pnpm test:env",
     "test:jest": "NODE_OPTIONS=--max-old-space-size=8192 jest --maxWorkers=50%",
