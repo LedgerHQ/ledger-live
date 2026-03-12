@@ -211,14 +211,14 @@ describe("useAssetsViewModel", () => {
     expect(stablecoins.totalCount).toBe(mockCategorizedAssets.stablecoins.length);
   });
 
-  it("should navigate to /assets when onNavigate is called", () => {
+  it("should navigate to /cryptos when onNavigate is called", () => {
     const { result } = renderHook(() => useAssetsViewModel());
 
     act(() => {
       result.current.sections[0].onNavigate();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/assets");
+    expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
   it("should navigate to /asset when onItemClick is called with a real item", () => {

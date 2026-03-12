@@ -6,6 +6,7 @@ describe("Page utils", () => {
       expect(isWallet40Page("/")).toBe(true);
       expect(isWallet40Page("/market")).toBe(true);
       expect(isWallet40Page("/analytics")).toBe(true);
+      expect(isWallet40Page("/cryptos")).toBe(true);
     });
 
     it("returns true for wallet 4.0 prefixed pages", () => {
@@ -23,6 +24,7 @@ describe("Page utils", () => {
     it("returns true only for right panel pages", () => {
       expect(shouldDisplayRightPanel("/")).toBe(true);
       expect(shouldDisplayRightPanel("/analytics")).toBe(true);
+      expect(shouldDisplayRightPanel("/cryptos")).toBe(true);
       expect(shouldDisplayRightPanel("/market")).toBe(false);
     });
   });

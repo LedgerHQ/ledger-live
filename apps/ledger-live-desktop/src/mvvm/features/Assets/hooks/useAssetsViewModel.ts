@@ -69,6 +69,10 @@ export function useAssetsViewModel(): AssetsViewProps {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const onNavigateToCryptos = useCallback(() => {
+    navigate("/cryptos");
+  }, [navigate]);
+
   const onNavigate = useCallback(() => {
     navigate("/assets");
   }, [navigate]);
@@ -131,7 +135,7 @@ export function useAssetsViewModel(): AssetsViewProps {
         title: t("assets.cryptos"),
         items: paddedCryptos,
         totalCount: isEmptyState ? paddedCryptos.length : categorizedAssets.cryptos.length,
-        onNavigate,
+        onNavigate: onNavigateToCryptos,
         onItemClick,
       },
       {
@@ -143,7 +147,15 @@ export function useAssetsViewModel(): AssetsViewProps {
         onItemClick,
       },
     ];
-  }, [isEmptyState, categorizedAssets, resolvedDefaults, onNavigate, onItemClick, t]);
+  }, [
+    isEmptyState,
+    categorizedAssets,
+    resolvedDefaults,
+    onNavigate,
+    onNavigateToCryptos,
+    onItemClick,
+    t,
+  ]);
 
   return {
     isLoading: needsPadding
