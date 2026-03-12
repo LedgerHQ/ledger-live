@@ -26,7 +26,10 @@ function isQuoteErrorItem(item: unknown): item is QuoteErrorItem {
  * Fetches the current USD price for a currency from the Ledger countervalues API
  * and converts a target USD value into the equivalent crypto amount.
  */
-async function getAmountFromUSD(currencyId: string, targetUSD: number): Promise<number | null> {
+export async function getAmountFromUSD(
+  currencyId: string,
+  targetUSD: number,
+): Promise<number | null> {
   try {
     const { data } = await axios.get(COUNTERVALUES_URL, {
       params: {
@@ -51,6 +54,7 @@ async function getAmountFromUSD(currencyId: string, targetUSD: number): Promise<
 export async function getMinimumSwapAmount(
   accountFrom: Account,
   accountTo: Account,
+  providersWhitelist?: string[],
 ): Promise<number | null> {
   try {
     const addressFrom = accountFrom.address || accountFrom.parentAccount?.address;
@@ -73,7 +77,7 @@ export async function getMinimumSwapAmount(
         networkFeesCurrency: accountTo.currency.speculosApp.name.toLowerCase(),
         displayLanguage: "en",
         theme: "light",
-        "providers-whitelist": PROVIDERS_WHITELIST,
+        "providers-whitelist": providersWhitelist?.join(",") ?? PROVIDERS_WHITELIST,
         tradeType: "INPUT",
         uniswapOrderType: "uniswapxv1",
       },
