@@ -162,4 +162,41 @@ export type APIBlock = {
   };
   lbEscapeVote: boolean;
   lbEscapeEma: number;
+  /** Hash of the previous block. Not included by default; request via TzKT `select` param if needed. */
+  prevHash?: string;
+};
+
+/**
+ * A FA1.2 / FA2 token transfer event returned by `GET /v1/tokens/transfers`.
+ * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
+ */
+export type APITokenTransfer = {
+  /** Unique transfer identifier (monotonically increasing, usable as cursor). */
+  id: number;
+  level: number;
+  timestamp: string;
+  token: {
+    id: number;
+    contract: { address: string };
+    /** Stringified token ID (FA2 only; "0" for FA1.2). */
+    tokenId: string;
+    standard: "fa1.2" | "fa2";
+    metadata?: {
+      name?: string;
+      symbol?: string;
+      decimals?: string;
+    };
+  };
+  /** Sender address. Null/undefined for minting events. */
+  from: { address: string } | undefined | null;
+  /** Receiver address. Null/undefined for burning events. */
+  to: { address: string } | undefined | null;
+  /** Transfer amount as a decimal string (integer, no magnitude applied). */
+  amount: string;
+  /**
+   * The `id` of the `APITransactionType` operation that triggered this transfer.
+   * Use this to join token transfers back to their parent on-chain operation hash.
+   * Undefined for implicit/protocol-level transfers.
+   */
+  transactionId?: number;
 };
