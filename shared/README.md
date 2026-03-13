@@ -10,7 +10,7 @@ Cross-cutting concern packages that don't belong to a specific business domain. 
 
 - Own **non-domain state** (feature flags, observability/telemetry consent, etc.)
 - Define Zod schemas, RTK slices, selectors, and value objects for cross-cutting concerns
-- Provide packages that are consumed by both LWD and LWM without creating domain dependencies
+- Provide packages that are consumed by multiple applications (for example, both web and mobile clients) without creating domain dependencies
 
 ## Conventions
 
