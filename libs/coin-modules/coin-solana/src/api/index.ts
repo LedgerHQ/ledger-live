@@ -9,9 +9,9 @@ import {
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
-import { getBalance } from "../logic/getBalance";
 import { craftTransaction } from "../logic/craftTransaction";
-import { estimateFees as estimateFeesFn } from "../logic/estimateFees";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
@@ -41,7 +41,7 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
       intent: TransactionIntent,
       customFeesParameters?: FeeEstimation["parameters"],
     ) => {
-      return estimateFeesFn(api, intent, customFeesParameters);
+      return estimateFees(api, intent, customFeesParameters);
     },
     getBalance: (address: string) => {
       return getBalance(api, address, {

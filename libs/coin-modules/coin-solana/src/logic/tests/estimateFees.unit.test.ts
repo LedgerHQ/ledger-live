@@ -8,6 +8,7 @@ jest.mock("../craftTransaction", () => ({
 }));
 
 jest.mock("../../network/chain/web3", () => ({
+  ...jest.requireActual("../../network/chain/web3"),
   getStakeAccountAddressWithSeed: jest.fn().mockResolvedValue("stakeAccAddress"),
 }));
 
