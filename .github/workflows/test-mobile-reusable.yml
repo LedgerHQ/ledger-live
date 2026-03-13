@@ -59,6 +59,8 @@ jobs:
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
         run: pnpm mobile lint:ci
+      - name: Run lint (i18n)
+        run: pnpm mobile lint:i18n
       - name: check for dead code
         run: pnpm mobile knip-check
         shell: bash

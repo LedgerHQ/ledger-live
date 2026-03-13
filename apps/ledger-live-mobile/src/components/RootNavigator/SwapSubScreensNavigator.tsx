@@ -9,6 +9,8 @@ import SwapHistory from "~/screens/Swap/History";
 import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/index";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { SwapSubScreensNavigatorParamList } from "./types/SwapSubScreensNavigator";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { navigateBackToSwapTab } from "~/screens/Swap/navigation/navigateBackToSwapTab";
 
 const Stack = createNativeStackNavigator<SwapSubScreensNavigatorParamList>();
 
@@ -16,6 +18,39 @@ const NullHeader = () => null;
 
 function BackButton() {
   return <NavigationHeaderBackButton />;
+}
+
+function SwapHistoryBackButton({
+  shouldDisplayWallet40MainNav,
+}: {
+  shouldDisplayWallet40MainNav: boolean;
+}) {
+  return (
+    <NavigationHeaderBackButton
+      onPress={navigation =>
+        navigateBackToSwapTab({
+          navigation,
+          shouldDisplayWallet40MainNav,
+        })
+      }
+    />
+  );
+}
+
+function getSwapHistoryScreenOptions({
+  headerTitle,
+  shouldDisplayWallet40MainNav,
+}: {
+  headerTitle: string;
+  shouldDisplayWallet40MainNav: boolean;
+}) {
+  return {
+    headerTitle,
+    headerLeft: () => (
+      <SwapHistoryBackButton shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav} />
+    ),
+    headerRight: NullHeader,
+  };
 }
 
 /**
@@ -29,6 +64,7 @@ function BackButton() {
 export default function SwapSubScreensNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
@@ -44,11 +80,10 @@ export default function SwapSubScreensNavigator() {
       <Stack.Screen
         name={ScreenName.SwapHistory}
         component={SwapHistory}
-        options={{
+        options={getSwapHistoryScreenOptions({
           headerTitle: t("transfer.swap2.history.title"),
-          headerLeft: BackButton,
-          headerRight: NullHeader,
-        }}
+          shouldDisplayWallet40MainNav,
+        })}
       />
       <Stack.Screen
         name={ScreenName.SwapLoading}

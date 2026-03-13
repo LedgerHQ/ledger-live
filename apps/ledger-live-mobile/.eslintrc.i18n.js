@@ -1,6 +1,5 @@
 /**
- * ESLint config for i18next/no-literal-string only.
- * Oxlint does not support this rule, so we run it separately via: pnpm mobile lint:i18n
+ * ESLint config containing ONLY rules NOT available in oxlint.
  */
 module.exports = {
   root: true,
@@ -20,6 +19,8 @@ module.exports = {
             "\\s #LedgerLiveApp\\s*",
             "\\s*ledger.com/academy\\s*",
             "Baking Bad",
+            "&minus;",
+            "−",
           ],
         },
       },

@@ -3,5 +3,9 @@
   "printWidth": 100,
   "trailingComma": "all",
   "arrowParens": "avoid",
-  "sortPackageJson": false
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "src/components/BleDevicePairingFlow/assets/bluetooth.json",
+    "**/locales/**/*.json"
+  ]
 }
