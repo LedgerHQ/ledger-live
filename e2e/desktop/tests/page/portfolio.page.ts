@@ -62,7 +62,7 @@ export class PortfolioPage extends AppPage {
 
   @step("Check embedded swap container visibility")
   async checkEmbeddedSwapContainerVisibility() {
-    await this.embeddedSwapContainer.waitFor({ state: "visible" });
+    await this.checkVisibility(this.embeddedSwapContainer);
   }
 
   @step("Check 'Stake' button visibility")
