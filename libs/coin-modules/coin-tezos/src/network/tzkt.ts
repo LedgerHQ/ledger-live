@@ -74,10 +74,7 @@ const api = {
    * Internal — used by `fetchBlockTransactions` which handles pagination.
    * https://api.tzkt.io/#operation/Operations_GetTransactions
    */
-  async getBlockTransactionsPage(
-    level: number,
-    cursor?: number,
-  ): Promise<APITransactionType[]> {
+  async getBlockTransactionsPage(level: number, cursor?: number): Promise<APITransactionType[]> {
     const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITransactionType[]>({
@@ -92,10 +89,7 @@ const api = {
    * Internal — used by `fetchBlockTokenTransfers` which handles pagination.
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
-  async getBlockTokenTransfersPage(
-    level: number,
-    cursor?: number,
-  ): Promise<APITokenTransfer[]> {
+  async getBlockTokenTransfersPage(level: number, cursor?: number): Promise<APITokenTransfer[]> {
     const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({

@@ -132,6 +132,37 @@ describe("block info and guard", () => {
     // Then
     expect(result.transactions).toEqual([]);
   });
+
+  it("silently skips a transaction with no hash (covers !tx.hash branch and tx.id && tx.hash false branch)", async () => {
+    // Given – one tx without a hash and one valid tx
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: undefined as unknown as string, id: 5, amount: 500_000 }),
+      makeTx({ id: 2, hash: "validHash", amount: 1_000_000 }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then – only the tx with a valid hash is included
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("validHash");
+  });
+
+  it("excludes a no-id transaction from the token-transfer lookup (covers tx.id falsy branch)", async () => {
+    // Given – tx without id cannot be registered in txIdToHash
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ id: undefined as unknown as number, hash: "noIdHash", amount: 2_000_000 }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then – the tx still appears (it has a hash), but no txIdToHash entry was created
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].hash).toBe("noIdHash");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -293,15 +324,33 @@ describe("fee computation and fee payer", () => {
   it("omits feesPayer when both sender and initiator are null", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockTransactions.mockResolvedValue([
-      makeTx({ sender: null, initiator: null }),
-    ]);
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ sender: null, initiator: null })]);
 
     // When
     const result = await getBlock(5_000_000);
 
     // Then
     expect(result.transactions[0].feesPayer).toBeUndefined();
+  });
+
+  it("treats null/undefined fee fields as zero (covers ?? 0 fallback branches)", async () => {
+    // Given – a transaction where none of the fee fields are populated (possible for
+    // implicit/internal ops that the protocol injects without explicit fees).
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({
+        bakerFee: undefined as unknown as number,
+        storageFee: undefined as unknown as number,
+        allocationFee: undefined as unknown as number,
+        amount: 1_000_000,
+      }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then – all three ?? 0 branches are exercised; total fees must be 0n
+    expect(result.transactions[0].fees).toBe(0n);
   });
 });
 
@@ -313,9 +362,7 @@ describe("failed transactions", () => {
   it("marks a transaction as failed when status is 'failed'", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockTransactions.mockResolvedValue([
-      makeTx({ status: "failed", amount: 1_000_000 }),
-    ]);
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ status: "failed", amount: 1_000_000 })]);
 
     // When
     const result = await getBlock(5_000_000);
@@ -360,9 +407,7 @@ describe("failed transactions", () => {
   it("treats operations with no status field as succeeded", async () => {
     // Given – status is undefined (some TzKT responses omit it)
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockTransactions.mockResolvedValue([
-      makeTx({ status: undefined, amount: 100_000 }),
-    ]);
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ status: undefined, amount: 100_000 })]);
 
     // When
     const result = await getBlock(5_000_000);
@@ -461,7 +506,9 @@ describe("FA token transfers", () => {
     expect(result.transactions).toHaveLength(1);
     const tx = result.transactions[0];
     expect(tx.operations).toHaveLength(4);
-    const tokenOps = tx.operations.filter(op => op.type === "transfer" && "asset" in op && (op as any).asset.type === "token");
+    const tokenOps = tx.operations.filter(
+      op => op.type === "transfer" && "asset" in op && (op as any).asset.type === "token",
+    );
     expect(tokenOps).toHaveLength(2);
   });
 
@@ -544,7 +591,12 @@ describe("FA token transfers", () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTokenTransfers.mockResolvedValue([
-      makeTokenTransfer({ transactionId: undefined, from: null, to: { address: "tz1Receiver" }, amount: "750" }),
+      makeTokenTransfer({
+        transactionId: undefined,
+        from: null,
+        to: { address: "tz1Receiver" },
+        amount: "750",
+      }),
     ]);
 
     // When
@@ -564,7 +616,12 @@ describe("FA token transfers", () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTokenTransfers.mockResolvedValue([
-      makeTokenTransfer({ transactionId: undefined, from: { address: "tz1Burner" }, to: null, amount: "300" }),
+      makeTokenTransfer({
+        transactionId: undefined,
+        from: { address: "tz1Burner" },
+        to: null,
+        amount: "300",
+      }),
     ]);
 
     // When

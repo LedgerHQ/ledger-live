@@ -35,10 +35,7 @@ function mapBlockInfo(block: APIBlock): BlockInfo {
 function computeFees(group: APITransactionType[]): bigint {
   return group.reduce(
     (sum, op) =>
-      sum +
-      BigInt(op.bakerFee ?? 0) +
-      BigInt(op.storageFee ?? 0) +
-      BigInt(op.allocationFee ?? 0),
+      sum + BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0),
     0n,
   );
 }
@@ -131,10 +128,22 @@ function buildTokenOperations(transfer: APITokenTransfer): BlockOperation[] {
   const ops: BlockOperation[] = [];
 
   if (fromAddr) {
-    ops.push({ type: "transfer", address: fromAddr, ...(toAddr && { peer: toAddr }), asset, amount: -tokenAmount });
+    ops.push({
+      type: "transfer",
+      address: fromAddr,
+      ...(toAddr && { peer: toAddr }),
+      asset,
+      amount: -tokenAmount,
+    });
   }
   if (toAddr) {
-    ops.push({ type: "transfer", address: toAddr, ...(fromAddr && { peer: fromAddr }), asset, amount: tokenAmount });
+    ops.push({
+      type: "transfer",
+      address: toAddr,
+      ...(fromAddr && { peer: fromAddr }),
+      asset,
+      amount: tokenAmount,
+    });
   }
   return ops;
 }
@@ -192,9 +201,7 @@ function attachTokenTransfer(
   if (tokenOps.length === 0) return;
 
   const parentHash =
-    transfer.transactionId === undefined
-      ? undefined
-      : txIdToHash.get(transfer.transactionId);
+    transfer.transactionId === undefined ? undefined : txIdToHash.get(transfer.transactionId);
 
   if (parentHash !== undefined && blockTxByHash.has(parentHash)) {
     const parent = blockTxByHash.get(parentHash)!;
@@ -213,11 +220,11 @@ function attachTokenTransfer(
     existing.operations.push(...tokenOps);
   } else {
     standaloneByKey.set(key, {
-          hash: key,
-          failed: false,
-          fees: 0n,
-          operations: tokenOps,
-        });
+      hash: key,
+      failed: false,
+      fees: 0n,
+      operations: tokenOps,
+    });
   }
 }
 
