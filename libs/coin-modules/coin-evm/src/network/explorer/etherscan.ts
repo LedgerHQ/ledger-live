@@ -794,10 +794,15 @@ export const getOperations = makeLRUCache<
           : err instanceof Error
             ? `${err.name} - ${err.message}`
             : JSON.stringify(err);
-      throw new InvalidExplorerResponse(`${currency.name} - ${message}`, {
-        currencyName: currency.name,
-        cause: err,
-      });
+      throw new InvalidExplorerResponse(
+        `${currency.name} - ${message}`,
+        {
+          currencyName: currency.name,
+        },
+        {
+          cause: err,
+        },
+      );
     }
   },
   (_currency, _address, accountId, fromBlock, toBlock, pagingToken, limit, order) =>
