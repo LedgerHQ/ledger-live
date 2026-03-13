@@ -1,7 +1,16 @@
 import type { Config } from "jest";
 import type { ReporterOptions } from "jest-allure2-reporter";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { compilerOptions } = require("./tsconfig.json");
+import { createRequire } from "node:module";
+
+// This file is loaded as ESM by Jest; typecheck uses CJS settings so import.meta is reported (TS1470).
+// @ts-expect-error - valid at runtime when Node loads this config as ESM
+const requireFromHere = createRequire(import.meta.url);
+const { compilerOptions } = requireFromHere("./tsconfig.json");
+
+// Load live-common e2e helper via require (same as tsconfig) so Node 24 is happy
+const { getDeviceFirmwareVersion, getSpeculosModel } = requireFromHere(
+  "@ledgerhq/live-common/e2e/speculosAppVersion",
+);
 
 function pathsToModuleNameMapper(
   paths: Record<string, string[]>,
@@ -22,10 +31,6 @@ function pathsToModuleNameMapper(
 
   return jestPaths;
 }
-import {
-  getDeviceFirmwareVersion,
-  getSpeculosModel,
-} from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 const jestAllure2ReporterOptions: ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
@@ -107,7 +112,8 @@ const config: Config = {
   testTimeout: 300_000,
   reporters: [
     "detox/runners/jest/reporter",
-    ["jest-allure2-reporter", jestAllure2ReporterOptions as Record<string, unknown>],
+    // ReporterOptions is compatible but Jest's Config type expects a looser reporter options type
+    ["jest-allure2-reporter", jestAllure2ReporterOptions as Record<string, unknown>], // eslint-disable-line @typescript-eslint/consistent-type-assertions
   ],
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
