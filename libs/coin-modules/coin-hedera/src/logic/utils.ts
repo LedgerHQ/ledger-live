@@ -84,22 +84,47 @@ export const getOperationValue = ({
 };
 
 /**
- * Extract the fee payer account from a Hedera transaction_id.
+ * Extract the transaction initiator account from a Hedera transaction_id.
  *
  * Hedera transaction IDs follow the format `0.0.ACCOUNT-TIMESTAMP-NONCE`.
- * The first segment (before the first `-`) is the Hedera native account ID
- * of the entity that paid for the transaction fees.
+ * The first segment (before the first `-`) is the Hedera native account ID of
+ * the transaction initiator.
  *
  * This always returns a Hedera-native account ID (e.g. `0.0.12345`), never
  * an EVM address, since the Mirror Node transaction_id always uses the native format.
  *
- * Note: Hedera supports scheduled/sponsored transactions where the fee payer
- * (from transaction_id) may differ from the logical sender of the transfer.
- * This function correctly handles that case since it reads from transaction_id,
- * which always identifies the actual fee payer.
+ * In most cases, the transaction initiator is also the fee payer, but not always: see `extractFeesPayer`.
  */
-export function extractFeesPayer(transactionId: string): string {
+export function extractInitiator(transactionId: string): string {
   return transactionId.split("-")[0];
+}
+
+/**
+ * Extract the fee payer account for a Hedera mirror transaction.
+ *
+ * In most cases, the transaction initiator is also the fee payer, but not always: failed
+ * transactions can be charged to the initiator, or not. The only reliable way to determine
+ * the fee payer is to analyze the actual balance changes.
+ */
+export function extractFeesPayer(
+  transaction: Pick<HederaMirrorTransaction, "transaction_id" | "transfers" | "charged_tx_fee">,
+): string {
+  const initiator = extractInitiator(transaction.transaction_id);
+  const transfers = transaction.transfers ?? [];
+  const chargedFee = transaction.charged_tx_fee;
+
+  // no transfers or fees => use initiator
+  if (transfers.length === 0 || chargedFee <= 0) return initiator;
+
+  // if initiator has any transfer, use it
+  if (transfers.some(transfer => transfer.account === initiator)) return initiator;
+
+  // exactly one transfer with amount equal to charged fee => use that transfer's account
+  const exactFeeTransfers = transfers.filter(transfer => transfer.amount === -chargedFee);
+  if (exactFeeTransfers.length === 1) return exactFeeTransfers[0].account;
+
+  // otherwise, fallback to initiator
+  return initiator;
 }
 
 // this utils extracts the bodyBytes from a Hedera Transaction that are required for signing

@@ -25,6 +25,7 @@ import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
   createStakingRewardOperationHash,
+  extractFeesPayer,
   getMemoFromBase64,
   getSyntheticBlock,
   mergeTransactionsFromDifferentSources,
@@ -50,10 +51,12 @@ function getCommonMirrorOperationData(
   const hasFailed = rawTx.result !== "SUCCESS";
   const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
+  const feesPayer = extractFeesPayer(rawTx);
   const extra: HederaOperationExtra = {
     pagingToken: rawTx.consensus_timestamp,
     consensusTimestamp: rawTx.consensus_timestamp,
     transactionId: rawTx.transaction_id,
+    feesPayer,
     ...(memo && { memo }),
   };
 

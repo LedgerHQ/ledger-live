@@ -183,7 +183,7 @@ export async function getBlockV2(height: number): Promise<Block> {
   // this creates a map of transaction_hash -> StakingAnalysis to avoid repeated lookups.
   const stakingAnalyses = await Promise.all(
     mergeResult.merged.filter(isStakingTransactionType).map(async item => {
-      const payerAccount = extractFeesPayer(item.data.transaction_id);
+      const payerAccount = extractFeesPayer(item.data);
       const analysis = await analyzeStakingOperation(payerAccount, item.data);
 
       return [item.data.transaction_hash, analysis] as const;
@@ -193,7 +193,7 @@ export async function getBlockV2(height: number): Promise<Block> {
 
   const blockTransactions: BlockTransaction[] = mergeResult.merged.map(item => {
     const mirrorTx = getMirrorTransaction(item);
-    const payerAccount = extractFeesPayer(mirrorTx.transaction_id);
+    const payerAccount = extractFeesPayer(mirrorTx);
     const stakingAnalysis = stakingAnalysisMap.get(mirrorTx.transaction_hash);
 
     let operations: BlockOperation[];

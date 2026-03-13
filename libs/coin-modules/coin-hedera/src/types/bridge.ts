@@ -163,6 +163,7 @@ export type HederaAccountRaw = AccountRaw & {
 export type HederaOperationExtra = {
   consensusTimestamp?: string;
   transactionId?: string;
+  feesPayer?: string;
   associatedTokenId?: string;
   pagingToken?: string;
   gasConsumed?: number;
