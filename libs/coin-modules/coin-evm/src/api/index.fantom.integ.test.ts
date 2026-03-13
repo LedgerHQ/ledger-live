@@ -1,4 +1,3 @@
-import { Api, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { safeEncodeEIP55 } from "../utils";
@@ -10,7 +9,7 @@ describe("Fantom (etherscan explorer)", () => {
   });
 
   describe("getBlock", () => {
-    let module: Api<MemoNotSupported, BufferTxData>;
+    let module: ReturnType<typeof createApi>;
 
     beforeAll(() => {
       const fantomConfig: EvmConfig = {
