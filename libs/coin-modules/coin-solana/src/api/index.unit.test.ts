@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { AlpacaApi, Balance, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
@@ -24,6 +25,10 @@ jest.mock("../logic/lastBlock", () => ({
 
 jest.mock("../logic/combine", () => ({
   combine: jest.fn(),
+}));
+
+jest.mock("../logic/getBalance", () => ({
+  getBalance: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -79,24 +84,45 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly to broadcast", async () => {
+    jest.mocked(broadcast).mockResolvedValueOnce("txHash");
+
     const api: AlpacaApi = createApi(mockConfig, "solana");
-    await api.broadcast("transaction");
+    const result = await api.broadcast("transaction");
 
     expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
+    expect(result).toBe("txHash");
+  });
+
+  it("should pass parameters correctly to getBalance and return its result", async () => {
+    const mockBalances: Balance[] = [{ value: BigInt(1000), asset: { type: "native" as const } }];
+    jest.mocked(getBalance).mockResolvedValueOnce(mockBalances);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const result = await api.getBalance("address");
+
+    expect(getBalance).toHaveBeenCalledWith(mockChainAPI, "address", {
+      token2022Enabled: false,
+    });
+    expect(result).toEqual(mockBalances);
   });
 
   it("should pass parameters correctly to lastBlock", async () => {
+    const mockedDate = new Date();
+    jest.mocked(lastBlock).mockResolvedValueOnce({ height: 100, hash: "hash", time: mockedDate });
     const api: AlpacaApi = createApi(mockConfig, "solana");
-    await api.lastBlock();
+    const result = await api.lastBlock();
 
     expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
+    expect(result).toEqual({ height: 100, hash: "hash", time: mockedDate });
   });
 
   it("should pass parameters correctly to combine", async () => {
+    jest.mocked(combine).mockReturnValueOnce("txHash");
     const api: AlpacaApi = createApi(mockConfig, "solana");
-    await api.combine("transaction", "signature");
+    const result = await api.combine("transaction", "signature");
 
     expect(combine).toHaveBeenCalledWith("transaction", "signature");
+    expect(result).toBe("txHash");
   });
 
   it("should throw for unsupported methods", () => {
@@ -116,7 +142,6 @@ describe("createApi", () => {
       "craftRawTransaction is not supported",
     );
     expect(() => api.estimateFees(intent)).toThrow("estimateFees is not supported");
-    expect(() => api.getBalance("address")).toThrow("getBalance is not supported");
     expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");

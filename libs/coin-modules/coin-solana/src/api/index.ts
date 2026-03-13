@@ -9,6 +9,7 @@ import {
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
@@ -40,8 +41,10 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     ) => {
       throw new Error("estimateFees is not supported");
     },
-    getBalance: (_address: string) => {
-      throw new Error("getBalance is not supported");
+    getBalance: (address: string) => {
+      return getBalance(api, address, {
+        token2022Enabled: config.token2022Enabled,
+      });
     },
     lastBlock: () => {
       return lastBlock(api);
