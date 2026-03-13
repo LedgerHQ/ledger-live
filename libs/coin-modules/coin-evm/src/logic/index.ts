@@ -14,3 +14,4 @@ export * from "./refreshOperations";
 export * from "./getBlock";
 export * from "./getBlockInfo";
 export * from "./validateTransaction";
+export * from "./getPendingTransactions";

@@ -28,9 +28,22 @@ export function postSync(initial: Account, synced: Account): Account {
     );
   }
 
-  const pendingOperations = initial.pendingOperations.length
+  const fromInitial = initial.pendingOperations.length
     ? initial.pendingOperations.filter(op => isPending(synced, op))
     : [];
+  const fromSynced = synced.pendingOperations.length
+    ? synced.pendingOperations.filter(op => isPending(synced, op))
+    : [];
+  const pendingOperations = [...fromInitial, ...fromSynced].filter(
+    (op, index, self) =>
+      self.findIndex(
+        item =>
+          item.hash === op.hash &&
+          item.type === op.type &&
+          item.accountId === op.accountId &&
+          String(item.transactionSequenceNumber) === String(op.transactionSequenceNumber),
+      ) === index,
+  );
   const subAccounts = synced.subAccounts?.length
     ? synced.subAccounts.map(subAccount => ({
         ...subAccount,

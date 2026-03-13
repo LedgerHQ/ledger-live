@@ -27,6 +27,7 @@ import {
   EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../types";
+import { getPendingOperations } from "./ledger";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
@@ -802,10 +803,12 @@ export const getOperations = makeLRUCache<
 
 const explorerApi: ExplorerApi = {
   getOperations,
+  getPendingOperations,
 };
 
 const explorerApiNoCache: ExplorerApi = {
   getOperations: getOperations.force,
+  getPendingOperations: getPendingOperations,
 };
 
 export default { explorerApi, explorerApiNoCache };

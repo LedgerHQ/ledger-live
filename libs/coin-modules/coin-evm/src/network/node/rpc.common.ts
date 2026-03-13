@@ -21,6 +21,7 @@ import {
   PrefetchedBlockTransaction,
   LogWithAddress,
   TransactionReceipt,
+  TransactionInfo,
 } from "./types";
 
 /**
@@ -149,6 +150,32 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
       to: tx.to ?? undefined,
       erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
     };
+  });
+
+/**
+ * Get all pending transactions for an address
+ */
+export const getPendingTransactions: NodeApi["getPendingTransactions"] = (currency, address) =>
+  withApi(currency, async api => {
+    const result: TransactionInfo[] = [];
+    const txpoolContent = await api.send("txpool_contentFrom", [address]);
+
+    for (const nonce in txpoolContent.pending) {
+      result.push({
+        hash: txpoolContent.pending[nonce].hash,
+        blockHeight: txpoolContent.pending[nonce].blockNumber ?? undefined,
+        blockHash: txpoolContent.pending[nonce].blockHash ?? undefined,
+        nonce: txpoolContent.pending[nonce].nonce,
+        gasUsed: "0x0",
+        gasPrice: txpoolContent.pending[nonce].gasPrice.toString(),
+        status: null,
+        value: txpoolContent.pending[nonce].value.toString(),
+        from: txpoolContent.pending[nonce].from,
+        to: txpoolContent.pending[nonce].to ?? undefined,
+        erc20Transfers: [],
+      });
+    }
+    return result;
   });
 
 /**
@@ -539,6 +566,7 @@ const node: NodeApi = {
   getBlockReceipts,
   getGasEstimation,
   getFeeData,
+  getPendingTransactions,
   broadcastTransaction,
   getOptimismAdditionalFees,
   getScrollAdditionalFees,

@@ -2,6 +2,7 @@ import type {
   BroadcastConfig,
   Balance,
   Block,
+  BlockTransaction,
   BlockInfo,
   FeeEstimation,
   ListOperationsOptions,
@@ -41,6 +42,7 @@ import {
   getBlock,
   getBlockInfo,
   validateTransaction,
+  getPendingTransactions,
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
 
@@ -104,6 +106,10 @@ export function createApi(
     },
     getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
     validateAddress,
+    getPendingTransactions: (
+      _currency: typeof currency,
+      address: string,
+    ): Promise<Page<BlockTransaction>> => getPendingTransactions(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],

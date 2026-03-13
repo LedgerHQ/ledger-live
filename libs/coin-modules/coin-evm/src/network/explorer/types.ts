@@ -22,6 +22,17 @@ export type ExplorerApi = {
     lastInternalOperations: Operation[];
     nextPagingToken: string;
   }>;
+  getPendingOperations: (
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+  ) => Promise<{
+    lastCoinOperations: Operation[];
+    lastTokenOperations: Operation[];
+    lastNftOperations: Operation[];
+    lastInternalOperations: Operation[];
+    nextPagingToken: string;
+  }>;
 };
 
 type ExplorerConfig = EvmConfigInfo["explorer"];

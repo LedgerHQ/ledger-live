@@ -26,6 +26,11 @@ type OperationsRequestParams = {
   batchSize: number;
 };
 
+type PendingOperationsRequestParams = {
+  explorerId: string;
+  address: string;
+};
+
 /**
  * Request fetching all operations from an address
  * and supporting pagination through tokens.
@@ -47,11 +52,7 @@ export async function fetchPaginatedOpsWithRetries(
       method: "GET",
       url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
       params: {
-        filtering: true,
-        from_height: params.fromBlock ?? 0,
-        order: "ascending", // Needed to make sure we get transactions after the block height and not before. Order is still descending in the end
-        batch_size: params.batchSize,
-        token: paginationToken,
+        noinput: true,
       },
     });
 
@@ -144,8 +145,118 @@ export const getOperations: ExplorerApi["getOperations"] = async (
   };
 };
 
+/**
+ * Returns all operation types from an address
+ *
+ * Note: Ledger explorer fetches all pages recursively internally,
+ * so pagination parameters are ignored and nextPagingToken is always empty.
+ * Pagination may be supported in the future.
+ */
+export const getPendingOperations: ExplorerApi["getPendingOperations"] = async (
+  currency,
+  address,
+  accountId,
+) => {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
+  if (!isLedgerExplorerConfig(explorer)) {
+    throw new LedgerExplorerUsedIncorrectly(
+      `Ledger explorer used incorrectly with currency: ${currency.id}`,
+    );
+  }
+
+  const ledgerExplorerOps = await fetchPendingPaginatedOpsWithRetries({
+    explorerId: explorer.explorerId,
+    address,
+  });
+
+  const lastCoinOperations: Operation[] = [];
+  const lastTokenOperations: Operation[] = [];
+  const lastNftOperations: Operation[] = [];
+  const lastInternalOperations: Operation[] = [];
+
+  for (const ledgerOp of ledgerExplorerOps) {
+    const coinOps = ledgerOperationToOperations(accountId, ledgerOp);
+    const erc20Ops = ledgerOp.transfer_events.flatMap((event, index) =>
+      ledgerERC20EventToOperations(coinOps[0], event, index),
+    );
+    const erc721Ops =
+      isNFTActive(currency) && config.showNfts
+        ? ledgerOp.erc721_transfer_events.flatMap((event, index) =>
+            ledgerERC721EventToOperations(coinOps[0], event, index),
+          )
+        : [];
+    const erc1155Ops =
+      isNFTActive(currency) && config.showNfts
+        ? ledgerOp.erc1155_transfer_events.flatMap((event, index) =>
+            ledgerERC1155EventToOperations(coinOps[0], event, index),
+          )
+        : [];
+    const internalOps = ledgerOp.actions.flatMap((action, index) =>
+      ledgerInternalTransactionToOperations(coinOps[0], action, index),
+    );
+
+    lastCoinOperations.push(...coinOps);
+    lastTokenOperations.push(...erc20Ops);
+    lastNftOperations.push(...erc721Ops);
+    lastNftOperations.push(...erc1155Ops);
+    lastInternalOperations.push(...internalOps);
+  }
+
+  return {
+    lastCoinOperations,
+    lastTokenOperations,
+    lastNftOperations,
+    lastInternalOperations,
+    nextPagingToken: NO_TOKEN, // Ledger explorer fetches all pages internally
+  };
+};
+
+export async function fetchPendingPaginatedOpsWithRetries(
+  params: Required<PendingOperationsRequestParams>,
+  paginationToken: string | null = null,
+  previousOperations: LedgerExplorerOperation[] = [],
+  retries = DEFAULT_RETRIES_API,
+): Promise<LedgerExplorerOperation[]> {
+  try {
+    const {
+      data: { data: operationsBatch, token },
+    } = await axios.request<{
+      data: LedgerExplorerOperation[];
+      token: string;
+    }>({
+      headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
+      method: "GET",
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs/pending`,
+      params: {
+        noinput: true,
+      },
+    });
+
+    const mergedOperations = [...previousOperations, ...operationsBatch];
+
+    return token
+      ? fetchPendingPaginatedOpsWithRetries(params, token, mergedOperations, retries)
+      : mergedOperations;
+  } catch (e) {
+    if (retries) {
+      // wait the API timeout before trying again
+      await delay(LEDGER_TIMEOUT);
+      // decrement with prefix here or it won't work
+      return fetchPendingPaginatedOpsWithRetries(
+        params,
+        paginationToken,
+        previousOperations,
+        --retries,
+      );
+    }
+    throw e;
+  }
+}
+
 const ledgerExplorerAPI: ExplorerApi = {
   getOperations,
+  getPendingOperations,
 };
 
 export default ledgerExplorerAPI;

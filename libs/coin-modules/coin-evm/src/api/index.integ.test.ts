@@ -531,6 +531,31 @@ describe.each([
     });
   });
 
+  describe("getPendingTransactions", () => {
+    it.only("returns a valid pending transaction page structure", async () => {
+      if (!module.getPendingTransactions) {
+        throw new Error("getPendingTransactions is not implemented");
+      }
+      const result = await module.getPendingTransactions(
+        {} as never,
+        "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551",
+      );
+
+      expect(result).toEqual({
+        items: expect.any(Array),
+      });
+
+      result.items.forEach(tx => {
+        expect(tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
+        expect(typeof tx.failed).toBe("boolean");
+        expect(tx.operations).toBeInstanceOf(Array);
+        expect(tx.fees).toBeGreaterThanOrEqual(0n);
+        expect(tx.feesPayer).toMatch(/^0x[A-Fa-f0-9]{40}$/);
+        expect(tx.details).toEqual(expect.objectContaining({ sequence: expect.any(Number) }));
+      });
+    });
+  });
+
   describe.each([
     [
       "legacy",

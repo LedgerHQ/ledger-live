@@ -6,7 +6,11 @@ import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
+import type {
+  BlockOperation,
+  BlockTransaction,
+  Operation,
+} from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -28,6 +32,65 @@ function isIncomingCoreOp(operation: Operation): boolean {
 
 function isInternalLiveOp(operation: OperationCommon): boolean {
   return !!operation.extra?.internal;
+}
+
+function toBigNumberSequence(sequence: unknown): BigNumber | undefined {
+  if (typeof sequence === "bigint") return new BigNumber(sequence.toString());
+  if (typeof sequence === "number") return new BigNumber(sequence);
+  if (typeof sequence === "string" && sequence.length > 0) return new BigNumber(sequence);
+  return undefined;
+}
+
+function transferOperationToPendingLiveOperation(
+  accountId: string,
+  tx: BlockTransaction,
+  op: BlockOperation,
+  index: number,
+): OperationCommon | null {
+  if (op.type !== "transfer") return null;
+
+  const isOutgoing = op.amount < 0n;
+  const value = isOutgoing ? -op.amount : op.amount;
+  const sequence = toBigNumberSequence(tx.details?.sequence);
+  const operationType = isOutgoing ? "OUT" : "IN";
+  const operationId = `${encodeOperationId(accountId, tx.hash, operationType)}:${index}`;
+  const operationValue = isOutgoing && op.asset.type === "native" ? value + tx.fees : value;
+
+  return {
+    id: operationId,
+    hash: tx.hash,
+    accountId,
+    type: operationType,
+    value: new BigNumber(operationValue.toString()),
+    fee: new BigNumber(tx.fees.toString()),
+    blockHash: null,
+    blockHeight: null,
+    senders: isOutgoing ? [op.address] : op.peer ? [op.peer] : [],
+    recipients: isOutgoing ? (op.peer ? [op.peer] : []) : [op.address],
+    date: new Date(),
+    transactionSequenceNumber: sequence,
+    hasFailed: tx.failed,
+    extra: { pending: true },
+  };
+}
+
+function pendingTransactionsToOperations(
+  accountId: string,
+  address: string,
+  transactions: BlockTransaction[],
+): OperationCommon[] {
+  const normalizedAddress = address.toLowerCase();
+  const operations: OperationCommon[] = [];
+
+  for (const tx of transactions) {
+    tx.operations.forEach((op, index) => {
+      if (op.type !== "transfer" || op.address.toLowerCase() !== normalizedAddress) return;
+      const pendingOperation = transferOperationToPendingLiveOperation(accountId, tx, op, index);
+      if (pendingOperation) operations.push(pendingOperation);
+    });
+  }
+
+  return operations;
 }
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
@@ -125,6 +188,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
+    const pendingCoreTxs = alpacaApi.getPendingTransactions
+      ? (await alpacaApi.getPendingTransactions(currency, address)).items
+      : [];
+    const pendingOperations = pendingTransactionsToOperations(accountId, address, pendingCoreTxs);
 
     const res: Partial<Account> = {
       id: accountId,
@@ -133,6 +200,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
       operations,
+      pendingOperations,
       subAccounts,
       operationsCount: operations.length,
       syncHash,

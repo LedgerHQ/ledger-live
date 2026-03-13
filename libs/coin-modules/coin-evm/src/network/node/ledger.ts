@@ -365,6 +365,47 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
 };
 
 /**
+ * Get the pending transactions for an address
+ */
+export const getPendingTransactions: NodeApi["getPendingTransactions"] = async (
+  currency,
+  address,
+) => {
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
+  if (!isLedgerNodeConfig(node)) {
+    throw new LedgerNodeUsedIncorrectly();
+  }
+
+  const ledgerPendingTransactions = await fetchWithRetries<LedgerExplorerOperation[]>({
+    method: "GET",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/address/${address}/txs/pending`,
+  });
+  const pendings = ledgerPendingTransactions.map(transaction => ({
+    hash: transaction.hash,
+    blockHeight: transaction.block.height,
+    blockHash: transaction.block.hash,
+    nonce: transaction.nonce_value,
+    gasPrice: transaction.gas_price,
+    gasUsed: transaction.gas_used,
+    value: transaction.value,
+    status: transaction.status,
+    from: transaction.from,
+    to: transaction.to,
+    erc20Transfers: transaction.transfer_events.map(event => ({
+      asset: {
+        type: "erc20" as const,
+        assetReference: safeEncodeEIP55(event.contract),
+      },
+      from: safeEncodeEIP55(event.from),
+      to: safeEncodeEIP55(event.to),
+      value: event.count,
+    })),
+  }));
+  return pendings;
+};
+
+/**
  * ⚠️ Blockchain specific
  *
  * For a layer 2 like Optimism, additional fees are needed in order to
@@ -482,6 +523,7 @@ const node: NodeApi = {
   getTransaction,
   getGasEstimation,
   getFeeData,
+  getPendingTransactions,
   broadcastTransaction,
   getOptimismAdditionalFees,
   getScrollAdditionalFees,

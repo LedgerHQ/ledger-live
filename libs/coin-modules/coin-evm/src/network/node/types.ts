@@ -108,6 +108,7 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
+  getPendingTransactions: (currency: CryptoCurrency, address: string) => Promise<TransactionInfo[]>;
   getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
   getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
