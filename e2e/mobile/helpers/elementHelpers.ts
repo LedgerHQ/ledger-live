@@ -156,6 +156,25 @@ export const NativeElementHelpers = {
     return element(by.id(id).and(by.text(text))).atIndex(index);
   },
 
+  /**
+   * Builds a Detox element matcher scoped by test id and constrained by descendant text matchers.
+   * String values are converted to case-insensitive partial matches.
+   *
+   * @param id - Test id of the root element to target
+   * @param texts - Descendant text constraints (plain strings or RegExp)
+   * @returns Detox element matching id and all descendant text constraints
+   */
+  getElementByIdWithDescendantTexts(id: string, ...texts: Array<string | RegExp>) {
+    let matcher = by.id(id);
+
+    for (const text of texts) {
+      const descendantText = typeof text === "string" ? new RegExp(`.*${text}.*`, "i") : text;
+      matcher = matcher.withDescendant(by.text(descendantText));
+    }
+
+    return element(matcher);
+  },
+
   async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
     try {
       await waitFor(element(by.id(id)))
