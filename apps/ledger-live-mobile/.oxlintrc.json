@@ -108,6 +108,7 @@
     "jest/no-disabled-tests": "warn",
     "oxc/const-comparisons": "warn",
     "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
     "jsx-a11y/anchor-is-valid": ["error", { "components": [] }]
   },
   "overrides": [
