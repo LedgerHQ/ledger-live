@@ -9,10 +9,12 @@ export async function estimateFees({
   sender,
   asset,
   type,
+  currencyId,
   ...extra
 }: TransactionIntent & {
   useAllAmount?: boolean;
   stakedSuiId?: string;
+  currencyId?: string;
 }): Promise<bigint> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
@@ -32,14 +34,18 @@ export async function estimateFees({
       break;
   }
 
-  const { gasBudget } = await suiAPI.paymentInfo(sender, {
-    mode,
-    family: "sui",
-    recipient,
-    amount: BigNumber(amount.toString()),
-    errors: {},
-    coinType,
-    ...extra,
-  });
+  const { gasBudget } = await suiAPI.paymentInfo(
+    sender,
+    {
+      mode,
+      family: "sui",
+      recipient,
+      amount: BigNumber(amount.toString()),
+      errors: {},
+      coinType,
+      ...extra,
+    },
+    currencyId,
+  );
   return BigInt(gasBudget);
 }

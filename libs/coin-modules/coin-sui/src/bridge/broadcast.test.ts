@@ -5,7 +5,8 @@ const executeTransactionBlock = jest.fn();
 
 jest.mock("../network", () => {
   return {
-    executeTransactionBlock: (arg: any) => executeTransactionBlock(arg),
+    executeTransactionBlock: (arg: any, currencyId?: string) =>
+      executeTransactionBlock(arg, currencyId),
   };
 });
 
@@ -13,7 +14,7 @@ describe("broadcast", () => {
   it("calls explorer for broadcast operation", async () => {
     // WHEN
     await broadcast({
-      account: {} as any,
+      account: { currency: { id: "sui" } } as any,
       signedOperation: {
         signature: "SIGNATURE",
         operation: createFixtureOperation(),
@@ -35,7 +36,7 @@ describe("broadcast", () => {
 
     // WHEN
     const result = await broadcast({
-      account: {} as any,
+      account: { currency: { id: "sui" } } as any,
       signedOperation: {
         signature: "SIGNATURE",
         operation,

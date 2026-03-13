@@ -9,6 +9,7 @@ import suiAPI from "../network";
  */
 export async function broadcast(
   transaction: string | ExecuteTransactionBlockParams,
+  currencyId?: string,
 ): Promise<string> {
   let params: ExecuteTransactionBlockParams;
   if (typeof transaction === "string") {
@@ -25,7 +26,7 @@ export async function broadcast(
   } else {
     params = transaction;
   }
-  const result = await suiAPI.executeTransactionBlock(params);
+  const result = await suiAPI.executeTransactionBlock(params, currencyId);
   return result?.digest ?? "";
 }
 

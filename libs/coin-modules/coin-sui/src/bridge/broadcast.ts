@@ -11,7 +11,10 @@ import { SuiSignedOperation, Transaction } from "../types";
  * @param {Object} params.signedOperation.rawData - The raw data of the signed operation.
  * @returns {Promise<Object>} The operation with the hash of the transaction.
  */
-export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
+export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
+  account,
+  signedOperation,
+}) => {
   const {
     operation,
     signature,
@@ -27,6 +30,6 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signe
       showEvents: true,
     },
   };
-  const hash = await logicBroadcast(params);
+  const hash = await logicBroadcast(params, account.currency.id);
   return patchOperationWithHash(operation, hash);
 };
