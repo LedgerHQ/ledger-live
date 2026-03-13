@@ -238,8 +238,8 @@ catalogs:
       specifier: 3.2.1
       version: 3.2.1
     axios:
-      specifier: 1.13.2
-      version: 1.13.2
+      specifier: 1.13.5
+      version: 1.13.5
     babel-jest:
       specifier: 30.2.0
       version: 30.2.0
@@ -322,8 +322,8 @@ catalogs:
       specifier: ^2.7.3
       version: 2.7.3
     playwright:
-      specifier: 1.51.1
-      version: 1.51.1
+      specifier: 1.55.1
+      version: 1.55.1
     react-i18next:
       specifier: 16.5.0
       version: 16.5.0
@@ -1295,7 +1295,7 @@ importers:
         version: 10.4.22(postcss@8.5.6)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       buffer:
         specifier: 6.0.3
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
@@ -2356,7 +2356,7 @@ importers:
         version: 3.2.1(@playwright/test@1.51.1)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -2381,7 +2381,7 @@ importers:
         version: 40.6.0
       playwright:
         specifier: 'catalog:'
-        version: 1.51.1
+        version: 1.55.1
 
   e2e/mobile:
     dependencies:
@@ -3062,7 +3062,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -3210,7 +3210,7 @@ importers:
         version: 2.4.4
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bip32:
         specifier: ^2.0.6
         version: 2.0.6
@@ -3459,7 +3459,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       expect:
         specifier: 'catalog:'
         version: 30.2.0
@@ -3713,7 +3713,7 @@ importers:
         version: link:../../ledgerjs/packages/types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -3810,7 +3810,7 @@ importers:
         version: link:../../ledgerjs/packages/logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -3974,7 +3974,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -4217,7 +4217,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -4514,7 +4514,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -4854,7 +4854,7 @@ importers:
         version: 7.7.1
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       eslint-plugin-jest:
         specifier: ^27.4.2
         version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.8.3))(eslint@8.57.0)(typescript@5.8.3))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0))(typescript@5.8.3)
@@ -4911,7 +4911,7 @@ importers:
         version: 1.0.4
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5601,7 +5601,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -6081,7 +6081,7 @@ importers:
         version: 30.0.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       jest:
         specifier: 'catalog:'
         version: 30.2.0(ts-node@10.9.2(@swc/core@1.15.11)(typescript@5.8.3))
@@ -6108,7 +6108,7 @@ importers:
         version: link:../ledgerjs/packages/types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -6210,7 +6210,7 @@ importers:
         version: link:../env
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
@@ -6710,7 +6710,7 @@ importers:
         version: 3.2.5
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -7070,7 +7070,7 @@ importers:
         version: link:../ledgerjs/packages/types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -7146,7 +7146,7 @@ importers:
     dependencies:
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -7479,7 +7479,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -7729,7 +7729,7 @@ importers:
         version: link:../types-live
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -7925,7 +7925,7 @@ importers:
         version: 24.12.0
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -8038,7 +8038,7 @@ importers:
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -8554,7 +8554,7 @@ importers:
         version: link:../logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       ws:
         specifier: 'catalog:'
         version: 8.18.3
@@ -8839,7 +8839,7 @@ importers:
         version: link:../logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -9881,7 +9881,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       axios:
         specifier: 'catalog:'
-        version: 1.13.2
+        version: 1.13.5
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -11510,12 +11510,14 @@ packages:
   '@aptos-labs/aptos-client@2.0.0':
     resolution: {integrity: sha512-A23T3zTCRXEKURodp00dkadVtIrhWjC9uo08dRDBkh69OhCnBAxkENmUy/rcBarfLoFr60nRWt7cBkc8wxr1mg==}
     engines: {node: '>=20.0.0'}
+    deprecated: This version is deprecated.  Please upgrade to version 2.1.0 or later.
     peerDependencies:
       got: ^11.8.6
 
   '@aptos-labs/ts-sdk@3.1.3':
     resolution: {integrity: sha512-42CiChUnHzsZXE25p3gPiETFUTlchTd20zl9vAiq6es1vQaaf95LvVQ0q3GxeOgmW9ENn2q72gAsuGLIOYRohg==}
     engines: {node: '>=20.0.0'}
+    deprecated: This version is deprecated, please upgrade to 5.2.1, or the latest version
 
   '@as-integrations/express5@1.1.2':
     resolution: {integrity: sha512-BxfwtcWNf2CELDkuPQxi5Zl3WqY/dQVJYafeCBOGoFQjv5M0fjhxmAFZ9vKx/5YKKNeok4UY6PkFbHzmQrdxIA==}
@@ -13596,17 +13598,20 @@ packages:
 
   '@dfinity/agent@2.4.1':
     resolution: {integrity: sha512-IczFFOUDGfMTdQ83yiCvGtvHr1IIB80lWBP0ZYRLogs6NVt8t6HYcMlu1sgT+9VivhT7iwX4pktPFxxOkO3COw==}
+    deprecated: 'This package has been deprecated. Use @icp-sdk/core/agent instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
     peerDependencies:
       '@dfinity/candid': ^2.4.1
       '@dfinity/principal': ^2.4.1
 
   '@dfinity/candid@2.4.1':
     resolution: {integrity: sha512-kOaIKfhR2PYN8vD4M0Pc4s/7wb1nKjlTJUw+5E9jh26T03fITIZmaafIuwlX+wmdxwIT9Xoy7PlsxOEpzv203A==}
+    deprecated: 'This package has been deprecated. Use @icp-sdk/core/candid instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
     peerDependencies:
       '@dfinity/principal': ^2.4.1
 
   '@dfinity/identity-secp256k1@2.4.1':
     resolution: {integrity: sha512-YP6AYObQc3bADwVhjqQ90V6mIKyN0vDISRBk9izKpiPStK29lbxF8zLkqY7wYhgrxDNvtSlmd+VMQrvbE7K3lg==}
+    deprecated: 'This package has been deprecated. Use @icp-sdk/core/identity/secp256k1 instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
 
   '@dfinity/ledger-icp@2.6.13':
     resolution: {integrity: sha512-Py/fpmT7+LVhrGYgKapuPz2l0+6HoVvuyN6xCr6MAu6DA8375cWJmXKeCWLz5qWPRu+D7zjKeitWdhUfxAy/cA==}
@@ -13627,6 +13632,7 @@ packages:
 
   '@dfinity/principal@2.4.1':
     resolution: {integrity: sha512-Cz6XQVOwq0TXDBClPbcidDd4SqK1lfr1/Kn34ruDD13xVQ4iaP1iCntzS9O97+vGpY/6jwDtKd32Gn5YJ9BQNw==}
+    deprecated: 'This package has been deprecated. Use @icp-sdk/core/principal instead. Migration guide: https://js.icp.build/core/latest/upgrading/v5'
 
   '@dfinity/utils@2.14.0':
     resolution: {integrity: sha512-WGwME4891K9TU7SXchhUVtdSbU3jUxnndblcrNJH0/QLPuQGnvP/7YhFL1b6MhI5GRpTWh0qLsyvMpEpdw7Faw==}
@@ -19136,7 +19142,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -21438,7 +21444,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -21751,6 +21757,9 @@ packages:
   axios@1.13.2:
     resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
 
+  axios@1.13.5:
+    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
+
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
@@ -21967,6 +21976,7 @@ packages:
   basic-ftp@5.0.5:
     resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==}
     engines: {node: '>=10.0.0'}
+    deprecated: Security vulnerability fixed in 5.2.0, please upgrade
 
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
@@ -25769,6 +25779,7 @@ packages:
   git-raw-commits@2.0.11:
     resolution: {integrity: sha512-VnctFhw+xfj8Va1xtfEqCUD2XDrbAPSJx+hSrE5K7fGdjZruW7XV+QOrN7LF/RJyvspRiD2I0asWsxFp0ya26A==}
     engines: {node: '>=10'}
+    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@7.0.0:
@@ -29388,6 +29399,7 @@ packages:
   node-version-matches@2.0.1:
     resolution: {integrity: sha512-oqk6+05FC0dNVY5NuXuhPEMq+m1b9ZjS9SIhVE9EjwCHZspnmjSO8npbKAEieinR8GeEgbecoQcYIvI/Kwcf6Q==}
     engines: {node: '>=8'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   nodemon@3.1.0:
     resolution: {integrity: sha512-xqlktYlDMCepBJd43ZQhjWwMw2obW/JRvkrLxq5RCNcuDDX1DbcPT+qT1IlIIdf+DhnWs90JpTMe+Y5KxOchvA==}
@@ -30111,8 +30123,18 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.55.1:
+    resolution: {integrity: sha512-Z6Mh9mkwX+zxSlHqdr5AOcJnfp+xUWLCt9uKV18fhzA8eyxUd8NUWzAjxUh55RZKSYwDGX0cfaySdhZJGMoJ+w==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.51.1:
     resolution: {integrity: sha512-kkx+MB2KQRkyxjYPc3a0wLZZoDczmppyGJIvQ43l+aZihkaVvmu/21kiyaHeHjiFxjxNNFnUncKmcGIyOojsaw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.55.1:
+    resolution: {integrity: sha512-cJW4Xd/G3v5ovXtJJ52MAOclqeac9S/aGGgRzLabuF8TnIb6xHvMzKIa6JmrRzUkeXJgfL1MhukP0NK6l39h3A==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -42904,7 +42926,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.2
+      axios: 1.13.5
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -51796,6 +51818,12 @@ snapshots:
       form-data: 4.0.5
       proxy-from-env: 1.1.0
 
+  axios@1.13.5:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.5
+      proxy-from-env: 1.1.0
+
   axios@1.7.7:
     dependencies:
       follow-redirects: 1.15.11
@@ -52877,7 +52905,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.13.2
+      axios: 1.13.5
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -63093,9 +63121,17 @@ snapshots:
 
   playwright-core@1.51.1: {}
 
+  playwright-core@1.55.1: {}
+
   playwright@1.51.1:
     dependencies:
       playwright-core: 1.51.1
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.55.1:
+    dependencies:
+      playwright-core: 1.55.1
     optionalDependencies:
       fsevents: 2.3.2
 
