@@ -17,7 +17,7 @@ import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
-import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
+import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
 
 function internalTransactionsFetcher(
   nodeApi: NodeApi,
