@@ -5,9 +5,9 @@ import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
 // Import fetchBlockTransactions / fetchBlockTokenTransfers through the index re-export
 // so that network/index.ts line 4 is exercised and its coverage is tracked.
-import { fetchBlockTransactions, fetchBlockTokenTransfers } from ".";
-import api from "./tzkt";
 import type { APIBlock, APITokenTransfer, APITransactionType } from "./types";
+import api from "./tzkt";
+import { fetchBlockTransactions, fetchBlockTokenTransfers } from ".";
 
 jest.mock("@ledgerhq/live-network");
 const mockedNetwork = jest.mocked(network);
@@ -89,7 +89,7 @@ describe("tzkt network API", () => {
 
       expect(result).toEqual(txs);
       const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
-      expect(params).toMatchObject({ level: 200, limit: 1000 });
+      expect(params).toMatchObject({ level: 200, limit: 1000, "sort.asc": "id" });
       expect(params).not.toHaveProperty("offset.cr");
     });
 
@@ -116,7 +116,7 @@ describe("tzkt network API", () => {
 
       expect(result).toEqual(items);
       const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
-      expect(params).toMatchObject({ level: 300, limit: 1000 });
+      expect(params).toMatchObject({ level: 300, limit: 1000, "sort.asc": "id" });
       expect(params).not.toHaveProperty("offset.cr");
     });
 

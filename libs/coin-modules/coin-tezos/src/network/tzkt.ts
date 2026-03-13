@@ -75,7 +75,10 @@ const api = {
    * https://api.tzkt.io/#operation/Operations_GetTransactions
    */
   async getBlockTransactionsPage(level: number, cursor?: number): Promise<APITransactionType[]> {
-    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE };
+    // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
+    // Without an explicit sort the API default may be descending, which would cause the
+    // cursor to go backwards and produce duplicates or an infinite loop.
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITransactionType[]>({
       url: `${getExplorerUrl()}/v1/operations/transactions`,
@@ -90,7 +93,9 @@ const api = {
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getBlockTokenTransfersPage(level: number, cursor?: number): Promise<APITokenTransfer[]> {
-    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE };
+    // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
+    // offset.cr cursor advancing forward regardless of the API's default ordering.
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,

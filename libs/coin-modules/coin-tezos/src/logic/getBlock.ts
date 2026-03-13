@@ -117,9 +117,13 @@ function buildTokenOperations(transfer: APITokenTransfer): BlockOperation[] {
   const tokenAmount = BigInt(transfer.amount);
   if (tokenAmount === 0n) return [];
 
+  // For FA2, multiple token IDs coexist under one contract address.
+  // Encoding both as "address:tokenId" makes every token uniquely identifiable.
+  // FA1.2 tokens always have tokenId "0", so this format is safe for both standards.
+  const tokenId = transfer.token.tokenId ?? "0";
   const asset: AssetInfo = {
     type: "token",
-    assetReference: transfer.token.contract.address,
+    assetReference: `${transfer.token.contract.address}:${tokenId}`,
     name: transfer.token.metadata?.name ?? transfer.token.metadata?.symbol,
   };
 

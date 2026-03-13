@@ -651,7 +651,7 @@ describe("FA token transfers", () => {
     expect(result.transactions).toHaveLength(0);
   });
 
-  it("sets assetReference to the FA contract address", async () => {
+  it("encodes assetReference as 'contract:tokenId' to uniquely identify FA2 tokens", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTokenTransfers.mockResolvedValue([
@@ -671,11 +671,12 @@ describe("FA token transfers", () => {
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — tokenId "7" must be part of the reference so different FA2 tokens under
+    // the same contract are not conflated.
     const op = result.transactions[0].operations[0] as any;
     expect(op.asset).toMatchObject({
       type: "token",
-      assetReference: "KT1SpecificContract",
+      assetReference: "KT1SpecificContract:7",
       name: "MyFA2Token",
     });
   });
