@@ -1,6 +1,6 @@
 ---
 description: Shared package structure and conventions — read shared/README.md before creating or modifying packages under shared/
-globs: shared/**
+globs: ["shared/**"]
 alwaysApply: false
 ---
 
