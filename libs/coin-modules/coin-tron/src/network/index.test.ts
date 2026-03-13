@@ -4,7 +4,13 @@ import { setupServer, SetupServerApi } from "msw/node";
 import coinConfig from "../config";
 import { getBlock as getBlockLogic, getBlockInfo } from "../logic/getBlock";
 import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
-import { defaultFetchParams, fetchTronAccountTxs, getBlock, getBlockWithTransactions } from ".";
+import {
+  defaultFetchParams,
+  fetchTronAccountTxs,
+  getBlock,
+  getBlockWithTransactions,
+  getTransactionInfoByBlockNum,
+} from ".";
 
 const TRON_BASE_URL_TEST = "https://httpbin.org";
 
@@ -413,6 +419,46 @@ describe("getBlockWithTransactions", () => {
   });
 });
 
+describe("getTransactionInfoByBlockNum", () => {
+  let capturedRequest: { method: string; url: string; body: unknown } | null = null;
+
+  const txInfoFixture = [
+    { id: "abc123", fee: 1000 },
+    { id: "def456", fee: 2000 },
+  ];
+
+  const getTxInfoHandler = http.post(
+    `${TRON_BASE_URL_TEST}/wallet/gettransactioninfobyblocknum`,
+    async ({ request }) => {
+      capturedRequest = {
+        method: request.method,
+        url: request.url,
+        body: await request.json(),
+      };
+      return HttpResponse.json(txInfoFixture);
+    },
+  );
+
+  const mockServer = setupServer(getTxInfoHandler);
+
+  beforeAll(doBeforeAll(mockServer));
+  beforeEach(() => {
+    capturedRequest = null;
+    mockServer.resetHandlers();
+  });
+  afterAll(doAfterAll(mockServer));
+
+  it("sends POST request with num in body", async () => {
+    const result = await getTransactionInfoByBlockNum(69629492);
+
+    expect(capturedRequest).not.toBeNull();
+    expect(capturedRequest!.method).toBe("POST");
+    expect(capturedRequest!.url).toContain("/wallet/gettransactioninfobyblocknum");
+    expect(capturedRequest!.body).toEqual({ num: 69629492 });
+    expect(result).toEqual(txInfoFixture);
+  });
+});
+
 describe("getBlock API integration", () => {
   const blockFixture = {
     blockID: "0000000004267634abc123def456789000000000000000000000000000000000",
@@ -448,11 +494,25 @@ describe("getBlock API integration", () => {
     ],
   };
 
+  const txInfoFixture = [
+    {
+      id: "abc123def456789",
+      fee: 1000,
+      blockNumber: 69629492,
+      blockTimeStamp: 1739540559000,
+    },
+  ];
+
   const getBlockHandler = http.post(`${TRON_BASE_URL_TEST}/wallet/getblock`, async () =>
     HttpResponse.json(blockFixture),
   );
 
-  const mockServer = setupServer(getBlockHandler);
+  const getTxInfoByBlockNumHandler = http.post(
+    `${TRON_BASE_URL_TEST}/wallet/gettransactioninfobyblocknum`,
+    async () => HttpResponse.json(txInfoFixture),
+  );
+
+  const mockServer = setupServer(getBlockHandler, getTxInfoByBlockNumHandler);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(() => mockServer.resetHandlers());
