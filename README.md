@@ -130,9 +130,9 @@ pnpm i
 > Note: multiple postinstall steps will be triggered and fail if the applications prerequisites are not met.
 > You can safely ignore the errors if you do not plan to work on those apps.
 
-#### Optional: CLI or Desktop with a Ledger device (USB)
+#### Optional: CLI with a Ledger device (USB)
 
-To use the **CLI** or **Desktop** app with a physical Ledger device over USB, the native modules `node-hid` and `usb` must be built. By default they are not built during `pnpm i` (so CI and most devs can install without system deps). Run once after install:
+To use the **CLI** with a physical Ledger device over USB (Node-based HID transport), the native modules `node-hid` and `usb` must be built. By default they are not built during `pnpm i` (so CI and most devs can install without system deps). Run once after install:
 
 ```bash
 pnpm build:device-deps
