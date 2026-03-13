@@ -295,7 +295,7 @@ test.describe("Send flows", () => {
             await addBugLink([transaction.bugTicket]);
           }
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -347,7 +347,7 @@ test.describe("Send flows", () => {
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -398,7 +398,7 @@ test.describe("Send flows", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           transactionInputValid.accountToDebit.accountName,
         );
@@ -448,7 +448,7 @@ test.describe("Send flows", () => {
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -523,7 +523,7 @@ test.describe("Send flows", () => {
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -580,7 +580,7 @@ test.describe("Send flows", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           transactionEnsAddress.accountToDebit.accountName,
         );
