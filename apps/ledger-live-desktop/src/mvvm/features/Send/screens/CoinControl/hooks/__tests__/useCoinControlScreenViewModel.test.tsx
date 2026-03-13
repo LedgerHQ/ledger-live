@@ -42,7 +42,7 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError", () => ({
   useTranslatedBridgeError: jest.fn(() => null),
 }));
-jest.mock("../useBitcoinUtxoDisplayData", () => ({
+jest.mock("@ledgerhq/live-common/families/bitcoin/react", () => ({
   useBitcoinUtxoDisplayData: () => ({
     pickingStrategyValue: bitcoinPickingStrategy.MERGE_OUTPUTS,
     pickingStrategyOptions: [
@@ -54,7 +54,7 @@ jest.mock("../useBitcoinUtxoDisplayData", () => ({
     totalSpent: new BigNumber(0),
   }),
 }));
-jest.mock("../useCoinControlAmountInput", () => ({
+jest.mock("@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput", () => ({
   useCoinControlAmountInput: () => ({
     amountValue: "0",
     onAmountChange: mockOnAmountChange,
@@ -189,7 +189,7 @@ describe("useCoinControlScreenViewModel", () => {
     expect(result.current.enterAmountPlaceholder).toBeDefined();
     expect(result.current.amountToSendLabel).toBeDefined();
     expect(result.current.amountInputLabel).toBeDefined();
-    expect(result.current.feesRowLabel).toBe("Network Fees");
+    expect(result.current.networkFees.feesRowLabel).toBe("Network Fees");
   });
 
   it("should set reviewLabel to getCta when hasInsufficientFundsError", () => {

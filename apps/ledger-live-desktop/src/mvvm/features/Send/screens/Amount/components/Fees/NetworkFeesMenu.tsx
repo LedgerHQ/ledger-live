@@ -60,7 +60,7 @@ type NetworkFeesMenuProps = Readonly<{
 export function NetworkFeesMenu({ display, selection, presets, actions }: NetworkFeesMenuProps) {
   const { label: feesLabel, value: feesValue, strategyLabel: feesStrategyLabel } = display;
   const { selectedStrategy, onSelectStrategy } = selection;
-  const { options: feePresetOptions, fiatByPreset, legendByPreset } = presets;
+  const { options: feePresetOptions = [], fiatByPreset = {}, legendByPreset = {} } = presets;
   const { onSelectCustomFees, onSelectCoinControl } = actions ?? {};
   const { t } = useTranslation();
   const { state } = useSendFlowData();
@@ -82,8 +82,9 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   );
 
   const feeOptionsWithFiat = useMemo(() => {
-    if (feePresetOptions.length > 0) {
-      return feePresetOptions.map(option => {
+    const options = feePresetOptions ?? [];
+    if (options.length > 0) {
+      return options.map(option => {
         return {
           ...option,
           fiatValue: fiatByPreset[option.id] ?? null,
