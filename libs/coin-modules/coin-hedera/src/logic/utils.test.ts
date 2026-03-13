@@ -323,7 +323,7 @@ describe("logic utils", () => {
       ).toBe("0.0.23");
     });
 
-    it("falls back to transaction_id payer when that account is debited", () => {
+    it("falls back to transaction initiator when that account is debited", () => {
       expect(
         extractFeesPayer({
           transaction_id: "0.0.8835924-1760510872-123456789",
@@ -339,7 +339,7 @@ describe("logic utils", () => {
       ).toBe("0.0.8835924");
     });
 
-    it("falls back to initiator when its transfer covers charged fee", () => {
+    it("falls back to transaction initiator when no other transfer can be used to identify the fee payer", () => {
       expect(
         extractFeesPayer({
           transaction_id: "0.0.10067173-1761755118-029000738",
