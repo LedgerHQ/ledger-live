@@ -1,0 +1,12 @@
+---
+description: Domain package structure and conventions — read domain READMEs before creating or modifying packages under domain/
+globs: ["domain/**"]
+alwaysApply: false
+---
+
+# Domain Packages
+
+Before creating or modifying any package under `domain/`, read the relevant README and follow its conventions:
+
+- **Entity packages** (`domain/entity/`): read `domain/entity/README.md` for schema, slice, selectors, and file layout rules.
+- **API packages** (`domain/api/`): read `domain/api/README.md` for RTK Query endpoint conventions and file layout rules.

@@ -12,6 +12,9 @@ packages:
   - "libs/ledger-live-common/tools"
   - "tools/**"
   - "docs"
+  - "domain/entity/*"
+  - "domain/api/*"
+  - "shared/*"
 
 catalog:
   "@jest/globals": 30.2.0
