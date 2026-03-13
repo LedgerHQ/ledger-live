@@ -6,7 +6,7 @@ import walletsync, {
   DistantState as LiveData,
   liveSlug,
 } from "@ledgerhq/live-wallet/walletsync/index";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { Actionable } from "./Actionable";
 import { JsonEditor } from "./JsonEditor";

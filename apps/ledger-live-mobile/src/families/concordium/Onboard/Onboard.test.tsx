@@ -6,7 +6,7 @@ import { ConcordiumOnboard } from "../index";
 import { ScreenName } from "~/const";
 import type { ConcordiumOnboardAccountParamList } from "./types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
 jest.mock("./OnboardScreen", () => {
   const { Text } = require("react-native");

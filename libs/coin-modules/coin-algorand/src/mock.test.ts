@@ -5,7 +5,7 @@ import mock from "./mock";
 import type { AlgorandAccount } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/mocks/helpers", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/mocks/helpers", () => ({
   genAddress: jest.fn(() => "MOCK_ADDRESS"),
   genHex: jest.fn((length: number) => "a".repeat(length)),
 }));

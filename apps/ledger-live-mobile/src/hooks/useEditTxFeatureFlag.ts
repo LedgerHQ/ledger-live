@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";

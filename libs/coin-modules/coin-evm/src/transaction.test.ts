@@ -1,4 +1,4 @@
-import { toErrorRaw } from "@ledgerhq/coin-framework/lib/serialization/transaction";
+import { toErrorRaw } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
 import BigNumber from "bignumber.js";
 import {
   eip1559Tx,

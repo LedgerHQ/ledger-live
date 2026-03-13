@@ -1,6 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import {
@@ -8,6 +6,8 @@ import {
   ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
 } from "@ledgerhq/evm-tools/selectors/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";

@@ -27,7 +27,7 @@ jest.mock("casper-js-sdk", () => {
   };
 });
 
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   encodeOperationId: jest.fn(
     (accountId: string, hash: string, type: string) => `${accountId}-${hash}-${type}`,
   ),

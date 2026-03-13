@@ -3,11 +3,11 @@ import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { useEvmGasOptions } from "../useEvmGasOptions";
 
-jest.mock("@ledgerhq/coin-framework/account/helpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("@ledgerhq/live-common/families/evm/react");
 
 const mockedGetMainAccount = jest.mocked(getMainAccount);

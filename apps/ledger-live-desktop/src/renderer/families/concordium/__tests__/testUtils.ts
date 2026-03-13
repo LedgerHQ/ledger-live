@@ -1,5 +1,8 @@
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { ConcordiumAccount, ConcordiumResources } from "@ledgerhq/coin-concordium/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";

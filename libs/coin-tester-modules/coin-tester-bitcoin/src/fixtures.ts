@@ -1,7 +1,10 @@
 /* instanbul ignore file: don't test fixtures */
 
 import BigNumber from "bignumber.js";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";

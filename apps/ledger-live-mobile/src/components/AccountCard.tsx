@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { ViewStyle, StyleProp, Pressable } from "react-native";

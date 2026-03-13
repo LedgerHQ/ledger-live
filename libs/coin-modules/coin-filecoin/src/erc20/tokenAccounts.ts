@@ -1,8 +1,11 @@
-import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { RecipientRequired } from "@ledgerhq/errors";
+import {
+  emptyHistoryCache,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import cbor from "@zondax/cbor";

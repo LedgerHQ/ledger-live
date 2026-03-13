@@ -1,7 +1,7 @@
 /* instanbul ignore file: don't test fixtures */
 
-import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeSubOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";

@@ -22,11 +22,11 @@ import {
   getParentAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   decodeTokenAccountIdSync,
   decodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import logger from "~/renderer/logger";
 import { useSyncAccountsById } from "~/renderer/hooks/useSyncAccountsById";
 import { useStake } from "LLD/hooks/useStake";

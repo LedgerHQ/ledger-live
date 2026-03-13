@@ -1,9 +1,9 @@
 import { makeSignDoc, serializeSignDoc } from "@cosmjs/amino";
 import { Secp256k1Signature } from "@cosmjs/crypto";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { ExpertModeRequired, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";

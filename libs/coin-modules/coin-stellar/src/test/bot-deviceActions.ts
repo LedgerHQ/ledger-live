@@ -1,11 +1,11 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
 

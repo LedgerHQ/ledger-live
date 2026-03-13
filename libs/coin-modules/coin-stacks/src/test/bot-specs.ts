@@ -5,8 +5,8 @@ import expect from "expect";
 
 import type { Transaction } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { acceptTokenTransfer, acceptTransaction } from "./bot-deviceActions";
 
 const MIN_SAFE = new BigNumber(10000);

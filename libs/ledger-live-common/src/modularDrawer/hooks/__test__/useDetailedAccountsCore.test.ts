@@ -14,13 +14,13 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
 }));
 
 // Mock the derivation function
-jest.mock("@ledgerhq/coin-framework/derivation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => ({
   getTagDerivationMode: jest.fn(() => "native_segwit"),
 }));
 
 // Import the mocked functions
 import { calculate } from "@ledgerhq/live-countervalues/logic";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
 const mockGetTagDerivationMode = getTagDerivationMode as jest.MockedFunction<
   typeof getTagDerivationMode

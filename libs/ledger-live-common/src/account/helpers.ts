@@ -3,7 +3,7 @@ import {
   clearAccount as commonClearAccount,
   isAccountEmpty as commonIsAccountEmpty,
   getMainAccount,
-} from "@ledgerhq/coin-framework/account";
+} from "@ledgerhq/ledger-wallet-framework/account";
 import { isAccountEmpty as isCosmosAccountEmpty } from "@ledgerhq/coin-cosmos/helpers";
 import { isCosmosAccount, type CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import {
@@ -34,7 +34,7 @@ export {
   isTokenAccount,
   listSubAccounts,
   shortAddressPreview,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
   if (a.type === "Account") {

@@ -1,6 +1,9 @@
-import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import {
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";

@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
 import type { ParamListBase, RouteProp } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";

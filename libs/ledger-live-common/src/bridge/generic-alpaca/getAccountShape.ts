@@ -1,10 +1,10 @@
-import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import type { Operation } from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";

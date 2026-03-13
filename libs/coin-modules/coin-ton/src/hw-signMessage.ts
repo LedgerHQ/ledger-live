@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { TonSigner } from "./signer";
 import { TonTransaction } from "./types";

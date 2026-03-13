@@ -1,6 +1,6 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 import { NearAccount } from "./types";
 

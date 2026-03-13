@@ -29,7 +29,7 @@ import {
 } from "@ledgerhq/live-countervalues/logic";
 import { getPortfolio } from "@ledgerhq/live-countervalues/portfolio";
 import { Account } from "@ledgerhq/types-live";
-import { getContext } from "@ledgerhq/coin-framework/bot/bot-test-context";
+import { getContext } from "@ledgerhq/ledger-wallet-framework/bot/bot-test-context";
 import { Transaction } from "../generated/types";
 import { sha256 } from "../crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";

@@ -1,5 +1,5 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Address } from "@multiversx/sdk-core";
 import BigNumber from "bignumber.js";

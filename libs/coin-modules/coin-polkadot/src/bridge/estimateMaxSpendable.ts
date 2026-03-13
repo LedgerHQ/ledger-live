@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "../types";
 import createTransaction from "./createTransaction";

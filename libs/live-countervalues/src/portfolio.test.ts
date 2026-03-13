@@ -1,4 +1,4 @@
-import "@ledgerhq/coin-framework/test-helpers/staticTime";
+import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { initialState, loadCountervalues, inferTrackingPairForAccounts } from "./logic";
@@ -18,10 +18,10 @@ import {
   orderAccountsByFiatValue,
 } from "./portfolio";
 import { setEnv } from "@ledgerhq/live-env";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 
 setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
 

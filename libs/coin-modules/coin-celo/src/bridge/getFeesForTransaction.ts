@@ -1,4 +1,4 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { BigNumber } from "bignumber.js";
 import {
   CELO_STABLE_TOKENS,

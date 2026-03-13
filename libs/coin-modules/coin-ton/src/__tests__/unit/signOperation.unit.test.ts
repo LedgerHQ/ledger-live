@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Address, Cell, beginCell, storeMessage } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { fetchAccountInfo } from "../../bridge/bridgeHelpers/api";

@@ -1,6 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { useModularDrawerController } from "../useModularDrawerController";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { AccountLike } from "@ledgerhq/types-live";
 
 const mockAccount = genAccount("test_account");

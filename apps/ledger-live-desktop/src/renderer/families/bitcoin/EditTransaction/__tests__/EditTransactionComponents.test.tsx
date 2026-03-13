@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getStuckAccountAndOperation } from "@ledgerhq/coin-bitcoin/operation";

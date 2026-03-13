@@ -1,5 +1,5 @@
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import solanaCoinConfig, { SolanaCoinConfig } from "../config";
 import { ChainAPI, Config, getChainAPI } from "../network";

@@ -6,7 +6,7 @@ import {
   RawTransaction,
   SimpleTransaction,
 } from "@aptos-labs/ts-sdk";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account } from "@ledgerhq/types-live";
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import { combineSignedTransaction } from "../logic/combine";

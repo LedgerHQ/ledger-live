@@ -6,7 +6,7 @@ import {
   getMainAccount,
   makeEmptyTokenAccount,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";

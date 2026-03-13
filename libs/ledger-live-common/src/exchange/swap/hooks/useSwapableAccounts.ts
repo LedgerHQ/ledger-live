@@ -1,4 +1,4 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useMemo } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
 

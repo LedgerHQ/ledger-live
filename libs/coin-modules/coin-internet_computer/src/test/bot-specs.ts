@@ -1,7 +1,11 @@
-import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
+import {
+  genericTestDestination,
+  pickSiblings,
+  botTest,
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";

@@ -1,4 +1,4 @@
-import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useNetworkAccountCounts } from "../useNetworkAccountCounts";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 

@@ -1,12 +1,12 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { CasperCoinConfig } from "../config";
 import { setCoinConfig } from "../config";

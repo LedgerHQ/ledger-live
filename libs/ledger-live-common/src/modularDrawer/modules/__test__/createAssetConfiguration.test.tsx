@@ -8,7 +8,7 @@ import { mockEthCryptoCurrency } from "../../__mocks__/currencies.mock";
 import { groupCurrenciesByAsset } from "../../utils";
 import createAssetConfigurationHook from "../createAssetConfiguration";
 import { BigNumber } from "bignumber.js";
-import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 import { CryptoCurrency, FiatCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

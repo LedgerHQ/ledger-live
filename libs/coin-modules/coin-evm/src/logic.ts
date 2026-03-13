@@ -1,7 +1,7 @@
-import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/index";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Account, AnyMessage, MessageProperties, TokenAccount } from "@ledgerhq/types-live";

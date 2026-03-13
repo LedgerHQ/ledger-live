@@ -58,6 +58,7 @@
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "catalog:",

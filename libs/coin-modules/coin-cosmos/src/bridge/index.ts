@@ -1,13 +1,13 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
-import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";

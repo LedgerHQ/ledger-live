@@ -1,6 +1,6 @@
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { apiClient } from "../network/api";
@@ -10,8 +10,8 @@ import { listOperations } from "./listOperations";
 import * as utils from "./utils";
 
 setupMockCryptoAssetsStore();
-jest.mock("@ledgerhq/coin-framework/account/accountId");
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../network/api");
 jest.mock("./utils");
 

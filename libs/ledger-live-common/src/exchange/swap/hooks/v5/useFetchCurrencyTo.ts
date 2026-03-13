@@ -1,5 +1,5 @@
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 import { getSwapAPIBaseURL } from "../../index";
 import { fetchCurrencyTo } from "../../api/v5";

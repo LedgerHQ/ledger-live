@@ -4,7 +4,7 @@ import ReactTable from "react-table";
 import styled from "styled-components";
 import "react-table/react-table.css";
 import { AccountRaw } from "@ledgerhq/types-live";
-import { decodeAccountId } from "@ledgerhq/coin-framework/lib/account/index";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 type App = {

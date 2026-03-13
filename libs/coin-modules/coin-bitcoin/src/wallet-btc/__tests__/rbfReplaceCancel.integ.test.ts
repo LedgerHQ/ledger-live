@@ -13,7 +13,7 @@
  */
 import { BigNumber } from "bignumber.js";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";

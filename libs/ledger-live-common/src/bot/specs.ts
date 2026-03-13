@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/bot/specs";
+export * from "@ledgerhq/ledger-wallet-framework/bot/specs";

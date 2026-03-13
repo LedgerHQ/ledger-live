@@ -9,7 +9,7 @@ import {
   getAccountCurrency,
   getAccountSpendableBalance,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { NavigatorName, ScreenName } from "~/const";
 import { WalletState } from "@ledgerhq/live-wallet/store";

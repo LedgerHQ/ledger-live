@@ -5,14 +5,14 @@ import {
   encodeAccountId,
   encodeTokenAccountId,
   getSyncHash,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   AccountShapeInfo,
   GetAccountShape,
   makeSync,
   mergeOps,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { decodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletContractV4 } from "@ton/ton";

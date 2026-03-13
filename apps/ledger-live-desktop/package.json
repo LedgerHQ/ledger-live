@@ -81,6 +81,7 @@
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-vault": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",

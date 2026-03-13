@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 
 export const buildOptimisticOperation = async (
   account: Account,

@@ -1,4 +1,4 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 

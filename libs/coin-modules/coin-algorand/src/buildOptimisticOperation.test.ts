@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   encodeOperationId: jest.fn((accountId, hash, type) => `${accountId}--${type}`),
 }));
 

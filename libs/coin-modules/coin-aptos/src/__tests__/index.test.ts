@@ -1,7 +1,7 @@
-jest.mock("@ledgerhq/coin-framework/bridge/getAddressWrapper", () => jest.fn());
-jest.mock("@ledgerhq/coin-framework/signer", () => jest.fn());
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper", () => jest.fn());
+jest.mock("@ledgerhq/ledger-wallet-framework/signer", () => jest.fn());
 jest.mock("@ledgerhq/types-live", () => jest.fn());
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   makeAccountBridgeReceive: jest.fn(),
   makeScanAccounts: jest.fn(),
   getSerializedAddressParameters: jest.fn(),

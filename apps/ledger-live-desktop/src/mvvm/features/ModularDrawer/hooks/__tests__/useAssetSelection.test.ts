@@ -1,7 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useAssetSelection } from "../useAssetSelection";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 
 setSupportedCurrencies(["cardano", "bitcoin", "ethereum", "neo"]);
 

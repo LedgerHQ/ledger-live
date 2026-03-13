@@ -4,7 +4,10 @@ import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { firstValueFrom, reduce } from "rxjs";
-import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import {
+  decodeAccountId,
+  encodeAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import currencies, { AccountInfo, AccountType } from "./currencies";

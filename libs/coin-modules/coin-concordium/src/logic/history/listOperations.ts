@@ -1,4 +1,4 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import type { Operation, ListOperationsOptions, Page } from "@ledgerhq/coin-framework/api/index";
 import { getOperations as getOperationsGrpc } from "../../network/grpcClient";
 import {

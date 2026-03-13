@@ -1,4 +1,4 @@
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getNonce } from "../api";
 import { MinaAccount, Transaction } from "../types/common";

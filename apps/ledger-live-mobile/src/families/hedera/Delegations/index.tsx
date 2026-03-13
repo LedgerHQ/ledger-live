@@ -3,7 +3,10 @@ import { Trans, useTranslation } from "~/context/Locale";
 import { Linking, StyleSheet, View } from "react-native";
 import { capitalize } from "lodash/fp";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { getAccountCurrency, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { HederaAccount, HederaDelegation } from "@ledgerhq/live-common/families/hedera/types";

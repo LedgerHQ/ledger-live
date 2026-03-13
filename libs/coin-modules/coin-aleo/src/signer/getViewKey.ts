@@ -1,5 +1,5 @@
-import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AleoSigner } from "../types";
 
 export type GetViewKeyOptions = Pick<GetAddressOptions, "path" | "currency">;

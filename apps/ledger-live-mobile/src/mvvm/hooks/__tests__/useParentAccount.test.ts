@@ -3,7 +3,7 @@ import { renderHook } from "@tests/test-renderer";
 import { useParentAccount } from "LLM/hooks/useParentAccount";
 import { State } from "~/reducers/types";
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
-import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
+import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

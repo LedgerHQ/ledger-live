@@ -1,10 +1,10 @@
 import { CantonAccount } from "@ledgerhq/coin-canton/types";
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
+import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

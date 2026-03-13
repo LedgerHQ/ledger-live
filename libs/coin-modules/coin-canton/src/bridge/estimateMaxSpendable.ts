@@ -1,5 +1,5 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Transaction, CantonAccount } from "../types";

@@ -1,13 +1,19 @@
 /* instanbul ignore file: don't test fixtures */
 
-import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import {
+  decodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
+import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
-} from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+} from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

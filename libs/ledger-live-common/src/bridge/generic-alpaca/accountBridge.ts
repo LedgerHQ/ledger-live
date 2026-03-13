@@ -5,8 +5,8 @@ import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { getSigner } from "./signer";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";

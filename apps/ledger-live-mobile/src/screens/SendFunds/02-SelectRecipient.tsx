@@ -1,4 +1,4 @@
-import { isConfirmedOperation } from "@ledgerhq/coin-framework/operation";
+import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";

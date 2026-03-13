@@ -11,11 +11,11 @@ import type {
   StatusErrorMap,
   Transaction,
 } from "@ledgerhq/coin-cosmos/types/index";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   AmountRequired,

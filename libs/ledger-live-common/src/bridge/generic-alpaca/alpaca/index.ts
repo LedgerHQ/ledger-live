@@ -6,7 +6,8 @@ import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
 import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
 import { getCurrencyConfiguration } from "../../../config";
 import { getNetworkAlpacaApi } from "./network/network-alpaca";
-import { Api } from "@ledgerhq/coin-framework/api/types";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/types";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";
 import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
@@ -15,26 +16,34 @@ import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import { findCryptoCurrencyByNetwork } from "../utils";
 
-export function getAlpacaApi(network: string, kind: string): Api<any> {
+export function getAlpacaApi(network: string, kind: string): AlpacaApi<any> & BridgeApi {
   if (kind === "local") {
     const currency = findCryptoCurrencyByNetwork(network);
     switch (currency?.family) {
       case "xrp":
-        return createXrpApi(getCurrencyConfiguration<XrpCoinConfig>(currency)) as Api<any>; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix Api<any> to allow it
+        return createXrpApi(getCurrencyConfiguration<XrpCoinConfig>(currency)) as AlpacaApi<any> &
+          BridgeApi; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix AlpacaApi<any> & BridgeApi to allow it
       case "stellar":
-        return createStellarApi(getCurrencyConfiguration<StellarCoinConfig>(currency)) as Api<any>;
+        return createStellarApi(
+          getCurrencyConfiguration<StellarCoinConfig>(currency),
+        ) as AlpacaApi<any> & BridgeApi;
       case "canton":
-        return createCantonApi(getCurrencyConfiguration<CantonCoinConfig>(currency)) as Api<any>;
+        return createCantonApi(
+          getCurrencyConfiguration<CantonCoinConfig>(currency),
+        ) as AlpacaApi<any> & BridgeApi;
       case "tron":
-        return createTronApi(getCurrencyConfiguration<TronCoinConfig>(currency)) as Api<any>;
+        return createTronApi(getCurrencyConfiguration<TronCoinConfig>(currency)) as AlpacaApi<any> &
+          BridgeApi;
       case "evm":
         return createEvmApi(
           getCurrencyConfiguration<EvmConfigInfo>(currency),
           currency.id,
-        ) as Api<any>;
+        ) as AlpacaApi<any> & BridgeApi;
       case "tezos":
-        return createTezosApi(getCurrencyConfiguration<TezosCoinConfig>(currency)) as Api<any>;
+        return createTezosApi(
+          getCurrencyConfiguration<TezosCoinConfig>(currency),
+        ) as AlpacaApi<any> & BridgeApi;
     }
   }
-  return getNetworkAlpacaApi(network) satisfies Partial<Api<any>>;
+  return getNetworkAlpacaApi(network) satisfies Partial<AlpacaApi<any> & BridgeApi>;
 }

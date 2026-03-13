@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 
 export const getAccountProtocol = (account: Account): string | null => {
   if (

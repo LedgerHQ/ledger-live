@@ -19,7 +19,7 @@ import Spoiler from "~/renderer/components/Spoiler";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 type Props = {

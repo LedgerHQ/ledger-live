@@ -1,7 +1,10 @@
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec, TransactionDestinationTestInput } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type {
+  AppSpec,
+  TransactionDestinationTestInput,
+} from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import expect from "expect";

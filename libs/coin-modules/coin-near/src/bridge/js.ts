@@ -3,10 +3,10 @@ import {
   makeAccountBridgeReceive,
   updateTransaction,
   makeScanAccounts,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { NearAccount, Transaction, TransactionStatus } from "../types";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { preload, hydrate, getPreloadStrategy } from "../preload";

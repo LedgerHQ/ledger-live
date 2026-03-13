@@ -1,7 +1,7 @@
 import {
   isAddressSanctioned,
   isCheckSanctionedAddressEnabled,
-} from "@ledgerhq/coin-framework/sanction/index";
+} from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/types-live";
 import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 // Removed: stores are now managed globally by @ledgerhq/cryptoassets/cal-client/store
 
 const alpacaized = {

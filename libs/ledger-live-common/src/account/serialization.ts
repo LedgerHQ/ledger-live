@@ -12,13 +12,13 @@ import type {
   TokenAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   fromAccountRaw as commonFromAccountRaw,
   toAccountRaw as commonToAccountRaw,
   fromOperationRaw as commonFromOperationRaw,
   toOperationRaw as commonToOperationRaw,
-} from "@ledgerhq/coin-framework/serialization/index";
+} from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getAccountBridge } from "../bridge";
 import { getAccountBridgeByFamily } from "../bridge/impl";
 

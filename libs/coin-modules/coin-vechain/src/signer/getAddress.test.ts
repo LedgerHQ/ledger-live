@@ -1,7 +1,7 @@
 import resolver from "./getAddress";
 import { VechainSigner } from "../types";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import eip55 from "eip55";
 
 // Mock dependencies

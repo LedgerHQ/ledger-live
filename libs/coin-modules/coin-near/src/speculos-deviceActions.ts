@@ -1,9 +1,9 @@
 import * as nearAPI from "near-api-js";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 const confirmWording: Record<string, string> = {
   send: "transfer",
   stake: "deposit_and_stake",

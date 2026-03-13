@@ -8,7 +8,10 @@ import {
 } from "@ledgerhq/live-countervalues-react";
 import { useLocale } from "~/context/Locale";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
@@ -16,7 +19,7 @@ jest.mock("~/context/hooks");
 jest.mock("@ledgerhq/live-countervalues-react");
 jest.mock("~/context/Locale");
 jest.mock("LLM/hooks/useAccountUnit");
-jest.mock("@ledgerhq/coin-framework/account/helpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 
 const btcUnit = { name: "Bitcoin", code: "BTC", magnitude: 8 };
 const usdUnit = { name: "US Dollar", code: "USD", magnitude: 2 };

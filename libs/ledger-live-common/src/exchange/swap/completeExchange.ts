@@ -28,8 +28,8 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";

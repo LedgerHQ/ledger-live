@@ -1,9 +1,9 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   getOperationAmountNumber,
   getOperationAmountNumberWithInternals,
-} from "@ledgerhq/coin-framework/operation";
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation } from "@ledgerhq/types-live";

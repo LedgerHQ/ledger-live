@@ -1,4 +1,4 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { StrKey } from "@stellar/stellar-sdk";
 import { BigNumber } from "bignumber.js";
