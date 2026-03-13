@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import type { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { EMPTY_STATE_CRYPTOS, EMPTY_STATE_STABLECOINS, MAX_ITEM_DISPLAYED } from "../../constants";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/lib-es/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/index";
 import type { AssetTableItem } from "../../types";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
