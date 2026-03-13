@@ -149,7 +149,7 @@ export const fetchBlockTransactions = async (level: number): Promise<APITransact
     if (page.length === 0) break;
     txs.push(...page);
     if (page.length < BLOCK_PAGE_SIZE) break; // last page: no need for another round-trip
-    cursor = page[page.length - 1].id;
+    cursor = page.at(-1)!.id;
   } while (--maxIteration > 0);
   return txs;
 };
@@ -171,7 +171,7 @@ export const fetchBlockTokenTransfers = async (level: number): Promise<APITokenT
     if (page.length === 0) break;
     transfers.push(...page);
     if (page.length < BLOCK_PAGE_SIZE) break; // last page
-    cursor = page[page.length - 1].id;
+    cursor = page.at(-1)!.id;
   } while (--maxIteration > 0);
   return transfers;
 };

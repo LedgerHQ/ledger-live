@@ -88,7 +88,7 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
       ops.push({
         type: "transfer",
         address: fromAddr,
-        peer: toAddr,
+        ...(toAddr && { peer: toAddr }),
         asset: NATIVE_ASSET,
         amount: -BigInt(tx.amount),
       });
@@ -97,7 +97,7 @@ function buildNativeOperations(group: APITransactionType[]): BlockOperation[] {
       ops.push({
         type: "transfer",
         address: toAddr,
-        peer: fromAddr,
+        ...(fromAddr && { peer: fromAddr }),
         asset: NATIVE_ASSET,
         amount: BigInt(tx.amount),
       });
@@ -131,96 +131,119 @@ function buildTokenOperations(transfer: APITokenTransfer): BlockOperation[] {
   const ops: BlockOperation[] = [];
 
   if (fromAddr) {
-    ops.push({ type: "transfer", address: fromAddr, peer: toAddr, asset, amount: -tokenAmount });
+    ops.push({ type: "transfer", address: fromAddr, ...(toAddr && { peer: toAddr }), asset, amount: -tokenAmount });
   }
   if (toAddr) {
-    ops.push({ type: "transfer", address: toAddr, peer: fromAddr, asset, amount: tokenAmount });
+    ops.push({ type: "transfer", address: toAddr, ...(fromAddr && { peer: fromAddr }), asset, amount: tokenAmount });
   }
   return ops;
 }
 
 // ---------------------------------------------------------------------------
-// Transaction grouping
+// Transaction grouping — private helpers
+// ---------------------------------------------------------------------------
+
+/** Groups native XTZ transactions by their operation hash. */
+function groupTransactionsByHash(
+  transactions: APITransactionType[],
+): Map<string, APITransactionType[]> {
+  const groups = new Map<string, APITransactionType[]>();
+  for (const tx of transactions) {
+    if (!tx.hash) continue;
+    const existing = groups.get(tx.hash);
+    if (existing) existing.push(tx);
+    else groups.set(tx.hash, [tx]);
+  }
+  return groups;
+}
+
+/** Builds a `BlockTransaction` from a group of ops that share the same hash. */
+function buildBlockTransactionFromGroup(
+  hash: string,
+  group: APITransactionType[],
+): BlockTransaction {
+  const succeeded = isGroupSucceeded(group);
+  const blockTx: BlockTransaction = {
+    hash,
+    failed: !succeeded,
+    fees: computeFees(group),
+    operations: succeeded ? buildNativeOperations(group) : [],
+  };
+  const feesPayer = findFeesPayer(group);
+  if (feesPayer) blockTx.feesPayer = feesPayer;
+  return blockTx;
+}
+
+/**
+ * Attaches a single FA token transfer to the appropriate `BlockTransaction`.
+ *
+ * When the transfer's parent native tx is found (via `transactionId → hash`),
+ * the token ops are appended to it (unless it failed).  Otherwise a standalone
+ * entry is created or extended in `standaloneByKey`, grouped by `transactionId`
+ * so that sibling transfers from the same on-chain operation share one entry.
+ */
+function attachTokenTransfer(
+  transfer: APITokenTransfer,
+  txIdToHash: Map<number, string>,
+  blockTxByHash: Map<string, BlockTransaction>,
+  standaloneByKey: Map<string, BlockTransaction>,
+): void {
+  const tokenOps = buildTokenOperations(transfer);
+  if (tokenOps.length === 0) return;
+
+  const parentHash =
+    transfer.transactionId === undefined
+      ? undefined
+      : txIdToHash.get(transfer.transactionId);
+
+  if (parentHash !== undefined && blockTxByHash.has(parentHash)) {
+    const parent = blockTxByHash.get(parentHash)!;
+    if (!parent.failed) parent.operations.push(...tokenOps);
+    return;
+  }
+
+  // No matching native tx: protocol-level mint/burn or origination-triggered transfer.
+  const key =
+    transfer.transactionId === undefined
+      ? `token-${transfer.id}`
+      : `txid-${transfer.transactionId}`;
+
+  const existing = standaloneByKey.get(key);
+  if (existing) {
+    existing.operations.push(...tokenOps);
+  } else {
+    standaloneByKey.set(key, {
+          hash: key,
+          failed: false,
+          fees: 0n,
+          operations: tokenOps,
+        });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Transaction grouping — public orchestrator
 // ---------------------------------------------------------------------------
 
 function groupAndMapTransactions(
   transactions: APITransactionType[],
   tokenTransfers: APITokenTransfer[],
 ): BlockTransaction[] {
-  // ── Step 1: group native XTZ transactions by operation hash ──────────────
-  const groups = new Map<string, APITransactionType[]>();
-  for (const tx of transactions) {
-    if (!tx.hash) continue;
-    const existing = groups.get(tx.hash);
-    if (existing) {
-      existing.push(tx);
-    } else {
-      groups.set(tx.hash, [tx]);
-    }
-  }
+  const groups = groupTransactionsByHash(transactions);
 
-  // ── Step 2: build TzKT operation id → hash lookup (for FA transfer join) ─
   const txIdToHash = new Map<number, string>();
   for (const tx of transactions) {
     if (tx.id && tx.hash) txIdToHash.set(tx.id, tx.hash);
   }
 
-  // ── Step 3: map each group into a BlockTransaction ────────────────────────
   const blockTxByHash = new Map<string, BlockTransaction>();
   for (const [hash, group] of groups) {
-    const succeeded = isGroupSucceeded(group);
-    const blockTx: BlockTransaction = {
-      hash,
-      failed: !succeeded,
-      fees: computeFees(group),
-      operations: succeeded ? buildNativeOperations(group) : [],
-    };
-    const feesPayer = findFeesPayer(group);
-    if (feesPayer) blockTx.feesPayer = feesPayer;
-    blockTxByHash.set(hash, blockTx);
+    blockTxByHash.set(hash, buildBlockTransactionFromGroup(hash, group));
   }
 
-  // ── Step 4: attach FA token operations ───────────────────────────────────
-  // Protocol-level / implicit transfers that have no matching native tx are
-  // collected into standalone BlockTransactions, grouped by transactionId so
-  // that multiple token transfers from the same parent op share one entry.
   const standaloneByKey = new Map<string, BlockTransaction>();
-
   for (const transfer of tokenTransfers) {
-    const tokenOps = buildTokenOperations(transfer);
-    if (tokenOps.length === 0) continue;
-
-    const parentHash =
-      transfer.transactionId !== undefined
-        ? txIdToHash.get(transfer.transactionId)
-        : undefined;
-
-    if (parentHash !== undefined && blockTxByHash.has(parentHash)) {
-      // Successful parent tx: append token ops (failed parents have no real balance changes)
-      const parent = blockTxByHash.get(parentHash)!;
-      if (!parent.failed) {
-        parent.operations.push(...tokenOps);
-      }
-    } else {
-      // No matching native tx (protocol-level mint/burn or origination-triggered transfer).
-      // Group by transactionId when available so sibling transfers share one entry.
-      const key =
-        transfer.transactionId !== undefined
-          ? `txid-${transfer.transactionId}`
-          : `token-${transfer.id}`;
-
-      const existing = standaloneByKey.get(key);
-      if (existing) {
-        existing.operations.push(...tokenOps);
-      } else {
-        standaloneByKey.set(key, {
-          hash: parentHash ?? "",
-          failed: false,
-          fees: 0n,
-          operations: tokenOps,
-        });
-      }
-    }
+    attachTokenTransfer(transfer, txIdToHash, blockTxByHash, standaloneByKey);
   }
 
   return [...blockTxByHash.values(), ...standaloneByKey.values()];

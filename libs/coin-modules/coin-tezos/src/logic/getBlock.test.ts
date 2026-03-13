@@ -180,7 +180,7 @@ describe("native XTZ operations", () => {
     expect(result.transactions[0].operations).toEqual([]);
   });
 
-  it("produces only an incoming operation when sender is null", async () => {
+  it("produces only an incoming operation when sender is null, with no peer field", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTransactions.mockResolvedValue([
@@ -190,16 +190,18 @@ describe("native XTZ operations", () => {
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — peer must be absent (not set to undefined) when the counterparty is unknown
     expect(result.transactions[0].operations).toHaveLength(1);
-    expect(result.transactions[0].operations[0]).toMatchObject({
+    expect(result.transactions[0].operations[0]).toEqual({
       type: "transfer",
       address: "tz1Receiver",
+      asset: { type: "native", name: "XTZ" },
       amount: 500_000n,
     });
+    expect(result.transactions[0].operations[0]).not.toHaveProperty("peer");
   });
 
-  it("produces only an outgoing operation when target is null", async () => {
+  it("produces only an outgoing operation when target is null, with no peer field", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTransactions.mockResolvedValue([
@@ -209,13 +211,15 @@ describe("native XTZ operations", () => {
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — peer must be absent (not set to undefined) when the counterparty is unknown
     expect(result.transactions[0].operations).toHaveLength(1);
-    expect(result.transactions[0].operations[0]).toMatchObject({
+    expect(result.transactions[0].operations[0]).toEqual({
       type: "transfer",
       address: "tz1Sender",
+      asset: { type: "native", name: "XTZ" },
       amount: -300_000n,
     });
+    expect(result.transactions[0].operations[0]).not.toHaveProperty("peer");
   });
 
   it("skips a transaction that has no hash", async () => {
@@ -493,7 +497,7 @@ describe("FA token transfers", () => {
     // Then – one standalone BlockTransaction with 2 token ops
     expect(result.transactions).toHaveLength(1);
     const tx = result.transactions[0];
-    expect(tx.hash).toBe(""); // no native parent = no hash
+    expect(tx.hash).toBe("txid-99"); // synthetic but unique, derived from transactionId
     expect(tx.failed).toBe(false);
     expect(tx.fees).toBe(0n);
     expect(tx.operations).toHaveLength(2);
@@ -536,7 +540,7 @@ describe("FA token transfers", () => {
     expect(result.transactions).toHaveLength(2);
   });
 
-  it("emits only an incoming operation for a minting event (no `from`)", async () => {
+  it("emits only an incoming operation for a minting event (no `from`), with no peer field", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTokenTransfers.mockResolvedValue([
@@ -546,8 +550,9 @@ describe("FA token transfers", () => {
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — peer must be absent when mint has no sender
     expect(result.transactions[0].operations).toHaveLength(1);
+    expect(result.transactions[0].operations[0]).not.toHaveProperty("peer");
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "transfer",
       address: "tz1Receiver",
@@ -555,7 +560,7 @@ describe("FA token transfers", () => {
     });
   });
 
-  it("emits only an outgoing operation for a burning event (no `to`)", async () => {
+  it("emits only an outgoing operation for a burning event (no `to`), with no peer field", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTokenTransfers.mockResolvedValue([
@@ -565,8 +570,9 @@ describe("FA token transfers", () => {
     // When
     const result = await getBlock(5_000_000);
 
-    // Then
+    // Then — peer must be absent when burn has no receiver
     expect(result.transactions[0].operations).toHaveLength(1);
+    expect(result.transactions[0].operations[0]).not.toHaveProperty("peer");
     expect(result.transactions[0].operations[0]).toMatchObject({
       type: "transfer",
       address: "tz1Burner",
