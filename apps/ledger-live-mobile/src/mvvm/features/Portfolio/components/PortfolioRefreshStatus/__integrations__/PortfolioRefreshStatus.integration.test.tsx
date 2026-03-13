@@ -45,7 +45,12 @@ const makeAccount = (lastSyncDate: Date) => ({
 
 const withRefreshing = (): ((state: State) => State) => state => ({
   ...state,
-  portfolioRefresh: { isRefreshing: true, lastSyncTimestampSnapshot: null },
+  portfolioRefresh: {
+    isRefreshing: true,
+    lastSyncTimestampSnapshot: null,
+    hasCompletedInitialSync: false,
+    lastUserSyncClickTimestamp: 0,
+  },
 });
 
 const withIdle =
@@ -56,7 +61,12 @@ const withIdle =
       ...state.accounts,
       active: [makeAccount(lastSyncDate)],
     },
-    portfolioRefresh: { isRefreshing: false, lastSyncTimestampSnapshot: null },
+    portfolioRefresh: {
+      isRefreshing: false,
+      lastSyncTimestampSnapshot: null,
+      hasCompletedInitialSync: false,
+      lastUserSyncClickTimestamp: 0,
+    },
   });
 
 const renderRefreshing = () =>
