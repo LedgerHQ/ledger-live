@@ -80,10 +80,10 @@ export function isMatchingDeviceModel(deviceA: DeviceBaseInfo, deviceB: DeviceBa
  * For a given old device, find the matching new device in the list of new devices.
  * First try to find a matching device by deviceId, then if not found, try to find a matching device by name.
  */
-export function findMatchingNewDevice(
+export function findMatchingNewDevice<T extends DeviceBaseInfo>(
   oldDevice: DeviceBaseInfo,
-  newDevices: DeviceBaseInfo[],
-): DeviceBaseInfo | null {
+  newDevices: Array<T>,
+): T | null {
   return (
     newDevices.find(
       newDevice =>

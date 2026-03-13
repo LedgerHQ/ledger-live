@@ -88,30 +88,35 @@ describe("defaultMapper", () => {
         deviceName: "name0",
         modelId: "europa",
         wired: false,
+        discoveredDevice: discoveredDevice[0],
       },
       {
         deviceId: "id1",
         deviceName: "name1",
         modelId: "stax",
         wired: false,
+        discoveredDevice: discoveredDevice[1],
       },
       {
         deviceId: "id2",
         deviceName: "name2",
         modelId: "nanoX",
         wired: false,
+        discoveredDevice: discoveredDevice[2],
       },
       {
         deviceId: "id3",
         deviceName: "name3",
         modelId: "nanoS",
         wired: false,
+        discoveredDevice: discoveredDevice[3],
       },
       {
         deviceId: "id4",
         deviceName: "name4",
         modelId: "nanoSP",
         wired: false,
+        discoveredDevice: discoveredDevice[4],
       },
     ]);
   });

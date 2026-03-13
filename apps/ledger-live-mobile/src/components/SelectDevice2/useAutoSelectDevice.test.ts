@@ -1,9 +1,12 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { HIDDiscoveredDevice } from "@ledgerhq/live-dmk-mobile";
 import { useAutoSelectDevice, Props } from "./useAutoSelectDevice";
+import { DisplayedDevice } from "./DisplayedDevice";
 
-// Helper to create mock devices
+// Helper to create mock Device
 const createMockDevice = (
   deviceId: string,
   options: {
@@ -16,6 +19,22 @@ const createMockDevice = (
   deviceName: options.deviceName ?? `Device ${deviceId}`,
   modelId: options.modelId ?? DeviceModelId.nanoX,
   wired: options.wired ?? false,
+});
+
+// Helper to create mock DiscoveredDevice
+const createMockDiscoveredDevice = (id: string): DiscoveredDevice =>
+  ({ id, name: `Device ${id}`, transport: "USB" }) as DiscoveredDevice;
+
+// Helper to create mock HIDDiscoveredDevice
+const createMockHidDevice = (
+  deviceId: string,
+  options: { modelId?: DeviceModelId; deviceName?: string } = {},
+): HIDDiscoveredDevice => ({
+  deviceId,
+  deviceName: options.deviceName ?? `Device ${deviceId}`,
+  modelId: options.modelId ?? DeviceModelId.nanoX,
+  wired: true,
+  discoveredDevice: createMockDiscoveredDevice(deviceId),
 });
 
 describe("useAutoSelectDevice", () => {
@@ -33,13 +52,13 @@ describe("useAutoSelectDevice", () => {
   });
 
   describe("BLE device auto-selection", () => {
-    it("should immediately call onAutoSelect when deviceToAutoSelect is a BLE device", () => {
+    it("should immediately call onAutoSelect with available: false when deviceToAutoSelect is a BLE device", () => {
       const bleDevice = createMockDevice("ble-device-1", { wired: false });
 
       renderHook(() =>
         useAutoSelectDevice({
           deviceToAutoSelect: bleDevice,
-          availableUSBDevice: undefined,
+          hidDevices: [],
           onAutoSelect: mockOnAutoSelect,
           usbDeviceToSelectExpirationDuration: 100,
           enabled: true,
@@ -47,14 +66,17 @@ describe("useAutoSelectDevice", () => {
       );
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnAutoSelect).toHaveBeenCalledWith(bleDevice);
+      expect(mockOnAutoSelect).toHaveBeenCalledWith<[DisplayedDevice]>({
+        device: bleDevice,
+        available: false,
+      });
     });
 
     it("should not call onAutoSelect when deviceToAutoSelect is null", () => {
       renderHook(() =>
         useAutoSelectDevice({
           deviceToAutoSelect: null,
-          availableUSBDevice: undefined,
+          hidDevices: [],
           onAutoSelect: mockOnAutoSelect,
           usbDeviceToSelectExpirationDuration: 100,
           enabled: true,
@@ -65,10 +87,12 @@ describe("useAutoSelectDevice", () => {
     });
 
     it("should not call onAutoSelect when enabled is false", () => {
+      const bleDevice = createMockDevice("ble-device-1", { wired: false });
+
       renderHook(() =>
         useAutoSelectDevice({
-          deviceToAutoSelect: null,
-          availableUSBDevice: undefined,
+          deviceToAutoSelect: bleDevice,
+          hidDevices: [],
           onAutoSelect: mockOnAutoSelect,
           usbDeviceToSelectExpirationDuration: 100,
           enabled: false,
@@ -80,91 +104,97 @@ describe("useAutoSelectDevice", () => {
   });
 
   describe("USB device auto-selection", () => {
-    it("should wait for availableUSBDevice and call onAutoSelect when device matches", () => {
-      const usbDevice = createMockDevice("usb-device-to-auto-select", {
+    it("should wait for matching hidDevice and call onAutoSelect with DisplayedAvailableDevice", () => {
+      const usbDevice = createMockDevice("usb-device-1", {
         wired: true,
         modelId: DeviceModelId.nanoX,
       });
-      const availableUSBDevice = createMockDevice("usb-device-available", {
-        wired: true,
+      const hidDevice = createMockHidDevice("usb-device-1", {
         modelId: DeviceModelId.nanoX,
       });
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: usbDevice,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
       // Should not be called initially
       expect(mockOnAutoSelect).not.toHaveBeenCalled();
 
-      // When USB device becomes available
+      // When HID device becomes available
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnAutoSelect).toHaveBeenCalledWith(usbDevice);
+      expect(mockOnAutoSelect).toHaveBeenCalledWith({
+        device: {
+          deviceId: hidDevice.deviceId,
+          deviceName: hidDevice.deviceName,
+          modelId: hidDevice.modelId,
+          wired: true,
+        },
+        available: true,
+        discoveredDevice: hidDevice.discoveredDevice,
+      });
     });
 
-    it("should not call onAutoSelect when availableUSBDevice has different modelId", () => {
-      const usbDevice = createMockDevice("usb-device-to-auto-select", {
+    it("should not call onAutoSelect when hidDevice has different modelId", () => {
+      const usbDevice = createMockDevice("usb-device-1", {
         wired: true,
         modelId: DeviceModelId.nanoX,
       });
-      const availableUSBDevice = createMockDevice("usb-device-available", {
-        wired: true,
+      const hidDevice = createMockHidDevice("usb-device-other", {
         modelId: DeviceModelId.nanoS,
       });
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: usbDevice,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).not.toHaveBeenCalled();
     });
 
     it("should not call onAutoSelect when USB device expires", () => {
-      const usbDevice = createMockDevice("usb-device-to-auto-select", {
+      const usbDevice = createMockDevice("usb-device-1", {
         wired: true,
         modelId: DeviceModelId.nanoX,
       });
-      const availableUSBDevice = createMockDevice("usb-device-available", {
-        wired: true,
+      const hidDevice = createMockHidDevice("usb-device-1", {
         modelId: DeviceModelId.nanoX,
       });
 
       const expirationDuration = 100;
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: usbDevice,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: expirationDuration,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
       // Fast-forward time past expiration
@@ -174,7 +204,7 @@ describe("useAutoSelectDevice", () => {
 
       // Now make device available after expiration
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).not.toHaveBeenCalled();
@@ -185,23 +215,22 @@ describe("useAutoSelectDevice", () => {
         wired: true,
         modelId: DeviceModelId.nanoX,
       });
-      const availableUSBDevice = createMockDevice("usb-device-1", {
-        wired: true,
+      const hidDevice = createMockHidDevice("usb-device-1", {
         modelId: DeviceModelId.nanoX,
       });
 
       const expirationDuration = 5000;
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: usbDevice,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: expirationDuration,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
       // Fast-forward time but not past expiration
@@ -211,70 +240,72 @@ describe("useAutoSelectDevice", () => {
 
       // Make device available before expiration
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnAutoSelect).toHaveBeenCalledWith(usbDevice);
     });
 
     it("should only call onAutoSelect once when USB device becomes available", () => {
-      const usbDevice = createMockDevice("usb-device-to-auto-select", {
+      const usbDevice = createMockDevice("usb-device-1", {
         wired: true,
         modelId: DeviceModelId.nanoX,
       });
-      const availableUSBDevice = createMockDevice("usb-device-available", {
-        wired: true,
+      const hidDevice = createMockHidDevice("usb-device-1", {
         modelId: DeviceModelId.nanoX,
       });
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: usbDevice,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
-      // Make device available
+      // First time device becomes available
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
 
-      // Make device available again (should not trigger another call)
+      // Device becomes unavailable
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [] });
+      });
+
+      // Device becomes available again - should not trigger another call
+      act(() => {
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
     });
 
-    it("should not call onAutoSelect when availableUSBDevice changes but no USB device was set to auto-select", () => {
-      const availableUSBDevice = createMockDevice("usb-device-1", {
-        wired: true,
+    it("should not call onAutoSelect when hidDevices changes but no USB device was set to auto-select", () => {
+      const hidDevice = createMockHidDevice("usb-device-1", {
         modelId: DeviceModelId.nanoX,
       });
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: null,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).not.toHaveBeenCalled();
@@ -290,7 +321,7 @@ describe("useAutoSelectDevice", () => {
         ({ deviceToAutoSelect }) =>
           useAutoSelectDevice({
             deviceToAutoSelect,
-            availableUSBDevice: undefined,
+            hidDevices: [],
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
@@ -300,7 +331,10 @@ describe("useAutoSelectDevice", () => {
 
       // Initial device should trigger auto-selection
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnAutoSelect).toHaveBeenCalledWith(initialDevice);
+      expect(mockOnAutoSelect).toHaveBeenCalledWith<[DisplayedDevice]>({
+        device: initialDevice,
+        available: false,
+      });
 
       // Change deviceToAutoSelect - should not trigger auto-selection
       act(() => {
@@ -317,7 +351,7 @@ describe("useAutoSelectDevice", () => {
         ({ deviceToAutoSelect }) =>
           useAutoSelectDevice({
             deviceToAutoSelect,
-            availableUSBDevice: undefined,
+            hidDevices: [],
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
@@ -343,7 +377,7 @@ describe("useAutoSelectDevice", () => {
         ({ onAutoSelect }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: bleDevice,
-            availableUSBDevice: undefined,
+            hidDevices: [],
             onAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
@@ -372,7 +406,7 @@ describe("useAutoSelectDevice", () => {
         ({ deviceToAutoSelect }) =>
           useAutoSelectDevice({
             deviceToAutoSelect,
-            availableUSBDevice: undefined,
+            hidDevices: [],
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
@@ -396,43 +430,42 @@ describe("useAutoSelectDevice", () => {
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
     });
 
-    it("should handle USB device becoming available multiple times", () => {
+    it("should handle USB hidDevices becoming available multiple times", () => {
       const usbDevice = createMockDevice("usb-device-1", {
         wired: true,
         modelId: DeviceModelId.nanoX,
       });
-      const availableUSBDevice = createMockDevice("usb-device-1", {
-        wired: true,
+      const hidDevice = createMockHidDevice("usb-device-1", {
         modelId: DeviceModelId.nanoX,
       });
 
-      const { rerender } = renderHook<unknown, Pick<Props, "availableUSBDevice">>(
-        ({ availableUSBDevice }) =>
+      const { rerender } = renderHook<unknown, Pick<Props, "hidDevices">>(
+        ({ hidDevices }) =>
           useAutoSelectDevice({
             deviceToAutoSelect: usbDevice,
-            availableUSBDevice,
+            hidDevices,
             onAutoSelect: mockOnAutoSelect,
             usbDeviceToSelectExpirationDuration: 100,
             enabled: true,
           }),
-        { initialProps: { availableUSBDevice: undefined } },
+        { initialProps: { hidDevices: [] } },
       );
 
       // First time device becomes available
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);
 
       // Device becomes unavailable
       act(() => {
-        rerender({ availableUSBDevice: undefined });
+        rerender({ hidDevices: [] });
       });
 
       // Device becomes available again - should not trigger another call
       act(() => {
-        rerender({ availableUSBDevice });
+        rerender({ hidDevices: [hidDevice] });
       });
 
       expect(mockOnAutoSelect).toHaveBeenCalledTimes(1);

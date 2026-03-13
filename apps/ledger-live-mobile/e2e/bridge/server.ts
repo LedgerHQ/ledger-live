@@ -17,6 +17,11 @@ import {
 } from "~/actions/types";
 
 let clientResponse: (data: string) => void;
+type PendingAck = {
+  resolve: () => void;
+  timeoutId: ReturnType<typeof setTimeout>;
+};
+const pendingAcks = new Map<string, PendingAck>();
 const RESPONSE_TIMEOUT = 10000;
 
 export async function findFreePort(): Promise<number> {
@@ -122,7 +127,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 }
 
 export async function loadBleState(bleState: BleState) {
-  await postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
+  await postMessageAndWaitForAck({ type: "importBle", id: uniqueId(), payload: bleState });
 }
 
 export async function loadAccountsRaw(
@@ -169,8 +174,8 @@ export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
 
 export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
   const devicesList = Array.isArray(devices) ? devices : [devices];
-  devicesList.forEach(device => {
-    postMessage({
+  for (const device of devicesList) {
+    await postMessageAndWaitForAck({
       type: "add",
       id: uniqueId(),
       payload: {
@@ -179,7 +184,7 @@ export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
         serviceUUID: getDeviceModel(device.modelId).bluetoothSpec![0].serviceUuid,
       },
     });
-  });
+  }
 }
 
 export async function addDevicesUSB(
@@ -227,6 +232,22 @@ function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<st
   });
 }
 
+function postMessageAndWaitForAck(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      pendingAcks.delete(message.id);
+      reject(new Error(`Timeout while waiting for ACK for ${message.type} (${message.id})`));
+    }, timeout);
+
+    pendingAcks.set(message.id, {
+      resolve,
+      timeoutId,
+    });
+
+    postMessage(message);
+  });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);
@@ -235,6 +256,14 @@ function onMessage(messageStr: string) {
     case "ACK":
       log(`${msg.id}`);
       delete webSocket.messages[msg.id];
+      {
+        const pendingAck = pendingAcks.get(msg.id);
+        if (pendingAck) {
+          clearTimeout(pendingAck.timeoutId);
+          pendingAcks.delete(msg.id);
+          pendingAck.resolve();
+        }
+      }
       break;
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);

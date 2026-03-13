@@ -7,7 +7,7 @@ import {
 import { AppOp } from "@ledgerhq/live-common/apps/types";
 import { AppType, DeviceInfo } from "@ledgerhq/types-live/lib/manager";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { mockDeviceEvent } from "../bridge/server";
+import { addDevicesBT, mockDeviceEvent } from "../bridge/server";
 import { DeviceLike } from "~/reducers/types";
 
 const mockListAppsResult = (
@@ -51,7 +51,16 @@ export default class DeviceAction {
     };
   }
 
+  deviceToDeviceLike(d: Device): DeviceLike {
+    return {
+      id: d.deviceId,
+      name: d.deviceName ?? "",
+      modelId: d.modelId,
+    };
+  }
+
   async selectMockDevice() {
+    await addDevicesBT(this.deviceToDeviceLike(this.device));
     const elId = "device-item-" + this.device.deviceId;
     await waitForElementById(elId);
     await tapById(elId);
@@ -62,6 +71,21 @@ export default class DeviceAction {
   }
 
   async openApp() {
+    // Some receive/verify flows reconnect to a remembered BLE device without
+    // going through explicit device selection. Re-emit mock scan availability
+    // so the device-action modal can transition to loading deterministically.
+    await addDevicesBT(this.deviceToDeviceLike(this.device));
+    const rememberedDeviceRowId = `device-item-${this.device.deviceId}`;
+    const scannedDeviceRowId = `device-scanned-${this.device.deviceId}`;
+
+    // Depending on the flow, reconnect can require an explicit row tap instead
+    // of auto-selection. If a connect row is visible, select it before waiting.
+    if (await IsIdVisible(rememberedDeviceRowId)) {
+      await tapById(rememberedDeviceRowId);
+    } else if (await IsIdVisible(scannedDeviceRowId)) {
+      await tapById(scannedDeviceRowId);
+    }
+
     await this.waitForSpinner();
     await mockDeviceEvent({ type: "opened" });
   }
