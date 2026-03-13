@@ -80,7 +80,7 @@
     "./specs": {
       "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
       "@ledgerhq/source": "./src/bridge/transaction.ts",
