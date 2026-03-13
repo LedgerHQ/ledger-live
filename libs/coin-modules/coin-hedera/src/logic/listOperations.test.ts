@@ -18,6 +18,11 @@ jest.mock("./utils");
 describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (utils.extractFeesPayer as jest.Mock).mockImplementation(input =>
+      typeof input === "string"
+        ? input.split("-")[0]
+        : input.transaction_id?.split("-")[0] ?? "0.0.0",
+    );
     (utils.getMemoFromBase64 as jest.Mock).mockImplementation(memo =>
       memo ? `decoded-${memo}` : null,
     );
@@ -375,7 +380,58 @@ describe("listOperations", () => {
     expect(result.coinOperations).toMatchObject([
       {
         hasFailed: true,
-        extra: { transactionId: "0.0.12345-1625097600-000000000" }, // <-- the transactionId is used in upstream layers to identify the fees payer
+        extra: {
+          transactionId: "0.0.12345-1625097600-000000000",
+          feesPayer: "0.0.12345",
+        },
+      },
+    ]);
+  });
+
+  it("should include inferred fees payer in operation extra", async () => {
+    const address = "0.0.12345";
+    const mockCurrency = getMockedCurrency();
+
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue("0.0.23");
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [
+        {
+          consensus_timestamp: "1625097600.000000000",
+          transaction_hash: "hash1",
+          transaction_id: "0.0.10067173-1761755118-730000493",
+          charged_tx_fee: 40743,
+          result: "INSUFFICIENT_PAYER_BALANCE",
+          memo_base64: "",
+          token_transfers: [],
+          staking_reward_transfers: [],
+          transfers: [
+            { account: "0.0.23", amount: -40743 },
+            { account: "0.0.801", amount: 40743 },
+          ],
+          name: "CRYPTOTRANSFER",
+        },
+      ],
+      nextCursor: null,
+    });
+
+    const result = await listOperations({
+      currency: mockCurrency,
+      address,
+      limit: 10,
+      order: "desc",
+      mirrorTokens: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toMatchObject([
+      {
+        extra: {
+          transactionId: "0.0.10067173-1761755118-730000493",
+          feesPayer: "0.0.23",
+        },
       },
     ]);
   });

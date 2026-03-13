@@ -41,6 +41,7 @@ jest.mock("./utils", () => ({
   base64ToUrlSafeBase64: jest.fn().mockImplementation(hash => `encoded-${hash}`),
   getMemoFromBase64: jest.fn().mockImplementation(memo => (memo ? `decoded-${memo}` : null)),
   getSyntheticBlock: jest.fn(),
+  extractFeesPayer: jest.fn(),
   analyzeStakingOperation: jest.fn(),
 }));
 
@@ -73,6 +74,11 @@ describe("listOperationsV2", () => {
       (accountId, token) => `${accountId}-${token.id}`,
     );
     (utils.getSyntheticBlock as jest.Mock).mockReturnValue(mockSyntheticBlock);
+    (utils.extractFeesPayer as jest.Mock).mockImplementation(input =>
+      typeof input === "string"
+        ? input.split("-")[0]
+        : input.transaction_id?.split("-")[0] ?? "0.0.0",
+    );
     (utils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
     (networkUtils.enrichERC20Transfers as jest.Mock).mockReturnValue([]);
   });
@@ -625,6 +631,55 @@ describe("listOperationsV2", () => {
     });
 
     expect(result.coinOperations).toMatchObject([{ hasFailed: true }]);
+  });
+
+  it("should include inferred fees payer in operation extra", async () => {
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue("0.0.23");
+
+    const mockTransactions: Partial<HederaMirrorTransaction>[] = [
+      {
+        consensus_timestamp: "1625097600.000000000",
+        transaction_hash: "hash1",
+        transaction_id: "0.0.10067173-1761755118-730000493",
+        charged_tx_fee: 40743,
+        result: "INSUFFICIENT_PAYER_BALANCE",
+        token_transfers: [],
+        staking_reward_transfers: [],
+        transfers: [
+          { account: "0.0.23", amount: -40743 },
+          { account: "0.0.801", amount: 40743 },
+        ],
+        name: "CRYPTOTRANSFER",
+      },
+    ];
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: mockTransactions,
+      nextCursor: null,
+    });
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      currency: mockCurrency,
+      mirrorTokens: [],
+      erc20Tokens: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toMatchObject([
+      {
+        extra: {
+          transactionId: "0.0.10067173-1761755118-730000493",
+          feesPayer: "0.0.23",
+        },
+      },
+    ]);
   });
 
   it("should create REWARD operation when staking rewards are present", async () => {

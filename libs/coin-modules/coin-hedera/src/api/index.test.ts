@@ -18,7 +18,7 @@ jest.mock("../logic/utils");
 jest.mock("../network/utils");
 jest.mock("../network/api");
 
-const mockExtractFeesPayer = jest.mocked(logicUtils.extractFeesPayer);
+const mockExtractInitiator = jest.mocked(logicUtils.extractInitiator);
 const mockGetOperationValue = jest.mocked(logicUtils.getOperationValue);
 const mockMapIntentToSDKOperation = jest.mocked(mapIntentToSDKOperation);
 const mockToEVMAddress = jest.mocked(logicUtils.toEVMAddress);
@@ -333,7 +333,7 @@ describe("createApi", () => {
     });
 
     beforeEach(() => {
-      mockExtractFeesPayer.mockReturnValue(mockFeesPayer);
+      mockExtractInitiator.mockReturnValue(mockFeesPayer);
       mockGetOperationValue.mockReturnValue(100n);
       mockToEVMAddress.mockResolvedValue("0xabc");
       mockGetAccountTokens.mockResolvedValue([]);
@@ -421,8 +421,29 @@ describe("createApi", () => {
 
       const result = await api.listOperations(mockAddress, mockOptions);
 
-      expect(mockExtractFeesPayer).not.toHaveBeenCalled();
+      expect(mockExtractInitiator).not.toHaveBeenCalled();
       expect(result.items[0].tx).not.toHaveProperty("feesPayer");
+    });
+
+    it("should prefer feesPayer from operation extra over transactionId", async () => {
+      const explicitFeesPayer = "0.0.9999";
+      const operationWithExplicitFeesPayer = getMockedOperation({
+        extra: {
+          transactionId: "0.0.111-1234567890-1",
+          feesPayer: explicitFeesPayer,
+        },
+      });
+
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [operationWithExplicitFeesPayer],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockAddress, mockOptions);
+
+      expect(mockExtractInitiator).not.toHaveBeenCalled();
+      expect(result.items[0].tx.feesPayer).toBe(explicitFeesPayer);
     });
 
     it.each([

@@ -583,6 +583,22 @@ describe("createApi", () => {
       expect(transaction?.details?.memo).toBe("test");
     });
 
+    it("derives fees payer from transfers for failed transactions", async () => {
+      const blockHeight = 176175512;
+      const txPaidBySender = "zlE5fX0N44XgMzi9jxr9G4gcCwuAQ4v75wYVXmqBqE808wLKhc/aS+3ZZFl1XOzp";
+      const txNotPaidBySender = "su9qFNvTpteObMCdqJZ8UxKmgB0UFafqPbwjpawBKzAzJOPwCgpQz6TLCL80oZXd";
+
+      const block = await api.getBlock(blockHeight);
+      const firstTx = block.transactions.find(tx => tx.hash === txPaidBySender);
+      const secondTx = block.transactions.find(tx => tx.hash === txNotPaidBySender);
+
+      expect(firstTx?.failed).toBe(true);
+      expect(firstTx?.feesPayer).toBe("0.0.10067173");
+
+      expect(secondTx?.failed).toBe(true);
+      expect(secondTx?.feesPayer).toBe("0.0.23");
+    });
+
     it("correctly identifies erc20 operations in blocks", async () => {
       const blockHeight = 176814261;
       const txHash = "dN7BMus6+8ISOwNPVt7l4KpQT9VaSM9LG6qLPXBqpRVw83ZPMO6Bzyt63305lLXu";

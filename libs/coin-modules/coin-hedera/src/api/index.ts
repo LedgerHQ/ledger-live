@@ -36,7 +36,7 @@ import {
   getRewards,
 } from "../logic";
 import {
-  extractFeesPayer,
+  extractInitiator,
   mapIntentToSDKOperation,
   getOperationValue,
   getBlockHash,
@@ -189,9 +189,10 @@ export function createApi(
             }
           : { type: "native" };
 
-        const feesPayer = liveOp.extra?.transactionId
-          ? extractFeesPayer(liveOp.extra.transactionId)
-          : undefined;
+        // Prefer inferred payer from operation extra, fallback to transaction_id parsing for legacy ops.
+        let feesPayer = liveOp.extra?.feesPayer;
+        if (!feesPayer && liveOp.extra?.transactionId)
+          feesPayer = extractInitiator(liveOp.extra.transactionId);
 
         // REWARD operations append a suffix to the tx.hash to ensure uniqueness
         const hash =

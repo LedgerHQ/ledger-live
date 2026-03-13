@@ -167,7 +167,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
       "delegation": {
         "delegated": "333985159",
         "nodeId": 18,
-        "pendingReward": "1158621",
+        "pendingReward": "1198245",
       },
       "isAutoTokenAssociationEnabled": false,
       "maxAutomaticTokenAssociations": 0,
@@ -183,12 +183,12 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "used": true,
   },
   {
-    "balance": "40110",
+    "balance": "40113",
     "id": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "operationsCount": 4,
     "parentId": "js:2:hedera:0.0.8313485:hederaBip44",
     "pendingOperations": [],
-    "spendableBalance": "40110",
+    "spendableBalance": "40113",
     "swapHistory": [],
     "tokenId": "hedera/erc20/bonzo_atoken_usdc_0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
     "type": "TokenAccountRaw",
@@ -288,6 +288,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1760963950.231238974",
+        "feesPayer": "0.0.9870888",
         "pagingToken": "1760963950.231238974",
         "transactionId": "0.0.9870888-1760963946-655198505",
       },
@@ -311,6 +312,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730811624.603795000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1730811624.603795000",
         "transactionId": "0.0.7305122-1730811607-577668546",
       },
@@ -334,6 +336,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764939327.504699000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1764939327.504699000",
         "previousStakingNodeId": 0,
@@ -360,6 +363,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764939327.504699000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1764939327.504699000",
         "transactionId": "0.0.1040977-1764939316-244718377",
@@ -382,6 +386,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676581.905435000",
+        "feesPayer": "0.0.1040977",
         "memo": "Stake",
         "pagingToken": "1764676581.905435000",
         "previousStakingNodeId": null,
@@ -408,6 +413,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958515.919946557",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958515.919946557",
         "transactionId": "0.0.7305122-1767958493-808816129",
       },
@@ -432,6 +438,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729155939.657319000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729155939.657319000",
         "transactionId": "0.0.1040977-1729155917-228948095",
       },
@@ -455,6 +462,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730813192.423784000",
+        "feesPayer": "0.0.7305122",
         "memo": "send",
         "pagingToken": "1730813192.423784000",
         "transactionId": "0.0.7305122-1730813176-701218516",
@@ -479,6 +487,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765219485.073358000",
+        "feesPayer": "0.0.8217344",
         "memo": "(3/3) More info (including a dApp safety video) ➡️ visit @tozmdotio on YouTube or X 🔥",
         "pagingToken": "1765219485.073358000",
         "transactionId": "0.0.8217344-1765219475-799705344",
@@ -511,6 +520,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765219485.073358000",
+        "feesPayer": "0.0.8217344",
         "memo": "(3/3) More info (including a dApp safety video) ➡️ visit @tozmdotio on YouTube or X 🔥",
         "pagingToken": "1765219485.073358000",
         "transactionId": "0.0.8217344-1765219475-799705344",
@@ -533,6 +543,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730811403.115680000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1730811403.115680000",
         "transactionId": "0.0.1040977-1730811386-444490852",
       },
@@ -556,6 +567,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1726477122.251592000",
+        "feesPayer": "0.0.7107424",
         "memo": "small send QA samy",
         "pagingToken": "1726477122.251592000",
         "transactionId": "0.0.7107424-1726477101-843178446",
@@ -580,6 +592,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767959010.046823770",
+        "feesPayer": "0.0.1040977",
         "memo": "Stake",
         "pagingToken": "1767959010.046823770",
         "previousStakingNodeId": null,
@@ -606,6 +619,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676088.728437000",
+        "feesPayer": "0.0.1040977",
         "memo": "Stake",
         "pagingToken": "1764676088.728437000",
         "previousStakingNodeId": null,
@@ -632,6 +646,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765219489.841439143",
+        "feesPayer": "0.0.8217344",
         "memo": "(2/3) Mint TOZM Gift 🎁 NFTs for Free (each costs only about $0.03 in network fees). 🚀",
         "pagingToken": "1765219489.841439143",
         "transactionId": "0.0.8217344-1765219479-133261197",
@@ -664,6 +679,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729155815.270550000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729155815.270550000",
         "transactionId": "0.0.7305122-1729155794-229850952",
       },
@@ -687,6 +703,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765303698.040541000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765303698.040541000",
         "transactionId": "0.0.1040977-1765303677-334944831",
       },
@@ -710,6 +727,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1726477062.311057502",
+        "feesPayer": "0.0.7107424",
         "memo": "test QA samy normal send",
         "pagingToken": "1726477062.311057502",
         "transactionId": "0.0.7107424-1726477040-503743491",
@@ -735,6 +753,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1760963943.673922000",
+        "feesPayer": "0.0.50571",
         "pagingToken": "1760963943.673922000",
         "transactionId": "0.0.50571-1760963942-785604000",
       },
@@ -758,6 +777,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766051926.733060576",
+        "feesPayer": "0.0.1040977",
         "memo": "Stake",
         "pagingToken": "1766051926.733060576",
         "previousStakingNodeId": null,
@@ -784,6 +804,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730811531.050920029",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1730811531.050920029",
         "transactionId": "0.0.1040977-1730811516-220354183",
       },
@@ -807,6 +828,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1726235313.566576000",
+        "feesPayer": "0.0.7107424",
         "memo": "give back to poor obelix - samy",
         "pagingToken": "1726235313.566576000",
         "transactionId": "0.0.7107424-1726235294-440831620",
@@ -831,6 +853,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729858464.980892000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729858464.980892000",
         "transactionId": "0.0.1040977-1729858426-380675565",
       },
@@ -854,6 +877,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765448860.100970000",
+        "feesPayer": "0.0.9870888",
         "pagingToken": "1765448860.100970000",
         "transactionId": "0.0.9870888-1765448853-223971741",
       },
@@ -877,6 +901,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765556566.904748000",
+        "feesPayer": "0.0.1040977",
         "memo": "Stake",
         "pagingToken": "1765556566.904748000",
         "previousStakingNodeId": null,
@@ -903,6 +928,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1769698035.720449444",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1769698035.720449444",
         "transactionId": "0.0.1040977-1769698022-867001204",
       },
@@ -940,6 +966,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "extra": {
         "associatedTokenId": "0.0.127877",
         "consensusTimestamp": "1753711721.783899000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1753711721.783899000",
         "transactionId": "0.0.1040977-1753711684-521725198",
       },
@@ -962,6 +989,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765363209.429188000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765363209.429188000",
         "transactionId": "0.0.1040977-1765363180-837997895",
       },
@@ -985,6 +1013,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765363209.429188000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765363209.429188000",
         "transactionId": "0.0.1040977-1765363180-837997895",
       },
@@ -1006,6 +1035,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729147655.662122737",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729147655.662122737",
         "transactionId": "0.0.1040977-1729147638-401252931",
       },
@@ -1029,6 +1059,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729687467.306035525",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729687467.306035525",
         "transactionId": "0.0.1040977-1729687448-634290453",
       },
@@ -1052,6 +1083,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729150225.131300000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729150225.131300000",
         "transactionId": "0.0.7305122-1729150206-365976103",
       },
@@ -1075,6 +1107,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1732192441.542423000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1732192441.542423000",
         "transactionId": "0.0.1040977-1732192424-679664160",
       },
@@ -1098,6 +1131,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1704213295.949352003",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1704213295.949352003",
         "transactionId": "0.0.1040977-1704213259-671300813",
       },
@@ -1120,6 +1154,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1732205762.558954000",
+        "feesPayer": "0.0.7579210",
         "pagingToken": "1732205762.558954000",
         "transactionId": "0.0.7579210-1732205742-260788798",
       },
@@ -1143,6 +1178,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676556.594347000",
+        "feesPayer": "0.0.1040977",
         "memo": "Unstake",
         "pagingToken": "1764676556.594347000",
         "previousStakingNodeId": 1,
@@ -1169,6 +1205,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1697645669.026204003",
+        "feesPayer": "0.0.1040977",
         "memo": "test send max",
         "pagingToken": "1697645669.026204003",
         "transactionId": "0.0.1040977-1697645638-975771968",
@@ -1192,6 +1229,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730813149.715064983",
+        "feesPayer": "0.0.1040977",
         "memo": "send",
         "pagingToken": "1730813149.715064983",
         "transactionId": "0.0.1040977-1730813133-219086574",
@@ -1216,6 +1254,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1769699423.568370037",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1769699423.568370037",
         "transactionId": "0.0.1040977-1769699408-000317990",
       },
@@ -1238,6 +1277,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1657021403.368076000",
+        "feesPayer": "0.0.880760",
         "pagingToken": "1657021403.368076000",
         "transactionId": "0.0.880760-1657021386-192171482",
       },
@@ -1261,6 +1301,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676452.498442000",
+        "feesPayer": "0.0.1040977",
         "memo": "Stake",
         "pagingToken": "1764676452.498442000",
         "previousStakingNodeId": null,
@@ -1287,6 +1328,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766051886.378264000",
+        "feesPayer": "0.0.1040977",
         "memo": "Unstake",
         "pagingToken": "1766051886.378264000",
         "previousStakingNodeId": 26,
@@ -1313,6 +1355,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676635.614168000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1764676635.614168000",
         "previousStakingNodeId": 1,
@@ -1339,6 +1382,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958685.802702000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958685.802702000",
         "transactionId": "0.0.7305122-1767958671-282358565",
       },
@@ -1362,6 +1406,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765448850.572930000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765448850.572930000",
         "transactionId": "0.0.1040977-1765448831-131663914",
       },
@@ -1385,6 +1430,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765448850.572930000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765448850.572930000",
         "transactionId": "0.0.1040977-1765448831-131663914",
       },
@@ -1420,6 +1466,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765556530.722814000",
+        "feesPayer": "0.0.1040977",
         "memo": "Unstake",
         "pagingToken": "1765556530.722814000",
         "transactionId": "0.0.1040977-1765556517-076339177",
@@ -1442,6 +1489,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765556530.722814000",
+        "feesPayer": "0.0.1040977",
         "memo": "Unstake",
         "pagingToken": "1765556530.722814000",
         "previousStakingNodeId": 20,
@@ -1468,6 +1516,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765303272.465501000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765303272.465501000",
         "transactionId": "0.0.1040977-1765303240-526750347",
       },
@@ -1491,6 +1540,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765303272.465501000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765303272.465501000",
         "transactionId": "0.0.1040977-1765303240-526750347",
       },
@@ -1526,6 +1576,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729177404.980663000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729177404.980663000",
         "transactionId": "0.0.1040977-1729177389-208250173",
       },
@@ -1549,6 +1600,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765219496.001325817",
+        "feesPayer": "0.0.8217344",
         "memo": "(1/3) 📢 This December is a great month to start playing TOZM - Token of Z Month! ✅",
         "pagingToken": "1765219496.001325817",
         "transactionId": "0.0.8217344-1765219486-024244026",
@@ -1581,6 +1633,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729156701.804949000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729156701.804949000",
         "transactionId": "0.0.7305122-1729156668-710409471",
       },
@@ -1604,6 +1657,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729585926.624752000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729585926.624752000",
         "transactionId": "0.0.1040977-1729585909-155505162",
       },
@@ -1627,6 +1681,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1721982048.841299095",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1721982048.841299095",
         "transactionId": "0.0.1040977-1721982032-865380643",
       },
@@ -1651,6 +1706,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1748539198.038322000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1748539198.038322000",
         "transactionId": "0.0.1040977-1748539160-218682911",
       },
@@ -1674,6 +1730,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765556611.828482000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1765556611.828482000",
         "previousStakingNodeId": 20,
@@ -1700,6 +1757,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1732202577.896639115",
+        "feesPayer": "0.0.1040977",
         "memo": "test nano x",
         "pagingToken": "1732202577.896639115",
         "transactionId": "0.0.1040977-1732202559-674720996",
@@ -1724,6 +1782,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740739322.044670000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1740739322.044670000",
         "transactionId": "0.0.1040977-1740739289-350913436",
       },
@@ -1747,6 +1806,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676405.364046000",
+        "feesPayer": "0.0.1040977",
         "memo": "Unstake",
         "pagingToken": "1764676405.364046000",
         "previousStakingNodeId": 20,
@@ -1773,6 +1833,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676526.955756000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1764676526.955756000",
         "previousStakingNodeId": 26,
@@ -1799,6 +1860,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1756718310.549818000",
+        "feesPayer": "0.0.1040977",
         "memo": "TOTO",
         "pagingToken": "1756718310.549818000",
         "transactionId": "0.0.1040977-1756718286-727919995",
@@ -1822,6 +1884,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1726235092.011928000",
+        "feesPayer": "0.0.1040977",
         "memo": "test qa samy",
         "pagingToken": "1726235092.011928000",
         "transactionId": "0.0.1040977-1726235075-648244564",
@@ -1846,6 +1909,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764676500.998306000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1764676500.998306000",
         "previousStakingNodeId": 20,
@@ -1872,6 +1936,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1669565599.465640003",
+        "feesPayer": "0.0.1040977",
         "memo": "test",
         "pagingToken": "1669565599.465640003",
         "transactionId": "0.0.1040977-1669565558-376194854",
@@ -1895,6 +1960,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729237802.452111000",
+        "feesPayer": "0.0.1040977",
         "memo": "send",
         "pagingToken": "1729237802.452111000",
         "transactionId": "0.0.1040977-1729237787-313384215",
@@ -1919,6 +1985,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1726233233.981368000",
+        "feesPayer": "0.0.1040977",
         "memo": "send max develop",
         "pagingToken": "1726233233.981368000",
         "transactionId": "0.0.1040977-1726233218-368881951",
@@ -1942,6 +2009,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729100859.761766000",
+        "feesPayer": "0.0.1040977",
         "memo": "testsamy",
         "pagingToken": "1729100859.761766000",
         "transactionId": "0.0.1040977-1729100836-865628504",
@@ -1967,6 +2035,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729103620.094329000",
+        "feesPayer": "0.0.7107424",
         "memo": "cadeauQPM",
         "pagingToken": "1729103620.094329000",
         "transactionId": "0.0.7107424-1729103602-240878582",
@@ -1992,6 +2061,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "extra": {
         "associatedTokenId": "0.0.456858",
         "consensusTimestamp": "1753699142.805347000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1753699142.805347000",
         "transactionId": "0.0.1040977-1753699107-557381534",
       },
@@ -2014,6 +2084,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958839.769743751",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1767958839.769743751",
         "transactionId": "0.0.1040977-1767958823-238761698",
       },
@@ -2036,6 +2107,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958580.114519000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958580.114519000",
         "transactionId": "0.0.7305122-1767958561-178317559",
       },
@@ -2060,6 +2132,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "extra": {
         "associatedTokenId": "0.0.7893707",
         "consensusTimestamp": "1753690589.721137000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1753690589.721137000",
         "transactionId": "0.0.1040977-1753690560-275947753",
       },
@@ -2082,6 +2155,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729159845.725723000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729159845.725723000",
         "transactionId": "0.0.7305122-1729159824-172228161",
       },
@@ -2105,6 +2179,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958970.807605000",
+        "feesPayer": "0.0.1040977",
         "memo": "Unstake",
         "pagingToken": "1767958970.807605000",
         "previousStakingNodeId": 20,
@@ -2131,6 +2206,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767959337.240412000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1767959337.240412000",
         "previousStakingNodeId": 18,
@@ -2157,6 +2233,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764748857.858276000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1764748857.858276000",
         "transactionId": "0.0.1040977-1764748842-778719139",
       },
@@ -2180,6 +2257,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765303351.645838829",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1765303351.645838829",
         "transactionId": "0.0.507737-1765303332-940658472",
       },
@@ -2203,6 +2281,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1726233110.321533000",
+        "feesPayer": "0.0.7107424",
         "memo": "samy test!",
         "pagingToken": "1726233110.321533000",
         "transactionId": "0.0.7107424-1726233090-613867298",
@@ -2227,6 +2306,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764943329.044339000",
+        "feesPayer": "0.0.1040977",
         "memo": "Restake",
         "pagingToken": "1764943329.044339000",
         "previousStakingNodeId": 1,
@@ -2253,6 +2333,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729858548.245891000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729858548.245891000",
         "transactionId": "0.0.7305122-1729858530-947089538",
       },
@@ -2276,6 +2357,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765363275.830291000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1765363275.830291000",
         "transactionId": "0.0.1040977-1765363244-467236904",
       },
@@ -2299,6 +2381,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729150309.511412000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729150309.511412000",
         "transactionId": "0.0.1040977-1729150293-974730734",
       },
@@ -2322,6 +2405,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1701941251.224927003",
+        "feesPayer": "0.0.1040977",
         "memo": "test",
         "pagingToken": "1701941251.224927003",
         "transactionId": "0.0.1040977-1701941233-356067020",
@@ -2350,6 +2434,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1755785525.693277000",
+        "feesPayer": "0.0.8313485",
         "memo": "toto",
         "pagingToken": "1755785525.693277000",
         "transactionId": "0.0.8313485-1755785490-483918521",
@@ -2375,6 +2460,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1756718310.549818000",
+        "feesPayer": "0.0.1040977",
         "memo": "TOTO",
         "pagingToken": "1756718310.549818000",
         "transactionId": "0.0.1040977-1756718286-727919995",
@@ -2400,6 +2486,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1767958839.769743751",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1767958839.769743751",
         "transactionId": "0.0.1040977-1767958823-238761698",
       },
@@ -2426,6 +2513,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.456858",
       "extra": {
         "consensusTimestamp": "1753699233.640576809",
+        "feesPayer": "0.0.8313635",
         "pagingToken": "1753699233.640576809",
         "transactionId": "0.0.8313635-1753699229-023150185",
       },
@@ -2452,6 +2540,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.7893707",
       "extra": {
         "consensusTimestamp": "1753690711.015332718",
+        "feesPayer": "0.0.8313635",
         "pagingToken": "1753690711.015332718",
         "transactionId": "0.0.8313635-1753690706-348075771",
       },
@@ -2477,6 +2566,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730811624.603795000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1730811624.603795000",
         "transactionId": "0.0.7305122-1730811607-577668546",
       },
@@ -2500,6 +2590,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958515.919946557",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958515.919946557",
         "transactionId": "0.0.7305122-1767958493-808816129",
       },
@@ -2523,6 +2614,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958515.919946557",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958515.919946557",
         "transactionId": "0.0.7305122-1767958493-808816129",
       },
@@ -2544,6 +2636,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729155939.657319000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729155939.657319000",
         "transactionId": "0.0.1040977-1729155917-228948095",
       },
@@ -2567,6 +2660,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730813192.423784000",
+        "feesPayer": "0.0.7305122",
         "memo": "send",
         "pagingToken": "1730813192.423784000",
         "transactionId": "0.0.7305122-1730813176-701218516",
@@ -2591,6 +2685,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730811403.115680000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1730811403.115680000",
         "transactionId": "0.0.1040977-1730811386-444490852",
       },
@@ -2614,6 +2709,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729155755.397758000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729155755.397758000",
         "transactionId": "0.0.7305122-1729155733-151479722",
       },
@@ -2636,6 +2732,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729155815.270550000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729155815.270550000",
         "transactionId": "0.0.7305122-1729155794-229850952",
       },
@@ -2659,6 +2756,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730811531.050920029",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1730811531.050920029",
         "transactionId": "0.0.1040977-1730811516-220354183",
       },
@@ -2682,6 +2780,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729858464.980892000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729858464.980892000",
         "transactionId": "0.0.1040977-1729858426-380675565",
       },
@@ -2705,6 +2804,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729147655.662122737",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729147655.662122737",
         "transactionId": "0.0.1040977-1729147638-401252931",
       },
@@ -2728,6 +2828,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729687467.306035525",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729687467.306035525",
         "transactionId": "0.0.1040977-1729687448-634290453",
       },
@@ -2751,6 +2852,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729150225.131300000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729150225.131300000",
         "transactionId": "0.0.7305122-1729150206-365976103",
       },
@@ -2774,6 +2876,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1730813149.715064983",
+        "feesPayer": "0.0.1040977",
         "memo": "send",
         "pagingToken": "1730813149.715064983",
         "transactionId": "0.0.1040977-1730813133-219086574",
@@ -2798,6 +2901,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958685.802702000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958685.802702000",
         "transactionId": "0.0.7305122-1767958671-282358565",
       },
@@ -2836,6 +2940,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "extra": {
         "associatedTokenId": "0.0.127877",
         "consensusTimestamp": "1767958775.232558000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958775.232558000",
         "transactionId": "0.0.7305122-1767958762-306325324",
       },
@@ -2858,6 +2963,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729177404.980663000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729177404.980663000",
         "transactionId": "0.0.1040977-1729177389-208250173",
       },
@@ -2881,6 +2987,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729156701.804949000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729156701.804949000",
         "transactionId": "0.0.7305122-1729156668-710409471",
       },
@@ -2904,6 +3011,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729585926.624752000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729585926.624752000",
         "transactionId": "0.0.1040977-1729585909-155505162",
       },
@@ -2927,6 +3035,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729237802.452111000",
+        "feesPayer": "0.0.1040977",
         "memo": "send",
         "pagingToken": "1729237802.452111000",
         "transactionId": "0.0.1040977-1729237787-313384215",
@@ -2951,6 +3060,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729156015.784781613",
+        "feesPayer": "0.0.7305122",
         "memo": "Unstake",
         "pagingToken": "1729156015.784781613",
         "previousStakingNodeId": 1,
@@ -2991,6 +3101,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1767958580.114519000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1767958580.114519000",
         "transactionId": "0.0.7305122-1767958561-178317559",
       },
@@ -3015,6 +3126,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
+        "feesPayer": "0.0.7305122",
         "gasConsumed": 271278,
         "gasLimit": 331284,
         "gasUsed": 265028,
@@ -3041,6 +3153,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1765992619.916268000",
         "transactionId": "0.0.7305122-1765992603-332568297",
       },
@@ -3062,6 +3175,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729159845.725723000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729159845.725723000",
         "transactionId": "0.0.7305122-1729159824-172228161",
       },
@@ -3085,6 +3199,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1764748857.858276000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1764748857.858276000",
         "transactionId": "0.0.1040977-1764748842-778719139",
       },
@@ -3108,6 +3223,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729858548.245891000",
+        "feesPayer": "0.0.7305122",
         "pagingToken": "1729858548.245891000",
         "transactionId": "0.0.7305122-1729858530-947089538",
       },
@@ -3131,6 +3247,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729156037.761102000",
+        "feesPayer": "0.0.7305122",
         "memo": "Update staked node",
         "pagingToken": "1729156037.761102000",
         "previousStakingNodeId": null,
@@ -3157,6 +3274,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1729150309.511412000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1729150309.511412000",
         "transactionId": "0.0.1040977-1729150293-974730734",
       },
@@ -3183,6 +3301,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1767958839.769743751",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1767958839.769743751",
         "transactionId": "0.0.1040977-1767958823-238761698",
       },
@@ -3209,6 +3328,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992359.883350234",
+        "feesPayer": "0.0.8313485",
         "gasConsumed": 271278,
         "gasLimit": 331284,
         "gasUsed": 265028,
@@ -3236,6 +3356,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
+        "feesPayer": "0.0.7305122",
         "gasConsumed": 271278,
         "gasLimit": 331284,
         "gasUsed": 265028,
@@ -3264,6 +3385,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1732192441.542423000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1732192441.542423000",
         "transactionId": "0.0.1040977-1732192424-679664160",
       },
@@ -3287,6 +3409,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1732193188.290747000",
+        "feesPayer": "0.0.7560245",
         "pagingToken": "1732193188.290747000",
         "transactionId": "0.0.7560245-1732193170-193972272",
       },
@@ -3312,6 +3435,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766052249.959659000",
+        "feesPayer": "0.0.7578015",
         "memo": "Unstake",
         "pagingToken": "1766052249.959659000",
         "previousStakingNodeId": 5,
@@ -3338,6 +3462,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1732193188.290747000",
+        "feesPayer": "0.0.7560245",
         "pagingToken": "1732193188.290747000",
         "transactionId": "0.0.7560245-1732193170-193972272",
       },
@@ -3361,6 +3486,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766052314.378850000",
+        "feesPayer": "0.0.7578015",
         "memo": "Stake",
         "pagingToken": "1766052314.378850000",
         "previousStakingNodeId": null,
@@ -3389,6 +3515,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740741189.513410000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740741189.513410000",
         "transactionId": "0.0.8313485-1740741167-623937002",
       },
@@ -3411,6 +3538,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740739889.583598491",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740739889.583598491",
         "transactionId": "0.0.8313485-1740739855-339205788",
       },
@@ -3434,6 +3562,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740741060.702187741",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740741060.702187741",
         "transactionId": "0.0.8313485-1740741008-869170654",
       },
@@ -3470,6 +3599,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740741706.219984000",
+        "feesPayer": "0.0.995584",
         "pagingToken": "1740741706.219984000",
         "transactionId": "0.0.995584-1740741698-495404678",
       },
@@ -3494,6 +3624,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743884119.632624000",
+        "feesPayer": "0.0.8217344",
         "memo": "(1/3) 📢 It's not too late to start playing TOZM - Token of Z Month! Learn more at tozm dot io.",
         "pagingToken": "1743884119.632624000",
         "transactionId": "0.0.8217344-1743884109-108773980",
@@ -3526,6 +3657,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740739889.583598490",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740739889.583598490",
         "transactionId": "0.0.8313485-1740739855-339205788",
       },
@@ -3576,6 +3708,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743094572.925082000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1743094572.925082000",
         "transactionId": "0.0.8313485-1743094539-448683032",
       },
@@ -3599,6 +3732,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766063577.780237000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1766063577.780237000",
         "transactionId": "0.0.8313485-1766063534-415377401",
       },
@@ -3621,6 +3755,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1768211891.563502685",
+        "feesPayer": "0.0.8313485",
         "memo": "Stake",
         "pagingToken": "1768211891.563502685",
         "previousStakingNodeId": null,
@@ -3648,6 +3783,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "extra": {
         "associatedTokenId": "0.0.127877",
         "consensusTimestamp": "1740739493.554732000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740739493.554732000",
         "transactionId": "0.0.8313485-1740739473-670497212",
       },
@@ -3670,6 +3806,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1768211549.921217740",
+        "feesPayer": "0.0.8313485",
         "memo": "Restake",
         "pagingToken": "1768211549.921217740",
         "previousStakingNodeId": 18,
@@ -3696,6 +3833,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1768211549.921217740",
+        "feesPayer": "0.0.8313485",
         "memo": "Restake",
         "pagingToken": "1768211549.921217740",
         "transactionId": "0.0.8313485-1768211481-660344077",
@@ -3718,6 +3856,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743371982.785505000",
+        "feesPayer": "0.0.8217344",
         "memo": "(3/3) Want more free tokens? 🔥 Check out the March 2025 Instructions 👀 on tozm dot io! 🚀",
         "pagingToken": "1743371982.785505000",
         "transactionId": "0.0.8217344-1743371970-157941037",
@@ -3764,6 +3903,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1765989230.220415000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1765989230.220415000",
         "transactionId": "0.0.8313485-1765989213-420642012",
       },
@@ -3787,6 +3927,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743884110.485189168",
+        "feesPayer": "0.0.8217344",
         "memo": "(3/3) Want more free tokens? 🔥 Check out the April 2025 Instructions 👀 on tozm dot io! 🚀",
         "pagingToken": "1743884110.485189168",
         "transactionId": "0.0.8217344-1743884099-696299654",
@@ -3819,6 +3960,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743371987.018009000",
+        "feesPayer": "0.0.8217344",
         "memo": "(2/3) To get started, simply associate with 0.0.8372908 ✅ and 0.0.8379490 ✅ before March 31st.",
         "pagingToken": "1743371987.018009000",
         "transactionId": "0.0.8217344-1743371975-082909573",
@@ -3880,6 +4022,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766063963.625248000",
+        "feesPayer": "0.0.8313485",
         "gasConsumed": 202934,
         "gasLimit": 260861,
         "gasUsed": 208689,
@@ -3907,6 +4050,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1755785525.693277000",
+        "feesPayer": "0.0.8313485",
         "memo": "toto",
         "pagingToken": "1755785525.693277000",
         "transactionId": "0.0.8313485-1755785490-483918521",
@@ -3930,6 +4074,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743601916.977125409",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1743601916.977125409",
         "transactionId": "0.0.8313485-1743601878-625294726",
       },
@@ -3953,6 +4098,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992359.883350234",
+        "feesPayer": "0.0.8313485",
         "gasConsumed": 271278,
         "gasLimit": 331284,
         "gasUsed": 265028,
@@ -3979,6 +4125,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1762974093.971287000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1762974093.971287000",
         "transactionId": "0.0.8313485-1762974074-601058452",
       },
@@ -4002,6 +4149,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740739322.044670000",
+        "feesPayer": "0.0.1040977",
         "pagingToken": "1740739322.044670000",
         "transactionId": "0.0.1040977-1740739289-350913436",
       },
@@ -4039,6 +4187,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743884114.875352000",
+        "feesPayer": "0.0.8217344",
         "memo": "(2/3) To get started, simply associate with 0.0.8808338 ✅ and 0.0.8808584 ✅ by April 30th👍.",
         "pagingToken": "1743884114.875352000",
         "transactionId": "0.0.8217344-1743884104-032614439",
@@ -4085,6 +4234,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743371991.769212000",
+        "feesPayer": "0.0.8217344",
         "memo": "(1/3) 📢 It's not too late to start playing TOZM - Token of Z Month! Learn more at tozm dot io.",
         "pagingToken": "1743371991.769212000",
         "transactionId": "0.0.8217344-1743371980-677379292",
@@ -4145,6 +4295,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740740327.007740000",
+        "feesPayer": "0.0.995584",
         "pagingToken": "1740740327.007740000",
         "transactionId": "0.0.995584-1740740322-120356562",
       },
@@ -4169,6 +4320,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743089390.497908000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1743089390.497908000",
         "transactionId": "0.0.8313485-1743089342-930041667",
       },
@@ -4191,6 +4343,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1760435993.267662000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1760435993.267662000",
         "transactionId": "0.0.8313485-1760435970-171962056",
       },
@@ -4213,6 +4366,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1743089390.497907999",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1743089390.497907999",
         "transactionId": "0.0.8313485-1743089342-930041667",
       },
@@ -4235,6 +4389,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1768211678.094779000",
+        "feesPayer": "0.0.8313485",
         "memo": "Unstake",
         "pagingToken": "1768211678.094779000",
         "previousStakingNodeId": 20,
@@ -4261,6 +4416,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740740097.334683000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740740097.334683000",
         "transactionId": "0.0.8313485-1740740046-345581600",
       },
@@ -4284,6 +4440,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1740738764.065021000",
+        "feesPayer": "0.0.507737",
         "memo": "fromLeVtoLeL",
         "pagingToken": "1740738764.065021000",
         "transactionId": "0.0.507737-1740738735-890860650",
@@ -4322,6 +4479,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766064273.982580754",
+        "feesPayer": "0.0.8313485",
         "memo": "Stake",
         "pagingToken": "1766064273.982580754",
         "previousStakingNodeId": null,
@@ -4351,6 +4509,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766063963.625248000",
+        "feesPayer": "0.0.8313485",
         "gasConsumed": 202934,
         "gasLimit": 260861,
         "gasUsed": 208689,
@@ -4379,6 +4538,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992359.883350234",
+        "feesPayer": "0.0.8313485",
         "gasConsumed": 271278,
         "gasLimit": 331284,
         "gasUsed": 265028,
@@ -4406,6 +4566,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992000.873157685",
+        "feesPayer": "0.0.6391739",
         "gasConsumed": 266997,
         "gasLimit": 1000000,
         "gasUsed": 800000,
@@ -4433,6 +4594,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
+        "feesPayer": "0.0.10096785",
         "gasConsumed": 248195,
         "gasLimit": 253976,
         "gasUsed": 238595,
@@ -4462,6 +4624,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1740741189.513410000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740741189.513410000",
         "transactionId": "0.0.8313485-1740741167-623937002",
       },
@@ -4486,6 +4649,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1740741060.702187741",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1740741060.702187741",
         "transactionId": "0.0.8313485-1740741008-869170654",
       },
@@ -4510,6 +4674,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1740739638.887363715",
+        "feesPayer": "0.0.507737",
         "memo": "fromLeVtoLeL",
         "pagingToken": "1740739638.887363715",
         "transactionId": "0.0.507737-1740739585-266960243",
@@ -4535,6 +4700,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1755857525.720819000",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1755857525.720819000",
         "transactionId": "0.0.507737-1755857506-487122839",
       },
@@ -4559,6 +4725,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1760441684.201301000",
+        "feesPayer": "0.0.10006055",
         "pagingToken": "1760441684.201301000",
         "transactionId": "0.0.10006055-1760441665-655036606",
       },
@@ -4583,6 +4750,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1766063577.780237000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1766063577.780237000",
         "transactionId": "0.0.8313485-1766063534-415377401",
       },
@@ -4607,6 +4775,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1747132022.307489000",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1747132022.307489000",
         "transactionId": "0.0.507737-1747131999-789289940",
       },
@@ -4631,6 +4800,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1755865083.033236000",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1755865083.033236000",
         "transactionId": "0.0.507737-1755865061-762935115",
       },
@@ -4655,6 +4825,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1757929653.557852000",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1757929653.557852000",
         "transactionId": "0.0.507737-1757929611-191822644",
       },
@@ -4679,6 +4850,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1755785525.693277000",
+        "feesPayer": "0.0.8313485",
         "memo": "toto",
         "pagingToken": "1755785525.693277000",
         "transactionId": "0.0.8313485-1755785490-483918521",
@@ -4704,6 +4876,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1743601916.977125409",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1743601916.977125409",
         "transactionId": "0.0.8313485-1743601878-625294726",
       },
@@ -4728,6 +4901,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1757929013.916417000",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1757929013.916417000",
         "transactionId": "0.0.507737-1757928988-064153304",
       },
@@ -4752,6 +4926,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1755008519.962485000",
+        "feesPayer": "0.0.507737",
         "pagingToken": "1755008519.962485000",
         "transactionId": "0.0.507737-1755008487-226122597",
       },
@@ -4776,6 +4951,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1756718310.549818000",
+        "feesPayer": "0.0.1040977",
         "memo": "TOTO",
         "pagingToken": "1756718310.549818000",
         "transactionId": "0.0.1040977-1756718286-727919995",
@@ -4801,6 +4977,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1743089390.497908000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1743089390.497908000",
         "transactionId": "0.0.8313485-1743089342-930041667",
       },
@@ -4825,6 +5002,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1760435993.267662000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1760435993.267662000",
         "transactionId": "0.0.8313485-1760435970-171962056",
       },
@@ -4865,6 +5043,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "extra": {
         "associatedTokenId": "0.0.127877",
         "consensusTimestamp": "1766063457.188069000",
+        "feesPayer": "0.0.10096785",
         "pagingToken": "1766063457.188069000",
         "transactionId": "0.0.10096785-1766063415-917576241",
       },
@@ -4887,6 +5066,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1762974093.971287000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1762974093.971287000",
         "transactionId": "0.0.8313485-1762974074-601058452",
       },
@@ -4925,6 +5105,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
+        "feesPayer": "0.0.10096785",
         "gasConsumed": 248195,
         "gasLimit": 253976,
         "gasUsed": 238595,
@@ -4951,6 +5132,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHeight": 10,
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
+        "feesPayer": "0.0.10096785",
         "pagingToken": "1766059747.925585000",
         "transactionId": "0.0.10096785-1766059648-924913103",
       },
@@ -4975,6 +5157,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0.0.127877",
       "extra": {
         "consensusTimestamp": "1766063577.780237000",
+        "feesPayer": "0.0.8313485",
         "pagingToken": "1766063577.780237000",
         "transactionId": "0.0.8313485-1766063534-415377401",
       },
@@ -5001,6 +5184,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1765992619.916268000",
+        "feesPayer": "0.0.7305122",
         "gasConsumed": 271278,
         "gasLimit": 331284,
         "gasUsed": 265028,
@@ -5028,6 +5212,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
         "consensusTimestamp": "1766059747.925585000",
+        "feesPayer": "0.0.10096785",
         "gasConsumed": 248195,
         "gasLimit": 253976,
         "gasUsed": 238595,
