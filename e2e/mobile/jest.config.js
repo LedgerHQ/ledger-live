@@ -1,28 +1,19 @@
-import type { Config } from "jest";
-import type { ReporterOptions } from "jest-allure2-reporter";
-import { createRequire } from "node:module";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { compilerOptions } = require("./tsconfig.json");
+const {
+  getDeviceFirmwareVersion,
+  getSpeculosModel,
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+} = require("@ledgerhq/live-common/e2e/speculosAppVersion");
 
-// This file is loaded as ESM by Jest; typecheck uses CJS settings so import.meta is reported (TS1470).
-// @ts-expect-error - valid at runtime when Node loads this config as ESM
-const requireFromHere = createRequire(import.meta.url);
-const { compilerOptions } = requireFromHere("./tsconfig.json");
-
-// Load live-common e2e helper via require (same as tsconfig) so Node 24 is happy
-const { getDeviceFirmwareVersion, getSpeculosModel } = requireFromHere(
-  "@ledgerhq/live-common/e2e/speculosAppVersion",
-);
-
-function pathsToModuleNameMapper(
-  paths: Record<string, string[]>,
-  { prefix = "<rootDir>/" }: { prefix?: string } = {},
-): Record<string, string> {
-  const jestPaths: Record<string, string> = {};
+function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
+  const jestPaths = {};
   if (!paths) return jestPaths;
 
   Object.keys(paths).forEach(pathKey => {
     const pathEntry = paths[pathKey];
-    const pathValues: string[] = Array.isArray(pathEntry) ? pathEntry : [pathEntry];
-    pathValues.forEach((pathValue: string) => {
+    const pathValues = Array.isArray(pathEntry) ? pathEntry : [pathEntry];
+    pathValues.forEach(pathValue => {
       const jestKey = pathKey.replace(/\*$/, "(.*)");
       const jestValue = pathValue.replace(/\*$/, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
@@ -32,7 +23,7 @@ function pathsToModuleNameMapper(
   return jestPaths;
 }
 
-const jestAllure2ReporterOptions: ReporterOptions = {
+const jestAllure2ReporterOptions = {
   extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
@@ -57,10 +48,8 @@ const jestAllure2ReporterOptions: ReporterOptions = {
   }),
 };
 
-import type { DetoxAllure2AdapterOptions } from "detox-allure2-adapter";
-
 // Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
-const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
+const detoxAllure2AdapterOptions = {
   deviceLogs: false,
   deviceScreenshots: false,
   deviceVideos: false,
@@ -70,7 +59,7 @@ const detoxAllure2AdapterOptions: DetoxAllure2AdapterOptions = {
 
 const ESM_PACKAGES = ["ky", "@polkadot"].join("|");
 
-const config: Config = {
+const config = {
   rootDir: ".",
   maxWorkers: process.env.CI ? 3 : 1,
   transform: {
@@ -110,15 +99,12 @@ const config: Config = {
   setupFilesAfterEnv: ["<rootDir>/setup.ts"],
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
   testTimeout: 300_000,
-  reporters: [
-    "detox/runners/jest/reporter",
-    // ReporterOptions is compatible but Jest's Config type expects a looser reporter options type
-    ["jest-allure2-reporter", jestAllure2ReporterOptions as Record<string, unknown>], // eslint-disable-line @typescript-eslint/consistent-type-assertions
-  ],
+  reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
   testEnvironment: "<rootDir>/jest.environment.ts",
   testEnvironmentOptions: {
+    customConditions: ["node"],
     eventListeners: [
       "jest-metadata/environment-listener",
       "jest-allure2-reporter/environment-listener",
@@ -129,4 +115,4 @@ const config: Config = {
   resetModules: true,
 };
 
-export default config;
+module.exports = config;
