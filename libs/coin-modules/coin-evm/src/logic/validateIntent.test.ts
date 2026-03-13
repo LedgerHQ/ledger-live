@@ -30,7 +30,7 @@ import { validateIntent } from "./validateIntent";
 
 jest.mock("./computeGasLimit", () => ({
   ...jest.requireActual("./computeGasLimit"),
-  computeIntrinsicGasLimit: jest.fn().mockReturnValue(0n),
+  computeEIP7623GasLimit: jest.fn().mockReturnValue(0n),
 }));
 
 function legacyIntent(
@@ -490,9 +490,9 @@ describe("validateIntent", () => {
         });
 
         it("detects gas limit being too low in a tx with an error", async () => {
-          const intrinsicGasLimit = 21000n;
-          (computeGasLimitModule.computeIntrinsicGasLimit as jest.Mock).mockReturnValue(
-            intrinsicGasLimit,
+          const eip7623GasLimit = 21000n;
+          (computeGasLimitModule.computeEIP7623GasLimit as jest.Mock).mockReturnValue(
+            eip7623GasLimit,
           );
 
           const res = await validateIntent(
@@ -501,7 +501,7 @@ describe("validateIntent", () => {
             [{ value: 50n, asset: { type: "native" } }],
             {
               value: 0n,
-              parameters: { gasLimit: intrinsicGasLimit - 1n }, // min should be 21000
+              parameters: { gasLimit: eip7623GasLimit - 1n }, // min should be 21000
             },
           );
 
@@ -511,13 +511,13 @@ describe("validateIntent", () => {
             }),
           );
 
-          expect(computeGasLimitModule.computeIntrinsicGasLimit).toHaveBeenCalledTimes(1);
+          expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledTimes(1);
         });
 
         it("detects custom gas limit being too low in a tx with an error", async () => {
-          const intrinsicGasLimit = 21000n;
-          (computeGasLimitModule.computeIntrinsicGasLimit as jest.Mock).mockReturnValue(
-            intrinsicGasLimit,
+          const eip7623GasLimit = 21000n;
+          (computeGasLimitModule.computeEIP7623GasLimit as jest.Mock).mockReturnValue(
+            eip7623GasLimit,
           );
 
           const res = await validateIntent(
@@ -526,7 +526,7 @@ describe("validateIntent", () => {
             [{ value: 50n, asset: { type: "native" } }],
             {
               value: 0n,
-              parameters: { customGasLimit: intrinsicGasLimit - 1n },
+              parameters: { customGasLimit: eip7623GasLimit - 1n },
             },
           );
 
@@ -536,7 +536,7 @@ describe("validateIntent", () => {
             }),
           );
 
-          expect(computeGasLimitModule.computeIntrinsicGasLimit).toHaveBeenCalledTimes(1);
+          expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledTimes(1);
         });
 
         it("detects customGasLimit being lower than gasLimit with a warning", async () => {

@@ -9,15 +9,16 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { getNodeApi } from "../network/node";
-import { getErc20Data } from "./getErc20Data";
 import { buildStakingTransactionParams } from "../staking";
 import {
   ApiFeeData,
   ApiGasOptions,
   isNative,
-  TransactionTypes,
   TransactionLikeWithPreparedParams,
+  TransactionTypes,
 } from "../types";
+import { isEthAddress } from "../utils";
+import { getErc20Data } from "./getErc20Data";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -95,7 +96,7 @@ export { getErc20Data } from "./getErc20Data";
 export function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
   const data = intent.data?.value;
   if (Buffer.isBuffer(data) && data.length) return data;
-  return isNative(intent.asset) || !intent.recipient
+  return isNative(intent.asset) || !isEthAddress(intent.recipient)
     ? Buffer.from([])
     : getErc20Data(intent.recipient, intent.amount);
 }
