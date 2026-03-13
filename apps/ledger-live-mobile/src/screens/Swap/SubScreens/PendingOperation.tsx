@@ -16,21 +16,17 @@ import { PendingOperationParamList } from "../types";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
-
-function hasSwapTabRoute(
-  getState: () => ReturnType<PendingOperationParamList["navigation"]["getState"]> | undefined,
-) {
-  const routeNames = getState()?.routeNames;
-  return Array.isArray(routeNames) && routeNames.includes(ScreenName.SwapTab);
-}
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigation/navigateBackToSwapTab";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
   const { isEmbeddedSwap, sponsored } = route.params;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const syncAccounts = useSyncAllAccounts();
-  const supportsSwapTabRoute = hasSwapTabRoute(() => navigation.getState());
+  const supportsSwapTabRoute = hasSwapTabRoute(navigation.getState());
 
   const navigateToSwapForm = useCallback(() => {
     track("button_clicked", {
@@ -39,18 +35,11 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
       swapVersion: SWAP_VERSION,
     });
 
-    if (supportsSwapTabRoute) {
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: ScreenName.SwapTab }],
-        }),
-      );
-      return;
-    }
-
-    navigation.getParent()?.goBack();
-  }, [navigation, supportsSwapTabRoute]);
+    navigateBackToSwapTab({
+      navigation,
+      shouldDisplayWallet40MainNav,
+    });
+  }, [navigation, shouldDisplayWallet40MainNav]);
 
   useEffect(() => {
     navigation.setOptions({

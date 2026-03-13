@@ -23,6 +23,7 @@ import { QuickActionCta, UserQuickActionsState } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
 import useBuyDeviceAction from "LLM/features/Reborn/hooks/useBuyDeviceAction";
+import { useOpenSwap } from "LLM/features/Swap";
 
 const BUTTON_LOCATION = "quick_action";
 
@@ -52,6 +53,7 @@ export const useQuickActionsCtasViewModel = ({
 
   const { openDrawer: openTransferDrawer } = useTransferDrawerController();
   const handleBuyDeviceAction = useBuyDeviceAction();
+  const { handleOpenSwap } = useOpenSwap({ sourceScreenName: pageName });
 
   // Determine user state
   const userState: UserQuickActionsState = useMemo(() => {
@@ -80,8 +82,8 @@ export const useQuickActionsCtasViewModel = ({
       buttonLocation: BUTTON_LOCATION,
       page: pageName,
     });
-    navigation.navigate(NavigatorName.Swap);
-  }, [navigation, pageName]);
+    handleOpenSwap();
+  }, [handleOpenSwap, pageName]);
 
   const handleBuyPress = useCallback(() => {
     track("button_clicked", {

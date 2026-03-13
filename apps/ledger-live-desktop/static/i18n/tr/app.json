@@ -308,6 +308,7 @@
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
     "perps" : "Süresiz vadeli sözleşmeler",
+    "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "Önceki düğüm kimliği",
       "gasConsumed" : "Harcanan gas",
       "gasUsed" : "Kullanılan gas",
-      "gasLimit" : "Gas limiti"
+      "gasLimit" : "Gas limiti",
+      "functionId" : "İşlev Kimliği"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "Donanım yazılımını güncelle",
       "installUpdate" : "Güncellemeyi yükle",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "İşletim sistemi güncellemesi mevcut",
+            "manager" : "Ledger OS güncellemesi mevcut"
+          },
+          "cta" : "Güncelle"
+        },
         "warning" : "İşletim sistemi güncellemesi mevcut",
         "version" : "Sürüm {{latestFirmware}}",
         "cta" : "My Ledger'a Git",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "hesap seçin",
-      "addAccount" : "Yeni veya mevcut bir hesabı ekle"
+      "addAccount" : "Yeni veya mevcut bir hesabı ekle",
+      "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir."
     }
   },
   "customImage" : {
@@ -8017,6 +8027,18 @@
     "connect" : "Bağlan",
     "buyALedger" : "Ledger satın alın"
   },
+  "assets" : {
+    "cryptos" : "Kriptolar",
+    "stablecoins" : "Stabil coin'ler",
+    "columns" : {
+      "name" : "İsim",
+      "price" : "Fiyat",
+      "balance" : "Bakiye",
+      "value" : "Değer",
+      "trend" : "1G Trendi",
+      "trendTooltip" : "24 sa. bakiye değişikliği"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "%{{progress}}",
     "errorTryAgain" : "Güncelleme sırasında bir hata oluştu, tekrar deneyin",
     "installAndRelaunch" : "Güncellemeyi yükleyip yeniden başlatın"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Kolayca takas edin",
+        "description" : "Ledger cihazınızın sağladığı güvenle, portföy dağılımınızı istediğiniz zaman değiştirin"
+      },
+      "navigation" : {
+        "title" : "Her şey olması gereken yerde",
+        "description" : "My Ledger ve Keşfet sekmeleri artık en üstte. Takas ve Kart, daha hızlı erişim için yan menüye taşındı."
+      },
+      "actions" : {
+        "title" : "Piyasa hızında eylemler",
+        "description" : "Yeni banner ile piyasa trendlerini görün ve anında alım satım yapın."
+      }
+    },
+    "cta" : {
+      "continue" : "Devam",
+      "explore" : "Yeni portföyünüzü keşfedin"
+    }
   }
 }

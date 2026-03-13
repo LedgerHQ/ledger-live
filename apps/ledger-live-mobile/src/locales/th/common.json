@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "กำลังรีเฟรช: อัปเดตล่าสุด {{timeAgo}}",
+      "refreshingInitial" : "กำลังรีเฟรช...",
+      "upToDate" : "เป็นปัจจุบันแล้ว"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "มีการอัปเดตระบบปฏิบัติการที่พร้อมใช้งาน",
+          "manager" : "มีการอัปเดต Ledger OS ที่พร้อมใช้งาน"
+        },
+        "version" : "เวอร์ชัน {{firmwareVersion}}",
+        "cta" : "อัปเดต"
+      },
       "title" : "มีการอัปเดตระบบปฏิบัติการที่พร้อมใช้งาน",
       "descriptionDeviceName" : "แตะเพื่ออัปเดต “{{deviceName}}” เป็น OS เวอร์ชัน {{firmwareVersion}}",
       "descriptionProductName" : "แตะเพื่ออัปเดต {{productName}} เป็น OS เวอร์ชัน {{firmwareVersion}}"
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "ไม่พบสินทรัพย์",
     "accountCount_one" : "{{count}} บัญชี",
     "accountCount_other" : "{{count}} บัญชี",
+    "perpetualsBanner" : "ปัจจุบันรองรับเฉพาะ USDC บนเครือข่าย Arbitrum เท่านั้น",
     "errors" : {
       "title" : "การเชื่อมต่อล้มเหลว",
       "backend" : "เกิดข้อผิดพลาดในระบบของเรา โปรดลองอีกครั้งในภายหลัง",

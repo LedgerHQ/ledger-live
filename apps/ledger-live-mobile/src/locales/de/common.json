@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Aktualisierung – Letzte Aktualisierung {{timeAgo}}",
+      "refreshingInitial" : "Wird neu geladen...",
+      "upToDate" : "Du bist auf dem aktuellen Stand"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Betriebssystem-Update verfügbar",
+          "manager" : "Update für Ledger OS verfügbar"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Aktualisieren"
+      },
       "title" : "Betriebssystem-Update verfügbar",
       "descriptionDeviceName" : "Tippe hier, um {{deviceName}} auf Betriebssystemversion {{firmwareVersion}} zu aktualisieren.",
       "descriptionProductName" : "Tippe hier, um dein {{productName}}-Gerät auf Betriebssystemversion {{firmwareVersion}} zu aktualisieren."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "Keine Assets gefunden",
     "accountCount_one" : "{{count}} Konto",
     "accountCount_other" : "{{count}} Konten",
+    "perpetualsBanner" : "Derzeit nur mit USD Coin (USDC) auf der Arbitrum-Chain unterstützt.",
     "errors" : {
       "title" : "Verbindung fehlgeschlagen",
       "backend" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal.",

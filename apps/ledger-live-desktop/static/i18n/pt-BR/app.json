@@ -308,6 +308,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "perps" : "Perpétuos",
+    "home" : "Início",
     "refer" : "Indicar",
     "lend" : "Emprestar",
     "catalog" : "Explorar",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "ID do node anterior",
       "gasConsumed" : "Gás consumido",
       "gasUsed" : "Gás usado",
-      "gasLimit" : "Limite de gás"
+      "gasLimit" : "Limite de gás",
+      "functionId" : "ID da Função"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "Atualizar Firmware",
       "installUpdate" : "Instalar atualização",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "Atualização do OS disponível",
+            "manager" : "Atualização do Ledger OS disponível"
+          },
+          "cta" : "Atualizar"
+        },
         "warning" : "Atualização do OS disponível",
         "version" : "Versão {{latestFirmware}}",
         "cta" : "Ir para Minha Ledger",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "escolher conta",
-      "addAccount" : "Adicionar conta nova ou existente"
+      "addAccount" : "Adicionar conta nova ou existente",
+      "perpetualsBanner" : "Atualmente, só é compatível com USDC na cadeia Arbitrum."
     }
   },
   "customImage" : {
@@ -8017,6 +8027,18 @@
     "connect" : "Conectar",
     "buyALedger" : "Comprar uma Ledger"
   },
+  "assets" : {
+    "cryptos" : "Criptomoedas",
+    "stablecoins" : "Stablecoins",
+    "columns" : {
+      "name" : "Nome",
+      "price" : "Preço",
+      "balance" : "Saldo",
+      "value" : "Valor",
+      "trend" : "Variação 1D",
+      "trendTooltip" : "Alteração no saldo em 24 horas"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "Erro durante a atualização, tente novamente",
     "installAndRelaunch" : "Instale a atualização e reinicie"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Troque facilmente",
+        "description" : "Remaneje a alocação do seu portfólio a qualquer hora na segurança do seu dispositivo Ledger"
+      },
+      "navigation" : {
+        "title" : "Tudo em seu devido lugar",
+        "description" : "Minha Ledger e Explorar passaram para cima. Trocar e Cartão foram para a barra lateral, para dar um acesso mais rápido."
+      },
+      "actions" : {
+        "title" : "Ações na velocidade do mercado",
+        "description" : "Identifique tendências do mercado à vista com o novo banner e negocie na hora."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuar",
+      "explore" : "Explorar meu novo portfólio"
+    }
   }
 }
