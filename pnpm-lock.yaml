@@ -10931,6 +10931,46 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
 
+  shared/feature-flags:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      lodash:
+        specifier: 4.17.21
+        version: 4.17.21
+      semver:
+        specifier: 'catalog:'
+        version: 7.7.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/lodash':
+        specifier: 4.17.24
+        version: 4.17.24
+      '@types/semver':
+        specifier: 'catalog:'
+        version: 7.7.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
+
   tests/dummy-live-app:
     dependencies:
       '@ledgerhq/live-app-sdk':
@@ -19130,7 +19170,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -20143,6 +20183,9 @@ packages:
 
   '@types/lodash@4.17.21':
     resolution: {integrity: sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==}
+
+  '@types/lodash@4.17.24':
+    resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
 
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
@@ -30859,7 +30902,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -45499,7 +45541,7 @@ snapshots:
       '@dnd-kit/utilities': 3.2.2(react@19.0.0)
       '@emotion/react': 11.14.0(@types/react@19.0.14)(react@19.0.0)
       '@redux-devtools/core': 4.1.1(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)(redux@5.0.1)
-      '@types/lodash': 4.17.21
+      '@types/lodash': 4.17.24
       '@types/react': 19.0.14
       dateformat: 5.0.3
       hex-rgba: 1.0.2
@@ -45554,7 +45596,7 @@ snapshots:
       '@redux-devtools/core': 4.1.1(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)(redux@5.0.1)
       '@redux-devtools/ui': 2.0.0(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@types/react@19.0.14)(react@19.0.0))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)
-      '@types/lodash': 4.17.21
+      '@types/lodash': 4.17.24
       '@types/react': 19.0.14
       hex-rgba: 1.0.2
       immutable: 5.1.3
@@ -45625,6 +45667,15 @@ snapshots:
     transitivePeerDependencies:
       - react
       - react-redux
+
+  '@reduxjs/toolkit@2.11.2':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@standard-schema/utils': 0.3.0
+      immer: 11.1.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
 
   '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0)':
     dependencies:
@@ -49444,7 +49495,7 @@ snapshots:
 
   '@types/lodash.debounce@4.0.9':
     dependencies:
-      '@types/lodash': 4.17.21
+      '@types/lodash': 4.17.24
 
   '@types/lodash@4.17.0': {}
 
@@ -49455,6 +49506,8 @@ snapshots:
   '@types/lodash@4.17.18': {}
 
   '@types/lodash@4.17.21': {}
+
+  '@types/lodash@4.17.24': {}
 
   '@types/lodash@4.17.7': {}
 
@@ -64066,7 +64119,7 @@ snapshots:
 
   react-base16-styling@0.10.0:
     dependencies:
-      '@types/lodash': 4.17.21
+      '@types/lodash': 4.17.24
       color: 4.2.3
       csstype: 3.2.3
       lodash-es: 4.17.21
@@ -64198,7 +64251,7 @@ snapshots:
 
   react-json-tree@0.20.0(@types/react@19.0.14)(react@19.0.0):
     dependencies:
-      '@types/lodash': 4.17.21
+      '@types/lodash': 4.17.24
       '@types/react': 19.0.14
       react: 19.0.0
       react-base16-styling: 0.10.0
