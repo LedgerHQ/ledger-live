@@ -1,5 +1,5 @@
 import React from "react";
-import { render, LONG_TIMEOUT, waitForElementToBeRemoved } from "@tests/test-renderer";
+import { render, LONG_TIMEOUT, waitForElementToBeRemoved, waitFor } from "@tests/test-renderer";
 import { TestPages } from "./shared";
 import { TestIdPrefix, testIds } from "../TestScreens";
 
@@ -258,7 +258,9 @@ describe("QueuedDrawer", () => {
     await helpers.waitForMainScreenDisappear();
     expect(await findByText(drawerOnScreen1Text)).toBeVisible();
     await user.press(elements.closeButton());
-    helpers.expectDrawersClosed(drawerOnScreen1Text, drawer1Text, drawer2Text, drawer4Text);
+    await waitFor(() => {
+      helpers.expectDrawersClosed(drawerOnScreen1Text, drawer1Text, drawer2Text, drawer4Text);
+    });
     await user.press(elements.navigateBackButton());
     await helpers.expectBackOnMainScreen();
     await helpers.openDrawer1();
