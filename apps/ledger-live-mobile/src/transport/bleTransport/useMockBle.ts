@@ -73,21 +73,6 @@ const handleMockBleBridgeMessage = (msg: MockBleBridgeMessage) => {
   }
 };
 
-e2eBridgeClient.subscribe(msg => {
-  if (msg.type === "add") {
-    handleMockBleBridgeMessage({
-      type: "add",
-      payload: msg.payload,
-    });
-  }
-
-  if (msg.type === "importBle") {
-    handleMockBleBridgeMessage({
-      type: "importBle",
-    });
-  }
-});
-
 export const __testUtils = {
   emitMockBleBridgeMessage: handleMockBleBridgeMessage,
   resetMockBleScannedDevices: () => mockBleScannedDevices.next([]),
@@ -125,10 +110,25 @@ export const useMockBleDevicesScanning = (enabled: boolean): BleScanningState =>
     }
 
     setScannedDevices(mockBleScannedDevices.getValue());
-    const subscription = mockBleScannedDevices.subscribe(setScannedDevices);
+    const scannedDevicesSubscription = mockBleScannedDevices.subscribe(setScannedDevices);
+    const bridgeSubscription = e2eBridgeClient.subscribe(msg => {
+      if (msg.type === "add") {
+        handleMockBleBridgeMessage({
+          type: "add",
+          payload: msg.payload,
+        });
+      }
+
+      if (msg.type === "importBle") {
+        handleMockBleBridgeMessage({
+          type: "importBle",
+        });
+      }
+    });
 
     return () => {
-      subscription.unsubscribe();
+      scannedDevicesSubscription.unsubscribe();
+      bridgeSubscription.unsubscribe();
     };
   }, [enabled]);
 
