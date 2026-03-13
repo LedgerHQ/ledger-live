@@ -1,5 +1,5 @@
-import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import Transport from "@ledgerhq/hw-transport";
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import type Transport from "@ledgerhq/hw-transport";
 
 export const isDmkTransport = (
   transport: Transport,

@@ -45,17 +45,30 @@ export type CertificateInfo = {
   signature: string;
 };
 function hexToUint8Array(hex: string): Uint8Array {
+  if (hex.length % 2 !== 0) {
+    throw new Error(`Invalid hex string length: expected even length, got ${hex.length}`);
+  }
+  if (!/^[0-9a-fA-F]*$/.test(hex)) {
+    throw new Error("Invalid hex string content: only [0-9a-fA-F] characters are allowed");
+  }
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < bytes.length; i++) {
-    bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+    bytes[i] = Number.parseInt(hex.slice(i * 2, i * 2 + 2), 16);
   }
   return bytes;
 }
 
 const SIGNATURE_TAG = 0x15;
+const MAX_SIGNATURE_LENGTH = 0xff;
 export function convertCertificateToDeviceData(info: CertificateInfo): Uint8Array {
   const descriptorBytes = hexToUint8Array(info.descriptor);
   const signatureBytes = hexToUint8Array(info.signature);
+
+  if (signatureBytes.length > MAX_SIGNATURE_LENGTH) {
+    throw new Error(
+      `Signature too long: ${signatureBytes.length} bytes (maximum ${MAX_SIGNATURE_LENGTH})`,
+    );
+  }
 
   const result = new Uint8Array(descriptorBytes.length + 2 + signatureBytes.length);
   let offset = 0;

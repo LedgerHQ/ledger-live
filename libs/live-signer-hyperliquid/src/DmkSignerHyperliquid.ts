@@ -6,6 +6,7 @@ import {
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { SignActionsActionItem } from "@ledgerhq/device-signer-kit-hyperliquid/api/app-binder/SignActionsDeviceActionTypes.js";
+import { firstValueFrom, filter, map } from "rxjs";
 
 export type Action = SignActionsActionItem;
 export type Signature = {
@@ -20,7 +21,7 @@ export type DAError = SignActionsDAError;
  * DMK-based Hyperliquid signer using DMK signer-kit
  */
 export class DmkSignerHyperliquid {
-  private dmkSigner: SignerHyperliquid;
+  private readonly dmkSigner: SignerHyperliquid;
 
   /**
    * @param dmk - instance of Device Management Kit
@@ -45,14 +46,10 @@ export class DmkSignerHyperliquid {
       typeof error.originalError === "object" &&
       error.originalError !== null &&
       "errorCode" in error.originalError &&
-      typeof error.originalError.errorCode === "string"
+      typeof error.originalError.errorCode === "string" &&
+      error.originalError.errorCode === "6985"
     ) {
-      switch (error.originalError.errorCode) {
-        case "6985":
-          return new UserRefusedOnDevice();
-        default:
-          return new Error(error._tag);
-      }
+      return new UserRefusedOnDevice();
     } else {
       return new Error(error._tag);
     }
@@ -61,6 +58,9 @@ export class DmkSignerHyperliquid {
   /**
    * signs a Hyperliquid transaction via DMK.
    * @param path - BIP32 derivation path
+   * @param certificate - Partner certificate
+   * @param signedMetadata - Partner signed metadata
+   * @param actions - Actions to sign at once
    */
   async signActions(
     path: string,
@@ -74,21 +74,20 @@ export class DmkSignerHyperliquid {
       signedMetadata,
       actions,
     });
-    return new Promise<Signatures>((resolve, reject) => {
-      observable.subscribe({
-        next: state => {
+    return firstValueFrom(
+      observable.pipe(
+        filter(
+          state =>
+            state.status === DeviceActionStatus.Completed ||
+            state.status === DeviceActionStatus.Error,
+        ),
+        map(state => {
           if (state.status === DeviceActionStatus.Error) {
-            reject(this._mapError<SignActionsDAError>(state.error));
+            throw this._mapError(state.error);
           }
-          if (state.status === DeviceActionStatus.Completed) {
-            const signatures = state.output;
-            resolve(signatures);
-          }
-        },
-        error: err => {
-          reject(err);
-        },
-      });
-    });
+          return state.output;
+        }),
+      ),
+    );
   }
 }

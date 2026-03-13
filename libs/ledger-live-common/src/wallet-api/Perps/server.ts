@@ -5,7 +5,7 @@ import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { convertAction, type ActionWithNonce } from "./types";
 import { getAccountIdFromWalletAccountId } from "../converters";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
-import { getMainAccount, getParentAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
 import { AppResult } from "../../hw/actions/app";
 import { Device } from "../../hw/actions/types";
