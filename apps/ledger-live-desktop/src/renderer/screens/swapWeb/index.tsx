@@ -9,8 +9,8 @@ import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
+import logger from "~/renderer/logger";
 import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
-import { captureException } from "~/sentry/renderer";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
@@ -30,7 +30,7 @@ const Swap = () => {
       shouldLogAsSentryException: true,
       shouldGoBack: true,
     });
-    captureException(
+    logger.critical(
       new UnableToLoadSwapLiveError(
         "Failed to load swap live app using WebPlatformPlayer in SwapWeb",
       ),
