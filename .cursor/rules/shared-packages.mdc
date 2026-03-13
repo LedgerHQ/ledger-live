@@ -6,4 +6,4 @@ alwaysApply: false
 
 # Shared Packages
 
-Before creating or modifying any package under `shared/`, read `@shared/README.md` and follow its conventions for naming, structure, dependencies, and barrel exports.
+Before creating or modifying any package under `shared/`, read `shared/README.md` and follow its conventions for naming, structure, dependencies, and barrel exports.
