@@ -90,7 +90,6 @@ const AssetSelection = ({
     useBalanceDeps,
     balanceItem,
     assetsMap,
-    // TODO: Could add custom TAGS here, like :boosted: etc.
   };
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);

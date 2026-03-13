@@ -47,12 +47,14 @@ const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 type MockModularDrawerComponentProps = {
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  sortKey?: string;
   flow?: string;
 };
 
 const MockModularDrawerComponent = ({
   networksConfiguration,
   assetsConfiguration,
+  sortKey,
   flow = "integration_test",
 }: MockModularDrawerComponentProps) => {
   const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
@@ -63,9 +65,10 @@ const MockModularDrawerComponent = ({
         enableAccountSelection: withAccountSelection,
         flow,
         source: "modular_drawer_shared",
+        sortKey,
       });
     },
-    [openDrawer],
+    [openDrawer, sortKey],
   );
 
   return (
@@ -97,6 +100,7 @@ const MockModularDrawerComponent = ({
         onClose={closeDrawer}
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
+        sortKey={sortKey}
         onAccountSelected={() => {}}
       />
     </>

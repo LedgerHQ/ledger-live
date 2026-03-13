@@ -182,6 +182,19 @@ describe("useAssetsData", () => {
     expect(result.current.loadNext).toBeUndefined();
   });
 
+  it("should pass sortKey to the infinite query when provided", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+    });
+
+    renderHook(() => useAssetsData({ product: "lld", version: "1.0.0", sortKey: "earnTrending" }));
+
+    expect(mockuseGetAssetsDataInfiniteQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ sortKey: "earnTrending" }),
+      expect.anything(),
+    );
+  });
+
   it("should return undefined data when no pages exist", () => {
     mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
       ...defaultMockValues,

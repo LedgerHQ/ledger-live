@@ -325,4 +325,21 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible();
     expect(screen.getByText(/34,478.4 eth/i)).toBeVisible();
   });
+
+  it("should render assets in the order returned by the DADA API currenciesOrder", async () => {
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+      />,
+      mockedInitialState,
+    );
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    const allTickers = screen.getAllByTestId(/^asset-item-ticker-/i);
+    const tickerTexts = allTickers.map(el => el.textContent?.toLowerCase());
+    const ethIndex = tickerTexts.findIndex(t => t?.includes("eth"));
+    const btcIndex = tickerTexts.findIndex(t => t?.includes("btc"));
+    expect(ethIndex).toBeLessThan(btcIndex);
+  });
 });

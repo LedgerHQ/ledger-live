@@ -1,4 +1,5 @@
 import * as systemLocale from "~/helpers/systemLocale";
+import * as useAssetsDataModule from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import {
   ARB_ACCOUNT,
@@ -321,6 +322,84 @@ describe("ModularDialogFlowManager - Modules configuration", () => {
 
     expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible();
     expect(screen.getByText(/34,478.4 eth/i)).toBeVisible();
+  });
+
+  describe("customTitle configuration", () => {
+    it("should display assets.customTitle only on the asset selection screen", async () => {
+      const { user } = renderWithMockedCounterValuesProvider(
+        <ModularDialogFlowManager />,
+        createMockedInitialState({
+          dialogConfiguration: {
+            assets: {
+              customTitle: "Crowd favourites",
+            },
+          },
+        }),
+      );
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+      expect(screen.getAllByText(/crowd favourites/i)[0]).toBeVisible();
+      expect(screen.queryByText(/select asset/i)).toBeNull();
+
+      await user.click(screen.getByText(/ethereum/i));
+
+      expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
+      expect(screen.queryByText(/crowd favourites/i)).toBeNull();
+    });
+
+    it("should display networks.customTitle only on the network selection screen", async () => {
+      const { user } = renderWithMockedCounterValuesProvider(
+        <ModularDialogFlowManager />,
+        createMockedInitialState({
+          dialogConfiguration: {
+            networks: {
+              customTitle: "Pick a chain",
+            },
+          },
+        }),
+      );
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+      expect(screen.queryByText(/pick a chain/i)).toBeNull();
+      expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
+
+      await user.click(screen.getByText(/ethereum/i));
+
+      expect(screen.getAllByText(/pick a chain/i)[0]).toBeVisible();
+      expect(screen.queryByText(/select network/i)).toBeNull();
+    });
+  });
+
+  describe("sortKey configuration", () => {
+    it("should pass sortKey from dialogConfiguration to useAssetsData", async () => {
+      const spy = jest.spyOn(useAssetsDataModule, "useAssetsData");
+
+      renderWithMockedCounterValuesProvider(
+        <ModularDialogFlowManager />,
+        createMockedInitialState({
+          dialogConfiguration: {
+            sortKey: "earnTrending",
+          },
+        }),
+      );
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ sortKey: "earnTrending" }));
+      spy.mockRestore();
+    });
+
+    it("should not pass sortKey to useAssetsData when not configured to allow default sorting", async () => {
+      const spy = jest.spyOn(useAssetsDataModule, "useAssetsData");
+
+      renderWithMockedCounterValuesProvider(
+        <ModularDialogFlowManager />,
+        createMockedInitialState(),
+      );
+
+      await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ sortKey: undefined }));
+      spy.mockRestore();
+    });
   });
 
   describe("APY indicator appearance by region", () => {

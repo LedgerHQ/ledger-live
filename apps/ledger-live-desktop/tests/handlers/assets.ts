@@ -124,7 +124,7 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
     res.currenciesOrder.metaCurrencyIds.push("urn:crypto:meta-currency:usd_coin");
   }
 
-  return HttpResponse.json(res);
+  return res;
 };
 
 const handler = ({ request }: { request: Request }) => {
@@ -134,11 +134,17 @@ const handler = ({ request }: { request: Request }) => {
   if (categories === "stablecoins") return HttpResponse.json(mockStablecoinsResponse);
 
   const search = searchParams.get("search")?.toLowerCase().trim();
+  const sortKey = searchParams.get("sortKey");
 
   const currencyIds = searchParams.get("currencyIds")?.trim().toLowerCase().split(",") || [];
 
   if (currencyIds.length) {
-    return handleFilteredCurrencyIds(currencyIds);
+    const data = handleFilteredCurrencyIds(currencyIds);
+    if (sortKey) {
+      data.currenciesOrder.metaCurrencyIds.reverse();
+      data.currenciesOrder.key = sortKey;
+    }
+    return HttpResponse.json(data);
   }
 
   if (search) {
@@ -159,6 +165,17 @@ const handler = ({ request }: { request: Request }) => {
       },
     };
     return HttpResponse.json(response);
+  }
+
+  if (sortKey) {
+    return HttpResponse.json({
+      ...jsonResponse,
+      currenciesOrder: {
+        ...jsonResponse.currenciesOrder,
+        key: sortKey,
+        metaCurrencyIds: [...jsonResponse.currenciesOrder.metaCurrencyIds].reverse(),
+      },
+    });
   }
 
   return HttpResponse.json(jsonResponse);

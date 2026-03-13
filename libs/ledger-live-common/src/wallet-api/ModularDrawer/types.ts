@@ -9,6 +9,8 @@ export type ModularDrawerConfiguration = {
     rightElement?: string;
   };
   networks?: {
+    customTitle?: string;
+    customDescription?: string;
     rightElement?: string;
     leftElement?: string;
   };
@@ -37,6 +39,8 @@ export const EnhancedModularDrawerConfigurationSchema = z.object({
     .optional(),
   networks: z
     .object({
+      customTitle: z.string().optional(),
+      customDescription: z.string().optional(),
       leftElement: z.enum(networksLeftElementOptions).optional(),
       rightElement: z.enum(networksRightElementOptions).optional(),
     })

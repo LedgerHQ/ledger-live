@@ -9,6 +9,7 @@ const handler = ({ request }: { request: Request }) => {
   if (category === "stablecoin") return HttpResponse.json(mockStablecoinsResponse);
 
   const search = searchParams.get("search")?.toLowerCase().trim();
+  const sortKey = searchParams.get("sortKey");
 
   if (search) {
     const filteredEntries = Object.entries(mockData.cryptoAssets).filter(([, asset]) => {
@@ -24,10 +25,22 @@ const handler = ({ request }: { request: Request }) => {
       cryptoAssets: filteredCryptoAssets,
       currenciesOrder: {
         ...mockData.currenciesOrder,
-        metaCurrencyIds: matchingMetaCurrencyIds,
+        key: sortKey || mockData.currenciesOrder.key,
+        metaCurrencyIds: sortKey ? [...matchingMetaCurrencyIds].reverse() : matchingMetaCurrencyIds,
       },
     };
     return HttpResponse.json(response);
+  }
+
+  if (sortKey) {
+    return HttpResponse.json({
+      ...mockData,
+      currenciesOrder: {
+        ...mockData.currenciesOrder,
+        key: sortKey,
+        metaCurrencyIds: [...mockData.currenciesOrder.metaCurrencyIds].reverse(),
+      },
+    });
   }
 
   return HttpResponse.json(mockData);

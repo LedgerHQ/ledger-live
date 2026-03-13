@@ -238,6 +238,139 @@ describe("ModularDrawer modules integration", () => {
     expect(getByText(/23.4663 ETH/i)).toBeVisible();
   });
 
+  describe("customTitle configuration", () => {
+    const lumenEnabledFF = {
+      ...mockedFF,
+      lwmWallet40: { enabled: true },
+    };
+
+    it("should display assets.customTitle only on the asset selection screen", async () => {
+      const { getByText, queryByText, user } = render(
+        <ModularDrawerSharedNavigator
+          assetsConfiguration={{
+            customTitle: "Crowd favourites",
+          }}
+        />,
+        {
+          ...INITIAL_STATE,
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              overriddenFeatureFlags: lumenEnabledFF,
+            },
+          }),
+        },
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      expect(getByText(/crowd favourites/i)).toBeVisible();
+      expect(queryByText(/select asset/i)).toBeNull();
+    });
+
+    it("should not display assets.customTitle on the network selection screen", async () => {
+      const { getByText, queryByText, user } = render(
+        <ModularDrawerSharedNavigator
+          assetsConfiguration={{
+            customTitle: "Crowd favourites",
+          }}
+        />,
+        {
+          ...INITIAL_STATE,
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              overriddenFeatureFlags: lumenEnabledFF,
+            },
+          }),
+        },
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      await user.press(getByText(/ethereum/i));
+      advanceTimers();
+      expect(getByText(/select network/i)).toBeVisible();
+      expect(queryByText(/crowd favourites/i)).toBeNull();
+    });
+
+    it("should display networks.customTitle only on the network selection screen", async () => {
+      const { getByText, queryByText, user } = render(
+        <ModularDrawerSharedNavigator
+          networksConfiguration={{
+            customTitle: "Pick a chain",
+          }}
+        />,
+        {
+          ...INITIAL_STATE,
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              overriddenFeatureFlags: lumenEnabledFF,
+            },
+          }),
+        },
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      expect(queryByText(/pick a chain/i)).toBeNull();
+      await user.press(getByText(/ethereum/i));
+      advanceTimers();
+      expect(getByText(/pick a chain/i)).toBeVisible();
+      expect(queryByText(/select network/i)).toBeNull();
+    });
+  });
+
+  describe("sortKey configuration", () => {
+    it("should render assets in default market cap order without sortKey", async () => {
+      const { getByText, getAllByText, user } = render(<ModularDrawerSharedNavigator />, {
+        ...INITIAL_STATE,
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: mockedFF,
+          },
+        }),
+      });
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      expect(getByText(/bitcoin/i)).toBeVisible();
+      const allAssets = getAllByText(/bitcoin|ethereum/i);
+      const firstAssetText = allAssets[0].props?.children?.toString().toLowerCase();
+      expect(firstAssetText).toContain("bitcoin");
+    });
+
+    it("should render assets in reversed order when sortKey is provided", async () => {
+      const { getByText, getAllByText, user } = render(
+        <ModularDrawerSharedNavigator sortKey="earnTrending" />,
+        {
+          ...INITIAL_STATE,
+          overrideInitialState: (state: State) => ({
+            ...state,
+            settings: {
+              ...state.settings,
+              overriddenFeatureFlags: mockedFF,
+            },
+          }),
+        },
+      );
+
+      await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+      advanceTimers();
+      const allAssets = getAllByText(/bitcoin|ethereum/i);
+      const lastAssetText = allAssets[allAssets.length - 1].props?.children
+        ?.toString()
+        .toLowerCase();
+      expect(lastAssetText).toContain("bitcoin");
+    });
+  });
+
   describe("APY indicator appearance by region", () => {
     afterEach(() => {
       jest.mocked(getStakeLabelHelpers.getCountryLocale).mockReset();

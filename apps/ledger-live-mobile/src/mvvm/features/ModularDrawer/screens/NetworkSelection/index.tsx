@@ -109,7 +109,12 @@ const NetworkSelection = ({
         formatNetworkConfig
       />
       {useLumenBottomSheet && (
-        <BottomSheetHeader spacing title={t("modularDrawer.selectNetwork")} appearance="expanded" />
+        <BottomSheetHeader
+          spacing
+          title={networksConfiguration?.customTitle || t("modularDrawer.selectNetwork")}
+          appearance="expanded"
+          description={networksConfiguration?.customDescription}
+        />
       )}
       <BottomSheetFlatList
         scrollEnabled={true}

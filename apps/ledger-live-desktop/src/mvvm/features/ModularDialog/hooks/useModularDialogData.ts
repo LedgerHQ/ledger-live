@@ -31,8 +31,10 @@ export function useModularDialogData() {
   const sortKey = useSelector(modularDialogSortKeySelector);
   const dialogConfiguration = useSelector(modularDialogConfigurationSelector);
 
-  const customTitle = dialogConfiguration?.assets?.customTitle;
-  const customDescription = dialogConfiguration?.assets?.customDescription;
+  const assetsCustomTitle = dialogConfiguration?.assets?.customTitle;
+  const assetsCustomDescription = dialogConfiguration?.assets?.customDescription;
+  const networksCustomTitle = dialogConfiguration?.networks?.customTitle;
+  const networksCustomDescription = dialogConfiguration?.networks?.customDescription;
 
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,
@@ -88,7 +90,9 @@ export function useModularDialogData() {
     assetsSorted,
     sortedCryptoCurrencies,
     loadNext,
-    customTitle,
-    customDescription,
+    assetsCustomTitle,
+    assetsCustomDescription,
+    networksCustomTitle,
+    networksCustomDescription,
   };
 }

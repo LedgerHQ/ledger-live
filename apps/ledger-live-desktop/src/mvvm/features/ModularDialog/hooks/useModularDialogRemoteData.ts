@@ -1,4 +1,4 @@
-import { ModularDialogStep } from "../types";
+import { MODULAR_DIALOG_STEP, ModularDialogStep } from "../types";
 import { useModularDialogData } from "./useModularDialogData";
 import { useModularDialogFlowState } from "./useModularDialogFlowState";
 import { useModularDialogBackButton } from "./useModularDialogBackButton";
@@ -25,9 +25,25 @@ export function useModularDialogRemoteData({
     loadingStatus,
     loadNext,
     assetsSorted,
-    customTitle,
-    customDescription,
+    assetsCustomTitle,
+    assetsCustomDescription,
+    networksCustomTitle,
+    networksCustomDescription,
   } = useModularDialogData();
+
+  const customTitle =
+    currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION
+      ? assetsCustomTitle
+      : currentStep === MODULAR_DIALOG_STEP.NETWORK_SELECTION
+        ? networksCustomTitle
+        : undefined;
+
+  const customDescription =
+    currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION
+      ? assetsCustomDescription
+      : currentStep === MODULAR_DIALOG_STEP.NETWORK_SELECTION
+        ? networksCustomDescription
+        : undefined;
 
   const { assetsToDisplay } = useAssetSelection(sortedCryptoCurrencies);
 
