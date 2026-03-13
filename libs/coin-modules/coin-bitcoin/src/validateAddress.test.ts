@@ -24,7 +24,7 @@ describe("validateAddress", () => {
   it.each([true, false])(
     "should call isValidAddress from Bitcoin and return expected value (%s)",
     async (expectedValue: boolean) => {
-      mockedIsValidAddress.mockResolvedValueOnce(expectedValue);
+      mockedIsValidAddress.mockReturnValueOnce(expectedValue);
 
       const address = "some random address";
       const parameters = {

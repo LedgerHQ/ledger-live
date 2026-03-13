@@ -22,7 +22,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount();
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -42,7 +42,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount({ freshAddress: customAddress });
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -57,7 +57,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount({ freshAddressPath: customPath });
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -68,10 +68,11 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureConcordiumAccount({ concordiumResources: undefined });
+      const account = createFixtureConcordiumAccount();
+      delete (account as { concordiumResources?: unknown }).concordiumResources;
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -90,7 +91,7 @@ describe("receive", () => {
       });
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -104,7 +105,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount();
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       let completed = false;
       await new Promise<void>((resolve, reject) => {
         observable.subscribe({
@@ -127,7 +128,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount();
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -148,7 +149,7 @@ describe("receive", () => {
       } as any;
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
 
       // THEN
       await expect(firstValueFrom(observable)).rejects.toThrow(errorMessage);

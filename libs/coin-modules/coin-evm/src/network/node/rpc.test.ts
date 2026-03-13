@@ -979,15 +979,14 @@ describe("EVM Family", () => {
         let capturedTransaction: { from?: string; to?: string } | undefined;
         jest
           .spyOn(JsonRpcProvider.prototype as any, "_perform")
-          .mockImplementation(
-            async (req: { method: string; transaction?: typeof capturedTransaction }) => {
-              if (req.method === "estimateGas") {
-                capturedTransaction = req.transaction;
-                return 21000n;
-              }
-              return null;
-            },
-          );
+          .mockImplementation(async (arg: unknown) => {
+            const req = arg as { method: string; transaction?: typeof capturedTransaction };
+            if (req.method === "estimateGas") {
+              capturedTransaction = req.transaction;
+              return 21000n;
+            }
+            return null;
+          });
 
         await RPC_API.getGasEstimation(account, {
           recipient: EIP1191_RECIPIENT,

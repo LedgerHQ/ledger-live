@@ -2,6 +2,8 @@ import BigNumber from "bignumber.js";
 import {
   withClient,
   getConsensusInfo,
+  getBlockInfoByHash,
+  getBlocksAtHeight,
   getAccountsByPublicKey,
   getAccountBalance,
   getAccountNonce,
@@ -132,6 +134,47 @@ describe("proxyClient", () => {
         expect.objectContaining({
           method: "GET",
           url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/consensusInfo",
+        }),
+      );
+    });
+  });
+
+  describe("getBlockInfoByHash", () => {
+    it("should fetch block info by hash", async () => {
+      const mockResponse = {
+        blockHash: "abc123",
+        blockHeight: 1000,
+        blockSlotTime: "2024-01-15T10:00:00.000Z",
+        blockParent: "parent123",
+        finalized: true,
+        transactionCount: 5,
+      };
+      mockNetwork.mockResolvedValue({ data: mockResponse });
+
+      const result = await getBlockInfoByHash(currencyId, "abc123");
+
+      expect(result).toEqual(mockResponse);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/blockInfo/abc123",
+        }),
+      );
+    });
+  });
+
+  describe("getBlocksAtHeight", () => {
+    it("should fetch block hashes at height", async () => {
+      const mockResponse = ["abc123", "def456"];
+      mockNetwork.mockResolvedValue({ data: mockResponse });
+
+      const result = await getBlocksAtHeight(currencyId, 1000);
+
+      expect(result).toEqual(mockResponse);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/blocksAtHeight/1000",
         }),
       );
     });

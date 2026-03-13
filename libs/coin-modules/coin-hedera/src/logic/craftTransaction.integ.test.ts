@@ -27,7 +27,10 @@ describe("craftTransaction", () => {
         type: "erc20",
         gasLimit: BigInt(100000),
       },
-    } satisfies Omit<TransactionIntent<HederaMemo, HederaTxData>, "recipient">;
+    } satisfies Omit<
+      TransactionIntent<HederaMemo, Extract<HederaTxData, { type: "erc20" }>>,
+      "recipient"
+    >;
 
     const txIntentAccountId = {
       ...txIntent,
@@ -77,7 +80,10 @@ describe("craftTransaction", () => {
         type: "erc20",
         gasLimit: BigInt(100000),
       },
-    } satisfies Omit<TransactionIntent<HederaMemo, HederaTxData>, "recipient">;
+    } satisfies Omit<
+      TransactionIntent<HederaMemo, Extract<HederaTxData, { type: "erc20" }>>,
+      "recipient"
+    >;
 
     const txIntentAccountId = {
       ...txIntent,

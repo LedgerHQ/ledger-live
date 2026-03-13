@@ -86,11 +86,14 @@ describe("getBlock", () => {
     expect(result.transactions[0].hash).toBe("0xtx1");
 
     // Check native transfer operations (tx1 has value: 1000)
-    const tx1NativeOps = result.transactions[0].operations.filter(op => op.asset.type === "native");
+    const tx1Operations = result.transactions[0].operations as Array<{
+      asset: { type: string; assetReference?: string };
+    }>;
+    const tx1NativeOps = tx1Operations.filter(op => op.asset.type === "native");
     expect(tx1NativeOps).toHaveLength(2); // sender and receiver
 
     // Check ERC20 transfer operations (tx1 has one ERC20 transfer)
-    const tx1Erc20Ops = result.transactions[0].operations.filter(op => op.asset.type === "erc20");
+    const tx1Erc20Ops = tx1Operations.filter(op => op.asset.type === "erc20");
     expect(tx1Erc20Ops).toHaveLength(2); // sender and receiver
     expect(tx1Erc20Ops[0].asset.assetReference).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 

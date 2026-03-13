@@ -64,8 +64,8 @@ const createFetchWithLimit =
       address: account.freshAddress,
       accountId: account.id,
       fromBlock: 0,
-      limit,
       sort,
+      ...(limit !== undefined ? { limit } : {}),
     });
   };
 
@@ -194,6 +194,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -426,6 +427,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -664,6 +666,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -900,6 +903,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -1149,8 +1153,8 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
-          limit,
           sort,
+          ...(limit !== undefined ? { limit } : {}),
         });
       };
 
@@ -1269,6 +1273,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -1710,6 +1715,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
       expect(response).toEqual({
         operations: [],
@@ -1857,9 +1863,9 @@ describe("EVM Family", () => {
 
     // Helper to extract result summary for assertions
     const summarize = (result: {
-      lastCoinOperations: { blockHeight?: number }[];
-      lastTokenOperations: { blockHeight?: number }[];
-      lastInternalOperations: { blockHeight?: number }[];
+      lastCoinOperations: { blockHeight?: number | null | undefined }[];
+      lastTokenOperations: { blockHeight?: number | null | undefined }[];
+      lastInternalOperations: { blockHeight?: number | null | undefined }[];
       nextPagingToken?: string;
     }): { ops: string[]; pagingState: PagingState | undefined } => {
       const tagged = [

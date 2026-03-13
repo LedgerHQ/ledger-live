@@ -222,7 +222,8 @@ describe("listOperations", () => {
       forward: true,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(1, "src", baseOptions);
-    await api.listOperations("src", { minHeight: 0, cursor: token, order: "asc" });
+    expect(token).toEqual(expect.any(String));
+    await api.listOperations("src", { minHeight: 0, cursor: token as string, order: "asc" });
     const optionsWithToken = {
       ...baseOptions,
       marker: defaultMarker,

@@ -42,17 +42,26 @@ describe("Sui Api", () => {
     async function testListOperations(order: "asc" | "desc" | undefined) {
       const { items: operations1, next: token1 } = await module.listOperations(binance, {
         minHeight: 0,
-        order,
+        ...(order ? { order } : {}),
       });
 
       expect(operations1.length).toBeGreaterThan(2);
-      expect(token1.length).toBeGreaterThan(0);
+      expect(token1).toEqual(expect.any(String));
+      expect(token1!.length).toBeGreaterThan(0);
 
-      const { items: operations2 } = await module.listOperations(binance, {
-        minHeight: 0,
-        cursor: token1,
-        order,
-      });
+      const { items: operations2 } = await module.listOperations(
+        binance,
+        token1
+          ? {
+              minHeight: 0,
+              cursor: token1,
+              ...(order ? { order } : {}),
+            }
+          : {
+              minHeight: 0,
+              ...(order ? { order } : {}),
+            },
+      );
       expect(operations2.length).toBeGreaterThan(2);
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
 
@@ -99,7 +108,7 @@ describe("Sui Api", () => {
           const { items, next } = await module.listOperations(address, {
             minHeight: 0,
             order,
-            cursor,
+            ...(cursor ? { cursor } : {}),
           });
 
           pageCount += 1;

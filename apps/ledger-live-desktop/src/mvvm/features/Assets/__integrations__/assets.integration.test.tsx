@@ -94,7 +94,7 @@ describe("Assets", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("should navigate to /assets when section header is clicked with many items", async () => {
+  it("should navigate to /cryptos when section header is clicked with many items", async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...onboardedState, accounts: MANY_CRYPTO_ACCOUNTS },
     });
@@ -104,7 +104,7 @@ describe("Assets", () => {
     });
 
     await user.click(screen.getByTestId("cryptos-section-header-button"));
-    expect(mockNavigate).toHaveBeenCalledWith("/assets");
+    expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
   it("should show placeholder assets when user has no accounts", async () => {

@@ -12,7 +12,11 @@ import {
 import { pathToBuffer } from "./utils";
 import { AccountAddress } from "./address";
 import { TransactionType } from "./types";
-import type { CredentialDeploymentTransaction, Transaction } from "./types";
+import type {
+  CredentialDeploymentTransaction,
+  Transaction,
+  TransferWithMemoPayload,
+} from "./types";
 
 describe("serialization", () => {
   describe("pathToBuffer", () => {
@@ -1025,7 +1029,9 @@ describe("serialization", () => {
       expect(deserialized.type).toBe(TransactionType.TransferWithMemo);
       expect(deserialized.header.nonce).toBe(99n);
       expect(deserialized.payload.amount).toBe(10000n);
-      expect(deserialized.payload.memo?.toString("utf-8")).toBe("Test memo");
+      expect((deserialized.payload as TransferWithMemoPayload).memo?.toString("utf-8")).toBe(
+        "Test memo",
+      );
     });
 
     it("should throw error for invalid buffer", () => {
@@ -1089,7 +1095,9 @@ describe("serialization", () => {
       expect(deserialized.type).toBe(TransactionType.TransferWithMemo);
       expect(deserialized.header.nonce).toBe(456n);
       expect(deserialized.payload.amount).toBe(12000n);
-      expect(deserialized.payload.memo?.toString("utf-8")).toBe("Roundtrip test");
+      expect((deserialized.payload as TransferWithMemoPayload).memo?.toString("utf-8")).toBe(
+        "Roundtrip test",
+      );
     });
   });
 

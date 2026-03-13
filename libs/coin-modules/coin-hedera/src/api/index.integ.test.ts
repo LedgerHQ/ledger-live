@@ -119,7 +119,7 @@ describe("createApi", () => {
           type: "erc20",
           gasLimit: 100n,
         },
-      });
+      } as any);
 
       const rawTx = ContractExecuteTransaction.fromBytes(Buffer.from(hex, "hex"));
       expect(rawTx).toBeInstanceOf(ContractExecuteTransaction);
@@ -953,12 +953,12 @@ describe("createApi", () => {
 
         const { items: page1, next: pagingToken1 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: initialCursor, limit, order },
+          { minHeight, limit, order, ...(initialCursor ? { cursor: initialCursor } : {}) },
         );
 
         const { items: page2, next: pagingToken2 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: pagingToken1, limit, order },
+          { minHeight, limit, order, ...(pagingToken1 ? { cursor: pagingToken1 } : {}) },
         );
 
         const firstPage1Timestamp = page1[0]?.tx?.date;

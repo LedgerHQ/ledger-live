@@ -16,13 +16,15 @@ import {
 } from "./fixtures/helpers.fixture";
 
 // Module-level mock for getStakeAccounts
-const actualGetStakeAccounts = jest.requireActual(
-  "../network/chain/stake-activation/rpc",
-).getStakeAccounts;
-const mockGetStakeAccounts = jest.fn(actualGetStakeAccounts);
+type GetStakeAccounts = typeof import("../network/chain/stake-activation/rpc").getStakeAccounts;
+const actualGetStakeAccounts = jest.requireActual("../network/chain/stake-activation/rpc")
+  .getStakeAccounts as GetStakeAccounts;
+const mockGetStakeAccounts = jest.fn<ReturnType<GetStakeAccounts>, Parameters<GetStakeAccounts>>(
+  actualGetStakeAccounts,
+);
 jest.mock("../network/chain/stake-activation/rpc", () => ({
   ...jest.requireActual("../network/chain/stake-activation/rpc"),
-  getStakeAccounts: (...args: unknown[]) => mockGetStakeAccounts(...args),
+  getStakeAccounts: (...args: Parameters<GetStakeAccounts>) => mockGetStakeAccounts(...args),
 }));
 
 describe("Scan account", () => {

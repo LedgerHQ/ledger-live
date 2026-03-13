@@ -1,4 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import etherscanExplorer from "../network/explorer/etherscan";
@@ -524,8 +525,8 @@ describe("listOperations", () => {
       const getOperationsSpy = buildOperationsSpy(etherscanExplorer.explorerApi);
       const { items: result } = await listOperations(currency, address, {
         minHeight: 0,
-        limit,
-        order,
+        ...(limit !== undefined ? { limit } : {}),
+        ...(order !== undefined ? { order } : {}),
       });
       expect(result.length).toBeGreaterThan(1);
 
@@ -548,7 +549,7 @@ describe("listOperations", () => {
 
   it("should not enrich feePayer with ambiguous sender", async () => {
     const address = "address";
-    const ambiguousParentSenders = {
+    const ambiguousParentSenders: Operation = {
       id: "coin-op-1",
       accountId: "",
       type: "IN",
@@ -564,7 +565,7 @@ describe("listOperations", () => {
       hasFailed: false,
       extra: {},
     };
-    const relatedTokenOp = {
+    const relatedTokenOp: Operation = {
       ...ambiguousParentSenders, // inherit parent properties
       id: "token-op-1",
       accountId: "",
@@ -575,7 +576,7 @@ describe("listOperations", () => {
       value: new BigNumber(1),
       extra: {},
     };
-    const relatedInternalOp = {
+    const relatedInternalOp: Operation = {
       ...ambiguousParentSenders, // inherit parent properties
       id: "internal-op-1",
       accountId: "",

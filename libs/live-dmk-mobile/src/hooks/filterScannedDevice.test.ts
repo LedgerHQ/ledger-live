@@ -9,7 +9,6 @@ describe("filterScannedDevice", () => {
     deviceName: "Test Device",
     wired: false,
     modelId: DeviceModelId.nanoX,
-    isAlreadyKnown: false,
   };
 
   const mockDevice2: ScannedDevice = {
@@ -17,7 +16,6 @@ describe("filterScannedDevice", () => {
     deviceName: "Test Device 2",
     wired: true,
     modelId: DeviceModelId.nanoS,
-    isAlreadyKnown: true,
   };
 
   const mockDevice3: ScannedDevice = {
@@ -25,7 +23,6 @@ describe("filterScannedDevice", () => {
     deviceName: "Test Device 3",
     wired: false,
     modelId: DeviceModelId.stax,
-    isAlreadyKnown: false,
   };
 
   describe("when no filters are provided", () => {

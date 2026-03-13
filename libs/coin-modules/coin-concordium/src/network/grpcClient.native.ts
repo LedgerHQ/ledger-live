@@ -8,7 +8,6 @@
  */
 import type {
   Block,
-  BlockInfo,
   Operation,
   ListOperationsOptions,
   Page,
@@ -26,13 +25,6 @@ export async function withClient<T>(
   _retries?: number,
 ): Promise<T> {
   throw new Error("gRPC client is not available in React Native");
-}
-
-export async function getBlockInfoByHeight(
-  _currencyId: string,
-  _height: number,
-): Promise<BlockInfo> {
-  throw new Error("gRPC getBlockInfoByHeight() method is not available in React Native");
 }
 
 export async function getBlockByHeight(_currencyId: string, _height: number): Promise<Block> {

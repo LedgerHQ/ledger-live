@@ -973,10 +973,10 @@ describe("Staking Operations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             sender: senderAddress,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: sponsorAddress,
             },
           },
@@ -1240,7 +1240,7 @@ describe("getOperations filtering logic", () => {
   beforeEach(() => {
     mockLoadOperations.mockReset();
     // Mock loadOperations to return different data based on operation type
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: [
@@ -1287,7 +1287,7 @@ describe("getOperations filtering logic", () => {
 
   test("should apply timestamp filter when sent operations reach limit", async () => {
     // Mock to return enough sent operations to reach limit
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
@@ -1320,7 +1320,7 @@ describe("getOperations filtering logic", () => {
 
   test("should apply timestamp filter when received operations reach limit", async () => {
     // Mock to return enough received operations to reach limit
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: [
@@ -1355,7 +1355,7 @@ describe("getOperations filtering logic", () => {
 
   test("should apply timestamp filter when both operations reach limit", async () => {
     // Mock to return enough operations to reach limit for both types
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
@@ -1389,7 +1389,7 @@ describe("getOperations filtering logic", () => {
 
   test("should handle null/undefined timestampMs values", async () => {
     // Mock to return operations with null timestamps and reach limit
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: [
@@ -1425,7 +1425,7 @@ describe("getOperations filtering logic", () => {
 
   test("should maintain chronological order after filtering", async () => {
     // Mock to return operations that reach limit
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
@@ -1453,7 +1453,7 @@ describe("getOperations filtering logic", () => {
 
   test("should handle empty operations arrays", async () => {
     // Mock to return empty arrays
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async () => {
       return { operations: [], cursor: null };
     });
 
@@ -1464,7 +1464,7 @@ describe("getOperations filtering logic", () => {
 
   test("should handle mixed empty and non-empty operations", async () => {
     // Mock to return only OUT operations
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: [
@@ -1487,7 +1487,7 @@ describe("getOperations filtering logic", () => {
 
   test("should handle operations with same timestamps", async () => {
     // Mock to return operations with same timestamps and reach limit
-    mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
+    mockLoadOperations.mockImplementation(async ({ type }) => {
       if (type === "OUT") {
         return {
           operations: Array.from(
@@ -2772,10 +2772,10 @@ describe("filterOperations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             sender: senderAddress,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: sponsorAddress,
             },
           },
@@ -2794,9 +2794,9 @@ describe("filterOperations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: undefined,
             },
           },
@@ -2807,9 +2807,9 @@ describe("filterOperations", () => {
         transaction: {
           ...mockTransaction.transaction,
           data: {
-            ...mockTransaction.transaction.data,
+            ...mockTransaction.transaction?.data,
             gasData: {
-              ...mockTransaction.transaction.data.gasData,
+              ...mockTransaction.transaction?.data?.gasData,
               owner: "",
             },
           },

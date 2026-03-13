@@ -92,7 +92,7 @@ describe("acceptOffer", () => {
   } as unknown as CantonSigner;
 
   const mockSignerContext: SignerContext<CantonSigner> = jest.fn(
-    async (deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
+    async (_deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
       return callback(mockSigner);
     },
   ) as unknown as SignerContext<CantonSigner>;

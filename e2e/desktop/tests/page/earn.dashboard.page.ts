@@ -54,11 +54,14 @@ export class EarnPage extends WebViewAppPage {
     }
   }
 
-  @step("Click on stake button for $1")
-  async clickStakeCurrencyButton(account: string) {
+  @step("Click on stake button")
+  async clickStakeCurrencyButton(account: Account) {
     const webview = await this.getWebView();
-    const row = webview.locator("tr", { hasText: `${account}` });
-    await row.getByRole("button", { name: "Earn" }).first().click();
+    const row = webview.getByRole("row", {
+      // include ticker in case tokens also exist on the account (eg Ethereum with USDC)
+      name: `${account.currency.ticker} ${account.accountName}`,
+    });
+    await row.getByRole("button", { name: "Earn" }).click();
   }
 
   @step("Verify rewards potential is visible")

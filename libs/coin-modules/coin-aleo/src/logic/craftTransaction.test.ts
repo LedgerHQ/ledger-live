@@ -17,8 +17,8 @@ const mockIntent: TransactionIntent = {
   sender: "aleo1sender",
   recipient: "aleo1recipient",
 };
-const mockMappedIntent = { mapped: "intent" };
-const mockSdkResponse = { foo: "bar" };
+const mockMappedIntent = { mapped: "intent" } as any;
+const mockSdkResponse = { foo: "bar" } as any;
 const mockSerializedTx = "7b227478223a2273657269616c697a6564227d";
 
 describe("craftTransaction", () => {

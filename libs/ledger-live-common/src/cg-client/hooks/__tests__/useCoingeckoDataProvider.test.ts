@@ -28,19 +28,23 @@ const mockUseGetSupportedCounterCurrenciesQuery = jest.mocked(
 );
 const mockUseGetCurrencyChartDataQuery = jest.mocked(useGetCurrencyChartDataQuery);
 
-const mockQueryReturn = (data?: unknown) =>
-  ({ data, isLoading: !data, isSuccess: !!data }) as ReturnType<
-    | typeof useGetSupportedCoinsListQuery
-    | typeof useGetSupportedCounterCurrenciesQuery
-    | typeof useGetCurrencyChartDataQuery
-  >;
+const mockQueryReturn = <TQuery extends (...args: any[]) => any>(
+  data?: ReturnType<TQuery>["data"],
+): ReturnType<TQuery> =>
+  ({ data, isLoading: !data, isSuccess: !!data }) as unknown as ReturnType<TQuery>;
 
 describe("useCoingeckoDataProvider", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseGetSupportedCoinsListQuery.mockReturnValue(mockQueryReturn());
-    mockUseGetSupportedCounterCurrenciesQuery.mockReturnValue(mockQueryReturn());
-    mockUseGetCurrencyChartDataQuery.mockReturnValue(mockQueryReturn());
+    mockUseGetSupportedCoinsListQuery.mockReturnValue(
+      mockQueryReturn<typeof useGetSupportedCoinsListQuery>(),
+    );
+    mockUseGetSupportedCounterCurrenciesQuery.mockReturnValue(
+      mockQueryReturn<typeof useGetSupportedCounterCurrenciesQuery>(),
+    );
+    mockUseGetCurrencyChartDataQuery.mockReturnValue(
+      mockQueryReturn<typeof useGetCurrencyChartDataQuery>(),
+    );
   });
 
   describe("useSupportedCurrencies", () => {
@@ -81,8 +85,12 @@ describe("useCoingeckoDataProvider", () => {
       const coins = [{ id: "bitcoin", name: "Bitcoin", symbol: "btc" }];
       const currencies = ["usd", "eur"];
 
-      mockUseGetSupportedCoinsListQuery.mockReturnValue(mockQueryReturn(coins));
-      mockUseGetSupportedCounterCurrenciesQuery.mockReturnValue(mockQueryReturn(currencies));
+      mockUseGetSupportedCoinsListQuery.mockReturnValue(
+        mockQueryReturn<typeof useGetSupportedCoinsListQuery>(coins),
+      );
+      mockUseGetSupportedCounterCurrenciesQuery.mockReturnValue(
+        mockQueryReturn<typeof useGetSupportedCounterCurrenciesQuery>(currencies),
+      );
 
       const { result } = renderHook(() => useMarketDataProvider());
 

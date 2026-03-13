@@ -32,11 +32,14 @@ describe("api/estimateFees", () => {
     });
     estimateFeesMock.mockResolvedValue({ cost: BigInt(1500) });
     const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: BigInt(1000000),
+      asset: { type: "native", ticker: "CCD", id: "ccd" },
       memo: { type: "string" as const, value: "fee test" },
-    };
+    } as any;
 
     const result = await api.estimateFees(transactionIntent);
 
@@ -61,10 +64,13 @@ describe("api/estimateFees", () => {
     });
     estimateFeesMock.mockResolvedValue({ cost: BigInt(1000) });
     const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: BigInt(500000),
-    };
+      asset: { type: "native", ticker: "CCD", id: "ccd" },
+    } as any;
 
     const result = await api.estimateFees(transactionIntent);
 

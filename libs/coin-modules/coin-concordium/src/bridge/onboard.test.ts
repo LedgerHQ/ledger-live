@@ -106,7 +106,7 @@ describe("onboard", () => {
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      const result = events[events.length - 1];
+      const result = events[events.length - 1] as any;
       expect(result.account).not.toBeUndefined();
       expect(result.account.freshAddress).toBe(VALID_ADDRESS);
       expect(result.account.concordiumResources).toMatchObject({

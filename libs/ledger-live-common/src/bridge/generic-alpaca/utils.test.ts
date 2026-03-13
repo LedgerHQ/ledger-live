@@ -509,6 +509,7 @@ describe("Alpaca utils", () => {
         block: {
           hash: "blockhash123",
           height: 123456,
+          time: new Date("2025-08-29T12:00:00Z"),
         },
         date: new Date("2025-08-29T12:00:00Z"),
         failed: false,
@@ -530,6 +531,7 @@ describe("Alpaca utils", () => {
             block: {
               hash: "block_hash",
               height: 123456,
+              time: new Date("2025-08-29T12:00:00Z"),
             },
             date: new Date("2025-08-29T12:00:00Z"),
             failed: false,

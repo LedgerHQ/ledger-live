@@ -2,6 +2,7 @@ import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import type { AleoSigner } from "../types";
 import type { AleoCoinConfig } from "../config";
 import aleoCoinConfig from "../config";
@@ -30,10 +31,8 @@ describe("Bridge", () => {
       fn(mockSigner);
   };
 
-  const createMockCoinConfig = (): CoinConfig<AleoCoinConfig> => ({
-    getCoinConfig: jest.fn().mockReturnValue(mockConfig),
-    setCoinConfig: jest.fn(),
-  });
+  const createMockCoinConfig = (): CoinConfig<AleoCoinConfig> =>
+    jest.fn().mockReturnValue(mockConfig);
 
   describe("buildCurrencyBridge", () => {
     it("should return a currency bridge with preload, hydrate, and scanAccounts methods", () => {
@@ -49,7 +48,7 @@ describe("Bridge", () => {
       const signerContext = createMockSignerContext();
       const currencyBridge = buildCurrencyBridge(signerContext);
 
-      const result = await currencyBridge.preload();
+      const result = await currencyBridge.preload(getMockedCurrency());
 
       expect(result).toEqual({});
     });
@@ -58,8 +57,7 @@ describe("Bridge", () => {
       const signerContext = createMockSignerContext();
       const currencyBridge = buildCurrencyBridge(signerContext);
 
-      // Should not throw and return undefined
-      const result = currencyBridge.hydrate();
+      const result = currencyBridge.hydrate({}, getMockedCurrency());
       expect(result).toBeUndefined();
     });
   });
@@ -89,14 +87,18 @@ describe("Bridge", () => {
       const signerContext = createMockSignerContext();
       const accountBridge = buildAccountBridge(signerContext);
 
-      expect(() => accountBridge.signRawOperation()).toThrow("signRawOperation is not supported");
+      expect(() => accountBridge.signRawOperation({} as any)).toThrow(
+        "signRawOperation is not supported",
+      );
     });
 
     it("signOperation should throw unsupported error", () => {
       const signerContext = createMockSignerContext();
       const accountBridge = buildAccountBridge(signerContext);
 
-      expect(() => accountBridge.signOperation()).toThrow("signOperation is not supported");
+      expect(() => accountBridge.signOperation({} as any)).toThrow(
+        "signOperation is not supported",
+      );
     });
 
     it("createTransaction should return a transaction", () => {

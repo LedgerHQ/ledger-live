@@ -1,10 +1,4 @@
-import {
-  getClient,
-  withClient,
-  getBlockInfoByHeight,
-  getBlockByHeight,
-  getOperations,
-} from "./grpcClient";
+import { getClient, withClient, getBlockByHeight, getOperations } from "./grpcClient";
 
 // Type definitions for gRPC callbacks
 type GrpcCallback<T> = (error: Error | null, response: T | null) => void;
@@ -21,7 +15,7 @@ jest.mock("@grpc/grpc-js", () => ({
     concordium: {
       v2: {
         Queries: jest.fn().mockImplementation(() => ({
-          GetConsensusInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetConsensusInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetConsensusStatusResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -41,7 +35,7 @@ jest.mock("@grpc/grpc-js", () => ({
               callback(null, { blocks: response });
             }
           },
-          GetBlockInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetBlockInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetBlockInfoResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -134,77 +128,6 @@ describe("grpcClient", () => {
 
       await expect(withClient(currencyId, mockFn)).rejects.toThrow("Fails");
       expect(mockFn).toHaveBeenCalledTimes(2); // DEFAULT_RETRIES = 1
-    });
-  });
-
-  describe("getBlockInfoByHeight", () => {
-    it("should return block info at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 500n,
-        blockHash: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-
-      const result = await getBlockInfoByHeight(currencyId, 500);
-
-      expect(result.height).toBe(500);
-      expect(result.hash).toBe("abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4");
-    });
-
-    it("should throw error when no blocks found at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([]);
-
-      await expect(getBlockInfoByHeight(currencyId, 999)).rejects.toThrow(
-        "No blocks found at height 999",
-      );
-    });
-
-    it("should include parent block info when height > 0", async () => {
-      mockGetBlocksAtHeightResponse
-        .mockReturnValueOnce([
-          { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-        ])
-        .mockReturnValueOnce([
-          { value: "def123def123def123def123def123def123def123def123def123def123def1" },
-        ]);
-
-      mockGetBlockInfoResponse
-        .mockReturnValueOnce({
-          blockHeight: 500n,
-          blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-          blockSlotTime: new Date("2024-01-02"),
-        })
-        .mockReturnValueOnce({
-          blockHeight: 499n,
-          blockHash: "def123def123def123def123def123def123def123def123def123def123def1",
-          blockSlotTime: new Date("2024-01-01"),
-        });
-
-      const result = await getBlockInfoByHeight(currencyId, 500);
-
-      expect(result.parent).not.toBeUndefined();
-      expect(result.parent?.height).toBe(499);
-      expect(result.parent?.hash).toBe(
-        "def123def123def123def123def123def123def123def123def123def123def1",
-      );
-    });
-
-    it("should not include parent for height 0", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "0000000000000000000000000000000000000000000000000000000000000000" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 0n,
-        blockHash: "0000000000000000000000000000000000000000000000000000000000000000",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-
-      const result = await getBlockInfoByHeight(currencyId, 0);
-
-      expect(result.parent).toBeUndefined();
     });
   });
 
@@ -489,21 +412,6 @@ describe("grpcClient", () => {
   });
 
   describe("error handling", () => {
-    it("should handle and throw getBlockInfoByHeight errors when GetBlocksAtHeight fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue(new Error("Network error"));
-
-      await expect(getBlockInfoByHeight(currencyId, 100)).rejects.toThrow("Network error");
-    });
-
-    it("should handle and throw getBlockInfoByHeight errors when GetBlockInfo fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue(new Error("Block not found"));
-
-      await expect(getBlockInfoByHeight(currencyId, 100)).rejects.toThrow("Block not found");
-    });
-
     it("should handle and throw getBlockByHeight errors", async () => {
       mockGetBlocksAtHeightResponse.mockReturnValue([
         { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },

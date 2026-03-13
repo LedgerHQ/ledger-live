@@ -36,7 +36,7 @@ describe("EVM Cronos Network (blockscout explorer)", () => {
         minHeight: 0,
         order: "asc",
         limit: 100,
-        cursor: page1.next,
+        ...(page1.next ? { cursor: page1.next } : {}),
       });
 
       expect(page2.items.length).toBeGreaterThan(0);

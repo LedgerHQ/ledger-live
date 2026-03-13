@@ -154,7 +154,7 @@ describe("DeviceManagementKitTransportSpeculos", () => {
     const transport = await openTransport();
 
     // when
-    pressMock.mockRejectedValueOnce(new Error("button-failed"));
+    pressMock.mockRejectedValueOnce(new Error("button-failed") as never);
 
     // then
     await expect(transport.button(SpeculosButton.LEFT)).rejects.toThrow("button-failed");

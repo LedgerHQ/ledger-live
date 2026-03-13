@@ -7,11 +7,13 @@ import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager
 import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import { pushDevicesApi } from "@ledgerhq/client-ids/api";
 import { cmcApi } from "@ledgerhq/live-common/cmc-client/state-manager/api";
+import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
 // Add new RTK Query API here:
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
   [cmcApi.reducerPath]: cmcApi,
+  [counterValuesApi.reducerPath]: counterValuesApi,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
   [firebaseRemoteConfigApi.reducerPath]: firebaseRemoteConfigApi,
   [cgApi.reducerPath]: cgApi,
