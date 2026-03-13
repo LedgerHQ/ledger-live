@@ -48,6 +48,7 @@ describe("validateTransaction", () => {
     const result = await validateTransaction(mockCurrency, { signature });
 
     expect(result.error?.name).toBe("InvalidTransactionError");
+    expect(result.error?.message).toBe("transaction is already mined");
   });
 
   it("returns an error when transaction is already known", async () => {
@@ -64,6 +65,7 @@ describe("validateTransaction", () => {
     const result = await validateTransaction(mockCurrency, { signature });
 
     expect(result.error?.name).toBe("InvalidTransactionError");
+    expect(result.error?.message).toBe("transaction is already known");
   });
 
   it("returns an error when nonce is too low", async () => {

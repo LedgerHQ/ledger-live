@@ -55,7 +55,9 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onResult({ operation });
         },
         error => {
-          if (shouldRestartFlow(error)) {
+          const shouldRestart = shouldRestartFlow(error);
+
+          if (shouldRestart) {
             onResult({ error });
             return;
           }

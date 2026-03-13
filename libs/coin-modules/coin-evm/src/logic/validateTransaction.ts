@@ -14,8 +14,11 @@ export async function validateTransaction(
   if (transaction.hash) {
     try {
       const { hash, blockHeight = null } = await nodeApi.getTransaction(currency, transaction.hash);
-      if (blockHeight || hash) {
-        return { error: new InvalidTransactionError() };
+      if (blockHeight) {
+        return { error: new InvalidTransactionError("transaction is already mined") };
+      }
+      if (hash) {
+        return { error: new InvalidTransactionError("transaction is already known") };
       }
     } catch {
       // eslint-disable-next-line no-empty
@@ -28,7 +31,7 @@ export async function validateTransaction(
       const txNonce = BigInt(transaction.nonce);
       if (txNonce < currentNonce) {
         return {
-          error: new InvalidTransactionError(),
+          error: new InvalidTransactionError("nonce is too low"),
         };
       }
     }
