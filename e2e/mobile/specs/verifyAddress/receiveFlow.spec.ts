@@ -73,7 +73,7 @@ describe("Receive Flow", () => {
     await app.receive.doNotVerifyAddress();
 
     await app.receive.expectReceivePageIsDisplayed("ETH", Account.BASE_1.accountName);
-    const address = await CLI.getAddressForAccount(Account.ETH_1);
+    const address = await CLI.getAddressForAccount(Account.BASE_1);
     await app.receive.verifyAddress(address);
     await app.common.closePage();
 
