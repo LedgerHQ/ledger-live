@@ -1,5 +1,14 @@
 # @ledgerhq/live-signer-evm
 
+## 0.14.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025), [`8a8ead3`](https://github.com/LedgerHQ/ledger-live/commit/8a8ead3a5afef8273783cb3fe6fab322145ee711), [`044f9c0`](https://github.com/LedgerHQ/ledger-live/commit/044f9c0dbfa4f95b218c7f5d4299de0214f54806), [`7038137`](https://github.com/LedgerHQ/ledger-live/commit/703813747349288325fdc661637644d980073b9d), [`2e1d372`](https://github.com/LedgerHQ/ledger-live/commit/2e1d3723be3944e18b5b417aa9a52de39a32cf97), [`0d627ba`](https://github.com/LedgerHQ/ledger-live/commit/0d627ba04e4e0d9365fd5d6e6eb401cf0388ca78), [`312d92d`](https://github.com/LedgerHQ/ledger-live/commit/312d92dbd9d115a2ec6ad6628445c31d45806aea), [`08ee941`](https://github.com/LedgerHQ/ledger-live/commit/08ee9414908ec1f7489493c98b9a823a20cce550)]:
+  - @ledgerhq/errors@6.31.0-next.0
+  - @ledgerhq/hw-app-eth@7.6.0-next.0
+  - @ledgerhq/coin-evm@3.0.0-next.0
+
 ## 0.14.0
 
 ### Minor Changes

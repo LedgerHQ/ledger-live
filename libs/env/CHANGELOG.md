@@ -1,5 +1,13 @@
 # @ledgerhq/live-env
 
+## 2.30.0-next.0
+
+### Minor Changes
+
+- [#14856](https://github.com/LedgerHQ/ledger-live/pull/14856) [`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Added sell button to all relevant screens on lwd and lwm
+
+- [#13835](https://github.com/LedgerHQ/ledger-live/pull/13835) [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d) Thanks [@qperrot](https://github.com/qperrot)! - Feature: Speed up and cancel Bitcoin transactions
+
 ## 2.29.0
 
 ### Minor Changes

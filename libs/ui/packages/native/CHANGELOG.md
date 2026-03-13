@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.60.0-next.0
+
+### Minor Changes
+
+- [#14458](https://github.com/LedgerHQ/ledger-live/pull/14458) [`175471d`](https://github.com/LedgerHQ/ledger-live/commit/175471d9420ba21bba9245c21f5c8c5dbece418e) Thanks [@cseille](https://github.com/cseille)! - Display APY in green for non-UK users in Modular Asset Drawer.
+  Remove temporary APY indicator from pre-ldls, react-ui and native-ui components
+
 ## 0.59.0
 
 ### Minor Changes

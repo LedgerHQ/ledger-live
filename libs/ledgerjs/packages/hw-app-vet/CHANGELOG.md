@@ -1,5 +1,20 @@
 # @ledgerhq/hw-app-vet
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#15304](https://github.com/LedgerHQ/ledger-live/pull/15304) [`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump Node.js runtime to 24. Proto/toolchain and pnpm catalog use Node 24 and @types/node 24; engines and .nvmrc updated. TSConfig lib set to ES2022 where needed; Jest configs updated for ESM (imports, \_\_dirname, createRequire). CI: Linux build deps in setup-caches/setup-build-desktop; optional native deps (cpu-features, node-hid, usb, unrs-resolver) removed from onlyBuiltDependencies so install succeeds.
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025), [`42bf9b7`](https://github.com/LedgerHQ/ledger-live/commit/42bf9b7c40c04c7d2eeffba30b778be0b123bfd0), [`79f2f0e`](https://github.com/LedgerHQ/ledger-live/commit/79f2f0e3e8b8089664d2aee7c3dd25c7685aec2c)]:
+  - @ledgerhq/cryptoassets@13.42.0-next.0
+  - @ledgerhq/errors@6.31.0-next.0
+  - @ledgerhq/hw-transport@6.34.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.33.0-next.0
+  - @ledgerhq/logs@6.16.0-next.0
+
 ## 0.10.0
 
 ### Minor Changes
