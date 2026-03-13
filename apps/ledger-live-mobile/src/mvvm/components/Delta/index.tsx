@@ -45,7 +45,6 @@ function Delta({
 
   if (!deltaData) {
     return fallbackToPercentPlaceholder ? (
-      // eslint-disable-next-line i18next/no-literal-string
       <Text typography="body2" lx={{ color: "base" }}>
         &minus;
       </Text>
