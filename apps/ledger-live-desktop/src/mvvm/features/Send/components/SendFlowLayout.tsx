@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
+import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import type { SendFlowStep, SendFlowBusinessContext } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
-import { cn } from "LLD/utils/cn";
+import { AnimatedHeight } from "./AnimatedHeight";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
@@ -33,6 +34,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   const shouldShowStatusGradient =
     state.flowStatus === FLOW_STATUS.ERROR || state.flowStatus === FLOW_STATUS.SUCCESS;
+  const shouldAnimateHeight = dialogHeight === "hug";
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
@@ -45,11 +47,29 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
             })}
           />
         )}
-        <SendHeader />
-        {StepComponent && (
-          <div key={wizard.currentStep} className="flex min-h-0 flex-1 animate-fade-in flex-col">
-            <StepComponent />
-          </div>
+        {shouldAnimateHeight ? (
+          <AnimatedHeight>
+            <div className="flex flex-col">
+              <SendHeader />
+              {StepComponent && (
+                <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
+                  <StepComponent />
+                </div>
+              )}
+            </div>
+          </AnimatedHeight>
+        ) : (
+          <>
+            <SendHeader />
+            {StepComponent && (
+              <div
+                key={wizard.currentStep}
+                className="flex min-h-0 flex-1 animate-fade-in flex-col"
+              >
+                <StepComponent />
+              </div>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>

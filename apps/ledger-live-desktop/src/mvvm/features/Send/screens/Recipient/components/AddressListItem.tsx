@@ -71,7 +71,7 @@ export function AddressListItem({
       onClick={disabled ? undefined : onSelect}
       onContextMenu={onContextMenu}
       data-testid={testId}
-      className={cn("mb-6", {
+      className={cn("mt-6", {
         "cursor-not-allowed opacity-50": disabled,
       })}
     >

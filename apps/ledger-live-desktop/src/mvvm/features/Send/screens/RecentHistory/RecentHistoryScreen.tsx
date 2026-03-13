@@ -14,7 +14,7 @@ export function RecentHistoryScreen() {
 
   return (
     <>
-      <DialogBody className="py-16" data-testid="send-recipient-recent-history-step">
+      <DialogBody className="py-16 -mb-6" data-testid="send-recipient-recent-history-step">
         <div className="flex flex-col gap-16">
           <h1 className="-mt-24 mb-6 heading-2-semi-bold text-base">
             {t("newSendFlow.recentHistory.dialog.title")}

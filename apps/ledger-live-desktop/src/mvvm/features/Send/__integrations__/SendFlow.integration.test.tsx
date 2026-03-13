@@ -14,6 +14,7 @@ import {
   renderSendFlow,
   resetSendFlowTestState,
   screen,
+  waitFor,
   setMockBridgeRecipientValidation,
   setMockStatus,
   setMockStatusResolver,
@@ -28,6 +29,74 @@ describe("Send Flow Integration", () => {
 
   beforeEach(() => {
     resetSendFlowTestState("evm");
+  });
+
+  describe("Recipient step", () => {
+    it("should show the collapsable security card collapsed by default and expand on click", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("send-recipient-intro-card")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-security-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-recent-addresses-section")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("send-my-accounts-section")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("send-recipient-security-toggle"));
+
+      expect(screen.getByTestId("send-recipient-security-content")).toBeVisible();
+
+      await user.click(screen.getByTestId("send-recipient-security-toggle"));
+
+      expect(screen.queryByTestId("send-recipient-security-content")).not.toBeInTheDocument();
+    });
+
+    it("should open the recent history step for a new address and return to recipient", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      const recipientInput = await screen.findByTestId("send-recipient-input");
+
+      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+
+      expect(await screen.findByTestId("send-recent-history-warning")).toBeVisible();
+
+      await user.click(screen.getByRole("button", { name: /learn more/i }));
+
+      expect(await screen.findByTestId("send-recipient-recent-history-step")).toBeVisible();
+      expect(screen.queryByTestId("send-recent-history-warning")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("send-recipient-recent-history-step-close"));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("send-recipient-recent-history-step")).not.toBeInTheDocument();
+        expect(screen.getByTestId("send-recent-history-warning")).toBeVisible();
+      });
+    });
+
+    it("should not show the recent history warning for an address already sent to", async () => {
+      const accountWithHistory = createEthereumAccount({
+        operations: [
+          {
+            id: "outgoing-op-1",
+            hash: "outgoing-op-1",
+            type: "OUT",
+            value: new BigNumber("1000"),
+            fee: new BigNumber(100),
+            senders: ["0x1234567890abcdef1234567890abcdef12345678"],
+            recipients: [VALID_EVM_RECIPIENT],
+            accountId: "mock-account-id",
+            date: new Date("2026-03-01T10:00:00.000Z"),
+            blockHeight: 1,
+            blockHash: "block-1",
+            extra: {},
+          },
+        ],
+      });
+      const { user } = renderSendFlow(accountWithHistory);
+      const recipientInput = await screen.findByTestId("send-recipient-input");
+
+      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+
+      expect(await screen.findByTestId("send-matched-address-button")).toBeVisible();
+      expect(screen.queryByTestId("send-recent-history-warning")).not.toBeInTheDocument();
+    });
   });
 
   describe("Happy path: send to valid recipient", () => {
@@ -190,7 +259,7 @@ describe("Send Flow Integration", () => {
       await user.type(feeInputs[1], "50000");
 
       expect(screen.getByRole("button", { name: /confirm/i })).toBeDisabled();
-      expect(screen.getByRole("heading", { name: /custom fees/i })).toBeVisible();
+      expect(screen.getByTestId("send-dialog-header")).toBeVisible();
       expect(screen.queryByTestId("send-amount-step")).not.toBeInTheDocument();
     });
 
