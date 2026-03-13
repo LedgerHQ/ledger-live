@@ -2,6 +2,25 @@ name: "[Web] - Build  - Called"
 
 on:
   workflow_call:
+    inputs:
+      build-web-tools:
+        description: Whether to build web tools
+        required: false
+        default: true
+        type: string
+
+      build-native-storybook:
+        description: Whether to build native storybook
+        required: false
+        default: true
+        type: string
+
+      build-react-storybook:
+        description: Whether to build react storybook
+        required: false
+        default: true
+        type: string
+
   workflow_dispatch:
     inputs:
       ref:
@@ -10,22 +29,36 @@ on:
           have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         required: false
+      build-web-tools:
+        description: Whether to build web tools
+        required: false
+        default: true
+      build-native-storybook:
+        description: Whether to native storybook
+        required: false
+        default: true
+      build-react-storybook:
+        description: Whether to react storybook
+        required: false
+        default: true
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
+
   build-web-tools:
     name: "Web Tools Build"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-    runs-on: ubuntu-22.04
+    if: ${{ inputs.build-web-tools != 'false' }}
+    runs-on: ubuntu-24.04
+    outputs:
+      deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
+
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -36,52 +69,147 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: Install dependencies
-        run: pnpm i -F "web-tools..." -F "ledger-live"
-      - name: build web-tools
-        run: pnpm turbo run build --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-      - name: typecheck web-tools
+
+      - name: Build and Deploy
+        id: build-deploy
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        with:
+          turbo-port: ${{ steps.setup-caches.outputs.port }}
+          vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
+          turbo-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          working-directory: apps/web-tools
+
+      - name: Typecheck web-tools
         run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
-  report:
-    needs: build-web-tools
-    name: "Web Tools Build > Report"
-    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-22.04
+
+  build-native-storybook:
+    name: "Native Storybook Build"
+    if: ${{ inputs.build-native-storybook != 'false' }}
+    runs-on: ubuntu-24.04
+    outputs:
+      deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          pattern: outputs-*
-          merge-multiple: true
-          path: outputs
-      - uses: actions/github-script@v6
-        name: build summary
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: "true"
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Build and Deploy
+        id: build-deploy
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        with:
+          turbo-port: ${{ steps.setup-caches.outputs.port }}
+          vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_NATIVE_STORYBOOK }}
+          turbo-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          working-directory: libs/ui/packages/native
+
+  build-react-storybook:
+    name: "React Storybook Build"
+    if: ${{ inputs.build-react-storybook != 'false' }}
+    runs-on: ubuntu-24.04
+    outputs:
+      deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: "true"
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Build and Deploy
+        id: build-deploy
+        uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
+        with:
+          turbo-port: ${{ steps.setup-caches.outputs.port }}
+          vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_REACT_STORYBOOK }}
+          turbo-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          working-directory: libs/ui/packages/react
+
+  post-build-summary:
+    name: "Post build status to PR"
+    needs: [build-web-tools, build-native-storybook, build-react-storybook]
+    if: ${{ always() && !cancelled() && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Post build status summary
+        uses: actions/github-script@v7
         with:
           script: |
-            const fs = require("fs");
-            const statuses = {
-              tool: {
-                pass: ${{ needs.build-web-tools.result == 'success' }},
-                status: "${{ needs.build-web-tools.result }}",
-              }
-            };
+            const needs = JSON.parse(process.env.NEEDS_JSON || '{}');
+            const jobs = [
+              { id: 'build-web-tools', name: 'Web Tools Build' },
+              { id: 'build-native-storybook', name: 'Native Storybook Build' },
+              { id: 'build-react-storybook', name: 'React Storybook Build' },
+            ];
 
-            const summary = `### Web Tools
+            const rows = jobs.map(({ id, name }) => {
+              const jobNeeds = needs[id];
+              const result = jobNeeds?.result ?? 'skipped';
+              const statusEmoji = result === 'success' ? '✅' : result === 'failure' ? '❌' : '⏭️';
+              const statusLabel = result === 'success' ? 'Deployed' : result === 'failure' ? 'Failed' : 'Skipped';
+              const deploymentUrl = jobNeeds?.outputs?.['deployment-url'];
+              const url = (result === 'success' && deploymentUrl)
+                ? `[${deploymentUrl}](${deploymentUrl})`
+                : '—';
+              return `| ${name} | ${statusEmoji} ${statusLabel} | ${url} |`;
+            }).join('\n');
 
-            ${statuses.tool.pass ? "Web Tools are fine" : "Web Tools build or typecheck failed"}
-              - ${statuses.tool.pass ? "✅" : "❌"} **Web Tools** ended with status \`${statuses.tool.status}\`
-            `;
+            const body = `## Web Tools Build Status
 
-            const actions = [];
+            | Build | Status | Deployment |
+            |-------|--------|------------|
+            ${rows}
 
-            const output = {
-              summary,
-              actions
-            };
+            <!-- web-tools-build-summary -->`;
 
-            fs.writeFileSync("summary-web-tools.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        name: Upload output
-        with:
-          path: ${{ github.workspace }}/summary-web-tools.json
-          name: summary-web-tools.json
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existing = comments.find(c => c.body.includes('<!-- web-tools-build-summary -->'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
+        env:
+          NEEDS_JSON: '${{ toJson(needs) }}'
