@@ -106,6 +106,7 @@ export default class ReceivePage {
     await waitForElementById(titleID);
     await detoxExpect(getElementById(titleID)).toBeVisible();
     await detoxExpect(getElementById(accountNameID)).toBeVisible();
+    await scrollToId(qrCodeContainerID, this.receivePageScrollViewId);
     await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
   }
 
