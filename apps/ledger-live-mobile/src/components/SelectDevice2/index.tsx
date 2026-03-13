@@ -272,10 +272,21 @@ export default function SelectDevice({
       if (!wired && !isMockEnv && !isNonBleDebugDevice) {
         setSelectedBleDevice(displayedDevice);
       } else {
-        // it's a wired or mock/debug device, so it's available.
-        if (!displayedDevice.available) return;
         setSelectedBleDevice(null);
-        checkDeviceStatus(displayedDevice);
+
+        if (displayedDevice.available) {
+          checkDeviceStatus(displayedDevice);
+          return;
+        }
+
+        // Non-BLE debug devices can be selected without scan availability.
+        if (isNonBleDebugDevice) {
+          checkDeviceStatus({
+            device: displayedDevice.device,
+            available: true,
+            discoveredDevice: makeMockDiscoveredDevice(displayedDevice.device),
+          });
+        }
       }
 
       setIsPairingDevices(false);

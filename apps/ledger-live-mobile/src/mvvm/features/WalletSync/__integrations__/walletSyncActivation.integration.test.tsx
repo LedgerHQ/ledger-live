@@ -1,6 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { render } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSharedNavigator } from "./shared";
 import { State } from "~/reducers/types";
@@ -14,17 +15,25 @@ const mockSelectedDevice: Device = {
   wired: false,
 };
 
+const mockDiscoveredDevice = {
+  id: "mock-discovered-device",
+} as DiscoveredDevice;
+
 jest.mock("~/components/SelectDevice2", () => {
   const React = jest.requireActual("react");
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
 
   return {
     __esModule: true,
-    default: ({ onSelect }: { onSelect: (device: Device) => void }) => (
+    default: ({
+      onSelect,
+    }: {
+      onSelect: (device: Device, discoveredDevice: DiscoveredDevice) => void;
+    }) => (
       <TouchableOpacity
         accessibilityRole="button"
         accessibilityLabel={mockSelectedDevice.deviceName}
-        onPress={() => onSelect(mockSelectedDevice)}
+        onPress={() => onSelect(mockSelectedDevice, mockDiscoveredDevice)}
       >
         <Text>{mockSelectedDevice.deviceName}</Text>
       </TouchableOpacity>

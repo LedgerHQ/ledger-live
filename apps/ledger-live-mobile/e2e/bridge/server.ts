@@ -17,7 +17,11 @@ import {
 } from "~/actions/types";
 
 let clientResponse: (data: string) => void;
-const pendingAcks = new Map<string, () => void>();
+type PendingAck = {
+  resolve: () => void;
+  timeoutId: ReturnType<typeof setTimeout>;
+};
+const pendingAcks = new Map<string, PendingAck>();
 const RESPONSE_TIMEOUT = 10000;
 
 export async function findFreePort(): Promise<number> {
@@ -229,16 +233,15 @@ function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<st
 }
 
 function postMessageAndWaitForAck(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       pendingAcks.delete(message.id);
-      console.warn(`Timeout while waiting for ACK for ${message.type}`);
-      resolve();
+      reject(new Error(`Timeout while waiting for ACK for ${message.type} (${message.id})`));
     }, timeout);
 
-    pendingAcks.set(message.id, () => {
-      clearTimeout(timeoutId);
-      resolve();
+    pendingAcks.set(message.id, {
+      resolve,
+      timeoutId,
     });
 
     postMessage(message);
@@ -253,8 +256,14 @@ function onMessage(messageStr: string) {
     case "ACK":
       log(`${msg.id}`);
       delete webSocket.messages[msg.id];
-      pendingAcks.get(msg.id)?.();
-      pendingAcks.delete(msg.id);
+      {
+        const pendingAck = pendingAcks.get(msg.id);
+        if (pendingAck) {
+          clearTimeout(pendingAck.timeoutId);
+          pendingAcks.delete(msg.id);
+          pendingAck.resolve();
+        }
+      }
       break;
     case "walletAPIResponse":
       webSocket.e2eBridgeServer.next(msg);

@@ -69,6 +69,7 @@ export function useAutoSelectDevice({
 
   // USB auto-selection: wait for a matching HID device within timeout
   useEffect(() => {
+    if (!enabled) return;
     if (autoSelectionDoneRef.current) return;
     const target = deviceToAutoSelectRef.current;
     if (!target || !target.wired) return;
@@ -83,5 +84,5 @@ export function useAutoSelectDevice({
       autoSelectionDoneRef.current = true;
       onAutoSelect(mapHidDeviceToDisplayedAvailableDevice(match));
     }
-  }, [hidDevices, onAutoSelect, usbDeviceToSelectExpirationDuration]);
+  }, [enabled, hidDevices, onAutoSelect, usbDeviceToSelectExpirationDuration]);
 }
