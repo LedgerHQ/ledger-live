@@ -828,21 +828,32 @@ describe("EVM Family", () => {
       expect(result).toEqual([traceItem]);
     });
 
-    it("should throw UnsupportedRpcMethodError when RPC returns -32601", async () => {
-      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
-        if (method === "trace_block") {
-          throw { code: -32601, message: "method not found" };
-        }
-        throw new Error(`Method not mocked: ${method}`);
-      });
+    it.each([
+      { code: -32601, message: "method not found", label: "-32601" },
+      {
+        code: -32605,
+        message:
+          "debug and trace methods are not supported on your current plan. Enable by upgrading to Growth or Business plan at dashboard.quicknode.com/billing/plan.",
+        label: "-32605 (e.g. QuickNode plan limit)",
+      },
+    ])(
+      "should throw UnsupportedRpcMethodError when RPC returns $label",
+      async ({ code, message }) => {
+        jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
+          if (method === "trace_block") {
+            throw { code, message };
+          }
+          throw new Error(`Method not mocked: ${method}`);
+        });
 
-      const err = await RPC_API.traceBlock(fakeCurrency as CryptoCurrency, 1).then(
-        () => null,
-        (e: unknown) => e,
-      );
-      expect(err).toBeInstanceOf(UnsupportedRpcMethodError);
-      expect((err as { method?: string }).method).toBe("trace_block");
-    });
+        const err = await RPC_API.traceBlock(fakeCurrency as CryptoCurrency, 1).then(
+          () => null,
+          (e: unknown) => e,
+        );
+        expect(err).toBeInstanceOf(UnsupportedRpcMethodError);
+        expect((err as { method?: string }).method).toBe("trace_block");
+      },
+    );
   });
 
   describe("getOptimismAdditionalFees", () => {
