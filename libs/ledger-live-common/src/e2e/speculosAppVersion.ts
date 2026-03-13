@@ -1,11 +1,15 @@
 import { HttpManagerApiRepository, ApplicationV2Entity } from "@ledgerhq/device-core";
-import { version } from "../../package.json";
+import { createRequire } from "node:module";
 import { getEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device as CryptoWallet } from "./enum/Device";
 import { sanitizeError } from "./index";
 import * as fs from "fs";
 import * as path from "path";
+
+// CJS build: __filename is defined. E2E loads this via createRequire(import.meta.url) in jest.config so CJS is used.
+const req = createRequire(__filename);
+const version = req("../../package.json").version;
 
 export function getSpeculosModel(): DeviceModelId {
   const speculosDevice = process.env.SPECULOS_DEVICE;
