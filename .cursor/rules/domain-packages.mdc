@@ -1,6 +1,6 @@
 ---
 description: Domain package structure and conventions — read domain READMEs before creating or modifying packages under domain/
-globs: domain/**
+globs: ["domain/**"]
 alwaysApply: false
 ---
 
