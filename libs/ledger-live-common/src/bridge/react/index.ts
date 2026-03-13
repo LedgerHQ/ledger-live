@@ -5,3 +5,8 @@ export * from "./SyncSkipUnderPriority";
 export * from "./useAccountSyncState";
 export * from "./useGlobalSyncState";
 export * from "./useAccountsSyncStatus";
+export * from "./useStablePending";
+export * from "./useSyncLifecycle";
+export * from "./useManualRefresh";
+export * from "./useBalanceSyncState";
+export * from "./useSyncSources";

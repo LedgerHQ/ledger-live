@@ -1,6 +1,10 @@
-import { act, renderHook } from "tests/testSetup";
+/**
+ * @jest-environment jsdom
+ */
+import "../../../__tests__/test-helpers/dom-polyfill";
+import { act, renderHook } from "@testing-library/react";
 import { useStablePending } from "../useStablePending";
-import { POLLING_FINISHED_DELAY_MS } from "LLD/utils/constants";
+import { POLLING_FINISHED_DELAY_MS } from "../useSyncSources";
 
 function renderStablePending(initialPending: boolean, delayMs: number = POLLING_FINISHED_DELAY_MS) {
   return renderHook((props: { pending: boolean }) => useStablePending(props.pending, delayMs), {

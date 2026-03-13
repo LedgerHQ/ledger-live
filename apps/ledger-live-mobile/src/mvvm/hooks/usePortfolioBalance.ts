@@ -4,9 +4,12 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { accountsWithUpToDateCheckSelector, hasNoAccountsSelector } from "~/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { useAccountsSyncStatus } from "@ledgerhq/live-common/bridge/react/index";
-import { useSyncLifecycle, type SyncPhase } from "./useSyncLifecycle";
-import { useManualRefresh } from "./useManualRefresh";
+import {
+  useAccountsSyncStatus,
+  useSyncLifecycle,
+  useManualRefresh,
+  type SyncPhase,
+} from "@ledgerhq/live-common/bridge/react/index";
 import {
   selectLastUserSyncClickTimestamp,
   selectHasCompletedInitialSync,

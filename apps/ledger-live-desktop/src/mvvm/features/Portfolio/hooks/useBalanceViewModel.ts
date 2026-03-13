@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
@@ -10,6 +10,7 @@ import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
@@ -42,32 +43,15 @@ export const useBalanceViewModel = (
     syncPhase,
   } = usePortfolioBalance({ legacyRange });
 
-  // Keep balanceAvailable sticky-false until the sync fully settles so the
-  // skeleton covers the entire cycle (Skeleton → Animate balance, no shimmer).
-  const [balanceUnavailable, setBalanceUnavailable] = useState(!rawBalanceAvailable);
-  useEffect(() => {
-    if (!rawBalanceAvailable) {
-      setBalanceUnavailable(true);
-    } else if (syncPhase !== "syncing") {
-      setBalanceUnavailable(false);
-    }
-  }, [rawBalanceAvailable, syncPhase]);
-
-  const balanceAvailable = !balanceUnavailable;
-
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
 
-  // Holds the pre-sync balance so AmountDisplay can animate the delta on settle.
-  const frozenBalanceRef = useRef(latestBalanceValue);
-  useEffect(() => {
-    if (syncPhase !== "syncing") {
-      frozenBalanceRef.current = latestBalanceValue;
-    }
-  }, [syncPhase, latestBalanceValue]);
-
-  const shouldFreezeBalance = shouldDisplayBalanceRefreshRework && syncPhase === "syncing";
-  const displayedBalance = shouldFreezeBalance ? frozenBalanceRef.current : latestBalanceValue;
+  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
+    rawBalanceAvailable,
+    syncPhase,
+    latestBalance: latestBalanceValue,
+    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+  });
 
   const unit = counterValue.units[0];
   const valueChange = portfolio.countervalueChange;
@@ -112,7 +96,7 @@ export const useBalanceViewModel = (
     hasOnboardedDevice,
     isColdStart,
     shouldDisplayBalanceRefreshRework,
-    isLoading: syncPhase === "syncing",
+    isLoading,
     theme,
   };
 };
