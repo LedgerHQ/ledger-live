@@ -2,6 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
@@ -125,26 +126,21 @@ export class PortfolioPage extends AppPage {
     }
   }
 
-  @step("Expect total balance to be visible")
-  async expectTotalBalanceToBeVisible() {
-    await this.checkVisibility(this.totalBalance);
-  }
-
-  @step("Expect total balance to have the correct counter value $0")
+  @step("Expect total balance to display the correct counter value $0")
   async expectTotalBalanceCounterValue(counterValue: string) {
-    await this.expectTotalBalanceToBeVisible();
-    await expect(this.totalBalance).toContainText(counterValue);
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioTotalBalance
+      : this.totalBalance;
+
+    await expect(selector).toBeVisible();
+    await expect(selector).toContainText(counterValue);
   }
 
-  @step("Expect balance diff to be visible")
-  async expectBalanceDiffToBeVisible() {
-    await this.checkVisibility(this.balanceDiff);
-  }
-
-  @step("Expect balance diff to have the correct counter value $0")
+  @step("Expect balance diff to display the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
-    await this.expectBalanceDiffToBeVisible();
-    await expect(this.balanceDiff).toContainText(counterValue);
+    const selector = (await isWallet40Enabled(this.page)) ? this.portfolioTrend : this.balanceDiff;
+    await expect(selector).toBeVisible();
+    await expect(selector).toContainText(counterValue);
   }
 
   @step("Expect asset row $0 to be visible")
@@ -194,11 +190,6 @@ export class PortfolioPage extends AppPage {
   }
 
   // Wallet 4.0 methods
-  @step("Check portfolio total balance visibility")
-  async checkPortfolioTotalBalanceVisibility() {
-    await this.checkVisibility(this.portfolioTotalBalance);
-  }
-
   @step("Check one-day performance indicator visibility")
   async checkOneDayPerformanceIndicatorVisibility() {
     await this.checkVisibility(this.portfolioTrend);
