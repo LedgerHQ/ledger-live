@@ -152,8 +152,6 @@ describe("EVM Family", () => {
           from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
           to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
           callType: "call",
-          gas: "0x5208",
-          input: "0x",
           value: "1000000000000000000",
           ...overrides,
         });

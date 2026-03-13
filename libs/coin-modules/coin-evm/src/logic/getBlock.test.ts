@@ -101,8 +101,6 @@ describe("getBlock", () => {
       from: address1,
       to: address2,
       callType: "call",
-      gas: "21000",
-      input: "0x",
       value: 240000481795678944n.toString(),
       ...overrides,
     };
@@ -443,21 +441,23 @@ describe("getBlock", () => {
 
     const encodedFrom = safeEncodeEIP55(address1);
     const encodedTo = safeEncodeEIP55(address2);
-    expect(result.transactions[0].operations).toContainEqual(
-      expect.objectContaining({
-        type: "transfer",
-        address: encodedFrom,
-        peer: encodedTo,
-        asset: { type: "native" },
-        amount: -amount,
-      }),
-      expect.objectContaining({
-        type: "transfer",
-        address: encodedTo,
-        peer: encodedFrom,
-        asset: { type: "native" },
-        amount: amount,
-      }),
+    expect(result.transactions[0].operations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "transfer",
+          address: encodedFrom,
+          peer: encodedTo,
+          asset: { type: "native" },
+          amount: -amount,
+        }),
+        expect.objectContaining({
+          type: "transfer",
+          address: encodedTo,
+          peer: encodedFrom,
+          asset: { type: "native" },
+          amount: amount,
+        }),
+      ]),
     );
   });
 
