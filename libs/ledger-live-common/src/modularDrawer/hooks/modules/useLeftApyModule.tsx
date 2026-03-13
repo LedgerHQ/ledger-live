@@ -3,6 +3,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ApyType } from "../../../dada-client/types/trend";
 import { useInterestRatesByCurrencies } from "../../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../../utils/getInterestRateForAsset";
+import { AssetConfigurationOptions } from "../../utils/type";
 
 const createApyItem = ({
   value,
@@ -16,7 +17,7 @@ const createApyItem = ({
 
 export const useLeftApyModule = (
   currencies: CryptoOrTokenCurrency[],
-  ApyIndicator: React.ComponentType<{ value: number; type: ApyType }>,
+  { ApyIndicator }: Pick<AssetConfigurationOptions, "ApyIndicator">,
 ) => {
   const interestRates = useInterestRatesByCurrencies(currencies);
 

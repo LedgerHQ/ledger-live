@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
 import counterValueFormatter from "../../../market/utils/countervalueFormatter";
-import { UseBalanceDeps } from "../../utils/type";
+import { AssetConfigurationOptions } from "../../utils/type";
 
 const createMarketPriceItem = ({
   price,
@@ -14,15 +14,13 @@ const createMarketPriceItem = ({
   MarketPriceIndicator: React.ComponentType<{ percent: number; price: string }>;
 }) => <MarketPriceIndicator percent={percent} price={price} />;
 
-export const useRightMarketTrendModule = ({
-  currencies,
-  useBalanceDeps,
-  MarketPriceIndicator,
-}: {
-  currencies: CryptoOrTokenCurrency[];
-  useBalanceDeps: UseBalanceDeps;
-  MarketPriceIndicator: React.ComponentType<{ percent: number; price: string }>;
-}) => {
+export const useRightMarketTrendModule = (
+  currencies: CryptoOrTokenCurrency[],
+  {
+    useBalanceDeps,
+    MarketPriceIndicator,
+  }: Pick<AssetConfigurationOptions, "useBalanceDeps" | "MarketPriceIndicator">,
+) => {
   const marketByCurrencies = useMarketByCurrencies(currencies);
   const { counterValueCurrency, locale } = useBalanceDeps();
 
