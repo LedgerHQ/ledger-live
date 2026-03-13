@@ -2,13 +2,13 @@ import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index"
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { calculateToken2022TransferFees } from "./helpers/token";
+import { estimateTxFee } from "./logic/estimateFees";
 import { ChainAPI } from "./network";
 import { TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
 import {
   getMaybeTokenMint,
   getStakeAccountMinimumBalanceForRentExemption,
 } from "./network/chain/web3";
-import { estimateTxFee } from "./tx-fees";
 import type { SolanaTokenAccount, Transaction } from "./types";
 
 export const estimateFeeAndSpendable = async (

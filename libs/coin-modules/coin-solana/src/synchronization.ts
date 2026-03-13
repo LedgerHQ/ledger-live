@@ -28,6 +28,7 @@ import {
   isStakeLockUpInForce,
   withdrawableFromStake,
 } from "./logic";
+import { estimateTxFee } from "./logic/estimateFees";
 import { ChainAPI } from "./network";
 import { tryParseAsMintAccount } from "./network/chain/account";
 import { MintExtensions } from "./network/chain/account/tokenExtensions";
@@ -44,7 +45,6 @@ import {
   TransactionDescriptor,
 } from "./network/chain/web3";
 import { ParsedOnChainTokenAccountWithInfo } from "./network/chain/web3";
-import { estimateTxFee } from "./tx-fees";
 import {
   SolanaAccount,
   SolanaOperationExtra,
