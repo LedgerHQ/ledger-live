@@ -23,12 +23,10 @@ import { getFreshAccountAddress } from "~/utils/address";
 import CopyButton from "LLM/components/CopyButton";
 import ShareButton from "LLM/components/ShareButton";
 
-type ScreenProps = CompositeScreenProps<
+type Props = CompositeScreenProps<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
-
-type Props = ScreenProps;
 
 export default function Confirmation({ route }: Props) {
   const { colors } = useTheme();

@@ -27,10 +27,7 @@ function compile() {
   let nbOfFilteredDiagnostics = 0;
 
   const allDiagnostics = ts.getPreEmitDiagnostics(program).filter(diag => {
-    if (!diag.file) {
-      nbOfFilteredDiagnostics++;
-      return false;
-    }
+    if (!diag.file) return true;
     const fileName = diag.file.fileName;
     const isAppSource = appSourcePrefixes.some(prefix => fileName.startsWith(prefix));
     const pass =
@@ -52,7 +49,7 @@ function compile() {
     console.log("‾‾‾‾‾‾  ‾‾‾‾‾");
 
     const errorsByFile = allDiagnostics.reduce((acc, diag) => {
-      const fileName = diag.file.fileName;
+      const fileName = diag.file ? diag.file.fileName : "<global>";
       acc[fileName] = (acc[fileName] || 0) + 1;
       return acc;
     }, {});
