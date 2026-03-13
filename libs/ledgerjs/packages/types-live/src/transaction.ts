@@ -162,6 +162,8 @@ export type TransactionStatusCommon = {
   totalSpent: BigNumber;
   // should the recipient be non editable
   recipientIsReadOnly?: boolean | undefined;
+  // account for responsible paying fees
+  feeCurrencyAccountId?: string | null | undefined;
 };
 /**
  *
@@ -174,6 +176,8 @@ export type TransactionStatusCommonRaw = {
   totalSpent: string;
   useAllAmount?: boolean;
   recipientIsReadOnly?: boolean | undefined;
+  // account for responsible paying fees
+  feeCurrencyAccountId?: string | null | undefined;
 };
 
 export type TransactionEditType = "cancel" | "speedup";

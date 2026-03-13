@@ -6,6 +6,7 @@ import {
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
+  findSubAccountById,
 } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -73,7 +74,10 @@ const StepSummary = (props: StepProps) => {
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
   const currency = getAccountCurrency(account);
-  const feesCurrency = getFeesCurrency(mainAccount);
+
+  const feeCurrencyAccount =
+    findSubAccountById(mainAccount, status.feeCurrencyAccountId ?? "") ?? mainAccount;
+  const feesCurrency = getFeesCurrency(feeCurrencyAccount);
   const feesUnit = getFeesUnit(feesCurrency);
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =
