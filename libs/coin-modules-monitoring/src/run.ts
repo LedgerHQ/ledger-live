@@ -57,6 +57,33 @@ function formatDuration(ms: number): string {
   return parts.join(" ");
 }
 
+function hasCauseProperty(object: unknown): object is { cause: object } {
+  return (
+    object !== null &&
+    object !== undefined &&
+    typeof object === "object" &&
+    "cause" in object &&
+    object.cause !== null &&
+    object.cause !== undefined &&
+    typeof object.cause === "object"
+  );
+}
+
+function objectWithoutKeys(obj: object, excludeKeys: string[]): Record<string, unknown> {
+  const set = new Set(excludeKeys);
+  return Object.fromEntries(Object.entries(obj).filter(([key]) => !set.has(key)));
+}
+
+function logErrorProperties(error: Error): void {
+  const errorProperties = objectWithoutKeys(error, ["message", "stack", "cause"]);
+  console.error(` └─ Error properties:`, errorProperties);
+
+  if (hasCauseProperty(error)) {
+    const causeProperties = objectWithoutKeys(error.cause, ["stack", "cause"]);
+    console.error(`  └─ Error cause properties:`, causeProperties);
+  }
+}
+
 function prettyLog(
   i: number,
   nbOfAccounts: number,
@@ -224,6 +251,12 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         console.error(
           `Skipping failing run. Error: ${err instanceof Error ? err.stack ?? err.message : err}`,
         );
+        // We may miss some parameters added to the error on runtime
+        // We display only the message on the top for convenience and better readibility
+        // So we added this log to have the full object
+        if (err instanceof Error) {
+          logErrorProperties(err);
+        }
         result.failed = true;
       }
     }
