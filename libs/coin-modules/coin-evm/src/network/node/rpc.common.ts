@@ -1,7 +1,6 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -14,6 +13,7 @@ import { ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
+import { withRetries } from "../withRetries";
 import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
 import {
   NodeApi,
@@ -103,22 +103,18 @@ export async function withApi<T>(
   nodeConfig: ExternalNodeConfig,
 ): Promise<T> {
   const retries = nodeConfig.retries ?? DEFAULT_RETRIES_RPC_METHODS;
-  try {
-    if (!PROVIDERS_BY_RPC[currency.id]) {
-      const chainId = currency.ethereumLikeInfo?.chainId;
-      PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(nodeConfig.uri, chainId);
-    }
-
-    const provider = PROVIDERS_BY_RPC[currency.id];
-    return await execute(provider);
-  } catch (e) {
-    if (retries) {
-      // wait the RPC timeout before trying again
-      await delay(RPC_TIMEOUT);
-      return withApi<T>(currency, execute, { ...nodeConfig, retries: retries - 1 });
-    }
-    throw e;
-  }
+  return withRetries(
+    async () => {
+      if (!PROVIDERS_BY_RPC[currency.id]) {
+        const chainId = currency.ethereumLikeInfo?.chainId;
+        PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(nodeConfig.uri, chainId);
+      }
+      const provider = PROVIDERS_BY_RPC[currency.id];
+      return await execute(provider);
+    },
+    retries,
+    RPC_TIMEOUT,
+  );
 }
 
 async function getTransaction(api: JsonRpcProvider, txHash: string): Promise<TransactionInfo> {
