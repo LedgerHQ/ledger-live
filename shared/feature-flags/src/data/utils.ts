@@ -80,14 +80,21 @@ export function resolveAll(
   config: ResolutionConfig,
 ): FeatureFlagsState["resolved"] {
   const remoteFlags = extractRemoteFlags(currentResolved, overrides, config.envFlags);
-  return FeatureIdSchema.options.reduce(
-    (acc, key) => {
-      acc[key] = resolveFeature(key, overrides, remoteFlags, config);
-      return acc;
-    },
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    {} as FeatureFlagsState["resolved"],
-  );
+  return resolveAllFromRemote(overrides, remoteFlags, config);
+}
+
+export function resolveAllFromRemote(
+  overrides: FeatureFlagsState["overrides"],
+  remoteFlags: Record<string, Feature>,
+  config: ResolutionConfig,
+): FeatureFlagsState["resolved"] {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const result = {} as Record<string, Feature>;
+  for (const key of FeatureIdSchema.options) {
+    result[key] = resolveFeature(key, overrides, remoteFlags, config);
+  }
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return result as FeatureFlagsState["resolved"];
 }
 
 /**

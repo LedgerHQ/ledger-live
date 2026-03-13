@@ -47,10 +47,14 @@ describe("FeatureFlagsStateSchema", () => {
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
 
-  it("rejects when resolved is incomplete", () => {
-    expect(() =>
-      FeatureFlagsStateSchema.parse({ overrides: {}, resolved: {}, bannerVisible: false }),
-    ).toThrow();
+  it("fills in defaults for missing flags in resolved", () => {
+    const result = FeatureFlagsStateSchema.parse({
+      overrides: {},
+      resolved: {},
+      bannerVisible: false,
+    });
+    expect(result.resolved).toEqual(FEATURE_FLAGS_DEFAULTS);
+    expect(result.overrides).toEqual({});
   });
 
   it("rejects when resolved is missing", () => {

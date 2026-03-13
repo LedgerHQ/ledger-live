@@ -12,6 +12,4 @@ export const FeatureSchema = z.object({
   overriddenByEnv: z.boolean().optional(),
 });
 
-export const FeatureValueSchema = FeatureSchema.extend({ params: z.unknown().optional() });
-
 export type Feature<T = unknown> = z.infer<typeof FeatureSchema> & { params?: T };
