@@ -33,7 +33,8 @@ Every `package.json` under `domain/` must include `"private": true`. Flag any pa
 
 ## API Packages
 
-- Define RTK Query `createApi` instances/endpoints for the domain **and/or** compose and re-export existing ones
-- Runtime logic is limited to API wiring (request/response mapping, tags, transforms) — non-API business logic stays in entity or feature packages
+- Define new RTK Query `createApi` endpoints, `createAsyncThunk` actions, or compose/re-export existing ones
+- Provide a single import path for all API endpoints related to a domain entity
+- Use entity schemas from `@domain/entity-<name>` for request/response typing
 - Must depend on the corresponding `@domain/entity-<name>` package
 - Barrel export via `src/index.ts`
