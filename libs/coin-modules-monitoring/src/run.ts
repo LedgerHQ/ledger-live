@@ -54,8 +54,11 @@ function formatDuration(ms: number): string {
   return parts.join(" ");
 }
 
-function hasCauseProperty(object: any): object is { cause: object } {
+function hasCauseProperty(object: unknown): object is { cause: object } {
   return (
+    object !== null &&
+    object !== undefined &&
+    typeof object === "object" &&
     "cause" in object &&
     object.cause !== null &&
     object.cause !== undefined &&
