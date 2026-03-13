@@ -76,12 +76,12 @@ export class ConcordiumWalletConnect {
   }
 
   async disconnectAllSessions(): Promise<void> {
-    const client = await this.getClient();
-    const concordiumSessions = await this.getConcordiumSessions();
-
-    if (concordiumSessions.length === 0) return;
-
     try {
+      const client = await this.getClient();
+      const concordiumSessions = await this.getConcordiumSessions();
+
+      if (concordiumSessions.length === 0) return;
+
       await Promise.all(
         concordiumSessions.map(async session => {
           try {

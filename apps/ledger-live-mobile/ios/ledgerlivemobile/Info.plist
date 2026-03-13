@@ -64,6 +64,7 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>revolut</string>
+		<string>concordiumidapp</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
