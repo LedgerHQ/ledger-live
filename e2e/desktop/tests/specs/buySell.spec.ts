@@ -210,7 +210,7 @@ const sellAsset: { buySell: BuySell; xrayTicket: string; provider: Provider } = 
   buySell: {
     crypto: Account.BTC_NATIVE_SEGWIT_1,
     fiat: { locale: "fr-FR", currencyTicker: "EUR" },
-    amount: "0.0006",
+    amount: "0.0003",
     operation: OperationType.Sell,
   },
   xrayTicket: "B2CQA-3524",
