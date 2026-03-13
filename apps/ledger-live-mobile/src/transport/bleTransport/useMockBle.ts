@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BleScanningState, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId, getInfosForServiceUuid } from "@ledgerhq/devices";
-import { Subscription } from "@ledgerhq/hw-transport";
-import { useSelector } from "~/context/hooks";
-import { bleDevicesSelector } from "~/reducers/ble";
-import { DeviceLike } from "~/reducers/types";
+import { BehaviorSubject } from "rxjs";
+import { e2eBridgeClient } from "../../../e2e/bridge/client";
 import { makeMockDiscoveredDevice } from "../mockDiscoveredDevice";
 import getBLETransport from "./index";
 
@@ -15,24 +13,32 @@ const mapDeviceToScannedDevice = (device: Device): ScannedDevice => ({
   discoveredDevice: makeMockDiscoveredDevice(device),
 });
 
-const mapKnownDeviceToScannedDevice = (device: DeviceLike): ScannedDevice =>
-  mapDeviceToScannedDevice({
-    deviceId: device.id,
-    deviceName: device.name,
-    modelId: device.modelId,
-    wired: false,
-  });
+type MockBleDescriptor = {
+  id: string;
+  name: string;
+  serviceUUID?: string;
+  serviceUUIDs?: string[];
+};
+
+type MockBleBridgeMessage =
+  | {
+      type: "add";
+      payload: MockBleDescriptor;
+    }
+  | {
+      type: "importBle";
+    };
 
 const mapDescriptorToScannedDevice = ({
   id,
   name,
   serviceUUID,
-}: {
-  id: string;
-  name: string;
-  serviceUUID: string;
-}): ScannedDevice => {
-  const modelId = getInfosForServiceUuid(serviceUUID)?.deviceModel.id ?? DeviceModelId.nanoX;
+  serviceUUIDs,
+}: MockBleDescriptor): ScannedDevice => {
+  const resolvedServiceUUID = serviceUUID ?? serviceUUIDs?.[0];
+  const modelId = resolvedServiceUUID
+    ? getInfosForServiceUuid(resolvedServiceUUID)?.deviceModel.id ?? DeviceModelId.nanoX
+    : DeviceModelId.nanoX;
 
   return mapDeviceToScannedDevice({
     deviceId: id,
@@ -54,13 +60,46 @@ const mergeScannedDevices = (...deviceLists: ScannedDevice[][]): ScannedDevice[]
   return Array.from(mergedDevices.values());
 };
 
+const mockBleScannedDevices = new BehaviorSubject<ScannedDevice[]>([]);
+
+const handleMockBleBridgeMessage = (msg: MockBleBridgeMessage) => {
+  if (msg.type === "add") {
+    const newDevice = mapDescriptorToScannedDevice(msg.payload);
+    mockBleScannedDevices.next(mergeScannedDevices(mockBleScannedDevices.getValue(), [newDevice]));
+  }
+
+  if (msg.type === "importBle") {
+    mockBleScannedDevices.next([]);
+  }
+};
+
+e2eBridgeClient.subscribe(msg => {
+  if (msg.type === "add") {
+    handleMockBleBridgeMessage({
+      type: "add",
+      payload: msg.payload,
+    });
+  }
+
+  if (msg.type === "importBle") {
+    handleMockBleBridgeMessage({
+      type: "importBle",
+    });
+  }
+});
+
+export const __testUtils = {
+  emitMockBleBridgeMessage: handleMockBleBridgeMessage,
+  resetMockBleScannedDevices: () => mockBleScannedDevices.next([]),
+};
+
 /**
  * Mock hook for BLE device scanning in e2e tests.
  *
- * Uses the mock transport's `listen()` method (from `makeMock.ts`) which subscribes to
- * `e2eBridgeClient` for "add" events sent by the test runner via `addDevicesBT()`.
- * It also exposes imported `knownDevices` as scanned devices so remembered mock BLE devices
- * stay selectable in Detox flows.
+ * Subscribes directly to `e2eBridgeClient` for "add" events sent by the
+ * test runner via `addDevicesBT()`.
+ *
+ * Emitted scan events are retained across screen mounts until a new BLE state is imported.
  *
  * @param enabled - Whether scanning is currently enabled
  * @returns BleScanningState with scanned devices
@@ -72,14 +111,11 @@ const mergeScannedDevices = (...deviceLists: ScannedDevice[][]): ScannedDevice[]
  * // This triggers in server.ts:
  * bridge.addDevicesBT({ id: "...", name: "...", serviceUUID: "..." });
  *
- * // Which sends an "add" message that makeMock.listen receives
+ * // Which sends an "add" message that this hook receives via e2eBridgeClient
  */
 export const useMockBleDevicesScanning = (enabled: boolean): BleScanningState => {
-  const knownDevices = useSelector(bleDevicesSelector);
-  const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
-  const knownScannedDevices = useMemo(
-    () => knownDevices.map(mapKnownDeviceToScannedDevice),
-    [knownDevices],
+  const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>(() =>
+    enabled ? mockBleScannedDevices.getValue() : [],
   );
 
   useEffect(() => {
@@ -88,34 +124,16 @@ export const useMockBleDevicesScanning = (enabled: boolean): BleScanningState =>
       return;
     }
 
-    let subscription: Subscription | null = null;
-
-    // Use the mock transport's listen method which subscribes to e2eBridgeClient
-    subscription = getBLETransport().listen({
-      next: event => {
-        if (event.type === "add" && event.descriptor) {
-          const newDevice = mapDescriptorToScannedDevice(event.descriptor);
-          setScannedDevices(prev => mergeScannedDevices(prev, [newDevice]));
-        }
-      },
-      error: () => {},
-      complete: () => {},
-    });
+    setScannedDevices(mockBleScannedDevices.getValue());
+    const subscription = mockBleScannedDevices.subscribe(setScannedDevices);
 
     return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
+      subscription.unsubscribe();
     };
   }, [enabled]);
 
-  const mergedScannedDevices = useMemo(
-    () => (enabled ? mergeScannedDevices(knownScannedDevices, scannedDevices) : []),
-    [enabled, knownScannedDevices, scannedDevices],
-  );
-
   return {
-    scannedDevices: mergedScannedDevices,
+    scannedDevices,
     scanningBleError: null,
     isScanning: enabled,
   };

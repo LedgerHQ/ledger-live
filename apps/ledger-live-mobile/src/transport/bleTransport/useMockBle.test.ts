@@ -1,106 +1,149 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useMockBleDevicesScanning } from "./useMockBle";
+import { __testUtils, useMockBleDevicesScanning } from "./useMockBle";
+import { DeviceLike } from "~/reducers/types";
 
-const mockListen = jest.fn();
 const mockOpen = jest.fn();
-const mockUseSelector = jest.fn();
+type MockAddPayload = {
+  id: string;
+  name: string;
+  serviceUUID?: string;
+  serviceUUIDs?: string[];
+};
+
+type MockBridgeMessage =
+  | {
+      type: "add";
+      payload: MockAddPayload;
+    }
+  | {
+      type: "importBle";
+    };
 
 jest.mock("./index", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    listen: mockListen,
     open: mockOpen,
   })),
 }));
 
-jest.mock("~/context/hooks", () => ({
-  useSelector: (...args: unknown[]) => mockUseSelector(...args),
-}));
-
-type MockBleEvent = {
-  type: "add";
-  descriptor: {
-    id: string;
-    name: string;
-    serviceUUID: string;
-  };
-};
-
-const createKnownDevice = (overrides: Partial<{ id: string; name: string; modelId: DeviceModelId }> = {}) => ({
+const createKnownDevice = (overrides: Partial<DeviceLike> = {}): DeviceLike => ({
   id: "mock_1",
   name: "Nano X",
   modelId: DeviceModelId.nanoX,
   ...overrides,
 });
 
-const getServiceUuid = (modelId: DeviceModelId) => {
-  const serviceUuid = getDeviceModel(modelId).bluetoothSpec?.[0]?.serviceUuid;
+const emitBridgeMessage = (message: MockBridgeMessage) => {
+  act(() => {
+    __testUtils.emitMockBleBridgeMessage(message);
+  });
+};
 
-  if (!serviceUuid) {
-    throw new Error(`Missing bluetooth service UUID for ${modelId}`);
+const emitScannedBleDevice = (
+  device: Pick<DeviceLike, "id" | "name" | "modelId">,
+  extraPayload: Partial<MockAddPayload> = {},
+) => {
+  const serviceUUID = getDeviceModel(device.modelId).bluetoothSpec?.[0]?.serviceUuid;
+
+  if (!serviceUUID) {
+    throw new Error(`Missing bluetooth service UUID for ${device.modelId}`);
   }
 
-  return serviceUuid;
+  emitBridgeMessage({
+    type: "add",
+    payload: {
+      id: device.id,
+      name: device.name,
+      serviceUUID,
+      ...extraPayload,
+    },
+  });
 };
 
 describe("useMockBleDevicesScanning", () => {
-  let knownDevices: ReturnType<typeof createKnownDevice>[];
-  let bleListener: { next: (event: MockBleEvent) => void } | null;
-
   beforeEach(() => {
-    knownDevices = [];
-    bleListener = null;
-
-    mockUseSelector.mockImplementation(() => knownDevices);
-    mockListen.mockImplementation(listener => {
-      bleListener = listener;
-      return { unsubscribe: jest.fn() };
-    });
+    __testUtils.resetMockBleScannedDevices();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should expose remembered mock BLE devices as scanned devices when enabled", () => {
-    knownDevices = [createKnownDevice()];
-
+  it("should not treat imported known devices as scanned devices", () => {
     const { result } = renderHook(() => useMockBleDevicesScanning(true));
+
+    emitBridgeMessage({
+      type: "importBle",
+    });
+
+    expect(result.current.scannedDevices).toEqual([]);
+  });
+
+  it("should retain bridge-emitted scanned BLE devices across screen mounts", () => {
+    const knownDevice = createKnownDevice();
+    const { result, unmount } = renderHook(() => useMockBleDevicesScanning(true));
+
+    emitScannedBleDevice(knownDevice);
 
     expect(result.current.scannedDevices).toMatchObject([
       {
-        deviceId: "mock_1",
-        deviceName: "Nano X",
-        modelId: DeviceModelId.nanoX,
+        deviceId: knownDevice.id,
+        deviceName: knownDevice.name,
+        modelId: knownDevice.modelId,
         wired: false,
         discoveredDevice: {
-          id: "mock_1",
-          name: "Nano X",
+          id: knownDevice.id,
+          name: knownDevice.name,
           transport: "BLE",
         },
+      },
+    ]);
+
+    unmount();
+
+    const { result: remountedResult } = renderHook(() => useMockBleDevicesScanning(true));
+
+    expect(remountedResult.current.scannedDevices).toMatchObject([
+      {
+        deviceId: knownDevice.id,
+        deviceName: knownDevice.name,
+        modelId: knownDevice.modelId,
+        wired: false,
       },
     ]);
   });
 
   it("should derive the scanned device model from the bluetooth service UUID", () => {
+    const scannedDevice = createKnownDevice({
+      id: "mock_4",
+      name: "Stax",
+      modelId: DeviceModelId.stax,
+    });
     const { result } = renderHook(() => useMockBleDevicesScanning(true));
 
-    const listener = bleListener;
+    emitScannedBleDevice(scannedDevice);
 
-    if (!listener) {
-      throw new Error("BLE listener was not registered");
-    }
+    expect(result.current.scannedDevices).toMatchObject([
+      {
+        deviceId: scannedDevice.id,
+        deviceName: scannedDevice.name,
+        modelId: DeviceModelId.stax,
+        wired: false,
+      },
+    ]);
+  });
 
-    act(() => {
-      listener.next({
-        type: "add",
-        descriptor: {
-          id: "mock_4",
-          name: "Stax",
-          serviceUUID: getServiceUuid(DeviceModelId.stax),
-        },
-      });
+  it("should handle the mock descriptor shape with serviceUUIDs", () => {
+    const { result } = renderHook(() => useMockBleDevicesScanning(true));
+
+    emitBridgeMessage({
+      type: "add",
+      payload: {
+        id: "mock_4",
+        name: "Stax",
+        serviceUUIDs: [getDeviceModel(DeviceModelId.stax).bluetoothSpec?.[0]?.serviceUuid ?? ""],
+      },
     });
 
     expect(result.current.scannedDevices).toMatchObject([
@@ -109,19 +152,50 @@ describe("useMockBleDevicesScanning", () => {
         deviceName: "Stax",
         modelId: DeviceModelId.stax,
         wired: false,
-        discoveredDevice: {
-          id: "mock_4",
-          name: "Stax",
-          transport: "BLE",
-        },
       },
     ]);
   });
 
-  it("should not expose scanned devices when disabled", () => {
-    knownDevices = [createKnownDevice()];
+  it("should fall back to Nano X when the mock descriptor has no service UUID", () => {
+    const { result } = renderHook(() => useMockBleDevicesScanning(true));
 
+    emitBridgeMessage({
+      type: "add",
+      payload: {
+        id: "mock_fallback",
+        name: "Unknown mock device",
+      },
+    });
+
+    expect(result.current.scannedDevices).toMatchObject([
+      {
+        deviceId: "mock_fallback",
+        deviceName: "Unknown mock device",
+        modelId: DeviceModelId.nanoX,
+        wired: false,
+      },
+    ]);
+  });
+
+  it("should clear retained scanned devices when a new BLE state is imported", () => {
+    const knownDevice = createKnownDevice();
+    const { result } = renderHook(() => useMockBleDevicesScanning(true));
+
+    emitScannedBleDevice(knownDevice);
+
+    expect(result.current.scannedDevices).toHaveLength(1);
+
+    emitBridgeMessage({
+      type: "importBle",
+    });
+
+    expect(result.current.scannedDevices).toEqual([]);
+  });
+
+  it("should not expose scanned devices when disabled", () => {
     const { result } = renderHook(() => useMockBleDevicesScanning(false));
+
+    emitScannedBleDevice(createKnownDevice());
 
     expect(result.current.scannedDevices).toEqual([]);
     expect(result.current.isScanning).toBe(false);
