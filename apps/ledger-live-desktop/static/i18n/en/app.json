@@ -2313,7 +2313,8 @@
         "banner": "Maximum spendable amount is",
         "fees": "Learn more about fees",
         "standard": "Standard",
-        "advanced": "Advanced"
+        "advanced": "Advanced",
+        "feeCurrency": "Fee currency"
       },
       "summary": {
         "title": "Summary"

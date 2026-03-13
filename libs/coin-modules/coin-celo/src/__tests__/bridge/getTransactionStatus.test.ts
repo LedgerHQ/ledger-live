@@ -479,4 +479,19 @@ describe("getTransactionStatus", () => {
     expect(transactionStatus.errors["fees"].name).toEqual("NotEnoughBalance");
     expect(transactionStatus.errors).not.toHaveProperty("amount");
   });
+
+  it("treats token fee as same-token using feeCurrencyUnwrapped when feeCurrency is adapter", async () => {
+    const transactionStatus = await getTransactionStatus(accountWithTokenAccountFixture, {
+      ...tokenTransactionFixture,
+      subAccountId: usdcTokenAccount.id,
+      feeCurrency: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B" as `0x${string}`,
+      feeCurrencyUnwrapped: usdcTokenAccount.token.contractAddress as `0x${string}`,
+      feeCurrencyAccountId: usdcTokenAccount.id,
+      recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      amount: new BigNumber("900000000"), // 900 USDC
+      fees: new BigNumber("200000000000000000000"), // 200 USDC in wei precision
+    });
+
+    expect(transactionStatus.errors["amount"]?.name).toEqual("NotEnoughBalance");
+  });
 });
