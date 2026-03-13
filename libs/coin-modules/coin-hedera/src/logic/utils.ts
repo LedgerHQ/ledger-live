@@ -103,8 +103,14 @@ export function extractInitiator(transactionId: string): string {
  * Extract the fee payer account for a Hedera mirror transaction.
  *
  * In most cases, the transaction initiator is also the fee payer, but not always: failed
- * transactions can be charged to the initiator, or not. The only reliable way to determine
- * the fee payer is to analyze the actual balance changes.
+ * transactions can be charged to the initiator, or not. The most reliable signal for
+ * determining the fee payer is to analyze the actual balance changes (transfers) and the
+ * charged transaction fee.
+ *
+ * This helper implements a best-effort heuristic:
+ * - it first inspects the transfers and charged fee to infer a unique fee payer when possible;
+ * - if it cannot unambiguously identify a single payer from balance changes, it falls back to
+ *   the transaction initiator derived from the transaction id.
  */
 export function extractFeesPayer(
   transaction: Pick<HederaMirrorTransaction, "transaction_id" | "transfers" | "charged_tx_fee">,
