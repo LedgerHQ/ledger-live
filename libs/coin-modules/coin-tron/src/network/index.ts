@@ -42,6 +42,7 @@ import {
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
+  TransactionInfoByBlockNumAPI,
   TransactionResponseTronAPI,
   TransactionTronAPI,
   Trc20API,
@@ -413,8 +414,6 @@ function toBlock(data: BlockWithTransactionsAPI): Block {
   return ret;
 }
 
-// For the moment, fetching transaction info is the only way to get fees from a transaction
-// Export for test purpose only
 export async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
   const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
     `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
@@ -425,6 +424,15 @@ export async function fetchTronTxDetail(txId: string): Promise<TronTransactionIn
     withdraw_amount,
     unfreeze_amount,
   };
+}
+
+export async function getTransactionInfoByBlockNum(
+  blockNum: number,
+): Promise<TransactionInfoByBlockNumAPI[]> {
+  return post<{ num: number }, TransactionInfoByBlockNumAPI[]>(
+    `/wallet/gettransactioninfobyblocknum`,
+    { num: blockNum },
+  );
 }
 
 async function getAllTransactions<T>(

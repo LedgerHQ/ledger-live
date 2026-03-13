@@ -4,21 +4,20 @@ import type {
   BlockOperation,
   BlockTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import {
-  fetchTronTxDetail,
   getBlock as networkGetBlock,
   getBlockWithTransactions,
+  getTransactionInfoByBlockNum,
 } from "../network";
 import { encode58Check } from "../network/format";
 import { inferAssetInfo } from "../network/trongrid/trongrid-adapters";
-import type { BlockTransactionAPI } from "../network/types";
+import type { BlockTransactionAPI, TransactionInfoByBlockNumAPI } from "../network/types";
 import { abiDecodeTrc20Transfer } from "../network/utils";
 import type { TrongridTxInfo, TrongridTxType } from "../types";
 
-type BlockTxInfo = TrongridTxInfo & { fee: BigNumber };
+type BlockTxInfo = TrongridTxInfo;
 
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
   if (!Number.isSafeInteger(height) || height <= 0) {
@@ -38,7 +37,10 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`Invalid block height: ${height}`);
   }
 
-  const data = await getBlockWithTransactions(height);
+  const [data, txInfos] = await Promise.all([
+    getBlockWithTransactions(height),
+    getTransactionInfoByBlockNum(height),
+  ]);
   const header = data.block_header.raw_data;
   const blockTimestamp = header.timestamp ?? 0;
 
@@ -53,51 +55,37 @@ export async function getBlock(height: number): Promise<Block> {
   }
 
   const rawTxs = data.transactions ?? [];
-  const feesById = await fetchMissingFees(rawTxs);
+  const txInfoById = buildTxInfoMap(txInfos);
 
   const transactions: BlockTransaction[] = rawTxs
-    .map(tx => toBlockTransaction(tx, blockTimestamp, info.height, feesById))
+    .map(tx => toBlockTransaction(tx, blockTimestamp, info.height, txInfoById))
     .filter((tx): tx is BlockTransaction => tx !== null);
 
   return { info, transactions };
 }
 
-async function fetchMissingFees(txs: BlockTransactionAPI[]): Promise<Map<string, number>> {
-  const feesById = new Map<string, number>();
-
-  const txsMissingFees = txs.filter(tx => tx.ret?.[0]?.fee === undefined);
-  if (txsMissingFees.length === 0) return feesById;
-
-  await promiseAllBatched(3, txsMissingFees, async tx => {
-    try {
-      const detail = await fetchTronTxDetail(tx.txID);
-      if (detail.fee !== undefined) {
-        feesById.set(tx.txID, detail.fee);
-      }
-    } catch (error) {
-      log("warn", `Failed to fetch fee for tx ${tx.txID}, falling back to 0`, { error });
-    }
-  });
-
-  return feesById;
+function buildTxInfoMap(
+  txInfos: TransactionInfoByBlockNumAPI[],
+): Map<string, TransactionInfoByBlockNumAPI> {
+  return new Map(txInfos.map(tx => [tx.id, tx]));
 }
 
 function toBlockTransaction(
   tx: BlockTransactionAPI,
   blockTimestamp: number,
   blockHeight: number,
-  feesById: Map<string, number>,
+  txInfoById: Map<string, TransactionInfoByBlockNumAPI>,
 ): BlockTransaction | null {
   const txInfo = formatBlockTransaction(tx, blockTimestamp, blockHeight);
   if (!txInfo) return null;
 
-  const fee = txInfo.fee.gt(0) ? txInfo.fee : new BigNumber(feesById.get(tx.txID) ?? 0);
-  const fees = fee.isNaN() || !fee.isFinite() ? 0n : BigInt(fee.toFixed(0));
+  const txDetail = txInfoById.get(tx.txID);
+  const fee = txDetail?.fee ?? 0;
 
   return {
     hash: txInfo.txID,
     failed: txInfo.hasFailed,
-    fees,
+    fees: BigInt(fee),
     feesPayer: txInfo.from,
     operations: txInfo.hasFailed ? [] : toBlockOperations(txInfo),
   };
@@ -120,7 +108,6 @@ function formatBlockTransaction(
     const from = encode58Check(ownerAddress);
     const contractRet = tx.ret?.[0]?.contractRet ?? "SUCCESS";
     const hasFailed = contractRet !== "SUCCESS";
-    const fee = new BigNumber(tx.ret?.[0]?.fee ?? 0);
 
     const isTrc20 = type === "TriggerSmartContract" && params.contract_address;
     const isTrc10 = type === "TransferAssetContract";
@@ -159,7 +146,6 @@ function formatBlockTransaction(
       from,
       to,
       value,
-      fee,
       blockHeight,
       hasFailed,
     };

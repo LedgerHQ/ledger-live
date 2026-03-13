@@ -448,11 +448,25 @@ describe("getBlock API integration", () => {
     ],
   };
 
+  const txInfoFixture = [
+    {
+      id: "abc123def456789",
+      fee: 1000,
+      blockNumber: 69629492,
+      blockTimeStamp: 1739540559000,
+    },
+  ];
+
   const getBlockHandler = http.post(`${TRON_BASE_URL_TEST}/wallet/getblock`, async () =>
     HttpResponse.json(blockFixture),
   );
 
-  const mockServer = setupServer(getBlockHandler);
+  const getTxInfoByBlockNumHandler = http.post(
+    `${TRON_BASE_URL_TEST}/wallet/gettransactioninfobyblocknum`,
+    async () => HttpResponse.json(txInfoFixture),
+  );
+
+  const mockServer = setupServer(getBlockHandler, getTxInfoByBlockNumHandler);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(() => mockServer.resetHandlers());
