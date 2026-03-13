@@ -20,7 +20,7 @@ import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
 
 function internalTransactionsFetcher(
-  nodeApi: ReturnType<typeof getNodeApi>,
+  nodeApi: NodeApi,
   currency: CryptoCurrency,
 ): (height: number) => Promise<Map<string, BlockOperation[]>> {
   const config = getCoinConfig(currency).info;

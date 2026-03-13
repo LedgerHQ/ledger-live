@@ -406,7 +406,7 @@ export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> =
  * Not supported by all RPC providers (e.g. Fantom supports it).
  * @see https://www.quicknode.com/docs/ethereum/trace_block
  */
-export const traceBlock: Exclude<NodeApi["traceBlock"], undefined> = (
+export const traceBlock: NodeApi["traceBlock"] = (
   currency,
   blockHeight = "latest",
 ) =>

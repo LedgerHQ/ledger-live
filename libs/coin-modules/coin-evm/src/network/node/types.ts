@@ -46,7 +46,7 @@ export type TraceBlockCallAction = {
 };
 
 export function isTraceBlockCallAction(
-  action: Record<string, unknown>,
+  action: TraceBlockOtherAction,
 ): action is TraceBlockCallAction {
   return (
     typeof action.from === "string" &&
