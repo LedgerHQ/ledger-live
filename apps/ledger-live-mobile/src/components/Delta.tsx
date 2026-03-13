@@ -46,7 +46,6 @@ function Delta({
   const { shouldDisplayGraphRework } = useWalletFeaturesConfig("mobile");
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
-    // eslint-disable-next-line i18next/no-literal-string
     <Text variant="large" color="neutral.c60" fontWeight="semiBold" {...textProperties}>
       &minus;
     </Text>
