@@ -401,7 +401,41 @@ describe("getBlock", () => {
     expect(result.transactions[0].fees).toBe(BigInt(9999));
   });
 
-  it("should fallback to zero fees when tx info not found", async () => {
+  it("should fallback to ret fee when tx info not found", async () => {
+    mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TransferContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    to_address: "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
+                    amount: 1000000,
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS", fee: 7500 }],
+        },
+      ],
+    });
+
+    const result = await getBlock(100);
+
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].fees).toBe(BigInt(7500));
+  });
+
+  it("should fallback to zero fees when neither tx info nor ret has fee", async () => {
     mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
 
     (getBlockWithTransactions as jest.Mock).mockResolvedValue({
@@ -433,5 +467,40 @@ describe("getBlock", () => {
 
     expect(result.transactions).toHaveLength(1);
     expect(result.transactions[0].fees).toBe(BigInt(0));
+  });
+
+  it("should still succeed when getTransactionInfoByBlockNum fails", async () => {
+    mockGetTransactionInfoByBlockNum.mockRejectedValue(new Error("Network error"));
+
+    (getBlockWithTransactions as jest.Mock).mockResolvedValue({
+      blockID: "blockhash",
+      block_header: { raw_data: { number: 100, timestamp: 1700000000000 } },
+      transactions: [
+        {
+          txID: "tx1",
+          raw_data: {
+            contract: [
+              {
+                type: "TransferContract",
+                parameter: {
+                  value: {
+                    owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+                    to_address: "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
+                    amount: 1000000,
+                  },
+                },
+              },
+            ],
+          },
+          ret: [{ contractRet: "SUCCESS", fee: 4000 }],
+        },
+      ],
+    });
+
+    const result = await getBlock(100);
+
+    expect(result.info.height).toBe(100);
+    expect(result.transactions).toHaveLength(1);
+    expect(result.transactions[0].fees).toBe(BigInt(4000));
   });
 });

@@ -39,7 +39,13 @@ export async function getBlock(height: number): Promise<Block> {
 
   const [data, txInfos] = await Promise.all([
     getBlockWithTransactions(height),
-    getTransactionInfoByBlockNum(height),
+    getTransactionInfoByBlockNum(height).catch(error => {
+      log("tron/getBlock", "Failed to fetch transaction info, falling back to ret fees", {
+        height,
+        error,
+      });
+      return [];
+    }),
   ]);
   const header = data.block_header.raw_data;
   const blockTimestamp = header.timestamp ?? 0;
@@ -80,7 +86,7 @@ function toBlockTransaction(
   if (!txInfo) return null;
 
   const txDetail = txInfoById.get(tx.txID);
-  const fee = txDetail?.fee ?? 0;
+  const fee = txDetail?.fee ?? tx.ret?.[0]?.fee ?? 0;
 
   return {
     hash: txInfo.txID,
