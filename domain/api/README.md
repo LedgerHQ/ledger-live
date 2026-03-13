@@ -27,6 +27,6 @@ Each package follows this file layout inside `src/`:
 
 ```
 api.ts          # createApi definition or re-export (required)
-api.test.ts     # MSW-based endpoint tests (required if new endpoints)
+api.test.ts     # Endpoint/integration tests (required if new endpoints; MSW recommended if that's the project standard)
 index.ts        # Barrel exports (required)
 ```
