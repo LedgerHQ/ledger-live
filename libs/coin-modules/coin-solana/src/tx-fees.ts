@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
-import { buildTransactionWithAPI } from "./buildTransaction";
 import createTransaction from "./createTransaction";
+import { buildVersionedTransaction } from "./logic/craftTransaction";
 import { ChainAPI } from "./network";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
 import { getStakeAccountAddressWithSeed } from "./network/chain/web3";
@@ -17,7 +17,7 @@ export async function estimateTxFee(
   kind: TransactionModel["kind"],
 ) {
   const tx = await createDummyTx(address, kind);
-  const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
+  const [onChainTx] = await buildVersionedTransaction(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
 
