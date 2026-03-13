@@ -3,7 +3,7 @@
   "compilerOptions": {
     "allowJs": false,
     "jsx": "react",
-    "lib": ["ES2021", "dom"],
+    "lib": ["ES2022", "dom"],
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "bundler",

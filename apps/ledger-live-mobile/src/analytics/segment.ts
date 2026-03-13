@@ -529,7 +529,10 @@ export const track = async (
     date: new Date(),
   });
   if (!token) return;
-  segmentClient?.track(event, allProperties);
+  segmentClient?.track(
+    event,
+    allProperties as Parameters<NonNullable<typeof segmentClient>["track"]>[1],
+  );
 };
 export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
   const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
@@ -655,5 +658,8 @@ export const screen = async (
     date: new Date(),
   });
   if (!token) return;
-  segmentClient?.track(eventName, allProperties);
+  segmentClient?.track(
+    eventName,
+    allProperties as Parameters<NonNullable<typeof segmentClient>["track"]>[1],
+  );
 };

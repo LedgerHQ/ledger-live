@@ -1,4 +1,8 @@
-import baseConfig from "../../jest.config";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import baseConfig from "../../jest.config.ts";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Handle unhandled promise rejections early, before Jest checks for them
 // This is needed for Jest 20 which is more strict about unhandled rejections

@@ -51,7 +51,7 @@ runs:
         version: 10.24.0
     - uses: actions/setup-node@v4
       with:
-        node-version: 22.13.1
+        node-version: 24.14.0
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: pull docker image
