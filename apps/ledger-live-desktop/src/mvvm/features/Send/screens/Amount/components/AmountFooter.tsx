@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FeePresetOption } from "../../../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../../../hooks/useFeePresetFiatValues";
@@ -55,7 +55,7 @@ export function AmountFooter({
   const ctaTestId = reviewShowIcon ? "send-review-button" : "send-get-funds-button";
 
   return (
-    <div className="mt-56 pt-12" data-testid="send-amount-footer">
+    <DialogFooter data-testid="send-amount-footer" className="flex flex-col">
       <div className="border-t border-muted-subtle" />
       <NetworkFeesMenu
         display={{
@@ -90,6 +90,6 @@ export function AmountFooter({
       >
         {reviewLoading ? "" : reviewLabel}
       </Button>
-    </div>
+    </DialogFooter>
   );
 }

@@ -27,6 +27,41 @@ function isDomainLoading(domain: DomainServiceStatus): boolean {
 }
 
 const OUTGOING_OPERATION_TYPES = new Set<Operation["type"]>(["OUT"]);
+const MAX_RECENT_RECIPIENTS = 12;
+
+function isConfirmedOutgoingOperation(operation: Operation): boolean {
+  return (
+    OUTGOING_OPERATION_TYPES.has(operation.type) &&
+    operation.blockHeight != null &&
+    !operation.hasFailed
+  );
+}
+
+function tryAddRecentRecipient(
+  operation: Operation,
+  recipient: string,
+  deduplicatedAddresses: Map<string, RecentAddress>,
+  userAccountsByAddress: Map<string, AccountLike>,
+  currency: CryptoCurrency | TokenCurrency,
+): void {
+  const normalizedRecipient = recipient.trim().toLowerCase();
+  if (!normalizedRecipient) return;
+
+  const existing = deduplicatedAddresses.get(normalizedRecipient);
+  const isNewer = !existing || operation.date.getTime() > existing.lastUsedAt.getTime();
+  if (!isNewer) return;
+
+  const matchedAccount = userAccountsByAddress.get(normalizedRecipient);
+  const trimmedRecipient = recipient.trim();
+  deduplicatedAddresses.set(normalizedRecipient, {
+    address: trimmedRecipient,
+    currency,
+    lastUsedAt: operation.date,
+    name: trimmedRecipient,
+    isLedgerAccount: !!matchedAccount,
+    accountId: matchedAccount?.id,
+  });
+}
 
 type UseAddressValidationProps = Readonly<{
   searchValue: string;
@@ -119,36 +154,26 @@ export function useAddressValidation({
 
     const deduplicatedAddresses = new Map<string, RecentAddress>();
 
-    [...loadedOperations]
-      .filter(
-        operation =>
-          OUTGOING_OPERATION_TYPES.has(operation.type) &&
-          operation.blockHeight != null &&
-          !operation.hasFailed,
-      )
-      .sort((a, b) => b.date.getTime() - a.date.getTime())
-      .forEach(operation => {
-        operation.recipients.forEach(recipient => {
-          const normalizedRecipient = recipient.trim().toLowerCase();
+    for (const operation of loadedOperations) {
+      if (!isConfirmedOutgoingOperation(operation)) continue;
 
-          if (!normalizedRecipient || deduplicatedAddresses.has(normalizedRecipient)) {
-            return;
-          }
+      for (const recipient of operation.recipients) {
+        if (deduplicatedAddresses.size >= MAX_RECENT_RECIPIENTS) break;
+        tryAddRecentRecipient(
+          operation,
+          recipient,
+          deduplicatedAddresses,
+          userAccountsByAddress,
+          currency,
+        );
+      }
 
-          const matchedAccount = userAccountsByAddress.get(normalizedRecipient);
-          const trimmedRecipient = recipient.trim();
-          deduplicatedAddresses.set(normalizedRecipient, {
-            address: trimmedRecipient,
-            currency,
-            lastUsedAt: operation.date,
-            name: trimmedRecipient,
-            isLedgerAccount: !!matchedAccount,
-            accountId: matchedAccount?.id,
-          });
-        });
-      });
+      if (deduplicatedAddresses.size >= MAX_RECENT_RECIPIENTS) break;
+    }
 
-    return Array.from(deduplicatedAddresses.values());
+    return Array.from(deduplicatedAddresses.values()).sort(
+      (a, b) => b.lastUsedAt.getTime() - a.lastUsedAt.getTime(),
+    );
   }, [account?.operations, currency, userAccountsForCurrency]);
 
   const matchedRecentAddress = useMemo(() => {

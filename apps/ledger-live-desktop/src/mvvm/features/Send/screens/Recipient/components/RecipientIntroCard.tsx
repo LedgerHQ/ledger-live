@@ -29,6 +29,8 @@ export function RecipientIntroCard() {
           className="cursor-pointer py-16"
           onClick={toggle}
           data-testid="send-recipient-security-toggle"
+          aria-expanded={isOpen}
+          aria-controls="send-recipient-security-content"
         >
           <div className="flex w-full items-center gap-8">
             <div className="flex min-w-0 flex-1 items-center">
@@ -46,7 +48,11 @@ export function RecipientIntroCard() {
         </ListItem>
 
         {isOpen && (
-          <div className="pb-16 px-8" data-testid="send-recipient-security-content">
+          <div
+            id="send-recipient-security-content"
+            className="pb-16 px-8"
+            data-testid="send-recipient-security-content"
+          >
             <div className="flex items-start mb-24 mt-12">
               <div className="flex h-40 w-40 shrink-0 items-center justify-center">
                 <Circles size={24} />
