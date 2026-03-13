@@ -1,6 +1,5 @@
 {
   "name": "@ledgerhq/disable-network-setup",
-  "type": "module",
   "version": "0.3.0",
   "private": true,
   "description": "Disable network hook, util for tests",
