@@ -15,18 +15,40 @@ export function ModularDrawerFlowView({
   assetsViewModel,
   networksViewModel,
   accountsViewModel,
+  useLumenBottomSheet,
 }: ModularDrawerFlowProps) {
   const currentStep = useSelector(modularDrawerStepSelector);
+
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
+
+  const { assetsConfiguration } = assetsViewModel;
+  const assetSelectionKey = `${assetsConfiguration?.rightElement ?? "default"}-${assetsConfiguration?.leftElement ?? "default"}`;
+
+  const { networksConfiguration } = networksViewModel;
+  const networkSelectionKey = `${networksConfiguration?.rightElement ?? "default"}-${networksConfiguration?.leftElement ?? "default"}`;
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
       case ModularDrawerStep.Asset:
-        return <AssetSelection {...assetsViewModel} useLumenBottomSheet={false} />;
+        return (
+          <AssetSelection
+            key={assetSelectionKey}
+            {...assetsViewModel}
+            useLumenBottomSheet={useLumenBottomSheet}
+          />
+        );
       case ModularDrawerStep.Network:
-        return <NetworkSelection {...networksViewModel} useLumenBottomSheet={false} />;
+        return (
+          <NetworkSelection
+            key={networkSelectionKey}
+            {...networksViewModel}
+            useLumenBottomSheet={useLumenBottomSheet}
+          />
+        );
       case ModularDrawerStep.Account:
-        return <AccountSelection {...accountsViewModel} useLumenBottomSheet={false} />;
+        return (
+          <AccountSelection {...accountsViewModel} useLumenBottomSheet={useLumenBottomSheet} />
+        );
       default:
         return null;
     }
@@ -42,8 +64,7 @@ export function ModularDrawerFlowView({
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        {/* TODO: Re-enable it for LIVE-27294: {!isEnabled && <Title step={step} />} */}
-        <Title step={step} />
+        {!useLumenBottomSheet && <Title step={step} />}
         {renderStepContent(step)}
       </Animated.View>
     );
