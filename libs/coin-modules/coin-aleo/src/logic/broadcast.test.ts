@@ -1,4 +1,4 @@
-import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
 import {
@@ -50,7 +50,6 @@ describe("broadcast", () => {
       currency: mockAccount.currency,
       authorization: mockAuthorization,
       feeAuthorization: mockFeeAuthorization,
-      jwt: mockAleoResources.provableApi?.jwt?.token,
       broadcast: true,
     });
     expect(result).toBe(mockResponse.transaction.id);
@@ -71,23 +70,8 @@ describe("broadcast", () => {
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledWith({
       currency: mockAccount.currency,
       authorization: mockAuthorization,
-      jwt: mockAleoResources.provableApi?.jwt?.token,
       broadcast: true,
     });
-  });
-
-  it("should throw when JWT is missing", async () => {
-    const accountWithoutJwt = getMockedAccount({
-      aleoResources: { ...mockAleoResources, provableApi: {} },
-    });
-
-    await expect(
-      broadcast({
-        configOrCurrencyId: mockConfig,
-        account: accountWithoutJwt,
-        signedTx: mockSignedTx,
-      }),
-    ).rejects.toThrow(/aleo: jwt token is missing/);
   });
 
   it("should propagate network errors from the API client", async () => {
@@ -121,13 +105,11 @@ describe("broadcast", () => {
       expect(apiClient.getProvePublicKey).toHaveBeenCalledTimes(1);
       expect(apiClient.getProvePublicKey).toHaveBeenCalledWith({
         currency: mockAccount.currency,
-        jwt: mockAleoResources.provableApi?.jwt?.token,
       });
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledTimes(1);
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
         publicKey: mockPublicKeyResponse.public_key,
         currency: mockAccount.currency,
-        jwt: mockAleoResources.provableApi?.jwt?.token,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
         broadcast: true,
@@ -135,7 +117,6 @@ describe("broadcast", () => {
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledTimes(1);
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledWith({
         currency: mockAccount.currency,
-        jwt: mockAleoResources.provableApi?.jwt?.token,
         keyId: mockPublicKeyResponse.key_id,
         encryptedData: mockEncryptedData,
       });
@@ -156,7 +137,6 @@ describe("broadcast", () => {
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
         publicKey: mockPublicKeyResponse.public_key,
         currency: mockAccount.currency,
-        jwt: mockAleoResources.provableApi?.jwt?.token,
         authorization: mockAuthorization,
         broadcast: true,
       });

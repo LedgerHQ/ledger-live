@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -211,13 +210,6 @@ export const toPrivateBridgeOperation = (
   };
 };
 
-export const generateUniqueUsername = (address: string): string => {
-  const timestamp = Date.now().toString();
-  const combined = `${timestamp}_${address}`;
-  const hash = createHash("sha256").update(combined).digest("hex");
-  return hash;
-};
-
 export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
   if (typeof configOrCurrencyId === "string") {
     const config = aleoConfig.getCoinConfig(configOrCurrencyId);
@@ -281,8 +273,8 @@ export function calculateAmount({
 
 export const isProvableApiConfigured = (
   provableApi: ProvableApi | null,
-): provableApi is Required<Pick<ProvableApi, "jwt" | "uuid" | "apiKey">> => {
-  return !!provableApi?.uuid && !!provableApi?.apiKey && !!provableApi?.jwt?.token;
+): provableApi is Required<Pick<ProvableApi, "uuid">> => {
+  return !!provableApi?.uuid;
 };
 
 export const isRecordScannerReady = (provableApi: ProvableApi): boolean => {

@@ -416,7 +416,6 @@ describe("sync.ts", () => {
       expect(mockAccessProvableApi).toHaveBeenCalledWith({
         currency: mockCurrency,
         viewKey: "AViewKey123",
-        address: mockAccount.freshAddress,
         provableApi: accountWithProvableApi.aleoResources?.provableApi,
       });
     });
@@ -609,16 +608,12 @@ describe("sync.ts", () => {
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
-        jwtToken: configuredProvableApi.jwt!.token,
         uuid: configuredProvableApi.uuid,
-        apiKey: configuredProvableApi.apiKey,
         start: 0,
       });
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledWith({
         currency: mockCurrency,
-        jwtToken: configuredProvableApi.jwt!.token,
         uuid: configuredProvableApi.uuid,
-        apiKey: configuredProvableApi.apiKey,
         unspent: true,
       });
       expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);

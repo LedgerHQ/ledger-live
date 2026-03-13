@@ -80,22 +80,6 @@ export interface AleoPublicTransactionsResponse {
   };
 }
 
-export interface AleoRegisterAccountResponse {
-  consumer: { id: string };
-  created_at: number;
-  id: string;
-  key: string;
-}
-
-export interface AleoAccountJWTResponse {
-  exp: number;
-}
-
-export interface AleoJWT {
-  token: string;
-  exp: number;
-}
-
 export interface AleoRegisterForRecordsResponse {
   uuid: string;
 }
