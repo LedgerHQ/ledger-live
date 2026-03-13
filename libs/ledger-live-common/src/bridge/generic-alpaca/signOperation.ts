@@ -10,11 +10,11 @@ import {
   transactionToIntent,
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
+import { GenericSigner } from "./signer/types";
 
 /**
  * Enriches transaction intent with memo and asset information
@@ -37,7 +37,9 @@ function enrichTransactionIntent(
  */
 export const genericSignOperation =
   (_network: string, kind: string) =>
-  (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signOperation"] =>
+  (
+    signerContext: SignerContext<GenericSigner>,
+  ): AccountBridge<GenericTransaction>["signOperation"] =>
   ({
     account,
     transaction,
@@ -85,7 +87,7 @@ export const genericSignOperation =
         }
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
-          const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
+          const { publicKey } = await signer.getAddress(derivationPath);
 
           let transactionIntent = transactionToIntent(
             account,

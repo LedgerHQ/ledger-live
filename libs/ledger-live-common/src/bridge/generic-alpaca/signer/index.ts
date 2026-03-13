@@ -1,23 +1,22 @@
 import xrpGetAddress from "@ledgerhq/coin-xrp/signer/getAddress";
 import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
 import Stellar from "@ledgerhq/hw-app-str";
-import { signTransaction, stellarSignTransaction, tezosSignTransaction } from "./signTransaction";
 import { StrKey } from "@stellar/stellar-sdk";
 import { CreateSigner, executeWithSigner } from "../../setup";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
-import { AlpacaSigner } from "./types";
+import { AlpacaSigner, GenericSigner } from "./types";
 import { DerivationType, LedgerSigner as TaquitoLedgerSigner } from "@taquito/ledger-signer";
 import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
 import Tezos from "@ledgerhq/hw-app-tezos";
 import { context as evmContext, getAddress as evmGetAddress } from "./Eth";
 
-const createSignerXrp: CreateSigner<Xrp> = (transport: Transport) => {
+const createSignerXrp: CreateSigner<GenericSigner> = (transport: Transport) => {
   return new Xrp(transport);
 };
 const signerContextXrp = executeWithSigner(createSignerXrp);
 
-const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
+const createSignerStellar: CreateSigner<GenericSigner> = (transport: Transport) => {
   const stellar = new Stellar(transport);
   const originalSignTransaction = stellar.signTransaction;
   // Return the original Stellar instance with overridden methods
@@ -41,9 +40,7 @@ const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
 
 const signerContextStellar = executeWithSigner(createSignerStellar);
 
-const createSignerTezos: CreateSigner<
-  Tezos & { createLedgerSigner: (path: string, prompt: boolean, derivationType: number) => any }
-> = (transport: Transport) => {
+const createSignerTezos: CreateSigner<GenericSigner> = (transport: Transport) => {
   const tezos = new Tezos(transport);
   // align with genericSignOperation that calls signer.signTransaction
   return Object.assign(tezos, {
@@ -80,21 +77,18 @@ export function getSigner(network: string): AlpacaSigner {
     case "xrp": {
       return {
         getAddress: xrpGetAddress(signerContextXrp),
-        signTransaction: signTransaction(signerContextXrp),
         context: signerContextXrp,
       };
     }
     case "stellar": {
       return {
         getAddress: stellarGetAddress(signerContextStellar),
-        signTransaction: stellarSignTransaction(signerContextStellar),
         context: signerContextStellar,
       };
     }
     case "tezos": {
       return {
         getAddress: tezosGetAddress(signerContextTezos),
-        signTransaction: tezosSignTransaction(executeWithSigner(createSignerTezos)),
         context: signerContextTezos,
       };
     }
