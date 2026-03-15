@@ -3,7 +3,8 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import TrackScreen from "~/analytics/TrackScreen";
 import WebPlatformPlayer from "~/components/WebPlatformPlayer";
 import GenericErrorView from "~/components/GenericErrorView";
