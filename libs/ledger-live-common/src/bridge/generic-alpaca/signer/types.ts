@@ -7,7 +7,6 @@ export type LegacySigner = {
 
 export type AlpacaSigner<S = unknown> = {
   getAddress: GetAddressFn;
-  signTransaction?: (deviceId: string, opts: SignTransactionOptions) => Promise<string>;
   signMessage?: (message: string) => Promise<string>;
   context: SignerContext<S>;
 };

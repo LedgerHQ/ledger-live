@@ -10,7 +10,7 @@ import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import expect from "expect";
 import invariant from "invariant";
 import type { Transaction } from "../types";
-import { acceptTransaction } from "./bot-deviceActions";
+import { acceptTransaction } from "./deviceActions";
 
 const currency = getCryptoCurrencyById("ripple");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");

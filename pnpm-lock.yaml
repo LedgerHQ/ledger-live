@@ -5495,24 +5495,15 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/ledger-wallet-framework':
-        specifier: workspace:^
-        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-live
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
