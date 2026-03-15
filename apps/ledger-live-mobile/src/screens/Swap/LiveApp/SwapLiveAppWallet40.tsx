@@ -1,6 +1,7 @@
 import React, { RefObject, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Web3AppWebview } from "~/components/Web3AppWebview";

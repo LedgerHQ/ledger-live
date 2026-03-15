@@ -1,6 +1,6 @@
-import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
-import Config from "react-native-config";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import Animation from "~/components/Animation";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import React from "react";
@@ -24,12 +24,7 @@ export const BleDevicePairingProgress = ({
         <Flex height={100} justifyContent="center">
           <BoxedIcon
             Icon={() => (
-              <InfiniteLoader
-                color="primary.c80"
-                size={32}
-                mock={!!Config.DETOX}
-                testID="ble-pairing-loading"
-              />
+              <InfiniteLoader color="primary.c80" size={32} testID="ble-pairing-loading" />
             )}
             backgroundColor={colors.opacityDefault.c05}
             size={64}

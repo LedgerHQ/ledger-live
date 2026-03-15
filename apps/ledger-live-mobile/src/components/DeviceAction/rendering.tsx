@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
-import Config from "react-native-config";
 import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
@@ -27,17 +26,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import {
-  BoxedIcon,
-  Flex,
-  Icons,
-  IconsLegacy,
-  InfiniteLoader,
-  Link,
-  Log,
-  Tag,
-  Text,
-} from "@ledgerhq/native-ui";
+import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -957,7 +947,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={!!Config.DETOX} testID="device-action-loading" />
+        <InfiniteLoader testID="device-action-loading" />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}
