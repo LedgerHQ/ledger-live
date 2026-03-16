@@ -18,12 +18,12 @@ export function useActivityIndicatorTooltip({
   isError,
   listOfErrorAccountNames,
   lastSyncMs,
-}: ActivityIndicatorTooltipParams): string | undefined {
+}: ActivityIndicatorTooltipParams): string {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
   if (isRotating) {
-    return undefined;
+    return t("topBar.activityIndicator.refreshing");
   }
 
   if (isError) {

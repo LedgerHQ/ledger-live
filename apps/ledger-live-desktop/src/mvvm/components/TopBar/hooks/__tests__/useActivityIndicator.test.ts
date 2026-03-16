@@ -60,7 +60,7 @@ describe("useActivityIndicator", () => {
 
     expect(result.current.isRotating).toBe(true);
     expect(result.current.icon).toBe(Spinner);
-    expect(result.current.tooltip).toBeUndefined();
+    expect(result.current.tooltip).toBe("Refreshing...");
   });
 
   it("should return Warning icon and isError true when failed", () => {
