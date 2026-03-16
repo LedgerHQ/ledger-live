@@ -1,6 +1,6 @@
+import { InvalidTransactionError } from "@ledgerhq/errors";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ethers } from "ethers";
-import { InvalidTransactionError } from "../errors";
 import { getNodeApi } from "../network/node";
 import { getNextSequence } from "./getNextSequence";
 

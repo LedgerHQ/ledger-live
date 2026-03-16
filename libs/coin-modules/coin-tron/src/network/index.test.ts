@@ -1,10 +1,15 @@
 import { assert } from "console";
+import { InvalidTransactionError } from "@ledgerhq/errors";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import { setupServer, SetupServerApi } from "msw/node";
 import coinConfig from "../config";
 import { getBlock as getBlockLogic, getBlockInfo } from "../logic/getBlock";
+import { Transaction } from "../types";
 import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
 import {
+  createTronTransaction,
   defaultFetchParams,
   fetchTronAccountTxs,
   getBlock,
@@ -457,6 +462,59 @@ describe("getTransactionInfoByBlockNum", () => {
     expect(capturedRequest!.body).toEqual({ num: 69629492 });
     expect(result).toEqual(txInfoFixture);
   });
+});
+
+describe("createTronTransaction", () => {
+  const mockServer = setupServer(
+    http.post(`${TRON_BASE_URL_TEST}/wallet/createtransaction`, () =>
+      HttpResponse.json({ raw_data: { expiration: Date.now() - 3_600_000 } }),
+    ),
+    http.post(`${TRON_BASE_URL_TEST}/wallet/transferasset`, () =>
+      HttpResponse.json({ raw_data: { expiration: Date.now() - 3_600_000 } }),
+    ),
+    http.post(`${TRON_BASE_URL_TEST}/wallet/triggersmartcontract`, () =>
+      HttpResponse.json({ transaction: { raw_data: { expiration: Date.now() - 3_600_000 } } }),
+    ),
+  );
+
+  beforeAll(doBeforeAll(mockServer));
+  beforeEach(doBeforeEach(mockServer));
+  afterAll(doAfterAll(mockServer));
+
+  it.each([
+    ["native", null],
+    [
+      "trc10",
+      {
+        type: "TokenAccount",
+        token: { id: "tron/trc10/1000001" },
+      } as unknown as TokenAccount,
+    ],
+    [
+      "trc20",
+      {
+        type: "TokenAccount",
+        token: {
+          id: "tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        },
+      } as unknown as TokenAccount,
+    ],
+  ])(
+    "throws InvalidTransactionError for %s asset when the node returns an expired transaction",
+    async (_, subAccount) => {
+      await expect(
+        createTronTransaction(
+          { freshAddress: "TQ7pF3NTDL2Tjz5rdJ6ECjQWjaWHpLZJMH" } as Account,
+          {
+            recipient: "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
+            amount: new BigNumber(1000000),
+          } as Transaction,
+          subAccount,
+        ),
+      ).rejects.toThrow(InvalidTransactionError);
+    },
+  );
 });
 
 describe("getBlock API integration", () => {
