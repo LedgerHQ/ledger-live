@@ -318,6 +318,21 @@ libs/ledger-live-common/src/e2e/                                            @led
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 
+# Team-split convention: ownership of team-* folders (order: last match wins)
+**/team-wallet-ci/                @ledgerhq/wallet-ci
+**/team-qaa/                      @ledgerhq/qaa
+**/team-wallet-xp/                @ledgerhq/wallet-xp
+**/team-platform/                 @ledgerhq/platform
+**/team-coin-integration/         @ledgerhq/coin-integration
+**/team-blockchain-support/       @ledgerhq/blockchain-support
+**/team-ledger-partner-hoodies/   @ledgerhq/ledger-partner-hoodies
+**/team-ledger-partner-blockydevs/ @ledgerhq/ledger-partner-blockydevs
+**/team-ptx/                      @ledgerhq/ptx
+**/team-cloud-wallet/             @ledgerhq/cloud-wallet
+**/team-live-devices/             @ledgerhq/live-devices
+**/team-recover-software/         @ledgerhq/recover-software
+**/team-engagement/               @ledgerhq/engagement
+
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 .github/copilot-instructions.md
 libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
