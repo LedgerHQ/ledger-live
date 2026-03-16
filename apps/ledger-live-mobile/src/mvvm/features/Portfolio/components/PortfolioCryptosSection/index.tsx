@@ -10,11 +10,12 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import AssetListItem from "./AssetListItem";
-import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionViewModel";
+import { CryptoListContent } from "./components/CryptoListContent";
+import usePortfolioCryptosSectionViewModel from "./hooks/usePortfolioCryptosSectionViewModel";
 
 interface PortfolioCryptosSectionProps {
   isEmptyState?: boolean;
+  isReadOnly?: boolean;
 }
 
 const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
@@ -22,10 +23,10 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
   isReadOnly,
 }) => {
   const { t } = useTranslation();
-  const { assetsCount, hasMore, assetsToDisplay, onPressShowAll, onItemPress } =
+  const { assetsCount, hasMore, assetsToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
     usePortfolioCryptosSectionViewModel({ isEmptyState, isReadOnly });
 
-  if (assetsCount === 0) return null;
+  if (!isLoading && !isError && assetsCount === 0) return null;
 
   return (
     <Box>
@@ -45,9 +46,12 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
         </SubheaderRow>
       </Subheader>
       <Box testID="PortfolioCryptosList">
-        {assetsToDisplay.map(item => (
-          <AssetListItem key={item.currency.id} asset={item} onPress={onItemPress} />
-        ))}
+        <CryptoListContent
+          isLoading={isLoading}
+          isError={isError}
+          assetsToDisplay={assetsToDisplay}
+          onItemPress={onItemPress}
+        />
       </Box>
       {hasMore && (
         <Button

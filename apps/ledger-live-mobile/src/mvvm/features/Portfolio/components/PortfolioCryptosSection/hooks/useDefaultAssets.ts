@@ -6,22 +6,35 @@ import VersionNumber from "react-native-version-number";
 import { Asset } from "~/types/asset";
 import { EMPTY_STATE_MAX_ASSETS } from "./usePortfolioCryptosSectionViewModel";
 
-export function useDefaultAssets(isEmptyState: boolean): Asset[] {
+export interface DefaultAssetsResult {
+  assets: Asset[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export function useDefaultAssets(isEmptyState: boolean): DefaultAssetsResult {
   const skip = !isEmptyState;
 
-  const { data: assetsData } = useAssetsData({
+  const {
+    data: assetsData,
+    isLoading: assetsLoading,
+    isError: assetsError,
+  } = useAssetsData({
     product: "llm",
     version: VersionNumber.appVersion,
     skip,
   });
-  const { tickers: stablecoinTickers } = useStablecoinTickers(
-    "llm",
-    VersionNumber.appVersion,
-    skip,
-  );
+  const {
+    tickers: stablecoinTickers,
+    isLoading: tickersLoading,
+    isError: tickersError,
+  } = useStablecoinTickers("llm", VersionNumber.appVersion, skip);
+
+  const isLoading = assetsLoading || tickersLoading;
+  const isError = assetsError || tickersError;
 
   const assets = useMemo(() => {
-    if (!assetsData) return [];
+    if (!assetsData || isLoading) return [];
 
     const items: Asset[] = [];
     for (const id of assetsData.currenciesOrder.metaCurrencyIds) {
@@ -44,10 +57,10 @@ export function useDefaultAssets(isEmptyState: boolean): Asset[] {
       });
     }
     return items;
-  }, [assetsData, stablecoinTickers]);
+  }, [assetsData, isLoading, stablecoinTickers]);
 
   // Early return after all hooks — no API data needed outside empty state
-  if (!isEmptyState) return [];
+  if (!isEmptyState) return { assets: [], isLoading: false, isError: false };
 
-  return assets;
+  return { assets, isLoading, isError };
 }

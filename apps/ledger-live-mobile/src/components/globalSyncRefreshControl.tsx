@@ -4,6 +4,8 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useIsFocused, useRoute, useTheme } from "@react-navigation/native";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { AssetsDataTags } from "@ledgerhq/live-common/dada-client/state-manager/types";
 import { SYNC_DELAY } from "~/utils/constants";
 import { track } from "~/analytics";
 import { useWalletSyncUserState } from "LLM/features/WalletSync/components/WalletSyncContext";
@@ -53,6 +55,7 @@ function globalSyncRefreshControl<P>(
         priority: 5,
         reason: "user-pull-to-refresh",
       });
+      dispatch(assetsDataApi.util.invalidateTags([AssetsDataTags.Assets]));
       setRefreshing(true);
       dispatch(setRefreshStarted(selectLastSyncTimestamp(store.getState())));
       if (shouldDisplayBalanceRefreshRework) {
