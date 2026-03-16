@@ -1,6 +1,6 @@
 import { renderHook } from "@tests/test-renderer";
 import { usePortfolioForAccounts } from "~/hooks/portfolio";
-import { useAssetListItemViewModel } from "../useAssetListItemViewModel";
+import { useAssetListItemViewModel } from "../hooks/useAssetListItemViewModel";
 import { bitcoin, createCryptoAsset } from "./shared";
 
 jest.mock("~/hooks/portfolio", () => ({

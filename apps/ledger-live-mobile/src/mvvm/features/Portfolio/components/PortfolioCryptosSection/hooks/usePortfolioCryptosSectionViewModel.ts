@@ -21,6 +21,8 @@ export interface PortfolioCryptosSectionViewModelResult {
   assetsCount: number;
   hasMore: boolean;
   assetsToDisplay: Asset[];
+  isLoading: boolean;
+  isError: boolean;
   onPressShowAll: () => void;
   onItemPress: (asset: Asset) => void;
 }
@@ -60,7 +62,11 @@ const usePortfolioCryptosSectionViewModel = ({
     [distributionAssets, blacklistedTokenIdsSet],
   );
 
-  const defaultAssets = useDefaultAssets(isEmptyState);
+  const {
+    assets: defaultAssets,
+    isLoading: _defaultAssetsLoading,
+    isError: _defaultAssetsError,
+  } = useDefaultAssets(isEmptyState);
 
   const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: READ_ONLY_MAX_ASSETS });
   const readOnlyAssets = useMemo<Asset[]>(
@@ -131,10 +137,15 @@ const usePortfolioCryptosSectionViewModel = ({
     return assetsCount > MAX_ASSETS_TO_DISPLAY;
   }, [isEmptyState, isReadOnly, assetsCount]);
 
+  const isLoading = isEmptyState ? _defaultAssetsLoading : false;
+  const isError = isEmptyState ? _defaultAssetsError : false;
+
   return {
     assetsCount,
     hasMore,
     assetsToDisplay,
+    isLoading,
+    isError,
     onPressShowAll,
     onItemPress,
   };

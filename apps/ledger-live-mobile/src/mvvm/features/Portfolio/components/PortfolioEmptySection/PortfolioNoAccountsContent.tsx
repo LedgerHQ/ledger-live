@@ -5,6 +5,7 @@ import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
+import { useDefaultAssets } from "../PortfolioCryptosSection/hooks/useDefaultAssets";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -25,6 +26,7 @@ const PortfolioNoAccountsContent = ({
   isAddModalOpened,
 }: PortfolioNoAccountsContentProps) => {
   const { t } = useTranslation();
+  const { isError: isAssetsError } = useDefaultAssets(shouldDisplayAssetSection);
 
   return (
     <Box lx={{ paddingHorizontal: "s16" }}>
@@ -43,6 +45,7 @@ const PortfolioNoAccountsContent = ({
           marginBottom: "s48",
         }}
         onPress={openAddModal}
+        disabled={isAssetsError}
         testID="add-account-cta"
       >
         {t("account.emptyState.addCryptoAccount")}
