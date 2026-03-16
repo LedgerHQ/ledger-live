@@ -26,7 +26,8 @@ export type TargetName =
 export class MainNavigationPage extends AppPage {
   private readonly drawer = new Drawer(this.page);
   private readonly layout = new Layout(this.page);
-  private readonly sideBarButton: (name: TargetName) => Locator = targetName =>
+
+  private readonly sideBarButton: (name: TargetName | RegExp) => Locator = targetName =>
     this.page.getByRole("navigation").getByRole("button", { name: targetName });
 
   private async expectPath(expectedPath: RegExp) {
@@ -59,7 +60,7 @@ export class MainNavigationPage extends AppPage {
       earn: {
         expectActive: true,
         expectedPath: /^\/earn(?:\/|$|\?)/,
-        selector: this.page.getByRole("button", { name: /^(earn|stake)$/i }),
+        selector: this.sideBarButton(/^(earn|stake|yield)$/i),
         legacySelector: this.layout.drawerEarnButton,
       },
       discover: {

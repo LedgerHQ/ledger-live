@@ -72,7 +72,9 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+        await app.earnDashboard.goAndWaitForEarnToBeReady(() =>
+          app.mainNavigation.openTargetFromMainNavigation("earn"),
+        );
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.clickStakeCurrencyButton(account);
         const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
@@ -107,7 +109,9 @@ test.describe("Inline Add Account", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+      await app.earnDashboard.goAndWaitForEarnToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("earn"),
+      );
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
       const selector = await getModularSelector(app, "ACCOUNT");
       if (selector) {
@@ -122,7 +126,7 @@ test.describe("Inline Add Account", () => {
       }
 
       await app.addAccount.close();
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsCountToBeNotNull();
     },
   );
@@ -207,7 +211,9 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+        await app.earnDashboard.goAndWaitForEarnToBeReady(() =>
+          app.mainNavigation.openTargetFromMainNavigation("earn"),
+        );
         if (!staking) {
           await app.earnDashboard.verifyRewardsPotentials();
           await app.earnDashboard.verifyYourEligibleAssets(account.accountName);
