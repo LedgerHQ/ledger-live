@@ -19,6 +19,10 @@ jest.mock("~/actions/general", () => ({
   useDistribution: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
+  useAssetsData: () => ({ data: undefined, isLoading: false }),
+}));
+
 const mockDistribution = (list: Asset[] = [], isAvailable = true) => {
   (useDistribution as jest.Mock).mockReturnValue({ isAvailable, list });
 };
@@ -118,6 +122,33 @@ describe("usePortfolioCryptosSectionViewModel", () => {
         screen: ScreenName.Asset,
         params: { currency: ethereum },
       });
+    });
+
+    it("should navigate to MarketDetail for placeholder assets", () => {
+      const placeholderAsset: Asset = {
+        ...createCryptoAsset(bitcoin, 0),
+        isPlaceholder: true,
+        marketId: "bitcoin",
+      };
+      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
+
+      act(() => {
+        result.current.onItemPress(placeholderAsset);
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, {
+        currencyId: "bitcoin",
+      });
+    });
+  });
+
+  describe("isEmptyState", () => {
+    it("should always return hasMore false", () => {
+      const { result } = renderHook(() =>
+        usePortfolioCryptosSectionViewModel({ isEmptyState: true }),
+      );
+
+      expect(result.current.hasMore).toBe(false);
     });
   });
 });

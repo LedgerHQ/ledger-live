@@ -4,9 +4,9 @@ import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks
 
 const handler = ({ request }: { request: Request }) => {
   const searchParams = new URL(request.url).searchParams;
-  const category = searchParams.get("category");
+  const categories = searchParams.get("categories");
 
-  if (category === "stablecoin") return HttpResponse.json(mockStablecoinsResponse);
+  if (categories === "stablecoins") return HttpResponse.json(mockStablecoinsResponse);
 
   const search = searchParams.get("search")?.toLowerCase().trim();
 

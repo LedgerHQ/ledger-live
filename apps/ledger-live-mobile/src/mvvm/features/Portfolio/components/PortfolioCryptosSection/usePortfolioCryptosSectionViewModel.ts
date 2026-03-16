@@ -9,8 +9,10 @@ import { NavigatorName, ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
+import { useDefaultAssets } from "./useDefaultAssets";
 
 export const MAX_ASSETS_TO_DISPLAY = 6;
+export const EMPTY_STATE_MAX_ASSETS = 4;
 
 export interface PortfolioCryptosSectionViewModelResult {
   assetsCount: number;
@@ -20,7 +22,13 @@ export interface PortfolioCryptosSectionViewModelResult {
   onItemPress: (asset: Asset) => void;
 }
 
-const usePortfolioCryptosSectionViewModel = (): PortfolioCryptosSectionViewModelResult => {
+interface UsePortfolioCryptosSectionViewModelOptions {
+  isEmptyState?: boolean;
+}
+
+const usePortfolioCryptosSectionViewModel = ({
+  isEmptyState = false,
+}: UsePortfolioCryptosSectionViewModelOptions = {}): PortfolioCryptosSectionViewModelResult => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
@@ -32,25 +40,28 @@ const usePortfolioCryptosSectionViewModel = (): PortfolioCryptosSectionViewModel
     hideEmptyTokenAccount,
   });
 
-  const allAssets = useMemo(
+  const distributionAssets = useMemo(
     () => (distribution.isAvailable && distribution.list.length > 0 ? distribution.list : []),
     [distribution],
   );
 
   const filteredAssets = useMemo(
     () =>
-      allAssets.filter(
+      distributionAssets.filter(
         ({ currency }) =>
           currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
       ),
-    [allAssets, blacklistedTokenIdsSet],
+    [distributionAssets, blacklistedTokenIdsSet],
   );
 
-  const assetsCount = filteredAssets.length;
+  const defaultAssets = useDefaultAssets(isEmptyState);
+
+  const assets = isEmptyState ? defaultAssets : filteredAssets;
+  const assetsCount = assets.length;
 
   const assetsToDisplay = useMemo(
-    () => filteredAssets.slice(0, MAX_ASSETS_TO_DISPLAY),
-    [filteredAssets],
+    () => assets.slice(0, isEmptyState ? EMPTY_STATE_MAX_ASSETS : MAX_ASSETS_TO_DISPLAY),
+    [assets, isEmptyState],
   );
 
   const onPressShowAll = useCallback(() => {
@@ -75,19 +86,25 @@ const usePortfolioCryptosSectionViewModel = (): PortfolioCryptosSectionViewModel
         asset: asset.currency.name,
         page: "Wallet",
       });
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: {
-          currency: asset.currency,
-        },
-      });
+      if (asset.isPlaceholder) {
+        navigation.navigate(ScreenName.MarketDetail, {
+          currencyId: asset.marketId ?? asset.currency.id,
+        });
+      } else {
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.Asset,
+          params: {
+            currency: asset.currency,
+          },
+        });
+      }
     },
     [navigation],
   );
 
   return {
     assetsCount,
-    hasMore: assetsCount > MAX_ASSETS_TO_DISPLAY,
+    hasMore: isEmptyState ? false : assetsCount > MAX_ASSETS_TO_DISPLAY,
     assetsToDisplay,
     onPressShowAll,
     onItemPress,

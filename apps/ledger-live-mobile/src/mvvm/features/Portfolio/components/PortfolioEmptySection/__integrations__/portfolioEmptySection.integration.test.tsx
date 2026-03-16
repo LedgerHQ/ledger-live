@@ -3,7 +3,11 @@ import { render, renderWithReactQuery, screen } from "@tests/test-renderer";
 import { PortfolioEmptySection } from "../index";
 import { State } from "~/reducers/types";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { btcCurrency, ethCurrency } from "../../../__integrations__/shared";
+import {
+  btcCurrency,
+  ethCurrency,
+  overrideInitialStateWithAssetSection,
+} from "../../../__integrations__/shared";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 
 const mockNavigate = jest.fn();
@@ -106,6 +110,14 @@ describe("PortfolioEmptySection", () => {
       });
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+    });
+
+    it("should not render the cryptos section when assetSection flag is off", () => {
+      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+        overrideInitialState: overrideInitialStateWithAssetSection(false),
+      });
+
+      expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
     });
 
     it("should render quick actions CTAs", () => {
