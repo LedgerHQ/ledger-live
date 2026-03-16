@@ -125,6 +125,8 @@ env:
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   E2E_ENABLE_WALLET40: ${{ ((github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5') || inputs.enable_wallet40 == true) && '1' || '0' }}
+  # iOS Simulator configuration
+  IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
   AVD_API: 35
   AVD_ARCH: x86_64
@@ -451,9 +453,9 @@ jobs:
           mkdir -p e2e/mobile/artifacts
           nohup bash -c '
             echo "🔧 Creating iOS Simulator 2 (if not exists)"
-            xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "${{ env.IOS_SIMULATOR_DEVICE }}"
             echo "🔧 Creating iOS Simulator 3 (if not exists)"
-            xcrun simctl list devices | grep -q "iOS Simulator 3" || xcrun simctl create "iOS Simulator 3" "iPhone 15"
+            xcrun simctl list devices | grep -q "iOS Simulator 3" || xcrun simctl create "iOS Simulator 3" "${{ env.IOS_SIMULATOR_DEVICE }}"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -552,6 +554,12 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
+      - name: Get iOS device info
+        run: |
+          set -o pipefail
+          IOS_VERSION=$(xcrun simctl list runtimes iOS -j | jq -r '.runtimes[-1].version // "unknown"' || echo "unknown")
+          echo "DEVICE_INFO=${{ env.IOS_SIMULATOR_DEVICE }} (iOS $IOS_VERSION)" >> $GITHUB_ENV
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -570,6 +578,7 @@ jobs:
           INPUTS_TEST_FILTER: ${{ needs.determine-builds.outputs.test_filter }}
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
+          DEVICE_INFO: ${{ env.DEVICE_INFO }}
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -802,6 +811,11 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
+      - name: Get Android device info
+        run: |
+          DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
+          echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
@@ -821,6 +835,7 @@ jobs:
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
+          DEVICE_INFO: ${{ env.DEVICE_INFO }}
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
