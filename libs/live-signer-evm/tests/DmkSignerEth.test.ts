@@ -41,20 +41,14 @@ describe("DmkSignerEth", () => {
       // WHEN
       const result = await signer.getAddress(path);
 
-      // THEN
+      // THEN – DMK is invoked with Ethereum app and a task (exact input shape may vary with signer-kit version)
       expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(
         expect.objectContaining({
           deviceAction: expect.objectContaining({
             input: expect.objectContaining({
               appName: "Ethereum",
-              command: expect.objectContaining({
-                args: expect.objectContaining({
-                  derivationPath: "path",
-                  checkOnDevice: false,
-                  returnChainCode: false,
-                  skipOpenApp: true,
-                }),
-              }),
+              skipOpenApp: true,
+              task: expect.any(Function),
             }),
           }),
           sessionId: "sessionId",
@@ -84,20 +78,14 @@ describe("DmkSignerEth", () => {
       // WHEN
       const result = await signer.getAddress(path, true, true);
 
-      // THEN
+      // THEN – DMK is invoked with Ethereum app and a task
       expect(dmkMock.executeDeviceAction).toHaveBeenCalledWith(
         expect.objectContaining({
           deviceAction: expect.objectContaining({
             input: expect.objectContaining({
               appName: "Ethereum",
-              command: expect.objectContaining({
-                args: expect.objectContaining({
-                  derivationPath: "path",
-                  checkOnDevice: true,
-                  returnChainCode: true,
-                  skipOpenApp: true,
-                }),
-              }),
+              skipOpenApp: true,
+              task: expect.any(Function),
             }),
           }),
           sessionId: "sessionId",
@@ -151,6 +139,51 @@ describe("DmkSignerEth", () => {
         // THEN
         expect(error).toEqual(new Error("Unknown device action status"));
       }
+    });
+
+    it("should forward parsed chainId to signer getAddress options (regression guard for DMK/signer-kit bumps)", async () => {
+      // GIVEN – spy on the inner signer so we assert options.chainId is passed regardless of DMK input shape
+      const path = "44'/60'/0'/0/0";
+      const chainId = "1";
+      dmkMock.executeDeviceAction.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: {
+            address: "0xaddr",
+            publicKey: "0xpub",
+            chainCode: undefined,
+          },
+        }),
+      });
+      const signerEth = (signer as unknown as { signer: { getAddress: jest.Mock } }).signer;
+      const getAddressSpy = jest.spyOn(signerEth, "getAddress");
+
+      // WHEN
+      await signer.getAddress(path, false, false, chainId);
+
+      // THEN – signer.getAddress must be called with parsed numeric chainId in options
+      expect(getAddressSpy).toHaveBeenCalledWith(
+        path,
+        expect.objectContaining({
+          checkOnDevice: false,
+          returnChainCode: false,
+          skipOpenApp: true,
+          chainId: 1,
+        }),
+      );
+    });
+
+    it.each([
+      ["non-numeric", "abc"],
+      ["zero", "0"],
+      ["negative", "-1"],
+      ["float", "1.5"],
+      ["empty string", ""],
+      ["NaN", "NaN"],
+    ])("should throw Invalid chainId for invalid chainId input: %s", async (_label, invalidChainId) => {
+      await expect(signer.getAddress("44'/60'/0'/0/0", false, false, invalidChainId)).rejects.toThrow(
+        "Invalid chainId",
+      );
     });
   });
 

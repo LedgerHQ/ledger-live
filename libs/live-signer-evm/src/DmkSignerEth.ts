@@ -118,14 +118,28 @@ export class DmkSignerEth implements EvmSigner {
     path: string,
     boolDisplay?: boolean,
     boolChaincode?: boolean,
-    _chainId?: string,
+    chainId?: string,
   ): Promise<EvmAddress> {
+    let parsedChainId: number | undefined;
+    if (chainId !== undefined) {
+      const numericChainId = Number(chainId);
+      if (
+        !Number.isFinite(numericChainId) ||
+        !Number.isInteger(numericChainId) ||
+        numericChainId <= 0
+      ) {
+        throw new Error("Invalid chainId");
+      }
+      parsedChainId = numericChainId;
+    }
+
     const result = this._mapResult(
       await lastValueFrom(
         this.signer.getAddress(path, {
           checkOnDevice: boolDisplay,
           returnChainCode: boolChaincode,
           skipOpenApp: true,
+          chainId: parsedChainId,
         }).observable,
       ),
     );
