@@ -1,3 +1,4 @@
+import { PublicKey } from "@solana/web3.js";
 import { listOperations } from "../listOperations";
 import { server, rpcHandler, createTestChainApi } from "./helpers/msw-rpc.mock";
 
@@ -26,13 +27,13 @@ function makeParsedTx({
   postBalances: number[];
   slot?: number;
   blockTime?: number;
-  err?: unknown;
+  err?: null | { InstructionError: [number, string] } | string;
 }) {
   return {
     transaction: {
       signatures: ["sig-placeholder"],
       message: {
-        accountKeys,
+        accountKeys: accountKeys.map(k => ({ ...k, pubkey: new PublicKey(k.pubkey) })),
         recentBlockhash: TEST_BLOCKHASH,
         instructions: [],
       },
@@ -41,9 +42,9 @@ function makeParsedTx({
       fee,
       preBalances,
       postBalances,
-      err,
       preTokenBalances: [],
       postTokenBalances: [],
+      err,
     },
     slot,
     blockTime,

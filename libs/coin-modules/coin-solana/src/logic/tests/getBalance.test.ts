@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { PublicKey } from "@solana/web3.js";
 import { getBalance } from "../getBalance";
 import { server, rpcHandler, createTestChainApi } from "../tests/helpers/msw-rpc.mock";
 
@@ -74,7 +75,7 @@ describe("getBalance (MSW integration)", () => {
 
     function splTokenAccount(mint: string, amount: string) {
       return {
-        pubkey: "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ",
+        pubkey: new PublicKey("AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ"),
         account: {
           data: {
             parsed: {
@@ -90,7 +91,7 @@ describe("getBalance (MSW integration)", () => {
           },
           executable: false,
           lamports: 2039280,
-          owner: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          owner: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
           rentEpoch: 0,
         },
       };
@@ -134,7 +135,7 @@ describe("getBalance (MSW integration)", () => {
 
     function token2022Account(mint: string, amount: string) {
       return {
-        pubkey: "FvbvvXMY4Rf1AtGG7UHJUesjt8FFgPnPy6o83Dna9mXK",
+        pubkey: new PublicKey("FvbvvXMY4Rf1AtGG7UHJUesjt8FFgPnPy6o83Dna9mXK"),
         account: {
           data: {
             parsed: {
@@ -150,7 +151,7 @@ describe("getBalance (MSW integration)", () => {
           },
           executable: false,
           lamports: 2039280,
-          owner: "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+          owner: new PublicKey("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"),
           rentEpoch: 0,
         },
       };
