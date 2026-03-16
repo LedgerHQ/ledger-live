@@ -316,7 +316,8 @@ function useWebView(
     manifest,
     customHandlers,
     currentAccountHistDb,
-  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb">,
+    inputs,
+  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
   webviewRef: RefObject<WebviewTag | null>,
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
@@ -378,6 +379,7 @@ function useWebView(
     postMessage: webviewHook.postMessage,
     currentAccountHistDb,
     tracking,
+    initialAccountId: inputs?.accountId?.toString(),
     mevProtected,
   });
 
@@ -501,6 +503,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         manifest,
         customHandlers,
         currentAccountHistDb,
+        inputs,
       },
       webviewRef,
       tracking,
