@@ -1,5 +1,5 @@
-import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ICPSigner } from "../types";
 import resolver from "./getAddress";
 
