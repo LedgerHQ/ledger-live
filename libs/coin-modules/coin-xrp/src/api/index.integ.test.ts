@@ -362,6 +362,39 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.type).toEqual(outTx.type);
       expect(op.tx.fees).toEqual(BigInt(outTx.fees * 1e6));
     });
+
+    it("returns IN operation on account delete", async () => {
+      //https://xrpscan.com/tx/EE823A89E7EC7EE9AD3AFD7FFE6CCF46653B325F898EE44BE8FA69CEC37FBF69
+      const accountDeleteResponse = await api.listOperations("rKAnkysinEbryTHdBh6nseDSU2ULhaFSs6", {
+        minHeight: 0,
+      });
+      const opsAccountDelete = accountDeleteResponse.items;
+      const inTx = {
+        hash: "EE823A89E7EC7EE9AD3AFD7FFE6CCF46653B325F898EE44BE8FA69CEC37FBF69",
+        amount: 8.0,
+        recipient: "rKAnkysinEbryTHdBh6nseDSU2ULhaFSs6",
+        sender: "rD3UstYio1Ggd5aWf11gXtbakiiWDPUmV",
+        type: "IN",
+        fees: 2.0,
+      };
+      const op = opsAccountDelete.find(o => o.tx.hash === inTx.hash) as Operation;
+      expect(op).toMatchObject({
+        id: inTx.hash,
+        tx: {
+          hash: inTx.hash,
+          fees: BigInt(inTx.fees * 1e6),
+          feesPayer: inTx.sender,
+          failed: false,
+        },
+        type: inTx.type,
+        value: BigInt(inTx.amount * 1e6),
+        senders: [inTx.sender],
+        recipients: [inTx.recipient],
+        details: {
+          xrpTxType: "AccountDelete",
+        },
+      });
+    });
   });
 
   describe("lastBlock", () => {

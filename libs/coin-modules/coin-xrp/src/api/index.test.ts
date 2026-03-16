@@ -30,6 +30,7 @@ jest.mock("../logic", () => ({
 
 describe("listOperations", () => {
   const api = createApi({ node: "https://localhost" });
+  type NonPaymentTransactionType = "OfferCreate" | "AccountDelete";
 
   afterEach(() => {
     mockGetServerInfos.mockClear();
@@ -126,7 +127,8 @@ describe("listOperations", () => {
   function givenNonPaymentTx(
     fee: bigint,
     sender: string,
-    transactionType = "OfferCreate",
+    transactionType: NonPaymentTransactionType = "OfferCreate",
+    destination?: string,
   ): unknown {
     return {
       ledger_hash: "HASH_VALUE_BLOCK",
@@ -139,6 +141,7 @@ describe("listOperations", () => {
         ledger_index: 1,
         date: 1000,
         Account: sender,
+        Destination: destination,
         Sequence: 42,
         SigningPubKey: "PUBKEY",
       },
@@ -186,6 +189,37 @@ describe("listOperations", () => {
     });
 
     expect(results).toHaveLength(0);
+  });
+
+  it("should return non-Payment tx when queried address is recipient", async () => {
+    const fee = BigInt(10);
+    const address = "recipient_address";
+    const sender = "sender_address";
+    mockGetTransactions.mockResolvedValue(
+      mockNetworkTxs([givenNonPaymentTx(fee, sender, "AccountDelete", address)], undefined),
+    );
+
+    const { items: results } = await api.listOperations(address, { minHeight: 0, order: "asc" });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject<Partial<Operation>>({
+      id: "NON_PAYMENT_HASH",
+      type: "IN",
+      value: BigInt(0),
+      senders: [sender],
+      recipients: [address],
+      tx: expect.objectContaining({
+        hash: "NON_PAYMENT_HASH",
+        fees: fee,
+        feesPayer: sender,
+        failed: false,
+      }),
+      details: {
+        xrpTxType: "AccountDelete",
+        sequence: 42,
+        signingPubKey: "PUBKEY",
+      },
+    });
   });
 
   it("should kill the loop after 10 iterations", async () => {
