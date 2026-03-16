@@ -10936,9 +10936,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
-      lodash:
-        specifier: 4.17.21
-        version: 4.17.21
       semver:
         specifier: 'catalog:'
         version: 7.7.3
@@ -10958,9 +10955,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: 4.17.24
-        version: 4.17.24
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
@@ -19170,7 +19164,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

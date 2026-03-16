@@ -1,4 +1,3 @@
-import cloneDeep from "lodash/cloneDeep";
 import type { Feature, FeatureId } from "./data/schema";
 
 export interface ResolutionConfig {
@@ -11,7 +10,7 @@ export interface ResolutionConfig {
 let resolutionConfig: ResolutionConfig = {};
 
 export function setResolutionConfig(config: ResolutionConfig): void {
-  resolutionConfig = cloneDeep(config);
+  resolutionConfig = Object.freeze(structuredClone(config));
 }
 
 export function getResolutionConfig(): Readonly<ResolutionConfig> {

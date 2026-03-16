@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
-    "lodash": "4.17.21",
     "semver": "catalog:",
     "zod": "catalog:"
   },
@@ -24,7 +23,6 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/lodash": "4.17.24",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

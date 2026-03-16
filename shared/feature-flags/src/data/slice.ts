@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import cloneDeep from "lodash/cloneDeep";
 import { type Feature, type FeatureId, type FeatureFlagsState } from "./schema";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
 import { getResolutionConfig } from "../config";
@@ -8,7 +7,7 @@ import { extractRemoteFlags, resolveFeature, resolveAll, resolveAllFromRemote } 
 const initialState: FeatureFlagsState = {
   overrides: {},
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  resolved: cloneDeep(FEATURE_FLAGS_DEFAULTS) as FeatureFlagsState["resolved"],
+  resolved: structuredClone(FEATURE_FLAGS_DEFAULTS) as FeatureFlagsState["resolved"],
   bannerVisible: false,
 };
 
