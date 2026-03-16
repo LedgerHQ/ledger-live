@@ -35,11 +35,7 @@ const featureFlagsSlice = createSlice({
     },
 
     syncRemoteConfig(state, action: PayloadAction<Record<string, Feature>>) {
-      state.resolved = resolveAllFromRemote(
-        state.overrides,
-        action.payload,
-        getResolutionConfig(),
-      );
+      state.resolved = resolveAllFromRemote(state.overrides, action.payload, getResolutionConfig());
     },
 
     setBannerVisible(state, action: PayloadAction<boolean>) {
@@ -72,7 +68,12 @@ const featureFlagsSlice = createSlice({
       const config = getResolutionConfig();
       const remoteFlags = extractRemoteFlags(state.resolved, state.overrides, config.envFlags);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-      (state.resolved as any)[flagKey] = resolveFeature(flagKey, state.overrides, remoteFlags, config);
+      (state.resolved as any)[flagKey] = resolveFeature(
+        flagKey,
+        state.overrides,
+        remoteFlags,
+        config,
+      );
     });
 
     builder.addCase("SET_OVERRIDDEN_FEATURE_FLAGS", (state, action) => {
