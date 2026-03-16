@@ -63,15 +63,14 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const canBeSold = !currency || currency.id === "bitcoin";
 
   const {
-    getCanStakeUsingLedgerLive,
+    getCanStakeCurrency,
     getCanStakeUsingPlatformApp,
     getRouteParamsForPlatformApp,
     enabledCurrencies,
     partnerSupportedAssets,
   } = useStake();
-  const canStakeCurrencyUsingLedgerLive = !currency
-    ? false
-    : getCanStakeUsingLedgerLive(currency?.id);
+  const canStakeCurrency = !currency ? false : getCanStakeCurrency(currency.id);
+
   const stakeAccount = accounts?.[0];
 
   const shallowAccounts = useSelector(shallowAccountsSelector);
@@ -79,6 +78,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const stakeAccountCurrency = !stakeAccount ? null : getAccountCurrency(stakeAccount);
   const walletState = useSelector(walletSelector);
+
   const partnerStakeRoute =
     !stakeAccount || !stakeAccountCurrency || !getCanStakeUsingPlatformApp(stakeAccountCurrency?.id)
       ? null
@@ -176,7 +176,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
-    if (canStakeCurrencyUsingLedgerLive || !currency) {
+    if (canStakeCurrency || !currency) {
       list.STAKE = {
         disabled: isLegacyRebornFlow,
         customHandler: handleOpenStakeDrawer,
@@ -224,7 +224,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     canBeBought,
     canBeSold,
     partnerStakeRoute,
-    canStakeCurrencyUsingLedgerLive,
+    canStakeCurrency,
     canBeRecovered,
     handleOpenStakeDrawer,
   ]);
