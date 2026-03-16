@@ -2,7 +2,6 @@ import { Step } from "jest-allure2-reporter/api";
 import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import { Feature_Noah } from "@ledgerhq/types-live";
-
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
   assetsListId = "AssetsList";
@@ -27,6 +26,7 @@ export default class PortfolioPage {
   showAllAssetsButton = "assets-button";
   showAllAccountsButton = "show-all-accounts-button";
   seeAllTransactionsButton = "portfolio-seeAll-transaction";
+  operationRowBody = "operationRowBody";
   operationRowDate = "operationRowDate";
   operationRowCounterValue = "operationRow-counterValue-label";
   assetItemRegExp = new RegExp(`${this.baseAssetItem}[^-]+$`);
@@ -61,8 +61,10 @@ export default class PortfolioPage {
   tabSelector = (id: "Accounts" | "Assets") => getElementById(`${this.tabSelectorBase}${id}`);
   walletTabSelector = (id: "Wallet" | "Market") =>
     getElementById(`${this.walletTabSelectorBase}${id}`);
-  operationByType = (operationType?: string) =>
-    getElementByIdAndText(this.operationRowDate, new RegExp(`.*${operationType ?? ""}.*`, "i"));
+  operationByType = (operationType: string, accountName?: string) =>
+    accountName
+      ? getElementByIdWithDescendantTexts(this.operationRowBody, accountName, operationType)
+      : getElementByIdWithDescendantTexts(this.operationRowBody, operationType);
 
   private flags: Feature_Noah | null = null;
 
@@ -256,8 +258,8 @@ export default class PortfolioPage {
   }
 
   @Step("Click on selected last operation")
-  async selectAndClickOnLastOperation(operationType?: string) {
-    await tapByElement(this.operationByType(operationType));
+  async selectAndClickOnLastOperation(operationType: string, accountName?: string) {
+    await tapByElement(this.operationByType(operationType, accountName).atIndex(0));
   }
 
   @Step("Tap on tab selector")
