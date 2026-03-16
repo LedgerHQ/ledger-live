@@ -26,6 +26,20 @@ function stubFeeEstimation(fee = 5000) {
     }),
     getRecentPrioritizationFees: () => [],
     getMinimumBalanceForRentExemption: () => 2039280,
+    getAccountInfo: () => ({
+      context: { slot: 100 },
+      value: {
+        data: [
+          "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+          "base64",
+        ],
+        executable: false,
+        lamports: 1_000_000,
+        owner: "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+        rentEpoch: 0,
+        space: 82,
+      },
+    }),
   });
 }
 
@@ -54,7 +68,7 @@ describe("estimateFees (MSW integration)", () => {
         recipient: TEST_RECIPIENT,
         amount: 1_000_000n,
         asset: { type: "native" },
-      } as any),
+      }),
     ).rejects.toThrow("Unsupported intent type: staking");
   });
 

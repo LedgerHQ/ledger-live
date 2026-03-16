@@ -14,6 +14,7 @@ import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
@@ -52,6 +53,9 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     lastBlock: () => {
       return lastBlock(api);
     },
+    listOperations: (_address: string, _options: ListOperationsOptions) => {
+      return listOperations(api, _address, _options);
+    },
     getBlock: () => {
       throw new Error("getBlock is not supported");
     },
@@ -63,9 +67,6 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     },
     getValidators: () => {
       throw new Error("getValidators is not supported");
-    },
-    listOperations: (_address: string, _options: ListOperationsOptions) => {
-      throw new Error("listOperations is not supported");
     },
     getStakes: (_address: string, _cursor?: Cursor) => {
       throw new Error("getStakes is not supported");

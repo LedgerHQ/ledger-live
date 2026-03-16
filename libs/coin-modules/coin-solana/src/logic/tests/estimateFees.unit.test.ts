@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import type { ChainAPI } from "../../network";
 import { estimateFees, estimateTxFee } from "../estimateFees";
@@ -80,6 +81,52 @@ describe("estimateFees", () => {
     expect(tx.model.kind).toBe("token.transfer");
   });
 
+  it("should use spl-token program for standard SPL token intents", async () => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "spl-token", assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+    } as TransactionIntent);
+
+    const tx = buildVersionedTransaction.mock.calls[0][1];
+    const command = tx.model.commandDescriptor.command;
+    expect(command.tokenProgram).toBe("spl-token");
+    expect(command.extensions).toBeUndefined();
+  });
+
+  it("should use spl-token-2022 program and include dummy extensions for Token-2022 intents", async () => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "spl-token-2022", assetReference: "SomeMintAddress" },
+    } as TransactionIntent);
+
+    const tx = buildVersionedTransaction.mock.calls[0][1];
+    const command = tx.model.commandDescriptor.command;
+    expect(command.tokenProgram).toBe("spl-token-2022");
+    expect(command.extensions).not.toBeUndefined();
+    expect(command.extensions.transferFee).toEqual({
+      feePercent: 0,
+      maxTransferFee: 0,
+      transferFee: 0,
+      feeBps: 0,
+      transferAmountIncludingFee: 0,
+      transferAmountExcludingFee: 0,
+    });
+  });
+
   it("should propagate errors from estimateTxFee", async () => {
     buildVersionedTransaction.mockRejectedValueOnce(new Error("RPC error"));
 
@@ -106,7 +153,7 @@ describe("estimateFees", () => {
         recipient: TEST_RECIPIENT,
         amount: 1000000n,
         asset: { type: "native" },
-      } as any),
+      } as unknown as TransactionIntent),
     ).rejects.toThrow("Unsupported intent type: staking");
   });
 });
