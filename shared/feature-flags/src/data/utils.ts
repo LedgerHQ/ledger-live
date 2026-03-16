@@ -5,8 +5,8 @@ import {
   type Feature,
   type FeatureId,
   type FeatureFlagsState,
+  type PartialFeatures,
   FeatureIdSchema,
-  type OptionalFeatureMap,
 } from "./schema";
 
 /**
@@ -106,8 +106,8 @@ export function applyLanguageFilter(feature: Feature, appLanguage?: string): Fea
  */
 export function resolveFeature(
   key: FeatureId,
-  overrides: FeatureFlagsState["overrides"],
-  remoteFlags: Record<string, Feature>,
+  overrides: PartialFeatures,
+  remoteFlags: PartialFeatures,
   config: ResolutionConfig,
 ): Feature {
   const { platform, appVersion, appLanguage, envFlags } = config;
@@ -124,7 +124,7 @@ export function resolveFeature(
     }
   }
 
-  const remote = remoteFlags[key];
+  const remote = remoteFlags?.[key];
   if (remote) {
     const afterLang = applyLanguageFilter(remote, appLanguage);
     return checkFeatureFlagVersion(afterLang, platform, appVersion);
@@ -134,38 +134,8 @@ export function resolveFeature(
 }
 
 /**
- * Re-resolves every registered feature flag. Recovers remote values from the
- * current resolved state via `extractRemoteFlags`, then delegates to
- * `resolveAllFromRemote`.
- *
- * Use this when overrides change but no fresh remote data is available.
- *
- * @param overrides
- * User-defined local overrides map.
- *
- * @param currentResolved
- * The current fully-resolved feature flags map.
- *
- * @param config
- * Platform, version, language, and env flags for resolution.
- *
- * @return
- * A new fully-resolved features map.
- */
-export function resolveAll(
-  overrides: FeatureFlagsState["overrides"],
-  currentResolved: FeatureFlagsState["resolved"],
-  config: ResolutionConfig,
-): FeatureFlagsState["resolved"] {
-  const remoteFlags = extractRemoteFlags(currentResolved, overrides, config.envFlags);
-  return resolveAllFromRemote(overrides, remoteFlags, config);
-}
-
-/**
- * Resolves every registered feature flag using explicit remote values.
+ * Resolves every registered feature flag.
  * Iterates over all known flag IDs and calls `resolveFeature` for each.
- *
- * Use this when fresh remote data is available (e.g. after `syncRemoteConfig`).
  *
  * @param overrides
  * User-defined local overrides map.
@@ -179,9 +149,9 @@ export function resolveAll(
  * @return
  * A new fully-resolved features map.
  */
-export function resolveAllFromRemote(
-  overrides: FeatureFlagsState["overrides"],
-  remoteFlags: Record<string, Feature>,
+export function resolveAll(
+  overrides: PartialFeatures,
+  remoteFlags: PartialFeatures,
   config: ResolutionConfig,
 ): FeatureFlagsState["resolved"] {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -193,41 +163,3 @@ export function resolveAllFromRemote(
   return result as FeatureFlagsState["resolved"];
 }
 
-/**
- * Extracts the "remote" base flags from the current resolved state by
- * stripping out anything that was locally overridden or env-overridden.
- *
- * The recovered values may include post-filtered results (version/language).
- * This is safe because re-filtering is idempotent: `checkFeatureFlagVersion`
- * and `applyLanguageFilter` short-circuit on already-disabled flags.
- * For fresh remote values, use `syncRemoteConfig` instead.
- *
- * @param currentResolved
- * The current fully-resolved feature flags map.
- *
- * @param overrides
- * User-defined local overrides map.
- *
- * @param envFlags
- * Feature flags provided via environment variables.
- *
- * @return
- * A partial map containing only the flags that came from remote config.
- */
-export function extractRemoteFlags(
-  currentResolved: FeatureFlagsState["resolved"],
-  overrides: FeatureFlagsState["overrides"],
-  envFlags?: OptionalFeatureMap,
-): OptionalFeatureMap {
-  return FeatureIdSchema.options.reduce(
-    (acc, key) => {
-      const resolved = currentResolved[key];
-      if (resolved && !overrides[key] && !envFlags?.[key]) {
-        acc[key] = resolved;
-      }
-      return acc;
-    },
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    {} as OptionalFeatureMap,
-  );
-}

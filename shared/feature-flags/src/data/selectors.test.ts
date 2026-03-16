@@ -12,6 +12,7 @@ const state: { featureFlags: FeatureFlagsState } = {
     overrides: {
       mockFeature: { enabled: true, params: { color: "blue" } },
     },
+    remote: {},
     resolved: {
       ...FEATURE_FLAGS_DEFAULTS,
       mockFeature: { enabled: true, params: { color: "blue" } },

@@ -1,11 +1,17 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type Feature, type FeatureId, type FeatureFlagsState } from "./schema";
+import {
+  type Feature,
+  type FeatureId,
+  type FeatureFlagsState,
+  type PartialFeatures,
+} from "./schema";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
 import { getResolutionConfig } from "../config";
-import { extractRemoteFlags, resolveFeature, resolveAll, resolveAllFromRemote } from "./utils";
+import { resolveFeature, resolveAll } from "./utils";
 
 const initialState: FeatureFlagsState = {
   overrides: {},
+  remote: {},
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   resolved: structuredClone(FEATURE_FLAGS_DEFAULTS) as FeatureFlagsState["resolved"],
   bannerVisible: false,
@@ -24,18 +30,18 @@ const featureFlagsSlice = createSlice({
         (state.overrides as any)[key] = value;
       }
       const config = getResolutionConfig();
-      const remoteFlags = extractRemoteFlags(state.resolved, state.overrides, config.envFlags);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
-      (state.resolved as any)[key] = resolveFeature(key, state.overrides, remoteFlags, config);
+      (state.resolved as any)[key] = resolveFeature(key, state.overrides, state.remote, config);
     },
 
     setAllOverrides(state, action: PayloadAction<FeatureFlagsState["overrides"]>) {
       state.overrides = action.payload;
-      state.resolved = resolveAll(state.overrides, state.resolved, getResolutionConfig());
+      state.resolved = resolveAll(state.overrides, state.remote, getResolutionConfig());
     },
 
-    syncRemoteConfig(state, action: PayloadAction<Record<string, Feature>>) {
-      state.resolved = resolveAllFromRemote(state.overrides, action.payload, getResolutionConfig());
+    syncRemoteConfig(state, action: PayloadAction<PartialFeatures>) {
+      state.remote = action.payload;
+      state.resolved = resolveAll(state.overrides, state.remote, getResolutionConfig());
     },
 
     setBannerVisible(state, action: PayloadAction<boolean>) {
@@ -66,12 +72,11 @@ const featureFlagsSlice = createSlice({
         (state.overrides as any)[flagKey] = value;
       }
       const config = getResolutionConfig();
-      const remoteFlags = extractRemoteFlags(state.resolved, state.overrides, config.envFlags);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions
       (state.resolved as any)[flagKey] = resolveFeature(
         flagKey,
         state.overrides,
-        remoteFlags,
+        state.remote,
         config,
       );
     });
@@ -85,12 +90,12 @@ const featureFlagsSlice = createSlice({
         const overrides = payload.overriddenFeatureFlags;
         if (overrides === undefined) return;
         state.overrides = overrides;
-        state.resolved = resolveAll(overrides, state.resolved, getResolutionConfig());
+        state.resolved = resolveAll(overrides, state.remote, getResolutionConfig());
       } else {
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const overrides = payload as FeatureFlagsState["overrides"];
         state.overrides = overrides;
-        state.resolved = resolveAll(overrides, state.resolved, getResolutionConfig());
+        state.resolved = resolveAll(overrides, state.remote, getResolutionConfig());
       }
     });
 
@@ -111,4 +116,4 @@ const featureFlagsSlice = createSlice({
 
 export const { setOverride, setAllOverrides, syncRemoteConfig, setBannerVisible, importState } =
   featureFlagsSlice.actions;
-export default featureFlagsSlice.reducer;
+export const featureFlagsReducer = featureFlagsSlice.reducer;

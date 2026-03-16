@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { Feature, FeatureFlagsState } from "./schema";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
-import {
-  checkFeatureFlagVersion,
-  applyLanguageFilter,
-  resolveFeature,
-  resolveAll,
-  resolveAllFromRemote,
-  extractRemoteFlags,
-} from "./utils";
+import { checkFeatureFlagVersion, applyLanguageFilter, resolveFeature, resolveAll } from "./utils";
 
 const defaults = FEATURE_FLAGS_DEFAULTS as FeatureFlagsState["resolved"];
 
@@ -179,11 +172,34 @@ describe("resolveFeature", () => {
     const result = resolveFeature("mockFeature", {}, {}, {});
     expect(result).toEqual(FEATURE_FLAGS_DEFAULTS["mockFeature"]);
   });
+
+  it("handles undefined remoteFlags gracefully", () => {
+    const result = resolveFeature("mockFeature", {}, undefined as any, {});
+    expect(result).toEqual(FEATURE_FLAGS_DEFAULTS["mockFeature"]);
+  });
+
+  it("handles empty remoteFlags for a key not present", () => {
+    const result = resolveFeature("mockFeature", {}, {}, {});
+    expect(result).toEqual(FEATURE_FLAGS_DEFAULTS["mockFeature"]);
+  });
+
+  it("remote flag goes through both language and version filtering", () => {
+    const remote = {
+      mockFeature: { enabled: true, desktop_version: ">=2.0.0", languages_whitelisted: ["en"] },
+    };
+    const result = resolveFeature("mockFeature", {}, remote, {
+      platform: "desktop",
+      appVersion: "3.0.0",
+      appLanguage: "de",
+    });
+    expect(result.enabled).toBe(false);
+    expect(result.enabledOverriddenForCurrentLanguage).toBe(true);
+  });
 });
 
-describe("resolveAllFromRemote", () => {
+describe("resolveAll", () => {
   it("resolves every registered flag", () => {
-    const result = resolveAllFromRemote({}, { mockFeature: { enabled: true } }, {});
+    const result = resolveAll({}, { mockFeature: { enabled: true } }, {});
     expect(result.mockFeature).toEqual({ enabled: true });
     expect(result.ptxCard.enabled).toBe(false);
   });
@@ -193,70 +209,52 @@ describe("resolveAllFromRemote", () => {
       mockFeature: { enabled: true },
       ptxCard: { enabled: true },
     } as FeatureFlagsState["overrides"];
-    const result = resolveAllFromRemote(overrides, {}, {});
+    const result = resolveAll(overrides, {}, {});
     expect(result.mockFeature.enabled).toBe(true);
     expect(result.ptxCard.enabled).toBe(true);
   });
-});
 
-describe("resolveAll", () => {
-  it("extracts remote flags from current resolved state and re-resolves", () => {
-    const currentResolved = {
-      ...defaults,
-      mockFeature: { enabled: true, params: { remote: true } },
-    } as FeatureFlagsState["resolved"];
-    const result = resolveAll({}, currentResolved, {});
-    expect(result.mockFeature).toEqual({ enabled: true, params: { remote: true } });
+  it("falls back to defaults when no overrides or remote", () => {
+    const result = resolveAll({}, {}, {});
+    expect(result).toEqual(defaults);
   });
 
-  it("excludes overridden keys from remote extraction", () => {
-    const overrides = {
-      mockFeature: { enabled: false, overridesRemote: true },
-    } as FeatureFlagsState["overrides"];
-    const currentResolved = {
-      ...defaults,
-      mockFeature: { enabled: true },
-    } as FeatureFlagsState["resolved"];
-    const result = resolveAll(overrides, currentResolved, {});
-    expect(result.mockFeature.enabled).toBe(false);
-    expect(result.mockFeature.overridesRemote).toBe(true);
-  });
-});
-
-describe("extractRemoteFlags", () => {
-  it("returns resolved flags that are not overridden or env-overridden", () => {
-    const resolved = {
-      ...defaults,
-      mockFeature: { enabled: true },
-    } as FeatureFlagsState["resolved"];
-    const result = extractRemoteFlags(resolved, {});
-    expect(result.mockFeature).toEqual({ enabled: true });
+  it("remote values are used for flags without overrides", () => {
+    const remote = {
+      mockFeature: { enabled: true, params: { v: 1 } },
+      ptxCard: { enabled: true },
+    };
+    const result = resolveAll({}, remote, {});
+    expect(result.mockFeature).toEqual({ enabled: true, params: { v: 1 } });
+    expect(result.ptxCard).toEqual({ enabled: true });
   });
 
-  it("excludes locally overridden flags", () => {
-    const resolved = {
-      ...defaults,
-      mockFeature: { enabled: true },
-    } as FeatureFlagsState["resolved"];
+  it("overrides take priority over remote values", () => {
     const overrides = { mockFeature: { enabled: false } } as FeatureFlagsState["overrides"];
-    const result = extractRemoteFlags(resolved, overrides);
-    expect(result.mockFeature).toBeUndefined();
+    const remote = { mockFeature: { enabled: true, params: { v: 1 } } };
+    const result = resolveAll(overrides, remote, {});
+    expect(result.mockFeature).toEqual({ enabled: false });
   });
 
-  it("excludes env-overridden flags", () => {
-    const resolved = {
-      ...defaults,
-      mockFeature: { enabled: true },
-    } as FeatureFlagsState["resolved"];
+  it("env flags take priority over remote values", () => {
     const envFlags = { mockFeature: { enabled: false } } as FeatureFlagsState["overrides"];
-    const result = extractRemoteFlags(resolved, {}, envFlags);
-    expect(result.mockFeature).toBeUndefined();
+    const remote = { mockFeature: { enabled: true } };
+    const result = resolveAll({}, remote, { envFlags });
+    expect(result.mockFeature.enabled).toBe(false);
+    expect(result.mockFeature.overriddenByEnv).toBe(true);
   });
 
-  it("returns empty when all flags are overridden", () => {
-    const overrides = { ...defaults } as FeatureFlagsState["overrides"];
-    const result = extractRemoteFlags(defaults, overrides);
-    const values = Object.values(result).filter(Boolean);
-    expect(values).toHaveLength(0);
+  it("applies version filtering to remote values", () => {
+    const remote = { mockFeature: { enabled: true, desktop_version: ">=5.0.0" } };
+    const result = resolveAll({}, remote, { platform: "desktop", appVersion: "2.0.0" });
+    expect(result.mockFeature.enabled).toBe(false);
+    expect(result.mockFeature.enabledOverriddenForCurrentVersion).toBe(true);
+  });
+
+  it("applies language filtering to remote values", () => {
+    const remote = { mockFeature: { enabled: true, languages_whitelisted: ["en"] } };
+    const result = resolveAll({}, remote, { appLanguage: "de" });
+    expect(result.mockFeature.enabled).toBe(false);
+    expect(result.mockFeature.enabledOverriddenForCurrentLanguage).toBe(true);
   });
 });
