@@ -1,15 +1,26 @@
 import React, { memo, useMemo } from "react";
 import { Animated, ImageBackground, View } from "react-native";
 import { useTheme, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import swapBackgroundDark from "~/images/liveApps/swap/MOBILE_SWAP_LW_V4_BG.webp";
+import earnBackgroundDark from "~/images/liveApps/earn/background-dark.webp";
+import wallet40BackgroundLight from "~/images/portfolio/v4-light.webp";
 
 const FADE_DISTANCE = 150;
 
+const darkBackgrounds = {
+  swap: swapBackgroundDark,
+  earn: earnBackgroundDark,
+} as const;
+
+type LiveAppBackgroundType = keyof typeof darkBackgrounds;
+
 type Props = {
+  type: LiveAppBackgroundType;
   scrollY?: Animated.Value;
   fadeDistance?: number;
 };
 
-function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
+function LiveAppBackgroundComponent({ type, scrollY, fadeDistance }: Props) {
   const { colorScheme } = useTheme();
   const styles = useStyleSheet(
     theme => ({
@@ -43,10 +54,10 @@ function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
 
   const source = useMemo(() => {
     if (colorScheme === "dark") {
-      return require("~/images/liveApps/earn/background-dark.webp");
+      return darkBackgrounds[type];
     }
-    return require("~/images/portfolio/v4-light.webp");
-  }, [colorScheme]);
+    return wallet40BackgroundLight;
+  }, [colorScheme, type]);
 
   return (
     <View style={styles.container} pointerEvents="none">
@@ -57,4 +68,4 @@ function EarnBackgroundComponent({ scrollY, fadeDistance }: Props) {
   );
 }
 
-export const EarnBackground = memo(EarnBackgroundComponent);
+export const LiveAppBackground = memo(LiveAppBackgroundComponent);
