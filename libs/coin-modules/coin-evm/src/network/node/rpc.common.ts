@@ -21,6 +21,8 @@ import {
   PrefetchedBlockTransaction,
   LogWithAddress,
   TransactionReceipt,
+  TraceBlockItem,
+  isTraceBlockCallAction,
 } from "./types";
 
 /**
@@ -399,6 +401,58 @@ export const getBlockReceipts: Exclude<NodeApi["getBlockReceipts"], undefined> =
     });
   });
 
+/**
+ * Get execution traces for a block via trace_block RPC.
+ * Not supported by all RPC providers (e.g. Fantom supports it).
+ * @see https://www.quicknode.com/docs/ethereum/trace_block
+ */
+export const traceBlock: NonNullable<NodeApi["traceBlock"]> = (currency, blockHeight = "latest") =>
+  withApi(currency, async api => {
+    const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+    let traces: unknown;
+    try {
+      traces = await api.send("trace_block", [blockTag]);
+    } catch (error) {
+      if (isUnsupportedRpcMethodError(error)) {
+        throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
+          method: "trace_block",
+          rawError: error,
+        });
+      }
+      throw error;
+    }
+
+    if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
+
+    return traces.map((trace, index) => {
+      if (!isTraceBlockItem(trace)) {
+        throw new Error(
+          `Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`,
+        );
+      }
+      return trace;
+    });
+  });
+
+function isTraceBlockItem(value: unknown): value is TraceBlockItem {
+  if (typeof value !== "object" || value === null) return false;
+  const o = value as Record<string, unknown>;
+  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
+  const action = o.action as Record<string, unknown>;
+  if (o.error !== undefined && typeof o.error !== "string") return false;
+
+  const result = o.result;
+  const resultOk =
+    result === undefined ||
+    result === null ||
+    (typeof result === "object" &&
+      ((result as Record<string, unknown>).error === undefined ||
+        typeof (result as Record<string, unknown>).error === "string"));
+  const validCall = typeof o.transactionHash === "string" && resultOk;
+
+  return !isTraceBlockCallAction(action) || validCall;
+}
+
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
   return (
     typeof value === "object" &&
@@ -537,6 +591,7 @@ const node: NodeApi = {
   getTransactionCount,
   getTransaction,
   getBlockReceipts,
+  traceBlock,
   getGasEstimation,
   getFeeData,
   broadcastTransaction,

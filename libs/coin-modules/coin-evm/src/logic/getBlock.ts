@@ -1,14 +1,60 @@
-import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Block,
+  BlockInfo,
+  BlockOperation,
+  BlockTransaction,
+} from "@ledgerhq/coin-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import {
+  rpcTransactionToBlockOperations,
+  traceBlockItemsToOperationsByHash,
+} from "../adapters/blockOperations";
 import { internalTxsToOperationsByHash } from "../adapters/etherscan";
+import { getCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
 import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
+import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
-import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
-import { EtherscanInternalTransaction } from "../types";
+import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
+
+function internalTransactionsFetcher(
+  nodeApi: NodeApi,
+  currency: CryptoCurrency,
+): (height: number) => Promise<Map<string, BlockOperation[]>> {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || {};
+
+  async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {
+    if (nodeApi.traceBlock === undefined) {
+      // no support for traceBlock, return empty map,
+      // this could be buggy but we can't just throw an error, that would break consumer app
+      log("coin-evm", "error: no internal transactions support for this currency", {
+        currencyId: currency.id,
+        blockHeight: height,
+      });
+      return new Map();
+    } else {
+      return nodeApi
+        .traceBlock(currency, height)
+        .then(traceBlockItemsToOperationsByHash)
+        .catch(error => {
+          if (error instanceof UnsupportedRpcMethodError) return new Map();
+          throw error;
+        });
+    }
+  }
+
+  if (isEtherscanLikeExplorerConfig(explorer)) {
+    return (height: number) =>
+      getInternalTransactionsByBlock(currency, height)
+        .then(internalTxsToOperationsByHash)
+        .catch(async _error => nodeFallback(height));
+  } else {
+    return nodeFallback;
+  }
+}
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   // Note: to use RPC calls efficiently, the strategy here is:
@@ -18,9 +64,10 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   //    one by one
   //  - in parallel, fetch internal transactions from explorer (etherscan/blockscout) and merge into block transactions
   const nodeApi = getNodeApi(currency);
+  const fetchInternalTxs = internalTransactionsFetcher(nodeApi, currency);
   const [result, internalTxs] = await Promise.all([
     nodeApi.getBlockByHeight(currency, height, true),
-    getInternalTransactionsByBlock(currency, height),
+    fetchInternalTxs(height),
   ]);
 
   const info: BlockInfo = {
@@ -57,15 +104,12 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
  */
 function mergeInternalTransactions(
   transactions: BlockTransaction[],
-  internalTxs: EtherscanInternalTransaction[],
+  internalTxs: Map<string, BlockOperation[]>,
 ): BlockTransaction[] {
-  if (internalTxs.length === 0) return transactions;
-
-  const opsByHash = internalTxsToOperationsByHash(internalTxs);
-  if (opsByHash.size === 0) return transactions;
+  if (internalTxs.size === 0) return transactions;
 
   return transactions.map(tx => {
-    const extraOps = opsByHash.get(tx.hash);
+    const extraOps = internalTxs.get(tx.hash);
     if (!extraOps || extraOps.length === 0) return tx;
     return {
       ...tx,

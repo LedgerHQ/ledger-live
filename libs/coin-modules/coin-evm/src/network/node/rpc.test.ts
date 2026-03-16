@@ -797,6 +797,54 @@ describe("EVM Family", () => {
     });
   });
 
+  describe("traceBlock", () => {
+    it("should return trace array when trace_block is supported", async () => {
+      const traceItem = {
+        action: {
+          from: "0x59e8070de88cc1e4085293efd08aad4fba2ef6e0",
+          to: "0x44ceb2cdd0e9891f26ce5b96d2a7a3017304c25f",
+          callType: "call",
+          gas: "0x1283b",
+          input: "0x",
+          value: "0x15a7c087e1eb7e18",
+        },
+        result: { gasUsed: "0x11771", output: "0x" },
+        blockHash: "0x0005619600000bb1b28517d18a5c633abe62ecf35ef5492e939680748d0acecb",
+        blockNumber: 120647648,
+        transactionHash: "0x18815c2073a78c2264b89ee4b4a9267eb31c4c0a91b9d4d751ddd84b26584493",
+        transactionPosition: 0,
+        traceAddress: [0],
+        subtraces: 1,
+        type: "call",
+      };
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
+        if (method === "trace_block") {
+          return [traceItem];
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      const result = await RPC_API.traceBlock(fakeCurrency as CryptoCurrency, 120647648);
+      expect(result).toEqual([traceItem]);
+    });
+
+    it("should throw UnsupportedRpcMethodError when RPC returns -32601", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementation(async (method: string) => {
+        if (method === "trace_block") {
+          throw { code: -32601, message: "method not found" };
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+
+      const err = await RPC_API.traceBlock(fakeCurrency as CryptoCurrency, 1).then(
+        () => null,
+        (e: unknown) => e,
+      );
+      expect(err).toBeInstanceOf(UnsupportedRpcMethodError);
+      expect((err as { method?: string }).method).toBe("trace_block");
+    });
+  });
+
   describe("getOptimismAdditionalFees", () => {
     it("should return the expected payload", async () => {
       // @ts-expect-error LRUCache

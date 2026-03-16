@@ -34,6 +34,63 @@ export type LogWithAddress = {
   data: string;
 };
 
+/**
+ * Call action part of a trace_block trace item (OpenEthereum/Erigon trace API).
+ * @see https://www.quicknode.com/docs/ethereum/trace_block
+ */
+export type TraceBlockCallAction = {
+  from: string;
+  to: string;
+  callType: string;
+  value: string;
+};
+
+export function isTraceBlockCallAction(
+  action: TraceBlockOtherAction,
+): action is TraceBlockCallAction {
+  return (
+    typeof action.from === "string" &&
+    typeof action.to === "string" &&
+    typeof action.callType === "string" &&
+    typeof action.value === "string"
+  );
+}
+
+/**
+ * Other action types (e.g. reward, or other trace_block action shapes).
+ * No specific fields are prescribed.
+ */
+export type TraceBlockOtherAction = Record<string, unknown>;
+
+/**
+ * Result part of a trace_block trace item.
+ */
+export type TraceBlockResult = {
+  gasUsed: string;
+  output: string;
+  error?: string;
+};
+
+/**
+ * Single trace entry returned by trace_block RPC.
+ * When a call reverts, RPC may omit `result` and set top-level `error` (e.g. "Reverted").
+ * "reward" type items have no transactionHash/transactionPosition and result is null.
+ */
+export type TraceBlockItem = {
+  action: TraceBlockCallAction | TraceBlockOtherAction;
+  /** null when the trace is a reward */
+  result?: TraceBlockResult | null;
+  /** Present when the trace reverted (no result object). */
+  error?: string;
+  blockHash: string;
+  blockNumber: number;
+  transactionHash: string | null;
+  transactionPosition: number | null;
+  traceAddress: number[];
+  subtraces: number;
+  type: string;
+};
+
 /** A transaction receipt as returned by a RPC node. */
 export type TransactionReceipt = {
   transactionHash: string;
@@ -69,6 +126,15 @@ export type BlockReceiptInfo = Pick<
   "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers"
 >;
 
+export type BlockByHeightResult = {
+  hash: string;
+  height: number;
+  timestamp: number;
+  parentHash: string;
+  transactionHashes?: string[];
+  transactions?: PrefetchedBlockTransaction[];
+};
+
 export type NodeApi = {
   getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
@@ -96,18 +162,15 @@ export type NodeApi = {
     blockHeight: number | "latest",
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
-  ) => Promise<{
-    hash: string;
-    height: number;
-    timestamp: number;
-    parentHash: string;
-    transactionHashes?: string[];
-    transactions?: PrefetchedBlockTransaction[];
-  }>;
+  ) => Promise<BlockByHeightResult>;
   getBlockReceipts?: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
+  traceBlock?: (
+    currency: CryptoCurrency,
+    blockHeight: number | "latest",
+  ) => Promise<TraceBlockItem[]>;
   getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
   getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
