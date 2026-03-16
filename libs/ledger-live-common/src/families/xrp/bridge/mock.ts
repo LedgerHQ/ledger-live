@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughSpendableBalance,
@@ -42,7 +41,6 @@ const createTransaction = (): Transaction => ({
   amount: new BigNumber(0),
   recipient: "",
   fees: new BigNumber(10),
-  feeCustomUnit: getCryptoCurrencyById("ripple").units[1],
   tag: undefined,
   networkInfo: null,
   useAllAmount: false,
