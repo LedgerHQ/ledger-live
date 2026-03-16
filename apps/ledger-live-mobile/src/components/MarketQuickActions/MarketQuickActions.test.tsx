@@ -265,7 +265,7 @@ describe("MarketQuickActions", () => {
         }),
       },
     );
-    expect(getByText(/earn/i)).toBeVisible();
+    expect(getByText(/(earn|yield)/i)).toBeVisible();
   });
 
   it("should not render earn button for token currencies without stake support", () => {
@@ -274,6 +274,6 @@ describe("MarketQuickActions", () => {
         <MarketQuickActions currency={usdcCurrency} accounts={[ethereumAccount]} />
       </TestNavigator>,
     );
-    expect(queryByText(/earn/i)).toBeNull();
+    expect(queryByText(/(earn|yield)/i)).toBeNull();
   });
 });
