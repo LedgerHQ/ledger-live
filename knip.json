@@ -29,7 +29,8 @@
     "**/e2e/**",
     "**/*.config.*",
     "**/scripts/**",
-    "**/tools/**"
+    "**/tools/**",
+    "**/.eslintrc.i18n.js"
   ],
   "workspaces": {
     "./apps/ledger-live-desktop": {

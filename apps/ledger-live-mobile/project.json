@@ -1,9 +1,6 @@
 {
   "targets": {
     "lint": {
-      "outputs": [
-        "{projectRoot}/lint.json"
-      ],
       "inputs": [
         "default",
         {
