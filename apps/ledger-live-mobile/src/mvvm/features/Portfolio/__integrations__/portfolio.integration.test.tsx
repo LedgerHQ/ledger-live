@@ -1,4 +1,5 @@
 import React from "react";
+import { act } from "@testing-library/react-native";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
 import {
   PortfolioTest,
@@ -123,6 +124,11 @@ describe("Portfolio Screen", () => {
       });
 
       await screen.findByTestId("PortfolioEmptyList");
+
+      // Advance fake timers so RTK Query dispatches and resolves its fetch
+      await act(async () => {
+        jest.advanceTimersByTime(100);
+      });
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
       expect(await screen.findByTestId("assetItem-Bitcoin")).toBeVisible();

@@ -15,7 +15,6 @@ import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionVie
 
 interface PortfolioCryptosSectionProps {
   isEmptyState?: boolean;
-  isReadOnly?: boolean;
 }
 
 const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
