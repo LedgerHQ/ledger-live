@@ -56,16 +56,24 @@ jobs:
         run: pnpm i --filter="./libs/**"
 
       - name: Run coverage on appropriate libraries
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
         run: |
           
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
         
-          pnpm turbo run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1 
+          pnpm turbo run coverage --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1 
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
         run: |
           
           echo "::group::Processing coverage files"
@@ -94,9 +102,6 @@ jobs:
           done
           
           testCommand+=(--filter="!./libs/ui/**")
-          testCommand+=(--api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}")
-          testCommand+=(--token="${{ secrets.TURBOREPO_SERVER_TOKEN }}")
-          testCommand+=(--team="foo")
 
           echo "::endgroup::"
           echo "Running tests for libs without coverage with command: ${testCommand[@]}"
@@ -158,13 +163,25 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Lint affected libraries
         id: lint-libs
-        run: pnpm turbo lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" -- --quiet
       - name: Typecheck affected libraries
         id: typecheck-libs
-        run: pnpm turbo typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]"
       - name: Test unimported files
         id: unimported
-        run: pnpm turbo unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!./e2e/**" --filter="!ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]"
         shell: bash
       - uses: actions/github-script@v6
         if: ${{ !cancelled() }}
@@ -204,7 +221,11 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
-        run: pnpm turbo doc --filter="./libs/ledgerjs/**" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo doc --filter="./libs/ledgerjs/**"
       - name: get diff
         id: diff
         run: |

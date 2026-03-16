@@ -51,12 +51,16 @@ jobs:
         run: pnpm i --filter="./features/**"
 
       - name: Run coverage on feature packages
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
         run: |
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm turbo run coverage --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" --filter="./features/**" --concurrency=4 -- --runInBand=1
+          pnpm turbo run coverage --filter="./features/**" --concurrency=4 -- --runInBand=1
 
       - name: Process coverage files
         id: process-coverage

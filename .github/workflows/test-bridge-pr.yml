@@ -70,7 +70,11 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
-        run: pnpm turbo build --filter=./libs/ledger-live-common --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo build --filter=./libs/ledger-live-common
       - name: Test
         shell: bash
         env:

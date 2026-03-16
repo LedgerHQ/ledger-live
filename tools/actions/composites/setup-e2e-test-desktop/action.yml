@@ -37,8 +37,12 @@ runs:
       shell: bash
     - name: Build dependencies
       if: inputs.turborepo-server-port != ''
+      env:
+        TURBO_API: "http://127.0.0.1:${{ inputs.turborepo-server-port }}"
+        TURBO_TOKEN: ${{ inputs.turbo-server-token }}
+        TURBO_TEAM: "foo"
       run: |
-        pnpm turbo build --filter="ledger-live-desktop^..." --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
+        pnpm turbo build --filter="ledger-live-desktop^..."
       shell: bash
     - name: Build dependencies
       if: inputs.turborepo-server-port == ''

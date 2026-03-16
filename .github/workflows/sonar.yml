@@ -48,10 +48,14 @@ jobs:
           pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 
       - name: Build dependencies
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
         run: |
-          pnpm turbo build --filter="./libs/**" --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-          pnpm turbo build --filter="ledger-live-desktop^..." --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-          pnpm turbo build --filter="live-mobile^..." --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+          pnpm turbo build --filter="./libs/**"
+          pnpm turbo build --filter="ledger-live-desktop^..."
+          pnpm turbo build --filter="live-mobile^..."
 
       - name: Generate Unit test coverage for LLD & LLM
         run: |

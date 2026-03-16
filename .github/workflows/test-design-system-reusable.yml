@@ -73,7 +73,11 @@ jobs:
           path: ${{ github.workspace }}/libs/ui/packages/native/coverage
       - name: Build and Test affected libraries
         id: test-ui
-        run: pnpm turbo test --concurrency=1 --continue --filter="./libs/ui/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo test --concurrency=1 --continue --filter="./libs/ui/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]"
         shell: bash
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

@@ -82,7 +82,11 @@ jobs:
           working-directory: apps/web-tools
 
       - name: Typecheck web-tools
-        run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools"
 
 
   build-native-storybook:
