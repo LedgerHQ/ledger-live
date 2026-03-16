@@ -5,6 +5,7 @@ import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePersistedPortfolioBalance } from "./usePersistedPortfolioBalance";
 import {
   PortfolioBalanceState,
   PortfolioBalanceSectionProps,
@@ -26,12 +27,24 @@ export const usePortfolioBalanceSectionViewModel = ({
   const latestBalance = lastItem?.value ?? 0;
   const unit = counterValueCurrency.units[0];
 
-  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
-    rawBalanceAvailable,
-    syncPhase,
+  const effectiveLatestBalance = usePersistedPortfolioBalance(
     latestBalance,
+    syncPhase,
+    counterValueCurrency.ticker,
+  );
+
+  // If MMKV has a cached balance from a previous session, treat it as available
+  // immediately so the cached value is shown at cold start instead of a skeleton.
+  const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
+
+  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
+    rawBalanceAvailable: effectiveRawBalanceAvailable,
+    syncPhase,
+    latestBalance: effectiveLatestBalance,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
   });
+
+  const effectiveIsLoading = syncPhase === "syncing";
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {
@@ -43,13 +56,18 @@ export const usePortfolioBalanceSectionViewModel = ({
     return "normal";
   }, [isReadOnlyMode, showAssets]);
 
+  const isAnalyticPillVisible =
+    state === "normal" &&
+    (balanceAvailable || (shouldDisplayBalanceRefreshRework && effectiveIsLoading));
+
   return {
     state,
     balance: displayedBalance,
     countervalueChange,
     unit,
     isBalanceAvailable: balanceAvailable,
-    isLoading,
+    isAnalyticPillVisible,
+    isLoading: effectiveIsLoading,
     shouldDisplayBalanceRefreshRework,
     onToggleDiscreetMode: toggleDiscreetMode,
   };

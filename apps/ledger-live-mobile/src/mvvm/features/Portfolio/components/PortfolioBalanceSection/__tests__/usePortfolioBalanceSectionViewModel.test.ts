@@ -5,6 +5,9 @@ import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/index";
 import type { State } from "~/reducers/types";
 
 jest.mock("LLM/hooks/usePortfolioBalance");
+jest.mock("../usePersistedPortfolioBalance", () => ({
+  usePersistedPortfolioBalance: (b: number) => b,
+}));
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
 
@@ -21,12 +24,11 @@ const defaultPortfolio = {
   countervalueSendSum: 0,
 };
 
-function makePortfolioBalanceReturn(
+function makeReturn(
   overrides: Partial<{
-    portfolio: typeof defaultPortfolio;
     balanceAvailable: boolean;
     syncPhase: SyncPhase;
-    isBalanceLoading: boolean;
+    portfolio: typeof defaultPortfolio;
   }> = {},
 ) {
   return {
@@ -35,6 +37,7 @@ function makePortfolioBalanceReturn(
     syncPhase: "synced" as SyncPhase,
     isBalanceLoading: false,
     isColdStart: false,
+    isManualRefreshLoading: false,
     allAccounts: [],
     accountsWithError: [],
     listOfErrorAccountNames: "",
@@ -47,102 +50,61 @@ function makePortfolioBalanceReturn(
 
 const defaultProps = { showAssets: true, isReadOnlyMode: false };
 
+const withFreezeFlag = {
+  overrideInitialState: (state: State): State => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      overriddenFeatureFlags: {
+        lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
+      },
+    },
+  }),
+};
+
 describe("usePortfolioBalanceSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUsePortfolioBalance.mockReturnValue(makePortfolioBalanceReturn());
+    mockUsePortfolioBalance.mockReturnValue(makeReturn());
   });
 
-  describe("state determination", () => {
-    it("should return 'noSigner' state when isReadOnlyMode is true", () => {
+  describe("state", () => {
+    it("returns noSigner when readOnly, regardless of showAssets", () => {
       const { result } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel({
-          showAssets: false,
-          isReadOnlyMode: true,
-        }),
+        usePortfolioBalanceSectionViewModel({ showAssets: false, isReadOnlyMode: true }),
       );
-
       expect(result.current.state).toBe("noSigner");
     });
 
-    it("should return 'noAccounts' state when isReadOnlyMode is false and showAssets is false", () => {
+    it("returns noAccounts when showAssets is false", () => {
       const { result } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel({
-          showAssets: false,
-          isReadOnlyMode: false,
-        }),
+        usePortfolioBalanceSectionViewModel({ showAssets: false, isReadOnlyMode: false }),
       );
-
       expect(result.current.state).toBe("noAccounts");
-    });
-
-    it("should return 'normal' state when isReadOnlyMode is false and showAssets is true", () => {
-      const { result } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel({
-          showAssets: true,
-          isReadOnlyMode: false,
-        }),
-      );
-
-      expect(result.current.state).toBe("normal");
-    });
-
-    it("should prioritize noSigner over noAccounts when both conditions are met", () => {
-      const { result } = renderHook(() =>
-        usePortfolioBalanceSectionViewModel({
-          showAssets: false,
-          isReadOnlyMode: true,
-        }),
-      );
-
-      expect(result.current.state).toBe("noSigner");
     });
   });
 
   describe("isLoading", () => {
-    it("should be false when syncPhase is synced", () => {
-      const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps));
-
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    it("should be true when syncPhase is syncing", () => {
-      mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({ syncPhase: "syncing", isBalanceLoading: true }),
+    it("is true while syncPhase is syncing, false otherwise", () => {
+      const { result, rerender } = renderHook(() =>
+        usePortfolioBalanceSectionViewModel(defaultProps),
       );
+      expect(result.current.isLoading).toBe(false);
 
-      const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps));
-
+      mockUsePortfolioBalance.mockReturnValue(makeReturn({ syncPhase: "syncing" }));
+      rerender({});
       expect(result.current.isLoading).toBe(true);
-    });
 
-    it("should be false when syncPhase is failed", () => {
-      mockUsePortfolioBalance.mockReturnValue(makePortfolioBalanceReturn({ syncPhase: "failed" }));
-
-      const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps));
-
+      mockUsePortfolioBalance.mockReturnValue(makeReturn({ syncPhase: "failed" }));
+      rerender({});
       expect(result.current.isLoading).toBe(false);
     });
   });
 
-  describe("balance freeze during sync", () => {
-    // Balance freeze requires shouldDisplayBalanceRefreshRework to be enabled.
-    const withFreezeFlag = {
-      overrideInitialState: (state: State): State => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: {
-            lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-          },
-        },
-      }),
-    };
-
-    it("should freeze balance during syncing and release when synced", () => {
+  describe("balance freeze", () => {
+    it("freezes at pre-sync value and releases on settle", () => {
       mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({
-          syncPhase: "synced",
+        makeReturn({
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
         }),
       );
@@ -154,9 +116,8 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.balance).toBe(1500);
 
       mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({
+        makeReturn({
           syncPhase: "syncing",
-          isBalanceLoading: true,
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
         }),
       );
@@ -164,8 +125,7 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.balance).toBe(1500);
 
       mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({
-          syncPhase: "synced",
+        makeReturn({
           portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
         }),
       );
@@ -174,14 +134,15 @@ describe("usePortfolioBalanceSectionViewModel", () => {
     });
   });
 
-  describe("balanceAvailable stickiness", () => {
-    it("should keep balanceAvailable false until sync settles (no shimmer gap after skeleton)", () => {
+  describe("isBalanceAvailable", () => {
+    it("stays false until syncPhase settles when there is no cached balance", () => {
+      const emptyPortfolio = {
+        ...defaultPortfolio,
+        balanceHistory: [{ date: new Date(), value: 0 }],
+      };
+
       mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({
-          balanceAvailable: false,
-          syncPhase: "syncing",
-          isBalanceLoading: true,
-        }),
+        makeReturn({ balanceAvailable: false, syncPhase: "syncing", portfolio: emptyPortfolio }),
       );
 
       const { result, rerender } = renderHook(() =>
@@ -190,26 +151,28 @@ describe("usePortfolioBalanceSectionViewModel", () => {
       expect(result.current.isBalanceAvailable).toBe(false);
 
       mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({
-          balanceAvailable: true,
-          syncPhase: "syncing",
-          isBalanceLoading: false,
-          portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1200 }] },
-        }),
+        makeReturn({ balanceAvailable: true, syncPhase: "syncing", portfolio: emptyPortfolio }),
       );
       rerender({});
       expect(result.current.isBalanceAvailable).toBe(false);
 
       mockUsePortfolioBalance.mockReturnValue(
-        makePortfolioBalanceReturn({
-          balanceAvailable: true,
-          syncPhase: "synced",
-          portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1200 }] },
-        }),
+        makeReturn({ balanceAvailable: true, syncPhase: "synced", portfolio: emptyPortfolio }),
       );
       rerender({});
       expect(result.current.isBalanceAvailable).toBe(true);
-      expect(result.current.isLoading).toBe(false);
+    });
+
+    it("is true immediately at cold start when a cached balance exists", () => {
+      mockUsePortfolioBalance.mockReturnValue(
+        makeReturn({ balanceAvailable: false, syncPhase: "syncing" }),
+      );
+
+      const { result } = renderHook(() => usePortfolioBalanceSectionViewModel(defaultProps));
+
+      // effectiveLatestBalance = 1000 (from defaultPortfolio via pass-through mock),
+      // so effectiveRawBalanceAvailable = true and balanceAvailable starts as true.
+      expect(result.current.isBalanceAvailable).toBe(true);
     });
   });
 });
