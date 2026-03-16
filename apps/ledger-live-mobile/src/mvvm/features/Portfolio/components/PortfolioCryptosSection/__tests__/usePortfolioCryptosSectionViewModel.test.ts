@@ -4,7 +4,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useDistribution } from "~/actions/general";
 import { Asset } from "~/types/asset";
 import { State } from "~/reducers/types";
-import usePortfolioCryptosSectionViewModel from "../usePortfolioCryptosSectionViewModel";
+import usePortfolioCryptosSectionViewModel from "../hooks/usePortfolioCryptosSectionViewModel";
 import { bitcoin, ethereum, createCryptoAsset } from "./shared";
 
 const mockNavigate = jest.fn();
