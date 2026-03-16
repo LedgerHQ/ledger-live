@@ -21,7 +21,7 @@ describe("EVM Optimism Network", () => {
       },
       explorer: {
         type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10",
+        uri: "https://proxyetherscan-ci.api.live.ledger.com/v2/api/10",
       },
     };
     module = createApi(config as EvmConfig, "optimism");

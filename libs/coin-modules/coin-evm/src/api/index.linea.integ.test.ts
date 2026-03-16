@@ -41,7 +41,7 @@ describe("Linea (etherscan explorer)", () => {
         },
         explorer: {
           type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59144",
+          uri: "https://proxyetherscan-ci.api.live.ledger.com/v2/api/59144",
         },
         showNfts: false,
       };

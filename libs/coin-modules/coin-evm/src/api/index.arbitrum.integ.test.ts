@@ -20,7 +20,7 @@ describe("EVM Arbitrum Network", () => {
       },
       explorer: {
         type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42161",
+        uri: "https://proxyetherscan-ci.api.live.ledger.com/v2/api/42161",
       },
     };
     module = createApi(config as EvmConfig, "arbitrum");

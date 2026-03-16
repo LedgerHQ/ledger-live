@@ -20,7 +20,7 @@ describe.each([
       node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
       explorer: {
         type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
+        uri: "https://proxyetherscan-ci.api.live.ledger.com/v2/api/1",
       },
       showNfts: true,
     },
@@ -845,7 +845,7 @@ describe("EVM Api (SEI Network)", () => {
       },
       explorer: {
         type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+        uri: "https://proxyetherscan-ci.api.live.ledger.com/v2/api/1329",
       },
     };
     module = createApi(config as EvmConfig, "sei_evm");
