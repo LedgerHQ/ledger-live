@@ -25,7 +25,6 @@ import {
   craftRawTransaction,
   estimateFees as estimateFeesLogic,
   getBalance,
-  getBlock,
   getBlockInfo,
   getNextValidSequence,
   lastBlock,
@@ -50,7 +49,9 @@ export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaA
     lastBlock: () => lastBlock(currencyId),
     listOperations: (address: string, options: ListOperationsOptions) =>
       listOperations(address, options, currencyId),
-    getBlock: (height: number) => getBlock(height, currencyId),
+    getBlock: (_height: number) => {
+      throw new Error("getBlock is not supported");
+    },
     getBlockInfo: (height: number) => getBlockInfo(height, currencyId),
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");

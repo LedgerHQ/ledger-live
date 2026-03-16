@@ -6,12 +6,7 @@
  * and node:path. The bridge layer (sync, broadcast, sign) uses only
  * proxyClient (HTTP REST) and never reaches these functions at runtime.
  */
-import type {
-  Block,
-  Operation,
-  ListOperationsOptions,
-  Page,
-} from "@ledgerhq/coin-framework/api/index";
+import type { Operation, ListOperationsOptions, Page } from "@ledgerhq/coin-framework/api/index";
 
 type GRPCClient = never;
 
@@ -25,10 +20,6 @@ export async function withClient<T>(
   _retries?: number,
 ): Promise<T> {
   throw new Error("gRPC client is not available in React Native");
-}
-
-export async function getBlockByHeight(_currencyId: string, _height: number): Promise<Block> {
-  throw new Error("gRPC getBlockByHeight() method is not available in React Native");
 }
 
 export async function getOperations(

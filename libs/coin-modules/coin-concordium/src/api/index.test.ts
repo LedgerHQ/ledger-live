@@ -8,7 +8,6 @@ jest.mock("../logic", () => ({
   craftRawTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
-  getBlock: jest.fn(),
   getBlockInfo: jest.fn(),
   getNextValidSequence: jest.fn(),
   lastBlock: jest.fn(),
@@ -18,7 +17,6 @@ jest.mock("../logic", () => ({
 const {
   broadcast: broadcastMock,
   getBalance: getBalanceMock,
-  getBlock: getBlockMock,
   getBlockInfo: getBlockInfoMock,
   lastBlock: lastBlockMock,
   listOperations: listOperationsMock,
@@ -106,19 +104,6 @@ describe("api/index", () => {
     });
   });
 
-  describe("getBlock", () => {
-    it("should call getBlock with height and currency", async () => {
-      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
-      const mockBlock = { height: 500, hash: "block-500", transactions: [] };
-      getBlockMock.mockResolvedValue(mockBlock);
-
-      const result = await api.getBlock(500);
-
-      expect(getBlockMock).toHaveBeenCalledWith(500, "concordium_testnet");
-      expect(result).toEqual(mockBlock);
-    });
-  });
-
   describe("getBlockInfo", () => {
     it("should call getBlockInfo with height and currency", async () => {
       const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
@@ -133,6 +118,11 @@ describe("api/index", () => {
   });
 
   describe("unsupported methods", () => {
+    it("should throw error for getBlock", () => {
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+      expect(() => api.getBlock(500)).toThrow("getBlock is not supported");
+    });
+
     it("should throw error for getStakes", () => {
       const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
