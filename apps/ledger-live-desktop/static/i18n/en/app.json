@@ -8323,6 +8323,10 @@
     "send": {
       "stepRecipient": {
         "selectLabel": "Send from"
+      },
+      "summary": {
+        "coveredByProvable": "Covered by Provable",
+        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
       }
     }
   },

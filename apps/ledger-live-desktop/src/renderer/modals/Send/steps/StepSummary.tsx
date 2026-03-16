@@ -81,8 +81,10 @@ const StepSummary = (props: StepProps) => {
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
   const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const SpecificSummaryAmountRow = specific?.StepSummaryAmountRow;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
   const SpecificSummaryAdditionalRows = specific?.StepSummaryAdditionalRows;
+  const SpecificSummaryPostAlert = specific?.StepSummaryPostAlert;
 
   const memo = lldMemoTag?.enabled
     ? getMemoTagValueByTransactionFamily(transaction)
@@ -232,34 +234,43 @@ const StepSummary = (props: StepProps) => {
               )}
         </Box>
         <Separator />
-        <Box horizontal justifyContent="space-between" mb={2}>
-          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
-            <Trans i18nKey="send.steps.details.amount" />
-          </Text>
-          <Box>
-            <FormattedVal
-              color={"neutral.c80"}
-              disableRounding
-              unit={unit}
-              val={amount}
-              fontSize={4}
-              inline
-              showCode
-              alwaysShowValue
-              data-testid="transaction-amount"
-            />
-            <Box textAlign="right">
-              <CounterValue
-                color="neutral.c70"
-                fontSize={3}
-                currency={currency}
-                value={amount}
-                alwaysShowSign={false}
+        {SpecificSummaryAmountRow ? (
+          <SpecificSummaryAmountRow
+            amount={amount}
+            unit={unit}
+            currency={currency}
+            transaction={transaction}
+          />
+        ) : (
+          <Box horizontal justifyContent="space-between" mb={2}>
+            <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+              <Trans i18nKey="send.steps.details.amount" />
+            </Text>
+            <Box>
+              <FormattedVal
+                color={"neutral.c80"}
+                disableRounding
+                unit={unit}
+                val={amount}
+                fontSize={4}
+                inline
+                showCode
                 alwaysShowValue
+                data-testid="transaction-amount"
               />
+              <Box textAlign="right">
+                <CounterValue
+                  color="neutral.c70"
+                  fontSize={3}
+                  currency={currency}
+                  value={amount}
+                  alwaysShowSign={false}
+                  alwaysShowValue
+                />
+              </Box>
             </Box>
           </Box>
-        </Box>
+        )}
 
         {SpecificSummaryNetworkFeesRow ? (
           <SpecificSummaryNetworkFeesRow
@@ -267,6 +278,7 @@ const StepSummary = (props: StepProps) => {
             feesUnit={feesUnit}
             estimatedFees={estimatedFees}
             feesCurrency={feesCurrency}
+            transaction={transaction}
           />
         ) : (
           <>
@@ -356,6 +368,8 @@ const StepSummary = (props: StepProps) => {
             </Box>
           </>
         ) : null}
+
+        {SpecificSummaryPostAlert && <SpecificSummaryPostAlert />}
       </FromToWrapper>
     </Box>
   );
