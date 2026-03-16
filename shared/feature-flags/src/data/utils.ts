@@ -48,7 +48,7 @@ export function checkFeatureFlagVersion(
     appVersion &&
     !semver.satisfies(appVersion, versionConstraint, { includePrerelease: true })
   ) {
-    return { enabledOverriddenForCurrentVersion: true, ...feature, enabled: false };
+    return { ...feature, enabled: false, enabledOverriddenForCurrentVersion: true };
   }
   return feature;
 }
@@ -75,7 +75,7 @@ export function applyLanguageFilter(feature: Feature, appLanguage?: string): Fea
     ((feature.languages_whitelisted && !feature.languages_whitelisted.includes(appLanguage)) ||
       (feature.languages_blacklisted && feature.languages_blacklisted.includes(appLanguage)))
   ) {
-    return { enabledOverriddenForCurrentLanguage: true, ...feature, enabled: false };
+    return { ...feature, enabled: false, enabledOverriddenForCurrentLanguage: true };
   }
   return feature;
 }
