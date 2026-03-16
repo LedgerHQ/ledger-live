@@ -416,7 +416,7 @@ overrides:
   bignumber.js: 9.1.2
   '@radix-ui/react-slot': ^1.2.3
 
-packageExtensionsChecksum: sha256-oFPDBJXygat0iMzkO4oGwhSi6BtY54eC5dgXuFjN6jk=
+packageExtensionsChecksum: sha256-soBxUGswy51TVCDSs7z78kD8EkYlgg2DCcxh6UCSojg=
 
 pnpmfileChecksum: sha256-WizsKK+XY4tzYGFYz2IjQ3NcaxUnMgMAxQXmfGYtEqA=
 
@@ -2036,6 +2036,9 @@ importers:
       '@types/ws':
         specifier: 8.5.10
         version: 8.5.10
+      '@typescript-eslint/parser':
+        specifier: 'catalog:'
+        version: 8.48.1(eslint@8.57.0)(typescript@5.8.3)
       babel-jest:
         specifier: 'catalog:'
         version: 30.2.0(@babel/core@7.28.5)
@@ -2048,6 +2051,9 @@ importers:
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
         version: 1.0.0-alpha.42(patch_hash=de02364484341fdd00f4e5601cb028842443dcf23b7ce9932c1ff36d073b2e81)(detox@20.46.0(patch_hash=b7fe5cdd8646c24964cf1d3ab9e7a18465d5ac243ed898632769ddbb4796ec14)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.17))(@types/node@24.12.0)(typescript@5.9.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.17))(@types/node@24.12.0)(typescript@5.9.3))))
+      eslint:
+        specifier: 8.57.0
+        version: 8.57.0
       eslint-import-resolver-typescript:
         specifier: 3.6.1
         version: 3.6.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@5.9.3))(eslint-plugin-import@2.32.0)(eslint@8.57.0)
@@ -2105,6 +2111,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@5.9.3)
+      oxfmt:
+        specifier: ^0.36.0
+        version: 0.36.0
+      oxlint:
+        specifier: 1.51.0
+        version: 1.51.0
       react-native-bundle-visualizer:
         specifier: 3.1.3
         version: 3.1.3(patch_hash=860509fa484fba50bc575fd4729f51687bfb5342e9fca66d2b7c12b0cf81e11d)
@@ -2138,6 +2150,19 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
 
   apps/web-tools:
     dependencies:
