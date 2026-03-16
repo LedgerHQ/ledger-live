@@ -1,5 +1,8 @@
 export enum LocationContentCard {
+  /** Top carousel on portfolio page (placement "portfolio") */
   Portfolio = "portfolio",
+  /** Bottom carousel on portfolio page (placement "bottom_portfolio") */
+  BottomPortfolio = "bottom_portfolio",
   Action = "action",
   NotificationCenter = "notification_center",
 }

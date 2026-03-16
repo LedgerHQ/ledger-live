@@ -5,7 +5,11 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { useGenerateLocalBraze } from "../Hooks/useGenerateLocalBraze";
 import { useTranslation } from "react-i18next";
 
-type TabKey = "NotificationContentCard" | "ActionContentCard" | "PortfolioContentCard";
+type TabKey =
+  | "NotificationContentCard"
+  | "ActionContentCard"
+  | "PortfolioContentCard"
+  | "BottomPortfolioContentCard";
 
 const FormRow = styled(Flex)`
   align-items: center;
@@ -72,8 +76,13 @@ export const ModalBody: React.FC = () => {
   const { t } = useTranslation();
   const [formData, dispatch] = useReducer(formReducer, initialState);
 
-  const { addLocalPortfolioCard, addLocalActionCard, addLocalNotificationCard, dismissLocalCards } =
-    useGenerateLocalBraze();
+  const {
+    addLocalPortfolioCard,
+    addLocalBottomPortfolioCard,
+    addLocalActionCard,
+    addLocalNotificationCard,
+    dismissLocalCards,
+  } = useGenerateLocalBraze();
 
   const handleAddCard = () => {
     const {
@@ -93,6 +102,8 @@ export const ModalBody: React.FC = () => {
     } = formData;
     if (selectedTab === "PortfolioContentCard") {
       addLocalPortfolioCard(title, description, image, order, url, cta, tag);
+    } else if (selectedTab === "BottomPortfolioContentCard") {
+      addLocalBottomPortfolioCard(title, description, image, order, url, cta, tag);
     } else if (selectedTab === "ActionContentCard") {
       addLocalActionCard(
         title,
@@ -138,6 +149,10 @@ export const ModalBody: React.FC = () => {
       key: "PortfolioContentCard",
       label: t("settings.developer.brazeTools.modal.fields.portfolio"),
     },
+    {
+      key: "BottomPortfolioContentCard",
+      label: t("settings.developer.brazeTools.modal.fields.bottomPortfolio"),
+    },
   ];
 
   const [selectedTab, setSelectedTab] = useReducer(
@@ -150,6 +165,28 @@ export const ModalBody: React.FC = () => {
     { field: keyof FormState; placeholder: string; label: string }[]
   > = {
     PortfolioContentCard: [
+      {
+        field: "image",
+        placeholder: "Image URL",
+        label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "url",
+        placeholder: "URL",
+        label: t("settings.developer.brazeTools.modal.fields.url"),
+      },
+      {
+        field: "cta",
+        placeholder: "CTA",
+        label: t("settings.developer.brazeTools.modal.fields.cta"),
+      },
+      {
+        field: "tag",
+        placeholder: "TAG",
+        label: t("settings.developer.brazeTools.modal.fields.tag"),
+      },
+    ],
+    BottomPortfolioContentCard: [
       {
         field: "image",
         placeholder: "Image URL",
@@ -224,7 +261,7 @@ export const ModalBody: React.FC = () => {
 
   return (
     <Flex flexDirection="column" rowGap={24}>
-      <Flex flexDirection="row" columnGap={24}>
+      <div className="flex gap-x-6 overflow-x-auto pb-1">
         {tabs.map(tab => (
           <Button
             appearance={selectedTab === tab.key ? "accent" : "transparent"}
@@ -234,7 +271,7 @@ export const ModalBody: React.FC = () => {
             {tab.label}
           </Button>
         ))}
-      </Flex>
+      </div>
       <Flex flexDirection="column" rowGap={12}>
         <FormRow>
           <Label> {t("settings.developer.brazeTools.modal.fields.title")}</Label>

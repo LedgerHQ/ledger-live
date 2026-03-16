@@ -828,6 +828,7 @@ export const DEFAULT_FEATURES: Features = {
       balanceRefreshRework: true,
       assetSection: true,
       operationsList: true,
+      brazePlacement: true,
     },
   },
   addressPoisoningOperationsFilter: {
