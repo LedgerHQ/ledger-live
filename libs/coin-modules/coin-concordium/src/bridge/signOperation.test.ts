@@ -95,7 +95,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const derivationPath = "m/1105'/0'/1'/2'/3'/4'";
+      const derivationPath = "44'/919'/404'/404'/5'";
       const account = createFixtureAccount({ freshAddressPath: derivationPath });
       const transaction = createFixtureTransaction();
 
@@ -116,7 +116,7 @@ describe("signOperation", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const signOperation = buildSignOperation(signerContext);
-      const derivationPath = "m/1105'/0'/0'/0'/0'/0'";
+      const derivationPath = "44'/919'/404'/404'/0'";
       const account = createFixtureAccount({ freshAddressPath: derivationPath });
       const transaction = createFixtureTransaction();
 

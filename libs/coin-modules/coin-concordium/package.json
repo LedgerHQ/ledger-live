@@ -178,14 +178,8 @@
     },
     "./package.json": "./package.json"
   },
-  "browser": {
-    "./lib/network/grpcClient.js": "./lib/network/grpcClient.web.js",
-    "./lib-es/network/grpcClient.js": "./lib-es/network/grpcClient.web.js"
-  },
   "license": "Apache-2.0",
   "dependencies": {
-    "@grpc/grpc-js": "^1.9.15",
-    "@grpc/proto-loader": "^0.7.15",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

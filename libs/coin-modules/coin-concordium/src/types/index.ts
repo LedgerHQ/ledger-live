@@ -3,5 +3,6 @@ export * from "./config";
 export * from "./errors";
 export * from "./network";
 export * from "./onboard";
+export * from "./operation";
 export * from "./signer";
 export * from "./memo";

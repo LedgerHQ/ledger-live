@@ -5,6 +5,7 @@ import type {
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
+  Operation,
   Page,
   Reward,
   Stake,
@@ -28,11 +29,12 @@ import {
   getBlockInfo,
   getNextValidSequence,
   lastBlock,
-  listOperations,
+  listOperations as listOperationsLogic,
 } from "../logic";
 import coinConfig from "../config";
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
 import { validateAddress } from "../bridge/validateAddress";
+import { mapRawOperationToApiOperation } from "./utils";
 
 export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -112,4 +114,17 @@ async function estimateFees(
   const estimation = await estimateFeesLogic(currencyId, memo);
 
   return { value: estimation.cost };
+}
+
+async function listOperations(
+  address: string,
+  options: ListOperationsOptions,
+  currencyId: string,
+): Promise<Page<Operation>> {
+  const { items, next } = await listOperationsLogic(address, options, currencyId);
+
+  return {
+    items: items.map(mapRawOperationToApiOperation),
+    next,
+  };
 }

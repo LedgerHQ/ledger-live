@@ -1,24 +1,18 @@
-import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/live-promise";
-import { log } from "@ledgerhq/logs";
-import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
   BlockInfoResponse,
   BlocksAtHeightResponse,
   ConsensusInfoResponse,
-  GetOperationsParams,
   GetTransactionCostParams,
   TransactionsResponse,
   PublicKeyAccountsResponse,
   SubmitCredentialData,
   SubmitTransferData,
   TransactionQueryParams,
-  WalletProxyTransaction,
 } from "../types";
 
 interface ProxyClient {
@@ -266,108 +260,4 @@ export async function submitCredential(
 
     return client.request<{ submissionId: string }, SubmitCredentialData>(request);
   });
-}
-
-/**
- * Raw operation data from wallet-proxy (network layer representation).
- * This type represents the raw transaction data without any framework abstractions.
- */
-export interface ProxyOperation {
-  id: string;
-  hash: string;
-  accountId: string;
-  type: string;
-  value: BigNumber;
-  fee: BigNumber;
-  blockHash: string | null;
-  blockHeight: number;
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber?: BigNumber;
-  extra: Record<string, unknown>;
-}
-
-/**
- * Convert wallet-proxy transaction to network operation format
- */
-function operationAdapter(
-  tx: WalletProxyTransaction,
-  accountAddress: string,
-  accountId: string,
-): ProxyOperation | null {
-  if (tx.details.type !== "transfer" && tx.details.type !== "transferWithMemo") {
-    return null;
-  }
-
-  const transferSource = tx.details.transferSource || "";
-  const transferDestination = tx.details.transferDestination || "";
-
-  const isOutgoing = transferSource === accountAddress;
-  const isIncoming = transferDestination === accountAddress;
-
-  // Ignore transactions that don't involve this account
-  // (neither sender nor recipient matches the account address)
-  if (!isOutgoing && !isIncoming) {
-    return null;
-  }
-
-  const type = isOutgoing ? "OUT" : "IN";
-  const transferAmount = tx.details.transferAmount || "0";
-  const feeValue = new BigNumber(tx.cost || 0);
-  let value = new BigNumber(transferAmount);
-
-  if (isOutgoing) {
-    value = value.plus(feeValue);
-  }
-
-  const extra: Record<string, unknown> = {};
-  if (tx.details.memo) {
-    extra.memo = decodeMemoFromCbor(Buffer.from(tx.details.memo, "hex"));
-  }
-
-  return {
-    id: encodeOperationId(accountId, tx.transactionHash, type),
-    hash: tx.transactionHash,
-    accountId,
-    type,
-    value,
-    fee: feeValue,
-    blockHash: tx.blockHash || null,
-    blockHeight: 0, // wallet-proxy doesn't provide block height
-    senders: [transferSource],
-    recipients: [transferDestination],
-    date: new Date(Math.floor(tx.blockTime) * 1000),
-    extra,
-  };
-}
-
-/**
- * Filters and converts wallet-proxy transactions to network operation format
- */
-export async function getOperations(
-  currencyId: string,
-  { address, accountId, size }: GetOperationsParams,
-): Promise<ProxyOperation[]> {
-  try {
-    const proxyParams: TransactionQueryParams = {
-      limit: size || 100,
-      order: "d",
-    };
-
-    const response = await getTransactions(currencyId, address, proxyParams);
-
-    if (!("transactions" in response) || !Array.isArray(response.transactions)) {
-      return [];
-    }
-
-    const operations = response.transactions
-      .map(tx => operationAdapter(tx, address, accountId))
-      .filter((op): op is ProxyOperation => op !== null);
-
-    return operations;
-  } catch (error) {
-    log("concordium-proxy", `Error fetching transactions for ${address}`, { error });
-    return [];
-  }
 }
