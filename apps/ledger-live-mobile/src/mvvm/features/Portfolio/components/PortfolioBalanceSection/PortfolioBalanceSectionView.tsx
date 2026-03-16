@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { AmountDisplay, Box, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay, Box, Pressable, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { DiscreetModeIcon } from "./DiscreetModeIcon";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -64,28 +64,34 @@ export const PortfolioBalanceSectionView = ({
       <>
         <Pressable onPress={onToggleDiscreetMode} testID="portfolio-balance-toggle">
           <Box lx={{ flexDirection: "row", alignItems: "baseline", gap: "s14" }}>
-            <AmountDisplay
-              key={unit.code}
-              value={balance}
-              formatter={formatter}
-              hidden={discreet || (!shouldDisplayBalanceRefreshRework && !isBalanceAvailable)}
-              loading={shouldDisplayBalanceRefreshRework && isLoading}
-              testID="portfolio-balance-amount"
-            />
+            {isBalanceAvailable ? (
+              <AmountDisplay
+                key={unit.code}
+                value={balance}
+                formatter={formatter}
+                hidden={discreet}
+                loading={shouldDisplayBalanceRefreshRework && isLoading}
+                testID="portfolio-balance-amount"
+              />
+            ) : (
+              <Skeleton
+                testID="portfolio-placeholder-balance"
+                lx={{ height: "s48", width: "s256" }}
+              />
+            )}
             {discreet && <DiscreetModeIcon />}
           </Box>
         </Pressable>
-        {isBalanceAvailable && (
-          <Box
-            lx={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: "s12",
-            }}
-          >
-            <AnalyticPill valueChange={countervalueChange} />
-          </Box>
-        )}
+
+        <Box
+          lx={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: "s12",
+          }}
+        >
+          <AnalyticPill valueChange={countervalueChange} />
+        </Box>
       </>
     );
   };
