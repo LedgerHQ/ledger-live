@@ -13,7 +13,7 @@ export type Features = {
 };
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-export const FeatureIdSchema = z.enum(Object.keys(flagRegistry) as FeatureId[]);
+export const FeatureIdSchema = z.enum(Object.keys(flagRegistry) as [FeatureId, ...FeatureId[]]);
 
 export type FeatureMap<T = Features[FeatureId]> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Features[FeatureId]> = { [key in FeatureId]?: T };
