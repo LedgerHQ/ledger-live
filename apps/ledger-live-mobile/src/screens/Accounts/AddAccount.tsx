@@ -3,6 +3,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import Touchable from "~/components/Touchable";
 import { track } from "~/analytics";
+
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
 
