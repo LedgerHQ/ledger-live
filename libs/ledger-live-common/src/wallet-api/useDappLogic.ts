@@ -191,6 +191,7 @@ export function useDappLogic({
   uiHook,
   tracking,
   currentAccountHistDb,
+  initialAccountId,
   mevProtected,
 }: {
   manifest: AppManifest;
@@ -199,6 +200,7 @@ export function useDappLogic({
   uiHook: UiHook;
   tracking: TrackingAPI;
   currentAccountHistDb?: CurrentAccountHistDB;
+  initialAccountId?: string;
   mevProtected?: boolean;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
@@ -209,6 +211,7 @@ export function useDappLogic({
       manifest,
       accounts,
       currentAccountHistDb,
+      initialAccountId,
     });
 
   /** Current network is needed for recognising the current chain id.
