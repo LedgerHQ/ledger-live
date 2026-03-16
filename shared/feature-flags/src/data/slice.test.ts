@@ -274,9 +274,7 @@ describe("remote state management", () => {
     const store = createStore();
     store.dispatch(setOverride({ key: "mockFeature", value: { enabled: true } }));
     store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
-    expect(store.getState().featureFlags.resolved.mockFeature).toEqual(
-      defaults.mockFeature,
-    );
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
   });
 
   it("setAllOverrides uses stored remote values for non-overridden flags", () => {

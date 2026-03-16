@@ -162,4 +162,3 @@ export function resolveAll(
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return result as FeatureFlagsState["resolved"];
 }
-
