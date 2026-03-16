@@ -50,13 +50,14 @@ export const ledgerOperationToOperations = (
     types.push("NONE");
   }
 
+  // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
   return types.map(
     type =>
       ({
         id: encodeOperationId(accountId, ledgerOp.hash, type),
         hash: ledgerOp.hash,
         type: type,
-        value: type === "OUT" || type === "FEES" ? (hasFailed ? fee : value.plus(fee)) : value,
+        value,
         fee,
         senders: [from],
         recipients: [to],
@@ -252,21 +253,13 @@ export const ledgerInternalTransactionToOperations = (
   // Ledger explorers are indexing the first `CALL` opcode of a smart contract transaction as an
   // internal transaction which is wrong. Only children `CALL` opcode should be indexed,
   // therefore we need to filter those "actions" to prevent duplicating ops.
-  if (from === coinOperation.senders[0] && to === coinOperation.recipients[0]) {
-    const coinOpValueWithoutFees = coinOperation.value.minus(coinOperation.fee);
-    const coinOpValueWithFees = coinOperation.value;
-    const coinTypeOutOrFees = coinOperation.type === "OUT" || coinOperation.type === "FEES";
-    const coinTypeIn = coinOperation.type === "IN";
-
-    // Detecting if an action value is identical to its coin op value
-    // (which is modified in the live depending on its type)
-    // in order to ignore the action completely
-    if (
-      (coinTypeOutOrFees && value.isEqualTo(coinOpValueWithoutFees)) ||
-      (coinTypeIn && value.isEqualTo(coinOpValueWithFees))
-    ) {
-      return [];
-    }
+  // coinOperation.value is the transferred amount only (same for OUT/FEES/IN); compare directly.
+  if (
+    from === coinOperation.senders[0] &&
+    to === coinOperation.recipients[0] &&
+    value.isEqualTo(coinOperation.value)
+  ) {
+    return [];
   }
 
   if (to === checksummedAddress) {
