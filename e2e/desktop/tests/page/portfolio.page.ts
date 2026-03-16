@@ -284,4 +284,9 @@ export class PortfolioPage extends AppPage {
   async clickAddAccountButton() {
     await this.portfolioAddAccountButton.click();
   }
+
+  @step("Click send button")
+  async clickSendButton() {
+    await this.quickActionButton("send").click();
+  }
 }
