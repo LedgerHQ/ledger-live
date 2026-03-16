@@ -2,7 +2,9 @@ import { z } from "zod";
 import { FeatureSchema } from "./schema.base";
 import * as flags from "../flags";
 
-export { FeatureSchema, type Feature } from "./schema.base";
+export { FeatureSchema } from "./schema.base";
+
+export type Feature<T = unknown> = z.infer<typeof FeatureSchema> & { params?: T };
 
 export const flagRegistry = flags;
 
