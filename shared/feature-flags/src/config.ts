@@ -1,10 +1,10 @@
-import type { Feature, FeatureId } from "./data/schema";
+import type { PartialFeatures } from "./data/schema";
 
 export interface ResolutionConfig {
   platform?: "desktop" | "ios" | "android";
   appVersion?: string;
   appLanguage?: string;
-  envFlags?: { [key in FeatureId]?: Feature | undefined };
+  envFlags?: PartialFeatures;
 }
 
 let resolutionConfig: ResolutionConfig = {};

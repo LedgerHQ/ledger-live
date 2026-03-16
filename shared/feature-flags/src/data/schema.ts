@@ -19,6 +19,7 @@ export const FeatureIdSchema = z.enum(Object.keys(flagRegistry) as [FeatureId, .
 
 export type FeatureMap<T = Features[FeatureId]> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Features[FeatureId]> = { [key in FeatureId]?: T };
+export type PartialFeatures = { [K in FeatureId]?: Features[K] };
 
 export interface FeatureFlagsState {
   /** User-set local overrides that take priority over remote and env values during resolution. */
