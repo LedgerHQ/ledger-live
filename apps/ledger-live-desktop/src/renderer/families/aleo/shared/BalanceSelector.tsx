@@ -70,7 +70,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
           label={t("aleo.shared.balanceSelector.public")}
           balance={formattedTransparentBalance}
           checked={isPublicTransfer}
-          disabled
+          onClick={() => onChange("public")}
         />
         <BalanceOptionsSwitch
           onClick={() => {
@@ -84,7 +84,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
           lastSyncDate={privateSyncDate}
           lastSyncTime={privateSyncTime}
           checked={isPrivateTransfer}
-          disabled
+          onClick={() => onChange("private")}
         />
       </Flex>
     );
