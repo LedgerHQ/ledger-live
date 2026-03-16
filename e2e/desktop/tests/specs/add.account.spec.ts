@@ -98,7 +98,7 @@ for (const currency of currencies) {
         await app.portfolio.checkOperationHistory();
         await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);
         await app.account.expectAccountBalance();
