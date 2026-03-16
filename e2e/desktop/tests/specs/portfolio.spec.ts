@@ -27,7 +27,7 @@ test.describe("Portfolio - legacy", () => {
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
-      await app.swap.expectSelectedAssetDisplayed("ETH", electronApp);
+      await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
       await app.portfolio.checkChartVisibility();
       await app.portfolio.checkAssetAllocationSection();
     },
