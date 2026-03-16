@@ -39,43 +39,61 @@ describe("common", () => {
 
     it.each([
       {
-        asset: {
-          type: "native",
-        },
-      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+        title: "intent on native Ethereum with no amount and no recipient",
+        intent: {
+          asset: {
+            type: "native",
+          },
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
       {
-        asset: {
-          type: "erc20",
-        },
-      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+        title: "intent on ERC20 token with no amount and no recipient",
+        intent: {
+          asset: {
+            type: "erc20",
+          },
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
       {
-        asset: {
-          type: "erc20",
-        },
-        amount: 1n,
-      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+        title: "intent on ERC20 token with no recipient",
+        intent: {
+          asset: {
+            type: "erc20",
+          },
+          amount: 1n,
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
       {
-        asset: {
-          type: "erc20",
-        },
-        amount: 1n,
-        recipient: "bc1pxlmrudqyq8qd8pfsc4mpmlaw56x6vtcr9m8nvp8kj3gckefc4kmqhkg4l7", // Bitcoin address
-      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+        title: "intent on ERC20 token with a Bitcoin address for recipient",
+        intent: {
+          asset: {
+            type: "erc20",
+          },
+          amount: 1n,
+          recipient: "bc1pxlmrudqyq8qd8pfsc4mpmlaw56x6vtcr9m8nvp8kj3gckefc4kmqhkg4l7", // Bitcoin address
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
       {
-        asset: {
-          type: "erc20",
-        },
-        amount: 1n,
-        recipient: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp", // Solana address
-      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+        title: "intent on ERC20 token with a Solana address for recipient",
+        intent: {
+          asset: {
+            type: "erc20",
+          },
+          amount: 1n,
+          recipient: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp", // Solana address
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
       {
-        asset: {
-          type: "erc20",
-        },
-        amount: 1n,
-        recipient: "some randon value", // Random text
-      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
-    ])("should return empty buffer for invalid intent", intent => {
+        title: "intent on ERC20 token with a random text for recipient",
+        intent: {
+          asset: {
+            type: "erc20",
+          },
+          amount: 1n,
+          recipient: "some randon value", // Random text
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
+    ])("should return empty buffer for invalid $title", ({ intent }) => {
       const expectedResult = Buffer.from([]);
       const result = getCallData(intent);
       expect(result).toEqual(expectedResult);

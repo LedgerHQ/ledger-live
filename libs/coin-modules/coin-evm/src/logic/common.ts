@@ -91,8 +91,6 @@ export function isEip55Address(address: string): boolean {
   }
 }
 
-export { getErc20Data } from "./getErc20Data";
-
 export function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
   const data = intent.data?.value;
   if (Buffer.isBuffer(data) && data.length) return data;
