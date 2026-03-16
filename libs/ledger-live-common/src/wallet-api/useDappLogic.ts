@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef, useCallback } from "react";
+import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
 import { atomFamily } from "jotai-family";
@@ -111,11 +111,14 @@ function useDappAccountLogic({
   manifest,
   accounts,
   currentAccountHistDb,
+  initialAccountId,
 }: {
   manifest: AppManifest;
   accounts: AccountLike[];
   currentAccountHistDb?: CurrentAccountHistDB;
+  initialAccountId?: string;
 }) {
+  const [initialAccountSelected, setInitialAccountSelected] = useState(false);
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } = useDappCurrentAccount(
     manifest.id,
     currentAccountHistDb,
@@ -138,7 +141,23 @@ function useDappAccountLogic({
     return accounts.find(account => account.id === currentAccountIdFromHist);
   }, [accounts, currentAccountIdFromHist]);
 
+  const initialAccount = useMemo(() => {
+    if (!initialAccountId) return;
+    return accounts.find(account => account.id === initialAccountId);
+  }, [accounts, initialAccountId]);
+
   useEffect(() => {
+    if (initialAccountSelected) {
+      return;
+    }
+
+    if (initialAccount && !initialAccountSelected) {
+      setCurrentAccount(initialAccount);
+      setCurrentAccountHist(manifest.id, initialAccount);
+      setInitialAccountSelected(true);
+      return;
+    }
+
     if (currentAccountFromHist) {
       setCurrentAccount(currentAccountFromHist);
       return;
