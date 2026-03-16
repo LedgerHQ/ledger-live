@@ -42,10 +42,7 @@ jobs:
         env:
           LANG: en_US.UTF-8
         run: |
-          pnpm i --filter="./libs/**" --no-frozen-lockfile --unsafe-perm
-          pnpm i --filter="./features/**" --no-frozen-lockfile --unsafe-perm
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-          pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="./libs/**" --filter="./features/**" --filter="live-mobile..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
 
       - name: Build dependencies
         env:
@@ -53,9 +50,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
         run: |
-          pnpm turbo build --filter="./libs/**"
-          pnpm turbo build --filter="ledger-live-desktop^..."
-          pnpm turbo build --filter="live-mobile^..."
+          pnpm turbo build --filter="./libs/**" --filter="ledger-live-desktop^..." --filter="live-mobile^..."
 
       - name: Generate Unit test coverage for LLD & LLM
         run: |
