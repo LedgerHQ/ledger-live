@@ -9,8 +9,8 @@ const mockIsSelfTransferTransaction = jest.mocked(isSelfTransferTransaction);
 
 jest.mock("@ledgerhq/live-common/families/aleo/utils");
 
-jest.mock("~/renderer/modals/Send/steps/StepRecipient", () => ({
-  DefaultStepRecipient: () => <div data-testid="default-step-recipient" />,
+jest.mock("./SendTransferModal/AleoSendStepRecipient", () => ({
+  AleoSendStepRecipient: () => <div data-testid="aleo-send-step-recipient" />,
 }));
 
 jest.mock("./SelfTransferModal/SelfTransferStepRecipient", () => ({
@@ -31,15 +31,15 @@ describe("SendStepRecipient", () => {
     render(<SendStepRecipient {...baseProps} />);
 
     expect(screen.queryByTestId("self-transfer-step-recipient")).toBeInTheDocument();
-    expect(screen.queryByTestId("default-step-recipient")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("aleo-send-step-recipient")).not.toBeInTheDocument();
   });
 
-  it("renders DefaultStepRecipient when isSelfTransferTransaction returns false", () => {
+  it("renders AleoSendStepRecipient when isSelfTransferTransaction returns false", () => {
     mockIsSelfTransferTransaction.mockReturnValue(false);
 
     render(<SendStepRecipient {...baseProps} />);
 
-    expect(screen.queryByTestId("default-step-recipient")).toBeInTheDocument();
+    expect(screen.queryByTestId("aleo-send-step-recipient")).toBeInTheDocument();
     expect(screen.queryByTestId("self-transfer-step-recipient")).not.toBeInTheDocument();
   });
 

@@ -4610,7 +4610,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -8054,7 +8053,9 @@
       },
       "title": "Checking the blockchain..."
     },
-    "connectYourDevice": { "title": "Connect and unlock your device" },
+    "connectYourDevice": {
+      "title": "Connect and unlock your device"
+    },
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
@@ -8317,6 +8318,11 @@
       "type": {
         "public": "Public",
         "private": "Private"
+      }
+    },
+    "send": {
+      "stepRecipient": {
+        "selectLabel": "Send from"
       }
     }
   },
