@@ -70,6 +70,24 @@ export * from "./myNewFlag";
 
 That's it — `FeatureId`, `Features`, `FEATURE_FLAGS_DEFAULTS`, and `FeatureIdSchema` are all derived automatically from the registry.
 
+## Type inference
+
+You can derive per-flag types from the registry without manual duplication:
+
+```ts
+import type { Features } from "@shared/feature-flags";
+
+// From the resolved type
+type LldModularDrawerFlag = Features["lldModularDrawer"];
+type LldModularDrawerParams = Features["lldModularDrawer"]["params"];
+
+// Or infer directly from the Zod schema
+import { z } from "zod";
+import { FEATURE_FLAGS_SCHEMAS } from "@shared/feature-flags";
+
+type LldModularDrawerFlag = z.infer<typeof FEATURE_FLAGS_SCHEMAS["lldModularDrawer"]>;
+```
+
 ## Resolution priority
 
 When a flag is resolved, the following priority chain applies (highest first):
