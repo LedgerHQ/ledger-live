@@ -2,7 +2,7 @@ import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { Transaction } from "../types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import { getSubAccount } from "../bridge/utils/token";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import invariant from "invariant";
 

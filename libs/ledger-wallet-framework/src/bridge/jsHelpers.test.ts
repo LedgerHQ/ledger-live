@@ -157,7 +157,7 @@ describe("makeSync", () => {
       lastSyncDate: new Date("2024-05-12T17:04:12"),
     });
     const accountUpdater = makeSync({
-      getAccountShape: () => of({} as Account),
+      getAccountShape: () => of({} as Partial<Account>),
     })(account, {} as SyncConfig);
     const updater = await firstValueFrom(accountUpdater);
     const newAccount = updater(account);
@@ -172,7 +172,8 @@ describe("makeSync", () => {
       lastSyncDate: new Date("2024-05-12T17:04:12"),
     });
     const sync$ = makeSync({
-      getAccountShape: () => of({} as Account, {} as Account, {} as Account),
+      getAccountShape: () =>
+        of({} as Partial<Account>, {} as Partial<Account>, {} as Partial<Account>),
     })(account, {} as SyncConfig);
     const updaters: Array<(a: Account) => Account> = [];
     await new Promise<void>((resolve, reject) => {

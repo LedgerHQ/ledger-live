@@ -21,7 +21,7 @@
     "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "zx ./scripts/build.mjs",
     "watch": "rslib build --watch",
-    "typecheck": "tsc --project src/tsconfig.json --noEmit",
+    "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "zx ./scripts/test.mjs"

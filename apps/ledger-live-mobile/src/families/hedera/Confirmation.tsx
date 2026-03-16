@@ -19,7 +19,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import ReceiveConfirmationTokenAlert from "./ReceiveConfirmationTokenAlert";
-import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
+import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { getFreshAccountAddress } from "~/utils/address";
 import CopyButton from "LLM/components/CopyButton";
 import ShareButton from "LLM/components/ShareButton";

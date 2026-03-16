@@ -5,7 +5,7 @@ import {
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 import { AppOp } from "@ledgerhq/live-common/apps/types";
-import { AppType, DeviceInfo } from "@ledgerhq/types-live/lib/manager";
+import { AppType, DeviceInfo } from "@ledgerhq/types-live/manager";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addDevicesBT, mockDeviceEvent } from "../bridge/server";
 import { DeviceLike } from "~/reducers/types";

@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
+import { TransportReplayer } from "@ledgerhq/hw-transport-mocker";
 import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ScenarioOptions } from "../../../tests/test-helpers/types";

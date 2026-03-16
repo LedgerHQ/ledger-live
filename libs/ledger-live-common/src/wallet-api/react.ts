@@ -15,7 +15,7 @@ import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import type {
   TokensDataWithPagination,
   PageParam,
-} from "@ledgerhq/cryptoassets/lib/cal-client/state-manager/types";
+} from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
 import { useFeatureFlags } from "../featureFlags/FeatureFlagsContext";

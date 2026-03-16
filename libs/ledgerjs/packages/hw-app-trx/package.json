@@ -54,5 +54,22 @@
     "test": "jest",
     "unimported": "unimported"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Trx.ts",
+      "import": "./lib-es/Trx.js",
+      "require": "./lib/Trx.js",
+      "default": "./lib/Trx.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

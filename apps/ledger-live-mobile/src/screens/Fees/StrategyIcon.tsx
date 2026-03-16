@@ -1,4 +1,4 @@
-import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
+import { Strategy } from "@ledgerhq/coin-evm/types/index";
 import { SpeedFast, SpeedLow, SpeedMedium } from "@ledgerhq/icons-ui/native";
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";

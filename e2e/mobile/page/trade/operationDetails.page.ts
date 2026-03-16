@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";

@@ -59,5 +59,22 @@
     "test": "jest",
     "unimported": "unimported"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Algorand.ts",
+      "import": "./lib-es/Algorand.js",
+      "require": "./lib/Algorand.js",
+      "default": "./lib/Algorand.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

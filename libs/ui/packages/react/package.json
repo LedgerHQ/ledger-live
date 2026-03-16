@@ -23,10 +23,18 @@
   },
   "exports": {
     "./*": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/cjs/*.js",
       "default": "./lib/*.js"
     },
     "./*.js": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/cjs/*.js",
       "default": "./lib/*.js"
     },
@@ -43,10 +51,12 @@
     "./assets/fonts/Inter-Regular.woff2": "./lib/assets/fonts/Inter-Regular.woff2",
     "./assets/fonts/Inter-SemiBold.woff2": "./lib/assets/fonts/Inter-SemiBold.woff2",
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/cjs/index.js",
       "default": "./lib/index.js"
     },
     "./pre-ldls": {
+      "@ledgerhq/source": "./src/pre-ldls/index.ts",
       "require": "./lib/cjs/pre-ldls/index.js",
       "default": "./lib/pre-ldls/index.js"
     },
@@ -69,7 +79,7 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
-    "typecheck": "tsc --p . --noEmit",
+    "typecheck": "tsc --p . --noEmit --customConditions node",
     "test": "pnpm -w -F ui build-and-test",
     "test:jest": "jest --maxWorkers=50%",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",

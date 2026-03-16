@@ -40,10 +40,12 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
@@ -73,6 +75,6 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit --customConditions node"
   }
 }

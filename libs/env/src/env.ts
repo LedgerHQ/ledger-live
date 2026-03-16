@@ -1045,9 +1045,9 @@ const envDefinitions = {
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> => {
+export const getDefinition = (name: string): EnvDef<any> | undefined => {
   if (name in envDefinitions) {
-    return envDefinitions[name];
+    return envDefinitions[name as EnvName];
   }
   return undefined;
 };
@@ -1056,7 +1056,7 @@ const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[
   (acc, curr) => {
     return {
       ...acc,
-      [curr]: envDefinitions[curr].def,
+      [curr]: envDefinitions[curr as EnvName].def,
     };
   },
   {} as { [Key in EnvName]: EnvDefs[Key]["def"] },

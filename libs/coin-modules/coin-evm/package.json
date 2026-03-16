@@ -37,6 +37,7 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -53,7 +54,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "test:debug": "node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",

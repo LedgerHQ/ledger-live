@@ -58,30 +58,37 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./bridge": {
+      "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
     },
     "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./network": {
+      "@ledgerhq/source": "./src/network/index.ts",
       "require": "./lib/network/index.js",
       "default": "./lib-es/network/index.js"
     },
     "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
     },
     "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },

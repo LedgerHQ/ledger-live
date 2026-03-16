@@ -1,4 +1,4 @@
-import { BlockInfo } from "@ledgerhq/coin-framework/lib/api/types";
+import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
 import { getLastBlock } from "../network/sdk";
 
 export async function lastBlock(): Promise<BlockInfo> {

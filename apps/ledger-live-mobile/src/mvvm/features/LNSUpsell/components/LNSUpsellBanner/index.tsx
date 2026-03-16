@@ -1,7 +1,7 @@
 import React from "react";
 import { NewBannerCard } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
+import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useLNSUpsellBannerModel } from "./useLNSUpsellBannerModel";
 import type { LNSBannerLocation, LNSBannerModel } from "./types";
 

@@ -24,7 +24,7 @@
     "watch:es": "pnpm watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -59,5 +59,19 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib-es/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib-es/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

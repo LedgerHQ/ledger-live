@@ -40,7 +40,24 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "typecheck": "tsc --noEmit -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib/ethereum-provider.mjs",
+      "require": "./lib/ethereum-provider.js",
+      "default": "./lib/ethereum-provider.js"
+    },
+    "./lib/ethereum-provider.umd.json": "./lib/ethereum-provider.umd.json",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib/*.mjs",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

@@ -40,34 +40,42 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
     "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/deviceTransactionConfig.ts",
       "require": "./lib/deviceTransactionConfig.js",
       "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
     },
     "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/transaction.ts",
       "require": "./lib/transaction.js",
       "default": "./lib-es/transaction.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
@@ -108,17 +116,17 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json --outDir lib --module commonjs --moduleResolution node10 && tsc --project tsconfig.build.json -m ES6 --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
   }
 }

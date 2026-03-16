@@ -55,5 +55,22 @@
     "test": "jest --config=jest.config.ts",
     "test-integ": "jest --config=jest.integ.config.ts",
     "unimported": "unimported"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Canton.ts",
+      "import": "./lib-es/Canton.js",
+      "require": "./lib/Canton.js",
+      "default": "./lib/Canton.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }
