@@ -1,11 +1,6 @@
 {
   "entry": [
     "src/api/index.ts",
-    "src/bridge/index.ts",
-    "src/bridge/deviceTransactionConfig.ts",
-    "src/signer/index.ts",
-    "src/transaction.ts",
-    "src/test/index.ts",
     "src/index.ts",
     "src/logic/validateAddress.ts"
   ],
@@ -23,6 +18,8 @@
     "jest-message-util",
     "jest-util"
   ],
-  "ignoreUnimported": ["src/deviceTransactionConfig.ts", "src/supportedFeatures.ts"],
-  "ignoreUnused": ["rxjs"]
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
+  ],
+  "ignoreUnused": []
 }

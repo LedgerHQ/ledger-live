@@ -1,4 +1,15 @@
 import { TypedMapMemo } from "@ledgerhq/coin-framework/api/types";
+import type { BigNumber } from "bignumber.js";
+
+export type NetworkInfo = {
+  family: "xrp";
+  serverFee: BigNumber;
+};
+
+export type NetworkInfoRaw = {
+  family: "xrp";
+  serverFee: string;
+};
 
 export type AccountInfo = {
   isNewAccount: boolean;

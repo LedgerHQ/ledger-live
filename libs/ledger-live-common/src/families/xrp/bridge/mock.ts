@@ -9,7 +9,6 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
-import type { Transaction } from "@ledgerhq/coin-xrp/types";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
@@ -27,6 +26,7 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { validateAddress } from "../../../bridge/validateAddress";
+import { Transaction } from "../types";
 
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];

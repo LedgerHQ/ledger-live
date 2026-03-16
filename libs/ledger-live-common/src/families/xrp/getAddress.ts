@@ -1,7 +1,7 @@
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { XrpAddress, XrpSigner } from "../types/signer";
+import { XrpAddress, XrpSigner } from "./types";
 
 const getAddress = (signerContext: SignerContext<XrpSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

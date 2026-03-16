@@ -1,6 +1,6 @@
 import { RippleTransaction as WalletAPIRippleTransaction } from "@ledgerhq/wallet-api-core";
 import { AreFeesProvided, GetWalletAPITransactionSignFlowInfos } from "../../wallet-api/types";
-import { Transaction } from "@ledgerhq/coin-xrp/types";
+import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
