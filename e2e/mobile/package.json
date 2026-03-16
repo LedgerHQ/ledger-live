@@ -22,7 +22,8 @@
   "dependencies": {
     "@ledgerhq/logs": "workspace:^",
     "invariant": "2.2.4",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@jest/reporters": "catalog:",
@@ -43,6 +44,7 @@
     "@types/express": "4.17.21",
     "@types/invariant": "2.2.37",
     "@types/node": "catalog:",
+    "@types/uuid": "^9.0.0",
     "@types/jest": "catalog:",
     "@types/lodash": "4.17.0",
     "@types/ws": "8.5.10",

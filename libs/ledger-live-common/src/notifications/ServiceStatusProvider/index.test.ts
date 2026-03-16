@@ -1,10 +1,11 @@
 import { filterServiceStatusIncidents } from "./index";
 import { LEDGER_COMPONENTS } from "./ledger-components";
 import type { Incident } from "./types";
+import { v4 as uuid } from "uuid";
 
 const makeIncident = (overrides: Partial<Incident> = {}): Incident => ({
   created_at: "2025-01-01T00:00:00Z",
-  id: Math.random().toString(16).slice(2),
+  id: uuid().slice(0, 8),
   impact: "minor",
   incident_updates: [],
   monitoring_at: null,

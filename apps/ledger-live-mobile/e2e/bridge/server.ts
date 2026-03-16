@@ -15,6 +15,7 @@ import {
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
 } from "~/actions/types";
+import { v4 as uuid } from "uuid";
 
 let clientResponse: (data: string) => void;
 type PendingAck = {
@@ -50,9 +51,7 @@ export async function findFreePort(): Promise<number> {
 }
 
 function uniqueId(): string {
-  const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
-  const randomString = Math.random().toString(36).slice(2, 7); // Generate random string
-  return timestamp + randomString; // Concatenate timestamp and random string
+  return uuid();
 }
 
 function isFeatureId(

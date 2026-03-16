@@ -60,6 +60,7 @@ import {
 } from "./network/chain/web3";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
 import { UserInputType } from "./signer";
+import { createStakeAccountSeed } from "./stakeAccountSeed";
 import type {
   CommandDescriptor,
   SolanaAccount,
@@ -646,7 +647,7 @@ async function deriveStakeCreateAccountCommandDescriptor(
 
   await validateValidatorCommon(delegate.voteAccAddress, errors, api);
 
-  const stakeAccAddressSeed = `stake:${Math.random().toString()}`;
+  const stakeAccAddressSeed = createStakeAccountSeed();
   const stakeAccAddress = await getStakeAccountAddressWithSeed({
     fromAddress: mainAccount.freshAddress,
     seed: stakeAccAddressSeed,
@@ -836,7 +837,7 @@ async function deriveStakeSplitCommandDescriptor(
 
   const commandFees = await getStakeAccountMinimumBalanceForRentExemption(api);
 
-  const splitStakeAccAddrSeed = `stake:${Math.random().toString()}`;
+  const splitStakeAccAddrSeed = createStakeAccountSeed();
   const splitStakeAccAddr = await getStakeAccountAddressWithSeed({
     fromAddress: mainAccount.freshAddress,
     seed: splitStakeAccAddrSeed,

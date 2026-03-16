@@ -8,6 +8,7 @@ import { log, trace, TraceContext } from "@ledgerhq/logs";
 import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
 import { Observer } from "rxjs";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { v4 as uuid } from "uuid";
 // No longer need transport channels - using direct invoke
 
 const LOG_TYPE = "hid-ipc";
@@ -25,7 +26,7 @@ export default class IPCTransport extends Transport {
 
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
     let unsubscribed = false;
-    const requestId = String(Math.random());
+    const requestId = uuid();
 
     const unsubscribe = () => {
       if (unsubscribed) return;
@@ -68,7 +69,7 @@ export default class IPCTransport extends Transport {
   ): Promise<IPCTransport> {
     log(LOG_TYPE, "open", { descriptor, timeout });
 
-    const requestId = String(Math.random());
+    const requestId = uuid();
 
     try {
       const result = await ipcRenderer.invoke("transport:open", {

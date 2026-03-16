@@ -71,7 +71,8 @@
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
     "semver": "catalog:",
-    "superstruct": "0.16.7"
+    "superstruct": "0.16.7",
+    "uuid": "11.1.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
@@ -87,8 +88,7 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "uuid": "11.1.0"
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
