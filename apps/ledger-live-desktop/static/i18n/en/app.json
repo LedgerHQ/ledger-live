@@ -8162,7 +8162,8 @@
       "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
       "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
       "upToDate": "You're up to date",
-      "lastSync": "Last sync: {{timeAgo}}. Tap to refresh"
+      "lastSync": "Last sync: {{timeAgo}}. Tap to refresh",
+      "refreshing": "Refreshing..."
     },
     "notificationIndicator": {
       "tooltip": "Notifications"
