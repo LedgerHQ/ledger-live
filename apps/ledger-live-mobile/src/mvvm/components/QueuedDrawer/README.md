@@ -1,4 +1,5 @@
 ### QueuedDrawer logic:
+
 - **Main principle:** two drawers must never be opened at the same time.
 - Therefore, there is a unique queue of drawers, handled by an orchestrator (a `QueuedDrawerContext.Provider`).
 - The first drawer in the queue opens as soon as it reaches that "first drawer in the queue" position, as the orchestrator signals it to open.
