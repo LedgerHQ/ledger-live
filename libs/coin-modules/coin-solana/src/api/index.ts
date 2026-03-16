@@ -9,6 +9,7 @@ import {
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
@@ -34,8 +35,8 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     craftTransaction: (intent: TransactionIntent, customFees?: FeeEstimation) => {
       return craftTransaction(api, intent, customFees);
     },
-    craftRawTransaction: (_tx: string, _sender: string, _publicKey: string, _sequence: bigint) => {
-      throw new Error("craftRawTransaction is not supported");
+    craftRawTransaction: (tx: string, sender: string, _publicKey: string, _sequence: bigint) => {
+      return craftRawTransaction(tx, sender);
     },
     estimateFees: (
       intent: TransactionIntent,
