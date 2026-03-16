@@ -3,7 +3,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
+import { useNetworkConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { balanceItem } from "../../../../components/Balance";
 import { useAccountData } from "../../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
@@ -27,26 +27,19 @@ export const NetworkSelectorContent = ({
 }: NetworkSelectorContentProps) => {
   const { trackModularDialogEvent } = useModularDialogAnalytics();
 
-  if (!networks || networks.length === 0 || !selectedAssetId) {
-    return null;
-  }
-
-  const networkConfigurationDeps = {
+  const formattedNetworks = useNetworkConfiguration(networks ?? [], {
     useAccountData,
     accountsCount,
     accountsCountAndApy,
     ApyIndicator,
     useBalanceDeps,
     balanceItem,
-  };
-
-  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
-
-  const transformNetworks = makeNetworkConfigurationHook({
-    networksConfig,
+    ...networksConfig,
   });
 
-  const formattedNetworks = transformNetworks(networks);
+  if (!networks || networks.length === 0 || !selectedAssetId) {
+    return null;
+  }
 
   const onClick = (networkId: string) => {
     const network = formattedNetworks.find(network =>

@@ -118,10 +118,6 @@ export type CreateNetworkConfigurationHookProps = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
 };
 
-type Props = {
-  assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-};
-
 export type AssetConfigurationDeps = {
   ApyIndicator: ApyIndicatorComponent;
   MarketPercentIndicator: (args: { percent: number }) => ReactNode;
@@ -134,9 +130,18 @@ export type AssetConfigurationDeps = {
   >;
 };
 
-export type CreateAssetConfigurationHook = (
-  AssetConfigurationDeps: AssetConfigurationDeps,
-) => (props: Props) => (assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[];
+export type AssetRightElementKind = "balance" | "marketTrend" | "undefined";
+export type AssetLeftElementKind = "apy" | "marketTrend" | "undefined";
+
+export type AssetConfigurationOptions = AssetConfigurationDeps & {
+  rightElement?: AssetRightElementKind;
+  leftElement?: AssetLeftElementKind;
+};
+
+export type NetworkConfigurationOptions = NetworkConfigurationDeps & {
+  leftElement?: NetworkLeftElementKind;
+  rightElement?: NetworkRightElementKind;
+};
 
 export type AssetData = {
   asset: {

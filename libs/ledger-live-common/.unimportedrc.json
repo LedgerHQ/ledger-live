@@ -288,7 +288,6 @@
     "src/transactionsAlerts/index.ts",
     "src/user.ts",
     "src/utils/runOnceWhen.ts",
-    "src/utils/composeHooks.ts",
     "src/utils/getAccountTuplesForCurrency.ts",
     "src/utils/timeAgo.ts",
     "src/wallet-api/ACRE/server.ts",
@@ -321,12 +320,7 @@
     "src/cmc-client/index.ts",
     "src/cmc-client/__mocks__/fearAndGreed.mock.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -583,12 +577,7 @@
     "@react-native/virtualized-lists",
     "@solana/buffer-layout",
     "@solana/codecs-numbers",
-    [
-      "@solana/codecs-numbers",
-      [
-        "node_modules/@solana/web3.js/lib/index.cjs.js"
-      ]
-    ],
+    ["@solana/codecs-numbers", ["node_modules/@solana/web3.js/lib/index.cjs.js"]],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",
