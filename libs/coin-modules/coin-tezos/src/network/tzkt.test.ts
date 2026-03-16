@@ -1,6 +1,7 @@
 // tzkt.ts imports `network` from "@ledgerhq/live-network" (the package root, not the /network
 // subpath). We mock the same path so Jest's module registry intercepts those calls.
 import network from "@ledgerhq/live-network";
+import { log } from "@ledgerhq/logs";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
 // Import fetchBlockTransactions / fetchBlockTokenTransfers through the index re-export
@@ -10,7 +11,9 @@ import api from "./tzkt";
 import { fetchBlockTransactions, fetchBlockTokenTransfers } from ".";
 
 jest.mock("@ledgerhq/live-network");
+jest.mock("@ledgerhq/logs");
 const mockedNetwork = jest.mocked(network);
+const mockedLog = jest.mocked(log);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -179,6 +182,10 @@ describe("tzkt network API", () => {
 
       expect(spy).toHaveBeenCalledTimes(100);
       expect(result).toHaveLength(100_000);
+      expect(mockedLog).toHaveBeenCalledWith(
+        "tezos",
+        expect.stringContaining("fetchBlockTransactions: maxTxQuery limit reached at level 100"),
+      );
     });
   });
 
@@ -229,6 +236,10 @@ describe("tzkt network API", () => {
 
       expect(spy).toHaveBeenCalledTimes(100);
       expect(result).toHaveLength(100_000);
+      expect(mockedLog).toHaveBeenCalledWith(
+        "tezos",
+        expect.stringContaining("fetchBlockTokenTransfers: maxTxQuery limit reached at level 100"),
+      );
     });
   });
 });

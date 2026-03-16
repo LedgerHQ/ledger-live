@@ -4,22 +4,23 @@ import { tzkt } from "../network";
 /**
  * Returns lightweight metadata for a Tezos block at the given level.
  *
- * Mirrors the XRP `getBlockInfo` contract:
- * - Returns an empty sentinel value for height <= 0 (avoids a network call).
- * - Does NOT populate `BlockInfo.parent` because TzKT does not include the
- *   predecessor hash in its default block response.  The field is optional in
- *   the coin-framework type so callers must handle its absence.
+ * Fetches the block and its predecessor in parallel so that `BlockInfo.parent`
+ * is always populated without adding serial latency.
  */
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
   if (height <= 0) {
-    return { height, hash: "", time: new Date(0) };
+    throw new Error(`getBlockInfo: height must be a positive integer, got ${height}`);
   }
 
-  const block = await tzkt.getBlockByLevel(height);
+  const [block, parentBlock] = await Promise.all([
+    tzkt.getBlockByLevel(height),
+    tzkt.getBlockByLevel(height - 1),
+  ]);
 
   return {
     height: block.level,
     hash: block.hash,
     time: new Date(block.timestamp),
+    parent: { height: parentBlock.level, hash: parentBlock.hash },
   };
 }

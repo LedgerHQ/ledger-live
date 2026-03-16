@@ -82,44 +82,42 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe("block info and guard", () => {
-  it("maps level, hash, and timestamp into Block.info", async () => {
+  it("maps level, hash, timestamp, and parent into Block.info", async () => {
     // Given
     const level = 7_000_000;
-    mockGetBlockByLevel.mockResolvedValue(makeBlock(level, "BLHash", "2025-06-15T12:00:00Z"));
+    mockGetBlockByLevel.mockResolvedValueOnce(makeBlock(level, "BLHash", "2025-06-15T12:00:00Z"));
+    mockGetBlockByLevel.mockResolvedValueOnce(
+      makeBlock(level - 1, "BLParentHash", "2025-06-15T11:59:52Z"),
+    );
 
     // When
     const result = await getBlock(level);
 
     // Then
     expect(mockGetBlockByLevel).toHaveBeenCalledWith(level);
+    expect(mockGetBlockByLevel).toHaveBeenCalledWith(level - 1);
     expect(result.info).toEqual({
       height: level,
       hash: "BLHash",
       time: new Date("2025-06-15T12:00:00Z"),
+      parent: { height: level - 1, hash: "BLParentHash" },
     });
   });
 
-  it("returns an empty sentinel block for height = 0 without any network calls", async () => {
-    // When
-    const result = await getBlock(0);
-
-    // Then
+  it("throws for height = 0 without any network calls", async () => {
+    // When / Then
+    await expect(getBlock(0)).rejects.toThrow("getBlock: height must be a positive integer, got 0");
     expect(mockGetBlockByLevel).not.toHaveBeenCalled();
     expect(mockFetchBlockTransactions).not.toHaveBeenCalled();
     expect(mockFetchBlockTokenTransfers).not.toHaveBeenCalled();
-    expect(result).toEqual({ info: { height: 0, hash: "", time: new Date(0) }, transactions: [] });
   });
 
-  it("returns an empty sentinel block for negative height without any network calls", async () => {
-    // When
-    const result = await getBlock(-3);
-
-    // Then
+  it("throws for negative height without any network calls", async () => {
+    // When / Then
+    await expect(getBlock(-3)).rejects.toThrow(
+      "getBlock: height must be a positive integer, got -3",
+    );
     expect(mockGetBlockByLevel).not.toHaveBeenCalled();
-    expect(result).toEqual({
-      info: { height: -3, hash: "", time: new Date(0) },
-      transactions: [],
-    });
   });
 
   it("returns an empty transactions array when the block has no operations", async () => {
@@ -712,7 +710,7 @@ describe("FA token transfers", () => {
 // ---------------------------------------------------------------------------
 
 describe("network calls", () => {
-  it("issues all three network calls with the correct height", async () => {
+  it("issues all four network calls with the correct heights", async () => {
     // Given
     const height = 6_000_000;
     mockGetBlockByLevel.mockResolvedValue(makeBlock(height));
@@ -720,9 +718,10 @@ describe("network calls", () => {
     // When
     await getBlock(height);
 
-    // Then
-    expect(mockGetBlockByLevel).toHaveBeenCalledTimes(1);
+    // Then – getBlockByLevel is called once for the block and once for the parent
+    expect(mockGetBlockByLevel).toHaveBeenCalledTimes(2);
     expect(mockGetBlockByLevel).toHaveBeenCalledWith(height);
+    expect(mockGetBlockByLevel).toHaveBeenCalledWith(height - 1);
     expect(mockFetchBlockTransactions).toHaveBeenCalledTimes(1);
     expect(mockFetchBlockTransactions).toHaveBeenCalledWith(height);
     expect(mockFetchBlockTokenTransfers).toHaveBeenCalledTimes(1);

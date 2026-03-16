@@ -14,11 +14,12 @@ const NATIVE_ASSET: AssetInfo = { type: "native", name: "XTZ" };
 // Block-info mapping
 // ---------------------------------------------------------------------------
 
-function mapBlockInfo(block: APIBlock): BlockInfo {
+function mapBlockInfo(block: APIBlock, parentBlock: APIBlock): BlockInfo {
   return {
     height: block.level,
     hash: block.hash,
     time: new Date(block.timestamp),
+    parent: { height: parentBlock.level, hash: parentBlock.hash },
   };
 }
 
@@ -268,26 +269,26 @@ function groupAndMapTransactions(
  * Returns the full block at the given Tezos level: metadata + all transactions
  * with their XTZ and FA token balance changes.
  *
- * Mirrors the XRP `getBlock` contract:
- * - Returns an empty sentinel block for `height <= 0` without hitting the network.
  * - Fetches block metadata, native transactions, and FA token transfers in parallel.
+ * - Also fetches the predecessor block in parallel to populate `BlockInfo.parent`.
  * - Groups operations by hash, aggregates fees, and determines the fee payer.
  * - Appends FA token transfer operations to the owning BlockTransaction when a
  *   matching `transactionId` can be resolved; otherwise creates a standalone entry.
  */
 export async function getBlock(height: number): Promise<Block> {
   if (height <= 0) {
-    return { info: { height, hash: "", time: new Date(0) }, transactions: [] };
+    throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [block, transactions, tokenTransfers] = await Promise.all([
+  const [block, parentBlock, transactions, tokenTransfers] = await Promise.all([
     tzkt.getBlockByLevel(height),
+    tzkt.getBlockByLevel(height - 1),
     fetchBlockTransactions(height),
     fetchBlockTokenTransfers(height),
   ]);
 
   return {
-    info: mapBlockInfo(block),
+    info: mapBlockInfo(block, parentBlock),
     transactions: groupAndMapTransactions(transactions, tokenTransfers),
   };
 }

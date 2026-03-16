@@ -8,25 +8,32 @@ describe("getBlockInfo", () => {
     jest.clearAllMocks();
   });
 
-  it("maps level, hash and timestamp from the TzKT block response", async () => {
+  it("maps level, hash, timestamp, and parent from the TzKT block response", async () => {
     // Given
     const level = 7_000_000;
-    mockGetBlockByLevel.mockResolvedValue({
+    mockGetBlockByLevel.mockResolvedValueOnce({
       level,
       hash: "BLockHashABC123",
       timestamp: "2024-06-15T10:30:00Z",
+    } as any);
+    mockGetBlockByLevel.mockResolvedValueOnce({
+      level: level - 1,
+      hash: "BLockHashParent",
+      timestamp: "2024-06-15T10:29:52Z",
     } as any);
 
     // When
     const result = await getBlockInfo(level);
 
     // Then
-    expect(mockGetBlockByLevel).toHaveBeenCalledTimes(1);
+    expect(mockGetBlockByLevel).toHaveBeenCalledTimes(2);
     expect(mockGetBlockByLevel).toHaveBeenCalledWith(level);
+    expect(mockGetBlockByLevel).toHaveBeenCalledWith(level - 1);
     expect(result).toEqual({
       height: level,
       hash: "BLockHashABC123",
       time: new Date("2024-06-15T10:30:00Z"),
+      parent: { height: level - 1, hash: "BLockHashParent" },
     });
   });
 
@@ -47,28 +54,31 @@ describe("getBlockInfo", () => {
     expect(result.time.toISOString()).toBe(isoDate);
   });
 
-  it("returns sentinel value for height = 0 without calling the API", async () => {
-    // When
-    const result = await getBlockInfo(0);
-
-    // Then
+  it("throws for height = 0 without calling the API", async () => {
+    // When / Then
+    await expect(getBlockInfo(0)).rejects.toThrow(
+      "getBlockInfo: height must be a positive integer, got 0",
+    );
     expect(mockGetBlockByLevel).not.toHaveBeenCalled();
-    expect(result).toEqual({ height: 0, hash: "", time: new Date(0) });
   });
 
-  it("returns sentinel value for negative height without calling the API", async () => {
-    // When
-    const result = await getBlockInfo(-5);
-
-    // Then
+  it("throws for negative height without calling the API", async () => {
+    // When / Then
+    await expect(getBlockInfo(-5)).rejects.toThrow(
+      "getBlockInfo: height must be a positive integer, got -5",
+    );
     expect(mockGetBlockByLevel).not.toHaveBeenCalled();
-    expect(result).toEqual({ height: -5, hash: "", time: new Date(0) });
   });
 
-  it("does not include a parent field (TzKT default response has no prevHash)", async () => {
-    // Given
-    mockGetBlockByLevel.mockResolvedValue({
+  it("includes parent from the predecessor block fetched in parallel", async () => {
+    // Given – genesis-adjacent block: level 1 with level 0 as parent
+    mockGetBlockByLevel.mockResolvedValueOnce({
       level: 1,
+      hash: "BLBlock1",
+      timestamp: "2018-06-30T16:07:40Z",
+    } as any);
+    mockGetBlockByLevel.mockResolvedValueOnce({
+      level: 0,
       hash: "BLGenesis",
       timestamp: "2018-06-30T16:07:32Z",
     } as any);
@@ -77,7 +87,7 @@ describe("getBlockInfo", () => {
     const result = await getBlockInfo(1);
 
     // Then
-    expect(result.parent).toBeUndefined();
+    expect(result.parent).toEqual({ height: 0, hash: "BLGenesis" });
   });
 
   it("propagates errors thrown by the network layer", async () => {

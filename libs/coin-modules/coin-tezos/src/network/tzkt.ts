@@ -150,6 +150,12 @@ export const fetchBlockTransactions = async (level: number): Promise<APITransact
     if (page.length < BLOCK_PAGE_SIZE) break; // last page: no need for another round-trip
     cursor = page.at(-1)!.id;
   } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockTransactions: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
   return txs;
 };
 
@@ -172,6 +178,12 @@ export const fetchBlockTokenTransfers = async (level: number): Promise<APITokenT
     if (page.length < BLOCK_PAGE_SIZE) break; // last page
     cursor = page.at(-1)!.id;
   } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockTokenTransfers: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
   return transfers;
 };
 
