@@ -1,5 +1,5 @@
 import type { Portfolio, PortfolioRange } from "@ledgerhq/types-live";
-import type { SyncPhase } from "../useSyncLifecycle";
+import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
 
 // --- Sync source mock functions ---
 

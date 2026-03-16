@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
-import { selectIsRefreshing } from "~/reducers/portfolioRefresh";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 import {
@@ -18,7 +18,6 @@ export const usePortfolioBalanceSectionViewModel = ({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
-  const isRefreshing = useSelector(selectIsRefreshing);
 
   const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
 
@@ -27,28 +26,12 @@ export const usePortfolioBalanceSectionViewModel = ({
   const latestBalance = lastItem?.value ?? 0;
   const unit = counterValueCurrency.units[0];
 
-  // Sticky balanceAvailable: stays false while syncing so the shimmer covers
-  // the entire cycle (Skeleton -> Animate balance, no shimmer).
-  const [balanceUnavailable, setBalanceUnavailable] = useState(!rawBalanceAvailable);
-  useEffect(() => {
-    if (!rawBalanceAvailable) {
-      setBalanceUnavailable(true);
-    } else if (syncPhase !== "syncing") {
-      setBalanceUnavailable(false);
-    }
-  }, [rawBalanceAvailable, syncPhase]);
-
-  const balanceAvailable = !balanceUnavailable;
-
-  const frozenBalanceRef = useRef(latestBalance);
-  useEffect(() => {
-    if (syncPhase !== "syncing") {
-      frozenBalanceRef.current = latestBalance;
-    }
-  }, [syncPhase, latestBalance]);
-
-  const shouldFreezeBalance = shouldDisplayBalanceRefreshRework && syncPhase === "syncing";
-  const balance = shouldFreezeBalance ? frozenBalanceRef.current : latestBalance;
+  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
+    rawBalanceAvailable,
+    syncPhase,
+    latestBalance,
+    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+  });
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {
@@ -60,13 +43,9 @@ export const usePortfolioBalanceSectionViewModel = ({
     return "normal";
   }, [isReadOnlyMode, showAssets]);
 
-  const isLoading = shouldDisplayBalanceRefreshRework
-    ? syncPhase === "syncing"
-    : !rawBalanceAvailable || isRefreshing;
-
   return {
     state,
-    balance,
+    balance: displayedBalance,
     countervalueChange,
     unit,
     isBalanceAvailable: balanceAvailable,

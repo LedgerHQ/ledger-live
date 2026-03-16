@@ -1,4 +1,8 @@
-import { renderHook } from "tests/testSetup";
+/**
+ * @jest-environment jsdom
+ */
+import "../../../__tests__/test-helpers/dom-polyfill";
+import { renderHook } from "@testing-library/react";
 import { useManualRefresh } from "../useManualRefresh";
 
 interface Props {
@@ -14,7 +18,7 @@ function renderManualRefresh(initialProps: Props) {
 }
 
 describe("useManualRefresh", () => {
-  it("should return false when idle", () => {
+  it("should return false when idle (no click, no pending)", () => {
     const { result } = renderManualRefresh({
       stableSyncPending: false,
       lastUserSyncClickTimestamp: 0,
@@ -23,43 +27,22 @@ describe("useManualRefresh", () => {
     expect(result.current).toBe(false);
   });
 
-  it("should return true after user click", () => {
-    const { result, rerender } = renderManualRefresh({
-      stableSyncPending: false,
-      lastUserSyncClickTimestamp: 0,
-    });
-
-    rerender({ stableSyncPending: false, lastUserSyncClickTimestamp: Date.now() });
-
-    expect(result.current).toBe(true);
-  });
-
-  it("should return true while sync is pending after click", () => {
-    const { result, rerender } = renderManualRefresh({
-      stableSyncPending: false,
-      lastUserSyncClickTimestamp: 0,
-    });
-
-    rerender({ stableSyncPending: false, lastUserSyncClickTimestamp: Date.now() });
-    expect(result.current).toBe(true);
-
-    rerender({ stableSyncPending: true, lastUserSyncClickTimestamp: Date.now() });
-    expect(result.current).toBe(true);
-  });
-
-  it("should return false after sync completes following click", () => {
+  it("should latch true on click, stay true while pending, then return false when sync completes", () => {
     const now = Date.now();
     const { result, rerender } = renderManualRefresh({
       stableSyncPending: false,
       lastUserSyncClickTimestamp: 0,
     });
 
+    // User clicks refresh
     rerender({ stableSyncPending: false, lastUserSyncClickTimestamp: now });
     expect(result.current).toBe(true);
 
+    // Sync starts
     rerender({ stableSyncPending: true, lastUserSyncClickTimestamp: now });
     expect(result.current).toBe(true);
 
+    // Sync completes
     rerender({ stableSyncPending: false, lastUserSyncClickTimestamp: now });
     expect(result.current).toBe(false);
   });
