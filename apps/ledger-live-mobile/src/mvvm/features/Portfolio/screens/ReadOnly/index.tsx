@@ -23,13 +23,12 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
   const {
-    assets,
     safeAreaTop,
     shouldDisplayGraphRework,
     shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
     isLNSUpsellBannerShown,
     source,
-    goToAssets,
     onBackFromUpdate,
   } = useReadOnlyPortfolioViewModel(navigation);
 
@@ -56,16 +55,14 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       ),
       <PortfolioNoSignerContent
         key="noSigner"
-        assets={assets}
-        goToAssets={goToAssets}
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        shouldDisplayAssetSection={shouldDisplayAssetSection}
       />,
     ],
     [
       shouldDisplayGraphRework,
+      shouldDisplayAssetSection,
       isLNSUpsellBannerShown,
-      assets,
-      goToAssets,
       onBackFromUpdate,
       safeAreaTop,
     ],

@@ -24,8 +24,11 @@ export const ReadOnlyPortfolioTest = () => (
   </Stack.Navigator>
 );
 
+export const btcCurrency = getCryptoCurrencyById("bitcoin");
+export const ethCurrency = getCryptoCurrencyById("ethereum");
+
 const mockAccount = {
-  ...genAccount("perpsAccount", { currency: getCryptoCurrencyById("bitcoin") }),
+  ...genAccount("perpsAccount", { currency: btcCurrency }),
   index: 0,
 };
 
@@ -60,32 +63,35 @@ export const overrideInitialStateWithGraphReworkAndReadOnly = (state: State): St
   },
 });
 
-export const overrideInitialStateWithPerpsEntryPointEnabled = (state: State): State => ({
-  ...state,
-  accounts: {
-    active: [mockAccount],
-  },
-  settings: {
-    ...state.settings,
-    overriddenFeatureFlags: {
-      ...state.settings.overriddenFeatureFlags,
-      lwmWallet40: { enabled: true },
-      ptxPerpsLiveAppMobile: { enabled: true },
+export const overrideInitialStateWithPerpsEntryPoint =
+  (enabled: boolean) =>
+  (state: State): State => ({
+    ...state,
+    accounts: {
+      active: [mockAccount],
     },
-  },
-});
+    settings: {
+      ...state.settings,
+      overriddenFeatureFlags: {
+        ...state.settings.overriddenFeatureFlags,
+        lwmWallet40: { enabled: true },
+        ptxPerpsLiveAppMobile: { enabled },
+      },
+    },
+  });
 
-export const overrideInitialStateWithPerpsEntryPointDisabled = (state: State): State => ({
-  ...state,
-  accounts: {
-    active: [mockAccount],
-  },
-  settings: {
-    ...state.settings,
-    overriddenFeatureFlags: {
-      ...state.settings.overriddenFeatureFlags,
-      lwmWallet40: { enabled: true },
-      ptxPerpsLiveAppMobile: { enabled: false },
+export const overrideInitialStateWithAssetSection =
+  (assetSection: boolean) =>
+  (state: State): State => ({
+    ...state,
+    accounts: {
+      active: [mockAccount],
     },
-  },
-});
+    settings: {
+      ...state.settings,
+      overriddenFeatureFlags: {
+        ...state.settings.overriddenFeatureFlags,
+        lwmWallet40: { enabled: true, params: { assetSection } },
+      },
+    },
+  });
