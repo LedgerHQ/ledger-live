@@ -26,7 +26,7 @@ export function setupEnv(disableBroadcast: boolean = false): void {
 }
 
 export async function checkAccountFromIsSynchronised(app: Application, swap: Swap) {
-  await app.layout.goToAccounts();
+  await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.clickSyncBtnForAccount(swap.accountToDebit.accountName);
   await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
   await app.account.verifySendButtonVisibility();
@@ -41,7 +41,9 @@ export async function performSwapUntilQuoteSelectionStep(
   if (swap.accountToDebit.currency === Currency.APT) {
     await checkAccountFromIsSynchronised(app, swap);
   }
-  await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+  await app.swap.goAndWaitForSwapToBeReady(() =>
+    app.mainNavigation.openTargetFromMainNavigation("swap"),
+  );
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
     electronApp,
