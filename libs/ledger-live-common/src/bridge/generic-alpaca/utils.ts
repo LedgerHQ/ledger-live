@@ -385,10 +385,6 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     raw.mode = transaction.mode;
   }
 
-  if ("feeCustomUnit" in transaction) {
-    raw.feeCustomUnit = transaction.feeCustomUnit;
-  }
-
   if ("data" in transaction) {
     raw.data = transaction.data?.toString("hex");
   }

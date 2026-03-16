@@ -3,7 +3,6 @@ export * from "@ledgerhq/coin-xrp/types";
 
 // Bridge related types
 import type { NetworkInfo, NetworkInfoRaw } from "@ledgerhq/coin-xrp/types";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
@@ -17,7 +16,6 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber | null | undefined;
   networkInfo: NetworkInfo | null | undefined;
   tag: number | null | undefined;
-  feeCustomUnit: Unit | null | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -25,7 +23,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees: string | null | undefined;
   networkInfo: NetworkInfoRaw | null | undefined;
   tag: number | null | undefined;
-  feeCustomUnit: Unit | null | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

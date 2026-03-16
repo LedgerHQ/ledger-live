@@ -14,7 +14,6 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         recipient: "",
         fees: null,
         tag: undefined,
-        feeCustomUnit: null, // NOTE: XRP does not use custom units for fees anymore
       };
     case "stellar":
       return {
