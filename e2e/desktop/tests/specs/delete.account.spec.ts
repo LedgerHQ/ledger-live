@@ -61,7 +61,7 @@ for (const account of accounts) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.expectAccountVisibility(account.account.accountName);
 
