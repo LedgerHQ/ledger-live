@@ -99,16 +99,5 @@ export const overrideInitialStateWithAssetSection =
 
 export const overrideInitialStateWithNoAccountsAndAssetSection =
   (assetSection: boolean) =>
-  (state: State): State => ({
-    ...state,
-    accounts: {
-      active: [],
-    },
-    settings: {
-      ...state.settings,
-      overriddenFeatureFlags: {
-        ...state.settings.overriddenFeatureFlags,
-        lwmWallet40: { enabled: true, params: { assetSection } },
-      },
-    },
-  });
+  (state: State): State =>
+    overrideInitialStateWithAssetSection(assetSection, [])(state);
