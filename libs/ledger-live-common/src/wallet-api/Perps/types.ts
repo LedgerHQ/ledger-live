@@ -1,3 +1,5 @@
+import type { Action as SignerAction } from "@ledgerhq/live-signer-hyperliquid";
+
 type Address = `0x${string}`;
 
 export type ActionWithNonce = {
@@ -55,7 +57,7 @@ export type Action =
       isBuy: boolean; // cross-leverage
       ntli: number;
     };
-export function convertAction(action: ActionWithNonce) {
+export function convertAction(action: ActionWithNonce): SignerAction {
   return {
     ...action.action,
     nonce: action.nonce,
