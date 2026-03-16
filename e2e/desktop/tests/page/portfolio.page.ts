@@ -42,7 +42,11 @@ export class PortfolioPage extends AppPage {
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
-    await this.addAccountButton.click();
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioAddAccountButton
+      : this.addAccountButton;
+
+    await selector.click();
   }
 
   @step("Check 'Buy/Sell' button visibility")
@@ -169,7 +173,11 @@ export class PortfolioPage extends AppPage {
 
   @step("Wait for balance to be visible")
   async expectBalanceVisibility() {
-    await this.totalBalance.waitFor({ state: "visible" });
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioTotalBalance
+      : this.totalBalance;
+
+    await selector.waitFor({ state: "visible" });
   }
 
   @step("Expect app.json to be persisted with at least $1 account(s) within $2ms")
