@@ -178,3 +178,5 @@ minimumReleaseAgeExclude:
   - "@ledgerhq/*"
   # Renovate security update: zx@8.8.5
   - zx@8.8.5
+  # Renovate security update: undici@7.24.0
+  - undici@7.24.0
