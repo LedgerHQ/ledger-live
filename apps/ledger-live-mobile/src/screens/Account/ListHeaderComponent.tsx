@@ -164,7 +164,7 @@ export function useListHeaderComponents({
 
   const isOperationStuck = Boolean(
     oldestEditableOperation &&
-      isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
+    isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
   );
 
   const disableDelegation =

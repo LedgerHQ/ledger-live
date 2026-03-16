@@ -34,7 +34,7 @@ const createMockViewModel = (overrides?: Partial<MockViewModel>): MockViewModel 
   const displayStatus = isAuthorizationPhase ? authorizeStatus : onboardingStatus;
   const showError = Boolean(
     error &&
-      (onboardingStatus === OnboardStatus.ERROR || authorizeStatus === AuthorizeStatus.ERROR),
+    (onboardingStatus === OnboardStatus.ERROR || authorizeStatus === AuthorizeStatus.ERROR),
   );
   const successKey = isReonboarding ? "canton.onboard.reonboard.success" : "canton.onboard.success";
 
