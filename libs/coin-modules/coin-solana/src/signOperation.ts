@@ -4,7 +4,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { buildTransactionWithAPI } from "./buildTransaction";
+import { buildVersionedTransaction } from "./logic/craftTransaction";
 import { ChainAPI } from "./network";
 import type { Resolution, SolanaSigner } from "./signer";
 import type {
@@ -105,7 +105,7 @@ export const buildSignOperation =
   ({ account, deviceId, deviceModelId, transaction, certificateSignatureKind }) =>
     new Observable(subscriber => {
       const main = async () => {
-        const [tx, recentBlockhash, signOnChainTransaction] = await buildTransactionWithAPI(
+        const [tx, recentBlockhash, signOnChainTransaction] = await buildVersionedTransaction(
           account.freshAddress,
           transaction,
           api,

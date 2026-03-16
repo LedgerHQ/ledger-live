@@ -1,15 +1,41 @@
+import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
-import { buildTransactionWithAPI } from "./buildTransaction";
-import createTransaction from "./createTransaction";
-import { ChainAPI } from "./network";
-import { PARSED_PROGRAMS } from "./network/chain/program/constants";
-import { getStakeAccountAddressWithSeed } from "./network/chain/web3";
-import { UserInputType } from "./signer";
-import { Transaction, TransactionModel } from "./types";
-import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "./utils";
+import BigNumber from "bignumber.js";
+import { ChainAPI } from "../network";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
+import { getStakeAccountAddressWithSeed } from "../network/chain/web3";
+import { UserInputType } from "../signer";
+import { Transaction, TransactionModel } from "../types";
+import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "../utils";
+import { buildVersionedTransaction } from "./craftTransaction";
 
 const DEFAULT_TX_FEE = 5000;
+
+const BASE_TRANSACTION: Transaction = {
+  family: "solana",
+  amount: new BigNumber(0),
+  useAllAmount: false,
+  recipient: "",
+  model: { kind: "transfer", uiState: {} },
+};
+
+/**
+ *
+ * @param api - The Solana API client
+ * @param intent - The transaction intent
+ * @param _customFeesParameters - The custom fees parameters (not used in this implementation)
+ * @returns The estimated fees as a FeeEstimation object
+ */
+export async function estimateFees(
+  api: ChainAPI,
+  intent: TransactionIntent,
+  _customFeesParameters?: FeeEstimation["parameters"],
+): Promise<FeeEstimation> {
+  const kind = mapIntentToTxKind(intent);
+  const fee = await estimateTxFee(api, intent.sender, kind);
+  return { value: BigInt(fee) };
+}
 
 export async function estimateTxFee(
   api: ChainAPI,
@@ -17,13 +43,11 @@ export async function estimateTxFee(
   kind: TransactionModel["kind"],
 ) {
   const tx = await createDummyTx(address, kind);
-  const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
+  const [onChainTx] = await buildVersionedTransaction(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
-    // Sometimes getFeeForMessage doesn't return valid fees, because onChainTx.message.recentBlockhash
-    // is outdated --> retrying with a next blockhash
     log("debug", `Solana api.getFeeForMessage returned invalid fee: <${fee}>`);
     fee = await retryWithNewBlockhash(api, onChainTx);
   }
@@ -33,7 +57,6 @@ export async function estimateTxFee(
       "error",
       `Solana unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
     );
-    // If still failing, fallback to a default fees value
     fee = DEFAULT_TX_FEE;
   }
   return fee;
@@ -68,7 +91,7 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
 
 const createDummyTransferTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "transfer",
       uiState: {},
@@ -87,7 +110,7 @@ const createDummyTransferTx = (address: string): Transaction => {
 
 const createDummyStakeCreateAccountTx = async (address: string): Promise<Transaction> => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "stake.createAccount",
       uiState: {} as any,
@@ -111,7 +134,7 @@ const createDummyStakeCreateAccountTx = async (address: string): Promise<Transac
 
 const createDummyStakeDelegateTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "stake.delegate",
       uiState: {} as any,
@@ -130,7 +153,7 @@ const createDummyStakeDelegateTx = (address: string): Transaction => {
 
 const createDummyStakeUndelegateTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "stake.undelegate",
       uiState: {} as any,
@@ -148,7 +171,7 @@ const createDummyStakeUndelegateTx = (address: string): Transaction => {
 
 const createDummyStakeWithdrawTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "stake.withdraw",
       uiState: {} as any,
@@ -168,7 +191,7 @@ const createDummyStakeWithdrawTx = (address: string): Transaction => {
 
 const createDummyTokenTransferTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "token.transfer",
       uiState: {} as any,
@@ -197,7 +220,7 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
 
 const createDummyTokenApproveTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "token.approve",
       uiState: {} as any,
@@ -225,7 +248,7 @@ const createDummyTokenApproveTx = (address: string): Transaction => {
 
 const createDummyTokenRevokeTx = (address: string): Transaction => {
   return {
-    ...createTransaction({} as any),
+    ...BASE_TRANSACTION,
     model: {
       kind: "token.revoke",
       uiState: {} as any,
@@ -248,7 +271,6 @@ const commandDescriptorCommons = {
   warnings: {},
 };
 
-// pregenerate for better caching
 const randomAddresses = [
   "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM",
   "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ",
@@ -288,4 +310,14 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
   }
 
   throw new Error("next blockhash timeout");
+}
+
+function mapIntentToTxKind(intent: TransactionIntent): TransactionModel["kind"] {
+  if (intent.intentType === "transaction") {
+    if (intent.asset.type !== "native") {
+      return "token.transfer";
+    }
+    return "transfer";
+  }
+  throw new Error(`Unsupported intent type: ${intent.intentType}`);
 }

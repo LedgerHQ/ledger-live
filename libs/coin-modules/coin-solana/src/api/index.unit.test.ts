@@ -4,6 +4,8 @@ import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
 import { ChainAPI } from "../network";
@@ -25,6 +27,14 @@ jest.mock("../logic/lastBlock", () => ({
 
 jest.mock("../logic/combine", () => ({
   combine: jest.fn(),
+}));
+
+jest.mock("../logic/craftTransaction", () => ({
+  craftTransaction: jest.fn(),
+}));
+
+jest.mock("../logic/estimateFees", () => ({
+  estimateFees: jest.fn(),
 }));
 
 jest.mock("../logic/getBalance", () => ({
@@ -125,6 +135,45 @@ describe("createApi", () => {
     expect(result).toBe("txHash");
   });
 
+  it("should pass parameters correctly to craftTransaction", async () => {
+    const mockResult = { transaction: "base64tx", details: { estimatedFee: "5000" } };
+    jest.mocked(craftTransaction).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const intent: TransactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(1000000),
+      asset: { type: "native" },
+    };
+    const customFees = { value: 10000n };
+    const result = await api.craftTransaction(intent, customFees);
+
+    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, customFees);
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should pass parameters correctly to estimateFees", async () => {
+    const mockResult = { value: 5000n };
+    jest.mocked(estimateFees).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const intent: TransactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(1000000),
+      asset: { type: "native" },
+    };
+    const result = await api.estimateFees(intent);
+
+    expect(estimateFees).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
+    expect(result).toEqual(mockResult);
+  });
+
   it("should throw for unsupported methods", () => {
     const api = createApi(mockConfig, "solana");
 
@@ -137,11 +186,9 @@ describe("createApi", () => {
       asset: { type: "native" },
     };
 
-    expect(() => api.craftTransaction(intent)).toThrow("craftTransaction is not supported");
     expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 42n)).toThrow(
       "craftRawTransaction is not supported",
     );
-    expect(() => api.estimateFees(intent)).toThrow("estimateFees is not supported");
     expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
