@@ -2748,6 +2748,9 @@
     },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
+    "cryptoSection": {
+      "connectionFailed": "Connection failed"
+    },
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",

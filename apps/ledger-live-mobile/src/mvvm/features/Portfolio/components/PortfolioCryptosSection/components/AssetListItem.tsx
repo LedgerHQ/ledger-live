@@ -14,7 +14,7 @@ import { Asset } from "~/types/asset";
 import {
   useAssetListItemViewModel,
   type AssetListItemViewModelResult,
-} from "./useAssetListItemViewModel";
+} from "../hooks/useAssetListItemViewModel";
 
 interface AssetListItemProps {
   asset: Asset;
