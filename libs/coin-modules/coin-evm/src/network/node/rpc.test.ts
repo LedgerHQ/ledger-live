@@ -739,7 +739,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      expect(await nodeApi.getBlockReceipts(fakeCurrency as CryptoCurrency, 1)).toEqual([
+      expect(await nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1)).toEqual([
         {
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           gasUsed: "500000",
@@ -762,7 +762,7 @@ describe("EVM Family", () => {
       });
 
       await expect(
-        nodeApi.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
+        nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1),
       ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
     });
 
@@ -784,7 +784,7 @@ describe("EVM Family", () => {
       });
 
       await expect(
-        nodeApi.getBlockReceipts(fakeCurrency as CryptoCurrency, 1),
+        nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1),
       ).rejects.toBeInstanceOf(UnsupportedRpcMethodError);
     });
   });
@@ -816,7 +816,7 @@ describe("EVM Family", () => {
         throw new Error(`Method not mocked: ${method}`);
       });
 
-      const result = await nodeApi.traceBlock(fakeCurrency as CryptoCurrency, 120647648);
+      const result = await nodeApi.traceBlock!(fakeCurrency as CryptoCurrency, 120647648);
       expect(result).toEqual([traceItem]);
     });
 
@@ -838,7 +838,7 @@ describe("EVM Family", () => {
           throw new Error(`Method not mocked: ${method}`);
         });
 
-        const err = await nodeApi.traceBlock(fakeCurrency as CryptoCurrency, 1).then(
+        const err = await nodeApi.traceBlock!(fakeCurrency as CryptoCurrency, 1).then(
           () => null,
           (e: unknown) => e,
         );

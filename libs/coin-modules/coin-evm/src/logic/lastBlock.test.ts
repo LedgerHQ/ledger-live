@@ -30,6 +30,7 @@ describe("lastBlock", () => {
     setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
     nodeApiMock.getBlockByHeight.mockResolvedValue({
       hash: "hash",
+      parentHash: "parentHash",
       height: 33,
       timestamp: new Date("2025-12-31").getTime(),
     });

@@ -1,6 +1,6 @@
 import type { NodeApi } from "./types";
 
-export function mockNodeApi(overrides: Partial<NodeApi> = {}): NodeApi {
+export function mockNodeApi(overrides: Partial<jest.Mocked<NodeApi>> = {}): jest.Mocked<NodeApi> {
   return {
     getTransaction: jest.fn(),
     getCoinBalance: jest.fn(),
@@ -15,5 +15,5 @@ export function mockNodeApi(overrides: Partial<NodeApi> = {}): NodeApi {
     getOptimismAdditionalFees: jest.fn(),
     getScrollAdditionalFees: jest.fn(),
     ...overrides,
-  } as NodeApi;
+  } as jest.Mocked<NodeApi>;
 }

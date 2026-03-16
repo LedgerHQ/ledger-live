@@ -225,6 +225,9 @@ describe("craftTransaction", () => {
     externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
     externalMocks.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     });
 
     const { transaction } = await craftTransaction(
@@ -260,6 +263,9 @@ describe("craftTransaction", () => {
     externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
     externalMocks.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     });
 
     const { transaction } = await craftTransaction(

@@ -127,13 +127,14 @@ describe("getBalance", () => {
       },
     );
     mockGetExplorerApi.mockReturnValue({
-      getOperations: () => ({
-        lastTokenOperations: [
-          { contract: "contract1" },
-          { contract: "contract1" },
-          { contract: "contract2" },
-        ],
-      }),
+      getOperations: () =>
+        Promise.resolve({
+          lastTokenOperations: [
+            { contract: "contract1" },
+            { contract: "contract1" },
+            { contract: "contract2" },
+          ],
+        } as any),
     });
     mockGetStakes.mockResolvedValue({
       items: [],
