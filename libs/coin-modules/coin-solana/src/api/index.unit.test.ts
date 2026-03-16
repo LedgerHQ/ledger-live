@@ -3,6 +3,8 @@ import type {
   AlpacaApi,
   Balance,
   CraftedTransaction,
+  Operation,
+  Page,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
@@ -14,6 +16,7 @@ import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
 
@@ -49,6 +52,10 @@ jest.mock("../logic/estimateFees", () => ({
 
 jest.mock("../logic/getBalance", () => ({
   getBalance: jest.fn(),
+}));
+
+jest.mock("../logic/listOperations", () => ({
+  listOperations: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -205,6 +212,20 @@ describe("createApi", () => {
     expect(result).toEqual(mockResult);
   });
 
+  it("should pass parameters correctly to listOperations", async () => {
+    const mockResult: Page<Operation> = { items: [], next: "next" };
+    jest.mocked(listOperations).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const result = await api.listOperations("address", { minHeight: 14, order: "asc" });
+
+    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {
+      minHeight: 14,
+      order: "asc",
+    });
+    expect(result).toEqual(mockResult);
+  });
+
   it("should throw for unsupported methods", () => {
     const api = createApi(mockConfig, "solana");
 
@@ -222,9 +243,6 @@ describe("createApi", () => {
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
     expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
     expect(() => api.getValidators()).toThrow("getValidators is not supported");
-    expect(() => api.listOperations("address", { minHeight: 14, order: "asc" })).toThrow(
-      "listOperations is not supported",
-    );
     expect(() => api.validateIntent(intent, [])).toThrow("validateIntent is not supported");
     expect(() => api.getNextSequence("address")).toThrow("getNextSequence is not supported");
     expect(() => api.validateAddress("address", {})).toThrow("validateAddress is not supported");
