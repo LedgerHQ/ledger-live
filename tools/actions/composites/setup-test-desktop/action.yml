@@ -60,7 +60,7 @@ runs:
     - name: Build dependencies
       if: inputs.turborepo-server-port == ''
       run: |
-        pnpm build:lld:deps
+        pnpm turbo build --filter="ledger-live-desktop^..."
       shell: bash
     - name: Build LLD app for testing
       env:
@@ -72,5 +72,5 @@ runs:
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm build:dummy-apps
+        pnpm turbo build --filter="@ledgerhq/dummy-*-app"
       shell: bash

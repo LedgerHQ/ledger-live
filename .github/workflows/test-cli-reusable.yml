@@ -42,14 +42,14 @@ jobs:
       - name: Install dependencies
         run: pnpm i -F "live-cli*..." -F "ledger-live"
       - name: build cli
-        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm turbo build --filter=@ledgerhq/live-cli --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: lint cli
-        run: pnpm lint --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
+        run: pnpm turbo lint --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: typecheck cli
-        run: pnpm typecheck --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm turbo typecheck --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: test cli
         id: test
-        run: pnpm run test --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm turbo test --concurrency=1 --filter="@ledgerhq/live-cli" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: get diff
         id: diff
         run: |

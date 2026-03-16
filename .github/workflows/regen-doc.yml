@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
-        run: pnpm doc:ljs --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm turbo doc --filter="./libs/ledgerjs/**" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: status
         id: check-status
         run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
