@@ -12,9 +12,15 @@ import { Device } from "../../hw/actions/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
 
+type AppOption = {
+  requireLatestFirmware: boolean;
+  allowPartialDependencies: boolean;
+  skipAppInstallIfNotFound: boolean;
+};
 export type PerpsUiHooks = {
   "device.select": (params: {
     appName: string | undefined;
+    appOptions?: AppOption;
     onSuccess: (result: Pick<AppResult, "device">) => void;
     onCancel: () => void;
   }) => void;
@@ -24,6 +30,7 @@ export type PerpsSignParams = {
   accountId: string;
   metadataWithSignature: string;
   actions: ActionWithNonce[];
+  options?: AppOption;
 };
 export type Signature = {
   r: string;
@@ -33,6 +40,8 @@ export type Signature = {
 export type PerpsSignResult = {
   signatures: Signature[];
 };
+
+const PERPS_APP_NAME = "Hyperliquid";
 
 export const handlers = ({
   accounts,
@@ -67,7 +76,8 @@ export const handlers = ({
       // Ask user to select a device via the UI
       const device = await new Promise<Device>((resolve, reject) => {
         uiDeviceSelect({
-          appName: "Hyperliquid",
+          appName: PERPS_APP_NAME,
+          appOptions: params.options,
           onSuccess: ({ device }) => resolve(device),
           onCancel: () => reject(new Error("User cancelled device selection")),
         });

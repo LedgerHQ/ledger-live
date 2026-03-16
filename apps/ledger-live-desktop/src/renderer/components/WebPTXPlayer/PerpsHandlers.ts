@@ -12,19 +12,25 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiDeviceSelect = useCallback(
     ({
       appName,
+      appOptions,
       onSuccess,
       onCancel,
     }: {
       appName: string | undefined;
+      appOptions?: {
+        requireLatestFirmware: boolean;
+        allowPartialDependencies: boolean;
+        skipAppInstallIfNotFound: boolean;
+      };
       onSuccess: (result: AppResult) => void;
       onCancel: () => void;
     }) => {
       dispatch(
         openModal("MODAL_CONNECT_DEVICE", {
           appName,
-          requireLatestFirmware: false,
-          allowPartialDependencies: true,
-          skipAppInstallIfNotFound: true,
+          requireLatestFirmware: appOptions?.requireLatestFirmware,
+          allowPartialDependencies: appOptions?.allowPartialDependencies,
+          skipAppInstallIfNotFound: appOptions?.skipAppInstallIfNotFound,
           onResult: onSuccess,
           onCancel,
         }),
