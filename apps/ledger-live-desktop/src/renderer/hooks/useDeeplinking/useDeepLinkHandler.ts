@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -35,6 +36,8 @@ export function useDeepLinkHandler() {
     "deeplink",
   );
   const openSendFlow = useOpenSendFlow();
+  const recoverFF = useFeature("protectServicesDesktop");
+  const recoverAppId = recoverFF?.params?.protectId;
 
   const navigate: NavigateFn = useCallback(
     (pathname: string, state?: { [k: string]: string | object }, search?: string) => {
@@ -65,6 +68,7 @@ export function useDeepLinkHandler() {
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
       currentPathname: location.pathname,
+      recoverAppId,
     }),
     [
       dispatch,
@@ -76,6 +80,7 @@ export function useDeepLinkHandler() {
       postOnboardingDeeplinkHandler,
       tryRedirectToPostOnboardingOrRecover,
       location.pathname,
+      recoverAppId,
     ],
   );
 
