@@ -53,7 +53,9 @@ export function useOpenBuy({ currency, sourceScreenName }: UseOpenBuyProps) {
   const navigateToBuy = useCallback(
     (account?: AccountLike, parentAccount?: Account) => {
       const defaultAccountId = account?.id;
-      const parentId = isTokenAccount(account) ? parentAccount?.id ?? account.parentId : undefined;
+      const parentId = isTokenAccount(account)
+        ? (parentAccount?.id ?? account.parentId)
+        : undefined;
 
       navigation.navigate(NavigatorName.Exchange, {
         screen: ScreenName.ExchangeBuy,

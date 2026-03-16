@@ -61,7 +61,7 @@ function useMarketListViewModel() {
   });
 
   const baseData = filterByStarredCurrencies
-    ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
+    ? (marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined)
     : marketResult.data;
 
   const marketDataFiltered = baseData
