@@ -158,7 +158,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             source:
               currentRouteNameRef.current === "Platform Catalog"
                 ? "Discover"
-                : currentRouteNameRef.current ?? "Unknown",
+                : (currentRouteNameRef.current ?? "Unknown"),
           });
         }),
       [tracking, manifest, deactivatedCurrencyIds, walletState, openModularDrawer],
