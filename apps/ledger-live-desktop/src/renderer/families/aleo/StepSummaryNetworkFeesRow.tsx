@@ -1,0 +1,80 @@
+import React from "react";
+import { Trans } from "react-i18next";
+import Box from "~/renderer/components/Box";
+import CounterValue from "~/renderer/components/CounterValue";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import Text from "~/renderer/components/Text";
+import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import { getAleoCurrencyConfig, getAleoTransactionTypeLabelKey } from "./shared/utils";
+import type { AleoFamily } from "./types";
+
+const StepSummaryNetworkFeesRow: NonNullable<AleoFamily["StepSummaryNetworkFeesRow"]> = ({
+  estimatedFees,
+  feeTooHigh,
+  feesCurrency,
+  feesUnit,
+  transaction,
+}) => {
+  const balanceTypeLabelKey = getAleoTransactionTypeLabelKey(transaction);
+  const isFeeSponsored = getAleoCurrencyConfig(feesCurrency)?.isFeeSponsored;
+
+  return (
+    <>
+      <Box horizontal justifyContent="space-between">
+        <Box>
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+            <Trans i18nKey="send.steps.details.fees" />
+          </Text>
+          <Text ff="Inter|Medium" color="neutral.c70" fontSize={4}>
+            <Trans i18nKey={balanceTypeLabelKey} />
+          </Text>
+        </Box>
+        <Box>
+          {isFeeSponsored ? (
+            <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+              <Trans i18nKey="aleo.send.summary.coveredByProvable" />
+            </Text>
+          ) : (
+            <FormattedVal
+              color={feeTooHigh ? "legacyWarning" : "neutral.c80"}
+              disableRounding
+              unit={feesUnit}
+              alwaysShowValue
+              val={estimatedFees}
+              fontSize={4}
+              inline
+              showCode
+            />
+          )}
+          <Box textAlign="right">
+            <CounterValue
+              color={feeTooHigh ? "legacyWarning" : "neutral.c70"}
+              fontSize={3}
+              currency={feesCurrency}
+              value={estimatedFees}
+              alwaysShowSign={false}
+              alwaysShowValue
+            />
+          </Box>
+        </Box>
+      </Box>
+      {feeTooHigh ? (
+        <Box horizontal justifyContent="flex-end" alignItems="center" color="legacyWarning">
+          <IconExclamationCircle size={10} />
+          <Text
+            ff="Inter|Medium"
+            fontSize={2}
+            style={{
+              marginLeft: "5px",
+            }}
+          >
+            <TranslatedError error={feeTooHigh} />
+          </Text>
+        </Box>
+      ) : null}
+    </>
+  );
+};
+
+export default StepSummaryNetworkFeesRow;
