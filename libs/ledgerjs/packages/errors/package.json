@@ -59,6 +59,7 @@
         "./src/*.ts",
         "./src/*.tsx"
       ],
+      "import": "./lib-es/*.js",
       "require": "./lib/*.js",
       "default": "./lib/*.js"
     },
