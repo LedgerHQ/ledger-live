@@ -1,5 +1,11 @@
-import { handlers, type PerpsSignParams, type PerpsSignResult } from "./server";
 import { from } from "rxjs";
+import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
+import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
+import { handlers, type PerpsSignParams, type PerpsSignResult } from "./server";
+import { getMainAccount, getParentAccount } from "../../account";
+import { withDevice } from "../../hw/deviceAccess";
+import { isDmkTransport } from "../../hw/dmkUtils";
+import { getAccountIdFromWalletAccountId } from "../converters";
 import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
 
 jest.mock("@ledgerhq/wallet-api-server", () => ({
@@ -42,15 +48,6 @@ jest.mock("../../hw/deviceAccess", () => ({
 jest.mock("../../hw/dmkUtils", () => ({
   isDmkTransport: jest.fn(),
 }));
-
-// ─── Imports of mocked modules ──────────────────────────────────────────────
-
-import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
-import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
-import { getMainAccount, getParentAccount } from "../../account";
-import { withDevice } from "../../hw/deviceAccess";
-import { isDmkTransport } from "../../hw/dmkUtils";
-import { getAccountIdFromWalletAccountId } from "../converters";
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
