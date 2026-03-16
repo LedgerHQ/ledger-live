@@ -115,7 +115,125 @@ open "$PR_URL"
 5. Click **"Update comment"**
 6. When ready, click **"Ready for review"** to publish the PR
 
-### Step 5: Generate Slack Message
+### Step 5: Trigger E2E CI (scoped to affected tests)
+
+Trigger Desktop and/or Mobile E2E workflows **only when relevant code is impacted**, with a `test_filter` scoped to the affected test suites.
+
+Run `git diff develop...HEAD --stat` once and use the result for both sub-steps.
+
+**Shared rules (apply to both Desktop and Mobile):**
+- Combine multiple filter matches with `,` (e.g. `addAccount,send,deposit`)
+- If the mapping is ambiguous or touches foundational code (e.g. transport, device, bridge), skip the filter and run all tests (pass no `test_filter`)
+- If no paths relevant to a given platform are changed, skip that platform's workflow entirely
+
+---
+
+#### 5.1 Desktop E2E (workflow: `test-ui-e2e-only-desktop.yml`)
+
+**Trigger when:** changes touch `apps/ledger-live-desktop/`, `e2e/desktop/`, or shared libs (`libs/ledger-live-common/`, `libs/ui/`, etc.)
+
+| Changed path pattern | `test_filter` value |
+|---|---|
+| `e2e/desktop/tests/specs/<name>.spec.ts` | Use the spec file name directly (e.g. `add.account`) |
+| `e2e/desktop/tests/models/` or `e2e/desktop/tests/page/` | Map to the spec(s) that use the changed model/page |
+| `apps/ledger-live-desktop/src/**/account*` | `add.account,delete.account,rename.account,subAccount` |
+| `apps/ledger-live-desktop/src/**/send*` | `send.tx` |
+| `apps/ledger-live-desktop/src/**/receive*` | `receive.address` |
+| `apps/ledger-live-desktop/src/**/swap*` or `**/exchange*` | `accounts.swap,entrypoint.swap,provider.swap,send.swap,validation.swap` |
+| `apps/ledger-live-desktop/src/**/earn*` or `**/stake*` or `**/delegate*` | `earn,delegate` |
+| `apps/ledger-live-desktop/src/**/market*` | `market,marketBanner` |
+| `apps/ledger-live-desktop/src/**/dashboard*` or `**/portfolio*` | `portfolio` |
+| `apps/ledger-live-desktop/src/**/settings*` | `settings` |
+| `apps/ledger-live-desktop/src/**/buy*` or `**/sell*` | `buySell` |
+| `apps/ledger-live-desktop/src/**/sync*` | `ledgerSync` |
+| `libs/ledger-live-common/src/**/account*` | `add.account,delete.account,subAccount` |
+| `libs/ledger-live-common/src/**/send*` or `**/transaction*` | `send.tx` |
+| `libs/ledger-live-common/src/**/receive*` | `receive.address` |
+| `libs/ledger-live-common/src/**/swap*` or `**/exchange*` | `accounts.swap,entrypoint.swap,provider.swap,send.swap,validation.swap` |
+| `libs/ledger-live-common/src/**/delegate*` or `**/staking*` | `delegate` |
+| `libs/ledger-live-common/src/e2e/**` | Map based on the specific enum/model changed and which specs use it |
+
+```bash
+gh workflow run test-ui-e2e-only-desktop.yml \
+  --ref "$(git branch --show-current)" \
+  -f test_filter="{{DESKTOP_TEST_FILTER}}"
+```
+
+---
+
+#### 5.2 Mobile E2E (workflow: `test-mobile-e2e-reusable.yml`)
+
+**Trigger when:** changes touch `apps/ledger-live-mobile/`, `e2e/mobile/`, or shared libs (`libs/ledger-live-common/`, `libs/ui/`, etc.)
+
+| Changed path pattern | `test_filter` value |
+|---|---|
+| `e2e/mobile/specs/<folder>/*.spec.ts` | Use the folder name directly (e.g. `send`, `addAccount`, `deposit`) |
+| `e2e/mobile/page/` or `e2e/mobile/models/` | Map to the spec folder(s) that use the changed page/model |
+| `apps/ledger-live-mobile/src/**/account*` | `addAccount,deleteAccount,account,subAccount` |
+| `apps/ledger-live-mobile/src/**/send*` | `send` |
+| `apps/ledger-live-mobile/src/**/receive*` or `**/deposit*` | `deposit,verifyAddress` |
+| `apps/ledger-live-mobile/src/**/swap*` or `**/exchange*` | `swap` |
+| `apps/ledger-live-mobile/src/**/earn*` or `**/stake*` or `**/delegate*` | `earn,delegate` |
+| `apps/ledger-live-mobile/src/**/market*` | `market` |
+| `apps/ledger-live-mobile/src/**/portfolio*` | `portfolio` |
+| `apps/ledger-live-mobile/src/**/settings*` | `settings` |
+| `apps/ledger-live-mobile/src/**/buy*` or `**/sell*` | `buySell` |
+| `apps/ledger-live-mobile/src/**/sync*` | `ledgerSync` |
+| `apps/ledger-live-mobile/src/**/deeplink*` or `**/linking*` | `deeplinks` |
+| `apps/ledger-live-mobile/src/**/onboarding*` | `onboardingReadOnly` |
+| `libs/ledger-live-common/src/**/account*` | `addAccount,deleteAccount,subAccount` |
+| `libs/ledger-live-common/src/**/send*` or `**/transaction*` | `send` |
+| `libs/ledger-live-common/src/**/receive*` | `deposit,verifyAddress` |
+| `libs/ledger-live-common/src/**/swap*` or `**/exchange*` | `swap` |
+| `libs/ledger-live-common/src/**/delegate*` or `**/staking*` | `delegate` |
+| `libs/ledger-live-common/src/e2e/**` | Map based on the specific enum/model changed and which specs use it |
+
+```bash
+gh workflow run test-mobile-e2e-reusable.yml \
+  --ref "$(git branch --show-current)" \
+  -f test_filter="{{MOBILE_TEST_FILTER}}" \
+  -f tests_type="iOS & Android"
+```
+
+---
+
+#### 5.3 Retrieve the run URLs
+
+Wait a few seconds for GitHub to register the runs, then fetch their URLs:
+
+```bash
+sleep 5
+DESKTOP_CI_URL=$(gh run list \
+  --workflow test-ui-e2e-only-desktop.yml \
+  --branch "$(git branch --show-current)" \
+  --limit 1 \
+  --json url \
+  --jq '.[0].url')
+
+MOBILE_CI_URL=$(gh run list \
+  --workflow test-mobile-e2e-reusable.yml \
+  --branch "$(git branch --show-current)" \
+  --limit 1 \
+  --json url \
+  --jq '.[0].url')
+```
+
+#### 5.4 Add the CI links to the PR description
+
+Append a **🔄 CI Execution** section to the PR body (use `gh pr edit`).
+Only include lines for the workflows that were actually triggered.
+If no filter was applied (full run), write `all tests` instead of the filter value.
+
+```bash
+gh pr edit "$PR_URL" --body "$(gh pr view "$PR_URL" --json body --jq .body)
+
+### 🔄 CI Execution
+
+- **Desktop E2E** (filter: \`{{DESKTOP_TEST_FILTER}}\`): $DESKTOP_CI_URL
+- **Mobile E2E** (filter: \`{{MOBILE_TEST_FILTER}}\`): $MOBILE_CI_URL"
+```
+
+### Step 6: Generate Slack Message
 
 Use the `slack-pr-message` skill (`.cursor/skills/slack-pr-message/SKILL.md`) to generate the Slack announcement message for the PR.
 
