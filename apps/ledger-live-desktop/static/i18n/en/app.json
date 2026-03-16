@@ -6718,7 +6718,7 @@
       "description": null
     },
     "TransactionHasBeenValidatedError": {
-      "title": "Can't be sped up or canceled",
+      "title": "Can't be speed up or canceled",
       "description": "This transaction has already been validated"
     },
     "InvalidTransactionError": {
