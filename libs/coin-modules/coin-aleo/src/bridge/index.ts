@@ -14,8 +14,8 @@ import type {
 } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
-import aleoCoinConfig, { type AleoCoinConfig } from "../config";
-import type { AleoAccount, Transaction as AleoTransaction } from "../types/index";
+import aleoCoinConfig from "../config";
+import type { AleoAccount, AleoCoinConfig, Transaction as AleoTransaction } from "../types";
 import type { AleoSigner } from "../types/signer";
 import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";

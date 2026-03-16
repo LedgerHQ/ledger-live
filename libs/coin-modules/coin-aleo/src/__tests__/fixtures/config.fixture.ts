@@ -1,5 +1,5 @@
-import { AleoCoinConfig } from "../../config";
 import { TRANSACTION_TYPE } from "../../constants";
+import type { AleoCoinConfig } from "../../types";
 
 export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinConfig => {
   return {
