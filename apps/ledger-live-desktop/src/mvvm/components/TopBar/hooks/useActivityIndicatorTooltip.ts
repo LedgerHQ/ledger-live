@@ -23,7 +23,7 @@ export function useActivityIndicatorTooltip({
   const locale = useSelector(localeSelector);
 
   if (isRotating) {
-    return undefined;
+    return t("topBar.activityIndicator.refreshing");
   }
 
   if (isError) {

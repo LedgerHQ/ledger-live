@@ -13,7 +13,7 @@ describe("useActivityIndicatorTooltip", () => {
         lastSyncMs: 0,
       }),
     );
-    expect(result.current).toBeUndefined();
+    expect(result.current).toBe("Refreshing...");
   });
 
   it("returns emptyErrorToolTip when isError is true and no account names", () => {
