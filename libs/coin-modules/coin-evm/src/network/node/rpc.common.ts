@@ -117,7 +117,11 @@ export async function withApi<T>(
   );
 }
 
-async function getTransaction(api: JsonRpcProvider, txHash: string): Promise<TransactionInfo> {
+async function getTransaction(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  txHash: string,
+): Promise<TransactionInfo> {
   const [tx, receipt] = await Promise.all([
     api.getTransaction(txHash),
     api.getTransactionReceipt(txHash),
@@ -142,20 +146,18 @@ async function getTransaction(api: JsonRpcProvider, txHash: string): Promise<Tra
   };
 }
 
-function makeGetTransaction(nodeConfig: ExternalNodeConfig): NodeApi["getTransaction"] {
-  return (currency, txHash) => withApi(currency, api => getTransaction(api, txHash), nodeConfig);
-}
-
-async function getCoinBalance(api: JsonRpcProvider, address: string): Promise<BigNumber> {
+async function getCoinBalance(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  address: string,
+): Promise<BigNumber> {
   const balance = await api.getBalance(normalizeAddress(address));
   return new BigNumber(balance.toString());
 }
 
-function makeGetCoinBalance(nodeConfig: ExternalNodeConfig): NodeApi["getCoinBalance"] {
-  return (currency, address) => withApi(currency, api => getCoinBalance(api, address), nodeConfig);
-}
 async function getTokenBalance(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   address: string,
   contractAddress: string,
 ): Promise<BigNumber> {
@@ -164,21 +166,17 @@ async function getTokenBalance(
   return new BigNumber(balance.toString());
 }
 
-function makeGetTokenBalance(nodeConfig: ExternalNodeConfig): NodeApi["getTokenBalance"] {
-  return (currency, address, contractAddress) =>
-    withApi(currency, api => getTokenBalance(api, address, contractAddress), nodeConfig);
-}
-async function getTransactionCount(api: JsonRpcProvider, address: string): Promise<number> {
+async function getTransactionCount(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  address: string,
+): Promise<number> {
   return api.getTransactionCount(normalizeAddress(address), "pending");
-}
-
-function makeGetTransactionCount(nodeConfig: ExternalNodeConfig): NodeApi["getTransactionCount"] {
-  return (currency, address) =>
-    withApi(currency, api => getTransactionCount(api, address), nodeConfig);
 }
 
 async function getGasEstimation(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   account: Pick<Account, "freshAddress">,
   transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
 ): Promise<BigNumber> {
@@ -203,10 +201,14 @@ async function getGasEstimation(
 
 function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEstimation"] {
   return (account, transaction) =>
-    withApi(account.currency, api => getGasEstimation(api, account, transaction), {
-      ...nodeConfig,
-      retries: 0,
-    });
+    withApi(
+      account.currency,
+      api => getGasEstimation(api, account.currency, account, transaction),
+      {
+        ...nodeConfig,
+        retries: 0,
+      },
+    );
 }
 
 async function getFeeData(
@@ -281,12 +283,11 @@ async function getFeeData(
   };
 }
 
-function makeGetFeeData(nodeConfig: ExternalNodeConfig): NodeApi["getFeeData"] {
-  return (currency, transaction) =>
-    withApi(currency, api => getFeeData(api, currency, transaction), nodeConfig);
-}
-
-async function broadcastTransaction(api: JsonRpcProvider, signedTxHex: string): Promise<string> {
+async function broadcastTransaction(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  signedTxHex: string,
+): Promise<string> {
   try {
     const { hash } = await api.broadcastTransaction(signedTxHex);
     return hash;
@@ -299,18 +300,11 @@ async function broadcastTransaction(api: JsonRpcProvider, signedTxHex: string): 
   }
 }
 
-function makeBroadcastTransaction(nodeConfig: ExternalNodeConfig): NodeApi["broadcastTransaction"] {
-  return (currency, signedTxHex) =>
-    withApi(currency, api => broadcastTransaction(api, signedTxHex), {
-      ...nodeConfig,
-      retries: 0,
-    });
-}
-
 async function getBlockByHeight(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
-  prefetchTxs: boolean,
+  prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
   const block = await api.getBlock(blockHeight, prefetchTxs);
 
@@ -360,13 +354,9 @@ async function getBlockByHeight(
   };
 }
 
-function makeGetBlockByHeight(nodeConfig: ExternalNodeConfig): NodeApi["getBlockByHeight"] {
-  return (currency, blockHeight = "latest", prefetchTxs = false) =>
-    withApi(currency, api => getBlockByHeight(api, blockHeight, prefetchTxs), nodeConfig);
-}
-
 async function getBlockReceipts(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<BlockReceiptInfo[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
@@ -402,15 +392,9 @@ async function getBlockReceipts(
   });
 }
 
-function makeGetBlockReceipts(
-  nodeConfig: ExternalNodeConfig,
-): Exclude<NodeApi["getBlockReceipts"], undefined> {
-  return (currency, blockHeight = "latest") =>
-    withApi(currency, api => getBlockReceipts(api, blockHeight), nodeConfig);
-}
-
 async function traceBlock(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
@@ -435,11 +419,6 @@ async function traceBlock(
     }
     return trace;
   });
-}
-
-function makeTraceBlock(nodeConfig: ExternalNodeConfig): NonNullable<NodeApi["traceBlock"]> {
-  return (currency, blockHeight = "latest") =>
-    withApi(currency, api => traceBlock(api, blockHeight), nodeConfig);
 }
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
@@ -531,13 +510,6 @@ async function getOptimismAdditionalFees(
   return new BigNumber(additionalL1Fees.toString());
 }
 
-function makeGetOptimismAdditionalFees(
-  nodeConfig: ExternalNodeConfig,
-): NodeApi["getOptimismAdditionalFees"] {
-  return async (currency, transaction) =>
-    withApi(currency, api => getOptimismAdditionalFees(api, currency, transaction), nodeConfig);
-}
-
 async function getScrollAdditionalFees(
   api: JsonRpcProvider,
   currency: CryptoCurrency,
@@ -562,13 +534,6 @@ async function getScrollAdditionalFees(
   return new BigNumber(additionalL1Fees.toString());
 }
 
-function makeGetScrollAdditionalFees(
-  nodeConfig: ExternalNodeConfig,
-): NodeApi["getScrollAdditionalFees"] {
-  return (currency, transaction) =>
-    withApi(currency, api => getScrollAdditionalFees(api, currency, transaction), nodeConfig);
-}
-
 /* Get default maxPriorityFeePerGas by chain */
 const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
   switch (currency.id) {
@@ -586,26 +551,34 @@ function cacheKeyOptimismL1Fees(
   return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
 }
 
+function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
+  f: (api: JsonRpcProvider, ...args: Parameters<F>) => ReturnType<F>,
+  nodeConfig: ExternalNodeConfig,
+  configOverride: Partial<ExternalNodeConfig> = {},
+): F {
+  return ((...args: Parameters<F>) => {
+    const [currency] = args;
+    return withApi(currency, api => f(api, ...args), { ...nodeConfig, ...configOverride });
+  }) as F;
+}
+
 export function createNodeApi(config: ExternalNodeConfig): NodeApi {
-  const getOptimismAdditionalFeesUncached = makeGetOptimismAdditionalFees(config);
   return {
-    getBlockByHeight: makeGetBlockByHeight(config),
-    getCoinBalance: makeGetCoinBalance(config),
-    getTokenBalance: makeGetTokenBalance(config),
-    getTransactionCount: makeGetTransactionCount(config),
-    getTransaction: makeGetTransaction(config),
-    getBlockReceipts: makeGetBlockReceipts(config),
-    traceBlock: makeTraceBlock(config),
+    getBlockByHeight: make(getBlockByHeight, config),
+    getCoinBalance: make(getCoinBalance, config),
+    getTokenBalance: make(getTokenBalance, config),
+    getTransactionCount: make(getTransactionCount, config),
+    getTransaction: make(getTransaction, config),
+    getBlockReceipts: make(getBlockReceipts, config),
+    traceBlock: make(traceBlock, config),
     getGasEstimation: makeGetGasEstimation(config),
-    getFeeData: makeGetFeeData(config),
-    broadcastTransaction: makeBroadcastTransaction(config),
+    getFeeData: make(getFeeData, config),
+    broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),
     getOptimismAdditionalFees: makeLRUCache(
-      getOptimismAdditionalFeesUncached,
+      make(getOptimismAdditionalFees, config),
       cacheKeyOptimismL1Fees,
-      {
-        ttl: 15 * 1000, // prevent rate limit by caching for at least 15s
-      },
+      { ttl: 15 * 1000 }, // prevent rate limit by caching for at least 15s
     ),
-    getScrollAdditionalFees: makeGetScrollAdditionalFees(config),
+    getScrollAdditionalFees: make(getScrollAdditionalFees, config),
   };
 }
