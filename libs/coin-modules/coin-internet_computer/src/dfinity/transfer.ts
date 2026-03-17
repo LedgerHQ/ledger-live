@@ -18,7 +18,7 @@ export interface UnsignedTransaction extends Record<string, unknown> {
   request_type: SubmitRequestType;
   canister_id: Principal;
   method_name: string;
-  arg: ArrayBuffer;
+  arg: ArrayBuffer | Uint8Array;
   sender: Principal;
   ingress_expiry: Expiry;
 }
