@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";
 import Animation from "~/components/Animation";
+import { ConnectYourDevice } from "~/components/DeviceAction/rendering";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { CreateStatus, useOnboarding } from "../hooks/useOnboarding";
 
@@ -14,8 +15,7 @@ const RESEND_DELAY_SECONDS = 10;
 
 type Props = Readonly<{
   currency: CryptoCurrency;
-  deviceId: string;
-  modelId: DeviceModelId;
+  device: Device;
   creatableAccount: Account;
   accountName: string | undefined;
   sessionTopic: string;
@@ -25,8 +25,7 @@ type Props = Readonly<{
 
 export default function StepCreate({
   currency,
-  deviceId,
-  modelId,
+  device,
   creatableAccount,
   accountName,
   sessionTopic,
@@ -37,7 +36,7 @@ export default function StepCreate({
   const theme = dark ? "dark" : "light";
   const { createStatus, confirmationCode, completedAccount, startOnboarding } = useOnboarding(
     currency,
-    deviceId,
+    device.deviceId,
     creatableAccount,
     sessionTopic,
     onSessionExpired,
@@ -140,12 +139,16 @@ export default function StepCreate({
             </Flex>
           )}
 
+          {createStatus === CreateStatus.DEVICE_LOCKED && (
+            <ConnectYourDevice device={device} isLocked fullScreen={false} />
+          )}
+
           {createStatus === CreateStatus.SUBMITTING && (
             <Flex alignItems="center">
               <Flex alignItems="center" justifyContent="center" height={150} mb={4}>
                 <Animation
-                  source={getDeviceAnimation({ modelId, key: "sign", theme })}
-                  style={getDeviceAnimationStyles(modelId)}
+                  source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+                  style={getDeviceAnimationStyles(device.modelId)}
                 />
               </Flex>
               <Alert type="info">
@@ -182,7 +185,7 @@ export default function StepCreate({
         </Flex>
       )}
 
-      {createStatus === CreateStatus.ERROR && (
+      {(createStatus === CreateStatus.DEVICE_LOCKED || createStatus === CreateStatus.ERROR) && (
         <Flex px={6} pb={10}>
           <Button type="main" onPress={startOnboarding}>
             <Trans i18nKey="common.retry" />
