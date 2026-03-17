@@ -15,6 +15,7 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
   bottomInset,
   bottomOffset,
   gradientColors,
+  useSolidTabBarBackground,
 }) => {
   if (hideTabBar) {
     return null;
@@ -43,7 +44,12 @@ export const MainTabBarView: React.FC<MainTabBarViewProps> = ({
         pointerEvents="none"
       />
 
-      <TabBar active={activeRouteName} onTabPress={onTabPress} lx={{ marginHorizontal: "s24" }}>
+      <TabBar
+        active={activeRouteName}
+        onTabPress={onTabPress}
+        useSolidBackground={useSolidTabBarBackground}
+        lx={{ marginHorizontal: "s24" }}
+      >
         {tabItems.map(item => (
           <TabBarItem
             key={item.value}

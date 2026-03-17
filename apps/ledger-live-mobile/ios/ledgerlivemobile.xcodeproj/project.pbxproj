@@ -22,6 +22,8 @@
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
 		CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */; };
+		RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */; };
+		RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */; };
 		CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA33C2502ED88BBB003C128E /* AppDelegate.swift */; };
 		CA3D2EB42EDDA65A008E836E /* BrazeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */; };
 		CA3D2EB62EDDA670008E836E /* FirebaseConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB52EDDA670008E836E /* FirebaseConfigurator.swift */; };
@@ -65,6 +67,8 @@
 		BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C900DA4D404CF00B311DC501 /* Pods-ledgerlivemobile.nightly.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.nightly.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.nightly.xcconfig"; sourceTree = "<group>"; };
 		CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelperModule.m; sourceTree = "<group>"; };
+		RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReduceTransparencyModule.m; sourceTree = "<group>"; };
+		RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceTransparencyModule.swift; sourceTree = "<group>"; };
 		CA33C2502ED88BBB003C128E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA33C2512ED88BBB003C128E /* LedgerWallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LedgerWallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrazeManager.swift; sourceTree = "<group>"; };
@@ -123,6 +127,8 @@
 			children = (
 				CA3D2EC12EDE0D93008E836E /* BluetoothHelperModule.swift */,
 				CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */,
+				RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */,
+				RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */,
 				2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */,
 				CAEE7B922E9FF33000479D0B /* splash_logo.png */,
 				CA33C2502ED88BBB003C128E /* AppDelegate.swift */,
@@ -536,6 +542,8 @@
 				CA3D2EBE2EDDA70E008E836E /* AppKeys.swift in Sources */,
 				CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */,
 				CA3D2EC22EDE0D9B008E836E /* BluetoothHelperModule.swift in Sources */,
+				RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */,
+				RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */,
 				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -114,6 +114,10 @@ NativeModules.BluetoothHelperModule = {
   E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
 };
 
+NativeModules.ReduceTransparencyModule = {
+  getReduceTransparencyEnabled: () => Promise.resolve(false),
+};
+
 jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));

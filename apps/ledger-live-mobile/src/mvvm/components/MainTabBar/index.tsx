@@ -4,6 +4,7 @@ import { rgba } from "@ledgerhq/native-ui/styles/helpers";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboardVisible } from "~/logic/keyboardVisible";
+import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
 import { useMainTabBarViewModel } from "./useMainTabBarViewModel";
 import { MainTabBarView } from "./MainTabBarView";
 import type { MainTabBarProps, MainTabBarViewProps } from "./types";
@@ -16,9 +17,14 @@ export function MainTabBar({
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
   const { keyboardHeight } = useKeyboardVisible();
+  const reduceTransparencyEnabled = useReduceTransparencyEnabled();
   const viewModel = useMainTabBarViewModel({ state, navigation });
 
   const bgBase = theme.colors.bg.base;
+
+  // On iOS the TabBar uses BlurView which can render blank/white (e.g. when Reduce Transparency is on).
+  // Always use solid tab bar background and opaque gradient on iOS so the menu is never white.
+  const useSolidStyle = Platform.OS === "android" || reduceTransparencyEnabled;
 
   const gradientColors = useMemo<MainTabBarViewProps["gradientColors"]>(
     () => [rgba(bgBase, 0), rgba(bgBase, 0.7), rgba(bgBase, 0.8)],
@@ -37,6 +43,7 @@ export function MainTabBar({
       bottomInset={bottom}
       bottomOffset={bottomOffset}
       gradientColors={gradientColors}
+      useSolidTabBarBackground={useSolidStyle}
     />
   );
 }
