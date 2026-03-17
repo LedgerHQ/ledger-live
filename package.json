@@ -336,8 +336,6 @@
       "protobufjs",
       "secp256k1",
       "sqlite3",
-      "ssh2",
-      "tiny-secp256k1",
       "utf-8-validate",
       "web3",
       "web3-bzz",
