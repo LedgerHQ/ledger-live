@@ -18,15 +18,25 @@ export type Transaction = TransactionCommon & {
 } & (
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        properties: {
+          amountRecordCommitment: string | null;
+          feeRecordCommitment: string | null;
+        };
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        properties: {
+          amountRecordCommitment: string | null;
+          feeRecordCommitment: string | null;
+        };
       }
   );
 
@@ -36,15 +46,25 @@ export type TransactionRaw = TransactionCommonRaw & {
 } & (
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        properties: {
+          amountRecordCommitment: string | null;
+          feeRecordCommitment: string | null;
+        };
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        properties: {
+          amountRecordCommitment: string | null;
+          feeRecordCommitment: string | null;
+        };
       }
   );
 

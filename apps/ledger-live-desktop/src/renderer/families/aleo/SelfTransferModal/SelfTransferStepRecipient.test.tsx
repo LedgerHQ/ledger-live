@@ -107,6 +107,7 @@ describe("SelfTransferStepRecipient", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(aleoTransaction);
     expect(result.mode).toBe(TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC);
+    expect(result.properties).toEqual({ amountRecordCommitment: null, feeRecordCommitment: null });
   });
 
   it("should call updateTransaction with CONVERT_PUBLIC_TO_PRIVATE when balance selector switches to public", async () => {

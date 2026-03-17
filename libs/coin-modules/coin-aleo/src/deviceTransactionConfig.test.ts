@@ -6,7 +6,7 @@ import { getMockedTransaction } from "./__tests__/fixtures/transaction.fixture";
 import type { TransactionStatus } from "./types";
 
 describe("getDeviceTransactionConfig", () => {
-  const mockTransaction = getMockedTransaction();
+  const mockTransaction = getMockedTransaction({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC });
   const mockAccount = getMockedAccount();
   const mockStatus: TransactionStatus = {
     errors: {},
@@ -24,7 +24,7 @@ describe("getDeviceTransactionConfig", () => {
   ] as const)("should return method '%s' for mode '%s'", async (expectedMethod, mode) => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
-      transaction: { ...mockTransaction, mode },
+      transaction: getMockedTransaction({ mode }),
       status: mockStatus,
     });
 
@@ -76,7 +76,7 @@ describe("getDeviceTransactionConfig", () => {
   it("should return fields in correct order", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
-      transaction: { ...mockTransaction, mode: TRANSACTION_TYPE.TRANSFER_PUBLIC },
+      transaction: mockTransaction,
       status: { ...mockStatus, estimatedFees: new BigNumber(100) },
     });
 

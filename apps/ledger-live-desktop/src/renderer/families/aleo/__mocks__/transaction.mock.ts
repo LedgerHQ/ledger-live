@@ -12,4 +12,4 @@ export const makeAleoTransaction = (overrides?: Partial<AleoTransaction>): AleoT
   fees: new BigNumber(0),
   useAllAmount: false,
   ...overrides,
-});
+} as AleoTransaction);

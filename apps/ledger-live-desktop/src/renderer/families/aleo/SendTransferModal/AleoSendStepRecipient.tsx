@@ -64,11 +64,23 @@ export const AleoSendStepRecipient = ({
             onChange={value => {
               updateTransaction(t => {
                 if (t.family !== "aleo") return t;
-                const nextMode =
-                  value === "public"
-                    ? TRANSACTION_TYPE.TRANSFER_PUBLIC
-                    : TRANSACTION_TYPE.TRANSFER_PRIVATE;
-                return { ...t, mode: nextMode };
+
+                if (value === "public") {
+                  return {
+                    ...t,
+                    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+                    properties: undefined,
+                  };
+                }
+
+                return {
+                  ...t,
+                  mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+                  properties: {
+                    amountRecordCommitment: null,
+                    feeRecordCommitment: null,
+                  },
+                };
               });
             }}
           />
