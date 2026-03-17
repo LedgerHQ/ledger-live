@@ -28,7 +28,7 @@ export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
   const type = node?.type;
 
   if (type !== "ledger" && type !== "external") {
-    throw new UnknownNode(`Unknown node for currency: ${currency.id}`);
+    throw new UnknownNode(`Unknown node "${type}" for currency: ${currency.id}`);
   }
 
   const key = cacheKey(currency.id, type, node);
