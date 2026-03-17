@@ -263,6 +263,7 @@ const mockTransaction = {
 // amount must be a negative number
 function mockStakingTx(address: string, amount: string) {
   assert(new BigNumber(amount).lte(0), "amount must be a negative number");
+  const validatorAddress = "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
   return {
     digest: "delegate_tx_digest_123",
     transaction: {
@@ -297,6 +298,15 @@ function mockStakingTx(address: string, amount: string) {
         amount: amount.startsWith("-") ? amount : `-${amount}`,
       },
     ],
+    events: [
+      {
+        type: "0x3::staking_pool::StakingRequestEvent",
+        parsedJson: {
+          validator_address: validatorAddress,
+          staked_sui_id: "0xstaked_object_id_123",
+        },
+      },
+    ],
     timestampMs: "1742294454878",
     checkpoint: "313024",
   } as unknown as SuiTransactionBlockResponse;
@@ -304,6 +314,7 @@ function mockStakingTx(address: string, amount: string) {
 
 // amount must be a positive number
 function mockUnstakingTx(address: string, amount: string) {
+  const validatorAddress = "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
   return {
     digest: "undelegate_tx_digest_456",
     transaction: {
@@ -336,6 +347,16 @@ function mockUnstakingTx(address: string, amount: string) {
         owner: { AddressOwner: address },
         coinType: "0x2::sui::SUI",
         amount: amount,
+      },
+    ],
+    events: [
+      {
+        type: "0x3::validator::UnstakingRequestEvent",
+        parsedJson: {
+          validator_address: validatorAddress,
+          principal_amount: "1200000000",
+          reward_amount: "50000000",
+        },
       },
     ],
     timestampMs: "1742294454878",
@@ -939,6 +960,8 @@ describe("Staking Operations", () => {
         tx: { block: expect.any(Object), feesPayer: address },
         details: {
           stakedAmount: 1000000000n,
+          validatorAddress: "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+          stakedObjectId: "0xstaked_object_id_123",
         },
       });
     });
@@ -961,7 +984,66 @@ describe("Staking Operations", () => {
         tx: { block: expect.any(Object), feesPayer: address },
         details: {
           stakedAmount: 1000000000n,
+          validatorAddress: "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+          rewardAmount: 50000000n,
+          withdrawnAmount: 1200000000n,
         },
+      });
+    });
+
+    test("transactionToOp should return staking details without events", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const tx = mockStakingTx(address, "-1001050000");
+      delete (tx as any).events;
+
+      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+
+      expect(operation.details).toEqual({ stakedAmount: 1000000000n });
+    });
+
+    test("transactionToOp should return unstaking details without events", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const tx = mockUnstakingTx(address, "998950000");
+      delete (tx as any).events;
+
+      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+
+      expect(operation.details).toEqual({ stakedAmount: 1000000000n });
+    });
+
+    test("transactionToOp should handle partial staking event fields", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const tx = mockStakingTx(address, "-1001050000");
+      (tx as any).events = [
+        {
+          type: "0x3::staking_pool::StakingRequestEvent",
+          parsedJson: { validator_address: "0xabc" },
+        },
+      ];
+
+      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+
+      expect(operation.details).toEqual({
+        stakedAmount: 1000000000n,
+        validatorAddress: "0xabc",
+      });
+    });
+
+    test("transactionToOp should handle partial unstaking event fields", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const tx = mockUnstakingTx(address, "998950000");
+      (tx as any).events = [
+        {
+          type: "0x3::validator::UnstakingRequestEvent",
+          parsedJson: { validator_address: "0xdef" },
+        },
+      ];
+
+      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+
+      expect(operation.details).toEqual({
+        stakedAmount: 1000000000n,
+        validatorAddress: "0xdef",
       });
     });
 
@@ -990,6 +1072,69 @@ describe("Staking Operations", () => {
       );
       expect(operation.tx.feesPayer).toBe(sponsorAddress);
     });
+  });
+});
+
+describe("getStakingEventDetails", () => {
+  const makeTx = (events?: unknown[]) => ({ events }) as unknown as SuiTransactionBlockResponse;
+
+  it("should extract all fields from StakingRequestEvent", () => {
+    const tx = makeTx([
+      {
+        type: "0x3::staking_pool::StakingRequestEvent",
+        parsedJson: {
+          validator_address: "0xabc",
+          staked_sui_id: "0xobj123",
+        },
+      },
+    ]);
+    expect(sdk.getStakingEventDetails(tx)).toEqual({
+      validatorAddress: "0xabc",
+      stakedObjectId: "0xobj123",
+    });
+  });
+
+  it("should extract all fields from UnstakingRequestEvent", () => {
+    const tx = makeTx([
+      {
+        type: "0x3::validator::UnstakingRequestEvent",
+        parsedJson: {
+          validator_address: "0xdef",
+          reward_amount: "50000000",
+          principal_amount: "1200000000",
+        },
+      },
+    ]);
+    expect(sdk.getStakingEventDetails(tx)).toEqual({
+      validatorAddress: "0xdef",
+      rewardAmount: 50000000n,
+      withdrawnAmount: 1200000000n,
+    });
+  });
+
+  it("should handle partial StakingRequestEvent fields", () => {
+    const tx = makeTx([
+      {
+        type: "0x3::staking_pool::StakingRequestEvent",
+        parsedJson: { validator_address: "0xabc" },
+      },
+    ]);
+    expect(sdk.getStakingEventDetails(tx)).toEqual({ validatorAddress: "0xabc" });
+  });
+
+  it("should handle partial UnstakingRequestEvent fields", () => {
+    const tx = makeTx([
+      {
+        type: "0x3::validator::UnstakingRequestEvent",
+        parsedJson: { validator_address: "0xdef" },
+      },
+    ]);
+    expect(sdk.getStakingEventDetails(tx)).toEqual({ validatorAddress: "0xdef" });
+  });
+
+  it("should return empty object when no staking events", () => {
+    expect(sdk.getStakingEventDetails(makeTx([]))).toEqual({});
+    expect(sdk.getStakingEventDetails(makeTx(undefined))).toEqual({});
   });
 });
 
