@@ -7,6 +7,7 @@ import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 const app: AppInfos = AppInfos.LS;
 const firstAccountId = accounts[0].id;
@@ -63,10 +64,13 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToAccounts();
-      await app.accounts.expectAccountsCount(0);
+      if (!(await isWallet40Enabled(app.getPage()))) {
+        // you can only go to empty accounts list on legacy
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.expectAccountsCount(0);
+      }
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.expectSyncAccountsButtonExist();
 
@@ -75,7 +79,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectSynchronizationSuccess();
       await app.ledgerSync.closeLedgerSync();
 
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsCount(2);
 
       await app.accounts.navigateToAccountByName(firstAccountName);
@@ -88,7 +92,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
 
       expect(await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app)).toBeDefined();
 
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsCount(1);
 
       const pulledData = await CLI.ledgerSync({
@@ -98,7 +102,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
 
       const parsedData = LedgerSyncCliHelper.parseData(pulledData);
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.manageInstances();
       await app.ledgerSync.removeCLIMember();
@@ -106,7 +110,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectMemberRemoval();
       await app.drawer.closeDrawer();
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
