@@ -46,13 +46,13 @@ function Effect({ bridge }: { bridge: CountervaluesMarketcapBridge }) {
     if (!lastUpdated || now - lastUpdated > MARKETCAP_REFRESH) {
       bridge.setLoading(true);
       api.fetchIdsSortedByMarketcap().then(
-        fetchedIds => {
+        (fetchedIds: string[]) => {
           bridge.setIds(fetchedIds);
           timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH);
         },
-        error => {
+        (error: unknown) => {
           log("countervalues", "error fetching marketcap ids " + error);
-          bridge.setError(error.message);
+          bridge.setError(error instanceof Error ? error.message : String(error));
           timeout = setTimeout(() => forceUpdate(), MARKETCAP_REFRESH_ON_ERROR);
         },
       );

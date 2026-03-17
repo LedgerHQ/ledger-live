@@ -1,5 +1,3 @@
-import type Sui from "@ledgerhq/hw-app-sui";
-
 export type SuiAddress = {
   pubKey: string;
   address: string;
@@ -9,5 +7,13 @@ export type SuiSignature = {
   signature: null | string;
   return_code: number;
 };
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface SuiSigner extends Sui {}
+/** Minimal signer interface compatible with Sui and test mocks */
+export interface SuiSigner {
+  getPublicKey(path: string, verify?: boolean): Promise<SuiAddress>;
+  signTransaction(
+    path: string,
+    signData: Uint8Array,
+    options?: { useLedgerTimestamp?: boolean },
+  ): Promise<SuiSignature>;
+  getVersion(): Promise<{ version: string }>;
+}

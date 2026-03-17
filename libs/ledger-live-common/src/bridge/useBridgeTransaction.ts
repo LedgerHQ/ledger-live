@@ -143,16 +143,9 @@ const reducer = <T extends Transaction = Transaction>(
         const bridge = getAccountBridge(account, parentAccount) as AccountBridge<T>;
         const subAccountId = account.type !== "Account" && account.id;
         let t = bridge.createTransaction(mainAccount);
-        if (
-          // @ts-expect-error transaction.mode is not available on all union types. type guard is required
-          state.transaction?.mode &&
-          // @ts-expect-error transaction.mode is not available on all union types. type guard is required
-          state.transaction.mode !== t.mode
-        ) {
-          t = bridge.updateTransaction(t, {
-            // @ts-expect-error transaction.mode is not available on all union types. type guard is required
-            mode: state.transaction.mode,
-          });
+        const txMode = (state.transaction as { mode?: unknown })?.mode;
+        if (txMode !== undefined && txMode !== (t as { mode?: unknown }).mode) {
+          t = bridge.updateTransaction(t, { mode: txMode } as unknown as Partial<T>);
         }
 
         if (subAccountId) {

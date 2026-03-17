@@ -48,7 +48,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     name: "Send 1 Sol",
     amount: new BigNumber(1e9),
     recipient: RECIPIENT,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("OUT");
@@ -75,14 +75,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     amount: new BigNumber(1e6),
     recipient: RECIPIENT,
     subAccountId: usdcSubAccountId,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
 
       const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
-        sa => sa.id === usdcSubAccountId,
+        (sa: { id: string }) => sa.id === usdcSubAccountId,
       );
       const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
-        sa => sa.id === usdcSubAccountId,
+        (sa: { id: string }) => sa.id === usdcSubAccountId,
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
@@ -101,14 +101,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     useAllAmount: true,
     recipient: RECIPIENT,
     subAccountId: usdcSubAccountId,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
 
       const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
-        sa => sa.id === usdcSubAccountId,
+        (sa: { id: string }) => sa.id === usdcSubAccountId,
       );
       const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
-        sa => sa.id === usdcSubAccountId,
+        (sa: { id: string }) => sa.id === usdcSubAccountId,
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
@@ -138,14 +138,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     amount: new BigNumber(1e2),
     recipient: RECIPIENT,
     subAccountId: cwifSubAccountId,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
 
       const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
-        sa => sa.id === cwifSubAccountId,
+        (sa: { id: string }) => sa.id === cwifSubAccountId,
       );
       const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
-        sa => sa.id === cwifSubAccountId,
+        (sa: { id: string }) => sa.id === cwifSubAccountId,
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
@@ -164,14 +164,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     useAllAmount: true,
     recipient: RECIPIENT,
     subAccountId: cwifSubAccountId,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
 
       const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
-        sa => sa.id === cwifSubAccountId,
+        (sa: { id: string }) => sa.id === cwifSubAccountId,
       );
       const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
-        sa => sa.id === cwifSubAccountId,
+        (sa: { id: string }) => sa.id === cwifSubAccountId,
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
@@ -198,14 +198,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     amount: new BigNumber(1e9),
     recipient: RECIPIENT,
     subAccountId: virtualSubAccountId,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
 
       const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
-        sa => sa.id === virtualSubAccountId,
+        (sa: { id: string }) => sa.id === virtualSubAccountId,
       );
       const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
-        sa => sa.id === virtualSubAccountId,
+        (sa: { id: string }) => sa.id === virtualSubAccountId,
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
@@ -224,14 +224,14 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     useAllAmount: true,
     recipient: RECIPIENT,
     subAccountId: virtualSubAccountId,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
 
       const currentAssociatedTokenAccount = currentAccount.subAccounts?.find(
-        sa => sa.id === virtualSubAccountId,
+        (sa: { id: string }) => sa.id === virtualSubAccountId,
       );
       const previousAssociatedTokenAccount = previousAccount.subAccounts?.find(
-        sa => sa.id === virtualSubAccountId,
+        (sa: { id: string }) => sa.id === virtualSubAccountId,
       );
       const [latestAssociatedTokenAccountOperation] =
         currentAssociatedTokenAccount?.operations ?? [];
@@ -252,7 +252,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       kind: "stake.createAccount",
       uiState: { delegate: { voteAccAddress: VOTE_ACCOUNT.votePubkey } },
     },
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("DELEGATE");
@@ -280,7 +280,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
         voteAccAddr: VOTE_ACCOUNT.votePubkey,
       },
     },
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("DELEGATE");
@@ -302,7 +302,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       kind: "stake.undelegate",
       uiState: { stakeAccAddr: STAKE_ACCOUNT.publicKey.toBase58() },
     },
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("UNDELEGATE");
@@ -319,7 +319,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
     name: "Send All Sol",
     useAllAmount: true,
     recipient: RECIPIENT,
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("OUT");
@@ -340,7 +340,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
         stakeAccAddr: STAKE_ACCOUNT.publicKey.toBase58(),
       },
     },
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("WITHDRAW_UNBONDED");
@@ -369,7 +369,7 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
       kind: "stake.createAccount",
       uiState: { delegate: { voteAccAddress: VOTE_ACCOUNT.votePubkey } },
     },
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: SolanaAccount, currentAccount: SolanaAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toEqual(1);
       expect(latestOperation.type).toEqual("DELEGATE");

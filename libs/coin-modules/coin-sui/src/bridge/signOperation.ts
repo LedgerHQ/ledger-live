@@ -49,7 +49,7 @@ export const buildSignOperation = (
           withApi(async (suiClient: SuiClient) => {
             const ledgerSigner = await LedgerSigner.fromDerivationPath(
               account.freshAddressPath,
-              suiSigner,
+              suiSigner as unknown as Parameters<typeof LedgerSigner.fromDerivationPath>[1],
               suiClient,
             );
             return ledgerSigner.signTransaction(unsigned, objects, resolution);

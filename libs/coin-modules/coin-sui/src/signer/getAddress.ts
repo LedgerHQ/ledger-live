@@ -9,7 +9,10 @@ const resolver = (signerContext: SignerContext<SuiSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
     log("debug", "start getAddress process");
 
-    const result = await signerContext(deviceId, signer => signer.getPublicKey(path, verify));
+    const result = (await signerContext(deviceId, signer => signer.getPublicKey(path, verify))) as unknown as {
+      address: Buffer;
+      publicKey: Buffer;
+    };
 
     if (!result.address || !result.publicKey) {
       throw Error("Failed to get address from device");
