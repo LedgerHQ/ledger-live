@@ -128,7 +128,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     if (shouldDisplayAssetSection) {
       sections.push(
-        <Box key="cryptos" px={6} pt={6}>
+        <Box key="cryptos" px={6}>
           <PortfolioCryptosSection />
         </Box>,
       );
