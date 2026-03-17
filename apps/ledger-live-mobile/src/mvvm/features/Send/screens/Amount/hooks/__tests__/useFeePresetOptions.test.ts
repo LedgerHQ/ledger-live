@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react-native";
-import { useFeePresetOptions } from "../useFeePresetOptions";
+import { useFeePresetOptions } from "../../../../hooks/useFeePresetOptions";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
