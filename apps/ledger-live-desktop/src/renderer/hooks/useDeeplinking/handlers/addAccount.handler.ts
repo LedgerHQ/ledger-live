@@ -3,7 +3,7 @@ import { DeeplinkHandler } from "../types";
 
 export const addAccountHandler: DeeplinkHandler<"add-account"> = (
   route,
-  { openAddAccountFlow },
+  { openAddAccountFlow, openAssetFlow },
 ) => {
   const { currency } = route;
 
@@ -14,5 +14,8 @@ export const addAccountHandler: DeeplinkHandler<"add-account"> = (
 
   if (foundCurrency) {
     openAddAccountFlow(foundCurrency, true);
+  } else {
+    // No currency or unknown currency: open Add Account modal so user can select one
+    openAssetFlow();
   }
 };
