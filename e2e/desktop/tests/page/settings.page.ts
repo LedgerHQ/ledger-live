@@ -7,7 +7,8 @@ import { FileUtils } from "../utils/fileUtils";
 import { mkdir, rename } from "fs/promises";
 
 export class SettingsPage extends AppPage {
-  private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
+  private syncWalletSyncButton = this.page.getByTestId("button-sync-walletSync");
+  private manageWalletSyncButton = this.page.getByTestId("button-manage-walletSync");
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
@@ -59,7 +60,21 @@ export class SettingsPage extends AppPage {
 
   @step("Open Ledger Sync Manager")
   async openManageLedgerSync() {
-    await this.manageLedgerSyncButton.click();
+    await this.manageWalletSyncButton.click();
+  }
+
+  @step("Open Wallet Sync Manager")
+  async openWalletSyncManager() {
+    await this.syncWalletSyncButton.click();
+  }
+
+  @step("Enable Wallet Sync")
+  async enableWalletSync() {
+    if (await this.syncWalletSyncButton.isVisible()) {
+      await this.syncWalletSyncButton.click();
+    } else {
+      await this.manageWalletSyncButton.click();
+    }
   }
 
   @step("Clear cache")
