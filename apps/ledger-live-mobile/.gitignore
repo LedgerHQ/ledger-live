@@ -115,8 +115,7 @@ coverage/
 artifacts/
 allure-results/
 
-# CI / lint output
-lint.json
+# CI
 **/vendor/**
 **/*.jks
 
