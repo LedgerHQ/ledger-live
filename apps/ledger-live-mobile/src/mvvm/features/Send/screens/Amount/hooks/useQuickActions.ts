@@ -10,7 +10,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 type UseQuickActionsParams = Readonly<{
   account: AccountLike;
