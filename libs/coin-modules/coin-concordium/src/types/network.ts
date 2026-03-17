@@ -53,23 +53,19 @@ export type BlocksAtHeightResponse = string[];
 export interface TransactionQueryParams {
   limit?: number;
   order?: "a" | "d"; // ascending or descending
-  from?: string; // transaction ID to start from
+  from?: string; // transaction ID to start from (exclusive cursor)
   includeRewards?: boolean;
   includeRawRejectReason?: boolean;
   onlyEncrypted?: boolean;
-  blockTimeFrom?: string; // ISO 8601 timestamp
-  blockTimeTo?: string; // ISO 8601 timestamp
+  blockTimeFrom?: number; // Unix seconds
+  blockTimeTo?: number; // Unix seconds
+  blockHeightFrom?: number; // inclusive lower bound
+  blockHeightTo?: number; // inclusive upper bound
 }
 
 export interface GetTransactionCostParams {
   numSignatures: number;
   memoSize?: number;
-}
-
-export interface GetOperationsParams {
-  address: string;
-  accountId: string;
-  size?: number;
 }
 
 /**
@@ -197,6 +193,7 @@ export interface WalletProxyTransaction {
   id: number;
   blockTime: number; // Unix timestamp with decimals
   blockHash?: string;
+  blockHeight: number; // Absolute block height
   origin: WalletProxyTransactionOrigin;
   energy?: number;
   cost?: number; // Transaction cost in microCCD

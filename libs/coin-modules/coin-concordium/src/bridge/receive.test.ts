@@ -29,7 +29,7 @@ describe("receive", () => {
       expect(events).toHaveLength(1);
       expect(events[0]).toEqual({
         address: VALID_ADDRESS,
-        path: "m/1105'/0'/0'/0'/0'/0'",
+        path: "44'/919'/404'/404'/0'",
         publicKey: PUBLIC_KEY,
       });
     });
@@ -53,7 +53,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const customPath = "m/1105'/0'/1'/2'/3'/4'";
+      const customPath = "44'/919'/404'/404'/5'";
       const account = createFixtureConcordiumAccount({ freshAddressPath: customPath });
 
       // WHEN
@@ -144,7 +144,7 @@ describe("receive", () => {
         get freshAddress(): string {
           throw new Error(errorMessage);
         },
-        freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
+        freshAddressPath: "44'/919'/404'/404'/0'",
         concordiumResources: { publicKey: "abc" },
       } as any;
 

@@ -89,8 +89,27 @@ describe("api/index", () => {
   describe("listOperations", () => {
     it("should call listOperations with address, pagination and currency", async () => {
       const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
-      const mockPage = { items: [{ id: "op1" }, { id: "op2" }], next: undefined };
-      listOperationsMock.mockResolvedValue(mockPage);
+      const mockRawPage = {
+        items: [
+          {
+            hash: "aa".repeat(32),
+            type: "OUT",
+            sender: VALID_ADDRESS,
+            recipient: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+            amount: "1000000",
+            fee: "500",
+            value: "1000500",
+            memo: undefined,
+            date: new Date("2024-06-01T00:00:00Z"),
+            blockHash: "bbcc",
+            blockHeight: 500,
+            failed: false,
+            id: 42,
+          },
+        ],
+        next: undefined,
+      };
+      listOperationsMock.mockResolvedValue(mockRawPage);
       const pagination = { minHeight: 100 };
 
       const result = await api.listOperations(VALID_ADDRESS, pagination);
@@ -100,7 +119,11 @@ describe("api/index", () => {
         pagination,
         "concordium_testnet",
       );
-      expect(result).toEqual(mockPage);
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].type).toBe("OUT");
+      expect(result.items[0].value).toBe(BigInt(1000500));
+      expect(result.items[0].tx.fees).toBe(BigInt(500));
+      expect(result.next).toBeUndefined();
     });
   });
 

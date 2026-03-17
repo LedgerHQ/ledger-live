@@ -3637,12 +3637,6 @@ importers:
 
   libs/coin-modules/coin-concordium:
     dependencies:
-      '@grpc/grpc-js':
-        specifier: ^1.9.15
-        version: 1.13.4
-      '@grpc/proto-loader':
-        specifier: ^0.7.15
-        version: 0.7.15
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework

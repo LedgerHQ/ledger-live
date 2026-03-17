@@ -7,8 +7,6 @@ export const concordiumConfig: Record<string, ConfigInfo> = {
     default: {
       status: { type: "active" },
       networkType: "mainnet",
-      grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
-      grpcPort: 443,
       proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
       minReserve: 0,
     } satisfies ConcordiumCoinConfig,
@@ -18,8 +16,6 @@ export const concordiumConfig: Record<string, ConfigInfo> = {
     default: {
       status: { type: "active" },
       networkType: "testnet",
-      grpcUrl: "https://ccd-node-testnet.coin.ledger-test.com",
-      grpcPort: 443,
       proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
       minReserve: 0,
     } satisfies ConcordiumCoinConfig,
