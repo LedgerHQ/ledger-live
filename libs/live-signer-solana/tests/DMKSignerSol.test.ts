@@ -4,6 +4,11 @@
 import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
+import {
+  LockedDeviceError,
+  SolAppPleaseEnableContractData,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 
@@ -12,6 +17,7 @@ jest.mock("@ledgerhq/device-signer-kit-solana", () => ({
   SignerSolanaBuilder: jest.fn().mockImplementation(() => ({
     build: () => ({}),
   })),
+  SignMessageVersion: { Raw: "raw", Legacy: "legacy", V0: "v0", V1: "v1" },
 }));
 
 describe("DmkSignerSol", () => {
@@ -280,8 +286,12 @@ describe("DmkSignerSol", () => {
 
   describe("signMessage", () => {
     it("resolves with signature buffer on Completed status", async () => {
-      const signatureResponse = { signature: Uint8Array.from([100, 200]) };
-      const observable = of({ status: DeviceActionStatus.Completed, output: signatureResponse });
+      const sigBytes = Uint8Array.from([100, 200]);
+      const signatureB58 = bs58.encode(sigBytes);
+      const observable = of({
+        status: DeviceActionStatus.Completed,
+        output: { signature: signatureB58 },
+      });
       (signer as any).dmkSigner = {
         signMessage: jest.fn().mockReturnValue({ observable }),
       };
@@ -289,10 +299,10 @@ describe("DmkSignerSol", () => {
       const result = await signer.signMessage("path", "f0cacc1a");
       expect((signer as any).dmkSigner.signMessage).toHaveBeenCalledWith(
         "path",
-        "f0cacc1a",
-        expect.objectContaining({ skipOpenApp: true }),
+        new Uint8Array(Buffer.from("f0cacc1a", "hex")),
+        expect.objectContaining({ skipOpenApp: true, version: "raw" }),
       );
-      expect(result).toEqual({ signature: Buffer.from(signatureResponse.signature) });
+      expect(result).toEqual({ signature: Buffer.from(sigBytes) });
     });
 
     it("rejects on observable error", async () => {
@@ -302,6 +312,46 @@ describe("DmkSignerSol", () => {
       };
 
       await expect(signer.signMessage("path", "f0cacc1a")).rejects.toThrow("msg error");
+    });
+  });
+
+  describe("_mapError", () => {
+    function makeDAError(errorCode: string) {
+      return {
+        _tag: "SomeDAError",
+        originalError: { errorCode },
+      };
+    }
+
+    function callMapError(error: any) {
+      return (signer as any)._mapError(error);
+    }
+
+    it("maps error code 5515 to LockedDeviceError", () => {
+      const result = callMapError(makeDAError("5515"));
+      expect(result).toBeInstanceOf(LockedDeviceError);
+    });
+
+    it("maps error code 6985 to UserRefusedOnDevice", () => {
+      const result = callMapError(makeDAError("6985"));
+      expect(result).toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("maps error code 6808 to SolAppPleaseEnableContractData", () => {
+      const result = callMapError(makeDAError("6808"));
+      expect(result).toBeInstanceOf(SolAppPleaseEnableContractData);
+    });
+
+    it("maps unknown error code to generic Error with _tag", () => {
+      const result = callMapError(makeDAError("ffff"));
+      expect(result).toBeInstanceOf(Error);
+      expect(result.message).toBe("SomeDAError");
+    });
+
+    it("maps error without originalError to generic Error with _tag", () => {
+      const result = callMapError({ _tag: "NoOriginal", originalError: null });
+      expect(result).toBeInstanceOf(Error);
+      expect(result.message).toBe("NoOriginal");
     });
   });
 });
