@@ -107,7 +107,7 @@ module.exports = {
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   silent: false,
-  verbose: true,
+  verbose: process.env.CI !== "true",
   projects: [
     {
       ...commonConfig,
