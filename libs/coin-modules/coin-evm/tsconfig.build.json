@@ -2,7 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "customConditions": [],
-    "types": []
+    "types": [
+      "node"
+    ]
   },
   "exclude": [
     "**/*.test.ts",
@@ -10,7 +12,11 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/__tests__/**/*",
+    "**/__mocks__/**/*",
+    "**/test/**/*",
     "**/tests/**/*",
+    "**/fixtures/**/*",
+    "**/*.fixtures.ts",
     "**/*.test.js",
     "**/*.test.jsx",
     "**/*.spec.js",

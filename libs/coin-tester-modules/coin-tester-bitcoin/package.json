@@ -81,6 +81,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "jest": "catalog:",
     "ts-node": "^10.9.2",

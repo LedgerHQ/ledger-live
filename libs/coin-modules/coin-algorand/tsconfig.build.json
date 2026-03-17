@@ -2,7 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "customConditions": [],
-    "types": []
+    "types": [
+      "node"
+    ]
   },
   "exclude": [
     "src/api/subscan.ts",
@@ -12,6 +14,8 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/__tests__/**/*",
+    "**/__mocks__/**/*",
+    "**/test/**/*",
     "**/tests/**/*",
     "**/*.test.js",
     "**/*.test.jsx",
