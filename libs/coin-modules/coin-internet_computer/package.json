@@ -122,7 +122,7 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json --outDir lib && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
