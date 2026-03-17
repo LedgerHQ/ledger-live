@@ -2,64 +2,55 @@
 applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
 
-<!-- Source: .cursor/rules/testing.mdc -->
-<!-- Last synced: 2026-02-13 -->
-
 # Testing
 
 ## Stack
 
 - **Framework**: Jest
 - **Network mocking**: MSW (Mock Service Worker)
-- **Desktop UI**: React Testing Library
-- **Mobile UI**: React Native Testing Library
+- **Desktop UI**: React Testing Library (`tests/testSetup`)
+- **Mobile UI**: React Native Testing Library (`@tests/test-renderer`)
 
 ## General Rules
 
 - **Test behavior, not implementation** — assert on user-visible outcomes, not internal state.
 - Tests must be **deterministic** — no flaky timing, no reliance on external services.
-- Keep mocks **minimal** — favor realistic wiring over extensive mocking.
+- Always use the app's custom test renderer — never import directly from `@testing-library/react` or `@testing-library/react-native`.
+- Every test must end with at least one positive assertion — avoid tests that only wait or navigate without verifying outcomes.
 - Use `async/await` with `waitFor` for asynchronous assertions.
-- Prefer **integration tests** for complex features to validate complete behavior.
+
+## Mocking Rules
+
+- Keep mocks **minimal** — favor realistic wiring over extensive mocking.
+- Never mock UI components — test what the user sees, not implementation details.
+- Mock at the network boundary with MSW — do not mock React components, hooks, or Redux directly in test files.
+- If a test file starts with many lines of mocks, refactor to reduce mocking or use dependency injection.
+- Check jest-setup before adding mocks — do not duplicate mocks already defined globally.
+
+## Assertions
+
+- Use strong matchers like `toEqual`, `toMatchObject`, or `toBeVisible` — avoid weak matchers like `not.toBeNull`.
+- Always specify expected error messages in `.rejects.toThrow("expected message")`.
+- Prefer `getByRole` and `getByText` over `getByTestId` — test-ids are a last resort.
 
 ## File Structure
 
 - Tests live next to source files: `MyComponent.test.tsx` alongside `MyComponent.tsx`.
-- Use `__tests__/` for grouped unit tests.
-- Use `__integrations__/` for integration tests.
-- Test data goes in `__fixtures__/` — use factories and builders, avoid hardcoded or unrealistic values.
+- Group unit tests in `__tests__/` folders within the relevant directory.
+- Place integration tests in `__integrations__/` folders.
+- Use `__fixtures__/` for test data with factories and builders.
 
-## Query Priority
+## Coverage Requirements
 
-When selecting elements in tests, follow this order:
-
-1. `ByRole` (preferred — matches accessibility tree)
-2. `ByLabelText`
-3. `ByText`
-4. `ByTestId` (last resort)
-
-## Desktop Testing
-
-- **Render**: import the render function from `tests/testSetup`.
-- **MSW server**: `apps/ledger-live-desktop/tests/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-desktop`.
-
-## Mobile Testing
-
-- **Render**: import the render function from `@tests/test-renderer`.
-- **MSW server**: `apps/ledger-live-mobile/__tests__/server.ts`.
-- **Run**: `pnpm test:jest "filename"` inside `apps/ledger-live-mobile`.
+- New features must include integration tests validating complete behavior.
+- Utility functions in `utils/` must have unit tests.
+- Hooks must have dedicated tests covering logic and edge cases.
+- When adding helper functions, extract them to a utils file and add tests.
 
 ## MSW Patterns
 
 - Define handlers alongside tests or in shared handler files.
-- Follow the existing patterns from the desktop and mobile server files referenced above.
-- Mock at the network boundary — do not mock React components or hooks directly.
-
-## Test Naming
-
-- Use descriptive names: `it("should <behavior> when <condition>")`.
-- One behavior per test — avoid testing multiple concerns in a single `it` block.
+- Follow patterns from `apps/ledger-live-desktop/tests/server.ts` and `apps/ledger-live-mobile/__tests__/server.ts`.
 
 ## Redux in Tests
 
