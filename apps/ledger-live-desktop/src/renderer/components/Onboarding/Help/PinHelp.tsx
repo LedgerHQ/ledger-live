@@ -112,6 +112,7 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
       </ScrollArea>
       <Button
         data-testid="v3-pin-code-drawer"
+        flexShrink={0}
         mt="auto"
         left="-258px"
         width="248px"

@@ -109,7 +109,7 @@ const Container = styled(Tabbable).attrs(() => ({
       p.theme.colors[p.$iconActiveColor as keyof DefaultTheme["colors"]] || p.$iconActiveColor;
     const color = p.$isActive ? iconActiveColor : p.theme.colors.opacityDefault.c70;
     return `
-      svg { color: ${color}; }
+      svg { color: ${color}; flex-shrink: 0; }
     `;
   }};
 `;

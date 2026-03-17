@@ -7,6 +7,7 @@ const ScrollAreaContainer = styled.div<{
   height: 100%;
   width: 100%;
   overflow-y: hidden;
+  flex-shrink: 0;
   padding-bottom: ${({ isInsideDrawer }) => (isInsideDrawer ? "80px" : "0px")};
 `;
 const ScrollableContentContainer = styled.div<{

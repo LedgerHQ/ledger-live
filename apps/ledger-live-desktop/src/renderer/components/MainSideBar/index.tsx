@@ -57,6 +57,9 @@ const Tag = styled(Link)`
     background-color: ${p => darken(p.theme.colors.opacityDefault.c10, 0.05)};
     border-color: ${p => p.theme.colors.wallet};
   }
+  & > * {
+    flex-shrink: 0;
+  }
 `;
 
 const CustomTag = styled(TagComponent)`

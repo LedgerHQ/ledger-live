@@ -50,7 +50,6 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
           onActiveChange={viewModel.handleActiveChange}
           collapsed={viewModel.collapsed}
           onCollapsedChange={viewModel.handleCollapsedChange}
-          className="[&_span]:shrink" // workaround for global flex shrink issue
           data-testid="sidebar-navigation"
         >
           <SideBarLeading>
