@@ -13,6 +13,7 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
 }));
 
 jest.mock("@ledgerhq/wallet-api-core", () => ({
+  ...jest.requireActual("@ledgerhq/wallet-api-core"),
   createAccountNotFound: jest.fn(id => ({ code: "AccountNotFound", id })),
   createUnknownError: jest.fn(opts => ({ code: "UnknownError", ...opts })),
   ServerError: class ServerError extends Error {

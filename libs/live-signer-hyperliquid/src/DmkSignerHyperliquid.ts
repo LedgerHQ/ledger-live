@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/device-signer-kit-hyperliquid";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { SignActionsActionItem } from "@ledgerhq/device-signer-kit-hyperliquid/api/app-binder/SignActionsDeviceActionTypes.js";
+import type { SignActionsActionItem } from "@ledgerhq/device-signer-kit-hyperliquid";
 import { firstValueFrom, filter, map } from "rxjs";
 
 export type Action = SignActionsActionItem;

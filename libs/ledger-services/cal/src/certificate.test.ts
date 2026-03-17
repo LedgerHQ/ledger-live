@@ -2,10 +2,8 @@ import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import { convertCertificateToDeviceData, getCertificate } from "./certificate";
 
-jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }), {
-  virtual: true,
-});
-jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }), { virtual: true });
+jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
+jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
 
 const mockNetwork = jest.mocked(network);
 const mockGetEnv = jest.mocked(getEnv);
@@ -33,10 +31,10 @@ describe("getCertificate", () => {
   });
 
   it.each([
-    ["trusted_name", "domain_metadata_key"],
-    ["coin_meta", "token_metadata_key"],
-    ["perps_data", "yield"],
-  ] as const)("uses public_key_id=%s when usage=%s", async (usage, expectedKeyId) => {
+    ["domain_metadata_key", "trusted_name"],
+    ["token_metadata_key", "coin_meta"],
+    ["yield", "perps_data"],
+  ] as const)("uses public_key_id=%s when usage=%s", async (expectedKeyId, usage) => {
     mockNetwork.mockResolvedValue({
       data: [makeCertificateResponse({ public_key_usage: usage })],
     } as any);

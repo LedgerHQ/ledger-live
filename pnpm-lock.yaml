@@ -24,6 +24,9 @@ catalogs:
     '@ledgerhq/device-signer-kit-ethereum':
       specifier: 1.12.0
       version: 1.12.0
+    '@ledgerhq/device-signer-kit-hyperliquid':
+      specifier: 0.0.0-hyperliquid-20260316180757
+      version: 0.0.0-hyperliquid-20260316180757
     '@ledgerhq/device-signer-kit-solana':
       specifier: 1.7.0
       version: 1.7.0
@@ -6680,6 +6683,9 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../live-signer-evm
+      '@ledgerhq/live-signer-hyperliquid':
+        specifier: workspace:^
+        version: link:../live-signer-hyperliquid
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
@@ -10119,6 +10125,52 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
+
+  libs/live-signer-hyperliquid:
+    dependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-hyperliquid':
+        specifier: 'catalog:'
+        version: 0.0.0-hyperliquid-20260316180757(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../disable-network-setup
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@5.9.3))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@5.9.3)
 
   libs/live-signer-solana:
     dependencies:
@@ -15415,6 +15467,11 @@ packages:
       '@ledgerhq/context-module': 1.15.0
       '@ledgerhq/device-management-kit': ^1.2.0
 
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-20260316180757':
+    resolution: {integrity: sha512-6aAFywpTNgY2BW42ho5Xzx3YaFTPqAc3PLppILuNwTpHgH61tHK5eIiV7vk5QEf0A13TWig04EKEB3exXI7WNA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-20260316180757
+
   '@ledgerhq/device-signer-kit-solana@1.7.0':
     resolution: {integrity: sha512-m6Zp4e8IOd/g1WmamBjRXTOm3Q+9TKvawgQmBcKVAUfBv9G/YQnqBHmVCD6VSd72mn/WqUpwmZwpNwuiHVYBOQ==}
     peerDependencies:
@@ -15557,6 +15614,11 @@ packages:
     resolution: {integrity: sha512-iBf0QO4Ki/72pygmavVTexdSug4TuBXUOtfgcl2Ro8eg/jphmLwxGAcxIDej3dKi/aFUtcE+RRrAGQyQ4eRZ5w==}
     peerDependencies:
       react: 19.0.0
+
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-20260316180757':
+    resolution: {integrity: sha512-Y1lELsTbV9pKAeZieaQSJcSmsrqgUut5fxfEVWpe9f9og0n9rtUNKTCx05zS4mFHnqxHLvX0WQIiVX2eKNhGrA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-hyperliquid-20260316180757
 
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
@@ -42434,6 +42496,19 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-hyperliquid-20260316180757(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-hyperliquid-20260316180757(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/device-signer-kit-solana@1.7.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@5.9.3)':
     dependencies:
       '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
@@ -42684,6 +42759,11 @@ snapshots:
       clsx: 2.1.1
       react: 19.0.0
       tailwind-merge: 2.6.0
+
+  '@ledgerhq/signer-utils@0.0.0-hyperliquid-20260316180757(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:

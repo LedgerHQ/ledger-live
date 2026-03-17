@@ -16,9 +16,9 @@ export type Data = {
 
 export default function ConnectDevice({
   appName = "BOLOS",
-  requireLatestFirmware = true,
-  allowPartialDependencies = false,
-  skipAppInstallIfNotFound = false,
+  requireLatestFirmware,
+  allowPartialDependencies,
+  skipAppInstallIfNotFound,
 }: Data) {
   const action = useConnectAppAction();
   const request = useMemo(() => {

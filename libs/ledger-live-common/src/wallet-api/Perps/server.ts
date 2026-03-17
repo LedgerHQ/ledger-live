@@ -11,6 +11,7 @@ import { AppResult } from "../../hw/actions/app";
 import { Device } from "../../hw/actions/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
+import { stripHexPrefix } from "../helpers";
 
 type AppOption = {
   requireLatestFirmware: boolean;
@@ -102,7 +103,7 @@ export const handlers = ({
               const signatures = await hyperliquidSigner.signActions(
                 derivationPath,
                 convertCertificateToDeviceData(certificate),
-                new Uint8Array(Buffer.from(params.metadataWithSignature, "hex")),
+                new Uint8Array(Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex")),
                 params.actions.map(convertAction),
               );
 

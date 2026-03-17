@@ -2,4 +2,4 @@
 "@ledgerhq/live-signer-hyperliquid": major
 ---
 
-First version to signer-hyperliquid wrapper
+First version to the signer-hyperliquid wrapper
