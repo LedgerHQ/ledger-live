@@ -13,7 +13,7 @@ cocoapods = "mise-plugins/mise-cocoapods"
 
 
 [tools]
-node = '22.13.1'
+node = '24.14.0'
 pnpm = '10.24.0'
 npm = '10.3.0'
 
