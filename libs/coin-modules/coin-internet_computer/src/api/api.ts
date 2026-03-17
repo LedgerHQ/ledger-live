@@ -69,7 +69,7 @@ export const broadcastTxn = async (
     return await res.arrayBuffer();
   }
 
-  throw new Error(`Failed to broadcast transaction: ${res.text()}`);
+  throw new Error(`Failed to broadcast transaction: ${await res.text()}`);
 };
 
 export const fetchBalance = async (address: string): Promise<BigNumber> => {
