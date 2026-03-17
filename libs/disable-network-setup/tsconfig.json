@@ -3,7 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "lib",
-    "strict": true
+    "strict": true,
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

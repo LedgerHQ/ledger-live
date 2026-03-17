@@ -3,7 +3,8 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

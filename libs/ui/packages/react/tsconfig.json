@@ -6,7 +6,7 @@
     "jsx": "react",
     "lib": ["es2019", "dom"],
     "types": ["jest"],
-    "baseUrl": ".",
+    "paths": { "*": ["./*"] },
     "rootDir": "./src",
     "outDir": "./lib",
     "preserveSymlinks": true,

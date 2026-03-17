@@ -3,6 +3,7 @@
   "compilerOptions": {
     "lib": ["es2020", "dom"],
     "outDir": "lib",
+    "types": ["node", "jest"],
     "composite": true,
     "declaration": true,
     "declarationMap": true,
