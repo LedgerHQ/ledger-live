@@ -62,7 +62,10 @@ export function useWebView(
 ) {
   const serverRef = useRef<WalletAPIServer | undefined>(undefined);
 
-  setOriginFlow(manifest.name);
+  useEffect(() => {
+    setOriginFlow(manifest.name);
+  }, [manifest.name]);
+
   const tracking = useMemo(
     () =>
       trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>

@@ -5,8 +5,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { ScreenName, NavigatorName } from "~/const";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AddAccountsNavigator from "LLM/features/Accounts/Navigator";
-import { createStore } from "@tests/test-renderer";
-import type { State } from "~/reducers/types";
+import { createStore, withReadOnlyDisabled } from "@tests/test-renderer";
 
 import { Button } from "@ledgerhq/native-ui";
 import {
@@ -46,14 +45,6 @@ export const mockedFF = {
 };
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
-
-const initialStateWithDeviceSelection = (state: State): State => ({
-  ...state,
-  settings: {
-    ...state.settings,
-    readOnlyModeEnabled: false,
-  },
-});
 
 type MockModularDrawerComponentProps = {
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
@@ -139,10 +130,7 @@ const StackNavigatorContent = (props: MockModularDrawerComponentProps) => (
 );
 
 const ModularDrawerWithDeviceSelectionStore = (props: MockModularDrawerComponentProps) => {
-  const store = useMemo(
-    () => createStore({ overrideInitialState: initialStateWithDeviceSelection }),
-    [],
-  );
+  const store = useMemo(() => createStore({ overrideInitialState: withReadOnlyDisabled }), []);
   return (
     <Provider store={store}>
       <StackNavigatorContent {...props} />
