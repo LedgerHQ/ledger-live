@@ -6,8 +6,10 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
@@ -18,8 +20,8 @@
   },
   "devDependencies": {
     "tailwindcss": "catalog:",
-    "eslint-plugin-better-tailwindcss": "catalog:",
-    "eslint-plugin-import": "2.32.0",
+    "oxfmt": "^0.36.0",
+    "oxlint": "1.51.0",
     "@gorhom/bottom-sheet": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -43,6 +45,12 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
