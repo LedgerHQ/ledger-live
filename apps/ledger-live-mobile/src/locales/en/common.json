@@ -7772,7 +7772,7 @@
   },
   "wallet": {
     "tabs": {
-      "crypto": "Crypto",
+      "crypto": "Cryptos",
       "market": "Market"
     },
     "referralProgram": "$20"
