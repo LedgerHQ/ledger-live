@@ -121,10 +121,7 @@ export async function withApi<T>(
   }
 }
 
-async function getTransaction(
-  api: JsonRpcProvider,
-  txHash: string,
-): Promise<TransactionInfo> {
+async function getTransaction(api: JsonRpcProvider, txHash: string): Promise<TransactionInfo> {
   const [tx, receipt] = await Promise.all([
     api.getTransaction(txHash),
     api.getTransactionReceipt(txHash),
@@ -153,10 +150,7 @@ function makeGetTransaction(nodeConfig: ExternalNodeConfig): NodeApi["getTransac
   return (currency, txHash) => withApi(currency, api => getTransaction(api, txHash), nodeConfig);
 }
 
-async function getCoinBalance(
-  api: JsonRpcProvider,
-  address: string,
-): Promise<BigNumber> {
+async function getCoinBalance(api: JsonRpcProvider, address: string): Promise<BigNumber> {
   const balance = await api.getBalance(normalizeAddress(address));
   return new BigNumber(balance.toString());
 }
@@ -178,10 +172,7 @@ function makeGetTokenBalance(nodeConfig: ExternalNodeConfig): NodeApi["getTokenB
   return (currency, address, contractAddress) =>
     withApi(currency, api => getTokenBalance(api, address, contractAddress), nodeConfig);
 }
-async function getTransactionCount(
-  api: JsonRpcProvider,
-  address: string,
-): Promise<number> {
+async function getTransactionCount(api: JsonRpcProvider, address: string): Promise<number> {
   return api.getTransactionCount(normalizeAddress(address), "pending");
 }
 
@@ -299,10 +290,7 @@ function makeGetFeeData(nodeConfig: ExternalNodeConfig): NodeApi["getFeeData"] {
     withApi(currency, api => getFeeData(api, currency, transaction), nodeConfig);
 }
 
-async function broadcastTransaction(
-  api: JsonRpcProvider,
-  signedTxHex: string,
-): Promise<string> {
+async function broadcastTransaction(api: JsonRpcProvider, signedTxHex: string): Promise<string> {
   try {
     const { hash } = await api.broadcastTransaction(signedTxHex);
     return hash;
