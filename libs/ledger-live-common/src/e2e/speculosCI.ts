@@ -7,6 +7,7 @@ import {
 import { SpeculosDevice } from "./speculos";
 import https from "https";
 import { sanitizeError } from "./index";
+import { v4 as uuid } from "uuid";
 
 const { GITHUB_TOKEN, SPECULOS_IMAGE_TAG } = process.env;
 const GIT_API_URL = "https://api.github.com/repos/LedgerHQ/actions/actions/";
@@ -17,9 +18,7 @@ const getSpeculosAddress = (runId: string) => `https://${runId}.speculos.aws.stg
 const speculosPort = 443;
 
 function uniqueId(): string {
-  const timestamp = Date.now().toString(36);
-  const randomString = Math.random().toString(36).slice(2, 7);
-  return timestamp + randomString;
+  return uuid();
 }
 
 function slugify(name: string): string {

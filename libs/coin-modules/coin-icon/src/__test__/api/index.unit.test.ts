@@ -10,7 +10,7 @@ import { isTestnet } from "../../logic";
 
 // Mock the necessary modules and functions
 jest.mock("@ledgerhq/live-network/network");
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("@ledgerhq/cryptoassets");
 jest.mock("../../logic");
 jest.mock("../../config");

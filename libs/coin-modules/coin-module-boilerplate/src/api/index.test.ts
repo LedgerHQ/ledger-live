@@ -17,6 +17,9 @@ describe("createApi", () => {
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
+      validateAddress: expect.any(Function),
+      validateIntent: expect.any(Function),
+      getNextSequence: expect.any(Function),
     });
   });
 });

@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "ウォレットへのアクセスはまだバックアップされていません"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "更新中 - 最終更新：{{timeAgo}}",
+      "refreshingInitial" : "更新中...",
+      "upToDate" : "最新の状態"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OSアップデートをご利用いただけます",
+          "manager" : "Ledger OSのアップデートをご利用いただけます"
+        },
+        "version" : "バージョン{{firmwareVersion}}",
+        "cta" : "アップデート"
+      },
       "title" : "OSアップデートをご利用いただけます",
       "descriptionDeviceName" : "「{{deviceName}}」をOSバージョン{{firmwareVersion}}にアップデートする場合は、こちらをタップしてください。",
       "descriptionProductName" : "{{productName}}をOSバージョン{{firmwareVersion}}にアップデートする場合は、こちらをタップしてください。"
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "資産が見つかりません",
     "accountCount_one" : "{{count}}アカウント",
     "accountCount_other" : "{{count}}アカウント",
+    "perpetualsBanner" : "現在、ArbitrumチェーンのUSDCでのみサポートされています。",
     "errors" : {
       "title" : "接続に失敗しました。",
       "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",

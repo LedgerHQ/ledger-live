@@ -6,7 +6,8 @@ import {
   PUBLIC_KEY,
 } from "../test/fixtures";
 import { createTestConcordiumAccount } from "../test/testHelpers";
-import { getAccountShape } from "./sync";
+import { getAccountShape as getAccountShapeOriginal } from "./sync";
+const getAccountShape = getAccountShapeOriginal as any;
 
 jest.mock("../network/proxyClient", () => ({
   getAccountsByPublicKey: jest.fn(),
@@ -173,7 +174,14 @@ describe("sync", () => {
       // GIVEN
       const currency = createFixtureCurrency();
       const initialAccount = createTestConcordiumAccount({
-        concordiumResources: { isOnboarded: false, publicKey: PUBLIC_KEY },
+        concordiumResources: {
+          isOnboarded: false,
+          publicKey: PUBLIC_KEY,
+          credId: "",
+          identityIndex: 0,
+          credNumber: 0,
+          ipIdentity: 0,
+        },
       });
 
       // WHEN
@@ -206,7 +214,14 @@ describe("sync", () => {
       const currency = createFixtureCurrency();
       const initialAccount = createTestConcordiumAccount({
         operations: [existingOp],
-        concordiumResources: { isOnboarded: false, publicKey: PUBLIC_KEY },
+        concordiumResources: {
+          isOnboarded: false,
+          publicKey: PUBLIC_KEY,
+          credId: "",
+          identityIndex: 0,
+          credNumber: 0,
+          ipIdentity: 0,
+        },
       });
 
       // WHEN

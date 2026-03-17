@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";

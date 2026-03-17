@@ -1,12 +1,12 @@
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,
   getSerializedAddressParameters,
   makeSync,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import createTransaction from "../logic/createTransaction";

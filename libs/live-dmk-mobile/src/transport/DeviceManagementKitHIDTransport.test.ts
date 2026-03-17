@@ -1,5 +1,4 @@
 import { BehaviorSubject, Observable, Subject } from "rxjs";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   ConnectedDevice,
   DeviceManagementKit,
@@ -21,13 +20,13 @@ import { DisconnectedDevice } from "@ledgerhq/errors";
 
 function createMockDMK(): DeviceManagementKit {
   const mock = {
-    getDeviceSessionState: jest.fn<DeviceManagementKit["getDeviceSessionState"]>(),
-    getConnectedDevice: jest.fn<DeviceManagementKit["getConnectedDevice"]>(),
-    connect: jest.fn<DeviceManagementKit["connect"]>(),
-    disconnect: jest.fn<DeviceManagementKit["disconnect"]>(),
-    listenToAvailableDevices: jest.fn<DeviceManagementKit["listenToAvailableDevices"]>(),
-    listenToConnectedDevice: jest.fn<DeviceManagementKit["listenToConnectedDevice"]>(),
-    sendApdu: jest.fn<DeviceManagementKit["sendApdu"]>(),
+    getDeviceSessionState: jest.fn(),
+    getConnectedDevice: jest.fn(),
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+    listenToAvailableDevices: jest.fn(),
+    listenToConnectedDevice: jest.fn(),
+    sendApdu: jest.fn(),
   };
   return mock as unknown as DeviceManagementKit;
 }
@@ -35,7 +34,7 @@ function createMockDMK(): DeviceManagementKit {
 const aMockedDeviceSessionState: DeviceSessionState = {
   deviceStatus: DeviceStatus.CONNECTED,
   sessionStateType: DeviceSessionStateType.Connected,
-  deviceModelId: DeviceModelId.FLEX,
+  deviceModelId: DMKDeviceModelId.FLEX,
 };
 
 const createMockDiscoveredDevice = (
@@ -76,8 +75,9 @@ describe("DeviceManagementKitHIDTransport", () => {
       const connectedDevice: ConnectedDevice = {
         id: "deviceId",
         type: "USB",
+        transport: rnHidTransportIdentifier,
         sessionId: "sessionId",
-        modelId: DeviceModelId.FLEX,
+        modelId: DMKDeviceModelId.FLEX,
         name: "FLEX",
       };
       jest.mocked(mockDMK.getConnectedDevice).mockReturnValue(connectedDevice);
@@ -113,8 +113,9 @@ describe("DeviceManagementKitHIDTransport", () => {
         jest.mocked(mockDMK.getConnectedDevice).mockReturnValue({
           id: "deviceId",
           type: "USB",
+          transport: rnHidTransportIdentifier,
           sessionId: "sessionId",
-          modelId: DeviceModelId.FLEX,
+          modelId: DMKDeviceModelId.FLEX,
           name: "FLEX",
         });
 
@@ -147,8 +148,9 @@ describe("DeviceManagementKitHIDTransport", () => {
         jest.mocked(mockDMK.getConnectedDevice).mockReturnValue({
           id: "deviceId",
           type: "USB",
+          transport: rnHidTransportIdentifier,
           sessionId: "sessionId",
-          modelId: DeviceModelId.FLEX,
+          modelId: DMKDeviceModelId.FLEX,
           name: "FLEX",
         });
 

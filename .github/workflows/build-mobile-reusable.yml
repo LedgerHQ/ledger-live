@@ -69,12 +69,15 @@ jobs:
         run: cd apps/ledger-live-mobile && npm version $VERSION
       - name: build the app
         env:
+          TURBO_API: "http://127.0.0.1:${{ steps.caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
           ANDROID_KEYSTORE_PASS: staging
           ANDROID_KEY_ALIAS: staging
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm build-ci:llm:android
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:

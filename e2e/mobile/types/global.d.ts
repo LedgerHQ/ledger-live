@@ -57,11 +57,13 @@ declare global {
   var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
+  var getElementByIdWithDescendantTexts: typeof NativeElementHelpers.getElementByIdWithDescendantTexts;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
   var getElementsById: typeof NativeElementHelpers.getElementsById;
   var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;
   var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
   var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
+  var IsIdPresent: typeof NativeElementHelpers.isIdPresent;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
   var scrollToId: typeof NativeElementHelpers.scrollToId;
   var scrollToText: typeof NativeElementHelpers.scrollToText;

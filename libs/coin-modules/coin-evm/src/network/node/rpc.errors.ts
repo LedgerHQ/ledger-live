@@ -12,10 +12,13 @@ export function hasErrorCode(error: unknown, code: string): boolean {
 /**
  * Checks if the given EVM RPC error response indicates that the called RPC method is unsupported by the node.
  *
+ * - -32601 / method_not_found: method not implemented
+ * - -32605: method not available on current plan (e.g. QuickNode "debug and trace methods are not supported")
+ *
  * @param error EVM node response
  */
 export function isUnsupportedRpcMethodError(error: unknown): boolean {
-  const unsupportedCodes = new Set(["-32601", "method_not_found"]);
+  const unsupportedCodes = new Set(["-32601", "method_not_found", "-32605"]);
   return collectRpcErrorCodes(error).some(code => unsupportedCodes.has(code));
 }
 

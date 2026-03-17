@@ -5,6 +5,8 @@ import { hgraphClient } from "./hgraph";
 
 jest.mock("@ledgerhq/live-network");
 const mockedNetwork = jest.mocked(network);
+const getRequestData = (callIndex = 0) =>
+  (mockedNetwork.mock.calls[callIndex][0] as { data: { query: string; variables: any } }).data;
 
 describe("getLatestIndexedConsensusTimestamp", () => {
   beforeEach(() => {
@@ -82,7 +84,7 @@ describe("getERC20Balances", () => {
 
     const result = await hgraphClient.getERC20Balances({ address: mockAddress });
 
-    const queryVariables = mockedNetwork.mock.calls[0][0].data.variables;
+    const queryVariables = getRequestData(0).variables;
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
     expect(queryVariables.accountId).toBe("1234");
     expect(result).toEqual(mockBalances);
@@ -99,7 +101,7 @@ describe("getERC20Balances", () => {
 
     await hgraphClient.getERC20Balances({ address: "0.0.9999" });
 
-    expect(mockedNetwork.mock.calls[0][0].data.variables.accountId).toBe("9999");
+    expect(getRequestData(0).variables.accountId).toBe("9999");
   });
 
   it("should throw error when API returns errors", async () => {
@@ -158,7 +160,7 @@ describe("getERC20Transfers", () => {
       fetchAllPages: true,
     });
 
-    const queryVariables = mockedNetwork.mock.calls[0][0].data.variables;
+    const queryVariables = getRequestData(0).variables;
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
     expect(result).toEqual([mockTransfer]);
     expect(queryVariables.accountId).toBe("1234");
@@ -263,8 +265,8 @@ describe("getERC20Transfers", () => {
       fetchAllPages: true,
     });
 
-    const query = mockedNetwork.mock.calls[0][0].data.query;
-    const queryVariables = mockedNetwork.mock.calls[0][0].data.variables;
+    const query = getRequestData(0).query;
+    const queryVariables = getRequestData(0).variables;
     expect(query).toContain("consensus_timestamp: { _gt: $cursor }");
     expect(queryVariables.cursor).toBe("1234567890123456789");
   });
@@ -283,7 +285,7 @@ describe("getERC20Transfers", () => {
       fetchAllPages: false,
     });
 
-    const query = mockedNetwork.mock.calls[0][0].data.query;
+    const query = getRequestData(0).query;
     expect(query).toContain("order_by: { consensus_timestamp: desc }");
   });
 
@@ -329,7 +331,7 @@ describe("getERC20TransfersByTimestampRange", () => {
       endTimestamp: "2000.000000000",
     });
 
-    const queryVariables = mockedNetwork.mock.calls[0][0].data.variables;
+    const queryVariables = getRequestData(0).variables;
     expect(mockedNetwork).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockTransfers);
     expect(queryVariables.startTimestamp).toBe("1000000000000");
@@ -348,7 +350,7 @@ describe("getERC20TransfersByTimestampRange", () => {
       endTimestamp: "5678.901234567",
     });
 
-    const queryVariables = mockedNetwork.mock.calls[0][0].data.variables;
+    const queryVariables = getRequestData(0).variables;
     expect(queryVariables.startTimestamp).toBe("1234567890123");
     expect(queryVariables.endTimestamp).toBe("5678901234567");
   });
@@ -415,8 +417,12 @@ describe("getERC20TransfersByTimestampRange", () => {
       limit: 1,
     });
 
-    const firstCall = mockedNetwork.mock.calls[0][0];
-    const secondCall = mockedNetwork.mock.calls[1][0];
+    const firstCall = mockedNetwork.mock.calls[0][0] as {
+      data: { query: string; variables: Record<string, unknown> };
+    };
+    const secondCall = mockedNetwork.mock.calls[1][0] as {
+      data: { query: string; variables: Record<string, unknown> };
+    };
 
     // First call should use _gte with startTimestamp
     expect(firstCall.data.query).toContain("_gte: $startTimestamp");
@@ -439,7 +445,7 @@ describe("getERC20TransfersByTimestampRange", () => {
       order: "asc",
     });
 
-    const query = mockedNetwork.mock.calls[0][0].data.query;
+    const query = getRequestData(0).query;
     expect(query).toContain("order_by: { consensus_timestamp: asc }");
   });
 

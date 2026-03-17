@@ -20,6 +20,8 @@ type Props = StackNavigatorProps<
   ScreenName.PlatformCompleteExchange
 >;
 
+const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
+
 const PlatformCompleteExchange: React.FC<Props> = ({
   route: {
     params: { request, onResult, device, onClose },
@@ -48,9 +50,20 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 
   useEffect(() => {
     if (signedOperation) {
-      broadcast(signedOperation).then(operation => {
-        onResult({ operation });
-      }, setError);
+      broadcast(signedOperation).then(
+        operation => {
+          onResult({ operation });
+        },
+        error => {
+          const shouldRestart = shouldRestartFlow(error);
+
+          if (shouldRestart) {
+            onResult({ error });
+            return;
+          }
+          setError(error);
+        },
+      );
     }
   }, [broadcast, onResult, signedOperation]);
 

@@ -11,9 +11,10 @@ import {
 } from "@hashgraph/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 import { createApi } from "../api";
-import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
+import { HEDERA_TRANSACTION_MODES, STAKING_REWARD_HASH_SUFFIX, TINYBAR_SCALE } from "../constants";
 import { getSyntheticBlock, toEVMAddress } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
@@ -118,7 +119,7 @@ describe("createApi", () => {
           type: "erc20",
           gasLimit: 100n,
         },
-      });
+      } as any);
 
       const rawTx = ContractExecuteTransaction.fromBytes(Buffer.from(hex, "hex"));
       expect(rawTx).toBeInstanceOf(ContractExecuteTransaction);
@@ -582,6 +583,22 @@ describe("createApi", () => {
       expect(transaction?.details?.memo).toBe("test");
     });
 
+    it("derives fees payer from transfers for failed transactions", async () => {
+      const blockHeight = 176175512;
+      const txPaidBySender = "zlE5fX0N44XgMzi9jxr9G4gcCwuAQ4v75wYVXmqBqE808wLKhc/aS+3ZZFl1XOzp";
+      const txNotPaidBySender = "su9qFNvTpteObMCdqJZ8UxKmgB0UFafqPbwjpawBKzAzJOPwCgpQz6TLCL80oZXd";
+
+      const block = await api.getBlock(blockHeight);
+      const firstTx = block.transactions.find(tx => tx.hash === txPaidBySender);
+      const secondTx = block.transactions.find(tx => tx.hash === txNotPaidBySender);
+
+      expect(firstTx?.failed).toBe(true);
+      expect(firstTx?.feesPayer).toBe("0.0.10067173");
+
+      expect(secondTx?.failed).toBe(true);
+      expect(secondTx?.feesPayer).toBe("0.0.23");
+    });
+
     it("correctly identifies erc20 operations in blocks", async () => {
       const blockHeight = 176814261;
       const txHash = "dN7BMus6+8ISOwNPVt7l4KpQT9VaSM9LG6qLPXBqpRVw83ZPMO6Bzyt63305lLXu";
@@ -763,6 +780,8 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
+    const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+
     it("returns empty array for pristine account", async () => {
       const { items: operations } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.pristine.accountId,
@@ -873,8 +892,35 @@ describe("createApi", () => {
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
+      expect(rewardOp?.tx.hash).not.toContain(STAKING_REWARD_HASH_SUFFIX);
       // every staking operation should have a fees payer
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("returns valid senders and recipients for staking operations", async () => {
+      const cursor = "1772617523.000000000";
+      const { items: ops } = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId,
+        { minHeight: 0, cursor, limit: 30, order: "desc" },
+      );
+
+      const delegateHash = "+07jwNyyEDuwngDgoW3sVgfTfDE5qn+HgPsbltlrUIW/n/LYpFSEwSQNOTu/8GLQ";
+      const undelegateHash = "v0jXJwjKaypunqz91EuQDU2mz/ejSb3AvEJ5fgYkftl+DDT2mBlwB5bSRqXWyoth";
+      const redelegateHash = "pm8vFWlcBEEPbB+pkZTUUxs0FfO2KyDtg0KNfOYnnba+rpHT63OIMhFKKNpfDokk";
+
+      const delegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === delegateHash);
+      const undelegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === undelegateHash);
+      const redelegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === redelegateHash);
+      const rewardOp = ops.find(o => o.type === "REWARD");
+
+      expect(delegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(delegateOp?.recipients).toEqual(["0.0.14"]);
+      expect(undelegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(undelegateOp?.recipients).toEqual(["0.0.31"]);
+      expect(redelegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(redelegateOp?.recipients).toEqual(["0.0.23"]);
+      expect(rewardOp?.senders).toEqual([rewardPayerAddress]);
+      expect(rewardOp?.recipients).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
     });
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
@@ -923,12 +969,12 @@ describe("createApi", () => {
 
         const { items: page1, next: pagingToken1 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: initialCursor, limit, order },
+          { minHeight, limit, order, ...(initialCursor ? { cursor: initialCursor } : {}) },
         );
 
         const { items: page2, next: pagingToken2 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: pagingToken1, limit, order },
+          { minHeight, limit, order, ...(pagingToken1 ? { cursor: pagingToken1 } : {}) },
         );
 
         const firstPage1Timestamp = page1[0]?.tx?.date;

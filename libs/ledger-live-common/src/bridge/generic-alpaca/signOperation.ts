@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import {
@@ -10,7 +10,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { Result } from "@ledgerhq/coin-framework/derivation";
+import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -99,7 +99,7 @@ export const genericSignOperation =
 
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-            const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
+            const sequenceNumber = await alpacaApi.getNextSequence(transactionIntent.sender);
             transactionIntent.sequence = sequenceNumber;
           }
 

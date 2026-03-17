@@ -36,9 +36,9 @@ export function AmountScreenView({
   onGetFunds,
 }: AmountScreenViewProps) {
   return (
-    <DialogBody className="py-16">
-      <div className="flex h-full flex-col" data-testid="send-amount-step">
-        <div className="flex flex-1 flex-col gap-24">
+    <>
+      <DialogBody className="py-16 mb-16" data-testid="send-amount-step">
+        <div className="flex flex-col gap-24">
           <AmountInputSection
             amountValue={amountValue}
             amountInputMaxDecimalLength={amountInputMaxDecimalLength}
@@ -54,26 +54,26 @@ export function AmountScreenView({
 
           {showQuickActions ? <QuickActionsRow actions={quickActions} /> : null}
         </div>
+      </DialogBody>
 
-        <AmountFooter
-          feesRowLabel={feesRowLabel}
-          feesRowValue={feesRowValue}
-          feesRowStrategyLabel={feesRowStrategyLabel}
-          selectedFeeStrategy={selectedFeeStrategy}
-          feePresetOptions={feePresetOptions}
-          fiatByPreset={fiatByPreset}
-          legendByPreset={legendByPreset}
-          onSelectFeeStrategy={onSelectFeeStrategy}
-          onSelectCustomFees={onOpenCustomFees}
-          onSelectCoinControl={onSelectCoinControl}
-          reviewLabel={reviewLabel}
-          reviewShowIcon={reviewShowIcon}
-          reviewDisabled={reviewDisabled}
-          reviewLoading={reviewLoading}
-          onReview={onReview}
-          onGetFunds={onGetFunds}
-        />
-      </div>
-    </DialogBody>
+      <AmountFooter
+        feesRowLabel={feesRowLabel}
+        feesRowValue={feesRowValue}
+        feesRowStrategyLabel={feesRowStrategyLabel}
+        selectedFeeStrategy={selectedFeeStrategy}
+        feePresetOptions={feePresetOptions}
+        fiatByPreset={fiatByPreset}
+        legendByPreset={legendByPreset}
+        onSelectFeeStrategy={onSelectFeeStrategy}
+        onSelectCustomFees={onOpenCustomFees}
+        onSelectCoinControl={onSelectCoinControl}
+        reviewLabel={reviewLabel}
+        reviewShowIcon={reviewShowIcon}
+        reviewDisabled={reviewDisabled}
+        reviewLoading={reviewLoading}
+        onReview={onReview}
+        onGetFunds={onGetFunds}
+      />
+    </>
   );
 }

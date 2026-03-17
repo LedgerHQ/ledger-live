@@ -8,7 +8,7 @@ import { renderHook, act } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { selectorStateDefaultValues } from ".";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
-import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";

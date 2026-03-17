@@ -1,4 +1,4 @@
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
@@ -85,6 +85,7 @@ const EMPTY_RESULT: Readonly<EndpointResult> = {
 export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
   retries = DEFAULT_RETRIES_API,
+  messageIsAnError = ["NOTOK"],
 ): Promise<T> {
   try {
     const { data } = await axios.request<{
@@ -93,7 +94,7 @@ export async function fetchWithRetries<T>(
       result: T;
     }>(params);
 
-    if (!Number(data.status) && data.message === "NOTOK") {
+    if (!Number(data.status) && messageIsAnError.includes(data.message)) {
       throw new EtherscanAPIError("Error while fetching data from Etherscan like API", {
         params,
         data,
@@ -106,7 +107,7 @@ export async function fetchWithRetries<T>(
       // wait the API timeout before trying again
       await delay(ETHERSCAN_TIMEOUT);
       // decrement with prefix here or it won't work
-      return fetchWithRetries<T>(params, --retries);
+      return fetchWithRetries<T>(params, --retries, messageIsAnError);
     }
     throw e;
   }
@@ -128,7 +129,14 @@ function isDone(limitParameter: number | undefined, operationCount: number): boo
   );
 }
 
-function paginationParams(params: FetchOperationsParams): {
+/** Query params for etherscan-like block-range endpoints (startblock, endblock, page, offset, sort). */
+function blockRangeQueryParams(params: {
+  fromBlock: number;
+  toBlock?: number;
+  page?: number;
+  limit?: number;
+  sort: "asc" | "desc";
+}): {
   tag: "latest";
   page: number;
   offset?: number;
@@ -144,6 +152,16 @@ function paginationParams(params: FetchOperationsParams): {
     startblock: params.fromBlock,
     endblock: params.toBlock,
   };
+}
+
+function paginationParams(params: FetchOperationsParams): ReturnType<typeof blockRangeQueryParams> {
+  return blockRangeQueryParams({
+    fromBlock: params.fromBlock,
+    ...(params.toBlock !== undefined && { toBlock: params.toBlock }),
+    ...(params.page !== undefined && { page: params.page }),
+    ...(params.limit !== undefined && { limit: params.limit }),
+    sort: params.sort,
+  });
 }
 
 function groupByHash<T extends { hash: string }>(items: T[]): Record<string, T[]> {
@@ -488,6 +506,62 @@ export const getInternalOperations = async (
 };
 
 /**
+ * Get internal transactions for a single block from etherscan/blockscout explorer.
+ * Used by getBlock to merge internal transfers into block transactions.
+ * Returns empty array for non-etherscan/non-blockscout explorers (ledger, none, etc.).
+ */
+export async function getInternalTransactionsByBlock(
+  currency: CryptoCurrency,
+  blockHeight: number,
+): Promise<EtherscanInternalTransaction[]> {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || {};
+
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    return [];
+  }
+
+  const PAGE_SIZE = 10000;
+  const allOps: EtherscanInternalTransaction[] = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const raw = await fetchWithRetries<EtherscanInternalTransaction[] | string>(
+      {
+        method: "GET",
+        url: `${explorer.uri}?module=account&action=txlistinternal`,
+        params: blockRangeQueryParams({
+          fromBlock: blockHeight,
+          toBlock: blockHeight,
+          page,
+          limit: PAGE_SIZE,
+          sort: "asc",
+        }),
+      },
+      0, // do not retry on error
+      [
+        // blockscout can respond `{"message":"No internal transactions found","result":[],"status":"0"}`
+        // even though there are internal transactions that could be fetched otherwise !
+        "No internal transactions found",
+        // this is the common error message for all etherscan like explorers
+        "NOTOK",
+      ],
+    );
+
+    const ops = Array.isArray(raw) ? raw : [];
+    allOps.push(...ops.map(fixTxHash));
+
+    hasMore = ops.length >= PAGE_SIZE;
+    if (hasMore) {
+      page += 1;
+    }
+  }
+
+  return allOps;
+}
+
+/**
  * Type for endpoint getter functions
  */
 export type FetchOperations = (params: FetchOperationsParams) => Promise<EndpointResult>;
@@ -720,9 +794,15 @@ export const getOperations = makeLRUCache<
           : err instanceof Error
             ? `${err.name} - ${err.message}`
             : JSON.stringify(err);
-      throw new InvalidExplorerResponse(`${currency.name} - ${message}`, {
-        currencyName: currency.name,
-      });
+      throw new InvalidExplorerResponse(
+        `${currency.name} - ${message}`,
+        {
+          currencyName: currency.name,
+        },
+        {
+          cause: err,
+        },
+      );
     }
   },
   (_currency, _address, accountId, fromBlock, toBlock, pagingToken, limit, order) =>

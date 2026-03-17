@@ -4,9 +4,9 @@
     "src/logic/index.ts",
     "src/logic/utils.ts",
     "src/bridge/index.ts",
-    "src/bridge/deviceTransactionConfig.ts",
     "src/signer/index.ts",
     "src/test/index.ts",
+    "src/deviceTransactionConfig.ts",
     "src/index.ts"
   ],
   "ignorePatterns": [

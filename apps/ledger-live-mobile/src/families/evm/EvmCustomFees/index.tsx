@@ -9,7 +9,7 @@ import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
 import Evm1559CustomFees from "./Evm1559CustomFees";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 type Props = BaseComposite<

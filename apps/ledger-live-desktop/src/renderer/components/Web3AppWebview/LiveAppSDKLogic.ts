@@ -11,7 +11,7 @@ import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/raw
 import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
@@ -67,7 +67,7 @@ export const requestAccountLogic = async (
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : currentRouteNameRef.current ?? "Unknown";
+      : (currentRouteNameRef.current ?? "Unknown");
 
   const flow = manifest.name;
 

@@ -308,6 +308,7 @@
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "perps" : "무기한 계약",
+    "home" : "홈",
     "refer" : "친구 추천",
     "lend" : "대출",
     "catalog" : "탐색",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "이전 노드 ID",
       "gasConsumed" : "소모된 가스비",
       "gasUsed" : "사용된 가스비",
-      "gasLimit" : "가스 한도"
+      "gasLimit" : "가스 한도",
+      "functionId" : "함수 ID"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "펌웨어를 업데이트하세요",
       "installUpdate" : "업데이트 설치",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "OS 업데이트 가능",
+            "manager" : "Ledger OS 최신 업데이트가 있습니다"
+          },
+          "cta" : "업데이트"
+        },
         "warning" : "OS 업데이트 사용 가능",
         "version" : "버전 {{latestFirmware}}",
         "cta" : "내 Ledger로 이동",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "계정 선택",
-      "addAccount" : "기존 계정이나 신규 계정 추가"
+      "addAccount" : "기존 계정이나 신규 계정 추가",
+      "perpetualsBanner" : "현재 아비트럼 체인에서는 USDC만 지원됩니다."
     }
   },
   "customImage" : {
@@ -7583,7 +7593,7 @@
       "skipCTA" : "나중에 할게요"
     },
     "default" : {
-      "title" : "{{ productName }}는 자체 앱을 보유하며 거래 시 필요합니다.",
+      "title" : "{{ productName }} 모델은 자체 앱을 제공하며, 트랜잭션에는 해당 앱이 필요합니다.",
       "subtitle" : "예를 들어, {{productName}}용 비트코인 앱은 비트코인 트랜잭션 서명에 필요합니다.\n기본 앱을 설치하여 사용 중이신 {{productName}} 트랜잭션 전용으로 사용하세요.",
       "installCTA" : "지금 설치",
       "skipCTA" : "나중에 할게요"
@@ -8017,6 +8027,18 @@
     "connect" : "연결",
     "buyALedger" : "Ledger 구매하기"
   },
+  "assets" : {
+    "cryptos" : "암호화폐",
+    "stablecoins" : "스테이블코인",
+    "columns" : {
+      "name" : "이름",
+      "price" : "가격",
+      "balance" : "잔액",
+      "value" : "가치",
+      "trend" : "1일 트렌드",
+      "trendTooltip" : "24시간 자산 변동"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT(대체 불가능 토큰)",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "업데이트 중 오류가 발생했습니다. 다시 시도해 주세요.",
     "installAndRelaunch" : "업데이트 설치 및 재실행"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "쉽고 간편한 스왑",
+        "description" : "Ledger 장치로 언제 어디서나 안전하게 포트폴리오를 관리하세요"
+      },
+      "navigation" : {
+        "title" : "모든 기능을 최적의 위치에서",
+        "description" : "더욱 쉽고 빠른 사용을 위한 메뉴 위치 변경. '내 Ledger'와 '탐색'은 화면 상단에서, '스왑'과 '카드' 메뉴는 사이드바에서 만나보세요."
+      },
+      "actions" : {
+        "title" : "시장 속도에 맞는 빠르고 간편한 트랜잭션",
+        "description" : "새로운 배너로 시장 트렌드를 포착하고, 누구보다 빠르고 간편하게 거래하세요."
+      }
+    },
+    "cta" : {
+      "continue" : "계속",
+      "explore" : "새로워진 포트폴리오 살펴보기"
+    }
   }
 }

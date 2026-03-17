@@ -50,3 +50,60 @@ export function testDeviceActionStates<
   });
   return { observable, cancel };
 }
+
+type Hooks<
+  Output,
+  Error extends DmkError,
+  IntermediateValue extends DeviceActionIntermediateValue,
+> = {
+  onEach?: (state: DeviceActionState<Output, Error, IntermediateValue>) => void;
+  onDone?: () => void;
+  onError?: (error: Error | unknown) => void;
+};
+
+/**
+ * Test that the states emitted by a device action match the expected states.
+ * This version includes hooks for each state, completion, and error handling.
+ * @param deviceAction The device action to test.
+ * @param expectedStates The expected states.
+ * @param internalApi The internal API to use for execution.
+ * @param hooks Optional hooks for onEach state, onDone, and onError.
+ * @returns An object containing the observable and a cancel function.
+ */
+export function testDeviceActionStatesWithUI<
+  Output,
+  Input,
+  Error extends DmkError,
+  IntermediateValue extends DeviceActionIntermediateValue,
+>(
+  deviceAction: DeviceAction<Output, Input, Error, IntermediateValue>,
+  expectedStates: Array<DeviceActionState<Output, Error, IntermediateValue>>,
+  internalApi: InternalApi,
+  hooks: Hooks<Output, Error, IntermediateValue> = {},
+) {
+  const observedStates: Array<DeviceActionState<Output, Error, IntermediateValue>> = [];
+  const { observable, cancel } = deviceAction._execute(internalApi);
+
+  const sub = observable.subscribe({
+    next: state => {
+      observedStates.push(state);
+      hooks.onEach?.(state);
+    },
+    error: error => {
+      hooks.onError?.(error);
+      sub.unsubscribe();
+    },
+    complete: () => {
+      try {
+        expect(observedStates).toEqual(expectedStates);
+        hooks.onDone?.();
+      } catch (e) {
+        hooks.onError?.(e);
+      } finally {
+        sub.unsubscribe();
+      }
+    },
+  });
+
+  return { observable, cancel };
+}

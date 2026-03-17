@@ -16,6 +16,9 @@ export class Layout extends Component {
   readonly drawerEarnButton = this.page.getByTestId("drawer-earn-button");
   readonly drawerBuycryptoButton = this.page.getByTestId("drawer-exchange-button");
   readonly drawerSwapButton = this.page.getByTestId("drawer-swap-button");
+  readonly drawerDiscoverButton = this.page.getByTestId("drawer-catalog-button");
+  readonly drawerReferButton = this.page.getByTestId("drawer-refer-button");
+  readonly drawerCardButton = this.page.getByTestId("drawer-card-button");
 
   // topbar
   readonly topbarSynchronizeButton = this.topbarActionButton("synchronize").or(

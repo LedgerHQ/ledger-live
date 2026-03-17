@@ -12,6 +12,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
+  DeviceInfo,
   DeviceModelInfo,
   Feature,
   FeatureId,
@@ -128,6 +129,7 @@ export type SettingsState = {
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
+  deprecationDoNotRemind: string[];
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -228,6 +230,18 @@ export const INITIAL_STATE: SettingsState = {
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
+  deprecationDoNotRemind: [],
+};
+
+export const AFTER_ONBOARDING_STATE: SettingsState = {
+  ...INITIAL_STATE,
+  hasCompletedOnboarding: true,
+  loaded: true,
+  lastSeenDevice: {
+    modelId: DeviceModelId.nanoS,
+    deviceInfo: {} as DeviceInfo,
+    apps: [],
+  },
 };
 
 /* Handlers */
@@ -273,6 +287,7 @@ type HandlersPayloads = {
 
   MARKET_ADD_STARRED_COINS: string;
   MARKET_REMOVE_STARRED_COINS: string;
+  DEPRECATION_DO_NOT_REMIND: string;
 
   SET_HAS_BEEN_UPSOLD_RECOVER: boolean;
   SET_ONBOARDING_USE_CASE: OnboardingUseCase;
@@ -323,6 +338,7 @@ const handlers: SettingsHandlers = {
       ...filteredPayload,
     };
   },
+
   FETCH_SETTINGS: (state, { payload: settings }) => {
     const filteredSettings = filterValidSettings(settings);
     return {
@@ -418,6 +434,12 @@ const handlers: SettingsHandlers = {
       ...state,
       supportedCounterValues: payload,
       counterValue: activeCounterValue,
+    };
+  },
+  DEPRECATION_DO_NOT_REMIND: (state: SettingsState, { payload }) => {
+    return {
+      ...state,
+      deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload],
     };
   },
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: (state: SettingsState, { payload }) => ({

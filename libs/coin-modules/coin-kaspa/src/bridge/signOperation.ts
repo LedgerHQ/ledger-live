@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 

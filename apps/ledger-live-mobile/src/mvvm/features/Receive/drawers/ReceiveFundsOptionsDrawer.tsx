@@ -1,6 +1,5 @@
 import React from "react";
-import { Text } from "@ledgerhq/native-ui";
-import { Icons } from "@ledgerhq/native-ui/index";
+import { Text, Icons } from "@ledgerhq/native-ui";
 import { BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 import { OptionButton } from "../components/OptionButton";

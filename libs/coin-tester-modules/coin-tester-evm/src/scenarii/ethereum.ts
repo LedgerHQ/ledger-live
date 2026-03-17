@@ -1,4 +1,4 @@
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

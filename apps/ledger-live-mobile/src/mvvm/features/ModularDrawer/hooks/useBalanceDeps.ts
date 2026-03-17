@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";
-import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
+import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";

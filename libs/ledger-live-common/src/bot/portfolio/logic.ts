@@ -40,13 +40,12 @@ export function getSpecsPerBots(
   }
 
   // prepare the jobs
-  const specsPerBots = Object.keys(seeds).flatMap((seed, i) => {
-    return specs.map(({ spec, family, key }, j) => {
+  const specsPerBots = Object.keys(seeds).flatMap(seed => {
+    return specs.map(({ spec, family, key }) => {
       return {
         seed,
         env: {
           SEED: seeds[seed],
-          SPECULOS_PID_OFFSET: String(i * specs.length + j),
         },
         spec,
         family,

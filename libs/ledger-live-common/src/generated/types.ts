@@ -171,7 +171,7 @@ import type {
   TransactionRaw as xrpTransactionRaw,
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
-} from "@ledgerhq/coin-xrp/types/index";
+} from "../families/xrp/types";
 
 export type Transaction =
   | aleoTransaction

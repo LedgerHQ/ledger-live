@@ -4,7 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import uniq from "lodash/uniq";
 import { useTranslation } from "react-i18next";
-import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/operation";
+import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";

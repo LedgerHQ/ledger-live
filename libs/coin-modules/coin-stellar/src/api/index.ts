@@ -1,5 +1,4 @@
 import {
-  Api,
   Block,
   BlockInfo,
   Cursor,
@@ -12,8 +11,10 @@ import {
   Reward,
   TransactionIntent,
   CraftedTransaction,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
@@ -31,10 +32,11 @@ import {
   getTokenFromAsset,
   getAssetFromToken,
 } from "../logic";
+import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
 import { StellarBurnAddressError, StellarMemo } from "../types";
 
-export function createApi(config: StellarConfig): Api<StellarMemo> {
+export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & BridgeApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -66,9 +68,8 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       throw new Error("getRewards is not supported");
     },
     validateIntent,
-    getSequence: async (address: string) => {
+    getNextSequence: async (address: string) => {
       const sequence = await fetchSequence(address);
-      // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return BigInt(sequence.plus(1).toFixed());
     },
     getTokenFromAsset,
@@ -87,6 +88,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateAddress,
   };
 }
 

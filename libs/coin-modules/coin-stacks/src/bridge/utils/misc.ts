@@ -19,7 +19,7 @@ import {
   createAssetInfo,
 } from "@stacks/transactions";
 
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   fetchFullMempoolTxs,
   fetchNonce,
@@ -29,7 +29,10 @@ import {
   TransactionResponse,
 } from "../../network/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import {
+  encodeOperationId,
+  encodeSubOperationId,
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
 import { bufferMemoToString, hexMemoToString } from "./memoUtils";

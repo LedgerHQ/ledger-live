@@ -5,10 +5,10 @@ import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
+import { useNetworkConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../../components/AccountCount";
 import { accountsCountAndApy } from "../../../components/AccountCountApy";
-import { accountsApy } from "../../../components/AccountApy";
+import { ApyIndicator } from "LLD/features/ModularDrawer/components/ApyIndicator";
 import { balanceItem } from "../../../components/Balance";
 import { useAccountData } from "../../../hooks/useAccountData";
 import { useBalanceDeps } from "../../../hooks/useBalanceDeps";
@@ -28,26 +28,19 @@ export const SelectNetwork = ({
 }: SelectNetworkProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
-  if (!networks || networks.length === 0 || !selectedAssetId) {
-    return null;
-  }
-
-  const networkConfigurationDeps = {
+  const formattedNetworks = useNetworkConfiguration(networks ?? [], {
     useAccountData,
     accountsCount,
     accountsCountAndApy,
-    accountsApy,
+    ApyIndicator,
     useBalanceDeps,
     balanceItem,
-  };
-
-  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
-
-  const transformNetworks = makeNetworkConfigurationHook({
-    networksConfig,
+    ...networksConfig,
   });
 
-  const formattedNetworks = transformNetworks(networks);
+  if (!networks || networks.length === 0 || !selectedAssetId) {
+    return null;
+  }
 
   const onClick = (networkId: string) => {
     const network = formattedNetworks.find(network =>

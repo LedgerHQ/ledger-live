@@ -1,4 +1,4 @@
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedConfig } from "../test/fixtures/config.fixture";

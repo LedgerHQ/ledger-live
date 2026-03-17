@@ -5,11 +5,20 @@ Dev teams are responsible for **adding/updating tests** when implementing new fe
 
 ---
 
+## Interactive Setup (Recommended)
+
+Use the Cursor command `/e2e-desktop-onboard` for a guided, interactive walkthrough that checks every prerequisite, validates your environment, builds the app, and runs a smoke test.
+
+---
+
 ## Quick Start
+
+All build and test commands below are run from the **repo root** (`ledger-live/`).
 
 ### 1. Prerequisites
 
 - Ledger Live repository (as mentioned in the full wiki)
+- Docker Desktop installed and running (Speculos runs in Docker)
 - Clone the CoinApps repository:
 
 ```bash
@@ -79,3 +88,16 @@ pnpm e2e:desktop test:playwright <testFileName>
 
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
+
+### 5. Wallet 4.0
+
+To reduce noise in test reports the Wallet 4.0 feature is OFF by default (regardless of Firebase).
+You can force Wallet 4.0 ON by setting the E2E environment variable:
+
+```bash
+export E2E_ENABLE_WALLET40=1
+```
+
+Individual tests can still switch the feature ON explicitly passing the flag and parameters.
+
+To switch Wallet 4.0 on for all tests please use the checkbox on the Workflow.

@@ -162,8 +162,3 @@ export const asBaker = (data: TezosApiBaker): Baker | undefined => {
     };
   }
 };
-
-export const hydrateBakers = (bakers: Baker[]): void => {
-  log("tezos/bakers", "hydrate " + bakers.length + " bakers");
-  cache.hydrate("", bakers);
-};

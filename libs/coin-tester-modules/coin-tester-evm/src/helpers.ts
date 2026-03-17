@@ -3,8 +3,8 @@ import { AccountBridge, CurrencyBridge, NFTStandard } from "@ledgerhq/types-live
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Eth";
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/wallet-api-core/lib/currencies/types";
+import type { CryptoCurrency } from "@ledgerhq/wallet-api-core/lib/currencies/types";
 
 export type PaymentServiceProvider =
   | "visa"

@@ -1,6 +1,9 @@
-import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import {
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -21,6 +24,8 @@ import type {
 import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
+  createStakingRewardOperationHash,
+  extractFeesPayer,
   getMemoFromBase64,
   getSyntheticBlock,
   mergeTransactionsFromDifferentSources,
@@ -46,10 +51,12 @@ function getCommonMirrorOperationData(
   const hasFailed = rawTx.result !== "SUCCESS";
   const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
+  const feesPayer = extractFeesPayer(rawTx);
   const extra: HederaOperationExtra = {
     pagingToken: rawTx.consensus_timestamp,
     consensusTimestamp: rawTx.consensus_timestamp,
     transactionId: rawTx.transaction_id,
+    feesPayer,
     ...(memo && { memo }),
   };
 
@@ -87,7 +94,7 @@ function createStakingRewardOperation({
   }
 
   const { hash, date, blockHeight, blockHash } = commonData;
-  const stakingRewardHash = `${hash}-staking-reward`;
+  const stakingRewardHash = createStakingRewardOperationHash(hash);
   const stakingRewardType: OperationType = "REWARD";
   // offset timestamp by +1ms so that, when operations are sorted newest-first, this reward appears just before the operation that triggered it
   const stakingRewardTimestamp = new Date(date.getTime() + 1);
@@ -296,6 +303,11 @@ function processCoinTransfers({
     extra.previousStakingNodeId = stakingAnalysis.previousStakingNodeId;
     extra.targetStakingNodeId = stakingAnalysis.targetStakingNodeId;
     extra.stakedAmount = new BigNumber(stakingAnalysis.stakedAmount.toString());
+  }
+
+  // if recipients array is empty, add the node where the transaction was submitted as recipient
+  if (recipients.length === 0 && rawTx.node) {
+    recipients.push(rawTx.node);
   }
 
   // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId

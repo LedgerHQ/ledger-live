@@ -6,7 +6,7 @@ import {
   type TransactionInfo as WalletTxInfo,
 } from "./wallet-btc";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 import type { Transaction, UtxoStrategy, BtcOperationExtra } from "./types";
 import { bitcoinPickingStrategy } from "./types";

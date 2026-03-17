@@ -1,5 +1,4 @@
 import type {
-  Api,
   Block,
   BlockInfo,
   Cursor,
@@ -13,18 +12,26 @@ import type {
   TransactionIntent,
   TransactionValidation,
   MemoNotSupported,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import invariant from "invariant";
-import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
-import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
+import coinConfig from "../config";
+import {
+  craftTransaction,
+  estimateFees,
+  getBalance,
+  lastBlock,
+  listOperations,
+  validateAddress,
+} from "../logic";
 import { getTransactionType } from "../logic/utils";
-import type { AleoTransactionIntentData } from "../types";
+import type { AleoTransactionIntentData, AleoCoinConfig, AleoConfig } from "../types";
 
 export function createApi(
   config: AleoConfig,
   currencyId: string,
-): Api<MemoNotSupported, AleoTransactionIntentData> {
+): AlpacaApi<MemoNotSupported, AleoTransactionIntentData> {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
   coinConfig.setCoinConfig(() => aleoCoinConfig);
   const currency = getCryptoCurrencyById(currencyId);
@@ -98,8 +105,9 @@ export function createApi(
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getSequence: async (_address: string) => {
-      throw new Error("getSequence is not supported");
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
     },
+    validateAddress,
   };
 }

@@ -10,6 +10,7 @@ import {
 } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
 import {
   CurrentAccountHistDB,
   safeGetRefValue,
@@ -40,6 +41,8 @@ export const initialWebviewState: WebviewState = {
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | boolean | undefined>;
+  /** When true, loadURL only allows URLs matching manifest.domains (same as lldWebviewManifestDomainCheck) */
+  manifestDomainCheckEnabled?: boolean;
 };
 
 type WebviewPartition = {
@@ -62,54 +65,72 @@ export function useWebviewState(
   serverRef?: RefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
-  const { manifest, inputs } = params;
+  const { manifest, inputs, manifestDomainCheckEnabled } = params;
   const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+
+  // Mirror mobile's originWhitelist: if the feature flag is on, only load URLs that pass
+  // the manifest.domains whitelist. Fall back to manifest.url if initialURL is rejected,
+  // and to about:blank if neither is allowed (e.g. domains: []).
+  const webviewSrc = useMemo(() => {
+    if (!manifestDomainCheckEnabled) {
+      return initialURL;
+    }
+    const domains = manifest.domains ?? [];
+    if (isUrlAllowedByManifestDomains(initialURL, domains)) {
+      return initialURL;
+    }
+    if (isUrlAllowedByManifestDomains(manifest.url.toString(), domains)) {
+      return manifest.url.toString();
+    }
+    return "about:blank";
+  }, [initialURL, manifest.domains, manifest.url, manifestDomainCheckEnabled]);
+
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
-  useImperativeHandle(
-    webviewAPIRef,
-    () => {
-      return {
-        reload: () => {
-          const webview = safeGetRefValue(webviewRef);
+  useImperativeHandle(webviewAPIRef, () => {
+    return {
+      reload: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.reload();
-        },
-        goBack: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.reload();
+      },
+      goBack: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.goBack();
-        },
-        goForward: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.goBack();
+      },
+      goForward: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.goForward();
-        },
-        openDevTools: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.goForward();
+      },
+      openDevTools: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.openDevTools();
-        },
-        loadURL: (url: string): Promise<void> => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.openDevTools();
+      },
+      loadURL: (url: string): Promise<void> => {
+        if (
+          manifestDomainCheckEnabled &&
+          !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
+        ) {
+          return Promise.reject(new Error("URL not allowed by manifest domains"));
+        }
+        const webview = safeGetRefValue(webviewRef);
 
-          return webview.loadURL(url);
-        },
-        clearHistory: () => {
-          const webview = safeGetRefValue(webviewRef);
+        return webview.loadURL(url);
+      },
+      clearHistory: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.clearHistory();
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        notify: (method: `event.${string}`, params: any) => {
-          serverRef?.current?.sendMessage(method, params);
-        },
-      };
-    },
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+        webview.clearHistory();
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      notify: (method: `event.${string}`, params: any) => {
+        serverRef?.current?.sendMessage(method, params);
+      },
+    };
+  }, [manifest.domains, manifestDomainCheckEnabled, serverRef]);
 
   const [isMounted, setMounted] = useState<boolean>(false);
   useEffect(() => {
@@ -159,13 +180,18 @@ export function useWebviewState(
     [webviewRef],
   );
 
+  const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "about:blank";
+
   const handleDidStartLoading = useCallback(() => {
     setState(oldState => ({
       ...oldState,
       loading: true,
-      isAppUnavailable: false,
+      // When the webview is intentionally pointed at about:blank due to domain
+      // restrictions, preserve isAppUnavailable so the blocked-app UI is not
+      // cleared by the loading event that about:blank itself triggers.
+      isAppUnavailable: isBlockedByDomainCheck ?? false,
     }));
-  }, []);
+  }, [isBlockedByDomainCheck]);
 
   const handleDidStopLoading = useCallback(() => {
     setState(oldState => ({
@@ -262,7 +288,7 @@ export function useWebviewState(
   ]);
 
   const props = {
-    src: initialURL,
+    src: webviewSrc,
   };
 
   const webviewPartition = useMemo(() => {
@@ -325,7 +351,7 @@ export function useSelectAccount({
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : currentRouteNameRef.current ?? "Unknown";
+      : (currentRouteNameRef.current ?? "Unknown");
 
   const flow = manifest.name;
 

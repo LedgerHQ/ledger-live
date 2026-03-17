@@ -1,5 +1,5 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CeloAccount, CeloOperation, CeloOperationMode, Transaction } from "../types";

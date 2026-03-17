@@ -55,7 +55,7 @@ for (const asset of assets) {
     const { crypto, fiat, operation, amount } = asset.buySell;
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -210,7 +210,7 @@ const sellAsset: { buySell: BuySell; xrayTicket: string; provider: Provider } = 
   buySell: {
     crypto: Account.BTC_NATIVE_SEGWIT_1,
     fiat: { locale: "fr-FR", currencyTicker: "EUR" },
-    amount: "0.0006",
+    amount: "0.0003",
     operation: OperationType.Sell,
   },
   xrayTicket: "B2CQA-3524",
@@ -223,7 +223,7 @@ test.describe("Sell flow - ", () => {
   const { crypto, fiat, amount, operation } = sellAsset.buySell;
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {

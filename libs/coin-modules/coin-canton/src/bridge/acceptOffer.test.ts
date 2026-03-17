@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import * as signTransactionModule from "../common-logic/transaction/sign";
@@ -92,7 +92,7 @@ describe("acceptOffer", () => {
   } as unknown as CantonSigner;
 
   const mockSignerContext: SignerContext<CantonSigner> = jest.fn(
-    async (deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
+    async (_deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
       return callback(mockSigner);
     },
   ) as unknown as SignerContext<CantonSigner>;

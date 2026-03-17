@@ -7,9 +7,11 @@ type TopBarActionButtonProps = TopBarAction;
 export function TopBarActionButton({
   label,
   tooltip,
+  tooltipClassName,
   isInteractive,
   onClick,
   icon,
+  appearance = "gray",
   onTooltipShow,
 }: TopBarActionButtonProps) {
   const testId = `topbar-action-button-${label.replace(/\s+/g, "-").toLowerCase()}`;
@@ -26,7 +28,7 @@ export function TopBarActionButton({
       <Tooltip onOpenChange={handleOpenChange}>
         <TooltipTrigger asChild>
           <IconButton
-            appearance="gray"
+            appearance={appearance}
             size="sm"
             aria-label={label}
             icon={icon}
@@ -35,7 +37,11 @@ export function TopBarActionButton({
             disabled={!isInteractive}
           />
         </TooltipTrigger>
-        {tooltip && <TooltipContent side="bottom">{tooltip}</TooltipContent>}
+        {tooltip && (
+          <TooltipContent side="bottom" className={tooltipClassName}>
+            {tooltip}
+          </TooltipContent>
+        )}
       </Tooltip>
     </div>
   );

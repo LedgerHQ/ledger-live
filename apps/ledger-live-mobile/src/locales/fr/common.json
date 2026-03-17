@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Actualisation – Dernière mise à jour {{timeAgo}}",
+      "refreshingInitial" : "Actualisation...",
+      "upToDate" : "Tout est à jour"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Mise à jour disponible",
+          "manager" : "Mise à jour de Ledger OS disponible"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Mettre à jour"
+      },
       "title" : "Mise à jour disponible",
       "descriptionDeviceName" : "Appuyez pour mettre à jour le système d’exploitation de {{deviceName}} vers la version {{firmwareVersion}}.",
       "descriptionProductName" : "Appuyez pour mettre à jour le système d’exploitation de votre {{productName}} vers la version {{firmwareVersion}}."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount_one" : "{{count}} compte",
     "accountCount_other" : "{{count}} comptes",
+    "perpetualsBanner" : "Actuellement uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
     "errors" : {
       "title" : "Échec de la connexion",
       "backend" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",

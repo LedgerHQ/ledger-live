@@ -11,7 +11,10 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useLocale } from "~/context/Locale";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   formatAmountForInput,
   formatFiatForInput,

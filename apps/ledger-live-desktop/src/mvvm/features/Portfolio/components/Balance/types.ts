@@ -12,6 +12,7 @@ export interface BalanceViewProps {
   readonly isColdStart: boolean;
   readonly isLoading: boolean;
   readonly shouldDisplayBalanceRefreshRework: boolean;
+  readonly theme: "light" | "dark";
 }
 
 export type BalanceViewModelResult = BalanceViewProps & {

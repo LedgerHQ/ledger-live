@@ -68,3 +68,8 @@ export type Intent =
   | TransferPublicToPrivateIntent
   | FeePrivateIntent
   | FeePublicIntent;
+
+export interface PrepareRequestBody {
+  view_key: string;
+  intent: Intent;
+}

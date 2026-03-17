@@ -20,7 +20,7 @@ describe("estimateMaxSpendable", () => {
     useAllAmount: true,
     recipient: "",
     fees: new BigNumber(5000),
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
   };
 
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe("estimateMaxSpendable", () => {
       useAllAmount: false,
       recipient: "",
       fees: new BigNumber(0),
-      type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     });
   });
 

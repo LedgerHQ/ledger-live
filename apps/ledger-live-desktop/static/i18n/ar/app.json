@@ -308,6 +308,7 @@
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
     "perps" : "العقود الدائمة",
+    "home" : "الصفحة الرئيسية",
     "refer" : "ترشيح صديق",
     "lend" : "إقراض",
     "catalog" : "Discover",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "مُعرّف العقدة السابقة",
       "gasConsumed" : "الغاز المستهلَك",
       "gasUsed" : "الغاز المستخدَم",
-      "gasLimit" : "حد الغاز"
+      "gasLimit" : "حد الغاز",
+      "functionId" : "مُعرّف الوظيفة"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "قم بتحديث البرنامج الثابت",
       "installUpdate" : "تثبيت التحديث",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "تحديث نظام التشغيل متاح",
+            "manager" : "تحديث نظام تشغيل Ledger OS متاح"
+          },
+          "cta" : "تحديث"
+        },
         "warning" : "تحديث نظام التشغيل متاح",
         "version" : "إصدار {{latestFirmware}}",
         "cta" : "انتقل إلى My Ledger",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "اختر حساب",
-      "addAccount" : "إضافة حساب جديد أو قائم"
+      "addAccount" : "إضافة حساب جديد أو قائم",
+      "perpetualsBanner" : "حالياً مدعوم فقط مع USDC على سلسلة Arbitrum."
     }
   },
   "customImage" : {
@@ -8017,6 +8027,18 @@
     "connect" : "اتصال",
     "buyALedger" : "شراء Ledger"
   },
+  "assets" : {
+    "cryptos" : "الأصول المشفرة",
+    "stablecoins" : "العملات المستقرة",
+    "columns" : {
+      "name" : "الاسم",
+      "price" : "السعر",
+      "balance" : "الرصيد",
+      "value" : "القيمة",
+      "trend" : "اتجاه يوم 1",
+      "trendTooltip" : "تغيُّر الرصيد خلال 24 ساعة"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "%{{progress}}",
     "errorTryAgain" : "حدث خطأ أثناء التحديث، أعد المحاولة",
     "installAndRelaunch" : "قم بتثبيت التحديث وإعادة التشغيل"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "المبادلة بدون عناء",
+        "description" : "قم بتكييف تخصيص محفظتك الاستثمارية في أي وقت عن طريق أمان جهازك Ledger"
+      },
+      "navigation" : {
+        "title" : "كل شيء في مكانه الصحيح",
+        "description" : "My Ledger (جهازي Ledger) و Discover (اكتشف) موجودون الآن في الأعلى. تم نقل Swap (مبادلة) و Card (البطاقة) إلى الشريط الجانبي لوصول أسرع."
+      },
+      "actions" : {
+        "title" : "إجراءات بسرعة السوق",
+        "description" : "حدد اتجاهات السوق بواسطة الشريط الجديد وتداول على الفور."
+      }
+    },
+    "cta" : {
+      "continue" : "متابعة",
+      "explore" : "استكشاف محفظتي الاستثمارية الجديدة"
+    }
   }
 }

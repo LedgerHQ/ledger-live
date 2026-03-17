@@ -167,7 +167,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10285205",
+    "0.0.10310433",
   );
   static readonly HEDERA_2 = new Account(
     Currency.HBAR,
@@ -178,7 +178,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    "0.0.10285245",
+    "0.0.10337251",
   );
 
   static readonly INJ_1 = new Account(Currency.INJ, "Injective 1", 0, "44'/60'/0'/0/0");
@@ -255,6 +255,8 @@ export class Account {
 
   static readonly BASE_1 = new Account(Currency.BASE, "Base 1", 0, "44'/60'/0'/0/0");
   static readonly BASE_2 = new Account(Currency.BASE, "Base 2", 1, "44'/60'/1'/0/0");
+
+  static readonly OP_1 = new Account(Currency.OP, "OP Mainnet 1", 0, "44'/60'/0'/0/0");
 
   static readonly VET_1 = new Account(Currency.VET, "Vechain 1", 0, "44'/818'/0'/0/0");
   static readonly VET_2 = new Account(Currency.VET, "Vechain 2", 1, "44'/818'/0'/0/1");

@@ -1,10 +1,10 @@
 import * as bech32 from "bech32";
+import type { BitcoinJS } from "coininfo";
 import bs58check from "bs58check";
 import Base from "./base";
 
 class Digibyte extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     // missing bip32 info in coininfo network for digibyte, we fill it mannually
     // https://electrum.readthedocs.io/en/latest/xpub_version_bytes.html
     super({ network });

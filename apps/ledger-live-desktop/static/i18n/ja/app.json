@@ -308,6 +308,7 @@
     "exchange" : "購入/売却",
     "swap" : "スワップ",
     "perps" : "無期限先物",
+    "home" : "ホーム",
     "refer" : "ご友人紹介",
     "lend" : "レンディング",
     "catalog" : "アプリ一覧",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "以前のノードID",
       "gasConsumed" : "消費ガス量",
       "gasUsed" : "使用ガス量",
-      "gasLimit" : "ガスリミット"
+      "gasLimit" : "ガスリミット",
+      "functionId" : "関数ID"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "ファームウェアをアップデート",
       "installUpdate" : "アップデートをインストール",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "OSアップデートをご利用いただけます",
+            "manager" : "Ledger OSのアップデートをご利用いただけます"
+          },
+          "cta" : "アップデート"
+        },
         "warning" : "OSアップデートをご利用いただけます",
         "version" : "バージョン{{latestFirmware}}",
         "cta" : "My Ledgerに移動",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "アカウントを選択",
-      "addAccount" : "新規または既存のアカウントを追加する"
+      "addAccount" : "新規または既存のアカウントを追加する",
+      "perpetualsBanner" : "現在、ArbitrumチェーンのUSDCでのみサポートされています。"
     }
   },
   "customImage" : {
@@ -7583,7 +7593,7 @@
       "skipCTA" : "後で行う"
     },
     "default" : {
-      "title" : "{{ productName }}には、独自のアプリがあります。トランザクションには、これらの専用アプリが必要となります。",
+      "title" : "{{ productName }}には、独自のアプリがあります。トランザクションには、専用アプリが必要となります。",
       "subtitle" : "例えば、{{productName}}のBitcoinアプリはBitcoinトランザクションに署名するのに必要です。\n\nデフォルトのアプリをインストールして、{{productName}}でのトランザクションの準備を整えてください。",
       "installCTA" : "今すぐインストールする",
       "skipCTA" : "後で行う"
@@ -8017,6 +8027,18 @@
     "connect" : "接続",
     "buyALedger" : "Ledgerを購入する"
   },
+  "assets" : {
+    "cryptos" : "暗号資産",
+    "stablecoins" : "ステーブルコイン",
+    "columns" : {
+      "name" : "名前",
+      "price" : "価格",
+      "balance" : "残高",
+      "value" : "価値",
+      "trend" : "1日のトレンド",
+      "trendTooltip" : "24時間の残高変更"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "アップデート中にエラーが発生しました。再試行してください。",
     "installAndRelaunch" : "アップデートをインストールして再起動"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "手軽にスワップ",
+        "description" : "Ledgerデバイスのセキュリティを活用して、いつでもポートフォリオの配分を調整できます。"
+      },
+      "navigation" : {
+        "title" : "必要な機能を、最適な場所へ",
+        "description" : "「My Ledger」と「アプリ一覧」は画面上部へ。「スワップ」と「カード」はアクセスしやすくなるようにサイドバーへ移動しました。"
+      },
+      "actions" : {
+        "title" : "市場の動きを逃さない",
+        "description" : "新しいバナーで市場トレンドをチェックし、すぐに取引を開始できます。"
+      }
+    },
+    "cta" : {
+      "continue" : "続行",
+      "explore" : "新しいポートフォリオを見る"
+    }
   }
 }

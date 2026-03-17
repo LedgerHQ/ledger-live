@@ -5,11 +5,15 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useTrack } from "~/analytics";
 import { SWAP_VERSION } from "~/screens/Swap/utils";
 import { useTranslation } from "~/context/Locale";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { SwapLiveAppNavigationParams } from "~/screens/Swap/types";
 import Touchable from "~/components/Touchable";
 import { SwapWebviewAllowedPageNames, WebviewAPI } from "~/components/Web3AppWebview/types";
 import { useIsSwapTab } from "./useIsSwapTab";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 function getScreenTitle({
   webviewCurrentPage,
@@ -37,9 +41,13 @@ function hasSwapNavigationParams(params: unknown): params is SwapLiveAppNavigati
 }
 
 export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI | null>) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<
+    StackNavigatorNavigation<BaseNavigatorStackParamList> &
+      StackNavigatorNavigation<SwapNavigatorParamList>
+  >();
   const { t } = useTranslation();
   const track = useTrack();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
 
   const { isSwapTabScreen, swapTabScreen } = useIsSwapTab();
 
@@ -50,10 +58,15 @@ export function useSwapHeaderNavigation(webviewRef: React.RefObject<WebviewAPI |
       swapVersion: SWAP_VERSION,
     });
 
-    navigation.navigate(NavigatorName.SwapSubScreens, {
-      screen: ScreenName.SwapHistory,
-    });
-  }, [navigation, track]);
+    if (shouldDisplayWallet40MainNav) {
+      navigation.navigate(NavigatorName.SwapSubScreens, {
+        screen: ScreenName.SwapHistory,
+      });
+      return;
+    }
+
+    navigation.navigate(ScreenName.SwapHistory);
+  }, [navigation, shouldDisplayWallet40MainNav, track]);
 
   const goBackWebView = useCallback(
     (currentWebviewPage?: SwapWebviewAllowedPageNames) => {

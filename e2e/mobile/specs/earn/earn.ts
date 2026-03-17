@@ -1,8 +1,9 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Provider } from "@ledgerhq/live-common/lib/e2e/enum/Provider";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
 import { ApplicationOptions } from "page";
+import { isWallet40 } from "../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -43,8 +44,13 @@ export async function runInlineAddAccountTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
-      await app.transferMenuDrawer.open();
-      await app.transferMenuDrawer.navigateToStake();
+      if (isWallet40) {
+        await app.mainNavigation.tapWallet40Tab("earn");
+        await app.earnDashboard.verifyEarnByStackingButton();
+      } else {
+        await app.transferMenuDrawer.open();
+        await app.transferMenuDrawer.navigateToStake();
+      }
 
       const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
 
@@ -102,7 +108,9 @@ export async function runStartETHStakingFromEarnDashboardTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`ETH staking flow - Earn Dashboard - Provider : ${provider.uiName}`, async () => {
-      await app.portfolio.openEarnTab();
+      if (isWallet40) await app.mainNavigation.tapWallet40Tab("earn");
+      else await app.portfolio.openEarnTab();
+
       await earnReady;
       await app.earnDashboard.goToTab("Earn Opportunities");
       await app.earnDashboard.clickEarnCurrencyButton();
@@ -131,7 +139,8 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`, async () => {
-      await app.portfolio.openEarnTab();
+      if (isWallet40) await app.mainNavigation.tapWallet40Tab("earn");
+      else await app.portfolio.openEarnTab();
       await earnReady;
       if (staking) {
         await app.earnDashboard.goToTab("My Rewards");

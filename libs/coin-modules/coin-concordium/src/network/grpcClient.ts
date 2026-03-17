@@ -10,10 +10,7 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { retry } from "@ledgerhq/live-promise";
 import type {
-  Block,
   BlockInfo,
-  BlockOperation,
-  BlockTransaction,
   Operation,
   ListOperationsOptions,
   Page,
@@ -132,8 +129,8 @@ function createGrpcClient(currencyId: string): GRPCClient {
   const { grpcUrl: address, grpcPort: port } = coinConfig.getCoinConfig(currencyId);
 
   try {
-    const protoPath = join(__dirname, "proto/v2/concordium/service.proto");
-    const protoDir = join(__dirname, "proto");
+    const protoPath = join(__dirname, "../../proto/v2/concordium/service.proto");
+    const protoDir = join(__dirname, "../../proto");
 
     const packageDefinition = protoLoader.loadSync(protoPath, {
       keepCase: false,
@@ -198,35 +195,30 @@ async function streamToList<T>(stream: AsyncIterable<T>): Promise<T[]> {
 /**
  * Get the last finalized block information.
  *
- * Used by: history/lastBlock.ts
+ * Used exclusively by getOperations to determine the current blockchain height and validate minHeight.
  *
  * @param currencyId - The cryptocurrency ID
  * @returns Block metadata (height, hash, time) of the last finalized block
  */
-export async function getLastBlock(currencyId: string): Promise<BlockInfo> {
-  try {
-    return await withClient(currencyId, async client => {
-      return new Promise<BlockInfo>((resolve, reject) => {
-        client.GetConsensusInfo({}, (error, response) => {
-          if (error) {
-            reject(error);
-            return;
-          }
+async function getLastBlock(currencyId: string): Promise<BlockInfo> {
+  return withClient(currencyId, async client => {
+    return new Promise<BlockInfo>((resolve, reject) => {
+      client.GetConsensusInfo({}, (error, response) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-          const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
+        const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
 
-          resolve({
-            height: Number(lastFinalizedBlockHeight?.value || 0),
-            hash: lastFinalizedBlock?.value?.toString("hex") || "",
-            time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
-          });
+        resolve({
+          height: Number(lastFinalizedBlockHeight?.value || 0),
+          hash: lastFinalizedBlock?.value?.toString("hex") || "",
+          time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
         });
       });
     });
-  } catch (error) {
-    log("concordium-grpc", "getLastBlock", { error });
-    throw error;
-  }
+  });
 }
 
 function handleBlocksResponse(
@@ -302,47 +294,6 @@ async function getBlockInfo(currencyId: string, blockHash: string): Promise<Bloc
     });
   } catch (error) {
     log("concordium-grpc", "getBlockInfo", { error });
-    throw error;
-  }
-}
-
-/**
- * Get block metadata by height, including parent block reference.
- *
- * Used by: history/getBlockInfo.ts
- *
- * Composes: getBlockHashesAtHeight + getBlockInfo (for block and parent)
- *
- * @param currencyId - The cryptocurrency ID
- * @param height - Block height to query
- * @returns Block metadata with parent block reference (if height > 0)
- */
-export async function getBlockInfoByHeight(currencyId: string, height: number): Promise<BlockInfo> {
-  try {
-    const blockHashes = await getBlockHashesAtHeight(currencyId, height);
-
-    if (blockHashes.length === 0) {
-      throw new Error(`No blocks found at height ${height}`);
-    }
-
-    const blockHash = blockHashes[0];
-    const result = await getBlockInfo(currencyId, blockHash);
-
-    if (height > 0) {
-      const parentHashes = await getBlockHashesAtHeight(currencyId, height - 1);
-
-      if (parentHashes.length > 0) {
-        const parentBlockInfo = await getBlockInfo(currencyId, parentHashes[0]);
-        result.parent = {
-          height: parentBlockInfo.height,
-          hash: parentBlockInfo.hash!,
-        };
-      }
-    }
-
-    return result;
-  } catch (error) {
-    log("concordium-grpc", "getBlockInfoByHeight", { error });
     throw error;
   }
 }
@@ -428,107 +379,6 @@ async function getBlockTransactionEvents(
     });
   } catch (error) {
     log("concordium-grpc", "getBlockTransactionEvents", { error });
-    throw error;
-  }
-}
-
-/**
- * Get a complete block with all parsed transactions.
- *
- * Used by: history/getBlock.ts
- *
- * Composes: getBlockHashesAtHeight + getBlockInfo + getBlockTransactionEvents
- *
- * Parses transaction events into Ledger Live Block format with operations
- * (transfers IN/OUT). Filters to account transactions only.
- *
- * @param currencyId - The cryptocurrency ID
- * @param height - Block height to query
- * @returns Full block with metadata and parsed transactions
- */
-export async function getBlockByHeight(currencyId: string, height: number): Promise<Block> {
-  try {
-    const blockHashes = await getBlockHashesAtHeight(currencyId, height);
-
-    if (blockHashes.length === 0) {
-      throw new Error(`No blocks found at height ${height}`);
-    }
-
-    const blockHash = blockHashes[0];
-    const info = await getBlockInfo(currencyId, blockHash);
-
-    if (height > 0) {
-      const parentHashes = await getBlockHashesAtHeight(currencyId, height - 1);
-
-      if (parentHashes.length > 0) {
-        const parentBlockInfo = await getBlockInfo(currencyId, parentHashes[0]);
-        info.parent = {
-          height: parentBlockInfo.height,
-          hash: parentBlockInfo.hash!,
-        };
-      }
-    }
-
-    const transactionStream = await getBlockTransactionEvents(currencyId, blockHash);
-    const transactionEvents = await streamToList(transactionStream);
-
-    const transactions: BlockTransaction[] = transactionEvents
-      .map(event => {
-        if (event?.type !== "accountTransaction") {
-          return null;
-        }
-
-        const accountTx = event;
-        const failed = accountTx.transactionType === "failed";
-        const hash = accountTx.hash ?? "";
-        const fees = accountTx.cost ?? 0n;
-        const sender = accountTx.sender ?? "";
-
-        const operations: BlockOperation[] = [];
-
-        if (
-          accountTx.transactionType === "transfer" ||
-          accountTx.transactionType === "transferWithMemo"
-        ) {
-          const transfer = accountTx.transfer!;
-          const amount = transfer.amount;
-          const from = sender;
-          const to = transfer.to;
-
-          operations.push(
-            {
-              type: "transfer",
-              address: from,
-              peer: to,
-              asset: { type: "native" },
-              amount: -amount,
-            },
-            {
-              type: "transfer",
-              address: to,
-              peer: from,
-              asset: { type: "native" },
-              amount: amount,
-            },
-          );
-        }
-
-        return {
-          hash,
-          failed,
-          operations,
-          fees,
-          feesPayer: sender,
-        };
-      })
-      .filter((tx): tx is BlockTransaction => tx !== null);
-
-    return {
-      info,
-      transactions,
-    };
-  } catch (error) {
-    log("concordium-grpc", "getBlockByHeight", { error });
     throw error;
   }
 }

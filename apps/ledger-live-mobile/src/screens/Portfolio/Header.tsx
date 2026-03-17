@@ -143,7 +143,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         <Flex mr={7}>
           <NotificationsButton />
         </Flex>
-        <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
+        <Touchable onPress={onSettingsButtonPress} testID="topbar-settings">
           <SettingsMedium size={24} color={"neutral.c100"} />
         </Touchable>
       </Flex>

@@ -23,7 +23,7 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
-import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 
 export type DAError =
   | GetAddressDAError

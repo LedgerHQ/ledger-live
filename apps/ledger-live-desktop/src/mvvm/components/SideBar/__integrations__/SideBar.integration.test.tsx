@@ -15,6 +15,14 @@ jest.mock("~/renderer/screens/card/CardPlatformApp", () => ({
   BAANX_APP_ID: "cl-card",
 }));
 
+jest.mock("electron-store", () => {
+  return jest.fn().mockImplementation(() => ({
+    get: jest.fn(),
+    set: jest.fn(),
+    clear: jest.fn(),
+  }));
+});
+
 const mockUseRemoteLiveAppManifest = jest.fn().mockReturnValue(null);
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"),
@@ -23,7 +31,10 @@ jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
-function renderSideBarWithRoute(route: string, initialState = defaultInitialState) {
+function renderSideBarWithRoute(
+  route: string,
+  initialState: typeof defaultInitialState = defaultInitialState,
+) {
   return render(<SideBar />, {
     initialRoute: route,
     initialState,

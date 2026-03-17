@@ -19,7 +19,7 @@ import { useReceiveNoahEntry } from "LLM/features/Noah/useNoahEntryPoint";
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
-const BUTTON_ID = "quick_action_transfer";
+const BUTTON_LOCATION = "quick_action_transfer";
 
 interface TransferDrawerViewModel {
   isOpen: boolean;
@@ -49,8 +49,8 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const handleReceivePress = useCallback(() => {
     track("button_clicked", {
-      button: BUTTON_ID,
-      flow: "receive",
+      button: "receive",
+      buttonLocation: BUTTON_LOCATION,
       page: sourceScreenName,
     });
     closeDrawer();
@@ -59,8 +59,8 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const handleSendPress = useCallback(() => {
     track("button_clicked", {
-      button: BUTTON_ID,
-      flow: "send",
+      button: "send",
+      buttonLocation: BUTTON_LOCATION,
       page: sourceScreenName,
     });
     closeDrawer();
@@ -71,8 +71,8 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const handleBankTransferPress = useCallback(() => {
     track("button_clicked", {
-      button: BUTTON_ID,
-      flow: "bank_transfer",
+      button: "bank_transfer",
+      buttonLocation: BUTTON_LOCATION,
       page: sourceScreenName,
     });
     closeDrawer();

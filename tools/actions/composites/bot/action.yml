@@ -51,7 +51,7 @@ runs:
         version: 10.24.0
     - uses: actions/setup-node@v4
       with:
-        node-version: 22.13.1
+        node-version: 24.14.0
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: pull docker image
@@ -60,7 +60,7 @@ runs:
     - name: install and build
       run: |
         pnpm i --filter="live-cli..." --filter="ledger-live"
-        pnpm build:llc
+        pnpm turbo build --filter=./libs/ledger-live-common
       shell: bash
     - uses: 8BitJonny/gh-get-current-pr@v2.1.3
       id: PR

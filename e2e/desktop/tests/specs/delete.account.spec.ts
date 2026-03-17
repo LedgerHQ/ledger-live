@@ -23,7 +23,7 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
@@ -61,7 +61,7 @@ for (const account of accounts) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.expectAccountVisibility(account.account.accountName);
 

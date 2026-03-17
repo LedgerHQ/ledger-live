@@ -31,12 +31,17 @@ export default function CustomError({ route }: CustomErrorPropsProps) {
           <Text variant="body" textAlign={"center"} testID="error-description-deviceAction">
             {t("errors.CustomError.description")}
 
-            {error && "cause" in error && error.cause?.swapCode && (
-              <Trans
-                i18nKey="errors.CustomError.errorCode"
-                values={{ errorCode: error.cause.swapCode }}
-              />
-            )}
+            {error &&
+              "cause" in error &&
+              typeof error.cause === "object" &&
+              error.cause !== null &&
+              "swapCode" in error.cause &&
+              Boolean((error.cause as { swapCode: string }).swapCode) && (
+                <Trans
+                  i18nKey="errors.CustomError.errorCode"
+                  values={{ errorCode: (error.cause as { swapCode: string }).swapCode }}
+                />
+              )}
 
             {error && "message" in error && error.message && (
               <Trans

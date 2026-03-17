@@ -2,8 +2,8 @@
 
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
-import xrpResolver from "@ledgerhq/coin-xrp/signer/index";
-import makeCliTools from "@ledgerhq/coin-xrp/test/cli";
+import xrpResolver from "./getAddress";
+import makeCliTools from "./cli";
 import { CreateSigner, createResolver } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 

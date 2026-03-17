@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",
@@ -83,58 +83,72 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
     "./bridge/index": {
+      "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
     },
     "./bridge/serialization": {
+      "@ledgerhq/source": "./src/bridge/serialization.ts",
       "require": "./lib/bridge/serialization.js",
       "default": "./lib-es/bridge/serialization.js"
     },
     "./config": {
+      "@ledgerhq/source": "./src/config.ts",
       "require": "./lib/config.js",
       "default": "./lib-es/config.js"
     },
     "./constants": {
+      "@ledgerhq/source": "./src/constants.ts",
       "require": "./lib/constants.js",
       "default": "./lib-es/constants.js"
     },
     "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
       "require": "./lib/logic/index.js",
       "default": "./lib-es/logic/index.js"
     },
     "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
     },
     "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
     "./test/cli": {
+      "@ledgerhq/source": "./src/test/cli.ts",
       "require": "./lib/test/cli.js",
       "default": "./lib-es/test/cli.js"
     },
     "./test/concordiumTestUtils": {
+      "@ledgerhq/source": "./src/test/concordiumTestUtils.ts",
       "require": "./lib/test/concordiumTestUtils.js",
       "default": "./lib-es/test/concordiumTestUtils.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./types/index": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
@@ -143,18 +157,22 @@
       "default": "./lib-es/network/submitCredentialDeploymentTransaction.js"
     },
     "./network/utils": {
+      "@ledgerhq/source": "./src/network/utils.ts",
       "require": "./lib/network/utils.js",
       "default": "./lib-es/network/utils.js"
     },
     "./network/walletConnect": {
+      "@ledgerhq/source": "./src/network/walletConnect.ts",
       "require": "./lib/network/walletConnect.js",
       "default": "./lib-es/network/walletConnect.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
@@ -172,6 +190,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/concordium-core": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
@@ -198,16 +217,16 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --outDir lib --module commonjs --moduleResolution node && tsc --outDir lib-es --module esnext --moduleResolution bundler",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
+    "watch": "tsc --watch --project tsconfig.build.json",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
   }
 }

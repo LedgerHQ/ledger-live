@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getAddressFormatDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { parsePsbt } from "@ledgerhq/psbtv2";

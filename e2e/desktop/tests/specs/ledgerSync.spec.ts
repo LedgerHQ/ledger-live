@@ -46,7 +46,7 @@ function initializeTrustchain() {
 test.describe(`[${app.name}] Sync Accounts`, () => {
   setupSeed();
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
   });

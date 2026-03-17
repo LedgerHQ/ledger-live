@@ -33,6 +33,8 @@ interface UsePortfolioViewModelResult {
   isAccountListUIEnabled: boolean;
   shouldDisplayQuickActionCtas: boolean;
   shouldDisplayWallet40MainNav: boolean;
+  shouldDisplayAssetSection: boolean;
+  shouldDisplayMarketBanner: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -53,8 +55,13 @@ const usePortfolioViewModel = (navigation: {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
-  const { shouldDisplayGraphRework, shouldDisplayQuickActionCtas, shouldDisplayWallet40MainNav } =
-    useWalletFeaturesConfig("mobile");
+  const {
+    shouldDisplayGraphRework,
+    shouldDisplayQuickActionCtas,
+    shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
+  } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
@@ -138,6 +145,8 @@ const usePortfolioViewModel = (navigation: {
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,

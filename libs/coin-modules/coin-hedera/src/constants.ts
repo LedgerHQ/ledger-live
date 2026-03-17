@@ -154,3 +154,9 @@ export const OP_TYPES_EXCLUDING_FEES: OperationType[] = [
   "UPDATE_ACCOUNT",
   "CONTRACT_CALL",
 ];
+
+/**
+ * Suffix used for staking reward Ledger operations to distinguish them from operations that trigger the rewards claim.
+ * Since staking rewards on Hedera are not represented as separate transactions, we need to create synthetic operations for them.
+ */
+export const STAKING_REWARD_HASH_SUFFIX = "-staking-reward";

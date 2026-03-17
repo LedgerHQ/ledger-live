@@ -1,6 +1,6 @@
 import { from } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
-import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
 import {

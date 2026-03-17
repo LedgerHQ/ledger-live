@@ -7,7 +7,7 @@ import semver from "semver";
 import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
+import type { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "../apps/polyfill";

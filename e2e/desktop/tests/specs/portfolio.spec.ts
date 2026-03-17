@@ -3,10 +3,12 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { CLI } from "tests/utils/cliUtils";
+import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
-test.describe("Portfolio", () => {
+test.describe("Portfolio - legacy", () => {
   test.use({
-    userdata: "speculos-tests-app",
+    userdata: "speculos-subAccount",
+    featureFlags: LWD_WALLET_40_FF_DISABLED,
   });
   test(
     "Charts are displayed when user added his accounts",
@@ -20,7 +22,7 @@ test.describe("Portfolio", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToPortfolio();
+      await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
       await app.portfolio.checkSwapButtonVisibility();
@@ -36,17 +38,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     // to-do remove when wallet 4.0 is default
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
@@ -93,17 +85,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       },
     ],
     // to-do remove when wallet 4.0 is default
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
@@ -122,7 +104,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.portfolio.checkSellButtonEnabled();
       await app.portfolio.checkSendButtonEnabled();
 
-      await app.portfolio.checkPortfolioTotalBalanceVisibility();
+      await app.portfolio.expectTotalBalanceCounterValue("0");
       await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
       await app.portfolio.clickOnPerformancePill();
       await app.analytics.expectAnalyticsScreenToBeVisible();
@@ -136,17 +118,7 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   test.use({
     userdata: "skip-onboarding",
     // to-do remove when wallet 4.0 is default
-    featureFlags: {
-      lwdWallet40: {
-        enabled: true,
-        params: {
-          marketBanner: true,
-          graphRework: true,
-          quickActionCtas: true,
-          mainNavigation: true,
-        },
-      },
-    },
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(

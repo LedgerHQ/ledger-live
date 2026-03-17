@@ -1,5 +1,8 @@
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import {
+  findSubAccountById,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { Address, beginCell, external, storeMessage, toNano } from "@ton/core";
 import { WalletContractV4 } from "@ton/ton";

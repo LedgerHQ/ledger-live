@@ -8,10 +8,9 @@ import type {
   SendFlowUiConfig,
 } from "@ledgerhq/live-common/flows/send/types";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
+import { useSendFlowAmountReviewCore } from "@ledgerhq/live-common/flows/send/hooks/useSendFlowAmountReviewCore";
 import type { AmountScreenViewModel } from "../types";
 import { useFlowWizard } from "LLD/features/FlowWizard/FlowWizardContext";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import { useAmountInput } from "./useAmountInput";
 import { useQuickActions } from "./useQuickActions";
 import { useInitialTransactionPreparation } from "../../../hooks/useInitialTransactionPreparation";
@@ -42,21 +41,30 @@ export function useAmountScreenViewModel({
   const { t } = useTranslation();
   const { navigation } = useFlowWizard();
 
-  const mainAccount = useMemo(
-    () => getMainAccount(account, parentAccount ?? undefined),
-    [account, parentAccount],
-  );
-  const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-
-  const updateTransactionWithPatch = useCallback(
-    (patch: Partial<Transaction>) => {
-      transactionActions.updateTransaction(currentTx => {
-        const bridge = getAccountBridge(account, parentAccount ?? undefined);
-        return bridge.updateTransaction(currentTx, patch);
-      });
+  const amountReviewCore = useSendFlowAmountReviewCore({
+    account,
+    parentAccount,
+    transaction,
+    status,
+    bridgePending,
+    transactionActions,
+    labels: {
+      reviewCta: t("newSendFlow.reviewCta"),
+      getCtaLabel: (currency: string) => t("newSendFlow.getCta", { currency }),
     },
-    [account, parentAccount, transactionActions],
-  );
+  });
+
+  const {
+    mainAccount,
+    accountCurrency,
+    updateTransactionWithPatch,
+    maxAvailable,
+    reviewLabel,
+    reviewShowIcon,
+    reviewDisabled,
+    amountComputationPending,
+    shouldPrepare,
+  } = amountReviewCore;
 
   const amountInput = useAmountInput({
     account,
@@ -66,11 +74,6 @@ export function useAmountScreenViewModel({
     onUpdateTransaction: updateTransactionWithPatch,
   });
 
-  const rawTransactionAmount = transaction.amount ?? new BigNumber(0);
-  const hasRawAmount = transaction.useAllAmount || rawTransactionAmount.gt(0);
-  const shouldPrepare = Boolean(transaction.recipient) && hasRawAmount;
-  const amountComputationPending = bridgePending && shouldPrepare;
-
   useInitialTransactionPreparation({
     shouldPrepare,
     mainAccountId: mainAccount.id,
@@ -78,19 +81,6 @@ export function useAmountScreenViewModel({
     bridgePending,
     updateTransactionWithPatch: () => updateTransactionWithPatch({}),
   });
-
-  const maxAvailable = useMemo(() => {
-    if (!account) return new BigNumber(0);
-    const spendable = "spendableBalance" in account ? account.spendableBalance : undefined;
-    const balance = spendable ?? account.balance ?? new BigNumber(0);
-
-    // For ratios (25%, 50%, 75%), we need to account for fees to avoid insufficient funds
-    // Subtract estimated fees to get a safer maxAvailable
-    const estimatedFees = status.estimatedFees ?? new BigNumber(0);
-    const safeMax = balance.minus(estimatedFees);
-
-    return BigNumber.max(0, safeMax);
-  }, [account, status.estimatedFees]);
 
   const quickActionsAvailableBalance = useMemo(() => {
     const spendable = "spendableBalance" in account ? account.spendableBalance : undefined;
@@ -133,7 +123,7 @@ export function useAmountScreenViewModel({
     status,
     accountCurrency,
     amountComputationPending,
-    hasRawAmount,
+    hasRawAmount: amountReviewCore.hasRawAmount,
   });
 
   const networkFees = useNetworkFees({
@@ -145,36 +135,10 @@ export function useAmountScreenViewModel({
     transactionActions,
   });
 
-  const hasInsufficientFundsError = useMemo(() => {
-    if (!status.errors?.amount) return false;
-    const errorName = status.errors.amount.name;
-    return (
-      errorName === "NotEnoughBalance" ||
-      errorName === "NotEnoughBalanceFees" ||
-      errorName === "NotEnoughBalanceSwap" ||
-      errorName === "NotEnoughBalanceBecauseDestinationNotCreated" ||
-      errorName === "NotEnoughBalanceInParentAccount" ||
-      errorName === "NotEnoughBalanceToDelegate" ||
-      errorName.includes("Insufficient")
-    );
-  }, [status.errors?.amount]);
-
-  const hasErrors = Object.keys(status.errors ?? {}).length > 0;
-  // For enabling the CTA, rely on the user-entered transaction amount (no bridge lag)
-  const hasAmount = hasRawAmount;
-  const reviewDisabled =
-    (hasErrors && !hasInsufficientFundsError) || !hasAmount || amountComputationPending;
-
-  const reviewLabel = hasInsufficientFundsError
-    ? t("newSendFlow.getCta", { currency: accountCurrency?.ticker ?? "CRYPTO" })
-    : t("newSendFlow.reviewCta");
-
-  // Navigate to custom fees step
   const onOpenCustomFees = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.CUSTOM_FEES);
   }, [navigation]);
 
-  // Navigate to coin control step
   const onSelectCoinControl = useCallback(() => {
     navigation.goToStep(SEND_FLOW_STEP.COIN_CONTROL);
   }, [navigation]);
@@ -193,7 +157,7 @@ export function useAmountScreenViewModel({
     showQuickActions: quickActionsAvailableBalance.gt(0),
     amountMessage,
     reviewLabel,
-    reviewShowIcon: !hasInsufficientFundsError,
+    reviewShowIcon,
     reviewDisabled,
     reviewLoading: amountComputationPending,
     onOpenCustomFees,

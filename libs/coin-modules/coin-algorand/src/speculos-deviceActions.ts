@@ -1,10 +1,10 @@
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { displayTokenValue } from "./deviceTransactionConfig";
 import { addPrefixToken, extractTokenId } from "./tokens";
 import type { AlgorandTransaction } from "./types";

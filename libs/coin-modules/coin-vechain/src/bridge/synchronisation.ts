@@ -5,10 +5,10 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "../network";
-import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "./helpers";
 import { VTHO_ADDRESS } from "@vechain/sdk-core";

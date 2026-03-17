@@ -43,7 +43,7 @@ function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string)
   }
 }
 
-function inferAssetInfo(trongridTxInfo: TrongridTxInfo): AssetInfo {
+export function inferAssetInfo(trongridTxInfo: TrongridTxInfo): AssetInfo {
   switch (true) {
     case trongridTxInfo.tokenType === "trc10":
       return {

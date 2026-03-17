@@ -1,11 +1,11 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountBridge } from "../bridge";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 export {
   getReceiveFlowError,
   checkAccountSupported,
-} from "@ledgerhq/coin-framework/account/support";
+} from "@ledgerhq/ledger-wallet-framework/account/support";
 
 export function canSend(account: AccountLike, parentAccount: Account | null | undefined): boolean {
   try {

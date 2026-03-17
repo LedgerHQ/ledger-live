@@ -7,7 +7,7 @@ import { makeRe } from "minimatch";
 import type {
   TokensDataWithPagination,
   PageParam,
-} from "@ledgerhq/cryptoassets/lib/cal-client/state-manager/types";
+} from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
 import { endpoints as calEndpoints } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { accountToPlatformAccount, currencyToPlatformCurrency } from "./converters";
 import { filterPlatformAccounts, AccountFilters, CurrencyFilters } from "./filters";

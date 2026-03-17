@@ -1,29 +1,21 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type {
   AddressSearchResult,
   AddressValidationError as AddressValidationErrorType,
-  RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";
 import { LoadingState } from "./LoadingState";
-import { MyAccountsSection } from "./MyAccountsSection";
-import { RecentAddressesSection } from "./RecentAddressesSection";
+import { RecipientIntroCard } from "./RecipientIntroCard";
 import { ValidationBanner } from "./ValidationBanner";
 
 type RecipientAddressModalViewProps = Readonly<{
   searchValue: string;
   isLoading: boolean;
   result: AddressSearchResult;
-  recentAddresses: RecentAddress[];
-  mainAccount: Account;
-  currency: CryptoOrTokenCurrency;
   showInitialState: boolean;
-  showInitialEmptyState: boolean;
   showMatchedAddress: boolean;
   showAddressValidationError: boolean;
   showEmptyState: boolean;
@@ -37,10 +29,7 @@ type RecipientAddressModalViewProps = Readonly<{
   bridgeRecipientError: Error | undefined;
   bridgeRecipientWarning: Error | undefined;
   bridgeSenderError: Error | undefined;
-  onRecentAddressSelect: (address: RecentAddress) => void;
-  onAccountSelect: (account: Account) => void;
   onAddressSelect: (address: string, ensName?: string) => void;
-  onRemoveAddress: (address: RecentAddress) => void;
   hasMemo: boolean;
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
@@ -50,11 +39,7 @@ export function RecipientAddressModalView({
   searchValue,
   isLoading,
   result,
-  recentAddresses,
-  mainAccount,
-  currency,
   showInitialState,
-  showInitialEmptyState,
   showMatchedAddress,
   showAddressValidationError,
   showEmptyState,
@@ -68,10 +53,7 @@ export function RecipientAddressModalView({
   bridgeRecipientError,
   bridgeRecipientWarning,
   bridgeSenderError,
-  onRecentAddressSelect,
-  onAccountSelect,
   onAddressSelect,
-  onRemoveAddress,
   hasMemo,
   hasMemoValidationError,
   hasFilledMemo,
@@ -84,23 +66,14 @@ export function RecipientAddressModalView({
       showBridgeRecipientWarning);
 
   return (
-    <DialogBody className="py-16">
-      {isLoading && <LoadingState />}
-
-      {showInitialState && (
-        <>
-          <RecentAddressesSection
-            recentAddresses={recentAddresses}
-            onSelect={onRecentAddressSelect}
-            onRemove={onRemoveAddress}
-          />
-          <MyAccountsSection
-            currency={currency}
-            currentAccountId={mainAccount.id}
-            onSelect={onAccountSelect}
-          />
-        </>
+    <DialogBody className="flex flex-col py-16 min-h-[156px]">
+      {isLoading && (
+        <div className="flex flex-1 items-center">
+          <LoadingState />
+        </div>
       )}
+
+      {showInitialState && <RecipientIntroCard />}
 
       {showMatchedAddress && (!hasMemo || (hasFilledMemo && !hasMemoValidationError)) && (
         <AddressMatchedSection
@@ -109,15 +82,17 @@ export function RecipientAddressModalView({
           onSelect={onAddressSelect}
           isSanctioned={isSanctioned}
           isAddressComplete={isAddressComplete}
-          hasBridgeError={showBridgeRecipientError || showBridgeRecipientWarning}
+          hasBridgeError={showBridgeRecipientError}
         />
       )}
 
-      {showAddressValidationError && <AddressValidationError error={addressValidationErrorType} />}
-
-      {(showEmptyState || showInitialEmptyState) && (
-        <EmptyList translationKey="newSendFlow.recentSendWillAppear" />
+      {showAddressValidationError && (
+        <div className="flex flex-1 items-center justify-center">
+          <AddressValidationError error={addressValidationErrorType} />
+        </div>
       )}
+
+      {showEmptyState && <EmptyList translationKey="newSendFlow.recentSendWillAppear" />}
 
       {shouldShowErrorBanner && (
         <div className="mt-6 flex flex-col gap-16">

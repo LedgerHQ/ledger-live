@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { hexToU8a } from "@polkadot/util";
 import { BigNumber } from "bignumber.js";

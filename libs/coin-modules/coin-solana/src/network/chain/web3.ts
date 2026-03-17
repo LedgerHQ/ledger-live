@@ -56,7 +56,7 @@ import { ChainAPI } from ".";
 
 const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
 
-type ParsedOnChainTokenAccount = Awaited<
+export type ParsedOnChainTokenAccount = Awaited<
   ReturnType<Connection["getParsedTokenAccountsByOwner"]>
 >["value"][number];
 

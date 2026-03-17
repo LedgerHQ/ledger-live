@@ -4,8 +4,11 @@ import {
   runDerivationScheme,
   getDerivationScheme,
   asDerivationMode,
-} from "@ledgerhq/coin-framework/derivation";
-import { decodeAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
+import {
+  decodeAccountId,
+  emptyHistoryCache,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
 

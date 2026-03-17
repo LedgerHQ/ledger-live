@@ -8,7 +8,7 @@ import {
   SpeculosTransport,
 } from "../load/speculos";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
-import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
+import type { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError, AxiosResponse } from "axios";

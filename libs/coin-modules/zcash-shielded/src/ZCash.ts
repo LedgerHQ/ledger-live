@@ -2,8 +2,9 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
-import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
+import { toShieldedTransaction } from "./shieldedTransaction";
 import { Observable, Subscriber, TeardownLogic } from "rxjs";
+import { ShieldedTransaction } from "./types";
 import { LOG_TYPE } from "./constants";
 
 /**

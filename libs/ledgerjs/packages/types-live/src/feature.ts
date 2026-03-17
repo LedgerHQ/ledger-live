@@ -173,7 +173,6 @@ export type CurrencyFeatures = {
 export type Features = CurrencyFeatures & {
   nanoOnboardingFundWallet: DefaultFeature;
   mixpanelAnalytics: DefaultFeature;
-  welcomeScreenVideoCarousel: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
@@ -254,6 +253,8 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
+  lldWebviewManifestDomainCheck: DefaultFeature;
+  llmWebviewManifestDomainCheck: DefaultFeature;
   llmModularDrawer: Feature_ModularDrawer;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkSolanaSigner: DefaultFeature;
@@ -294,6 +295,7 @@ export type Features = CurrencyFeatures & {
       profilingSampleRate: number;
     }>;
   };
+  llmNanoSDeprecation: DefaultFeature;
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   llmHomescreen: DefaultFeature;
@@ -830,10 +832,11 @@ type Feature_Wallet40_Params = {
   assetSection: boolean;
 
   // Specifics
+  brazePlacement?: boolean;
   newReceiveDialog?: boolean;
 };
 
-export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params>;
+export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;
 export type Feature_LwdWallet40 = Feature<
   {
     newReceiveDialog: boolean;

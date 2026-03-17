@@ -3,8 +3,8 @@
  */
 
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { OperationType } from "@ledgerhq/types-live";
 import { Horizon } from "@stellar/stellar-sdk";
 import BigNumber from "bignumber.js";

@@ -1,4 +1,7 @@
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

@@ -184,7 +184,7 @@ export const urls = {
   },
   editBitcoinTx: {
     learnMore:
-      "https://support.ledger.com/fr/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
+      "https://support.ledger.com/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
   },
   ledgerAcademy: {
     whatIsEthereumRestaking: "https://www.ledger.com/academy/what-is-ethereum-restaking",
@@ -204,6 +204,8 @@ export const urls = {
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
     "https://www.ledger.com/blog-ledger-sync-synchronize-your-crypto-accounts-effortless-private-and-secure",
+  buyDevice:
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-desktop?utm_source=ledger_wallet_desktop&utm_medium=self_referral&utm_content=onboarding-2",
   charonLearnMore: "https://shop.ledger.com/products/ledger-recovery-key",
 
   // Node errors
@@ -225,12 +227,16 @@ export const urls = {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
   aleo: {
-    viewKeyLearnMore: "https://support.ledger.com/article/Aleo-ALEO",
+    learnMore: "https://support.ledger.com/article/Aleo-ALEO",
   },
   concordium: {
     learnMore: "https://support.ledger.com/article/Concordium-CCD",
     appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
     playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
+  },
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
   },
 };
 

@@ -1,4 +1,4 @@
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   updateTransaction,
@@ -6,16 +6,20 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
-import { broadcastWithAPI } from "../broadcast";
+import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { createTransaction } from "../createTransaction";
+import { SolanaTxConfirmationTimeout, SolanaTxSimulationFailedWhilePendingOp } from "../errors";
 import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { broadcast } from "../logic/broadcast";
 import { ChainAPI, Config } from "../network";
 import nftResolvers from "../nftResolvers";
 import { PRELOAD_MAX_AGE, preloadWithAPI } from "../preload";
@@ -107,12 +111,34 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
 function makeBroadcast(
   getChainAPI: (config: Config) => ChainAPI,
 ): AccountBridge<Transaction, SolanaAccount>["broadcast"] {
-  return info => {
+  return async ({ account, signedOperation }) => {
     const config: Config = {
-      endpoint: endpointByCurrencyId(info.account.currency.id),
+      endpoint: endpointByCurrencyId(account.currency.id),
     };
     const api = getChainAPI(config);
-    return broadcastWithAPI(info, api);
+    const { signature, operation, rawData } = signedOperation;
+    const txBase64 = Buffer.from(signature, "hex").toString("base64");
+
+    try {
+      const txSignature = await broadcast(api, txBase64, {
+        recentBlockhash: rawData?.recentBlockhash as BlockhashWithExpiryBlockHeight,
+      });
+      return patchOperationWithHash(operation, txSignature);
+    } catch (e) {
+      if (e instanceof Error) {
+        log("broadcast-error", e.message);
+
+        if (e.message.includes("simulation failed") && account.pendingOperations.length > 0) {
+          throw new SolanaTxSimulationFailedWhilePendingOp();
+        }
+
+        if (e.message.includes("was not confirmed in")) {
+          throw new SolanaTxConfirmationTimeout();
+        }
+      }
+
+      throw e;
+    }
   };
 }
 

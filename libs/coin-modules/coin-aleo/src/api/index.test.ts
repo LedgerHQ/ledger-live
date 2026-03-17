@@ -191,11 +191,13 @@ describe("createApi", () => {
     });
   });
 
-  describe("getSequence", () => {
+  describe("getNextSequence", () => {
     it("should throw unsupported error", async () => {
       const api = createApi(mockConfig, "aleo");
 
-      await expect(api.getSequence("aleo1test")).rejects.toThrow("getSequence is not supported");
+      await expect(api.getNextSequence("aleo1test")).rejects.toThrow(
+        "getNextSequence is not supported",
+      );
     });
   });
 

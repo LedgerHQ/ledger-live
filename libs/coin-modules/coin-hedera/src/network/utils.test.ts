@@ -1,4 +1,5 @@
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { SUPPORTED_ERC20_TOKENS } from "../constants";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
@@ -35,8 +36,10 @@ describe("network utils", () => {
   });
 
   describe("parseTransfers", () => {
+    const userAddress = "0.0.1234";
+    const rewardPayer = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+
     it("should correctly identify an incoming transfer", () => {
-      const userAddress = "0.0.1234";
       const transfers = [
         createMirrorCoinTransfer("0.0.5678", -100),
         createMirrorCoinTransfer(userAddress, 100),
@@ -51,7 +54,6 @@ describe("network utils", () => {
     });
 
     it("should correctly identify an outgoing transfer", () => {
-      const userAddress = "0.0.1234";
       const transfers = [
         createMirrorCoinTransfer(userAddress, -100),
         createMirrorCoinTransfer("0.0.5678", 100),
@@ -66,7 +68,6 @@ describe("network utils", () => {
     });
 
     it("should handle multiple senders and recipients", () => {
-      const userAddress = "0.0.1234";
       const transfers = [
         createMirrorCoinTransfer("0.0.5678", -50),
         createMirrorCoinTransfer(userAddress, -50),
@@ -82,7 +83,6 @@ describe("network utils", () => {
     });
 
     it("should correctly process token transfers", () => {
-      const userAddress = "0.0.1234";
       const tokenId = "0.0.7777";
       const transfers = [
         createMirrorTokenTransfer(userAddress, -10, tokenId),
@@ -98,7 +98,6 @@ describe("network utils", () => {
     });
 
     it("should exclude system accounts that are not nodes from recipients", () => {
-      const userAddress = "0.0.1234";
       const systemAccount = "0.0.500";
       const transfers = [
         createMirrorCoinTransfer(userAddress, -100),
@@ -114,7 +113,6 @@ describe("network utils", () => {
     });
 
     it("should include node accounts as recipients only if no other recipients", () => {
-      const userAddress = "0.0.1234";
       const nodeAccount = "0.0.3";
       const transfers = [
         createMirrorCoinTransfer(userAddress, -100),
@@ -130,7 +128,6 @@ describe("network utils", () => {
     });
 
     it("should exclude node accounts if there are other recipients", () => {
-      const userAddress = "0.0.1234";
       const normalAccount = "0.0.5678";
       const nodeAccount = "0.0.3";
       const transfers = [
@@ -148,7 +145,6 @@ describe("network utils", () => {
     });
 
     it("should handle transactions where user is not involved", () => {
-      const userAddress = "0.0.1234";
       const transfers = [
         createMirrorCoinTransfer("0.0.5678", -100),
         createMirrorCoinTransfer("0.0.9999", 100),
@@ -163,7 +159,6 @@ describe("network utils", () => {
     });
 
     it("should handle empty transfers array", () => {
-      const userAddress = "0.0.1234";
       const transfers: HederaMirrorCoinTransfer[] = [];
 
       const result = parseTransfers(transfers, userAddress);
@@ -175,7 +170,6 @@ describe("network utils", () => {
     });
 
     it("should reverse the order of senders and recipients", () => {
-      const userAddress = "0.0.1234";
       const transfers = [
         createMirrorCoinTransfer("0.0.900", -5),
         createMirrorCoinTransfer("0.0.5678", -95),
@@ -191,7 +185,6 @@ describe("network utils", () => {
     });
 
     it("should subtract staking reward from amount", () => {
-      const userAddress = "0.0.1234";
       const amount = new BigNumber(30);
       const stakingReward = new BigNumber(20);
       const transfers = [createMirrorCoinTransfer(userAddress, amount.toNumber())];
@@ -203,6 +196,30 @@ describe("network utils", () => {
         type: "IN",
         value: expectedAmountWithoutReward,
       });
+    });
+
+    it("excludes reward payer from senders when staking reward is present", () => {
+      const stakingReward = new BigNumber(30000000);
+      const transfers = [
+        createMirrorCoinTransfer(rewardPayer, -30000000),
+        createMirrorCoinTransfer("0.0.801", 1000),
+        createMirrorCoinTransfer(userAddress, 30000000),
+      ];
+
+      const result = parseTransfers(transfers, userAddress, stakingReward);
+
+      expect(result.senders).not.toContain(rewardPayer);
+    });
+
+    it("includes reward payer in senders when no staking reward", () => {
+      const transfers = [
+        createMirrorCoinTransfer(rewardPayer, -1000000),
+        createMirrorCoinTransfer(userAddress, 1000000),
+      ];
+
+      const result = parseTransfers(transfers, userAddress);
+
+      expect(result.senders).toContain(rewardPayer);
     });
   });
 

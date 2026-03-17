@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { isAccount, isAccountEmpty } from "@ledgerhq/coin-framework/account/helpers";
+import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { DefaultAccountSwapParamList } from "~/screens/Swap/types";
@@ -17,6 +17,8 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 type UseOpenSwapProps = {
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
+  defaultAccount?: AccountLike;
+  defaultParentAccount?: Account;
 };
 
 type AccountWithParent = {
@@ -42,7 +44,12 @@ function getAccountsForCurrency(
     });
 }
 
-export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
+export function useOpenSwap({
+  currency,
+  sourceScreenName,
+  defaultAccount,
+  defaultParentAccount,
+}: UseOpenSwapProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const shallowAccounts = useSelector(shallowAccountsSelector);
@@ -128,6 +135,11 @@ export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
   }, [currency, openDrawer, sourceScreenName, navigateToSwap]);
 
   const handleOpenSwap = useCallback(() => {
+    if (defaultAccount && !isAccountEmpty(defaultAccount)) {
+      navigateToSwap(defaultAccount, defaultParentAccount);
+      return;
+    }
+
     const accountCount = accountsForCurrency.length;
 
     if (accountCount === 0) {
@@ -142,7 +154,13 @@ export function useOpenSwap({ currency, sourceScreenName }: UseOpenSwapProps) {
     }
 
     openAccountSelectionDrawer();
-  }, [accountsForCurrency, navigateToSwap, openAccountSelectionDrawer]);
+  }, [
+    accountsForCurrency,
+    defaultAccount,
+    defaultParentAccount,
+    navigateToSwap,
+    openAccountSelectionDrawer,
+  ]);
 
   return { handleOpenSwap };
 }

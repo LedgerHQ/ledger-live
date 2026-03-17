@@ -1,24 +1,21 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
-import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
-import { Asset } from "~/types/asset";
+import MarketBanner from "LLM/features/MarketBanner";
 import TrackScreen from "~/analytics/TrackScreen";
 import { TRACKING_LABEL_MAP } from "LLM/components/MainTabBar/constants";
 
 interface PortfolioNoSignerContentProps {
-  readonly assets: Asset[];
-  readonly goToAssets: () => void;
   readonly isLNSUpsellBannerShown: boolean;
+  readonly shouldDisplayAssetSection?: boolean;
 }
 
 export const PortfolioNoSignerContent = ({
-  assets,
-  goToAssets,
   isLNSUpsellBannerShown,
+  shouldDisplayAssetSection = false,
 }: PortfolioNoSignerContentProps) => (
   <Box lx={{ paddingHorizontal: "s16" }}>
     <TrackScreen name={TRACKING_LABEL_MAP[NavigatorName.Portfolio]} />
@@ -26,6 +23,6 @@ export const PortfolioNoSignerContent = ({
     <TransferDrawer />
     <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
     <MarketBanner />
-    <PortfolioCryptosSection assets={assets} onPressShowAll={goToAssets} />
+    {shouldDisplayAssetSection && <PortfolioCryptosSection />}
   </Box>
 );

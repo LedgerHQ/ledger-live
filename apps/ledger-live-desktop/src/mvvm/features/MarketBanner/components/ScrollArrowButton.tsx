@@ -30,7 +30,10 @@ export const ScrollArrowButton = ({ direction, onClick }: ScrollArrowButtonProps
 
   return (
     <div
-      className={cn("absolute inset-y-0 z-10 flex items-center", className)}
+      className={cn(
+        "absolute inset-y-0 z-10 flex items-center opacity-0 transition-opacity group-hover:opacity-100",
+        className,
+      )}
       data-testid={`scroll-arrow-${direction}`}
     >
       <div className={cn("pointer-events-none absolute inset-y-0 w-48", gradientClassName)} />

@@ -58,7 +58,7 @@ jobs:
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
 
       - name: Build dependencies
-        run: pnpm build:lld:deps
+        run: pnpm turbo build --filter="ledger-live-desktop^..."
 
       - name: Build desktop JS
         run: |

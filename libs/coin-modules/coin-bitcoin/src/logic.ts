@@ -8,11 +8,13 @@ import type {
   NetworkInfo,
   UtxoStrategy,
   BtcOperation,
+  BitcoinAccount,
+  ZcashAccount,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 
@@ -340,3 +342,7 @@ export const mapTxToOperations = (
 
   return operations;
 };
+
+export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
+  return "privateInfo" in a;
+}

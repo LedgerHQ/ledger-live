@@ -181,7 +181,7 @@ function OperationRow({
         />
       </Box>
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
-        <BodyLeftContainer>
+        <BodyLeftContainer testID="operationRowBody">
           <Text
             variant="body"
             fontWeight="semiBold"

@@ -17,7 +17,7 @@ describe("getRewards", () => {
           consensus_timestamp: "1704067210.123456789",
           staking_reward_transfers: [],
         },
-      ],
+      ] as any,
       nextCursor: null,
     });
 
@@ -35,7 +35,7 @@ describe("getRewards", () => {
   });
 
   it("should return rewards for account with staking rewards", async () => {
-    const rewardAmount = "5000000";
+    const rewardAmount = 5000000;
     const txHash = "0xabc123";
     const consensusTimestamp = "1704067210.123456789";
 
@@ -51,7 +51,7 @@ describe("getRewards", () => {
             },
           ],
         },
-      ],
+      ] as any,
       nextCursor: null,
     });
 
@@ -80,15 +80,15 @@ describe("getRewards", () => {
           staking_reward_transfers: [
             {
               account: mockAddress,
-              amount: "5000000",
+              amount: 5000000,
             },
             {
               account: "0.0.999999",
-              amount: "3000000",
+              amount: 3000000,
             },
           ],
         },
-      ],
+      ] as any,
       nextCursor: null,
     });
 
@@ -97,7 +97,7 @@ describe("getRewards", () => {
     expect(result.items).toMatchObject([
       {
         stake: mockAddress,
-        amount: BigInt("5000000"),
+        amount: BigInt(5000000),
       },
     ]);
   });
@@ -111,7 +111,7 @@ describe("getRewards", () => {
           staking_reward_transfers: [
             {
               account: mockAddress,
-              amount: "5000000",
+              amount: 5000000,
             },
           ],
         },
@@ -121,20 +121,17 @@ describe("getRewards", () => {
           staking_reward_transfers: [
             {
               account: mockAddress,
-              amount: "3000000",
+              amount: 3000000,
             },
           ],
         },
-      ],
+      ] as any,
       nextCursor: null,
     });
 
     const result = await getRewards(mockAddress);
 
-    expect(result.items).toMatchObject([
-      { amount: BigInt("5000000") },
-      { amount: BigInt("3000000") },
-    ]);
+    expect(result.items).toMatchObject([{ amount: BigInt(5000000) }, { amount: BigInt(3000000) }]);
   });
 
   it("should handle pagination with cursor", async () => {
@@ -149,11 +146,11 @@ describe("getRewards", () => {
           staking_reward_transfers: [
             {
               account: mockAddress,
-              amount: "5000000",
+              amount: 5000000,
             },
           ],
         },
-      ],
+      ] as any,
       nextCursor,
     });
 
@@ -179,11 +176,11 @@ describe("getRewards", () => {
           staking_reward_transfers: [
             {
               account: mockAddress,
-              amount: "5000000",
+              amount: 5000000,
             },
           ],
         },
-      ],
+      ] as any,
       nextCursor: null,
     });
 

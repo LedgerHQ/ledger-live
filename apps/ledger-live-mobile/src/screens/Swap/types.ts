@@ -41,7 +41,11 @@ export type SwapOperationDetails = Omit<MappedSwapOperation, "fromAccount" | "to
   toAccountId: string;
 };
 
-export type SwapPendingOperation = { swapOperation: SwapOperation };
+export type SwapPendingOperation = {
+  swapOperation: SwapOperation;
+  isEmbeddedSwap?: boolean;
+  sponsored?: boolean;
+};
 
 export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams {
   defaultAccount?: AccountLike;

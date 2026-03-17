@@ -125,6 +125,7 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.activateLedgerSyncOnSpeculos();
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeActivationSuccessPage();
+    await app.portfolio.waitForPortfolioWithAccounts();
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(2, ledgerSyncPushDataArgs.data);
     await goToLedgerSync(true);

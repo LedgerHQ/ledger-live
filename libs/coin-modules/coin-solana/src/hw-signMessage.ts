@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import bs58 from "bs58";
 import invariant from "invariant";

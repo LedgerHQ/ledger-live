@@ -32,6 +32,14 @@ describe("useSwapTopBarHeaderViewModel", () => {
       onNotificationsPress: noop,
       onSettingsPress: noop,
       hasUnreadNotifications: false,
+      hasAccounts: false,
+      isSyncError: false,
+      isSyncPending: false,
+      listOfErrorAccountNames: "",
+      syncAccessibilityLabel: "Synchronize",
+      isSyncDrawerOpen: false,
+      openSyncDrawer: noop,
+      closeSyncDrawer: noop,
     }));
   });
 

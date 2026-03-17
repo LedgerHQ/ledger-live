@@ -10,6 +10,7 @@ import {
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   OP_TYPES_EXCLUDING_FEES,
+  STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -49,6 +50,7 @@ import {
   deserializeSignature,
   serializeTransaction,
   deserializeTransaction,
+  extractInitiator,
   extractFeesPayer,
   getOperationValue,
   getMemoFromBase64,
@@ -85,6 +87,7 @@ import {
   millisToSeconds,
   nanosToSeconds,
   secondsToNanos,
+  createStakingRewardOperationHash,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -300,11 +303,56 @@ describe("logic utils", () => {
     });
   });
 
-  describe("extractFeesPayer", () => {
+  describe("extractInitiator", () => {
     it("returns Hedera account ID from valid transaction_id", () => {
-      expect(extractFeesPayer("0.0.12345-1625097600-000")).toBe("0.0.12345");
+      expect(extractInitiator("0.0.12345-1625097600-000")).toBe("0.0.12345");
     });
-    // other kind of check are unnecessary, we trust the mirror node data
+  });
+
+  describe("extractFeesPayer", () => {
+    it("returns transfer account that paid exactly charged fee", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.10067173-1761755118-730000493",
+          charged_tx_fee: 40743,
+          transfers: [
+            { account: "0.0.23", amount: -40743 },
+            { account: "0.0.801", amount: 40743 },
+          ],
+        }),
+      ).toBe("0.0.23");
+    });
+
+    it("falls back to transaction initiator when that account is debited", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.8835924-1760510872-123456789",
+          charged_tx_fee: 1176695,
+          transfers: [
+            { account: "0.0.15", amount: 55631 },
+            { account: "0.0.801", amount: 1121064 },
+            { account: "0.0.8835924", amount: -3176695 },
+            { account: "0.0.9124531", amount: 1000000 },
+            { account: "0.0.9169746", amount: 1000000 },
+          ],
+        }),
+      ).toBe("0.0.8835924");
+    });
+
+    it("falls back to transaction initiator when no other transfer can be used to identify the fee payer", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.10067173-1761755118-029000738",
+          charged_tx_fee: 42782,
+          transfers: [
+            { account: "0.0.34", amount: 2039 },
+            { account: "0.0.801", amount: 40743 },
+            { account: "0.0.10067174", amount: -50000 },
+            { account: "0.0.10067175", amount: 7218 },
+          ],
+        }),
+      ).toBe("0.0.10067173");
+    });
   });
 
   describe("getTransactionExplorer", () => {
@@ -1659,6 +1707,15 @@ describe("logic utils", () => {
 
     it("preserves nanosecond precision", () => {
       expect(nanosToSeconds(1_000_000_001)).toEqual(new BigNumber(1.000000001));
+    });
+  });
+
+  describe("createStakingRewardOperationHash", () => {
+    it("appends the staking reward suffix to the given hash", () => {
+      const hash = "0.0.12345-1234567890-123456789";
+      const result = createStakingRewardOperationHash(hash);
+
+      expect(result).toBe(`${hash}${STAKING_REWARD_HASH_SUFFIX}`);
     });
   });
 });

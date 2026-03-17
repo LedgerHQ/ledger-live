@@ -141,7 +141,7 @@ function mapBlockTransactions(txs: XrplOperation[]): BlockTransaction[] {
       hash: blk.hash,
       failed: !isSuccess,
       fees: fee,
-      feesPayer,
+      ...(feesPayer ? { feesPayer } : {}),
       operations,
       details: blk.tx_json,
     };

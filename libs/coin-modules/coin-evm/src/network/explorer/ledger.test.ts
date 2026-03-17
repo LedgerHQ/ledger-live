@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

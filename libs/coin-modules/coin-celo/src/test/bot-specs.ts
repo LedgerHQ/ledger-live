@@ -1,6 +1,6 @@
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { Transaction } from "../types";
 import {
   minimalAmount,

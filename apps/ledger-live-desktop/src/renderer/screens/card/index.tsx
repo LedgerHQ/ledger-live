@@ -56,6 +56,7 @@ const LiveAppCard = ({ appId }: { appId: string }) => {
     >
       {manifest ? (
         <WebPTXPlayer
+          basePath="/card"
           manifest={manifest}
           inputs={{
             theme: themeType,

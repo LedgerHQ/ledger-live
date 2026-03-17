@@ -1,4 +1,4 @@
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/lib/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
 import { broadcastTx } from "../api";
 import {

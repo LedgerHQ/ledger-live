@@ -41,7 +41,7 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import SanctionedAccountModal from "./SanctionedAccountModal";

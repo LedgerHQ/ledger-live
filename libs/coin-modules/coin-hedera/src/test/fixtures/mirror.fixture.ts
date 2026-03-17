@@ -73,6 +73,7 @@ export const getMockedMirrorTransaction = (
     transfers: [],
     token_transfers: [],
     memo_base64: "",
+    node: "0.0.3",
     ...overrides,
   };
 };

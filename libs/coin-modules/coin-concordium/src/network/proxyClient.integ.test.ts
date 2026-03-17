@@ -1,5 +1,8 @@
-import coinConfig from "../config";
+import { setupTestnetCoinConfig } from "../test/fixtures";
 import {
+  getConsensusInfo,
+  getBlockInfoByHash,
+  getBlocksAtHeight,
   getAccountsByPublicKey,
   getAccountBalance,
   getAccountNonce,
@@ -16,16 +19,51 @@ describe("proxyClient", () => {
   const ACCOUNT_ID = "js:2:concordium:test:";
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
+  });
+
+  describe("getConsensusInfo", () => {
+    it("should return consensus info", async () => {
+      const result = await getConsensusInfo(currencyId);
+
+      expect(result).toHaveProperty("lastFinalizedBlockHeight");
+      expect(result).toHaveProperty("lastFinalizedBlock");
+      expect(result).toHaveProperty("bestBlock");
+      expect(result).toHaveProperty("bestBlockHeight");
+      expect(result).toHaveProperty("protocolVersion");
+      expect(result.lastFinalizedBlockHeight).toBeGreaterThan(0);
+      expect(result.lastFinalizedBlock).toMatch(/^[A-Fa-f0-9]{64}$/);
+    });
+  });
+
+  describe("getBlockInfoByHash", () => {
+    it("should return block info for valid hash", async () => {
+      const { lastFinalizedBlock } = await getConsensusInfo(currencyId);
+      const result = await getBlockInfoByHash(currencyId, lastFinalizedBlock);
+
+      expect(result.blockHash).toBe(lastFinalizedBlock);
+      expect(result.blockHeight).toBeGreaterThan(0);
+      expect(typeof result.blockSlotTime).toBe("string");
+      expect(result.finalized).toBe(true);
+      expect(typeof result.transactionCount).toBe("number");
+    });
+  });
+
+  describe("getBlocksAtHeight", () => {
+    it("should return block hashes at height", async () => {
+      const result = await getBlocksAtHeight(currencyId, 1000);
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0]).toMatch(/^[A-Fa-f0-9]{64}$/);
+    });
+
+    it("should return consistent results for same height", async () => {
+      const result1 = await getBlocksAtHeight(currencyId, 1000);
+      const result2 = await getBlocksAtHeight(currencyId, 1000);
+
+      expect(result1).toEqual(result2);
+    });
   });
 
   describe("getAccountsByPublicKey", () => {

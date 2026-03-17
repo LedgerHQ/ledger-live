@@ -4,6 +4,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { FileUtils } from "tests/utils/fileUtils";
 import { liveDataCommand } from "tests/utils/cliCommandsUtils";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -19,7 +20,7 @@ test.describe("Settings", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
         Account.ETH_1.accountName,
@@ -29,10 +30,10 @@ test.describe("Settings", () => {
         Account.ETH_1.accountName,
         TokenAccount.ETH_USDT_1.currency,
       );
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.goToAccountsTab();
       await app.settings.clickHideEmptyTokenAccountsToggle();
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.verifyChildrenTokensAreNotVisible(
         Account.ETH_1.accountName,
         TokenAccount.ETH_USDT_1.currency,
@@ -44,7 +45,7 @@ test.describe("Settings", () => {
 test.describe("Password", () => {
   const account = Account.ETH_1;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
@@ -61,9 +62,9 @@ test.describe("Password", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       const countBeforeLock = await app.accounts.countAccounts();
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.password.toggle();
       await app.password.enablePassword("SpeculosPassword", "SpeculosPassword");
       await app.settings.goToHelpTab();
@@ -71,7 +72,7 @@ test.describe("Password", () => {
       await app.LockscreenPage.login("bad password");
       await app.LockscreenPage.checkInputErrorVisibility("visible");
       await app.LockscreenPage.login("SpeculosPassword");
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       const countAfterLock = await app.accounts.countAccounts();
       await app.accounts.compareAccountsCountFromJson(countBeforeLock, countAfterLock);
       await app.accounts.navigateToAccountByName(account.accountName);
@@ -82,7 +83,7 @@ test.describe("Password", () => {
 test.describe("counter value selection", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     cliCommands: [liveDataCommand(account)],
     speculosApp: account.currency.speculosApp,
   });
@@ -108,14 +109,18 @@ test.describe("counter value selection", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.changeCounterValue("euro");
       await app.settings.expectCounterValue("Euro - EUR");
-      await app.layout.goToPortfolio();
+      await app.mainNavigation.openTargetFromMainNavigation("home");
 
       await app.layout.waitForAccountsSyncToBeDone();
       await app.portfolio.expectTotalBalanceCounterValue("€");
-      await app.portfolio.expectBalanceDiffCounterValue("€");
+
+      // Wallet 4.0 only shows percentage change
+      const expectedCounterValue = (await isWallet40Enabled(app.getPage())) ? "%" : "€";
+      await app.portfolio.expectBalanceDiffCounterValue(expectedCounterValue);
+
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
       await app.portfolio.expectOperationCounterValue("€");
     },
@@ -124,7 +129,7 @@ test.describe("counter value selection", () => {
 
 test.describe("Ledger Support (web link)", () => {
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
   });
 
   test(
@@ -139,7 +144,7 @@ test.describe("Ledger Support (web link)", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.goToHelpTab();
 
       await app.settings.expectLedgerSupportUrlToBeCorrect();
@@ -164,7 +169,7 @@ test.describe("Reset app", () => {
     async ({ app, userdataFile }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       const appJsonBefore = await FileUtils.getAppJsonSize(userdataFile);
       await app.settings.goToHelpTab();
       await app.settings.resetApp();
@@ -194,7 +199,7 @@ test.describe("Settings - Help tab", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToSettings();
+      await app.mainNavigation.openSettings();
       await app.settings.goToHelpTab();
       await app.settings.checkViewUserDataButtonIsEnabled();
       await app.settings.clickExportLogs();

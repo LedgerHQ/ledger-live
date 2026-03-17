@@ -1,12 +1,11 @@
 import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, memo } from "react";
-import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import { SharedFooterContinueButton } from "~/renderer/components/SpeedUpCancel/SharedFooterContinueButton";
 import SendAmountFields, { SendAmountFieldsProps } from "~/renderer/modals/Send/SendAmountFields";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { TransactionErrorBanner } from "../components/TransactionErrorBanner";
@@ -104,15 +103,12 @@ export const StepFeesFooter = ({
           errors={errorsToDisplay}
         />
       )}
-      <Button
+      <SharedFooterContinueButton
         id={"send-amount-continue-button"}
         isLoading={bridgePending}
-        primary
         disabled={disabled}
         onClick={onClick}
-      >
-        <Trans i18nKey="common.continue" />
-      </Button>
+      />
     </>
   );
 };

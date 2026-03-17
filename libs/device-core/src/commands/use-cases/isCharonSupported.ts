@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/devices/lib/index";
+import { DeviceModelId } from "@ledgerhq/devices/index";
 import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
 
 const deviceVersionRangesForCharon: { [key in DeviceModelId]?: string } = {

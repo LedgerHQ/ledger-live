@@ -4,7 +4,7 @@ import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { Text } from "react-native";
 import EvmFeesStrategy from "./EvmFeesStrategy";
-import type { Transaction } from "@ledgerhq/coin-evm/lib/types/transaction";
+import type { Transaction } from "@ledgerhq/coin-evm/types/transaction";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 

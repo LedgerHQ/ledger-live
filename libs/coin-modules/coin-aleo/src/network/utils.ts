@@ -1,7 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
   EXPLORER_TRANSFER_TYPES,

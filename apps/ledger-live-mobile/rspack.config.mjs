@@ -213,12 +213,16 @@ export default withRozeniteUrlFix(
           ],
         },
         plugins: [
-          new Repack.RepackPlugin(),
+          new Repack.RepackPlugin({
+            logger: false,
+          }),
           new ReanimatedPlugin({
             unstable_disableTransform: true,
           }),
           new ExpoModulesPlugin(),
         ],
+        stats: "errors-warnings",
+        infrastructureLogging: { level: "warn" },
         devServer: {
           host: "local-ip",
           hot: true,

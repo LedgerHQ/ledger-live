@@ -25,11 +25,11 @@ import {
   getParentAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   decodeTokenAccountIdSync,
   decodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { createCustomErrorClass } from "@ledgerhq/errors";
@@ -361,13 +361,16 @@ export function useCustomExchangeHandlers({
 
                   if (result.error) {
                     onCancel(result.error);
-
-                    navigation.navigate(NavigatorName.SwapSubScreens, {
-                      screen: ScreenName.SwapCustomError,
-                      params: {
-                        error: result.error,
-                      },
-                    });
+                    if (onCompleteError) {
+                      onCompleteError(result.error);
+                    } else {
+                      navigation.navigate(NavigatorName.SwapSubScreens, {
+                        screen: ScreenName.SwapCustomError,
+                        params: {
+                          error: result.error,
+                        },
+                      });
+                    }
                   }
 
                   if (result.operation) {
@@ -387,12 +390,16 @@ export function useCustomExchangeHandlers({
               navigation.pop();
             }
 
-            navigation.navigate(NavigatorName.SwapSubScreens, {
-              screen: ScreenName.SwapCustomError,
-              params: {
-                error: error ?? unknownSwapError,
-              },
-            });
+            if (onCompleteError) {
+              onCompleteError(error ?? unknownSwapError);
+            } else {
+              navigation.navigate(NavigatorName.SwapSubScreens, {
+                screen: ScreenName.SwapCustomError,
+                params: {
+                  error: error ?? unknownSwapError,
+                },
+              });
+            }
           },
           "custom.isReady": async () => {
             if (Config.DETOX) {

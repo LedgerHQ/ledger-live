@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/consistent-type-assertions: 0 */
 
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
-import * as sanction from "@ledgerhq/coin-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
+import * as sanction from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig, { CardanoCoinConfig } from "../config";

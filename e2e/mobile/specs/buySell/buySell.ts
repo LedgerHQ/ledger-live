@@ -2,7 +2,8 @@ import { setEnv } from "@ledgerhq/live-env";
 import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { getParentAccountName } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
+import { isWallet40 } from "../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -56,8 +57,13 @@ export async function runNavigateToBuyFromPortfolioPageTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Buy / Sell [${buySell.crypto.currency.name}] asset from portfolio page`, async () => {
-      await app.transferMenuDrawer.open();
-      await app.transferMenuDrawer.navigateToBuy();
+      if (isWallet40) {
+        await app.portfolio.pressQuickActionBuyButton();
+      } else {
+        await app.transferMenuDrawer.open();
+        await app.transferMenuDrawer.navigateToBuy();
+      }
+
       await handleBuySellFlow(buySell, paymentMethod, provider);
     });
   });
@@ -116,7 +122,11 @@ export async function runNavigateToBuyFromMarketPageTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     test(`Navigate to Buy / Sell [${buySell.crypto.currency.name}] asset from market page`, async () => {
-      await app.portfolio.tapWalletTabSelector("Market");
+      if (isWallet40) {
+        await app.portfolio.tapMarketBannerTitle();
+      } else {
+        await app.portfolio.tapWalletTabSelector("Market");
+      }
       await app.market.searchAsset(buySell.crypto.currency.ticker);
       await app.market.openAssetPage(buySell.crypto.currency.ticker);
       await app.market.tapOnMarketQuickActionButton("buy");

@@ -1,19 +1,21 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
   localeSelector,
   discreetModeSelector,
 } from "~/renderer/reducers/settings";
+import { themeSelector } from "~/renderer/actions/general";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { usePortfolioBalanceSync } from "LLD/hooks/usePortfolioBalanceSync";
+import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "../utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -30,30 +32,32 @@ export const useBalanceViewModel = (
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+  const theme = useSelector(themeSelector);
   const { hasAccount } = useAccountStatus();
-  const { portfolio, counterValue, isBalanceLoading, isColdStart, balanceAvailable } =
-    usePortfolioBalanceSync({
-      legacyRange,
-    });
+
+  const {
+    portfolio,
+    counterValue,
+    isColdStart,
+    balanceAvailable: rawBalanceAvailable,
+    syncPhase,
+  } = usePortfolioBalance({ legacyRange });
 
   const latestBalanceValue =
     portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
 
-  const frozenBalanceRef = useRef(latestBalanceValue);
-  useEffect(() => {
-    if (!isBalanceLoading) {
-      frozenBalanceRef.current = latestBalanceValue;
-    }
-  }, [isBalanceLoading, latestBalanceValue]);
-  const shouldFreezeBalance = shouldDisplayBalanceRefreshRework && isBalanceLoading;
-  const displayedBalance = shouldFreezeBalance ? frozenBalanceRef.current : latestBalanceValue;
+  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
+    rawBalanceAvailable,
+    syncPhase,
+    latestBalance: latestBalanceValue,
+    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+  });
 
   const unit = counterValue.units[0];
   const valueChange = portfolio.countervalueChange;
 
   const navigateToAnalytics = useCallback(() => {
     setTrackingSource(PORTFOLIO_TRACKING_PAGE_NAME);
-
     track("button_clicked", {
       button: "analytics_page",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
@@ -92,6 +96,7 @@ export const useBalanceViewModel = (
     hasOnboardedDevice,
     isColdStart,
     shouldDisplayBalanceRefreshRework,
-    isLoading: isBalanceLoading,
+    isLoading,
+    theme,
   };
 };

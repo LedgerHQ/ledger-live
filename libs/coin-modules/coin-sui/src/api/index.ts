@@ -1,9 +1,12 @@
 import {
   AlpacaApi,
+  Balance,
   CraftedTransaction,
   FeeEstimation,
   TransactionIntent,
+  TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
+import { validateAddress } from "../bridge/validateAddress";
 import coinConfig, { type SuiConfig } from "../config";
 import {
   estimateFees,
@@ -44,6 +47,17 @@ export function createApi(config: SuiConfig): AlpacaApi {
     getStakes,
     getRewards,
     getValidators: logicGetValidators,
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 

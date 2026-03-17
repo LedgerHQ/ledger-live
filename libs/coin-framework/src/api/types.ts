@@ -1,5 +1,19 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
+// NOTE: from types-live
+export type BroadcastConfig = {
+  mevProtected: boolean;
+  sponsored?: boolean;
+  source?: TransactionSource;
+};
+
+/**
+ * TransactionSource identifies the origin of a transaction
+ */
+export type TransactionSource = {
+  // Type of the transaction source
+  type: "dApp" | "live-app" | "coin-module" | "swap";
+  // Name/identifier of the source (e.g., manifestId, provider name)
+  name: string;
+};
 
 export type BlockInfo = {
   height: number;
@@ -60,7 +74,6 @@ export type Operation<MemoType extends Memo = MemoNotSupported> = {
    * This can include things like status, error messages, swap info, etc.
    */
   details?: Record<string, unknown>;
-  assetInfo?: AssetInfo;
   tx: {
     hash: string; // transaction hash
     block: BlockInfo; // block metadata, empty string for block hash if not available directly and no reorg possible
@@ -126,7 +139,7 @@ export type BlockTransaction = {
   fees: bigint;
 
   /** The address that paid for this transaction's fees. */
-  feesPayer: string;
+  feesPayer?: string;
 };
 
 /** An operation belonging to a {@link BlockTransaction}. */
@@ -468,7 +481,7 @@ export type AccountInfo = {
 };
 
 export type AddressValidationCurrencyParameters = {
-  currency: CryptoCurrency;
+  currencyId: string;
   networkId: number;
 };
 
@@ -676,33 +689,38 @@ export type AlpacaApi<
    * @throws if the transaction is rejected by the network (e.g., invalid signature, insufficient funds)
    */
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
-};
 
-export type ChainSpecificRules = {
-  getAccountShape: (address: string) => void;
-  getTransactionStatus: {
-    throwIfPendingOperation?: boolean;
-  };
-};
-
-export type BridgeApi<
-  MemoType extends Memo = MemoNotSupported,
-  TxDataType extends TxData = TxDataNotSupported,
-> = {
+  /**
+   * Validate a transaction intent.
+   *
+   * @param transactionIntent the transaction intent describing what the user wants to do
+   * @param balances current balances of the intent sender
+   * @param customFees optional custom fees to use instead of the default estimation
+   * @returns additional values the intent has been validated with, and optional errors/warnings
+   */
   validateIntent: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
     balances: Balance[],
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
-  getSequence: (address: string) => Promise<bigint>;
-  getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
-  computeIntentType?: (transaction: Record<string, unknown>) => string;
-  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-};
 
-export type Api<
-  MemoType extends Memo = MemoNotSupported,
-  TxDataType extends TxData = TxDataNotSupported,
-> = AlpacaApi<MemoType, TxDataType> & BridgeApi<MemoType, TxDataType>;
+  /**
+   * Get the next sequence number (nonce) for an address
+   *
+   * @param address the account address
+   * @returns the next usable sequence number
+   */
+  getNextSequence: (address: string) => Promise<bigint>;
+
+  /**
+   * Validate whether an address is well-formed for the blockchain.
+   *
+   * @param address the address to validate
+   * @param parameters currency-specific validation parameters
+   * @returns `true` if the address is valid, `false` otherwise
+   */
+  validateAddress: (
+    address: string,
+    parameters: Partial<AddressValidationCurrencyParameters>,
+  ) => Promise<boolean>;
+};

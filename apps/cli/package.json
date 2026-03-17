@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.34.0",
+  "version": "24.35.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "zx ./scripts/build.mjs",
     "watch": "rslib build --watch",
-    "typecheck": "tsc --project src/tsconfig.json --noEmit",
+    "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "zx ./scripts/test.mjs"
@@ -41,6 +41,7 @@
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",

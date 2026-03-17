@@ -10,7 +10,10 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
 import { sendFeatures, getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useTranslation } from "react-i18next";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import type { FeePresetOption } from "../../../../hooks/useFeePresetOptions";
@@ -57,7 +60,7 @@ type NetworkFeesMenuProps = Readonly<{
 export function NetworkFeesMenu({ display, selection, presets, actions }: NetworkFeesMenuProps) {
   const { label: feesLabel, value: feesValue, strategyLabel: feesStrategyLabel } = display;
   const { selectedStrategy, onSelectStrategy } = selection;
-  const { options: feePresetOptions, fiatByPreset, legendByPreset } = presets;
+  const { options: feePresetOptions = [], fiatByPreset = {}, legendByPreset = {} } = presets;
   const { onSelectCustomFees, onSelectCoinControl } = actions ?? {};
   const { t } = useTranslation();
   const { state } = useSendFlowData();
@@ -79,8 +82,9 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   );
 
   const feeOptionsWithFiat = useMemo(() => {
-    if (feePresetOptions.length > 0) {
-      return feePresetOptions.map(option => {
+    const options = feePresetOptions ?? [];
+    if (options.length > 0) {
+      return options.map(option => {
         return {
           ...option,
           fiatValue: fiatByPreset[option.id] ?? null,
@@ -130,7 +134,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   if (!hasMenuOptions) {
     return (
       <div
-        className="flex w-full items-center justify-between py-16"
+        className="flex w-full items-center justify-between mt-16 mb-12"
         data-testid="send-network-fees-row"
       >
         <span className="flex items-center gap-8">
@@ -144,7 +148,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
 
   return (
     <div
-      className="flex w-full items-center justify-between py-16"
+      className="flex w-full items-center justify-between mt-16 mb-12"
       data-testid="send-network-fees-row"
     >
       <span className="flex items-center gap-8">

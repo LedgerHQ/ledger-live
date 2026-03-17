@@ -5,11 +5,11 @@ import specs from "./specs";
 import type { AlgorandAccount } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/account", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
   isAccountEmpty: jest.fn((account: Account) => account.balance?.isZero() ?? true),
 }));
 
-jest.mock("@ledgerhq/coin-framework/bot/specs", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/bot/specs", () => ({
   botTest: jest.fn((name, fn) => fn()),
   genericTestDestination: jest.fn(),
   pickSiblings: jest.fn(siblings => siblings[0]),

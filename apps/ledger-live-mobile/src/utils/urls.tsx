@@ -158,6 +158,10 @@ export const urls = {
         main: "https://www.near.org/intents",
         tos: "https://swapkit.dev/terms-of-service/",
       },
+      swapsxyz: {
+        main: "https://swaps.xyz/",
+        tos: "https://docs.swaps.xyz/resources/terms-of-service",
+      },
       oneinch: {
         main: "https://1inch.com/",
         tos: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
@@ -260,6 +264,13 @@ export const urls = {
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
+  concordium: {
+    learnMore: "https://support.ledger.com/article/Concordium-CCD",
+    idApp: {
+      appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
+      playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
+    },
+  },
   fwUpdateReleaseNotes: {
     nanoS: "https://support.ledger.com/article/360010446000-zd",
     nanoSP: "https://support.ledger.com/article/4494540771997-zd",
@@ -277,7 +288,7 @@ export const urls = {
   },
   editBitcoinTx: {
     learnMore:
-      "https://support.ledger.com/fr/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
+      "https://support.ledger.com/article/how-to-speed-up-or-cancel-pending-bitcoin-transactions",
   },
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
@@ -295,4 +306,8 @@ export const urls = {
   },
   nanoSUpgradeProgram: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
   nanoSLimitations: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  deviceDeprecation: {
+    shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+    learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
+  },
 };

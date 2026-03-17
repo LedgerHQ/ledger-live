@@ -16,6 +16,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithParentAddressCommand, liveDataCommand } from "tests/utils/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 const subAccounts = [
   {
@@ -49,7 +50,7 @@ const subAccountReceive: Array<{
 for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
     });
 
@@ -135,7 +136,7 @@ for (const token of subAccountReceive) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
@@ -187,7 +188,7 @@ for (const token of subAccounts) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectTokenToBePresent(token.account);
       },
@@ -211,7 +212,7 @@ const transactionE2E = [
 for (const transaction of transactionE2E) {
   test.describe("Send token - E2E", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
         liveDataWithParentAddressCommand(
@@ -233,7 +234,7 @@ for (const transaction of transactionE2E) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           getParentAccountName(transaction.tx.accountToDebit),
         );
@@ -307,7 +308,7 @@ const transactionsAddressInvalid = [
 for (const transaction of transactionsAddressInvalid) {
   test.describe("Send token - invalid address input", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         async (appjsonPath: string) => {
@@ -349,7 +350,12 @@ for (const transaction of transactionsAddressInvalid) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.openSendModalFromSideBar();
+        if (await isWallet40Enabled(app.getPage())) {
+          await app.portfolio.clickSendButton();
+        } else {
+          await app.layout.openSendModalFromSideBar();
+        }
+
         await app.send.selectDebitCurrency(transaction.transaction);
         invariant(transaction.recipient, "Recipient address is not defined");
         await app.send.fillRecipient(transaction.recipient);
@@ -377,7 +383,7 @@ const transactionsAddressValid = [
 for (const transaction of transactionsAddressValid) {
   test.describe("Send token - valid address input", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -413,7 +419,12 @@ for (const transaction of transactionsAddressValid) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.openSendModalFromSideBar();
+        if (await isWallet40Enabled(app.getPage())) {
+          await app.portfolio.clickSendButton();
+        } else {
+          await app.layout.openSendModalFromSideBar();
+        }
+
         await app.send.selectDebitCurrency(transaction.transaction);
         //CLI doesn't allow us to get ATA address
         await app.send.fillRecipient(Addresses.SOL_GIGA_2_ATA_ADDRESS);
@@ -464,7 +475,7 @@ const tokenTransactionInvalid = [
 for (const transaction of tokenTransactionInvalid) {
   test.describe("Send token (subAccount) - invalid amount input", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
         liveDataWithParentAddressCommand(
@@ -497,7 +508,7 @@ for (const transaction of tokenTransactionInvalid) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           getParentAccountName(transaction.tx.accountToDebit),
         );
@@ -523,7 +534,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     Fee.MEDIUM,
   );
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
     cliCommands: [
       liveDataWithParentAddressCommand(
@@ -545,7 +556,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(
         getParentAccountName(tokenTransactionValid.accountToDebit),
       );
@@ -576,7 +587,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
     xrayTicket: "B2CQA-3908",
   };
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tokenValidSend.tx.accountToDebit.currency.speculosApp,
     cliCommands: [
       liveDataWithParentAddressCommand(
@@ -598,7 +609,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
     async ({ app }) => {
       const tx = tokenValidSend.tx;
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToDebit));
       await app.account.navigateToTokenInAccount(tx.accountToDebit);
       await app.account.clickSend();
@@ -619,7 +630,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
       await app.sendDrawer.expectReceiverInfos(tx);
       await app.drawer.closeDrawer();
       if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.clickSyncBtnForAccount(getParentAccountName(tx.accountToCredit));
         await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToCredit));
         await app.account.navigateToTokenInAccount(tx.accountToDebit);

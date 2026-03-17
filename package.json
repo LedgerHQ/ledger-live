@@ -10,6 +10,9 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "resolutions": {
     "node-abi": "^4.9.0"
   },
@@ -27,6 +30,7 @@
     "build:dummy-live-app": "pnpm turbo build --filter=\"@ledgerhq/dummy-live-app\"",
     "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --filter=@ledgerhq/live-cli",
+    "build:device-deps": "node apps/cli/scripts/rebuild-device-deps.mjs",
     "build:coin": "pnpm turbo build --filter=\"./libs/coin-*/**\"",
     "build:coin:deps": "pnpm turbo build --filter=\"./libs/coin-*/**^...\"",
     "build:domain": "pnpm turbo build --filter=@ledgerhq/domain-service",
@@ -78,6 +82,7 @@
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
     "cli": "pnpm --filter live-cli",
+    "wallet-framework": "pnpm --filter ledger-wallet-framework",
     "coin": "pnpm --filter coin-framework",
     "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2",
     "coin:coverage:clean": "rm -rf coverage libs/coin-modules/**/coverage libs/coin-framework/coverage",
@@ -111,6 +116,7 @@
     "coin:tron": "pnpm --filter coin-tron",
     "coin:vechain": "pnpm --filter coin-vechain",
     "coin:xrp": "pnpm --filter coin-xrp",
+    "coin-modules:lint-fix": "pnpm --no-bail --filter=\"@ledgerhq/coin-*\" lint --fix",
     "coin-modules:test-integ": "pnpm --no-bail --filter=\"@ledgerhq/coin-*\" test-integ",
     "coin:sui": "pnpm --filter coin-sui",
     "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
@@ -146,7 +152,6 @@
     "live-dmk-shared": "pnpm --filter live-dmk-shared",
     "live-dmk-mobile": "pnpm --filter live-dmk-mobile",
     "live-dmk-desktop": "pnpm --filter live-dmk-desktop",
-    "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
     "ljs:errors": "pnpm --filter errors",
@@ -320,7 +325,6 @@
       "bufferutil",
       "core-js",
       "core-js-pure",
-      "cpu-features",
       "detox",
       "dtrace-provider",
       "electron",
@@ -328,15 +332,12 @@
       "esbuild",
       "keccak",
       "msw",
-      "node-hid",
       "nx",
       "protobufjs",
       "secp256k1",
       "sqlite3",
       "ssh2",
       "tiny-secp256k1",
-      "unrs-resolver",
-      "usb",
       "utf-8-validate",
       "web3",
       "web3-bzz",

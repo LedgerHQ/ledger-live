@@ -5,7 +5,7 @@ import "../../../__tests__/test-helpers/dom-polyfill";
 import { renderHook, act } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { selectorStateDefaultValues, useToState } from ".";
-import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";

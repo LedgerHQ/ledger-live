@@ -16,6 +16,7 @@ import { Icon, Text, Flex } from "@ledgerhq/native-ui";
 import { useShowProviderLoadingTransition } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { InterstitialType } from "~/components/WebPTXPlayer";
 import { DdRum, RumActionType } from "@datadog/mobile-react-native";
+import { v4 as uuid } from "uuid";
 
 export const Loader = styled(Flex)`
   gap: 28px;
@@ -197,7 +198,5 @@ function useProviderConnectRum({
 }
 
 function uniqueId(): string {
-  const timestamp = Date.now().toString(36);
-  const randomString = Math.random().toString(36).slice(2, 7);
-  return timestamp + randomString;
+  return uuid();
 }

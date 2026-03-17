@@ -1,4 +1,4 @@
-import { getMainAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount, isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "../../types";
 import { getSubAccount } from "./token";

@@ -1,7 +1,7 @@
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { AccountShapeInfo, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
@@ -17,8 +17,8 @@ import {
 import { AptosAPI } from "../../network";
 import { AptosAccount } from "../../types";
 
-jest.mock("@ledgerhq/coin-framework/account", () => {
-  const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => {
+  const originalModule = jest.requireActual("@ledgerhq/ledger-wallet-framework/account");
   const partialMockedModule = Object.keys(originalModule).reduce(
     (pre: { [key: string]: jest.Mock }, methodName) => {
       pre[methodName] = jest.fn();
@@ -40,7 +40,7 @@ const mockedDecodeTokenAccountId = jest.mocked(decodeTokenAccountId);
 jest.mock("../../network");
 let mockedAptosAPI: jest.Mocked<any>;
 
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("invariant", () => jest.fn());
 
 jest.mock("../../bridge/logic");

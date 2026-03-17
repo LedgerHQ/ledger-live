@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { NearAccount, Transaction } from "./types";
 import { createTransaction } from "./createTransaction";
 import getEstimatedFees from "./getFeesForTransaction";

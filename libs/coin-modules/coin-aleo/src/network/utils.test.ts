@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI5xx } from "@ledgerhq/errors";
-import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
+import { EXPLORER_TRANSFER_TYPES } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
 import type { ProvableApi } from "../types";
-import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
 import {
+  getMockedRecord,
   getMockedPublicTransaction,
   getMockedTransactionDetails,
-} from "../__tests__/fixtures/transaction.fixture";
+} from "../__tests__/fixtures/api.fixture";
 import * as logicUtils from "../logic/utils";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { accessProvableApi } from "./utils";
@@ -70,7 +70,6 @@ describe("network/utils", () => {
           .mockResolvedValueOnce({
             address: mockAddress,
             transactions: mockPage2Txs,
-            next_cursor: undefined,
           });
 
         const result = await fetchAccountTransactionsFromHeight({
@@ -110,7 +109,6 @@ describe("network/utils", () => {
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
           address: mockAddress,
           transactions: mockTxs,
-          next_cursor: undefined,
         });
 
         const result = await fetchAccountTransactionsFromHeight({
@@ -213,7 +211,6 @@ describe("network/utils", () => {
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
           address: mockAddress,
           transactions: mockTxs,
-          next_cursor: undefined,
         });
 
         const result = await fetchAccountTransactionsFromHeight({
@@ -243,7 +240,6 @@ describe("network/utils", () => {
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
           address: mockAddress,
           transactions: mockTxs,
-          next_cursor: undefined,
         });
 
         await fetchAccountTransactionsFromHeight({
@@ -272,7 +268,6 @@ describe("network/utils", () => {
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
           address: mockAddress,
           transactions: [],
-          next_cursor: undefined,
         });
 
         const result = await fetchAccountTransactionsFromHeight({
@@ -294,7 +289,6 @@ describe("network/utils", () => {
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
           address: mockAddress,
           transactions: mockTxs,
-          next_cursor: undefined,
         });
 
         await fetchAccountTransactionsFromHeight({
@@ -321,7 +315,6 @@ describe("network/utils", () => {
         jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
           address: mockAddress,
           transactions: mockTxs,
-          next_cursor: undefined,
         });
 
         await fetchAccountTransactionsFromHeight({
@@ -402,8 +395,6 @@ describe("network/utils", () => {
 
       it("should register a new account when apiKey is missing", async () => {
         const partialProvableApi: ProvableApi = {
-          apiKey: undefined,
-          consumerId: undefined,
           jwt: mockJWT,
           uuid: mockUUID,
           scannerStatus: { synced: true, percentage: 100 },
@@ -433,7 +424,6 @@ describe("network/utils", () => {
       it("should register a new account when consumerId is missing", async () => {
         const partialProvableApi: ProvableApi = {
           apiKey: mockApiKey,
-          consumerId: undefined,
           jwt: mockJWT,
           uuid: mockUUID,
           scannerStatus: { synced: true, percentage: 100 },
@@ -548,7 +538,6 @@ describe("network/utils", () => {
         const existingProvableApi: ProvableApi = {
           apiKey: mockApiKey,
           consumerId: mockConsumerId,
-          jwt: undefined,
           uuid: mockUUID,
           scannerStatus: { synced: true, percentage: 100 },
         };
@@ -631,7 +620,6 @@ describe("network/utils", () => {
           apiKey: mockApiKey,
           consumerId: mockConsumerId,
           jwt: mockJWT,
-          uuid: undefined,
           scannerStatus: { synced: false, percentage: 0 },
         };
 
@@ -718,7 +706,7 @@ describe("network/utils", () => {
           scannerStatus: { synced: false, percentage: 75 },
         };
 
-        mockGetRecordScannerStatus.mockResolvedValue(null);
+        mockGetRecordScannerStatus.mockResolvedValue(null as any);
 
         const result = await accessProvableApi({
           currency: mockCurrency,

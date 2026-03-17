@@ -1,4 +1,4 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
@@ -383,10 +383,6 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
 
   if ("mode" in transaction) {
     raw.mode = transaction.mode;
-  }
-
-  if ("feeCustomUnit" in transaction) {
-    raw.feeCustomUnit = transaction.feeCustomUnit;
   }
 
   if ("data" in transaction) {

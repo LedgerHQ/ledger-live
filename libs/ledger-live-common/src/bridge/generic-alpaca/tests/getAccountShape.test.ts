@@ -2,13 +2,13 @@ import BigNumber from "bignumber.js";
 import { genericGetAccountShape } from "../getAccountShape";
 
 const getSyncHashMock = jest.fn();
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   encodeAccountId: jest.fn(() => "accId"),
   getSyncHash: (...args: any[]) => getSyncHashMock(...args),
 }));
 
 const mergeOpsMock = jest.fn();
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   mergeOps: (...args: any[]) => mergeOpsMock(...args),
 }));
 
@@ -41,7 +41,7 @@ jest.mock("../utils", () => ({
 }));
 
 const inferSubOperationsMock = jest.fn();
-jest.mock("@ledgerhq/coin-framework/serialization", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/serialization", () => ({
   inferSubOperations: (...a: any[]) => inferSubOperationsMock(...a),
 }));
 
@@ -215,8 +215,8 @@ describe("genericGetAccountShape", () => {
 
         expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, {
           minHeight: expectedPagination.minHeight,
-          cursor: expectedPagination.cursor,
           order: expectedPagination.order,
+          ...("cursor" in expectedPagination ? { cursor: expectedPagination.cursor } : {}),
         });
 
         const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;

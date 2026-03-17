@@ -7,7 +7,7 @@ import { act, renderHook } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/evm/bridge/mock";
-import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 

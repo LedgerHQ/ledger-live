@@ -77,6 +77,7 @@ export enum ScreenName {
   DelegationSummary = "DelegationSummary",
   DelegationValidationError = "DelegationValidationError",
   DelegationValidationSuccess = "DelegationValidationSuccess",
+  DeeplinkInstallAppDeviceSelection = "DeeplinkInstallAppDeviceSelection",
   DeveloperCustomManifest = "DeveloperCustomManifest",
   DeveloperSettings = "DeveloperSettings",
   DeviceConnect = "DeviceConnect",
@@ -344,6 +345,8 @@ export enum ScreenName {
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
   CantonOnboardAccount = "CantonOnboardAccount",
+  // Concordium
+  ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -668,6 +671,7 @@ export enum NavigatorName {
   SuiUndelegateFlow = "SuiUndelegateFlow",
 
   CantonOnboard = "CantonOnboard",
+  ConcordiumOnboard = "ConcordiumOnboard",
 
   // Tab
   Main = "Main",

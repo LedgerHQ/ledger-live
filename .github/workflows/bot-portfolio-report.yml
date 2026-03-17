@@ -54,7 +54,7 @@ jobs:
       - name: install and build
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live"
-          pnpm build:llc
+          pnpm turbo build --filter=./libs/ledger-live-common
         shell: bash
       - name: portfolio
         timeout-minutes: 200

@@ -1,5 +1,5 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { craftTransaction } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
 import getResolution from "../signer/getResolution";

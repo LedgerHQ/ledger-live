@@ -2757,6 +2757,11 @@
       "connectDevice" : {
         "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "새로고침 중 - 마지막 업데이트 {{timeAgo}}",
+      "refreshingInitial" : "새로고침 중",
+      "upToDate" : "최신 상태입니다"
     }
   },
   "addAccountsModal" : {
@@ -5040,6 +5045,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OS 업데이트 가능",
+          "manager" : "Ledger OS 최신 업데이트가 있습니다"
+        },
+        "version" : "버전 {{firmwareVersion}}",
+        "cta" : "업데이트"
+      },
       "title" : "OS 업데이트 사용 가능",
       "descriptionDeviceName" : "탭하여 \"{{deviceName}}\" 장치를 OS 버전 {{firmwareVersion}}로 업데이트하세요.",
       "descriptionProductName" : "탭하여 {{productName}} 장치를 OS 버전 {{firmwareVersion}}로 업데이트하세요."
@@ -8326,6 +8339,7 @@
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "accountCount_one" : "{{count}}개 계정",
     "accountCount_other" : "{{count}}개 계정",
+    "perpetualsBanner" : "현재 아비트럼 체인에서는 USDC만 지원됩니다.",
     "errors" : {
       "title" : "연결에 실패했습니다",
       "backend" : "문제가 발생했습니다. 나중에 다시 시도해 주세요",

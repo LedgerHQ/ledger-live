@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
 import * as signTransactionModule from "../common-logic/transaction/sign";
@@ -83,7 +83,7 @@ describe("onboard", () => {
     } as unknown as CantonSigner;
 
     const mockSignerContext: SignerContext<CantonSigner> = jest.fn(
-      async (deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
+      async (_deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
         return callback(mockSigner);
       },
     ) as unknown as SignerContext<CantonSigner>;
@@ -94,8 +94,12 @@ describe("onboard", () => {
 
     it("should skip submission when account is onboarded on network but has no local xpub", async () => {
       // GIVEN
-      const account = createMockAccount({ xpub: undefined });
-      mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: mockPartyId });
+      const account = createMockAccount();
+      delete account.xpub;
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: mockPartyId,
+        public_key: mockPublicKey,
+      });
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
       const values = await firstValueFrom(
@@ -123,10 +127,15 @@ describe("onboard", () => {
       const account = createMockAccount({ xpub: existingPartyId });
       const newPartyId = "new-party-id";
 
-      mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: existingPartyId });
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: existingPartyId,
+        public_key: mockPublicKey,
+      });
       mockedGateway.prepareOnboarding.mockResolvedValue({
         party_id: newPartyId,
-        transactions: {},
+        party_name: "test-party-name",
+        public_key_fingerprint: "test-fingerprint",
+        transactions: {} as any,
       });
       mockedGateway.submitOnboarding.mockResolvedValue({
         party: {

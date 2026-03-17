@@ -1,4 +1,4 @@
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";

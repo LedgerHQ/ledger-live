@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { LiveNetworkResponse } from "@ledgerhq/live-network/lib/network";
+import { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import { getCoinConfig } from "../../config";
 import { MAX_TRANSACTIONS_PER_PAGE } from "../../consts";
 import {

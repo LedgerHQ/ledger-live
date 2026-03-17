@@ -3,7 +3,8 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ManagerPage {
   baseLink = "myledger";
-  managerTitleId = "manager-title";
+  // TODO - remove `or` statement when wallet40 is fully activated
+  managerTitleId = /manager-title|header-title/;
   deviceNameId = "manager-device-name";
 
   deviceName = () => getElementById(this.deviceNameId);

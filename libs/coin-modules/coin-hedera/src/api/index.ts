@@ -1,15 +1,21 @@
 import type {
-  Api,
+  AlpacaApi,
   CraftedTransaction,
   Operation,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { validateAddress } from "../bridge/validateAddress";
 import coinConfig, { type HederaConfig } from "../config";
-import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
+import {
+  HARDCODED_BLOCK_HEIGHT,
+  HEDERA_OPERATION_TYPES,
+  STAKING_REWARD_HASH_SUFFIX,
+} from "../constants";
 import {
   broadcast as logicBroadcast,
   combine,
@@ -30,7 +36,7 @@ import {
   getRewards,
 } from "../logic";
 import {
-  extractFeesPayer,
+  extractInitiator,
   mapIntentToSDKOperation,
   getOperationValue,
   getBlockHash,
@@ -40,7 +46,10 @@ import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 import type { EstimateFeesParams, HederaMemo, HederaOperationExtra } from "../types";
 
-export function createApi(config: HederaConfig, currencyId: string): Api<HederaMemo> {
+export function createApi(
+  config: HederaConfig,
+  currencyId: string,
+): AlpacaApi<HederaMemo> & BridgeApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -180,9 +189,16 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
             }
           : { type: "native" };
 
-        const feesPayer = liveOp.extra?.transactionId
-          ? extractFeesPayer(liveOp.extra.transactionId)
-          : undefined;
+        // Prefer inferred payer from operation extra, fallback to transaction_id parsing for legacy ops.
+        let feesPayer = liveOp.extra?.feesPayer;
+        if (!feesPayer && liveOp.extra?.transactionId)
+          feesPayer = extractInitiator(liveOp.extra.transactionId);
+
+        // REWARD operations append a suffix to the tx.hash to ensure uniqueness
+        const hash =
+          liveOp.type === "REWARD"
+            ? liveOp.hash.replace(STAKING_REWARD_HASH_SUFFIX, "")
+            : liveOp.hash;
 
         return {
           id: liveOp.id,
@@ -200,7 +216,7 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
             }),
           },
           tx: {
-            hash: liveOp.hash,
+            hash,
             fees: BigInt(liveOp.fee.toFixed(0)),
             ...(feesPayer && { feesPayer }),
             date: liveOp.date,
@@ -228,8 +244,9 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getSequence: async (_address): Promise<bigint> => {
-      throw new Error("getSequence is not supported");
+    getNextSequence: async (_address): Promise<bigint> => {
+      throw new Error("getNextSequence is not supported");
     },
+    validateAddress,
   };
 }

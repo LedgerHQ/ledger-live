@@ -1,5 +1,4 @@
 import { isValidAddress } from "@celo/utils/lib/address";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -8,6 +7,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { CeloAllFundsWarning } from "../errors";

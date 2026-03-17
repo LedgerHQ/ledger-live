@@ -1,6 +1,6 @@
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { apiClient } from "../network/api";
@@ -10,16 +10,24 @@ import { listOperations } from "./listOperations";
 import * as utils from "./utils";
 
 setupMockCryptoAssetsStore();
-jest.mock("@ledgerhq/coin-framework/account/accountId");
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../network/api");
 jest.mock("./utils");
 
 describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (utils.extractFeesPayer as jest.Mock).mockImplementation(input =>
+      typeof input === "string"
+        ? input.split("-")[0]
+        : input.transaction_id?.split("-")[0] ?? "0.0.0",
+    );
     (utils.getMemoFromBase64 as jest.Mock).mockImplementation(memo =>
       memo ? `decoded-${memo}` : null,
+    );
+    (utils.createStakingRewardOperationHash as jest.Mock).mockImplementation(
+      hash => `${hash}-reward`,
     );
     (encodeOperationId as jest.Mock).mockImplementation(
       (accountId, hash, type) => `${accountId}-${hash}-${type}`,
@@ -41,7 +49,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "asc",
       mirrorTokens: [],
@@ -93,7 +100,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -167,7 +173,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -227,7 +232,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -289,7 +293,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -315,7 +318,6 @@ describe("listOperations", () => {
     await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 20,
       order: "asc",
       cursor: "1625097500.000000000",
@@ -366,7 +368,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -379,7 +380,58 @@ describe("listOperations", () => {
     expect(result.coinOperations).toMatchObject([
       {
         hasFailed: true,
-        extra: { transactionId: "0.0.12345-1625097600-000000000" }, // <-- the transactionId is used in upstream layers to identify the fees payer
+        extra: {
+          transactionId: "0.0.12345-1625097600-000000000",
+          feesPayer: "0.0.12345",
+        },
+      },
+    ]);
+  });
+
+  it("should include inferred fees payer in operation extra", async () => {
+    const address = "0.0.12345";
+    const mockCurrency = getMockedCurrency();
+
+    (utils.extractFeesPayer as jest.Mock).mockReturnValue("0.0.23");
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [
+        {
+          consensus_timestamp: "1625097600.000000000",
+          transaction_hash: "hash1",
+          transaction_id: "0.0.10067173-1761755118-730000493",
+          charged_tx_fee: 40743,
+          result: "INSUFFICIENT_PAYER_BALANCE",
+          memo_base64: "",
+          token_transfers: [],
+          staking_reward_transfers: [],
+          transfers: [
+            { account: "0.0.23", amount: -40743 },
+            { account: "0.0.801", amount: 40743 },
+          ],
+          name: "CRYPTOTRANSFER",
+        },
+      ],
+      nextCursor: null,
+    });
+
+    const result = await listOperations({
+      currency: mockCurrency,
+      address,
+      limit: 10,
+      order: "desc",
+      mirrorTokens: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toMatchObject([
+      {
+        extra: {
+          transactionId: "0.0.10067173-1761755118-730000493",
+          feesPayer: "0.0.23",
+        },
       },
     ]);
   });
@@ -408,7 +460,6 @@ describe("listOperations", () => {
     const result = await listOperations({
       currency: mockCurrency,
       address,
-      minHeight: 0,
       limit: 10,
       order: "desc",
       mirrorTokens: [],
@@ -426,7 +477,7 @@ describe("listOperations", () => {
     expect(result.coinOperations).toMatchObject([
       {
         type: "REWARD",
-        hash: `${mockTransaction.transaction_hash}-staking-reward`,
+        hash: utils.createStakingRewardOperationHash(mockTransaction.transaction_hash ?? ""),
         value: new BigNumber(1000000),
         fee: new BigNumber(0),
         senders: [getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID")],

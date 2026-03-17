@@ -1,5 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { waitSwapReady } from "../bridge/server";
+import { isWallet40 } from "../helpers/commonHelpers";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
@@ -76,7 +77,9 @@ describe("DeepLinks Tests", () => {
       await app.discover.openViaDeeplink();
       await app.discover.typeInCatalogSearchBar(randomLiveApp);
       await app.discover.expectCatalogAppCard(randomLiveApp);
-      await app.discover.goBackFromCatalogSearch();
+      if (isWallet40) await app.discover.catalogSearchCancelButton().tap();
+      else await app.discover.goBackFromCatalogSearch();
+
       await app.discover.expectDiscoverPage();
     },
   );

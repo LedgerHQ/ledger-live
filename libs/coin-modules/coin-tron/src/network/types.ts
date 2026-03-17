@@ -76,7 +76,7 @@ export type TransactionTronAPI<T = TransactionContract> = {
 };
 
 type Ret = {
-  contractRet: string; // Better to have an exhaustive list: "STRING" + ?
+  contractRet: string;
   fee?: number;
 };
 
@@ -106,7 +106,7 @@ type Vote = {
 type TransactionContract = {
   owner_address: string;
   votes?: Vote[];
-  resource: any;
+  resource?: any;
   frozen_balance?: number;
   amount?: number;
   to_address?: string;
@@ -133,6 +133,11 @@ export type TransactionInfoTronAPI = {
     net_usage?: number;
     net_fee?: number;
   };
+};
+
+export type TransactionInfoByBlockNumAPI = {
+  id: string;
+  fee: number;
 };
 
 export function isTransactionTronAPI(tx: unknown): tx is TransactionTronAPI {
@@ -184,6 +189,29 @@ export type Block = {
   height: number;
   hash: string;
   time?: Date;
+};
+
+export type BlockHeaderRawData = {
+  number: number;
+  txTrieRoot: string;
+  witness_address: string;
+  parentHash: string;
+  version?: number;
+  timestamp?: number;
+};
+
+export type BlockHeaderAPI = {
+  raw_data: BlockHeaderRawData;
+  witness_signature: string;
+};
+
+export type BlockTransactionAPI = Pick<TransactionTronAPI, "txID" | "raw_data" | "raw_data_hex"> &
+  Partial<Pick<TransactionTronAPI, "signature" | "ret">>;
+
+export type BlockWithTransactionsAPI = {
+  blockID: string;
+  block_header: BlockHeaderAPI;
+  transactions?: BlockTransactionAPI[];
 };
 
 export function isMalformedTransactionTronAPI(

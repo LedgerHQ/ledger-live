@@ -69,4 +69,8 @@ jobs:
         run: pnpm i --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
 
       - name: Run lint and typecheck
-        run: pnpm turbo lint typecheck --filter="ledger-live-desktop-e2e-tests" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo lint typecheck --filter="ledger-live-desktop-e2e-tests"

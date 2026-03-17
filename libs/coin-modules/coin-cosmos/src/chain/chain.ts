@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import cosmosCoinConfig from "../config";
 import Axelar from "./Axelar";
 import Babylon from "./Babylon";

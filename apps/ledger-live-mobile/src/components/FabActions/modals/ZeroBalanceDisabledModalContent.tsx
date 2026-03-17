@@ -3,7 +3,6 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ModalOnDisabledClickComponentProps } from "../index";
 import CurrencyIcon from "../../CurrencyIcon";
 import { NavigatorName, ScreenName } from "~/const";
@@ -17,7 +16,9 @@ import QueuedDrawer from "../../QueuedDrawer";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 
 function ZeroBalanceDisabledModalContent({
   account,
@@ -33,6 +34,7 @@ function ZeroBalanceDisabledModalContent({
   const { navigateToRebornFlow } = useRebornFlow();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
@@ -40,9 +42,10 @@ function ZeroBalanceDisabledModalContent({
     sourceScreenName: "zero-balance-disabled-modal",
     currency,
   });
+  const shouldUseLegacyRebornFlow = readOnlyModeEnabled && !shouldUseLazyOnboarding;
 
   const goToBuy = useCallback(() => {
-    if (readOnlyModeEnabled && !hasOrderedNano) {
+    if (shouldUseLegacyRebornFlow && !hasOrderedNano) {
       navigateToRebornFlow();
       return;
     }
@@ -61,11 +64,11 @@ function ZeroBalanceDisabledModalContent({
     navigateToRebornFlow,
     navigation,
     onClose,
-    readOnlyModeEnabled,
+    shouldUseLegacyRebornFlow,
   ]);
 
   const goToReceive = useCallback(() => {
-    if (readOnlyModeEnabled && !hasOrderedNano) {
+    if (shouldUseLegacyRebornFlow && !hasOrderedNano) {
       navigateToRebornFlow();
       return;
     }
@@ -84,7 +87,6 @@ function ZeroBalanceDisabledModalContent({
     }
     onClose();
   }, [
-    readOnlyModeEnabled,
     hasOrderedNano,
     account,
     onClose,
@@ -93,6 +95,7 @@ function ZeroBalanceDisabledModalContent({
     actionCurrency,
     parentAccount?.id,
     handleOpenReceiveDrawer,
+    shouldUseLegacyRebornFlow,
   ]);
 
   return (

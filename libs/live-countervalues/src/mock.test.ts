@@ -1,4 +1,4 @@
-import "@ledgerhq/coin-framework/test-helpers/staticTime";
+import "@ledgerhq/ledger-wallet-framework/test-helpers/staticTime";
 import { initialState, loadCountervalues, calculate } from "./logic";
 import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";

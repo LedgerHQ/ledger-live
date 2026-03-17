@@ -1,6 +1,6 @@
 import { signMessage } from "./signMessage";
 import { VechainSDKTransaction, VechainSigner } from "../types";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 
 // Mock dependencies
 jest.mock("../types", () => ({

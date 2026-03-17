@@ -29,7 +29,7 @@ test.describe("Swap flow from different entry point", () => {
   const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [
@@ -257,7 +257,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     });
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
       cliCommandsOnApp: [
@@ -439,7 +439,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   });
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
     cliCommandsOnApp: [

@@ -1,13 +1,9 @@
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
-import { InvalidAddress } from "@ledgerhq/errors";
-import {
-  getAccountCurrency,
-  getMainAccount,
-  getRecentAddressesStore,
-} from "@ledgerhq/live-common/account/index";
+import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import type {
@@ -19,16 +15,52 @@ import type {
   RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { useBatchMaybeAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
   return domain.status === "loading" || domain.status === "queued";
+}
+
+const OUTGOING_OPERATION_TYPES = new Set<Operation["type"]>(["OUT"]);
+const MAX_RECENT_RECIPIENTS = 12;
+
+function isConfirmedOutgoingOperation(operation: Operation): boolean {
+  return (
+    OUTGOING_OPERATION_TYPES.has(operation.type) &&
+    operation.blockHeight != null &&
+    !operation.hasFailed
+  );
+}
+
+function tryAddRecentRecipient(
+  operation: Operation,
+  recipient: string,
+  deduplicatedAddresses: Map<string, RecentAddress>,
+  userAccountsByAddress: Map<string, AccountLike>,
+  currency: CryptoCurrency | TokenCurrency,
+): void {
+  const normalizedRecipient = recipient.trim().toLowerCase();
+  if (!normalizedRecipient) return;
+
+  const existing = deduplicatedAddresses.get(normalizedRecipient);
+  const isNewer = !existing || operation.date.getTime() > existing.lastUsedAt.getTime();
+  if (!isNewer) return;
+
+  const matchedAccount = userAccountsByAddress.get(normalizedRecipient);
+  const trimmedRecipient = recipient.trim();
+  deduplicatedAddresses.set(normalizedRecipient, {
+    address: trimmedRecipient,
+    currency,
+    lastUsedAt: operation.date,
+    name: trimmedRecipient,
+    isLedgerAccount: !!matchedAccount,
+    accountId: matchedAccount?.id,
+  });
 }
 
 type UseAddressValidationProps = Readonly<{
@@ -84,6 +116,11 @@ export function useAddressValidation({
     return ensResolution?.address ?? searchValue;
   }, [ensResolution?.address, searchValue]);
 
+  const mainAccount = useMemo(
+    () => (account ? getMainAccount(account, parentAccount) : null),
+    [account, parentAccount],
+  );
+
   // Bridge validation for recipient/sender errors and warnings
   const bridgeValidation = useBridgeRecipientValidation({
     recipient: addressForBridgeValidation,
@@ -93,6 +130,10 @@ export function useAddressValidation({
       addressForBridgeValidation && account && (!isEthereum || ensResolution || !domainIsLoading),
     ),
   });
+
+  const hasInvalidBridgeRecipient =
+    bridgeValidation.errors.recipient instanceof InvalidAddress && !ensResolution;
+  const canMatchValidatedRecipient = Boolean(searchValue) && !hasInvalidBridgeRecipient;
 
   const userAccountsForCurrency = useMemo(() => {
     const selfTransferPolicy = sendFeatures.getSelfTransferPolicy(currency);
@@ -105,79 +146,68 @@ export function useAddressValidation({
     });
   }, [allAccounts, currency, currentAccountId]);
 
-  const recentAddresses = useMemo(() => {
-    const store = getRecentAddressesStore();
-    const addressesWithMetadata = store.getAddresses(currency.id);
+  const recentSendRecipients = useMemo(() => {
+    const loadedOperations = account?.operations ?? [];
     const userAccountsByAddress = new Map(
       userAccountsForCurrency.map(acc => [acc.freshAddress.toLowerCase(), acc]),
     );
 
-    return addressesWithMetadata.map(entry => {
-      const matchedAccount = userAccountsByAddress.get(entry.address.toLowerCase());
-      const lastUsedTimestamp = normalizeLastUsedTimestamp(entry.lastUsed);
-      const recentAddress: RecentAddress = {
-        address: entry.address,
-        currency,
-        lastUsedAt: new Date(lastUsedTimestamp),
-        name: entry.address,
-        ensName: entry.ensName,
-        isLedgerAccount: !!matchedAccount,
-        accountId: matchedAccount?.id,
-      };
-      return recentAddress;
-    });
-  }, [currency, userAccountsForCurrency]);
+    const deduplicatedAddresses = new Map<string, RecentAddress>();
 
-  // Get account names for all user accounts to enable search by name
-  const accountNames = useBatchMaybeAccountName(userAccountsForCurrency);
+    for (const operation of loadedOperations) {
+      if (!isConfirmedOutgoingOperation(operation)) continue;
+
+      for (const recipient of operation.recipients) {
+        if (deduplicatedAddresses.size >= MAX_RECENT_RECIPIENTS) break;
+        tryAddRecentRecipient(
+          operation,
+          recipient,
+          deduplicatedAddresses,
+          userAccountsByAddress,
+          currency,
+        );
+      }
+
+      if (deduplicatedAddresses.size >= MAX_RECENT_RECIPIENTS) break;
+    }
+
+    return Array.from(deduplicatedAddresses.values()).sort(
+      (a, b) => b.lastUsedAt.getTime() - a.lastUsedAt.getTime(),
+    );
+  }, [account?.operations, currency, userAccountsForCurrency]);
 
   const matchedRecentAddress = useMemo(() => {
-    if (!searchValue) return undefined;
-    const normalizedSearch = searchValue.toLowerCase();
-    return recentAddresses.find(
-      (recent: RecentAddress) =>
-        recent.address.toLowerCase().includes(normalizedSearch) ||
-        recent.name?.toLowerCase().includes(normalizedSearch) ||
-        recent.ensName?.toLowerCase().includes(normalizedSearch),
+    if (!canMatchValidatedRecipient) return undefined;
+
+    const normalizedRecipientAddress = addressForBridgeValidation.toLowerCase();
+
+    return recentSendRecipients.find(
+      (recent: RecentAddress) => recent.address.toLowerCase() === normalizedRecipientAddress,
     );
-  }, [searchValue, recentAddresses]);
+  }, [recentSendRecipients, canMatchValidatedRecipient, addressForBridgeValidation]);
 
   const matchedLedgerAccounts = useMemo(() => {
-    if (!searchValue) return [];
-    const normalizedSearch = searchValue.toLowerCase();
-    return userAccountsForCurrency.filter((acc, index) => {
-      const name = accountNames[index];
-      return (
-        acc.freshAddress.toLowerCase().includes(normalizedSearch) ||
-        name?.toLowerCase().includes(normalizedSearch)
-      );
-    });
-  }, [searchValue, userAccountsForCurrency, accountNames]);
+    if (!canMatchValidatedRecipient) return [];
 
-  const currentAccountName = useMaybeAccountName(
-    account ? getMainAccount(account, parentAccount) : null,
-  );
+    const normalizedRecipientAddress = addressForBridgeValidation.toLowerCase();
+    return userAccountsForCurrency.filter(
+      acc => acc.freshAddress.toLowerCase() === normalizedRecipientAddress,
+    );
+  }, [canMatchValidatedRecipient, userAccountsForCurrency, addressForBridgeValidation]);
 
   const currentAccountMatch = useMemo(() => {
-    if (!searchValue || !account) return null;
+    if (!canMatchValidatedRecipient || !account || !mainAccount) return null;
 
-    const mainAccount = getMainAccount(account, parentAccount);
-    const addressToCheck = ensResolution?.address ?? searchValue;
     const selfTransferPolicy = sendFeatures.getSelfTransferPolicy(currency);
+    const addressMatches =
+      addressForBridgeValidation.toLowerCase() === mainAccount.freshAddress.toLowerCase();
 
-    const normalizedSearch = searchValue.toLowerCase();
-    const addressMatches = addressToCheck.toLowerCase() === mainAccount.freshAddress.toLowerCase();
-    const nameMatches = currentAccountName?.toLowerCase().includes(normalizedSearch) ?? false;
-
-    if (
-      (addressMatches || nameMatches) &&
-      (selfTransferPolicy === "free" || selfTransferPolicy === "warning")
-    ) {
+    if (addressMatches && (selfTransferPolicy === "free" || selfTransferPolicy === "warning")) {
       return mainAccount;
     }
 
     return null;
-  }, [searchValue, account, parentAccount, currency, ensResolution?.address, currentAccountName]);
+  }, [canMatchValidatedRecipient, account, mainAccount, currency, addressForBridgeValidation]);
 
   const matchedLedgerAccount = currentAccountMatch ?? matchedLedgerAccounts[0];
 
@@ -273,6 +303,15 @@ export function useAddressValidation({
       delete filteredBridgeErrors.recipient;
     }
 
+    const isImpossibleSelfTransferAttempt =
+      mainAccount &&
+      sendFeatures.getSelfTransferPolicy(currency) === "impossible" &&
+      addressForBridgeValidation.toLowerCase() === mainAccount.freshAddress.toLowerCase();
+
+    if (isImpossibleSelfTransferAttempt && !filteredBridgeErrors.recipient) {
+      filteredBridgeErrors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
+
     return {
       status: validationState.status,
       error: validationState.error,
@@ -298,6 +337,9 @@ export function useAddressValidation({
     formattedBalance,
     formattedCounterValue,
     accountName,
+    mainAccount,
+    currency,
+    addressForBridgeValidation,
     bridgeValidation.errors,
     bridgeValidation.warnings,
   ]);

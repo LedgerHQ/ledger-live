@@ -1,13 +1,10 @@
 import React from "react";
 import { AmountDisplay, Skeleton } from "@ledgerhq/lumen-ui-react";
-import { useSelector } from "LLD/hooks/redux";
 import { cn } from "LLD/utils/cn";
-import { themeSelector } from "~/renderer/actions/general";
 import { BalanceViewProps } from "./types";
 import { Trend } from "../Trend";
 
-const showPlaceholder = (balance: number, balanceAvailable: boolean) =>
-  balance === 0 && !balanceAvailable;
+const showPlaceholder = (balanceAvailable: boolean) => !balanceAvailable;
 
 export const BalanceView = ({
   balance,
@@ -18,11 +15,9 @@ export const BalanceView = ({
   navigateToAnalytics,
   handleKeyDown,
   isLoading,
-  isColdStart,
   shouldDisplayBalanceRefreshRework,
+  theme,
 }: BalanceViewProps) => {
-  const theme = useSelector(themeSelector);
-
   return (
     <button
       type="button"
@@ -42,7 +37,7 @@ export const BalanceView = ({
           theme === "dark" && "group-hover:brightness-85",
         )}
       >
-        {showPlaceholder(balance, balanceAvailable) ? (
+        {showPlaceholder(balanceAvailable) ? (
           <Skeleton data-testid="portfolio-placeholder-balance" className="h-48 w-256 rounded-md" />
         ) : (
           <AmountDisplay
@@ -54,7 +49,7 @@ export const BalanceView = ({
             data-testid="portfolio-total-balance"
           />
         )}
-        {!isColdStart && <Trend valueChange={valueChange} />}
+        {balanceAvailable && <Trend valueChange={valueChange} />}
       </span>
     </button>
   );

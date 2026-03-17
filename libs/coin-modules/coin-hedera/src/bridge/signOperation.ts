@@ -1,6 +1,6 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { DEFAULT_GAS_LIMIT, HEDERA_TRANSACTION_MODES } from "../constants";

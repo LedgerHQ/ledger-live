@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/live-promise";
@@ -8,6 +8,9 @@ import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
 import type {
   AccountBalanceResponse,
+  BlockInfoResponse,
+  BlocksAtHeightResponse,
+  ConsensusInfoResponse,
   GetOperationsParams,
   GetTransactionCostParams,
   TransactionsResponse,
@@ -83,6 +86,51 @@ export async function withClient<T>(
     interval: RETRY_DELAY,
     intervalMultiplicator: 1,
   });
+}
+
+/**
+ * Get consensus info from the Concordium network.
+ * GET /v0/consensusInfo
+ */
+export function getConsensusInfo(currencyId: string): Promise<ConsensusInfoResponse> {
+  return withClient(currencyId, async client =>
+    client.request<ConsensusInfoResponse>({
+      method: "GET",
+      url: "/v0/consensusInfo",
+    }),
+  );
+}
+
+/**
+ * Get block info by block hash.
+ * GET /v0/blockInfo/{blockHash}
+ */
+export function getBlockInfoByHash(
+  currencyId: string,
+  blockHash: string,
+): Promise<BlockInfoResponse> {
+  return withClient(currencyId, async client =>
+    client.request<BlockInfoResponse>({
+      method: "GET",
+      url: `/v0/blockInfo/${blockHash}`,
+    }),
+  );
+}
+
+/**
+ * Get block hash(es) at a specific height.
+ * GET /v0/blocksAtHeight/{blockHeight}
+ */
+export function getBlocksAtHeight(
+  currencyId: string,
+  height: number,
+): Promise<BlocksAtHeightResponse> {
+  return withClient(currencyId, async client =>
+    client.request<BlocksAtHeightResponse>({
+      method: "GET",
+      url: `/v0/blocksAtHeight/${height}`,
+    }),
+  );
 }
 
 /**

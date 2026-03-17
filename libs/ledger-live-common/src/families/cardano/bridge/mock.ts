@@ -21,7 +21,7 @@ import { CARDANO_MAX_SUPPLY } from "@ledgerhq/coin-cardano/constants";
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,

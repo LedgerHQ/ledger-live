@@ -1,4 +1,4 @@
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import {
   inferTrackingPairForAccounts,
@@ -394,7 +394,16 @@ describe("hasNewCountervaluesToExport", () => {
       ...createState({ "USD bitcoin": new Map([["2024-01-01", 1]]) }),
       status: { "USD bitcoin": {} },
       cache: {
-        "USD bitcoin": { map: new Map(), stats: { oldest: "2024-01-01", earliest: "2024-01-01" } },
+        "USD bitcoin": {
+          map: new Map(),
+          stats: {
+            oldest: "2024-01-01",
+            earliest: "2024-01-01",
+            oldestDate: new Date("2024-01-01"),
+            earliestDate: new Date("2024-01-01"),
+            earliestStableDate: new Date("2024-01-01"),
+          },
+        },
       },
     } as CounterValuesState;
     const newState = {
@@ -402,7 +411,16 @@ describe("hasNewCountervaluesToExport", () => {
       status: { "USD bitcoin": {}, "USD ethereum": {} },
       cache: {
         ...oldState.cache,
-        "USD ethereum": { map: new Map(), stats: { oldest: "2024-01-01", earliest: "2024-01-01" } },
+        "USD ethereum": {
+          map: new Map(),
+          stats: {
+            oldest: "2024-01-01",
+            earliest: "2024-01-01",
+            oldestDate: new Date("2024-01-01"),
+            earliestDate: new Date("2024-01-01"),
+            earliestStableDate: new Date("2024-01-01"),
+          },
+        },
       },
     } as CounterValuesState;
     expect(hasNewCountervaluesToExport(oldState, newState)).toBe(true);
@@ -415,7 +433,13 @@ describe("hasNewCountervaluesToExport", () => {
       cache: {
         "USD bitcoin": {
           map: new Map(),
-          stats: { oldest: "2024-01-01", earliest: "2024-01-01" },
+          stats: {
+            oldest: "2024-01-01",
+            earliest: "2024-01-01",
+            oldestDate: new Date("2024-01-01"),
+            earliestDate: new Date("2024-01-01"),
+            earliestStableDate: new Date("2024-01-01"),
+          },
         },
       },
     } as CounterValuesState;
@@ -424,7 +448,13 @@ describe("hasNewCountervaluesToExport", () => {
       cache: {
         "USD bitcoin": {
           map: new Map(),
-          stats: { oldest: "2024-01-01", earliest: "2024-01-02" },
+          stats: {
+            oldest: "2024-01-01",
+            earliest: "2024-01-02",
+            oldestDate: new Date("2024-01-01"),
+            earliestDate: new Date("2024-01-02"),
+            earliestStableDate: new Date("2024-01-02"),
+          },
         },
       },
     } as CounterValuesState;
@@ -438,7 +468,13 @@ describe("hasNewCountervaluesToExport", () => {
       cache: {
         "USD bitcoin": {
           map: new Map(),
-          stats: { oldest: "2024-01-01", earliest: "2024-01-01" },
+          stats: {
+            oldest: "2024-01-01",
+            earliest: "2024-01-01",
+            oldestDate: new Date("2024-01-01"),
+            earliestDate: new Date("2024-01-01"),
+            earliestStableDate: new Date("2024-01-01"),
+          },
         },
       },
     } as CounterValuesState;
@@ -466,7 +502,7 @@ describe("checkHolesOnNextLoad", () => {
   });
 
   test("loadCountervalues clears checkHolesOnNextLoad after run", async () => {
-    const api = await import("./api");
+    const api = require("./api");
     jest.spyOn(api.default, "fetchHistorical").mockResolvedValue({});
     jest.spyOn(api.default, "fetchLatest").mockResolvedValue([50000]);
     const withFlag = { ...initialState, checkHolesOnNextLoad: true };

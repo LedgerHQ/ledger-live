@@ -1,4 +1,3 @@
-import * as accountHelpers from "@ledgerhq/coin-framework/account";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -7,6 +6,7 @@ import {
   ClaimRewardsFeesWarning,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import * as accountHelpers from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
@@ -45,8 +45,8 @@ jest.mock("../logic/utils", () => ({
   checkAccountTokenAssociationStatus: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-framework/account", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-framework/account");
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/account");
   return {
     ...actual,
     findSubAccountById: jest.fn(actual.findSubAccountById),
@@ -61,9 +61,9 @@ jest.mock("../preload-data", () => ({
 import { getTransactionStatus } from "./getTransactionStatus";
 
 const mockEstimateFees = estimateFees.estimateFees as jest.Mock;
-const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as jest.Mock;
+const mockGetCurrencyToUSDRate = logicUtils.getCurrencyToUSDRate as unknown as jest.Mock;
 const mockCheckAccountTokenAssociationStatus =
-  logicUtils.checkAccountTokenAssociationStatus as jest.Mock;
+  logicUtils.checkAccountTokenAssociationStatus as unknown as jest.Mock;
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
 const mockFindSubAccountById = accountHelpers.findSubAccountById as jest.Mock;
 
@@ -85,7 +85,7 @@ describe("getTransactionStatus", () => {
     mockCheckAccountTokenAssociationStatus.mockResolvedValue(true);
     // Reset findSubAccountById to use actual implementation
     mockFindSubAccountById.mockImplementation(
-      jest.requireActual("@ledgerhq/coin-framework/account").findSubAccountById,
+      jest.requireActual("@ledgerhq/ledger-wallet-framework/account").findSubAccountById,
     );
   });
 

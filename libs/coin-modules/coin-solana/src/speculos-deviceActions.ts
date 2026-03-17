@@ -1,11 +1,11 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

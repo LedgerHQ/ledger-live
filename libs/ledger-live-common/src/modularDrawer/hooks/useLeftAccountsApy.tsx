@@ -1,23 +1,20 @@
-import {
-  AccountDataItem,
-  AccountModuleParams,
-  CreateAccountsCountAndApy,
-  NetworkWithCount,
-} from "../utils/type";
+import React from "react";
+import { AccountModuleParams, NetworkWithCount, NetworkConfigurationOptions } from "../utils/type";
 import { useInterestRatesByCurrencies } from "../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
 
 export function useLeftAccountsApyModule(
   params: AccountModuleParams,
-  useAccountData: (params: AccountModuleParams) => AccountDataItem[],
-  accountsCountAndApy: CreateAccountsCountAndApy,
-  accountsApy: CreateAccountsCountAndApy,
+  {
+    useAccountData,
+    accountsCountAndApy,
+    ApyIndicator,
+  }: Pick<NetworkConfigurationOptions, "useAccountData" | "accountsCountAndApy" | "ApyIndicator">,
 ): Array<NetworkWithCount> {
   const { networks } = params;
   const accountData = useAccountData(params);
   const interestRates = useInterestRatesByCurrencies(networks);
 
-  // Map each account to its APY info using the shared utility
   return accountData.map(({ asset, label, count }) => {
     const { interestRate, interestRatePercentageRounded } = getInterestRateForAsset(
       asset,
@@ -37,10 +34,10 @@ export function useLeftAccountsApyModule(
         type: interestRate?.type,
       }),
       description: count > 0 ? label : undefined,
-      apy: accountsApy({
-        value: interestRatePercentageRounded,
-        type: interestRate?.type,
-      }),
+      apy:
+        interestRate && interestRatePercentageRounded > 0 ? (
+          <ApyIndicator value={interestRatePercentageRounded} type={interestRate.type} />
+        ) : undefined,
       count,
     };
   });

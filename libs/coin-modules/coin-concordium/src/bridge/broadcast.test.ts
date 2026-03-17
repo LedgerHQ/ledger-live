@@ -1,10 +1,12 @@
 import type { BroadcastArg } from "@ledgerhq/types-live";
-jest.mock("@ledgerhq/coin-framework/operation");
-jest.mock("../logic");
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import BigNumber from "bignumber.js";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { broadcast as broadcastLogic } from "../logic";
 import { createTestAccount } from "../test/testHelpers";
 import { broadcast } from "./broadcast";
+
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
+jest.mock("../logic");
 
 const createBroadcastArg = (
   overrides?: Partial<BroadcastArg<ReturnType<typeof createTestAccount>>>,
@@ -16,8 +18,8 @@ const createBroadcastArg = (
       id: "",
       hash: "",
       type: "OUT",
-      value: "0",
-      fee: "0",
+      value: new BigNumber(0),
+      fee: new BigNumber(0),
       senders: [],
       recipients: [],
       blockHeight: null,

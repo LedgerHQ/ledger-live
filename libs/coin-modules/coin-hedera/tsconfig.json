@@ -6,16 +6,10 @@
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2022", "dom"],
     "types": ["node", "jest"],
     "exactOptionalPropertyTypes": true,
-    "module": "esnext",
-    "moduleResolution": "bundler"
+    "outDir": "./lib"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

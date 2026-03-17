@@ -39,7 +39,7 @@ export function CustomFeesScreenView({
 }: CustomFeesScreenViewProps) {
   return (
     <>
-      <DialogBody className="gap-32 py-12">
+      <DialogBody className="gap-32 -mt-12">
         {hasCustomAssets && assetOptions.length > 0 && (
           <FeeAssetSelector
             options={assetOptions}
@@ -86,8 +86,16 @@ export function CustomFeesScreenView({
         )}
       </DialogBody>
 
-      <DialogFooter>
-        <Button appearance="base" size="lg" isFull onClick={onConfirm} disabled={isConfirmDisabled}>
+      <DialogFooter className="flex flex-col">
+        <div className="py-12" />
+        <Button
+          appearance="base"
+          size="lg"
+          isFull
+          onClick={onConfirm}
+          disabled={isConfirmDisabled}
+          className="rounded-full -mb-8"
+        >
           {confirmLabel}
         </Button>
       </DialogFooter>

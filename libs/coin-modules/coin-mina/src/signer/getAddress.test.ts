@@ -1,6 +1,6 @@
-import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { MinaSigner } from "../types/signer";
 import resolver from "./getAddress";
@@ -16,7 +16,7 @@ describe("Mina getAddress resolver", () => {
     derivationMode: "minabip44" as DerivationMode,
   };
 
-  const mockSignerContext: SignerContext<MinaSigner> = jest.fn(async (deviceId, callback) => {
+  const mockSignerContext: SignerContext<MinaSigner> = jest.fn(async (_deviceId, callback) => {
     return callback(mockSigner);
   });
 

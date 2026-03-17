@@ -332,6 +332,30 @@ describe("useRecipientSearchState", () => {
     expect(result.current.bridgeRecipientError).toBe(recipientError);
   });
 
+  it("should show bridge recipient error even when a recent address matches", () => {
+    const recipientError = new InvalidAddressBecauseDestinationIsAlsoSource();
+    const recent = {
+      address: "tz1self",
+      currency: {} as never,
+      lastUsedAt: new Date(),
+    };
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "tz1self",
+        result: createDefaultResult({
+          status: "valid",
+          matchedRecentAddress: recent,
+          bridgeErrors: { recipient: recipientError },
+        }),
+      }),
+    );
+
+    expect(result.current.showMatchedAddress).toBe(true);
+    expect(result.current.showBridgeRecipientError).toBe(true);
+    expect(result.current.bridgeRecipientError).toBe(recipientError);
+  });
+
   it("should show bridge recipient warning when no recipient error and no address validation error", () => {
     const warning = new Error("Warning");
     const { result } = renderHook(() =>

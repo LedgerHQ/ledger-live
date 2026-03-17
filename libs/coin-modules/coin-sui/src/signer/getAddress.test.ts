@@ -18,7 +18,7 @@ describe("getAddress resolver", () => {
 
     const mockSignerContext = jest
       .fn()
-      .mockImplementation((deviceId, callback) => callback(mockSigner));
+      .mockImplementation((_deviceId, callback) => callback(mockSigner));
 
     const getAddress = getAddressResolver(mockSignerContext);
 
@@ -57,7 +57,7 @@ describe("getAddress resolver", () => {
 
     const mockSignerContext = jest
       .fn()
-      .mockImplementation((deviceId, callback) => callback(mockSigner));
+      .mockImplementation((_deviceId, callback) => callback(mockSigner));
 
     const getAddress = getAddressResolver(mockSignerContext);
 
@@ -92,7 +92,7 @@ describe("getAddress resolver", () => {
 
     const mockSignerContext = jest
       .fn()
-      .mockImplementation((deviceId, callback) => callback(mockSigner));
+      .mockImplementation((_deviceId, callback) => callback(mockSigner));
 
     const getAddress = getAddressResolver(mockSignerContext);
 

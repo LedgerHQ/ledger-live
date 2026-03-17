@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.63.0",
+  "version": "34.64.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -38,10 +38,18 @@
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./*.js": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -50,31 +58,42 @@
       "default": "./lib-es/index.js"
     },
     "./currencies/*": {
+      "@ledgerhq/source": "./src/currencies/*.ts",
       "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
+    },
+    "./device-action/*": {
+      "@ledgerhq/source": "./src/device-action/*.ts",
+      "require": "./lib/device-action/*.js",
+      "default": "./lib-es/device-action/*.js"
     },
     "./hooks": {
       "require": "./lib/hooks/index.js",
       "default": "./lib-es/hooks/index.js"
     },
     "./e2e": {
+      "@ledgerhq/source": "./src/e2e/index.ts",
       "require": "./lib/e2e/index.js",
       "default": "./lib-es/e2e/index.js"
     },
     "./featureFlags": {
+      "@ledgerhq/source": "./src/featureFlags/*.ts",
       "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
     },
     "./bridge/descriptor": {
+      "@ledgerhq/source": "./src/bridge/descriptor.ts",
       "require": "./lib/bridge/descriptor.js",
       "default": "./lib-es/bridge/descriptor.js"
     },
     "./test-helpers/cryptoAssetsStore": {
+      "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
       "require": "./lib/test-helpers/cryptoAssetsStore.js",
       "default": "./lib-es/test-helpers/cryptoAssetsStore.js"
     },
     "./test-helpers/*": {
+      "@ledgerhq/source": "./src/test-helpers/*.ts",
       "types": "./lib/test-helpers/*.d.ts",
       "require": "./lib/test-helpers/*.js",
       "default": "./lib-es/test-helpers/*.js"
@@ -92,7 +111,7 @@
     "lint:fix": "pnpm lint --fix",
     "jest": "jest",
     "jest:debug": "cross-env TZ=America/New_York node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "typecheck": "tsc --noEmit -p src/tsconfig.json",
+    "typecheck": "tsc --noEmit -p src/tsconfig.json --customConditions node",
     "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
@@ -202,6 +221,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
@@ -221,10 +241,10 @@
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.13.1",
-    "@ledgerhq/wallet-api-core": "^1.29.0",
+    "@ledgerhq/wallet-api-client": "^1.14.0",
+    "@ledgerhq/wallet-api-core": "^1.30.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
-    "@ledgerhq/wallet-api-server": "^3.2.0",
+    "@ledgerhq/wallet-api-server": "^3.3.0",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",
@@ -280,7 +300,7 @@
     "winston": "^3.4.0",
     "xstate": "^5.19.2",
     "yargs": "^17.0.0",
-    "zod": "^3.22.4"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-react": "workspace:^",

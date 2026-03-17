@@ -20,19 +20,44 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "events": "^3.3.0"
+    "events": "^3.3.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/events": "^3.0.3",
     "@rspack/cli": "catalog:",
-    "@rspack/core": "catalog:"
+    "@rspack/core": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/events": "^3.0.3",
+    "@types/jest": "catalog:",
+    "@types/uuid": "^9.0.8",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib",
-    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc --emitDeclarationOnly && node scripts/build-umd-json.mjs",
+    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib/ethereum-provider.mjs",
+      "require": "./lib/ethereum-provider.js",
+      "default": "./lib/ethereum-provider.js"
+    },
+    "./lib/ethereum-provider.umd.json": "./lib/ethereum-provider.umd.json",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib/*.mjs",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

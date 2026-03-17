@@ -1,4 +1,4 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

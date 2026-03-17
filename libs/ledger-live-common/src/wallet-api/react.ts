@@ -15,7 +15,7 @@ import { InfiniteData } from "@reduxjs/toolkit/query/react";
 import type {
   TokensDataWithPagination,
   PageParam,
-} from "@ledgerhq/cryptoassets/lib/cal-client/state-manager/types";
+} from "@ledgerhq/cryptoassets/cal-client/state-manager/types";
 import { Subject } from "rxjs";
 import { StateDB } from "../hooks/useDBRaw";
 import { useFeatureFlags } from "../featureFlags/FeatureFlagsContext";
@@ -96,6 +96,7 @@ export interface UiHook {
     currencyIds?: string[];
     areCurrenciesFiltered?: boolean;
     useCase?: string;
+    uiUseCase?: string;
     drawerConfiguration?: ModularDrawerConfiguration;
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
@@ -366,230 +367,211 @@ export function useWalletAPIServer({
   // TODO: refactor each handler into its own logic function for clarity
   useEffect(() => {
     server.setHandler("currency.list", async ({ currencyIds }) => {
-      tracking.currencyListRequested(manifest);
+      // 1. Parse manifest currency patterns to determine what to include
+      const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
 
-      try {
-        // 1. Parse manifest currency patterns to determine what to include
-        const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
+      // 2. Apply query filter early - intersect with manifest patterns
+      const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
+      let effectiveCurrencyIds = manifestCurrencyIds;
 
-        // 2. Apply query filter early - intersect with manifest patterns
-        const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
-        let effectiveCurrencyIds = manifestCurrencyIds;
-
-        if (queryCurrencyIdsSet) {
-          // If we have a query filter, narrow down what we need to fetch
-          effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
-            if (manifestId === "**") {
-              // Query can ask for anything, so use the query list
-              return [...queryCurrencyIdsSet];
-            } else if (manifestId.endsWith("/**")) {
-              // Pattern like "ethereum/**" - keep tokens from query that match this family
-              const family = manifestId.slice(0, -3);
-              return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
-            } else if (queryCurrencyIdsSet.has(manifestId)) {
-              // Specific currency/token that's in the query
-              return [manifestId];
-            }
-            // Not in query, skip it
-            return [];
-          });
-        }
-
-        // 3. Parse effective currency IDs to determine what to fetch
-        const includeAllCurrencies = effectiveCurrencyIds.includes("**");
-        const specificCurrencies = new Set<string>();
-        const tokenFamilies = new Set<string>();
-        const specificTokenIds = new Set<string>();
-
-        for (const id of effectiveCurrencyIds) {
-          if (id === "**") {
-            // Already handled above
-            continue;
-          } else if (id.endsWith("/**")) {
-            // Pattern like "ethereum/**" or "solana/**" - include tokens for this family
-            const family = id.slice(0, -3);
-            tokenFamilies.add(family);
-            // Additionally include the parent currency itself
-            specificCurrencies.add(family);
-          } else if (id.includes("/")) {
-            // Specific token ID like "ethereum/erc20/usd__coin"
-            specificTokenIds.add(id);
-          } else {
-            // Specific currency like "bitcoin" or "ethereum"
-            specificCurrencies.add(id);
+      if (queryCurrencyIdsSet) {
+        // If we have a query filter, narrow down what we need to fetch
+        effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
+          if (manifestId === "**") {
+            // Query can ask for anything, so use the query list
+            return [...queryCurrencyIdsSet];
+          } else if (manifestId.endsWith("/**")) {
+            // Pattern like "ethereum/**" - keep tokens from query that match this family
+            const family = manifestId.slice(0, -3);
+            return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
+          } else if (queryCurrencyIdsSet.has(manifestId)) {
+            // Specific currency/token that's in the query
+            return [manifestId];
           }
-        }
-
-        // 4. Gather all supported parent currencies
-        const allCurrencies = listSupportedCurrencies().reduce<WalletAPICurrency[]>((acc, c) => {
-          if (isWalletAPISupportedCurrency(c) && !deactivatedCurrencyIds.has(c.id))
-            acc.push(currencyToWalletAPICurrency(c));
-          return acc;
-        }, []);
-
-        // 5. Determine which currencies to include based on patterns
-        let includedCurrencies: WalletAPICurrency[] = [];
-        if (includeAllCurrencies) {
-          includedCurrencies = allCurrencies;
-        } else {
-          includedCurrencies = allCurrencies.filter(c => specificCurrencies.has(c.id));
-        }
-
-        // 6. Fetch specific tokens by ID if any
-        const specificTokens: WalletAPICurrency[] = [];
-        if (specificTokenIds.size > 0) {
-          const tokenPromises = [...specificTokenIds].map(async tokenId => {
-            const token = await getCryptoAssetsStore().findTokenById(tokenId);
-            return token ? currencyToWalletAPICurrency(token) : null;
-          });
-          const resolvedTokens = await Promise.all(tokenPromises);
-          specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
-        }
-
-        // 7. Determine which token families to fetch (only if not already fetched as specific tokens)
-        const familiesToFetch = new Set<string>();
-        if (includeAllCurrencies) {
-          // Fetch tokens for all currency families
-          allCurrencies.forEach(c => {
-            if (c.type === "CryptoCurrency") familiesToFetch.add(c.family);
-          });
-        } else if (tokenFamilies.size > 0) {
-          // Only fetch tokens for families explicitly marked with /**
-          tokenFamilies.forEach(family => familiesToFetch.add(family));
-        }
-
-        // 8. Fetch tokens for relevant families
-        const fetchAllPagesForFamily = async (family: string) => {
-          const args = { networkFamily: family, pageSize: 1000 };
-          let hasNextPage = true;
-          let data: InfiniteData<TokensDataWithPagination, PageParam> | undefined;
-
-          while (hasNextPage) {
-            const querySub = dispatch(
-              calEndpoints.getTokensData.initiate(
-                args,
-                data ? { direction: "forward" } : undefined,
-              ),
-            );
-
-            try {
-              const result = await querySub;
-              data = result.data;
-              hasNextPage = result.hasNextPage;
-              if (result.error) throw result.error;
-            } finally {
-              querySub.unsubscribe();
-            }
-          }
-
-          return (data?.pages ?? []).flatMap(p => p.tokens);
-        };
-
-        const tokensByFamily = await Promise.all(
-          [...familiesToFetch].map(f => fetchAllPagesForFamily(f)),
-        );
-
-        // 9. Combine all results (no additional filter needed since we pre-filtered)
-        const result = tokensByFamily.reduce<WalletAPICurrency[]>(
-          (acc, tokens) => [...acc, ...tokens.map(t => currencyToWalletAPICurrency(t))],
-          [...includedCurrencies, ...specificTokens],
-        );
-
-        tracking.currencyListSuccess(manifest);
-        return result;
-      } catch (err) {
-        tracking.currencyListFail(manifest);
-        throw err;
+          // Not in query, skip it
+          return [];
+        });
       }
+
+      // 3. Parse effective currency IDs to determine what to fetch
+      const includeAllCurrencies = effectiveCurrencyIds.includes("**");
+      const specificCurrencies = new Set<string>();
+      const tokenFamilies = new Set<string>();
+      const specificTokenIds = new Set<string>();
+
+      for (const id of effectiveCurrencyIds) {
+        if (id === "**") {
+          // Already handled above
+          continue;
+        } else if (id.endsWith("/**")) {
+          // Pattern like "ethereum/**" or "solana/**" - include tokens for this family
+          const family = id.slice(0, -3);
+          tokenFamilies.add(family);
+          // Additionally include the parent currency itself
+          specificCurrencies.add(family);
+        } else if (id.includes("/")) {
+          // Specific token ID like "ethereum/erc20/usd__coin"
+          specificTokenIds.add(id);
+        } else {
+          // Specific currency like "bitcoin" or "ethereum"
+          specificCurrencies.add(id);
+        }
+      }
+
+      // 4. Gather all supported parent currencies
+      const allCurrencies = listSupportedCurrencies().reduce<WalletAPICurrency[]>((acc, c) => {
+        if (isWalletAPISupportedCurrency(c) && !deactivatedCurrencyIds.has(c.id))
+          acc.push(currencyToWalletAPICurrency(c));
+        return acc;
+      }, []);
+
+      // 5. Determine which currencies to include based on patterns
+      let includedCurrencies: WalletAPICurrency[] = [];
+      if (includeAllCurrencies) {
+        includedCurrencies = allCurrencies;
+      } else {
+        includedCurrencies = allCurrencies.filter(c => specificCurrencies.has(c.id));
+      }
+
+      // 6. Fetch specific tokens by ID if any
+      const specificTokens: WalletAPICurrency[] = [];
+      if (specificTokenIds.size > 0) {
+        const tokenPromises = [...specificTokenIds].map(async tokenId => {
+          const token = await getCryptoAssetsStore().findTokenById(tokenId);
+          return token ? currencyToWalletAPICurrency(token) : null;
+        });
+        const resolvedTokens = await Promise.all(tokenPromises);
+        specificTokens.push(...resolvedTokens.filter((t): t is WalletAPICurrency => t !== null));
+      }
+
+      // 7. Determine which token families to fetch (only if not already fetched as specific tokens)
+      const familiesToFetch = new Set<string>();
+      if (includeAllCurrencies) {
+        // Fetch tokens for all currency families
+        allCurrencies.forEach(c => {
+          if (c.type === "CryptoCurrency") familiesToFetch.add(c.family);
+        });
+      } else if (tokenFamilies.size > 0) {
+        // Only fetch tokens for families explicitly marked with /**
+        tokenFamilies.forEach(family => familiesToFetch.add(family));
+      }
+
+      // 8. Fetch tokens for relevant families
+      const fetchAllPagesForFamily = async (family: string) => {
+        const args = { networkFamily: family, pageSize: 1000 };
+        let hasNextPage = true;
+        let data: InfiniteData<TokensDataWithPagination, PageParam> | undefined;
+
+        while (hasNextPage) {
+          const querySub = dispatch(
+            calEndpoints.getTokensData.initiate(args, data ? { direction: "forward" } : undefined),
+          );
+
+          try {
+            const result = await querySub;
+            data = result.data;
+            hasNextPage = result.hasNextPage;
+            if (result.error) throw result.error;
+          } finally {
+            querySub.unsubscribe();
+          }
+        }
+
+        return (data?.pages ?? []).flatMap(p => p.tokens);
+      };
+
+      const tokensByFamily = await Promise.all(
+        [...familiesToFetch].map(f => fetchAllPagesForFamily(f)),
+      );
+
+      // 9. Combine all results (no additional filter needed since we pre-filtered)
+      const result = tokensByFamily.reduce<WalletAPICurrency[]>(
+        (acc, tokens) => [...acc, ...tokens.map(t => currencyToWalletAPICurrency(t))],
+        [...includedCurrencies, ...specificTokens],
+      );
+
+      return result;
     });
   }, [walletState, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
 
   useEffect(() => {
     server.setHandler("account.list", ({ currencyIds }) => {
-      tracking.accountListRequested(manifest);
+      // 1. Parse manifest currency patterns to determine what to include
+      const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
 
-      try {
-        // 1. Parse manifest currency patterns to determine what to include
-        const manifestCurrencyIds = manifest.currencies === "*" ? ["**"] : manifest.currencies;
+      // 2. Apply query filter early - intersect with manifest patterns
+      const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
+      let effectiveCurrencyIds = manifestCurrencyIds;
 
-        // 2. Apply query filter early - intersect with manifest patterns
-        const queryCurrencyIdsSet = currencyIds ? new Set(currencyIds) : undefined;
-        let effectiveCurrencyIds = manifestCurrencyIds;
-
-        if (queryCurrencyIdsSet) {
-          // If we have a query filter, narrow down what we need to check
-          effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
-            if (manifestId === "**") {
-              // Query can ask for anything, so use the query list
-              return [...queryCurrencyIdsSet];
-            } else if (manifestId.endsWith("/**")) {
-              // Pattern like "ethereum/**" - keep tokens from query that match this family
-              const family = manifestId.slice(0, -3);
-              return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
-            } else if (queryCurrencyIdsSet.has(manifestId)) {
-              // Specific currency/token that's in the query
-              return [manifestId];
-            }
-            // Not in query, skip it
-            return [];
-          });
-        }
-
-        // 3. Build a set of allowed currency IDs based on effective patterns
-        const allowedCurrencyIds = new Set<string>();
-        const includeAllCurrencies = effectiveCurrencyIds.includes("**");
-        const tokenFamilyPrefixes = new Set<string>();
-
-        for (const id of effectiveCurrencyIds) {
-          if (id === "**") {
-            // Will match all currencies
-            continue;
-          } else if (id.endsWith("/**")) {
-            // Pattern like "ethereum/**" - store prefix for matching
-            const family = id.slice(0, -3);
-            tokenFamilyPrefixes.add(family);
-          } else {
-            // Specific currency/token ID
-            allowedCurrencyIds.add(id);
+      if (queryCurrencyIdsSet) {
+        // If we have a query filter, narrow down what we need to check
+        effectiveCurrencyIds = manifestCurrencyIds.flatMap(manifestId => {
+          if (manifestId === "**") {
+            // Query can ask for anything, so use the query list
+            return [...queryCurrencyIdsSet];
+          } else if (manifestId.endsWith("/**")) {
+            // Pattern like "ethereum/**" - keep tokens from query that match this family
+            const family = manifestId.slice(0, -3);
+            return [...queryCurrencyIdsSet].filter(qId => qId.startsWith(`${family}/`));
+          } else if (queryCurrencyIdsSet.has(manifestId)) {
+            // Specific currency/token that's in the query
+            return [manifestId];
           }
-        }
-
-        // 4. Filter accounts based on effective currency IDs
-        const wapiAccounts = accounts.reduce<WalletAPIAccount[]>((acc, account) => {
-          const parentAccount = getParentAccount(account, accounts);
-          const accountCurrencyId =
-            account.type === "TokenAccount" ? account.token.id : account.currency.id;
-          const parentCurrencyId =
-            account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
-
-          // Check if account currency ID matches the effective patterns
-          const isAllowed =
-            includeAllCurrencies ||
-            allowedCurrencyIds.has(accountCurrencyId) ||
-            tokenFamilyPrefixes.has(parentCurrencyId);
-
-          if (isAllowed) {
-            acc.push(accountToWalletAPIAccount(walletState, account, parentAccount));
-          }
-
-          return acc;
-        }, []);
-
-        tracking.accountListSuccess(manifest);
-        return wapiAccounts;
-      } catch (err) {
-        tracking.accountListFail(manifest);
-        throw err;
+          // Not in query, skip it
+          return [];
+        });
       }
+
+      // 3. Build a set of allowed currency IDs based on effective patterns
+      const allowedCurrencyIds = new Set<string>();
+      const includeAllCurrencies = effectiveCurrencyIds.includes("**");
+      const tokenFamilyPrefixes = new Set<string>();
+
+      for (const id of effectiveCurrencyIds) {
+        if (id === "**") {
+          // Will match all currencies
+          continue;
+        } else if (id.endsWith("/**")) {
+          // Pattern like "ethereum/**" - store prefix for matching
+          const family = id.slice(0, -3);
+          tokenFamilyPrefixes.add(family);
+        } else {
+          // Specific currency/token ID
+          allowedCurrencyIds.add(id);
+        }
+      }
+
+      // 4. Filter accounts based on effective currency IDs
+      const wapiAccounts = accounts.reduce<WalletAPIAccount[]>((acc, account) => {
+        const parentAccount = getParentAccount(account, accounts);
+        const accountCurrencyId =
+          account.type === "TokenAccount" ? account.token.id : account.currency.id;
+        const parentCurrencyId =
+          account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
+
+        // Check if account currency ID matches the effective patterns
+        const isAllowed =
+          includeAllCurrencies ||
+          allowedCurrencyIds.has(accountCurrencyId) ||
+          tokenFamilyPrefixes.has(parentCurrencyId);
+
+        if (isAllowed) {
+          acc.push(accountToWalletAPIAccount(walletState, account, parentAccount));
+        }
+
+        return acc;
+      }, []);
+
+      return wapiAccounts;
     });
-  }, [walletState, manifest, server, tracking, uiAccountRequest, accounts]);
+  }, [walletState, manifest, server, accounts]);
 
   useEffect(() => {
     if (!uiAccountRequest) return;
 
     server.setHandler(
       "account.request",
-      async ({ currencyIds, drawerConfiguration, areCurrenciesFiltered, useCase }) => {
+      async ({ currencyIds, drawerConfiguration, areCurrenciesFiltered, useCase, uiUseCase }) => {
         tracking.requestAccountRequested(manifest);
         return new Promise((resolve, reject) => {
           let done = false;
@@ -599,6 +581,7 @@ export function useWalletAPIServer({
               drawerConfiguration,
               areCurrenciesFiltered,
               useCase,
+              uiUseCase,
               onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
                 if (done) return;
                 done = true;

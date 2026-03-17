@@ -2,8 +2,8 @@ import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction, DeviceActionArg } from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction, DeviceActionArg } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction, Vote } from "../types";
 

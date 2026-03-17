@@ -7,7 +7,6 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-  Api,
   AssetInfo,
   Page,
   Stake,
@@ -15,7 +14,9 @@ import type {
   Cursor,
   CraftedTransaction,
   Validator,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import network from "@ledgerhq/live-network";
 
 function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
@@ -123,8 +124,8 @@ const buildGetBalance = (networkFamily: string) =>
     ];
   };
 
-const buildGetSequence = (networkFamily: string) =>
-  async function getSequence(address: string): Promise<bigint> {
+const buildGetNextSequence = (networkFamily: string) =>
+  async function getNextSequence(address: string): Promise<bigint> {
     const { data } = await network<bigint, unknown>({
       method: "GET",
       url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
@@ -183,7 +184,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateIntent: buildValidateIntent(networkFamily),
     estimateFees: buildEstimateFees(networkFamily),
     getBalance: buildGetBalance(networkFamily),
-    getSequence: buildGetSequence(networkFamily),
+    getNextSequence: buildGetNextSequence(networkFamily),
     listOperations: buildListOperations(networkFamily),
     lastBlock: buildLastBlock(networkFamily),
     craftTransaction: buildCraftTransaction(networkFamily),
@@ -210,4 +211,7 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-  }) satisfies Api<any>;
+    validateAddress(_address: string): Promise<boolean> {
+      throw new Error("validateAddress is not supported");
+    },
+  }) satisfies AlpacaApi<any> & BridgeApi;

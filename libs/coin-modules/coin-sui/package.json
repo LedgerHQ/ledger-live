@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -47,62 +47,77 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./config": {
+      "@ledgerhq/source": "./src/config.ts",
       "require": "./lib/config.js",
       "default": "./lib-es/config.js"
     },
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
     "./formatters": {
+      "@ledgerhq/source": "./src/bridge/formatters.ts",
       "require": "./lib/bridge/formatters.js",
       "default": "./lib-es/bridge/formatters.js"
     },
     "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
       "require": "./lib/logic/index.js",
       "default": "./lib-es/logic/index.js"
     },
     "./preload": {
+      "@ledgerhq/source": "./src/bridge/preload.ts",
       "require": "./lib/bridge/preload.js",
       "default": "./lib-es/bridge/preload.js"
     },
     "./getOperationExtra": {
+      "@ledgerhq/source": "./src/bridge/getOperationExtra.ts",
       "require": "./lib/bridge/getOperationExtra.js",
       "default": "./lib-es/bridge/getOperationExtra.js"
     },
     "./serialization": {
+      "@ledgerhq/source": "./src/bridge/serialization.ts",
       "require": "./lib/bridge/serialization.js",
       "default": "./lib-es/bridge/serialization.js"
     },
     "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
     },
     "./signer/*": {
+      "@ledgerhq/source": "./src/signer/*.ts",
       "require": "./lib/signer/*.js",
       "default": "./lib-es/signer/*.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./types/*": {
+      "@ledgerhq/source": "./src/types/*.ts",
       "require": "./lib/types/*.js",
       "default": "./lib-es/types/*.js"
     },
     "./test/*": {
+      "@ledgerhq/source": "./src/test/*.ts",
       "require": "./lib/test/*.js",
       "default": "./lib-es/test/*.js"
     },
     "./utils": {
+      "@ledgerhq/source": "./src/bridge/utils.ts",
       "require": "./lib/bridge/utils.js",
       "default": "./lib-es/bridge/utils.js"
     },
     "./constants": {
+      "@ledgerhq/source": "./src/constants.ts",
       "require": "./lib/constants.js",
       "default": "./lib-es/constants.js"
     },
@@ -111,6 +126,7 @@
       "default": "./lib-es/uiConfig.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
@@ -119,17 +135,17 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -137,6 +153,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-sui": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",

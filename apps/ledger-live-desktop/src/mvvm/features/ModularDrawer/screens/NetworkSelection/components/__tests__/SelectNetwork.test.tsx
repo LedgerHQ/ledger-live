@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { SelectNetwork } from "../index";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockDomMeasurements } from "../../../../../__tests__/shared";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 

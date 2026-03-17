@@ -1,10 +1,11 @@
-import { Api, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Cronos Network (blockscout explorer)", () => {
-  let module: Api<MemoNotSupported, BufferTxData>;
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -36,7 +37,7 @@ describe("EVM Cronos Network (blockscout explorer)", () => {
         minHeight: 0,
         order: "asc",
         limit: 100,
-        cursor: page1.next,
+        ...(page1.next ? { cursor: page1.next } : {}),
       });
 
       expect(page2.items.length).toBeGreaterThan(0);

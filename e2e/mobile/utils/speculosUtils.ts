@@ -21,10 +21,6 @@ import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 // Re-export setExchangeDependencies to ensure the same module instance is used
 export { setExchangeDependencies };
 
-const MAX_PORT = 65535;
-const BASE_PORT = 30000;
-let portCounter = BASE_PORT;
-
 type SpeculosId = { deviceId: string };
 export const SPECULOS_TRACKING_FILE = path.resolve("artifacts/speculos-instances.json");
 
@@ -64,15 +60,6 @@ async function writeInstances(instances: SpeculosId[]) {
 }
 
 export async function launchSpeculos(appName: string) {
-  // Ensure the portCounter stays within the valid port range
-  if (portCounter > MAX_PORT) {
-    portCounter = BASE_PORT;
-  }
-  const speculosPort = portCounter++;
-  const speculosPidOffset =
-    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
-  setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
-
   const testName = jestExpect.getState().testPath || "unknown";
   const device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
 
@@ -240,6 +227,7 @@ export async function registerKnownSpeculos(speculosPort: number) {
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
   const speculosPort = await deleteSpeculos(deviceId);
   if (speculosPort) {
+    await device.unreverseTcpPort(speculosPort);
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
     await waitForBridgeEnv("DEVICE_PROXY_URL", "");
   }

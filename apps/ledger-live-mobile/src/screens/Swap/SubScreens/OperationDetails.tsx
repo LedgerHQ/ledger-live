@@ -60,6 +60,9 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     color: colors[statusColorKey as keyof typeof colors],
   };
 
+  const fromCryptoCurrency =
+    fromCurrency?.type === "TokenCurrency" ? fromCurrency.parentCurrency : fromCurrency;
+
   const getProviderExplorerUrl = () => {
     switch (provider.toLowerCase()) {
       case "okx":
@@ -69,8 +72,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
       // fallthrough to default if fromCurrency or fromCurrency.id is undefined
       default:
         return (
-          fromCurrency?.type === "CryptoCurrency" &&
-          getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash)
+          fromCryptoCurrency &&
+          getTransactionExplorer(getDefaultExplorerView(fromCryptoCurrency), operation.hash)
         );
     }
   };

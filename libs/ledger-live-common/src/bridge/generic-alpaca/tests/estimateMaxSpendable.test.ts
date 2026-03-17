@@ -44,7 +44,7 @@ describe("genericEstimateMaxSpendable", () => {
     const result = await estimate({
       account: dummyAccount,
       parentAccount: null,
-      transaction: {},
+      transaction: {} as any,
     });
 
     expect(result.toString()).toBe("49990000");
@@ -65,7 +65,7 @@ describe("genericEstimateMaxSpendable", () => {
     const result = await estimate({
       account: poorAccount,
       parentAccount: null,
-      transaction: {},
+      transaction: {} as any,
     });
 
     expect(result.toString()).toBe("0");
@@ -81,7 +81,7 @@ describe("genericEstimateMaxSpendable", () => {
     const result = await estimate({
       account: dummyAccount,
       parentAccount: null,
-      transaction: {},
+      transaction: {} as any,
     });
 
     expect(result.toString()).toBe("50000000");

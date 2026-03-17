@@ -104,6 +104,7 @@ export function SendHeader() {
           className="-mt-12 mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
+          autoFocus
           value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}

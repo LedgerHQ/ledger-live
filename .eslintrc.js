@@ -53,25 +53,26 @@ module.exports = {
     "@typescript-eslint/no-unsafe-function-type": "warn",
   },
   overrides: [
-    {
-      // Enable type-aware linting for TypeScript files only
-      files: ["**/*.ts", "**/*.tsx"],
-      excludedFiles: [
-        "**/*.test.ts",
-        "**/*.test.tsx",
-        "spec.ts",
-        "spec.tsx",
-        "**/__tests__/**",
-        "**/tests/**",
-        "**/__mocks__/**",
-        "**/mocks/**",
-      ],
-      parserOptions: {
-        project: true,
-      },
-      rules: {
-        "@typescript-eslint/no-deprecated": "warn",
-      },
-    },
+    // Disabled as it takes too much ram on CI (1gb vs 8gb) and we're migrating to oxlint
+    // {
+    //   // Enable type-aware linting for TypeScript files only
+    //   files: ["**/*.ts", "**/*.tsx"],
+    //   excludedFiles: [
+    //     "**/*.test.ts",
+    //     "**/*.test.tsx",
+    //     "spec.ts",
+    //     "spec.tsx",
+    //     "**/__tests__/**",
+    //     "**/tests/**",
+    //     "**/__mocks__/**",
+    //     "**/mocks/**",
+    //   ],
+    //   parserOptions: {
+    //     project: true,
+    //   },
+    //   rules: {
+    //     "@typescript-eslint/no-deprecated": "warn",
+    //   },
+    // },
   ],
 };

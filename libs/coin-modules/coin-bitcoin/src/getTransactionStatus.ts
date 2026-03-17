@@ -17,8 +17,8 @@ import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
 import { TaprootNotActivated } from "./errors";
 import { Currency } from "./wallet-btc";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 
 export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
 

@@ -106,6 +106,20 @@
   ],
   "ui": "tui",
   "tasks": {
+    "build:storybook": {
+      "dependsOn": [
+        "^build",
+        "prebuild:storybook"
+      ],
+      "outputs": [
+        "storybook-static/**"
+      ]
+    },
+    "prebuild:storybook": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
@@ -226,8 +240,7 @@
     },
     "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],
-      "env": ["CI_OS"],
-      "outputs": ["lint.json", "lint-desktop.json", "lint-desktop-external.json"]
+      "env": ["CI_OS"]
     },
     "ledger-live-desktop#test": {
       "dependsOn": ["ledger-live-desktop#build:testing"],

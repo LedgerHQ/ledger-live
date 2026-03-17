@@ -2,7 +2,7 @@ import {
   findSubAccountById,
   getMainAccount,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CeloAccount, Transaction } from "../types";

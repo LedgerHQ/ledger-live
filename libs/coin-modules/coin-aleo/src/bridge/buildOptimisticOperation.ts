@@ -1,5 +1,5 @@
 import type { Account, OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AleoOperation, Transaction } from "../types";
 import { getOperationTransactionType } from "../logic/utils";
 
@@ -28,7 +28,7 @@ export function buildOptimisticOperation({
     date: new Date(),
     extra: {
       functionId: "",
-      transactionType: getOperationTransactionType(transaction.type),
+      transactionType: getOperationTransactionType(transaction.mode),
     },
   };
 

@@ -1,5 +1,5 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { KeyAlgorithm } from "casper-js-sdk";
 import * as addressHelpers from "../bridge/bridgeHelpers/addresses";
 import { CasperSigner, CasperGetAddrResponse } from "../types";

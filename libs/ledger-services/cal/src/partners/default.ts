@@ -125,6 +125,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.near.org/intents",
     needsKYC: false,
   },
+  swapsxyz: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "Swaps.xyz",
+    termsOfUseUrl: "https://docs.swaps.xyz/resources/terms-of-service",
+    supportUrl: "https://scan.swaps.xyz/",
+    mainUrl: "https://swaps.xyz/",
+    needsKYC: false,
+  },
   lifi: {
     useInExchangeApp: true,
     displayName: "LI.FI",

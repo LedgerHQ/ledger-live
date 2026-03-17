@@ -1,6 +1,6 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type {
   Account,
   AccountBridge,

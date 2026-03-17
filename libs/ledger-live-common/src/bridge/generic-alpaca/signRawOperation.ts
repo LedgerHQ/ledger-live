@@ -1,9 +1,9 @@
 import { Observable } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import { buildOptimisticOperation } from "./utils";
-import { Result } from "@ledgerhq/coin-framework/derivation";
+import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
@@ -33,7 +33,7 @@ export const genericSignRawOperation =
           const sender = account.freshAddress;
 
           // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await alpacaApi.getSequence(sender);
+          const sequenceNumber = await alpacaApi.getNextSequence(sender);
 
           /* Craft unsigned blob via Alpaca */
           const { transaction: unsigned } = await alpacaApi.craftRawTransaction(

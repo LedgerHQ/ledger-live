@@ -308,6 +308,7 @@
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
     "perps" : "永续合约",
+    "home" : "首页",
     "refer" : "推荐好友",
     "lend" : "借出",
     "catalog" : "探索",
@@ -1751,7 +1752,8 @@
       "previousStakingNodeId" : "前一节点 ID",
       "gasConsumed" : "Gas 消耗量",
       "gasUsed" : "Gas 使用量",
-      "gasLimit" : "Gas 限值"
+      "gasLimit" : "Gas 限值",
+      "functionId" : "函数标识"
     }
   },
   "operationList" : {
@@ -1939,6 +1941,13 @@
       "updateBtn" : "更新固件",
       "installUpdate" : "安装更新",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "有可用的系统更新",
+            "manager" : "Ledger OS 有可用更新"
+          },
+          "cta" : "更新"
+        },
         "warning" : "操作系统有更新",
         "version" : "版本 {{latestFirmware}}",
         "cta" : "前往 My Ledger（我的 Ledger）",
@@ -7528,7 +7537,8 @@
     },
     "selectAccount" : {
       "title" : "选择账户",
-      "addAccount" : "添加新账户或现有账户"
+      "addAccount" : "添加新账户或现有账户",
+      "perpetualsBanner" : "目前仅支持 Arbitrum 链上的 USDC。"
     }
   },
   "customImage" : {
@@ -7583,7 +7593,7 @@
       "skipCTA" : "我以后再下载"
     },
     "default" : {
-      "title" : "{{ productName }} 有自己的应用程序。 您需要用它们来进行交易。",
+      "title" : "{{ productName }} 有自己的应用程序。您需要用它们来进行交易。",
       "subtitle" : "例如，签署比特币交易需要适用于 {{productName}} 的比特币应用程序。\n\n安装默认应用程序以使您的 {{productName}} 为交易做好准备。",
       "installCTA" : "立即安装",
       "skipCTA" : "我以后再下载"
@@ -8017,6 +8027,18 @@
     "connect" : "连接",
     "buyALedger" : "购买 Ledger 设备"
   },
+  "assets" : {
+    "cryptos" : "加密货币",
+    "stablecoins" : "稳定币",
+    "columns" : {
+      "name" : "名称",
+      "price" : "价格",
+      "balance" : "余额",
+      "value" : "价值",
+      "trend" : "1 天趋势",
+      "trendTooltip" : "24 小时余额变更"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
     "entry" : {
@@ -8174,5 +8196,25 @@
     "downloadProgress" : "{{progress}}%",
     "errorTryAgain" : "更新时出错，请重试",
     "installAndRelaunch" : "安装更新并重新启动"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "轻松互换",
+        "description" : "随时灵活调整资产配置，安全始终由 Ledger 签署设备守护"
+      },
+      "navigation" : {
+        "title" : "一切井然有序",
+        "description" : "“我的 Ledger”和“探索”现已置于顶部。“互换”和“卡”已移至侧边栏，方便快速访问。"
+      },
+      "actions" : {
+        "title" : "操作响应，与市场同速",
+        "description" : "通过全新横幅洞察市场趋势，即时交易。"
+      }
+    },
+    "cta" : {
+      "continue" : "继续",
+      "explore" : "探索我的全新资产组合"
+    }
   }
 }

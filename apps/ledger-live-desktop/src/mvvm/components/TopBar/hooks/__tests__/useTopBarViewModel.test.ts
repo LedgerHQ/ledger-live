@@ -1,22 +1,32 @@
-import { Eye, Refresh, Settings } from "@ledgerhq/lumen-ui-react/symbols";
+import { Eye, Experiment, Refresh, Settings, Tools } from "@ledgerhq/lumen-ui-react/symbols";
 import { renderHook } from "tests/testSetup";
 import useTopBarViewModel from "../useTopBarViewModel";
 import * as useActivityIndicatorModule from "../useActivityIndicator";
 import * as useDiscreetModeModule from "../useDiscreetMode";
+import * as useExperimentalFeaturesModule from "../useExperimentalFeatures";
+import * as useFeatureFlagsModule from "../useFeatureFlags";
 import * as useSettingsModule from "../useSettings";
 
 jest.mock("../useActivityIndicator");
 jest.mock("../useDiscreetMode");
+jest.mock("../useExperimentalFeatures");
+jest.mock("../useFeatureFlags");
 jest.mock("../useSettings");
 
 const mockUseActivityIndicator = jest.mocked(useActivityIndicatorModule.useActivityIndicator);
 const mockUseDiscreetMode = jest.mocked(useDiscreetModeModule.useDiscreetMode);
+const mockUseExperimentalFeatures = jest.mocked(
+  useExperimentalFeaturesModule.useExperimentalFeatures,
+);
+const mockUseFeatureFlags = jest.mocked(useFeatureFlagsModule.useFeatureFlags);
 const mockUseSettings = jest.mocked(useSettingsModule.useSettings);
 
 describe("useTopBarViewModel", () => {
   const mockHandleSync = jest.fn();
   const mockHandleDiscreet = jest.fn();
   const mockHandleSettings = jest.fn();
+  const mockHandleExperimental = jest.fn();
+  const mockHandleFeatureFlags = jest.fn();
   const mockDiscreetIcon = Eye;
 
   beforeEach(() => {
@@ -39,6 +49,18 @@ describe("useTopBarViewModel", () => {
       handleSettings: mockHandleSettings,
       settingsIcon: Settings,
       tooltip: "Settings",
+    });
+    mockUseExperimentalFeatures.mockReturnValue({
+      isVisible: false,
+      handleExperimental: mockHandleExperimental,
+      icon: Experiment,
+      tooltip: "Experimental",
+    });
+    mockUseFeatureFlags.mockReturnValue({
+      isVisible: false,
+      handleFeatureFlags: mockHandleFeatureFlags,
+      icon: Tools,
+      tooltip: "Feature flags",
     });
   });
 
@@ -96,6 +118,54 @@ describe("useTopBarViewModel", () => {
       s.type === "action" ? s.action.label : "notification",
     );
     expect(slotLabels).toEqual(["notification", "discreet", "settings", "my ledger"]);
+  });
+
+  it("includes experimental and feature flags slots with accent appearance when visible", () => {
+    mockUseExperimentalFeatures.mockReturnValue({
+      isVisible: true,
+      handleExperimental: mockHandleExperimental,
+      icon: Experiment,
+      tooltip: "Experimental",
+    });
+    mockUseFeatureFlags.mockReturnValue({
+      isVisible: true,
+      handleFeatureFlags: mockHandleFeatureFlags,
+      icon: Tools,
+      tooltip: "Feature flags",
+    });
+
+    const { result } = renderHook(() => useTopBarViewModel());
+
+    const slotLabels = result.current.topBarSlots.map(s =>
+      s.type === "action" ? s.action.label : "notification",
+    );
+    expect(slotLabels).toEqual([
+      "experimental",
+      "feature flags",
+      "synchronize",
+      "notification",
+      "discreet",
+      "settings",
+      "my ledger",
+    ]);
+
+    const experimentalSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "experimental",
+    );
+    expect(experimentalSlot).toBeDefined();
+    if (experimentalSlot?.type === "action") {
+      expect(experimentalSlot.action.appearance).toBe("accent");
+      expect(experimentalSlot.action.onClick).toBe(mockHandleExperimental);
+    }
+
+    const featureFlagsSlot = result.current.topBarSlots.find(
+      s => s.type === "action" && s.action.label === "feature flags",
+    );
+    expect(featureFlagsSlot).toBeDefined();
+    if (featureFlagsSlot?.type === "action") {
+      expect(featureFlagsSlot.action.appearance).toBe("accent");
+      expect(featureFlagsSlot.action.onClick).toBe(mockHandleFeatureFlags);
+    }
   });
 
   it("passes isRotating from useActivityIndicator as isInteractive false on sync action", () => {

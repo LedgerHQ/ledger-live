@@ -1,5 +1,4 @@
 import {
-  Api,
   Cursor,
   ListOperationsOptions as ApiListOperationsOptions,
   Page,
@@ -10,6 +9,7 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { log } from "@ledgerhq/logs";
@@ -30,9 +30,10 @@ import {
   validateIntent,
   MemoInput,
 } from "../logic";
+import { validateAddress } from "../logic/validateAddress";
 import { ListOperationsOptions, XrpMapMemo } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpMapMemo> {
+export function createApi(config: XrpConfig): AlpacaApi<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -47,7 +48,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     validateIntent,
     getBlock,
     getBlockInfo,
-    getSequence: async (address: string) => {
+    getNextSequence: async (address: string) => {
       const accountInfo = await getAccountInfo(address);
       return BigInt(accountInfo.sequence);
     },
@@ -60,6 +61,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateAddress,
   };
 }
 

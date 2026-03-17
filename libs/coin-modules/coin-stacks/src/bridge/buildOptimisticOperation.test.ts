@@ -1,4 +1,4 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
@@ -6,7 +6,7 @@ import { Transaction } from "../types";
 import { getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("./utils/misc");
 jest.mock("./utils/token");
 

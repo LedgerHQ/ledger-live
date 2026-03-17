@@ -1,7 +1,10 @@
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
-import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import {
+  decodeTokenAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import {
   createFixtureAccount,
@@ -13,7 +16,7 @@ import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOpt
 import type { AptosTransaction, TransactionOptions } from "../../types";
 
 jest.mock("@ledgerhq/cryptoassets");
-jest.mock("@ledgerhq/coin-framework/account/index");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 
 setupMockCryptoAssetsStore();
 

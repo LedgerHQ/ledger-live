@@ -1,6 +1,6 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 
 /**

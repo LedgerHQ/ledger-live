@@ -1,5 +1,5 @@
-import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom } from "rxjs";

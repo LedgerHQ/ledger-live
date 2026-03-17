@@ -16,7 +16,7 @@ import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { BoxProps } from "./Box/Box";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 
 export type InputError = Error | boolean | null | undefined;
 

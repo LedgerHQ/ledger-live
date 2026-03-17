@@ -12,8 +12,8 @@ import Transport from "@ledgerhq/hw-transport";
 //
 // TLDR: /!\ Do not remove the /lib part in the import statements below (@ledgerhq/devices/lib) ! /!\
 // See: https://github.com/LedgerHQ/ledger-live/pull/879
-import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
+import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
+import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
 import {
   BleError,
   BleErrorCode,

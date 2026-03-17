@@ -4,7 +4,7 @@ import { useActivityIndicatorTooltip } from "../useActivityIndicatorTooltip";
 const enUsState = { settings: { locale: "en-US" } };
 
 describe("useActivityIndicatorTooltip", () => {
-  it("returns undefined when isRotating is true", () => {
+  it("returns Refreshing... when isRotating is true", () => {
     const { result } = renderHook(() =>
       useActivityIndicatorTooltip({
         isRotating: true,
@@ -13,7 +13,7 @@ describe("useActivityIndicatorTooltip", () => {
         lastSyncMs: 0,
       }),
     );
-    expect(result.current).toBeUndefined();
+    expect(result.current).toBe("Refreshing...");
   });
 
   it("returns emptyErrorToolTip when isError is true and no account names", () => {
@@ -26,7 +26,7 @@ describe("useActivityIndicatorTooltip", () => {
       }),
     );
     expect(result.current).toBe(
-      "There was a temporary network issue. Your assets are safe. Tap to retry",
+      "There was a temporary network issue. Your assets are safe.\n Tap to retry",
     );
   });
 
@@ -40,7 +40,7 @@ describe("useActivityIndicatorTooltip", () => {
       }),
     );
     expect(result.current).toBe(
-      "There was a temporary network issue. Your assets are safe. List of accounts impacted: BTC/ETH. Tap to retry",
+      "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: BTC/ETH. Tap to retry",
     );
   });
 

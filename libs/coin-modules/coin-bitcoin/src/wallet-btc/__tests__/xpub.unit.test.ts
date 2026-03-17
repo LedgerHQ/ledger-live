@@ -4,6 +4,7 @@ import { Output } from "../storage/types";
 import { DerivationModes } from "../types";
 
 import { mockCrypto, mockStorage } from "./fixtures/common.fixtures";
+import { IExplorer } from "../explorer/types";
 
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
@@ -24,7 +25,7 @@ describe("Xpub", () => {
     mockExplorer = createMockExplorer();
     xpub = new Xpub({
       storage: mockStorage,
-      explorer: mockExplorer,
+      explorer: mockExplorer as unknown as IExplorer,
       crypto: mockCrypto,
       xpub: "test-xpub",
       derivationMode: DERIVATION_MODE,

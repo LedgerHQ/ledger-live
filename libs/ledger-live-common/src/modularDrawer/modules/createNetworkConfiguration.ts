@@ -1,60 +1,25 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { ReactElement } from "react";
-import { createUseLeftAccountsModule } from "../hooks/useLeftAccounts";
+import { useLeftAccountsModule } from "../hooks/useLeftAccounts";
 import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
-import { createUseRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
+import { useRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
 import {
-  CreateNetworkConfigurationHookProps,
-  NetworkConfigurationDeps,
+  NetworkConfigurationOptions,
   Network,
-  NetworkHook,
-  AccountModuleParams,
   BalanceUI,
   NetworkLeftElementKind,
   NetworkRightElementKind,
 } from "../utils/type";
 import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 
-const getLeftElement =
-  (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  (leftElement?: NetworkLeftElementKind): NetworkHook | undefined => {
-    switch (leftElement) {
-      case "undefined":
-        return undefined;
-      case "numberOfAccountsAndApy":
-        return (params: AccountModuleParams) =>
-          useLeftAccountsApyModule(
-            params,
-            NetworkConfigurationDeps.useAccountData,
-            NetworkConfigurationDeps.accountsCountAndApy,
-            NetworkConfigurationDeps.accountsApy,
-          );
-      case "numberOfAccounts":
-      default:
-        return createUseLeftAccountsModule({
-          useAccountData: NetworkConfigurationDeps.useAccountData,
-          accountsCount: NetworkConfigurationDeps.accountsCount,
-        });
-    }
-  };
+type NetworkComponentProps = Partial<
+  Network & {
+    balanceData?: BalanceUI;
+    count?: number;
+  }
+>;
 
-const getRightElement =
-  (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  (rightElement?: NetworkRightElementKind): NetworkHook | undefined => {
-    switch (rightElement) {
-      case "undefined":
-        return undefined;
-      case "balance":
-      default:
-        return (params: { networks: CryptoOrTokenCurrency[] }) =>
-          createUseRightBalanceNetwork({
-            useBalanceDeps: NetworkConfigurationDeps.useBalanceDeps,
-            balanceItem: NetworkConfigurationDeps.balanceItem,
-          })({ networks: params.networks });
-    }
-  };
-
-type NetworksWithComponents = CryptoOrTokenCurrency &
+export type NetworksWithComponents = CryptoOrTokenCurrency &
   Network & {
     balanceData?: BalanceUI;
     count?: number;
@@ -62,69 +27,59 @@ type NetworksWithComponents = CryptoOrTokenCurrency &
     description?: string;
   };
 
-const sortNetworks = (
+export const sortNetworks = (
   result: NetworksWithComponents[],
   leftElement?: NetworkLeftElementKind,
   rightElement?: NetworkRightElementKind,
 ) => {
+  let sorted = result;
   if (
     leftElement === "numberOfAccounts" ||
     leftElement === "numberOfAccountsAndApy" ||
-    leftElement === undefined // default
+    leftElement === undefined
   ) {
-    result.sort((a, b) => (b?.count || 0) - (a?.count || 0));
+    sorted = [...sorted].sort((a, b) => (b?.count || 0) - (a?.count || 0));
   }
 
-  if (
-    rightElement === "balance" ||
-    rightElement === undefined // default
-  ) {
-    result.sort((a, b) => compareByBalanceThenFiat(a?.balanceData, b?.balanceData));
+  if (rightElement === "balance" || rightElement === undefined) {
+    sorted = [...sorted].sort((a, b) => compareByBalanceThenFiat(a?.balanceData, b?.balanceData));
   }
+  return sorted;
 };
 
-export const createNetworkConfigurationHook =
-  (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  ({ networksConfig }: CreateNetworkConfigurationHookProps) => {
-    const { leftElement, rightElement } = networksConfig ?? {};
-    const leftHook = getLeftElement(NetworkConfigurationDeps)(leftElement);
-    const rightHook = getRightElement(NetworkConfigurationDeps)(rightElement);
+export function useNetworkConfiguration(
+  networks: CryptoOrTokenCurrency[],
+  options: NetworkConfigurationOptions,
+) {
+  const { leftElement = "numberOfAccounts", rightElement = "balance" } = options;
+  const params = { networks };
+  const emptyParams: { networks: CryptoOrTokenCurrency[] } = { networks: [] };
 
-    const hooks = [rightHook, leftHook].filter((hook): hook is NetworkHook => Boolean(hook));
-
-    return (
-      networks: CryptoOrTokenCurrency[],
-    ): Array<
-      CryptoOrTokenCurrency &
-        Network & {
-          balanceData?: BalanceUI;
-          count?: number;
-          apy?: ReactElement;
-          description?: string;
-        }
-    > => {
-      const hookResults = hooks.map(hook =>
-        hook({
-          networks,
-        }),
-      );
-
-      const networksWithComponents = networks.map((network, index) => {
-        const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
-
-        const merged: NetworksWithComponents = { ...asset };
-
-        for (const hookResult of hookResults) {
-          if (hookResult[index]) {
-            Object.assign(merged, hookResult[index]);
-          }
-        }
-
-        return merged;
-      });
-
-      sortNetworks(networksWithComponents, leftElement, rightElement);
-
-      return networksWithComponents;
-    };
+  const rightResults: Record<string, NetworkComponentProps[]> = {
+    balance: useRightBalanceNetwork(
+      rightElement === "balance" || rightElement === undefined ? params : emptyParams,
+      options,
+    ),
   };
+  const leftResults: Record<string, NetworkComponentProps[]> = {
+    numberOfAccounts: useLeftAccountsModule(
+      leftElement === "numberOfAccounts" || leftElement === undefined ? params : emptyParams,
+      options,
+    ),
+    numberOfAccountsAndApy: useLeftAccountsApyModule(
+      leftElement === "numberOfAccountsAndApy" ? params : emptyParams,
+      options,
+    ),
+  };
+
+  const merged = networks.map<NetworksWithComponents>((network, i) => {
+    const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
+    return {
+      ...asset,
+      ...rightResults[rightElement]?.[i],
+      ...leftResults[leftElement]?.[i],
+    };
+  });
+
+  return sortNetworks(merged, leftElement, rightElement);
+}

@@ -85,6 +85,11 @@ export default function Generators() {
         desc="Replace existing accounts with 10 mock accounts from random currencies."
         count={10}
       />
+      <GenerateMockAccounts
+        title="100 Accounts"
+        desc="Replace existing accounts with 100 mock accounts from random currencies."
+        count={100}
+      />
 
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
 

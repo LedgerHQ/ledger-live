@@ -10,13 +10,11 @@ type StatusMessageProps = Readonly<{
 export function StatusMessage({ text, dataTestId }: StatusMessageProps) {
   return (
     <div
-      className="flex h-[33vh] flex-col items-center justify-center gap-16 pt-12"
+      className="flex flex-col items-center justify-center gap-10 px-24"
       data-testid={dataTestId}
     >
-      <Spot appearance="icon" icon={Search} size={72} />
-      <p className="mt-6 text-center text-[20px] leading-[28px] font-[600] tracking-[-1px] text-base">
-        {text}
-      </p>
+      <Spot appearance="icon" icon={Search} size={56} />
+      <p className="text-center mt-6 body-1-semi-bold">{text}</p>
     </div>
   );
 }

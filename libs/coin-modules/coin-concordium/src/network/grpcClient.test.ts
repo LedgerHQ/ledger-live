@@ -1,11 +1,4 @@
-import {
-  getClient,
-  withClient,
-  getLastBlock,
-  getBlockInfoByHeight,
-  getBlockByHeight,
-  getOperations,
-} from "./grpcClient";
+import { getClient, withClient, getOperations } from "./grpcClient";
 
 // Type definitions for gRPC callbacks
 type GrpcCallback<T> = (error: Error | null, response: T | null) => void;
@@ -22,7 +15,7 @@ jest.mock("@grpc/grpc-js", () => ({
     concordium: {
       v2: {
         Queries: jest.fn().mockImplementation(() => ({
-          GetConsensusInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetConsensusInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetConsensusStatusResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -42,7 +35,7 @@ jest.mock("@grpc/grpc-js", () => ({
               callback(null, { blocks: response });
             }
           },
-          GetBlockInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetBlockInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetBlockInfoResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -73,8 +66,8 @@ jest.mock("../config", () => ({
   __esModule: true,
   default: {
     getCoinConfig: jest.fn().mockReturnValue({
-      grpcUrl: "https://grpc.concordium.com",
-      grpcPort: 20000,
+      grpcUrl: "https://ccd-node-testnet.coin.ledger-test.com",
+      grpcPort: 443,
     }),
   },
 }));
@@ -138,233 +131,11 @@ describe("grpcClient", () => {
     });
   });
 
-  describe("getLastBlock", () => {
-    it("should return last finalized block info", async () => {
-      const mockHash = "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: mockHash,
-        lastFinalizedTime: { value: "1700000000000" },
-      });
-
-      const result = await getLastBlock(currencyId);
-
-      expect(result).toEqual({
-        height: 1000,
-        hash: mockHash,
-        time: new Date(1700000000000),
-      });
-    });
-
-    it("should call getConsensusStatus on client", async () => {
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        lastFinalizedTime: { value: "1000" },
-      });
-
-      await getLastBlock(currencyId);
-
-      expect(mockGetConsensusStatusResponse).toHaveBeenCalled();
-    });
-  });
-
-  describe("getBlockInfoByHeight", () => {
-    it("should return block info at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 500n,
-        blockHash: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-
-      const result = await getBlockInfoByHeight(currencyId, 500);
-
-      expect(result.height).toBe(500);
-      expect(result.hash).toBe("abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4");
-    });
-
-    it("should throw error when no blocks found at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([]);
-
-      await expect(getBlockInfoByHeight(currencyId, 999)).rejects.toThrow(
-        "No blocks found at height 999",
-      );
-    });
-
-    it("should include parent block info when height > 0", async () => {
-      mockGetBlocksAtHeightResponse
-        .mockReturnValueOnce([
-          { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-        ])
-        .mockReturnValueOnce([
-          { value: "def123def123def123def123def123def123def123def123def123def123def1" },
-        ]);
-
-      mockGetBlockInfoResponse
-        .mockReturnValueOnce({
-          blockHeight: 500n,
-          blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-          blockSlotTime: new Date("2024-01-02"),
-        })
-        .mockReturnValueOnce({
-          blockHeight: 499n,
-          blockHash: "def123def123def123def123def123def123def123def123def123def123def1",
-          blockSlotTime: new Date("2024-01-01"),
-        });
-
-      const result = await getBlockInfoByHeight(currencyId, 500);
-
-      expect(result.parent).not.toBeUndefined();
-      expect(result.parent?.height).toBe(499);
-      expect(result.parent?.hash).toBe(
-        "def123def123def123def123def123def123def123def123def123def123def1",
-      );
-    });
-
-    it("should not include parent for height 0", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "0000000000000000000000000000000000000000000000000000000000000000" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 0n,
-        blockHash: "0000000000000000000000000000000000000000000000000000000000000000",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-
-      const result = await getBlockInfoByHeight(currencyId, 0);
-
-      expect(result.parent).toBeUndefined();
-    });
-  });
-
-  describe("getBlockByHeight", () => {
-    it("should return block with transactions", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 100n,
-        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-      mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.info.height).toBe(100);
-      expect(result.transactions).toEqual([]);
-    });
-
-    it("should parse transfer transactions", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 100n,
-        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-      mockGetBlockTransactionEventsStream.mockReturnValue(
-        (async function* () {
-          yield {
-            accountTransaction: {
-              type: "accountTransaction",
-              transactionType: "transfer",
-              hash: "txhash",
-              cost: "1000",
-              sender: "sender-address",
-              effects: {
-                accountTransfer: {
-                  amount: "5000000",
-                  to: "recipient-address",
-                },
-              },
-            },
-          };
-        })(),
-      );
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].hash).toBe("txhash");
-      expect(result.transactions[0].operations).toHaveLength(2);
-    });
-
-    it("should handle failed transactions", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 100n,
-        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-      mockGetBlockTransactionEventsStream.mockReturnValue(
-        (async function* () {
-          yield {
-            accountTransaction: {
-              type: "accountTransaction",
-              transactionType: "failed",
-              hash: "failedtx",
-              cost: "500",
-              sender: "sender",
-            },
-          };
-        })(),
-      );
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].failed).toBe(true);
-    });
-
-    it("should skip non-accountTransaction events", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 100n,
-        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-      mockGetBlockTransactionEventsStream.mockReturnValue(
-        (async function* () {
-          yield null;
-          yield { type: "other" };
-          yield {
-            accountTransaction: {
-              type: "accountTransaction",
-              transactionType: "transfer",
-              hash: "tx",
-              cost: "100",
-              sender: "s",
-              effects: {
-                accountTransfer: {
-                  amount: "1000",
-                  to: "r",
-                },
-              },
-            },
-          };
-        })(),
-      );
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.transactions).toHaveLength(1);
-    });
-  });
-
   describe("getOperations", () => {
     beforeEach(() => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
     });
@@ -455,7 +226,7 @@ describe("grpcClient", () => {
     it("should return empty cursor when at chain tip", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -476,7 +247,7 @@ describe("grpcClient", () => {
     it("should return next block height as cursor when more blocks exist", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "2000",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -499,7 +270,7 @@ describe("grpcClient", () => {
     it("should return correct cursor when scan ends before MAX_BLOCKS_TO_SCAN", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "150",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -517,143 +288,6 @@ describe("grpcClient", () => {
 
       // At chain tip, should return empty cursor
       expect(cursor).toBeUndefined();
-    });
-  });
-
-  describe("error handling", () => {
-    it("should handle and throw getLastBlock errors", async () => {
-      mockGetConsensusStatusResponse.mockReturnValue(new Error("Connection failed"));
-
-      await expect(getLastBlock(currencyId)).rejects.toThrow("Connection failed");
-    });
-
-    it("should handle and throw getBlockInfoByHeight errors when GetBlocksAtHeight fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue(new Error("Network error"));
-
-      await expect(getBlockInfoByHeight(currencyId, 100)).rejects.toThrow("Network error");
-    });
-
-    it("should handle and throw getBlockInfoByHeight errors when GetBlockInfo fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue(new Error("Block not found"));
-
-      await expect(getBlockInfoByHeight(currencyId, 100)).rejects.toThrow("Block not found");
-    });
-
-    it("should handle and throw getBlockByHeight errors", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 100n,
-        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-      mockGetBlockTransactionEventsStream.mockImplementation(() => {
-        throw new Error("Stream error");
-      });
-
-      await expect(getBlockByHeight(currencyId, 100)).rejects.toThrow("Stream error");
-    });
-  });
-
-  describe("transaction type parsing", () => {
-    beforeEach(() => {
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "hash",
-        lastFinalizedTime: { value: "1700000000000" },
-      });
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 100n,
-        blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-    });
-
-    it("should parse transferWithMemo transactions", async () => {
-      mockGetBlockTransactionEventsStream.mockReturnValue(
-        (async function* () {
-          yield {
-            accountTransaction: {
-              type: "accountTransaction",
-              transactionType: "transferWithMemo",
-              hash: "txhash",
-              cost: "1000",
-              sender: "sender-address",
-              effects: {
-                accountTransfer: {
-                  amount: "5000000",
-                  to: "recipient-address",
-                  memo: "48656c6c6f",
-                },
-              },
-            },
-          };
-        })(),
-      );
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].hash).toBe("txhash");
-    });
-
-    it("should parse encrypted transfer transactions", async () => {
-      mockGetBlockTransactionEventsStream.mockReturnValue(
-        (async function* () {
-          yield {
-            accountTransaction: {
-              type: "accountTransaction",
-              transactionType: "encryptedAmountTransfer",
-              hash: "encrypted-tx",
-              cost: "2000",
-              sender: "sender-address",
-              effects: {
-                encryptedAmountTransferred: {
-                  removed: { data: "removed-data" },
-                  added: { data: "added-data" },
-                },
-              },
-            },
-          };
-        })(),
-      );
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.transactions).toHaveLength(1);
-      expect(result.transactions[0].hash).toBe("encrypted-tx");
-    });
-
-    it("should handle module deploy transactions", async () => {
-      mockGetBlockTransactionEventsStream.mockReturnValue(
-        (async function* () {
-          yield {
-            accountTransaction: {
-              type: "accountTransaction",
-              transactionType: "deployModule",
-              hash: "module-tx",
-              cost: "5000",
-              sender: "sender-address",
-              effects: {
-                moduleDeployed: {
-                  moduleRef: "module-ref-123",
-                },
-              },
-            },
-          };
-        })(),
-      );
-
-      const result = await getBlockByHeight(currencyId, 100);
-
-      expect(result.transactions).toHaveLength(1);
     });
   });
 });

@@ -1,6 +1,5 @@
 import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import type {
-  Account,
   Operation,
   OperationType,
   TransactionCommon,
@@ -136,5 +135,3 @@ export type StellarOperationExtra = {
    */
   feeAccount?: string;
 };
-
-export type StellarAccount = Account;
