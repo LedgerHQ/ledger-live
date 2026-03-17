@@ -80,8 +80,10 @@ describe("SendStepAmount", () => {
       amount: new BigNumber(0),
       fees: new BigNumber(0),
       useAllAmount: false,
-      amountRecord: null,
-      feeRecord: null,
+      properties: {
+        amountRecord: null,
+        feeRecord: null,
+      },
     };
 
     it("should render StepRecordPicker when account has aleoResources", () => {
