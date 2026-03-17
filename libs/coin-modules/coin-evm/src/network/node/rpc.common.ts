@@ -556,9 +556,10 @@ function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
   nodeConfig: ExternalNodeConfig,
   configOverride: Partial<ExternalNodeConfig> = {},
 ): F {
+  const mergedConfig = { ...nodeConfig, ...configOverride };
   return ((...args: Parameters<F>) => {
     const [currency] = args;
-    return withApi(currency, api => f(api, ...args), { ...nodeConfig, ...configOverride });
+    return withApi(currency, api => f(api, ...args), mergedConfig);
   }) as F;
 }
 
