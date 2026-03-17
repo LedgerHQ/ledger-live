@@ -286,6 +286,30 @@ export const makeSync =
               const operations = shouldMergeOps
                 ? mergeOps(a.operations, shape.operations || [])
                 : shape.operations || [];
+              const retainedPendingOperations = a.pendingOperations.filter(op =>
+                shouldRetainPendingOperation(a, op),
+              );
+              const pendingFromShape = shape.pendingOperations || [];
+              const pendingOperationsById: Record<string, Operation> = {};
+              [...retainedPendingOperations, ...pendingFromShape].forEach(op => {
+                const existing = pendingOperationsById[op.id];
+                if (!existing) {
+                  pendingOperationsById[op.id] = op;
+                  return;
+                }
+
+                // Prefer the version carrying transactionRaw (needed for edit speed-up/cancel).
+                // If both have or both don't have it, keep the latest source pass order.
+                if (!existing.transactionRaw && op.transactionRaw) {
+                  pendingOperationsById[op.id] = op;
+                  return;
+                }
+
+                if (!!existing.transactionRaw === !!op.transactionRaw) {
+                  pendingOperationsById[op.id] = op;
+                }
+              });
+              const pendingOperations = Object.values(pendingOperationsById);
 
               a = postSync(a, {
                 ...a,
@@ -297,9 +321,7 @@ export const makeSync =
                   operations.length > 0 ? operations[operations.length - 1].date : new Date(),
                 ...shape,
                 operations,
-                pendingOperations: a.pendingOperations.filter(op =>
-                  shouldRetainPendingOperation(a, op),
-                ),
+                pendingOperations,
               });
 
               a = recalculateAccountBalanceHistories(a, acc);

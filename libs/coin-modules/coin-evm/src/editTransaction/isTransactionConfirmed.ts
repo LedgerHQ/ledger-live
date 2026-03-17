@@ -15,8 +15,23 @@ export const isTransactionConfirmed = async ({
   hash: string;
 }): Promise<boolean> => {
   const nodeApi = getNodeApi(currency);
+  try {
+    const tx = await nodeApi.getTransaction(currency, hash);
+    const { blockHeight = null } = tx;
+    return typeof blockHeight === "number" && blockHeight > 0;
+  } catch (error) {
+    const status =
+      typeof error === "object" && error !== null ? Reflect.get(error, "status") : undefined;
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "object" && error !== null
+          ? Reflect.get(error, "message")
+          : undefined;
 
-  const { blockHeight = null } = await nodeApi.getTransaction(currency, hash);
-
-  return blockHeight !== null;
+    if (status === 404 || (typeof message === "string" && message.includes("404"))) {
+      return false;
+    }
+    throw error;
+  }
 };

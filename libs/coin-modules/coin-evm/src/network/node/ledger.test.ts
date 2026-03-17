@@ -225,6 +225,40 @@ describe("EVM Family", () => {
           ],
         });
       });
+
+      it("should fallback block fields when transaction block is null", async () => {
+        jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+          data: {
+            hash: "0xhash",
+            transaction_type: 2,
+            nonce: "0x1",
+            nonce_value: 1,
+            value: "1",
+            gas: "21000",
+            gas_price: "10",
+            max_fee_per_gas: "10",
+            max_priority_fee_per_gas: "1",
+            from: "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5",
+            to: "0x6d2e03b7effeae98bd302a9f836d0d6ab0002766",
+            transfer_events: [],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 0,
+            input: null,
+            gas_used: "21000",
+            cumulative_gas_used: "0",
+            status: 1,
+            received_at: "2023-06-29T19:03:35Z",
+            block: null,
+          },
+        }));
+
+        const response = await LEDGER_API.getTransaction(currency, "0xHash");
+        expect(response.blockHeight).toBe(0);
+        expect(response.blockHash).toBe("");
+      });
     });
 
     describe("getCoinBalance", () => {
@@ -658,6 +692,50 @@ describe("EVM Family", () => {
           parentHash: "0xparentHashLatest",
           transactionHashes: ["0xTx3", "0xTx4"],
         });
+      });
+    });
+
+    describe("getPendingTransactions", () => {
+      it("should map pending transactions even when block is null", async () => {
+        jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+          data: [
+            {
+              hash: "0xpendingHash",
+              transaction_type: 2,
+              nonce: "0x4b",
+              nonce_value: 75,
+              value: "1",
+              gas: "62350",
+              gas_price: "81876963401",
+              max_fee_per_gas: "125263305914",
+              max_priority_fee_per_gas: "33000000000",
+              from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+              to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+              transfer_events: [],
+              erc721_transfer_events: [],
+              erc1155_transfer_events: [],
+              approval_events: [],
+              actions: [],
+              confirmations: 0,
+              input: null,
+              gas_used: null,
+              cumulative_gas_used: "0",
+              status: 1,
+              received_at: "2023-01-24T17:11:45Z",
+              block: null,
+            },
+          ],
+        }));
+
+        expect(await LEDGER_API.getPendingTransactions(currency, "0xAddress")).toEqual([
+          expect.objectContaining({
+            hash: "0xpendingHash",
+            blockHeight: 0,
+            blockHash: "",
+            gasUsed: "62350",
+            nonce: 75,
+          }),
+        ]);
       });
     });
 

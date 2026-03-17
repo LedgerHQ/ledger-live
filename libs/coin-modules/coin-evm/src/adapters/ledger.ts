@@ -15,6 +15,7 @@ import BigNumber from "bignumber.js";
 import eip55 from "eip55";
 import {
   LedgerExplorerOperation,
+  LedgerExplorerPendingOperation,
   LedgerExplorerERC20TransferEvent,
   LedgerExplorerER721TransferEvent,
   LedgerExplorerER1155TransferEvent,
@@ -28,7 +29,7 @@ import { safeEncodeEIP55 } from "../utils";
  */
 export const ledgerOperationToOperations = (
   accountId: string,
-  ledgerOp: LedgerExplorerOperation,
+  ledgerOp: LedgerExplorerOperation | LedgerExplorerPendingOperation,
 ): Operation[] => {
   const { xpubOrAddress: address } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
@@ -37,7 +38,12 @@ export const ledgerOperationToOperations = (
   const value = new BigNumber(ledgerOp.value);
   const fee = new BigNumber(ledgerOp.gas_used).times(new BigNumber(ledgerOp.gas_price));
   const hasFailed = !ledgerOp.status;
-  const date = new Date(ledgerOp.block.time);
+  const block = ledgerOp.block ?? {
+    hash: "",
+    height: 0,
+    time: ledgerOp.received_at,
+  };
+  const date = new Date(block.time);
   const types: OperationType[] = [];
 
   if (to === checksummedAddress) {
@@ -49,7 +55,6 @@ export const ledgerOperationToOperations = (
   if (!types.length) {
     types.push("NONE");
   }
-
   return types.map(
     type =>
       ({
@@ -60,8 +65,8 @@ export const ledgerOperationToOperations = (
         fee,
         senders: [from],
         recipients: [to],
-        blockHeight: ledgerOp.block.height,
-        blockHash: ledgerOp.block.hash,
+        blockHeight: block.height,
+        blockHash: block.hash,
         transactionSequenceNumber: new BigNumber(ledgerOp.nonce_value),
         accountId,
         date,

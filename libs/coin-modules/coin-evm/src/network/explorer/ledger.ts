@@ -12,7 +12,7 @@ import {
 } from "../../adapters/index";
 import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
-import { LedgerExplorerOperation } from "../../types";
+import { LedgerExplorerOperation, LedgerExplorerPendingOperation } from "../../types";
 import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
 
 export const DEFAULT_BATCH_SIZE = 10_000;
@@ -52,7 +52,11 @@ export async function fetchPaginatedOpsWithRetries(
       method: "GET",
       url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
       params: {
-        noinput: true,
+        filtering: true,
+        from_height: params.fromBlock ?? 0,
+        order: "ascending", // Needed to make sure we get transactions after the block height and not before. Order is still descending in the end
+        batch_size: params.batchSize,
+        token: paginationToken,
       },
     });
 
@@ -62,7 +66,9 @@ export async function fetchPaginatedOpsWithRetries(
       ? fetchPaginatedOpsWithRetries(params, token, mergedOperations, retries)
       : mergedOperations.sort(
           // sorting DESC order
-          (a, b) => new Date(b.block.time).getTime() - new Date(a.block.time).getTime(),
+          (a, b) =>
+            new Date(b.block?.time ?? b.received_at).getTime() -
+            new Date(a.block?.time ?? a.received_at).getTime(),
         );
   } catch (e) {
     if (retries) {
@@ -215,14 +221,14 @@ export const getPendingOperations: ExplorerApi["getPendingOperations"] = async (
 export async function fetchPendingPaginatedOpsWithRetries(
   params: Required<PendingOperationsRequestParams>,
   paginationToken: string | null = null,
-  previousOperations: LedgerExplorerOperation[] = [],
+  previousOperations: LedgerExplorerPendingOperation[] = [],
   retries = DEFAULT_RETRIES_API,
-): Promise<LedgerExplorerOperation[]> {
+): Promise<LedgerExplorerPendingOperation[]> {
   try {
     const {
-      data: { data: operationsBatch, token },
+      data: { data: operationsBatch },
     } = await axios.request<{
-      data: LedgerExplorerOperation[];
+      data: LedgerExplorerPendingOperation[];
       token: string;
     }>({
       headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
@@ -235,9 +241,7 @@ export async function fetchPendingPaginatedOpsWithRetries(
 
     const mergedOperations = [...previousOperations, ...operationsBatch];
 
-    return token
-      ? fetchPendingPaginatedOpsWithRetries(params, token, mergedOperations, retries)
-      : mergedOperations;
+    return mergedOperations;
   } catch (e) {
     if (retries) {
       // wait the API timeout before trying again

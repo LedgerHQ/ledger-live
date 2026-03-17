@@ -24,6 +24,7 @@ describe.each([
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
       getPendingTransactions: expect.any(Function),
+      validateAddress: expect.any(Function),
       validateIntent: expect.any(Function),
       validateTransaction: expect.any(Function),
     },

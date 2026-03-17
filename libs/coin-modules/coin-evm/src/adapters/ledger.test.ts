@@ -7,6 +7,7 @@ import {
   LedgerExplorerERC20TransferEvent,
   LedgerExplorerInternalTransaction,
   LedgerExplorerOperation,
+  LedgerExplorerPendingOperation,
 } from "./../types";
 import {
   ledgerERC1155EventToOperations,
@@ -117,6 +118,39 @@ describe("EVM Family", () => {
           expect(ledgerOperationToOperations(accountId, ledgerExplorerOp)).toEqual([
             expectedOperation,
           ]);
+        });
+
+        it("should support pending operations when block is null", () => {
+          const ledgerOperation: LedgerExplorerPendingOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "1",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            transfer_events: [],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 0,
+            input: null,
+            gas_used: "51958",
+            cumulative_gas_used: "0",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: null,
+          };
+
+          const operation = ledgerOperationToOperations(accountId, ledgerOperation)[0];
+          expect(operation.blockHeight).toBe(0);
+          expect(operation.blockHash).toBe("");
+          expect(operation.date).toEqual(new Date("2023-01-24T17:11:45Z"));
         });
 
         it("should convert ledger explorer smart contract operation to a Ledger Live Operation", () => {

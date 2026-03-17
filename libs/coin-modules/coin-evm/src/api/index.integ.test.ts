@@ -1,5 +1,4 @@
 import {
-  AlpacaApi,
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
@@ -7,7 +6,6 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { ethers } from "ethers";
 import { EvmConfig } from "../config";
@@ -37,7 +35,7 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: ReturnType<typeof createApi>;
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -537,7 +535,6 @@ describe.each([
         throw new Error("getPendingTransactions is not implemented");
       }
       const result = await module.getPendingTransactions(
-        {} as never,
         "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551",
       );
 
@@ -632,7 +629,7 @@ describe.each([
 });
 
 describe("EVM Api (SEI Network)", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: ReturnType<typeof createApi>;
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)

@@ -52,8 +52,13 @@ export type TransactionInfo = {
   blockHeight: number | undefined;
   blockHash: string | undefined;
   nonce: number;
+  type?: number;
   gasUsed: string;
+  gasLimit?: string;
   gasPrice: string;
+  maxFeePerGas?: string | null;
+  maxPriorityFeePerGas?: string | null;
+  input?: string | null;
   value: string;
   status: number | null;
   from: string;

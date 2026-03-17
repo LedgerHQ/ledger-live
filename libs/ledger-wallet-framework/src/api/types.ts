@@ -1,4 +1,4 @@
-import type { AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo, BlockTransaction, Page } from "@ledgerhq/coin-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 
@@ -16,4 +16,5 @@ export type BridgeApi = {
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
+  getPendingTransactions?: (address: string) => Promise<Page<BlockTransaction>>;
 };

@@ -57,6 +57,7 @@ export function createApi(
 ): AlpacaApi<MemoNotSupported, BufferTxData> &
   BridgeApi & {
     validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
+    getPendingTransactions: (address: string) => Promise<Page<BlockTransaction>>;
   } {
   configs[currencyId] = config;
   setCoinConfig(c => {
@@ -106,10 +107,8 @@ export function createApi(
     },
     getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
     validateAddress,
-    getPendingTransactions: (
-      _currency: typeof currency,
-      address: string,
-    ): Promise<Page<BlockTransaction>> => getPendingTransactions(currency, address),
+    getPendingTransactions: (address: string): Promise<Page<BlockTransaction>> =>
+      getPendingTransactions(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],

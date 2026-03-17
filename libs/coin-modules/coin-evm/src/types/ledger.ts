@@ -69,3 +69,8 @@ export type LedgerExplorerOperation = {
     time: string;
   };
 };
+
+export type LedgerExplorerPendingOperation = Omit<LedgerExplorerOperation, "block"> & {
+  block: LedgerExplorerOperation["block"] | null;
+  gas_used: LedgerExplorerOperation["gas_used"] | null;
+};

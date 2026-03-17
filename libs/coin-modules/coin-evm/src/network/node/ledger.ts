@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
-import { LedgerExplorerOperation } from "../../types";
+import { LedgerExplorerOperation, LedgerExplorerPendingOperation } from "../../types";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { getGasOptions } from "../gasTracker/ledger";
 import { NodeApi, isLedgerNodeConfig } from "./types";
@@ -66,18 +66,30 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  const ledgerTransaction = await fetchWithRetries<LedgerExplorerOperation>({
+  const ledgerTransaction = await fetchWithRetries<
+    LedgerExplorerOperation | LedgerExplorerPendingOperation
+  >({
     method: "GET",
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/${hash}`,
   });
+  const block = ledgerTransaction.block ?? {
+    hash: "",
+    height: 0,
+    time: ledgerTransaction.received_at,
+  };
 
   return {
     hash: ledgerTransaction.hash,
-    blockHeight: ledgerTransaction.block.height,
-    blockHash: ledgerTransaction.block.hash,
+    blockHeight: block.height,
+    blockHash: block.hash,
     nonce: ledgerTransaction.nonce_value,
+    type: ledgerTransaction.transaction_type,
     gasPrice: ledgerTransaction.gas_price,
     gasUsed: ledgerTransaction.gas_used,
+    gasLimit: ledgerTransaction.gas,
+    maxFeePerGas: ledgerTransaction.max_fee_per_gas,
+    maxPriorityFeePerGas: ledgerTransaction.max_priority_fee_per_gas,
+    input: ledgerTransaction.input,
     value: ledgerTransaction.value,
     status: ledgerTransaction.status,
     from: ledgerTransaction.from,
@@ -377,31 +389,38 @@ export const getPendingTransactions: NodeApi["getPendingTransactions"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  const ledgerPendingTransactions = await fetchWithRetries<LedgerExplorerOperation[]>({
+  const ledgerPendingTransactions = await fetchWithRetries<LedgerExplorerPendingOperation[]>({
     method: "GET",
     url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/address/${address}/txs/pending`,
   });
-  const pendings = ledgerPendingTransactions.map(transaction => ({
-    hash: transaction.hash,
-    blockHeight: transaction.block.height,
-    blockHash: transaction.block.hash,
-    nonce: transaction.nonce_value,
-    gasPrice: transaction.gas_price,
-    gasUsed: transaction.gas_used,
-    value: transaction.value,
-    status: transaction.status,
-    from: transaction.from,
-    to: transaction.to,
-    erc20Transfers: transaction.transfer_events.map(event => ({
-      asset: {
-        type: "erc20" as const,
-        assetReference: safeEncodeEIP55(event.contract),
-      },
-      from: safeEncodeEIP55(event.from),
-      to: safeEncodeEIP55(event.to),
-      value: event.count,
-    })),
-  }));
+  const pendings = ledgerPendingTransactions.map(transaction => {
+    return {
+      blockHeight: transaction.block?.height ?? 0,
+      blockHash: transaction.block?.hash ?? "",
+      hash: transaction.hash,
+      nonce: transaction.nonce_value,
+      type: transaction.transaction_type,
+      gasPrice: transaction.gas_price,
+      gasUsed: transaction.gas_used ?? transaction.gas,
+      gasLimit: transaction.gas,
+      maxFeePerGas: transaction.max_fee_per_gas,
+      maxPriorityFeePerGas: transaction.max_priority_fee_per_gas,
+      input: transaction.input,
+      value: transaction.value,
+      status: transaction.status,
+      from: transaction.from,
+      to: transaction.to,
+      erc20Transfers: transaction.transfer_events.map(event => ({
+        asset: {
+          type: "erc20" as const,
+          assetReference: safeEncodeEIP55(event.contract),
+        },
+        from: safeEncodeEIP55(event.from),
+        to: safeEncodeEIP55(event.to),
+        value: event.count,
+      })),
+    };
+  });
   return pendings;
 };
 

@@ -20,7 +20,18 @@ export async function getPendingTransactions(
       operations,
       fees,
       feesPayer: transaction.from,
-      details: { sequence: transaction.nonce },
+      details: {
+        sequence: transaction.nonce,
+        nonce: transaction.nonce,
+        type: transaction.type,
+        gasLimit: transaction.gasLimit ?? transaction.gasUsed,
+        gasPrice: transaction.gasPrice,
+        maxFeePerGas: transaction.maxFeePerGas,
+        maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
+        recipient: transaction.to,
+        value: transaction.value,
+        data: transaction.input,
+      },
     };
   });
 
