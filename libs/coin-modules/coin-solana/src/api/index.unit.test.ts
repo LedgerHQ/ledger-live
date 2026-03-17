@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { AlpacaApi, Balance, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  Balance,
+  CraftedTransaction,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
@@ -31,6 +37,10 @@ jest.mock("../logic/combine", () => ({
 
 jest.mock("../logic/craftTransaction", () => ({
   craftTransaction: jest.fn(),
+}));
+
+jest.mock("../logic/craftRawTransaction", () => ({
+  craftRawTransaction: jest.fn(),
 }));
 
 jest.mock("../logic/estimateFees", () => ({
@@ -136,7 +146,14 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly to craftTransaction", async () => {
-    const mockResult = { transaction: "base64tx", details: { estimatedFee: "5000" } };
+    const mockResult: CraftedTransaction = {
+      transaction: "base64tx",
+      details: {
+        estimatedFee: "5000",
+        lastValidBlockHeight: 100,
+        recentBlockhash: "recentBlockhash",
+      },
+    };
     jest.mocked(craftTransaction).mockResolvedValueOnce(mockResult);
 
     const api: AlpacaApi = createApi(mockConfig, "solana");
@@ -152,6 +169,20 @@ describe("createApi", () => {
     const result = await api.craftTransaction(intent, customFees);
 
     expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, customFees);
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should pass parameters correctly to craftRawTransaction", async () => {
+    const mockResult: CraftedTransaction = {
+      transaction: "base64tx",
+      details: { recentBlockhash: "recentBlockhash" },
+    };
+    jest.mocked(craftRawTransaction).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const result = await api.craftRawTransaction("tx", "sender", "pubkey", 42n);
+
+    expect(craftRawTransaction).toHaveBeenCalledWith("tx", "sender");
     expect(result).toEqual(mockResult);
   });
 
@@ -186,9 +217,6 @@ describe("createApi", () => {
       asset: { type: "native" },
     };
 
-    expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 42n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
     expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
