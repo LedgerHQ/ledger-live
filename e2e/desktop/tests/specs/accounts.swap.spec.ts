@@ -70,7 +70,9 @@ test.describe("Swap - Default currency when landing on swap", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
       await app.swap.checkAssetFrom(electronApp, "BTC");
       await app.swap.checkAssetTo(electronApp, "");
     },
@@ -100,9 +102,11 @@ test.describe("Swap - Default currency when landing on swap", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsTitleVisibility();
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
       await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
       await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
     },
@@ -327,7 +331,9 @@ test.describe("Swap a coin for which you have no account yet - from present to n
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
@@ -398,7 +404,9 @@ test.describe("Swap a coin for which you have no account yet - from not present 
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
       const selector = await getModularSelector(app, "ASSET");
@@ -459,7 +467,9 @@ test.describe("Swap a coin for which you have no account yet - both not present"
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
 
       await app.swap.selectFromAccountCoinSelector(electronApp);
 
