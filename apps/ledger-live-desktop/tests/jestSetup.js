@@ -152,7 +152,7 @@ const EXCLUDED_ERRORS = ["act(...)", "ReactDOMTestUtils.act", "Warning: findDOMN
 
 const EXCLUDED_WARNINGS = ["@polkadot"];
 
-const EXCLUDED_LOG_MESSAGES = ["Message posted to worker"];
+const EXCLUDED_LOG_MESSAGES = ["Message posted to worker", "Patching Protobuf Long.js"];
 
 console.error = (...args) => {
   const error = args.join();
