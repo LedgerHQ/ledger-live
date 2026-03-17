@@ -101,10 +101,10 @@ jobs:
           skip_builds: true
           turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
       - name: Run unit tests
-        run: pnpm desktop test:jest:coverage
+        run: pnpm desktop test:jest --ci
       - name: Upload unit test coverage
         id: generate_coverage
-        if: ${{ !cancelled() }}
+        if: false
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-desktop
