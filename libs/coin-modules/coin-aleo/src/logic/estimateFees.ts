@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
-import type { AleoCoinConfig } from "../config";
-import type { TransactionType } from "../types";
+import type { TransactionType, AleoCoinConfig } from "../types";
 import { resolveConfig } from "./utils";
 
 export function estimateFees({

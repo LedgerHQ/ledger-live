@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import invariant from "invariant";
-import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
+import coinConfig from "../config";
 import {
   craftTransaction,
   estimateFees,
@@ -26,7 +26,7 @@ import {
   validateAddress,
 } from "../logic";
 import { getTransactionType } from "../logic/utils";
-import type { AleoTransactionIntentData } from "../types";
+import type { AleoTransactionIntentData, AleoCoinConfig, AleoConfig } from "../types";
 
 export function createApi(
   config: AleoConfig,

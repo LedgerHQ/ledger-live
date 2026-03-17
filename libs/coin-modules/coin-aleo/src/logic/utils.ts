@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import aleoConfig, { type AleoCoinConfig } from "../config";
+import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import type {
   AleoOperation,
@@ -33,6 +33,7 @@ import type {
   AleoOperationExtra,
   TransactionPublic,
   TransactionPrivate,
+  AleoCoinConfig,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {

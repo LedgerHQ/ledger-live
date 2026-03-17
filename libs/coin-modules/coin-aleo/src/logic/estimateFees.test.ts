@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import type { TransactionType } from "../types";
-import type { AleoCoinConfig } from "../config";
+import type { TransactionType, AleoCoinConfig } from "../types";
 import { estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {

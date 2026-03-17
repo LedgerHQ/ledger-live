@@ -28,11 +28,11 @@ const bulletPointTranslationKeys = [
 export function ViewKeyWarning({ onAllow, onCancel }: Props) {
   const source = useSelector(modularDrawerSourceSelector);
   const { t } = useTranslation();
-  const viewKeyLearnMoreUrl = useLocalizedUrl(urls.aleo.viewKeyLearnMore);
+  const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);
 
   const handleClick = useCallback(() => {
-    openURL(viewKeyLearnMoreUrl);
-  }, [viewKeyLearnMoreUrl]);
+    openURL(learnMoreUrl);
+  }, [learnMoreUrl]);
 
   return (
     <>

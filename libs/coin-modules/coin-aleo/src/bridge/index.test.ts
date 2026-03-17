@@ -3,8 +3,7 @@ import type { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
-import type { AleoSigner } from "../types";
-import type { AleoCoinConfig } from "../config";
+import type { AleoSigner, AleoCoinConfig } from "../types";
 import aleoCoinConfig from "../config";
 import { buildCurrencyBridge, buildAccountBridge, createBridges } from "./index";
 
