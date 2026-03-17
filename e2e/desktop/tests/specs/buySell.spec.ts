@@ -12,6 +12,7 @@ import { BuySell } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }> = [
   {
@@ -91,11 +92,16 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToPortfolio();
+        await app.mainNavigation.openTargetFromMainNavigation("home");
         await app.portfolio.clickOnSelectedAssetRow(crypto.currency.name);
         await app.assetPage.startBuyFlow();
 
-        await app.layout.verifyBuySellSideBarIsSelected();
+        if ((await isWallet40Enabled(app.getPage())) === false) {
+          // TODO: Remove this when wallet 4.0 is permanent
+          // Buy / Sell is only in the side navigation for legacy app
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
+
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -112,11 +118,22 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToMarket();
+
+        if (await isWallet40Enabled(app.getPage())) {
+          await app.marketBanner.clickExploreMarketHeader();
+        } else {
+          await app.layout.goToMarket();
+        }
+
         await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
 
-        await app.layout.verifyBuySellSideBarIsSelected();
+        if ((await isWallet40Enabled(app.getPage())) === false) {
+          // TODO: Remove this when wallet 4.0 is permanent
+          // Buy / Sell is only in the side navigation for legacy app
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
+
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -142,7 +159,7 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(asset.buySell.crypto));
         if (asset.buySell.crypto.tokenType) {
           await app.account.navigateToTokenInAccount(asset.buySell.crypto);
@@ -154,7 +171,12 @@ for (const asset of assets) {
         );
         await app.account.clickBuy();
 
-        await app.layout.verifyBuySellSideBarIsSelected();
+        if ((await isWallet40Enabled(app.getPage())) === false) {
+          // TODO: Remove this when wallet 4.0 is permanent
+          // Buy / Sell is only in the side navigation for legacy app
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
+
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(
           asset.buySell.crypto,
           operation,
@@ -183,13 +205,17 @@ for (const asset of assets) {
       },
       async ({ app, userdataDestinationPath }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.portfolio.clickBuySellButton();
+        if (await isWallet40Enabled(app.getPage())) {
+          await app.portfolio.clickBuyButton();
+        } else {
+          await app.portfolio.clickBuySellButton();
+          await app.layout.verifyBuySellSideBarIsSelected();
+        }
 
-        await app.layout.verifyBuySellSideBarIsSelected();
         await app.buyAndSell.chooseAssetIfNotSelected(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
-        await app.buyAndSell.verifyInfoBox();
+        await app.buyAndSell.verifyBuyInfoBox();
         await app.buyAndSell.verifyProviderInfoIsNotVisible();
 
         await app.buyAndSell.setAmountToPay(amount, operation);
@@ -259,15 +285,21 @@ test.describe("Sell flow - ", () => {
     },
     async ({ app, userdataDestinationPath }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.layout.goToBuySellCrypto();
-
-      await app.layout.verifyBuySellSideBarIsSelected();
-      await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Buy);
-      await app.buyAndSell.verifyFiatAssetSelector("USD");
-      await app.buyAndSell.verifyInfoBox();
-      await app.buyAndSell.verifyProviderInfoIsNotVisible();
-
-      await app.buyAndSell.selectTab(operation);
+      if (await isWallet40Enabled(app.getPage())) {
+        await app.portfolio.clickSellButton();
+        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Sell);
+        await app.buyAndSell.verifyFiatAssetSelector("USD");
+        await app.buyAndSell.verifySellInfoBox();
+        await app.buyAndSell.verifyProviderInfoIsNotVisible();
+      } else {
+        await app.layout.goToBuySellCrypto();
+        await app.layout.verifyBuySellSideBarIsSelected();
+        await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, OperationType.Buy);
+        await app.buyAndSell.verifyFiatAssetSelector("USD");
+        await app.buyAndSell.verifyBuyInfoBox();
+        await app.buyAndSell.verifyProviderInfoIsNotVisible();
+        await app.buyAndSell.selectTab(operation);
+      }
       await app.buyAndSell.changeRegionAndCurrency(fiat);
       await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
 
