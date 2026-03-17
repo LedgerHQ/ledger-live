@@ -19577,7 +19577,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -31184,7 +31184,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -39563,7 +39562,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.13.2
+      axios: 1.13.5
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -43154,7 +43153,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.13.2
+      axios: 1.13.5
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -44915,7 +44914,7 @@ snapshots:
       node-fetch: 2.7.0
       open: 6.4.0
       semver: 6.3.1
-      shell-quote: 1.8.2
+      shell-quote: 1.8.3
     transitivePeerDependencies:
       - encoding
 
@@ -48392,7 +48391,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.13.2
+      axios: 1.13.5
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -49236,7 +49235,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.13.2
+      axios: 1.13.5
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -51406,7 +51405,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
-      axios: 1.13.2
+      axios: 1.13.5
 
   JSONStream@1.3.5:
     dependencies:
@@ -53079,7 +53078,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.13.2
+      axios: 1.13.5
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -62297,7 +62296,7 @@ snapshots:
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.2
       '@zkochan/js-yaml': 0.0.7
-      axios: 1.13.2
+      axios: 1.13.5
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
       cliui: 8.0.1

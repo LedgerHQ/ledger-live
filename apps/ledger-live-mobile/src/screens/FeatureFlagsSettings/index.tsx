@@ -30,8 +30,7 @@ import KeyboardView from "~/components/KeyboardView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
-import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
-import { setFeatureFlagsBannerVisible } from "~/actions/settings";
+import { featureFlagsBannerVisibleSelector, setBannerVisible } from "@shared/feature-flags";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 const addFlagHint = `\
@@ -129,7 +128,7 @@ export default function DebugFeatureFlags() {
   const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
     (newVal: boolean) => {
-      dispatch(setFeatureFlagsBannerVisible(newVal));
+      dispatch(setBannerVisible(newVal));
     },
     [dispatch],
   );

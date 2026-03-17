@@ -9,8 +9,7 @@ import {
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
-import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
-import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "~/actions/settings";
+import { featureFlagsOverridesSelector, setOverride, setAllOverrides } from "@shared/feature-flags";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 import { useSettings } from "~/hooks";
 
@@ -36,7 +35,7 @@ export const FirebaseFeatureFlagsProvider = ({
   children,
   getFeature,
 }: FirebaseFeatureFlagsProviderProps) => {
-  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
+  const localOverrides = useSelector(featureFlagsOverridesSelector);
   const dispatch = useDispatch();
   const { language } = useSettings();
 
@@ -50,9 +49,9 @@ export const FirebaseFeatureFlagsProvider = ({
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv: _, ...pureValue } = value;
         const overridenValue = { ...pureValue, overridesRemote: true };
-        dispatch(setOverriddenFeatureFlag({ id: key, value: overridenValue }));
+        dispatch(setOverride({ key, value: overridenValue }));
       } else {
-        dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
+        dispatch(setOverride({ key, value: undefined }));
       }
     },
     [language, dispatch, getFeature],
@@ -60,13 +59,13 @@ export const FirebaseFeatureFlagsProvider = ({
 
   const resetFeature = useCallback(
     (key: FeatureId): void => {
-      dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
+      dispatch(setOverride({ key, value: undefined }));
     },
     [dispatch],
   );
 
   const resetFeatures = useCallback((): void => {
-    dispatch(setOverriddenFeatureFlags({}));
+    dispatch(setAllOverrides({}));
   }, [dispatch]);
 
   const wrappedGetFeature = useCallback(

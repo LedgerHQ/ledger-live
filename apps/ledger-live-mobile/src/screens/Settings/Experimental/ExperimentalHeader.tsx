@@ -20,7 +20,7 @@ import ExperimentalIcon from "~/icons/Experimental";
 import { rejections } from "~/logic/debugReject";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
-import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
+import { featureFlagsBannerVisibleSelector } from "@shared/feature-flags";
 
 export const HEIGHT = 30;
 export const PADDING = 8;

@@ -17,6 +17,7 @@ import {
   getAccounts,
   getCountervalues,
   getCryptoAssetsCacheState,
+  getFeatureFlagsState,
   getSettings,
   getBle,
   getPostOnboardingState,
@@ -43,6 +44,7 @@ import {
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
 
 interface Props {
   onInitFinished: () => void;
@@ -94,6 +96,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         largeMoverState,
         cryptoAssetsCache,
         persistedIdentities,
+        persistedFeatureFlags,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -107,6 +110,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
         retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
         retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
+        retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
         logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
           readTime: Date.now() - readStorageStart,
@@ -171,6 +175,22 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // Load persisted identities
       if (persistedIdentities) {
         store.dispatch(identitiesSlice.actions.initFromPersisted(persistedIdentities));
+      }
+
+      if (persistedFeatureFlags) {
+        store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
+        store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
+      } else if (
+        settingsData?.overriddenFeatureFlags &&
+        Object.keys(settingsData.overriddenFeatureFlags).length > 0
+      ) {
+        const filteredOverrides = Object.fromEntries(
+          Object.entries(settingsData.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
+        );
+        store.dispatch(
+          setAllOverrides(filteredOverrides as Parameters<typeof setAllOverrides>[0]),
+        );
+        store.dispatch(setBannerVisible(settingsData.featureFlagsBannerVisible ?? false));
       }
 
       setInitialCountervalues(initialCountervalues);
