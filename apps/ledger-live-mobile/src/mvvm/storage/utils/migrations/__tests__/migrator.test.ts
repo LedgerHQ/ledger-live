@@ -154,7 +154,7 @@ describe("migrator", () => {
       jest.restoreAllMocks();
     });
 
-    it("should track rollback status to NOT_STARTED ", () => {
+    it("should track rollback status to NOT_STARTED", () => {
       migrator.markRollbackStatusNotStarted(state);
       expect(track).toHaveBeenCalledTimes(1);
     });
