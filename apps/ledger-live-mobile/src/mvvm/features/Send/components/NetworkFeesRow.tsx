@@ -35,12 +35,12 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
       leftSection: {
         flexDirection: "row",
         alignItems: "center",
-        gap: theme.spacings.s8,
+        gap: theme.spacings.s4,
       },
       rightSection: {
         flexDirection: "row",
         alignItems: "center",
-        gap: theme.spacings.s8,
+        gap: theme.spacings.s4,
       },
       feeValue: {
         flexDirection: "row",
@@ -97,6 +97,11 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     [viewModel, selectorBottomSheetRef],
   );
 
+  const handleSelectCoinControl = useCallback(() => {
+    viewModel.onSelectCoinControl?.();
+    selectorBottomSheetRef.current?.dismiss();
+  }, [viewModel, selectorBottomSheetRef]);
+
   const handleCloseInfo = useCallback(() => {
     infoBottomSheetRef.current?.dismiss();
   }, [infoBottomSheetRef]);
@@ -105,10 +110,10 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     <>
       <View style={styles.row}>
         <Pressable onPress={handleOpenInfo} style={styles.leftSection}>
-          <Text typography="body2" lx={{ color: "base" }}>
+          <Text typography="body3" lx={{ color: "base" }}>
             {viewModel.label}
           </Text>
-          <Information size={16} />
+          <Information size={16} lx={{ color: "muted" }} />
         </Pressable>
         <Pressable
           style={styles.rightSection}
@@ -116,7 +121,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
           disabled={!viewModel.showFeePresets}
         >
           <View style={styles.feeValue}>
-            <Text typography="body2SemiBold" lx={{ color: "base" }}>
+            <Text typography="body3" lx={{ color: "base" }}>
               {viewModel.value}
             </Text>
             <Text typography="body3" lx={{ color: "muted" }}>
@@ -148,7 +153,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         <BottomSheetView>
           <BottomSheetHeader title={viewModel.label} appearance="compact" />
 
-          {viewModel.feePresetOptions.map(option => {
+          {viewModel.feePresetLabelsOptions.map(option => {
             const isSelected = viewModel.selectedFeeStrategy === option.id;
 
             return (
@@ -201,11 +206,8 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
             </Pressable>
           ) : null}
 
-          {viewModel.uiConfig?.hasCoinControl ? (
-            <Pressable
-              style={styles.presetOption}
-              onPress={() => handleSelectStrategy("coinControl")}
-            >
+          {viewModel.uiConfig?.hasCoinControl && viewModel.onSelectCoinControl ? (
+            <Pressable style={styles.presetOption} onPress={handleSelectCoinControl}>
               <View style={styles.presetLeft}>
                 <Text typography="body2SemiBold" lx={{ color: "base" }}>
                   {t("send.fees.coinControl")}
