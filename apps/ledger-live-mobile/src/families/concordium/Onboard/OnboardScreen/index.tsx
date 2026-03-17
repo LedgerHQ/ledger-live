@@ -8,6 +8,7 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import {
   setWalletConnect,
+  getWalletConnect,
   clearWalletConnect,
 } from "@ledgerhq/coin-concordium/network/walletConnect";
 import { log } from "@ledgerhq/logs";
@@ -63,9 +64,9 @@ export default function OnboardScreen() {
   const accountName = creatableAccount ? getDefaultAccountName(creatableAccount) : undefined;
 
   useEffect(() => {
-    const wc = setWalletConnect();
+    setWalletConnect();
     return () => {
-      wc.disconnectAllSessions();
+      getWalletConnect()?.disconnectAllSessions();
       clearWalletConnect();
     };
   }, []);
@@ -109,6 +110,9 @@ export default function OnboardScreen() {
 
   const handleCreated = useCallback(
     (account: Account) => {
+      getWalletConnect()?.disconnectAllSessions();
+      clearWalletConnect();
+
       const scannedAccounts = [...importableAccounts, account];
       dispatch(
         addAccountsAction({
@@ -122,11 +126,11 @@ export default function OnboardScreen() {
         screen: ScreenName.AddAccountsSuccess,
         params: {
           accountsToAdd: scannedAccounts,
-          currency,
+          currency: cryptoCurrency,
         },
       });
     },
-    [dispatch, existingAccounts, importableAccounts, navigation, currency],
+    [dispatch, existingAccounts, importableAccounts, navigation, cryptoCurrency],
   );
 
   const handleSessionExpired = useCallback(() => {
