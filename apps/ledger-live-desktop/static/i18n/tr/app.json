@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "İptal et",
-        "description" : "Kendi adresinize 0 {{ticker}} gönderiliyor."
+        "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal garanti edilmez. Eğer ağ, orijinal işleminizi bu iptal talebinden önce işleme koyarsa, fonlar yine de alıcıya gönderilir."
       },
       "steps" : {
         "method" : {
@@ -1499,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
+  },
   "currentAddress" : {
     "title" : "Geçerli adres",
     "for" : "<1><0>{{name}}</0></1> için adres",
@@ -2154,6 +2173,24 @@
       }
     }
   },
+  "buyDeviceModal" : {
+    "title" : "Bir Ledger cihazı bağlayın",
+    "subtitle" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
+    "0" : {
+      "title" : "Tam mülkiyet",
+      "desc" : "Özel anahtarlarınız asla cihazdan ayrılmaz."
+    },
+    "1" : {
+      "title" : "Güvenle alıp satın",
+      "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
+    },
+    "2" : {
+      "title" : "En güçlü cüzdana erişin",
+      "desc" : "Binlerce varlığı tek bir yerden yönetin."
+    },
+    "connectCTA" : "Bağlan",
+    "buyCTA" : "Ledger cihazınızı satın alın"
+  },
   "fund" : {
     "title" : "Fon ekleyin",
     "titleCrypto" : "{{currency}} ekleyin",
@@ -2371,6 +2408,24 @@
     "addressNotFound" : "Adres bulunamadı",
     "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
     "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+    "securityInfo" : {
+      "title" : "Güvenli bir şekilde nasıl gönderilir?",
+      "items" : {
+        "compatibility" : "Alıcı adresinin seçili ağ ile uyumlu olduğundan emin olun",
+        "review" : "Ledger cihazınızın güvenli ekranında işlem bilgilerinizi gözden geçirin.",
+        "smallAmount" : "Emin değilseniz, önce küçük bir tutar gönderin."
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "Bu adres, son işlemler geçmişinizde bulunmuyor. Emin değilseniz önce küçük bir tutar gönderin."
+      },
+      "dialog" : {
+        "title" : "Son gönderim işlemleri geçmişi",
+        "description" : "Son işlemler geçmişiniz, belirli bir adrese gönderim yapıp yapmadığınızı hemen görmenize izin verir. Bu, potansiyel kopyala/yapıştır hatalarını veya hack'leme girişimlerini önleyebilir. Geçmişiniz, Ledger Wallet kullanarak kripto gönderdiğiniz son 12 adresi içerir.",
+        "cta" : "Anladım"
+      }
+    },
     "relativeDate" : {
       "justNow" : "Yalnızca şimdilik",
       "minutesAgo_one" : "1 dk. önce",
@@ -2440,17 +2495,26 @@
       "confirm" : "Onayla",
       "maxFee" : "Ücret Üst Limiti ({{unit}})",
       "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
-      "gasLimit" : "Gas limiti ({{unit}})",
       "feePerByte" : "Ücret tutarı ({{unit}})",
       "suggested" : "Önerilen",
       "nextBlock" : "Sonraki blok",
       "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
       "invalidValue" : "Geçerli bir sayı girin.",
       "belowMinimum" : "Minimum değer: {{min}}",
-      "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır."
+      "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır.",
+      "feeAsset" : "Ücret ödeme varlığı",
+      "feesAmount" : "Ücret tutarı ({{unit}})",
+      "payFeesIn" : "Bu varlıkla öde:"
     },
     "coinControl" : {
-      "title" : "Coin yönetimi"
+      "title" : "Coin yönetimi",
+      "strategy" : "Strateji,",
+      "learnMore" : "Daha fazla bilgi",
+      "coinToSend" : "Gönderilecek coin",
+      "changeToReturn" : "Dönecek para üstü",
+      "enterAmount" : "Tutar girin",
+      "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
+      "amountInputLabel" : "Gönderilecek tutar"
     }
   },
   "releaseNotes" : {
@@ -5025,7 +5089,7 @@
     }
   },
   "theme" : {
-    "system" : "Sistem temasını seçin",
+    "system" : "Sistem",
     "light" : "Açık",
     "dusk" : "Loş",
     "dark" : "Koyu"
@@ -6630,6 +6694,10 @@
       "title" : "Hızlandırılamaz ve iptal edilemez",
       "description" : "Bu işlem zaten doğrulanmış"
     },
+    "InvalidTransactionError" : {
+      "title" : "Geçersiz işlem",
+      "description" : "İşlem artık blok zinciri durumuyla eşleşmiyor. Lütfen akışı yeniden başlatın."
+    },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
@@ -7699,7 +7767,16 @@
     }
   },
   "analytics" : {
-    "title" : "Analiz"
+    "title" : "Analiz",
+    "allocation" : {
+      "title" : "Varlık dağılımı",
+      "columns" : {
+        "name" : "İsim",
+        "balance" : "Bakiye",
+        "value" : "Değer",
+        "allocation" : "Dağılım"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8001,6 +8078,8 @@
     "title" : "Piyasayı keşfedin",
     "genericError" : "Bağlantı başarısız oldu",
     "cta" : "Tümünü gör",
+    "scrollLeft" : "Sola kaydır",
+    "scrollRight" : "Sağa kaydır",
     "fearAndGreed" : {
       "title" : "Duygu"
     }
@@ -8030,6 +8109,11 @@
   "assets" : {
     "cryptos" : "Kriptolar",
     "stablecoins" : "Stabil coin'ler",
+    "cryptoAccounts" : "Kripto hesapları",
+    "accountsCount_one" : "{{count}} hesap",
+    "accountsCount_other" : "{{count}} hesap",
+    "noCryptoAccounts" : "Henüz hesap yok",
+    "add" : "Ekle",
     "columns" : {
       "name" : "İsim",
       "price" : "Fiyat",
@@ -8048,15 +8132,10 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Etkilenen hesapların listesi: {{accounts}}. Tekrar denemek için dokunun.",
-      "emptyErrorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Tekrar denemek için dokunun.",
+      "errorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir.\n Etkilenen hesapların listesi: {{accounts}}. Tekrar denemek için dokunun.",
+      "emptyErrorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir.\n Tekrar denemek için dokunun.",
       "upToDate" : "Güncelsiniz",
-      "minutesAgo_one" : "Son senkronizasyon: {{count}} dk. önce. Yenilemek için dokunun",
-      "minutesAgo_other" : "Son senkronizasyon: {{count}} dk. önce. Yenilemek için dokunun",
-      "hoursAgo_one" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
-      "hoursAgo_other" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
-      "daysAgo_one" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun",
-      "daysAgo_other" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun"
+      "lastSync" : "Son senkronizasyon: {{timeAgo}}. Yenilemek için dokunun"
     },
     "notificationIndicator" : {
       "tooltip" : "Bildirimler"
@@ -8176,6 +8255,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "Kendine transfer",
+      "headerActionTooltip" : "Kendinize transfer edebileceğiniz fonunuz bulunmuyor",
+      "modal" : {
+        "title" : "Kendine transfer",
+        "stepRecipient" : {
+          "selectLabel" : "Transfer kaynağı"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "Gizli bakiye",
+        "public" : "Genel bakiye",
+        "lastUpdate" : "Son güncelleme",
+        "switchBalance" : "Bakiye kaynağını değiştirin"
+      }
+    },
     "account" : {
       "availableBalance" : "Mevcut bakiye",
       "availableBalanceTooltip" : "Transfer edilebilir bakiye",
@@ -8194,22 +8291,22 @@
   "updater" : {
     "newUpdateAvailable" : "Yeni güncelleme mevcut",
     "downloadProgress" : "%{{progress}}",
-    "errorTryAgain" : "Güncelleme sırasında bir hata oluştu, tekrar deneyin",
-    "installAndRelaunch" : "Güncellemeyi yükleyip yeniden başlatın"
+    "errorTryAgain" : "Güncelleme sırasında bir hata oluştu. Tekrar deneyin",
+    "installAndRelaunch" : "Yeni güncelleme. Yükleyip yeniden başlatın"
   },
   "walletV4Tour" : {
     "slides" : {
       "portfolio" : {
-        "title" : "Kolayca takas edin",
-        "description" : "Ledger cihazınızın sağladığı güvenle, portföy dağılımınızı istediğiniz zaman değiştirin"
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
       },
       "navigation" : {
-        "title" : "Her şey olması gereken yerde",
-        "description" : "My Ledger ve Keşfet sekmeleri artık en üstte. Takas ve Kart, daha hızlı erişim için yan menüye taşındı."
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Transfer alma, gönderme, satın alma ve satma işlemlerine anında erişin."
       },
       "actions" : {
-        "title" : "Piyasa hızında eylemler",
-        "description" : "Yeni banner ile piyasa trendlerini görün ve anında alım satım yapın."
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
       }
     },
     "cta" : {
