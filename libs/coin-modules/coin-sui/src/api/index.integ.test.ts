@@ -66,9 +66,29 @@ describe("Sui Api", () => {
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
 
       // check that none of the operations in operations2 are in operations1
-      expect(operations2.every(op2 => !operations1.some(op1 => op1.tx.hash === op2.tx.hash))).toBe(
-        true,
-      );
+      const hashes1 = new Set(operations1.map(op => op.tx.hash));
+      const overlapping = operations2.filter(op => hashes1.has(op.tx.hash));
+      if (overlapping.length > 0) {
+        const cursorTs = token1!.split(":")[0];
+        console.error(
+          `[DIAG] order=${order} cursor=${token1} p1=${operations1.length}ops p2=${operations2.length}ops overlap=${overlapping.length}`,
+        );
+        console.error(
+          `[DIAG] p1: first=${operations1[0].tx.hash}(${operations1[0].tx.date.toISOString()}) last=${operations1.at(-1)!.tx.hash}(${operations1.at(-1)!.tx.date.toISOString()})`,
+        );
+        console.error(
+          `[DIAG] p2: first=${operations2[0].tx.hash}(${operations2[0].tx.date.toISOString()}) last=${operations2.at(-1)!.tx.hash}(${operations2.at(-1)!.tx.date.toISOString()})`,
+        );
+        for (const op of overlapping) {
+          const p1 = operations1.find(o => o.tx.hash === op.tx.hash)!;
+          console.error(
+            `[DIAG] overlap: hash=${op.tx.hash} p1_date=${p1.tx.date.toISOString()} p2_date=${op.tx.date.toISOString()} p1_block=${p1.tx.block.height} p2_block=${op.tx.block.height}`,
+          );
+        }
+        const sameTs = operations1.filter(op => op.tx.date.getTime().toString() === cursorTs);
+        console.error(`[DIAG] same-ts cluster at cursor: ${sameTs.length} ops on page1`);
+      }
+      expect(overlapping).toEqual([]);
     }
 
     it("should fetch operations successfully in desc order", async () => {
