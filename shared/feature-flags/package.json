@@ -7,8 +7,8 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc",
-    "typecheck": "tsc --noEmit",
+    "build": "pnpm -w exec tsgo",
+    "typecheck": "tsgo --noEmit",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -24,6 +24,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@typescript/native-preview": "catalog:"
   }
 }

@@ -88,14 +88,14 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsgo --project tsconfig.build.json && tsgo --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch": "tsgo --watch --project tsconfig.build.json",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit --customConditions node",
+    "typecheck": "tsgo --noEmit --customConditions node",
     "test": "jest --passWithNoTests",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "unimported": "unimported"
@@ -129,6 +129,7 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "@swc/core": "catalog:",
+    "@typescript/native-preview": "catalog:"
   }
 }

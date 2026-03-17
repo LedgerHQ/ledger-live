@@ -13,7 +13,7 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
-    "typecheck": "tsc --noEmit --customConditions node"
+    "typecheck": "tsgo --noEmit --customConditions node"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
@@ -88,6 +88,7 @@
     "@types/react-table": "^7.7.20",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:"
+    "jest-environment-jsdom": "catalog:",
+    "@typescript/native-preview": "catalog:"
   }
 }

@@ -11,7 +11,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsgo --project tsconfig.build.json && tsgo --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "unimported": "unimported",
     "test": "jest --passWithNoTests",
     "coverage": "jest --coverage"
@@ -25,7 +25,8 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "10.9.2",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@typescript/native-preview": "catalog:"
   },
   "exports": {
     ".": {

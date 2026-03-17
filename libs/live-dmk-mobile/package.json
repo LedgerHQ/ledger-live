@@ -19,12 +19,12 @@
   "types": "./lib-es/index.d.ts",
   "scripts": {
     "clean": "rimraf lib-es",
-    "build": "tsc --project tsconfig.prod.json",
-    "watch": "tsc --watch --project tsconfig.prod.json",
+    "build": "tsgo --project tsconfig.prod.json",
+    "watch": "tsgo --watch --project tsconfig.prod.json",
     "watch:es": "pnpm watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit --customConditions node",
+    "typecheck": "tsgo --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-mobile",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -57,7 +57,8 @@
     "react-native": "catalog:",
     "react-native-ble-plx": "3.4.0",
     "rxjs": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "@typescript/native-preview": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

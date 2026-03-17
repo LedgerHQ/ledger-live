@@ -21,7 +21,7 @@
     "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "zx ./scripts/build.mjs",
     "watch": "rslib build --watch",
-    "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
+    "typecheck": "tsgo --project src/tsconfig.json --noEmit --customConditions node",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "zx ./scripts/test.mjs"
@@ -94,7 +94,8 @@
     "@types/ws": "8.5.10",
     "ts-node": "10.9.2",
     "@rslib/core": "catalog:",
-    "yaml": "2.8.1"
+    "yaml": "2.8.1",
+    "@typescript/native-preview": "catalog:"
   },
   "publishConfig": {
     "directory": "dist"

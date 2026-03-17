@@ -97,22 +97,23 @@
     "jest-file-snapshot": "catalog:",
     "object-hash": "^2.2.0",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "@swc/core": "catalog:",
+    "@typescript/native-preview": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsgo --project tsconfig.build.json && tsgo --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "test-integ": "jest --config=jest.integ.config.js",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsgo --watch --project tsconfig.build.json",
+    "watch:es": "tsgo --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "typecheck": "tsc --noEmit --customConditions node",
+    "typecheck": "tsgo --noEmit --customConditions node",
     "unimported": "unimported"
   }
 }

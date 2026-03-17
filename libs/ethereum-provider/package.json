@@ -33,15 +33,16 @@
     "@types/jest": "catalog:",
     "@types/uuid": "^9.0.8",
     "jest": "catalog:",
-    "jest-environment-jsdom": "catalog:"
+    "jest-environment-jsdom": "catalog:",
+    "@typescript/native-preview": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib",
-    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
+    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsgo -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "typecheck": "tsc --noEmit --customConditions node",
+    "typecheck": "tsgo --noEmit --customConditions node",
     "unimported": "unimported"
   },
   "exports": {
