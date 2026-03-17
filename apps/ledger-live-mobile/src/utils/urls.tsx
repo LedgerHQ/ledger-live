@@ -310,4 +310,5 @@ export const urls = {
     shop: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
     learnMore: "https://support.ledger.com/article/Ledger-Nano-S-Limitations",
   },
+  coinControl: "https://support.ledger.com/article/360015996580-zd",
 };
