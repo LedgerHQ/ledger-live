@@ -1151,6 +1151,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "sui_testnet",
+    ticker: "SUI",
+    name: "Sui (Testnet)",
+    family: "sui",
+    color: "#000",
+    decimals: 9,
+  },
+  {
+    type: "CryptoCurrency",
     id: "zenrock",
     ticker: "ROCK",
     name: "Zenrock",
