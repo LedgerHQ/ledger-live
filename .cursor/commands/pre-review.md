@@ -1,30 +1,26 @@
 # Pre-Review
 
-Run automated checks before submitting for code review.
+Deep code review
 
 ## Process
 
-1. **Identify changes**: `git diff --name-only develop..HEAD`
-2. **Launch agents in parallel**:
-   - `test-runner` — Run tests, fix failures
-   - `code-reviewer` — Check rules compliance (see `.cursor/rules/`)
-3. **Fix issues** found by agents
-4. **Report summary**
+1. Run `git diff develop..HEAD` to get the full diff.
 
-## Summary Template
+2. Launch 4 `code-reviewer` agents **in parallel**, each with a different focus:
+   - **A** — Architecture & MVVM compliance
+   - **B** — Correctness & security (edge cases, null handling, error states)
+   - **C** — Code quality & conventions (Lumen UI, TypeScript, naming, new deps)
+   - **D** — General review — DRY, KISS, missing tests, anything that would slow down a reviewer or cause future regressions
 
-```markdown
-## Pre-Review Summary
+   Each agent prompt: _"Review the diff vs develop. Focus on [FOCUS]. Return findings with file:line, severity (🔴 Critical / 🟡 Suggestion / 🟢 Nice to have), and suggested fix."_
 
-### Tests
-✅ / ❌ — X passed, Y failed
+3. Merge + deduplicate findings. Present grouped by severity:
 
-### Code Review
-✅ / ⚠️ — Issues found (if any)
+   ```
+   🔴 Critical — path/to/file.ts:42 — issue → fix
+   🟡 Suggestion — ...
+   🟢 Nice to have — ...
+   Summary: X critical, Y suggestions, Z nice-to-haves
+   ```
 
-### Ready for Review
-- [ ] Tests passing
-- [ ] Critical issues addressed
-```
-
-**Next**: `/cleanup` if needed, then `/create-pr`
+4. Ask the user which items to fix: **"all criticals"**, **"all"**, **"#1,#2, #3"**, or **"skip"** → `/create-pr`
