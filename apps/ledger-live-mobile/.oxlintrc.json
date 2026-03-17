@@ -100,6 +100,7 @@
     "unicorn/no-useless-fallback-in-spread": "off",
     "unicorn/no-useless-spread": "off",
     "unicorn/no-new-array": "off",
+    "unicorn/no-array-reverse": "off",
     "unicorn/no-array-sort": "off",
     "jest/no-conditional-expect": "warn",
     "jest/expect-expect": "warn",
