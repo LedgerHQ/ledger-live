@@ -3,14 +3,14 @@
 exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 1`] = `
 [
   {
-    "balance": "11813258449",
+    "balance": "11820845703",
     "cardanoResources": {
       "delegation": {
         "dRepHex": undefined,
         "deposit": "2000000",
         "name": "Apex Cardano Pool",
         "poolId": "7facad662e180ce45e5c504957cd1341940c72a708728f7ecfc6e349",
-        "rewards": "1714429074",
+        "rewards": "1722016328",
         "status": true,
         "ticker": "APEX",
       },
