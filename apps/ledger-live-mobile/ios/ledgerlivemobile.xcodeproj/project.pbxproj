@@ -22,8 +22,6 @@
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
 		CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */; };
-		RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */; };
-		RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */; };
 		CA33C2532ED88BBB003C128E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA33C2502ED88BBB003C128E /* AppDelegate.swift */; };
 		CA3D2EB42EDDA65A008E836E /* BrazeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */; };
 		CA3D2EB62EDDA670008E836E /* FirebaseConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3D2EB52EDDA670008E836E /* FirebaseConfigurator.swift */; };
@@ -39,6 +37,8 @@
 		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
+		RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */; };
+		RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,8 +67,6 @@
 		BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C900DA4D404CF00B311DC501 /* Pods-ledgerlivemobile.nightly.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.nightly.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.nightly.xcconfig"; sourceTree = "<group>"; };
 		CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelperModule.m; sourceTree = "<group>"; };
-		RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReduceTransparencyModule.m; sourceTree = "<group>"; };
-		RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceTransparencyModule.swift; sourceTree = "<group>"; };
 		CA33C2502ED88BBB003C128E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CA33C2512ED88BBB003C128E /* LedgerWallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LedgerWallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		CA3D2EB32EDDA65A008E836E /* BrazeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrazeManager.swift; sourceTree = "<group>"; };
@@ -93,6 +91,8 @@
 		E978BF722D91A2A800E9B78E /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F3993D7FF61549FE9270BC06 /* Inter-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.otf"; path = "../assets/fonts/Inter-SemiBold.otf"; sourceTree = "<group>"; };
 		F837348622721A48009D747A /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReduceTransparencyModule.m; sourceTree = "<group>"; };
+		RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceTransparencyModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

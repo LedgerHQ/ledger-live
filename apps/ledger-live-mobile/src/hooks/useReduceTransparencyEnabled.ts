@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { ReduceTransparencyModule } from "~/native-modules/ReduceTransparencyModule";
+
+const isIOS = Platform.OS === "ios";
 
 /**
  * Returns whether the user has Reduce Transparency enabled (iOS), from our native module.
@@ -8,53 +10,36 @@ import { ReduceTransparencyModule } from "~/native-modules/ReduceTransparencyMod
  * On Android this always returns false. Uses UIAccessibility.isReduceTransparencyEnabled on iOS.
  */
 export function useReduceTransparencyEnabled(): boolean {
-  const [enabled, setEnabled] = useState(true);
-  const mountedRef = useRef(true);
+  const [enabled, setEnabled] = useState(isIOS); // Android: false; iOS: true until we fetch
 
-  const fetchValue = useCallback(() => {
-    if (Platform.OS !== "ios") {
-      if (mountedRef.current) setEnabled(false);
-      return;
-    }
+  const fetchValue = useCallback(async () => {
+    if (!isIOS) return;
     // When module is missing (e.g. not linked), assume reduce transparency on so we use gradient.
     if (ReduceTransparencyModule == null) {
-      if (mountedRef.current) setEnabled(true);
+      setEnabled(true);
       return;
     }
-    ReduceTransparencyModule.getReduceTransparencyEnabled()
-      .then((value: unknown) => {
-        if (mountedRef.current) {
-          // Bridge may pass boolean or number (0/1); treat as enabled when true or 1.
-          setEnabled(value === true || value === 1);
-        }
-      })
-      .catch(() => {
-        if (mountedRef.current) {
-          setEnabled(true);
-        }
-      });
+    try {
+      const value: unknown = await ReduceTransparencyModule.getReduceTransparencyEnabled();
+      // Bridge may pass boolean or number (0/1); treat as enabled when true or 1.
+      setEnabled(value === true || value === 1);
+    } catch {
+      setEnabled(true);
+    }
   }, []);
 
   useEffect(() => {
-    mountedRef.current = true;
+    if (!isIOS) return;
+
     fetchValue();
 
-    if (Platform.OS !== "ios") {
-      return () => {
-        mountedRef.current = false;
-      };
-    }
-
     const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
-      if (nextState === "active" && mountedRef.current) {
+      if (nextState === "active") {
         fetchValue();
       }
     });
 
-    return () => {
-      mountedRef.current = false;
-      subscription.remove();
-    };
+    return () => subscription.remove();
   }, [fetchValue]);
 
   return enabled;

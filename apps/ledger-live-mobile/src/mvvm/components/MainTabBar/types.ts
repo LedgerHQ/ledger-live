@@ -14,8 +14,6 @@ export interface MainTabBarViewProps {
   readonly bottomInset: number;
   readonly bottomOffset: number;
   readonly gradientColors: [string, string, string];
-  /** When true (e.g. Reduce Transparency on), use solid background in TabBar instead of BlurView. */
-  readonly useSolidTabBarBackground: boolean;
 }
 
 export interface MainTabBarProps extends BottomTabBarProps {
