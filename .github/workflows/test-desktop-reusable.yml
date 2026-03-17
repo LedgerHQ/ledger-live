@@ -39,7 +39,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -78,7 +78,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
-    runs-on: ubuntu-22.04
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
