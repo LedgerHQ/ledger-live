@@ -728,6 +728,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   ldmkSolanaSigner: DEFAULT_FEATURE,
+  ldmkCosmosSigner: DEFAULT_FEATURE,
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
