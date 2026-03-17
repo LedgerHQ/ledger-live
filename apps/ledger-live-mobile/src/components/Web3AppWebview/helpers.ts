@@ -172,6 +172,7 @@ export function useWebView(
     postMessage: webviewHook.postMessage,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
+    referer: inputs?.referer?.toString(),
     mevProtected,
   });
 

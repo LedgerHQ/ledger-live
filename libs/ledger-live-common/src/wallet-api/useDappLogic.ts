@@ -236,6 +236,7 @@ export function useDappLogic({
   tracking,
   currentAccountHistDb,
   initialAccountId,
+  referer,
   mevProtected,
 }: {
   manifest: AppManifest;
@@ -245,6 +246,7 @@ export function useDappLogic({
   tracking: TrackingAPI;
   currentAccountHistDb?: CurrentAccountHistDB;
   initialAccountId?: string;
+  referer?: string;
   mevProtected?: boolean;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
@@ -571,6 +573,10 @@ export function useDappLogic({
               );
 
               tracking.dappSendTransactionSuccess(manifest, trackingData);
+
+              if (referer === "ledger-button") {
+                console.log("successfully broadcasted tx with referer", referer);
+              }
 
               postMessage(
                 JSON.stringify({
