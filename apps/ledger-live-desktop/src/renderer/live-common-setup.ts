@@ -1,6 +1,6 @@
 import "~/live-common-setup-base";
 import "~/live-common-set-supported-currencies";
-import "./families";
+// Families barrel is loaded lazily via BridgeAndFamiliesLayer (see jest-perf.md § Costly import tree)
 
 import { Store } from "redux";
 import VaultTransport from "@ledgerhq/hw-transport-vault";

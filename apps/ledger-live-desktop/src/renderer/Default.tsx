@@ -5,9 +5,7 @@ import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router"
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
-import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { WalletSyncProvider } from "LLD/features/WalletSync/components/WalletSyncContext";
-import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
 import Box from "~/renderer/components/Box/Box";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
@@ -96,6 +94,7 @@ const WelcomeScreenSettings = lazy(
 const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
 const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
 
+const BridgeAndFamiliesLayer = lazy(() => import("~/renderer/BridgeAndFamiliesLayer"));
 const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
@@ -308,7 +307,6 @@ export const MainAppLayout = () => {
           <IsTermOfUseUpdated />
         </>
       )}
-      <SyncNewAccounts priority={2} />
 
       {useWallet40Layout ? (
         <div
@@ -457,77 +455,79 @@ export default function Default() {
       <AppGeoBlocker>
         <AppVersionBlocker>
           <IsUnlocked>
-            <BridgeSyncProvider>
-              <WalletSyncProvider>
-                <ContextMenuWrapper>
-                  <ModalsLayer />
-                  <DebugWrapper>
-                    {process.env.MOCK ? <DebugMock /> : null}
-                    {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
-                    {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
-                    {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
-                  </DebugWrapper>
-                  {process.env.DISABLE_TRANSACTION_BROADCAST ? (
-                    <DisableTransactionBroadcastWarning
-                      value={process.env.DISABLE_TRANSACTION_BROADCAST}
-                    />
-                  ) : null}
+            <Suspense fallback={<Fallback />}>
+              <BridgeAndFamiliesLayer>
+                <WalletSyncProvider>
+                  <ContextMenuWrapper>
+                    <ModalsLayer />
+                    <DebugWrapper>
+                      {process.env.MOCK ? <DebugMock /> : null}
+                      {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
+                      {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
+                      {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
+                    </DebugWrapper>
+                    {process.env.DISABLE_TRANSACTION_BROADCAST ? (
+                      <DisableTransactionBroadcastWarning
+                        value={process.env.DISABLE_TRANSACTION_BROADCAST}
+                      />
+                    ) : null}
 
-                  <GlobalDialogs />
+                    <GlobalDialogs />
 
-                  <Routes>
-                    <Route
-                      path="/onboarding/*"
-                      element={
-                        <>
+                    <Routes>
+                      <Route
+                        path="/onboarding/*"
+                        element={
+                          <>
+                            <Suspense fallback={<Fallback />}>
+                              <Onboarding />
+                            </Suspense>
+                            <Drawer />
+                          </>
+                        }
+                      />
+                      <Route path="/sync-onboarding/*" element={withSuspense(SyncOnboarding)({})} />
+                      <Route
+                        path="/post-onboarding"
+                        element={
+                          <>
+                            <Suspense fallback={<Fallback />}>
+                              <PostOnboardingScreen />
+                            </Suspense>
+                            <Drawer />
+                          </>
+                        }
+                      />
+                      <Route path="/recover-restore" element={withSuspense(RecoverRestore)({})} />
+
+                      <Route
+                        path="/USBTroubleshooting"
+                        element={
                           <Suspense fallback={<Fallback />}>
-                            <Onboarding />
+                            <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
                           </Suspense>
-                          <Drawer />
-                        </>
-                      }
-                    />
-                    <Route path="/sync-onboarding/*" element={withSuspense(SyncOnboarding)({})} />
-                    <Route
-                      path="/post-onboarding"
-                      element={
+                        }
+                      />
+
+                      {hasCompletedOnboarding ? (
+                        <Route path="/*" element={<MainAppLayout />} />
+                      ) : (
                         <>
-                          <Suspense fallback={<Fallback />}>
-                            <PostOnboardingScreen />
-                          </Suspense>
-                          <Drawer />
+                          <Route
+                            path="/settings/*"
+                            element={withSuspense(WelcomeScreenSettings)({})}
+                          />
+                          <Route
+                            path="/recover/:appId"
+                            element={<RecoverPlayerWithFeatureToggle />}
+                          />
                         </>
-                      }
-                    />
-                    <Route path="/recover-restore" element={withSuspense(RecoverRestore)({})} />
-
-                    <Route
-                      path="/USBTroubleshooting"
-                      element={
-                        <Suspense fallback={<Fallback />}>
-                          <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
-                        </Suspense>
-                      }
-                    />
-
-                    {hasCompletedOnboarding ? (
-                      <Route path="/*" element={<MainAppLayout />} />
-                    ) : (
-                      <>
-                        <Route
-                          path="/settings/*"
-                          element={withSuspense(WelcomeScreenSettings)({})}
-                        />
-                        <Route
-                          path="/recover/:appId"
-                          element={<RecoverPlayerWithFeatureToggle />}
-                        />
-                      </>
-                    )}
-                  </Routes>
-                </ContextMenuWrapper>
-              </WalletSyncProvider>
-            </BridgeSyncProvider>
+                      )}
+                    </Routes>
+                  </ContextMenuWrapper>
+                </WalletSyncProvider>
+              </BridgeAndFamiliesLayer>
+            </Suspense>
           </IsUnlocked>
         </AppVersionBlocker>
       </AppGeoBlocker>

@@ -1,3 +1,11 @@
+/**
+ * Guard: mark that the families barrel (and thus all family UIs + generated) has loaded.
+ * Used by tests to assert heavy load is deferred (see heavyLoadGuards.test.ts).
+ */
+if (typeof globalThis !== "undefined") {
+  Object.defineProperty(globalThis, "__LEDGER_FAMILIES_BARREL_LOADED__", { value: true });
+}
+
 import {
   Account,
   TransactionCommon,

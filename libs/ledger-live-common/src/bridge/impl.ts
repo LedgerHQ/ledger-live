@@ -7,6 +7,14 @@ import { decodeAccountId, getMainAccount, checkAccountSupported } from "../accou
 import { getEnv } from "@ledgerhq/live-env";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
+
+/**
+ * Guard: this module loads generated/bridge/js (all family setups → all @ledgerhq/coin-*).
+ * Used by apps (e.g. desktop) to assert heavy load is deferred (see heavyLoadGuards.test.ts).
+ */
+if (typeof globalThis !== "undefined") {
+  Object.defineProperty(globalThis, "__LEDGER_BRIDGE_IMPL_LOADED__", { value: true });
+}
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
