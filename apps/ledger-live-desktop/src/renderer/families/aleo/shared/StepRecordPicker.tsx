@@ -35,7 +35,7 @@ const StyledButton = styled.button<ButtonState>`
   display: flex;
   flex-direction: column;
   text-align: left;
-  flex-gap: 4px;
+  gap: 4px;
   background-color: ${p => (p.$checked ? rgba(p.theme.colors.primary.c20, 0.7) : "transparent")};
   border: 1px solid ${p => (p.$checked ? p.theme.colors.primary.c50 : p.theme.colors.neutral.c40)};
   border-radius: ${p => `${p.theme.radii[2]}px`};
@@ -89,7 +89,7 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
   const formatDate = useDateFormatter(dayFormat);
   const formatHours = useDateFormatter(hourFormat);
 
-  const unspentRecords = (account.aleoResources?.unspentPrivateRecords ?? [])
+  const unspentRecords = [...(account.aleoResources?.unspentPrivateRecords ?? [])]
     .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
     .slice(0, 15);
 
