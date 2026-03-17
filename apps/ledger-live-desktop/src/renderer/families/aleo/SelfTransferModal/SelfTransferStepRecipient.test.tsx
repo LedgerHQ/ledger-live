@@ -130,5 +130,6 @@ describe("SelfTransferStepRecipient", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(convertPrivateToPublicTransaction);
     expect(result.mode).toBe(TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE);
+    expect(result).not.toHaveProperty("properties");
   });
 });

@@ -195,5 +195,7 @@ describe("AleoSendStepRecipient", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
     expect(result.mode).toBe(TRANSACTION_TYPE.TRANSFER_PUBLIC);
+
+    expect(result).not.toHaveProperty("properties");
   });
 });

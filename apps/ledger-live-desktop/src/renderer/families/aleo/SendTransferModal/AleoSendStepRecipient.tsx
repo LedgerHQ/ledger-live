@@ -66,10 +66,10 @@ export const AleoSendStepRecipient = ({
                 if (t.family !== "aleo") return t;
 
                 if (value === "public") {
+                  const { properties: _ignoredProperties, ...txWithoutProperties } = t;
                   return {
-                    ...t,
+                    ...txWithoutProperties,
                     mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-                    properties: undefined,
                   };
                 }
 
