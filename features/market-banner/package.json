@@ -7,7 +7,7 @@
   "sideEffects": false,
   "scripts": {
     "lint": "oxlint src",
-    "lint:fix": "oxfmt src && oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "test": "jest",
