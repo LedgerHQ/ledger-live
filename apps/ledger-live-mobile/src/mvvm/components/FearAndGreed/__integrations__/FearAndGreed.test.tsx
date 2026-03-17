@@ -39,7 +39,7 @@ describe("FearAndGreed Integration", () => {
   describe("Mood levels", () => {
     it.each([
       { value: 15, label: "Fear+", classification: "Extreme Fear" },
-      { value: 45, label: "Fear", classification: "Fear" },
+      { value: 40, label: "Fear", classification: "Fear" },
       { value: 50, label: "Neutral", classification: "Neutral" },
       { value: 70, label: "Greed", classification: "Greed" },
       { value: 90, label: "Greed+", classification: "Extreme Greed" },

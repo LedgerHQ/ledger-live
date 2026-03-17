@@ -17,10 +17,10 @@ export const FEAR_AND_GREED_COLORS: Record<FearAndGreedLevel, string> = {
 };
 
 export function getFearAndGreedLevel(value: number): FearAndGreedLevel {
-  if (value <= 25) return "extremeFear";
-  if (value <= 45) return "fear";
-  if (value <= 55) return "neutral";
-  if (value <= 75) return "greed";
+  if (value <= 20) return "extremeFear";
+  if (value <= 40) return "fear";
+  if (value <= 60) return "neutral";
+  if (value <= 80) return "greed";
   return "extremeGreed";
 }
 
