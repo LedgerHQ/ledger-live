@@ -31,8 +31,8 @@ const SWAP_PARAM_KEYS: string[] = [
   "amountFrom",
 ];
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  value != null && typeof value === "object";
+const isRecord = (data: unknown): data is Record<string, unknown> =>
+  data != null && typeof data === "object";
 
 const isDefaultAccountSwapParamsList = (
   params: DefaultAccountSwapParamList | unknown,
