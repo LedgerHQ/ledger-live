@@ -1,4 +1,4 @@
-import { renderHook, act } from "@tests/test-renderer";
+import { renderHook, act, withReadOnlyDisabled } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 import { expectedNavigationParams } from "../const";
@@ -9,6 +9,16 @@ const mockNavigate = jest.fn();
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+}));
+
+jest.mock("../hooks/useSyncIndicator", () => ({
+  useSyncIndicator: () => ({
+    hasAccounts: false,
+    isError: false,
+    isPending: false,
+    listOfErrorAccountNames: "",
+    syncAccessibilityLabel: "Synchronize",
+  }),
 }));
 
 const mockNavigation = { navigate: mockNavigate };
@@ -29,7 +39,9 @@ describe("useTopBarViewModel", () => {
   });
 
   it("should call navigate with expected params when onMyLedgerPress is invoked", () => {
-    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never), {
+      overrideInitialState: withReadOnlyDisabled,
+    });
 
     act(() => {
       result.current.onMyLedgerPress();

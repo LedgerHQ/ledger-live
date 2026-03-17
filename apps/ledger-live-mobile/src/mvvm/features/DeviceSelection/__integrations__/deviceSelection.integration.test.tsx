@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withReadOnlyDisabled } from "@tests/test-renderer";
 import DeviceSelectionNavigator from "../Navigator";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
@@ -47,7 +47,9 @@ describe("Device Selection feature integration test", () => {
   });
   it("should render a device connection screen when no device is installed", () => {
     mockDiscoverDevices.mockReturnValue(of({}));
-    render(<DeviceSelectionNavigator />);
+    render(<DeviceSelectionNavigator />, {
+      overrideInitialState: withReadOnlyDisabled,
+    });
 
     const screenTitle = screen.getByText(/Connect device/i);
     const stepIndicator = screen.getByText(/Step 2 of 3/i);
@@ -74,7 +76,9 @@ describe("Device Selection feature integration test", () => {
         wired: true,
       }),
     );
-    render(<DeviceSelectionNavigator />);
+    render(<DeviceSelectionNavigator />, {
+      overrideInitialState: withReadOnlyDisabled,
+    });
     const deviceCTA = screen.getByTestId("device-item-usb|1");
     const notConnectedText = screen.getByText(/connected/i);
     const addNewCTA = screen.queryByText(/Add new/i);

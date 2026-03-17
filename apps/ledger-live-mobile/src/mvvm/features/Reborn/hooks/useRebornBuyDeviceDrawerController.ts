@@ -18,19 +18,12 @@ import { REBORN_BUY_DRAWER_ANALYTICS_PAGE } from "../consts/analytics";
 export const useRebornBuyDeviceDrawerController = () => {
   const dispatch = useDispatch();
 
-  const { isOpen, sourceScreenName } = useSelector(rebornBuyDeviceDrawerStateSelector);
+  const { isOpen } = useSelector(rebornBuyDeviceDrawerStateSelector);
 
-  const openDrawer = useCallback(
-    (params?: { sourceScreenName: string }) => {
-      dispatch(
-        openRebornBuyDeviceDrawer({
-          sourceScreenName: params?.sourceScreenName ?? "",
-        }),
-      );
-      track("drawer_opened", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
-    },
-    [dispatch],
-  );
+  const openDrawer = useCallback(() => {
+    dispatch(openRebornBuyDeviceDrawer());
+    track("drawer_opened", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
+  }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
     dispatch(closeRebornBuyDeviceDrawer());
@@ -39,7 +32,6 @@ export const useRebornBuyDeviceDrawerController = () => {
 
   return {
     isOpen,
-    sourceScreenName,
     openDrawer,
     closeDrawer,
   };

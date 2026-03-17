@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import SettingsRow from "~/components/SettingsRow";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   useLedgerSyncAnalytics,
@@ -35,6 +37,7 @@ const WalletSyncRow = () => {
   const navigateToWalletSyncActivationScreen = useCallback(() => {
     // Here we need to check if the user has a backup or not to determine the screen to navigate to
     onClickTrack({ button: AnalyticsButton.LedgerSync, page: AnalyticsPage.SettingsGeneral });
+    setOriginFlow(HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow);
 
     if (trustchain?.rootId) {
       navigation.navigate(NavigatorName.WalletSync, {

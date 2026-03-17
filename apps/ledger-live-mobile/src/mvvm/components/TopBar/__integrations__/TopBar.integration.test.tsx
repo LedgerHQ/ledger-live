@@ -1,5 +1,5 @@
 import React from "react";
-import { renderWithReactQuery } from "@tests/test-renderer";
+import { renderWithReactQuery, withReadOnlyDisabled } from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
 import { track } from "~/analytics";
@@ -35,7 +35,9 @@ describe("TopBar navigation", () => {
   });
 
   it("should navigate to MyLedger with expected params when myLedger button is pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
+      overrideInitialState: withReadOnlyDisabled,
+    });
 
     await user.press(getByTestId("topbar-myledger"));
 
