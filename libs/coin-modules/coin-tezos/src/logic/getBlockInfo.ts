@@ -8,7 +8,7 @@ import { tzkt } from "../network";
  * is always populated without adding serial latency.
  */
 export async function getBlockInfo(height: number): Promise<BlockInfo> {
-  if (height <= 0) {
+  if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`getBlockInfo: height must be a positive integer, got ${height}`);
   }
 

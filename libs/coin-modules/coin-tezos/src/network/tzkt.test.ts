@@ -55,7 +55,6 @@ describe("tzkt network API", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-    jest.restoreAllMocks();
   });
 
   // -------------------------------------------------------------------------

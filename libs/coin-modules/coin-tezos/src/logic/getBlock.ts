@@ -276,7 +276,7 @@ function groupAndMapTransactions(
  *   matching `transactionId` can be resolved; otherwise creates a standalone entry.
  */
 export async function getBlock(height: number): Promise<Block> {
-  if (height <= 0) {
+  if (!Number.isSafeInteger(height) || height <= 0) {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 

@@ -70,6 +70,16 @@ describe("getBlockInfo", () => {
     expect(mockGetBlockByLevel).not.toHaveBeenCalled();
   });
 
+  it.each([NaN, 1.5, Infinity, -Infinity])(
+    "throws for non-safe-integer height (%s) without calling the API",
+    async height => {
+      await expect(getBlockInfo(height)).rejects.toThrow(
+        "getBlockInfo: height must be a positive integer",
+      );
+      expect(mockGetBlockByLevel).not.toHaveBeenCalled();
+    },
+  );
+
   it("includes parent from the predecessor block fetched in parallel", async () => {
     // Given – genesis-adjacent block: level 1 with level 0 as parent
     mockGetBlockByLevel.mockResolvedValueOnce({

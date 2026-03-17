@@ -120,6 +120,14 @@ describe("block info and guard", () => {
     expect(mockGetBlockByLevel).not.toHaveBeenCalled();
   });
 
+  it.each([NaN, 1.5, Infinity, -Infinity])(
+    "throws for non-safe-integer height (%s) without any network calls",
+    async height => {
+      await expect(getBlock(height)).rejects.toThrow("getBlock: height must be a positive integer");
+      expect(mockGetBlockByLevel).not.toHaveBeenCalled();
+    },
+  );
+
   it("returns an empty transactions array when the block has no operations", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
