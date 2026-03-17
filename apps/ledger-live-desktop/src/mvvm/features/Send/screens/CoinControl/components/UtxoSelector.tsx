@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Check } from "@ledgerhq/lumen-ui-react/symbols";
 import React from "react";
-import type { BitcoinUtxoDisplayData } from "../hooks/useBitcoinUtxoDisplayData";
+import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
 
 type UtxoSelectorProps = Readonly<{
   utxoDisplayData: BitcoinUtxoDisplayData | null;

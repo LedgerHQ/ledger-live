@@ -129,3 +129,5 @@ export function useNetworkFees({
     legendByPreset,
   };
 }
+
+export type NetworkFeesViewModel = ReturnType<typeof useNetworkFees>;
