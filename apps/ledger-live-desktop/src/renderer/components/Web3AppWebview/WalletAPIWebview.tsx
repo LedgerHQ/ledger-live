@@ -405,7 +405,10 @@ function useWebView(
 
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
     // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
-    globalThis.api?.openWindow(id, manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined);
+    globalThis.api?.openWindow(
+      id,
+      manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined,
+    );
   }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
   useEffect(() => {

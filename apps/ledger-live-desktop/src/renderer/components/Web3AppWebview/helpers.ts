@@ -87,54 +87,50 @@ export function useWebviewState(
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
-  useImperativeHandle(
-    webviewAPIRef,
-    () => {
-      return {
-        reload: () => {
-          const webview = safeGetRefValue(webviewRef);
+  useImperativeHandle(webviewAPIRef, () => {
+    return {
+      reload: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.reload();
-        },
-        goBack: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.reload();
+      },
+      goBack: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.goBack();
-        },
-        goForward: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.goBack();
+      },
+      goForward: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.goForward();
-        },
-        openDevTools: () => {
-          const webview = safeGetRefValue(webviewRef);
+        webview.goForward();
+      },
+      openDevTools: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.openDevTools();
-        },
-        loadURL: (url: string): Promise<void> => {
-          if (
-            manifestDomainCheckEnabled &&
-            !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
-          ) {
-            return Promise.reject(new Error("URL not allowed by manifest domains"));
-          }
-          const webview = safeGetRefValue(webviewRef);
+        webview.openDevTools();
+      },
+      loadURL: (url: string): Promise<void> => {
+        if (
+          manifestDomainCheckEnabled &&
+          !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
+        ) {
+          return Promise.reject(new Error("URL not allowed by manifest domains"));
+        }
+        const webview = safeGetRefValue(webviewRef);
 
-          return webview.loadURL(url);
-        },
-        clearHistory: () => {
-          const webview = safeGetRefValue(webviewRef);
+        return webview.loadURL(url);
+      },
+      clearHistory: () => {
+        const webview = safeGetRefValue(webviewRef);
 
-          webview.clearHistory();
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        notify: (method: `event.${string}`, params: any) => {
-          serverRef?.current?.sendMessage(method, params);
-        },
-      };
-    },
-    [manifest.domains, manifestDomainCheckEnabled, serverRef],
-  );
+        webview.clearHistory();
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      notify: (method: `event.${string}`, params: any) => {
+        serverRef?.current?.sendMessage(method, params);
+      },
+    };
+  }, [manifest.domains, manifestDomainCheckEnabled, serverRef]);
 
   const [isMounted, setMounted] = useState<boolean>(false);
   useEffect(() => {

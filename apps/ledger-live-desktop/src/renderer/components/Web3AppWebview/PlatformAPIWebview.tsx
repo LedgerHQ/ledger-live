@@ -425,7 +425,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
       globalThis.api?.openWindow(
         id,
-        manifestDomainCheckEnabled ? manifest.domains ?? [] : undefined,
+        manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined,
       );
     }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
 
