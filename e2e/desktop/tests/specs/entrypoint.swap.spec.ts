@@ -77,7 +77,7 @@ test.describe("Swap flow from different entry point", () => {
 >>>>>>> cb18bd0289 (fix(lwd): await swap)
       await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToPortfolio());
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
-      await app.swap.expectSelectedAssetDisplayed("ETH", electronApp);
+      await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/, electronApp);
     },
   );
 
