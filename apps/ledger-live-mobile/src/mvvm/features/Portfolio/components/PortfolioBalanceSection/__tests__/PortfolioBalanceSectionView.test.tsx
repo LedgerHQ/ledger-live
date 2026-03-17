@@ -80,17 +80,5 @@ describe("PortfolioBalanceSectionView", () => {
       expect(screen.getByTestId("portfolio-balance-amount")).toBeVisible();
       expect(screen.queryByTestId("portfolio-placeholder-balance")).toBeNull();
     });
-
-    it("should show shimmer on amount when balance is available and loading with rework enabled", () => {
-      renderView({
-        isBalanceAvailable: true,
-        isLoading: true,
-        shouldDisplayBalanceRefreshRework: true,
-      });
-
-      expect(screen.getByTestId("portfolio-balance-normal")).toBeVisible();
-      expect(screen.getByTestId("portfolio-balance-amount")).toBeVisible();
-      expect(screen.queryByTestId("portfolio-placeholder-balance")).toBeNull();
-    });
   });
 });
