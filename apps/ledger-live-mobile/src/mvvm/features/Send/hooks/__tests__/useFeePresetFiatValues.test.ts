@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import BigNumber from "bignumber.js";
-import { useFeePresetFiatValues } from "../useFeePresetFiatValues";
+import { useFeePresetFiatValues } from "../hooks/useFeePresetFiatValues";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
