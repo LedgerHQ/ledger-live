@@ -3,7 +3,8 @@
   "compilerOptions": {
     "customConditions": [],
     "types": [
-      "node"
+      "node",
+      "jest"
     ]
   },
   "exclude": [
@@ -16,8 +17,6 @@
     "**/*.spec.tsx",
     "**/__tests__/**/*",
     "**/__mocks__/**/*",
-    "**/test/**/*",
-    "**/tests/**/*",
     "**/*.test.js",
     "**/*.test.jsx",
     "**/*.spec.js",
