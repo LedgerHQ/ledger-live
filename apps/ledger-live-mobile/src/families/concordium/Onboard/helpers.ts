@@ -4,7 +4,12 @@ import type { CurrencyBridge } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 function isConcordiumCurrencyBridge(bridge: CurrencyBridge): bridge is ConcordiumCurrencyBridge {
-  return "onboardAccount" in bridge && "pairWalletConnect" in bridge;
+  return (
+    "onboardAccount" in bridge &&
+    typeof bridge.onboardAccount === "function" &&
+    "pairWalletConnect" in bridge &&
+    typeof bridge.pairWalletConnect === "function"
+  );
 }
 
 export function getConcordiumBridge(currency: CryptoCurrency): ConcordiumCurrencyBridge {
