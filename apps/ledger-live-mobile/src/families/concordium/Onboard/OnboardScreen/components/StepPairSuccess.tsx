@@ -14,9 +14,9 @@ export default function StepPairSuccess({ onContinue }: Props) {
           <Trans i18nKey="concordium.onboard.pair.title" />
         </Text>
         <Alert type="success">
-          <Text>
+          <Alert.BodyText>
             <Trans i18nKey="concordium.onboard.pair.success" />
-          </Text>
+          </Alert.BodyText>
         </Alert>
       </Flex>
       <Flex px={6} pb={10}>
