@@ -31,6 +31,8 @@ export type DAError =
   | SignTransactionDAError
   | SignPersonalMessageDAError;
 
+const DEFAULT_CHAIN_ID = 1;
+
 export class DmkSignerEth implements EvmSigner {
   private readonly signer: SignerEth;
   constructor(
@@ -118,14 +120,24 @@ export class DmkSignerEth implements EvmSigner {
     path: string,
     boolDisplay?: boolean,
     boolChaincode?: boolean,
-    _chainId?: string,
+    chainId?: string,
   ): Promise<EvmAddress> {
+    let parsedChainId: number | undefined;
+    if (chainId !== undefined) {
+      const numericChainId = Number(chainId);
+      parsedChainId =
+        !Number.isFinite(numericChainId) || !Number.isInteger(numericChainId) || numericChainId <= 0
+          ? DEFAULT_CHAIN_ID
+          : numericChainId;
+    }
+
     const result = this._mapResult(
       await lastValueFrom(
         this.signer.getAddress(path, {
           checkOnDevice: boolDisplay,
           returnChainCode: boolChaincode,
           skipOpenApp: true,
+          chainId: parsedChainId,
         }).observable,
       ),
     );
