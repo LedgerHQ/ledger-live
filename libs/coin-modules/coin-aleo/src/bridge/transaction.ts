@@ -33,16 +33,14 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
       family: tr.family,
       mode: tr.mode,
       fees: new BigNumber(tr.fees),
-      ...(tr.properties
-        ? {
-            properties: {
-              amountRecord: tr.properties.amountRecord
-                ? JSON.parse(tr.properties.amountRecord)
-                : null,
-              feeRecord: tr.properties.feeRecord ? JSON.parse(tr.properties.feeRecord) : null,
-            },
-          }
-        : {}),
+      properties: {
+        amountRecord:
+          tr.properties && tr.properties.amountRecord
+            ? JSON.parse(tr.properties.amountRecord)
+            : null,
+        feeRecord:
+          tr.properties && tr.properties.feeRecord ? JSON.parse(tr.properties.feeRecord) : null,
+      },
     };
   }
 
@@ -66,16 +64,14 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
       family: t.family,
       mode: t.mode,
       fees: t.fees.toString(),
-      ...(t.properties
-        ? {
-            properties: {
-              amountRecord: t.properties.amountRecord
-                ? JSON.stringify(t.properties.amountRecord)
-                : null,
-              feeRecord: t.properties.feeRecord ? JSON.stringify(t.properties.feeRecord) : null,
-            },
-          }
-        : {}),
+      properties: {
+        amountRecord:
+          t.properties && t.properties.amountRecord
+            ? JSON.stringify(t.properties.amountRecord)
+            : null,
+        feeRecord:
+          t.properties && t.properties.feeRecord ? JSON.stringify(t.properties.feeRecord) : null,
+      },
     };
   }
 
