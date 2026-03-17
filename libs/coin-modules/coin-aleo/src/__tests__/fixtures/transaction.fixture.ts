@@ -10,16 +10,41 @@ type PublicTransactionRaw = Extract<
   { mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC }
 >;
 
-export const getMockedTransaction = (overrides?: Partial<PublicTransaction>): PublicTransaction => {
-  return {
-    family: "aleo",
+type PublicMode =
+  | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
+  | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+type PrivateMode =
+  | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
+  | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+
+type SharedOverrides = Omit<Partial<PublicTransaction>, "mode" | "properties">;
+type GetMockedTransactionOverrides =
+  | (SharedOverrides & { mode?: PublicMode })
+  | (SharedOverrides & { mode: PrivateMode });
+
+const isPrivateMode = (mode: PublicMode | PrivateMode): mode is PrivateMode =>
+  mode === TRANSACTION_TYPE.TRANSFER_PRIVATE || mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+
+export const getMockedTransaction = (overrides?: GetMockedTransactionOverrides): Transaction => {
+  const mode = overrides?.mode ?? TRANSACTION_TYPE.TRANSFER_PUBLIC;
+  const base = {
+    family: "aleo" as const,
     amount: new BigNumber(0),
     recipient: ALEO_RECIPIENT,
     fees: new BigNumber(0),
     useAllAmount: false,
-    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-    ...overrides,
   };
+
+  if (isPrivateMode(mode)) {
+    return {
+      ...base,
+      ...overrides,
+      mode,
+      properties: { amountRecord: null, feeRecord: null },
+    };
+  }
+
+  return { ...base, ...overrides, mode };
 };
 
 export const getMockedTransactionRaw = (

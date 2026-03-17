@@ -1,10 +1,14 @@
 import BigNumber from "bignumber.js";
 import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
 
+type AleoPublicTransaction = Extract<AleoTransaction, { mode: "transfer_public" }>;
+
 export const ALEO_RECIPIENT_ADDRESS =
   "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
-export const makeAleoTransaction = (overrides?: Partial<AleoTransaction>): AleoTransaction => ({
+export const makeAleoTransaction = (
+  overrides: Partial<AleoPublicTransaction> = {},
+): AleoPublicTransaction => ({
   family: "aleo",
   mode: "transfer_public",
   recipient: "",

@@ -86,8 +86,10 @@ describe("StepRecordPicker", () => {
     amount: new BigNumber(0),
     fees: new BigNumber(0),
     useAllAmount: false,
-    amountRecord: null,
-    feeRecord: null,
+    properties: {
+      amountRecord: null,
+      feeRecord: null,
+    },
   };
 
   const mockStatus: TransactionStatus = {
@@ -278,7 +280,7 @@ describe("StepRecordPicker", () => {
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
-    expect(result.amountRecord).toBe(record2.decryptedData);
+    expect(result.properties?.amountRecord).toBe(record2.decryptedData);
   });
 
   it("should call updateTransaction with the lower-value record when the second button is clicked", async () => {
@@ -299,7 +301,7 @@ describe("StepRecordPicker", () => {
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
-    expect(result.amountRecord).toBe(record1.decryptedData);
+    expect(result.properties?.amountRecord).toBe(record1.decryptedData);
   });
 
   it("should render records sorted in descending order by value", () => {

@@ -24,7 +24,7 @@ describe("getDeviceTransactionConfig", () => {
   ] as const)("should return method '%s' for mode '%s'", async (expectedMethod, mode) => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
-      transaction: { ...mockTransaction, mode },
+      transaction: getMockedTransaction({ mode }),
       status: mockStatus,
     });
 
@@ -34,8 +34,7 @@ describe("getDeviceTransactionConfig", () => {
   it("should return method 'Unknown' for an invalid mode", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
-      // @ts-expect-error - testing invalid mode
-      transaction: { ...mockTransaction, mode: "invalidMode" },
+      transaction: getMockedTransaction({ mode: "invalidMode" as never }),
       status: mockStatus,
     });
 
@@ -76,7 +75,7 @@ describe("getDeviceTransactionConfig", () => {
   it("should return fields in correct order", async () => {
     const fields = await getDeviceTransactionConfig({
       account: mockAccount,
-      transaction: { ...mockTransaction, mode: TRANSACTION_TYPE.TRANSFER_PUBLIC },
+      transaction: getMockedTransaction({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC }),
       status: { ...mockStatus, estimatedFees: new BigNumber(100) },
     });
 

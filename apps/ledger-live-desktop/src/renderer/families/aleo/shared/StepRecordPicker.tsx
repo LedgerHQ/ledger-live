@@ -9,6 +9,7 @@ import type {
   AleoUnspentRecord,
   TransactionPrivate,
 } from "@ledgerhq/live-common/families/aleo/types";
+import { isPublicTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { useSelector } from "LLD/hooks/redux";
 import Label from "~/renderer/components/Label";
 import type { StepProps } from "~/renderer/modals/Send/types";
@@ -103,7 +104,7 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
     updateTransaction(t => {
       if (t.family !== "aleo") return t;
 
-      if (t.mode === "transfer_public" || t.mode === "convert_public_to_private") {
+      if (isPublicTransaction(t)) {
         return {
           ...t,
           properties: undefined,
@@ -113,7 +114,7 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
       return {
         ...t,
         properties: {
-          ...(t.properties ?? { feeRecord: null }),
+          feeRecord: t.properties?.feeRecord ?? null,
           amountRecord: record.decryptedData,
         },
       };
