@@ -208,7 +208,7 @@
     },
     "ledger-live-desktop#build": {
       "dependsOn": ["^build"],
-      "cache": false
+      "outputs": [".webpack/**"]
     },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
@@ -248,8 +248,8 @@
       "outputs": []
     },
     "ledger-live-desktop#build:testing": {
-      "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": [".webpack/**"]
     },
     "@ledgerhq/native-ui#typecheck": {
       "outputs": [],

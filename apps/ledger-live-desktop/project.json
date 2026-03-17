@@ -2,7 +2,6 @@
   "name": "ledger-live-desktop",
   "targets": {
     "build": {
-      "cache": false,
       "inputs": [
         "default",
         "desktopEnv",
@@ -10,7 +9,6 @@
       ]
     },
     "build:testing": {
-      "cache": false,
       "dependsOn": [
         "^build"
       ]
