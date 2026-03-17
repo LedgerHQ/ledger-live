@@ -24,8 +24,16 @@ import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import ledgerExplorer from "../network/explorer/ledger";
 import ledgerGasTracker from "../network/gasTracker/ledger";
-import ledgerNode from "../network/node/ledger";
+import { getNodeApi } from "../network/node";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { validateIntent } from "./validateIntent";
+
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
+}));
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
 
 function legacyIntent(
   intent: Omit<Partial<TransactionIntent>, "type">,
@@ -58,20 +66,23 @@ function eip1559Intent(
 }
 
 describe("validateIntent", () => {
+  const nodeApiMock = mockNodeApi();
+
   beforeEach(() => {
     setCoinConfig(
       () =>
         ({
           info: {
-            node: { type: "ledger" },
+            node: { type: "ledger", explorerId: "eth" },
             explorer: { type: "ledger" },
             gasTracker: { type: "ledger", explorerId: "eth" },
           },
         }) as unknown as EvmCoinConfig,
     );
 
-    jest.spyOn(ledgerNode, "getGasEstimation").mockResolvedValue(new BigNumber(0));
-    jest.spyOn(ledgerNode, "getFeeData").mockResolvedValue({
+    mockGetNodeApi.mockReturnValue(nodeApiMock);
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber(0));
+    nodeApiMock.getFeeData.mockResolvedValue({
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
       gasPrice: null,
@@ -104,7 +115,7 @@ describe("validateIntent", () => {
         nextBaseFee: null,
       },
     });
-    jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(30);
+    nodeApiMock.getTransactionCount.mockResolvedValue(30);
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -239,7 +250,7 @@ describe("validateIntent", () => {
     });
 
     it("detects an intent for token asset sending without amount with an error", async () => {
-      jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
+      nodeApiMock.getTransactionCount.mockResolvedValue(10);
 
       const res = await validateIntent(
         {} as CryptoCurrency,
@@ -276,7 +287,7 @@ describe("validateIntent", () => {
     });
 
     it("detects token asset sending intent with an error", async () => {
-      jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
+      nodeApiMock.getTransactionCount.mockResolvedValue(10);
       jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
         lastCoinOperations: [],
         lastInternalOperations: [],

@@ -12,6 +12,8 @@ export type EvmConfig = {
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
+        /** Number of retries for Ledger explorer API calls. Defaults to 2 if not set. Set to 0 for no retries. */
+        retries?: number;
       };
   explorer:
     | {
@@ -37,6 +39,7 @@ export type EvmConfig = {
 };
 
 export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;
+export type LedgerNodeConfig = Extract<EvmConfig["node"], { type: "ledger" }>;
 
 export type EvmConfigInfo = CurrencyConfig & EvmConfig;
 
