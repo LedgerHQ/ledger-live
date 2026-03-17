@@ -966,6 +966,9 @@ importers:
       '@sentry/electron':
         specifier: 5.2.0
         version: 5.2.0
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
       '@tanstack/react-query':
         specifier: 5.28.9
         version: 5.28.9(react@19.0.0)

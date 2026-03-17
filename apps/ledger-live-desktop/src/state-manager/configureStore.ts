@@ -13,6 +13,26 @@ type Props = {
 };
 
 const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) => {
+  // Bridge: mirror legacy settings into the new featureFlags slice so that
+  // tests setting state.settings.overriddenFeatureFlags / featureFlagsButtonVisible
+  // still work with the selector proxies that now read from state.featureFlags.
+  if (state?.settings) {
+    const patch: Partial<State["featureFlags"]> = {};
+
+    const legacyOverrides = state.settings.overriddenFeatureFlags;
+    if (legacyOverrides && Object.keys(legacyOverrides).length > 0) {
+      patch.overrides = legacyOverrides as State["featureFlags"]["overrides"];
+    }
+
+    if (state.settings.featureFlagsButtonVisible != null) {
+      patch.bannerVisible = state.settings.featureFlagsButtonVisible;
+    }
+
+    if (Object.keys(patch).length > 0) {
+      state = { ...state, featureFlags: { ...state.featureFlags!, ...patch } };
+    }
+  }
+
   const store = configureStore({
     reducer: reducers,
     preloadedState: state,

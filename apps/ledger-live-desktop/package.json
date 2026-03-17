@@ -111,6 +111,7 @@
     "@reduxjs/toolkit": "catalog:",
     "@segment/analytics-next": "1.81.1",
     "@sentry/electron": "5.2.0",
+    "@shared/feature-flags": "workspace:*",
     "@tanstack/react-query": "5.28.9",
     "@tanstack/react-query-devtools": "5.28.14",
     "@tanstack/react-table": "8.21.3",
