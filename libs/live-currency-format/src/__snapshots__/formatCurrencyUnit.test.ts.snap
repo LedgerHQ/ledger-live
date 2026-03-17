@@ -96,8 +96,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
@@ -352,6 +350,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Tezos unit (XTZ) 1`] = `"12.345.678.900,000000- -XTZ"`;
@@ -499,8 +499,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Concordium unit (ccd) 1`] = `"12,345,678,900.000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
@@ -756,6 +754,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Tezos unit (XTZ) 1`] = `"12,345,678,900.000000- -XTZ"`;
@@ -903,8 +903,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Concordium unit (ccd) 1`] = `"12.345.678.900,000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
@@ -1160,6 +1158,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Tezos unit (XTZ) 1`] = `"12.345.678.900,000000- -XTZ"`;
@@ -1307,8 +1307,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Concordium unit (ccd) 1`] = `"12 345 678 900,000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Coreum unit (Core) 1`] = `"12 345 678 900,000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12 345 678 900,000000- -MUON"`;
 
@@ -1564,6 +1562,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TX unit (TX) 1`] = `"12 345 678 900,000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Tezos unit (XTZ) 1`] = `"12 345 678 900,000000- -XTZ"`;
@@ -1711,8 +1711,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Concordium unit (ccd) 1`] = `"12,345,678,900.000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
@@ -1968,6 +1966,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Tezos unit (XTZ) 1`] = `"12,345,678,900.000000- -XTZ"`;
@@ -2115,8 +2115,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Concordium unit (ccd) 1`] = `"12,345,678,900.000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
@@ -2372,6 +2370,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Tezos unit (XTZ) 1`] = `"12,345,678,900.000000- -XTZ"`;
@@ -2519,8 +2519,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Concordium unit (ccd) 1`] = `"12.345.678.900,000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
@@ -2776,6 +2774,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Tezos unit (XTZ) 1`] = `"12.345.678.900,000000- -XTZ"`;
@@ -2923,8 +2923,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Concordium unit (ccd) 1`] = `"12 345 678 900,000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Coreum unit (Core) 1`] = `"12 345 678 900,000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12 345 678 900,000000- -MUON"`;
 
@@ -3180,6 +3178,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TX unit (TX) 1`] = `"12 345 678 900,000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Tezos unit (XTZ) 1`] = `"12 345 678 900,000000- -XTZ"`;
@@ -3327,8 +3327,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Concordium unit (ccd) 1`] = `"12.345.678.900,000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
@@ -3584,6 +3582,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Tezos unit (XTZ) 1`] = `"12.345.678.900,000000- -XTZ"`;
@@ -3731,8 +3731,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Concordium unit (ccd) 1`] = `"12,345,678,900.000000- -CCD"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
@@ -3988,6 +3986,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Tezos unit (XTZ) 1`] = `"12,345,678,900.000000- -XTZ"`;
@@ -4135,8 +4135,6 @@ exports[`formatCurrencyUnit with default options should correctly format Concord
 exports[`formatCurrencyUnit with default options should correctly format Concordium unit (ccd) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Core unit (CORE) 1`] = `"0.0123456"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Coreum unit (Core) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900"`;
 
@@ -4391,6 +4389,8 @@ exports[`formatCurrencyUnit with default options should correctly format Sui uni
 exports[`formatCurrencyUnit with default options should correctly format Syscoin unit (SYS) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format TON unit (TON) 1`] = `"12,345,678"`;
+
+exports[`formatCurrencyUnit with default options should correctly format TX unit (TX) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Telos unit (TLOS) 1`] = `"0.0123456"`;
 
