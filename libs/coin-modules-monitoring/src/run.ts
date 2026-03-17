@@ -59,13 +59,11 @@ function formatDuration(ms: number): string {
 
 function hasCauseProperty(object: unknown): object is { cause: object } {
   return (
-    object !== null &&
-    object !== undefined &&
     typeof object === "object" &&
+    object !== null &&
     "cause" in object &&
-    object.cause !== null &&
-    object.cause !== undefined &&
-    typeof object.cause === "object"
+    typeof object.cause === "object" &&
+    object.cause !== null
   );
 }
 
@@ -252,7 +250,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
           `Skipping failing run. Error: ${err instanceof Error ? err.stack ?? err.message : err}`,
         );
         // We may miss some parameters added to the error on runtime
-        // We display only the message on the top for convenience and better readibility
+        // We display only the message on the top for convenience and better readability
         // So we added this log to have the full object
         if (err instanceof Error) {
           logErrorProperties(err);
