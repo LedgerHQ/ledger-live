@@ -6,7 +6,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useStableGasOptions } from "../hooks/useStableGasOptions";
 import { isEvmTransaction } from "../../../utils/isEvmTransaction";
 import { CustomFeesScreenInnerBase } from "./CustomFeesScreenInnerBase";

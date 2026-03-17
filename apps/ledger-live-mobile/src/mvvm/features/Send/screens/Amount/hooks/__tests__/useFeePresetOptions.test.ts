@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react-native";
 import { useFeePresetOptions } from "../useFeePresetOptions";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockCurrency = { id: "bitcoin", family: "bitcoin" } as unknown as CryptoOrTokenCurrency;
 

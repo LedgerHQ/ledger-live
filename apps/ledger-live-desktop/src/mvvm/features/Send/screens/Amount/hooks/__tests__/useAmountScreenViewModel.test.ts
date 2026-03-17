@@ -16,8 +16,10 @@ import { createMockAccount } from "../../../Recipient/__integrations__/__fixture
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),
+}));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasFeePresets: () => false,
     shouldEstimateFeePresetsWithBridge: () => false,

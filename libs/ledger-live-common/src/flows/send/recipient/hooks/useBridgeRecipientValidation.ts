@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor";
+import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";

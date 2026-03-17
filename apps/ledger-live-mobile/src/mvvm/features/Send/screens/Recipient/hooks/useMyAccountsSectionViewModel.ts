@@ -1,5 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
+import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FeePresetOption } from "./useFeePresetOptions";
 import { formatFeeRate } from "../utils/gas";

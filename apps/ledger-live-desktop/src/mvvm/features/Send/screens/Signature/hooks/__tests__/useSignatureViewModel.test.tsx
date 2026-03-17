@@ -72,7 +72,7 @@ jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
 }));
 
 // eslint-disable-next-line
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => {
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   global.__isUserRefusedTransactionErrorMock = jest.fn(() => false);
   return {
     sendFeatures: {

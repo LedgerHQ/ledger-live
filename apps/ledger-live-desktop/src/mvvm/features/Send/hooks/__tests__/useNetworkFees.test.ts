@@ -15,13 +15,15 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/registry", () => ({
+  getSendDescriptor: jest.fn(() => ({ fees: {}, inputs: {} })),
+}));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     hasFeePresets: jest.fn(() => false),
     shouldEstimateFeePresetsWithBridge: jest.fn(() => false),
     getFeePresetOptions: jest.fn(() => []),
   },
-  getSendDescriptor: jest.fn(() => ({ fees: {}, inputs: {} })),
 }));
 
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
