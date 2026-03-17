@@ -9,13 +9,14 @@
     "isolatedModules": false,
     "jsx": "react",
     "lib": ["es2022", "dom"],
+    "types": ["node", "jest"],
+    "typeRoots": ["./../node_modules/@types", "./../../../node_modules/@types"],
     "rootDir": ".",
     "outDir": "../lib/",
-    "baseUrl": ".",
     "paths": {
-      "react": ["../../../node_modules/@types/react"],
-      "@types/react": ["../../../node_modules/@types/react"],
-      "@tests/*": ["__tests__/*"]
+      "react": ["./../../../node_modules/@types/react"],
+      "@types/react": ["./../../../node_modules/@types/react"],
+      "@tests/*": ["./__tests__/*"]
     }
   },
   "references": [
