@@ -20,7 +20,6 @@ import DebugFetchCustomImage, {
 import DebugFirmwareUpdate from "~/screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "~/screens/Settings/Debug/Generators";
 import DebugContentCards from "~/screens/Settings/Debug/ContentCards";
-import DebugHttpTransport from "~/screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "~/screens/Settings/Debug/Information";
 import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetOfApps";
 import DebugPerformance from "~/screens/Settings/Debug/Performance";
@@ -374,13 +373,6 @@ export default function SettingsNavigator() {
         component={DebugEnv}
         options={{
           title: "Environment Variables",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugHttpTransport}
-        component={DebugHttpTransport}
-        options={{
-          title: "HTTP Transport",
         }}
       />
       <Stack.Screen

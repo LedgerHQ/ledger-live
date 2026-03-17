@@ -1,6 +1,7 @@
 import { HIDDiscoveredDevice, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";
 import { DeviceLike } from "~/reducers/types";
+import { WsProxyDiscoveredDevice } from "@ledgerhq/live-dmk-ws-proxy-client";
 
 export function mapScannedDeviceToDisplayedAvailableDevice(
   scannedDevice: ScannedDevice,
@@ -29,6 +30,21 @@ export function mapHidDeviceToDisplayedAvailableDevice(
     },
     available: true,
     discoveredDevice: hidDevice.discoveredDevice,
+  };
+}
+
+export function mapWsProxyDeviceToDisplayedAvailableDevice(
+  wsProxyDevice: WsProxyDiscoveredDevice,
+): DisplayedAvailableDevice {
+  return {
+    device: {
+      deviceId: wsProxyDevice.deviceId,
+      deviceName: wsProxyDevice.deviceName,
+      modelId: wsProxyDevice.modelId,
+      wired: true,
+    },
+    available: true,
+    discoveredDevice: wsProxyDevice.discoveredDevice,
   };
 }
 

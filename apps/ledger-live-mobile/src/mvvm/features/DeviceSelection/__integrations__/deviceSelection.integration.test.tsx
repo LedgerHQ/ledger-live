@@ -2,14 +2,14 @@ import * as React from "react";
 import { render, screen, withReadOnlyDisabled } from "@tests/test-renderer";
 import DeviceSelectionNavigator from "../Navigator";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { of } from "rxjs";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
+import { useHidDevicesDiscovery } from "@ledgerhq/live-dmk-mobile";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 const MockUseRoute = useRoute as jest.Mock;
 const mockNavigate = jest.fn();
-const mockDiscoverDevices = discoverDevices as jest.Mock;
+const mockUseHidDevicesDiscovery = useHidDevicesDiscovery as jest.Mock;
 
 (useNavigation as jest.Mock).mockReturnValue({
   navigate: mockNavigate,
@@ -22,9 +22,9 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/hw/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/hw/index"),
-  discoverDevices: jest.fn(),
+jest.mock("@ledgerhq/live-dmk-mobile", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-mobile"),
+  useHidDevicesDiscovery: jest.fn(() => ({ hidDevices: [], error: null })),
 }));
 
 describe("Device Selection feature integration test", () => {
@@ -45,8 +45,12 @@ describe("Device Selection feature integration test", () => {
       },
     });
   });
+
+  beforeEach(() => {
+    mockUseHidDevicesDiscovery.mockReturnValue({ hidDevices: [], error: null });
+  });
+
   it("should render a device connection screen when no device is installed", () => {
-    mockDiscoverDevices.mockReturnValue(of({}));
     render(<DeviceSelectionNavigator />, {
       overrideInitialState: withReadOnlyDisabled,
     });
@@ -67,15 +71,18 @@ describe("Device Selection feature integration test", () => {
   });
 
   it("should render a device selection screen when a device is installed", () => {
-    mockDiscoverDevices.mockReturnValue(
-      of({
-        type: "add",
-        id: "usb|1",
-        name: "Ledger Stax device",
-        deviceModel: { id: DeviceModelId.stax },
-        wired: true,
-      }),
-    );
+    mockUseHidDevicesDiscovery.mockReturnValue({
+      hidDevices: [
+        {
+          deviceId: "usb|1",
+          deviceName: "Ledger Stax device",
+          wired: true,
+          modelId: DeviceModelId.stax,
+          discoveredDevice: {} as DiscoveredDevice,
+        },
+      ],
+      error: null,
+    });
     render(<DeviceSelectionNavigator />, {
       overrideInitialState: withReadOnlyDisabled,
     });

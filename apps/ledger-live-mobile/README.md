@@ -115,7 +115,7 @@ Optional environment variables you can put in `.env`, `.env.production` or `.env
 
 [A more exhaustive list of documented environment variables can be found here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts).
 
-- `DEVICE_PROXY_URL=http://localhost:8435` Use the ledger device over HTTP. Useful for debugging on an emulator. More info about this in the section [Connection via HTTP bridge](#connection-via-http-bridge).
+- `DEVICE_PROXY_URL=ws://localhost:8435` Use the Ledger device through the DMK WebSocket proxy. Useful for debugging on an emulator/simulator. More info in [Connection via WS proxy bridge](#connection-via-ws-proxy-bridge).
 - `BRIDGESTREAM_DATA=...` Come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning.
 - `DEBUG_RNDEBUGGER=1` Enable react native debugger.
 - `DISABLE_READ_ONLY=1` Disable readonly mode by default.
@@ -181,25 +181,31 @@ Run the app from the Apple or Google own IDE to get some native debugging featur
 
 ### Working on iOS or Android emulators
 
-#### Connection via HTTP bridge
+#### Connection via WebSocket proxy bridge
 
 It is possible to run Ledger Live Mobile on an emulator and connect to a Nano that is plugged in via USB.
 
-- Install the [ledger-live cli](https://developers.ledger.com/docs/coin/ledger-live-cli/).
-- Plug in your Nano to your computer.
-- Run `ledger-live proxy` or `pnpm run:cli proxy`. A server starts and displays variable environments that can be used to build Ledger-Live Mobile. For example:
+- Build the CLI (`pnpm build:cli`) or install it with [ledger-live cli](https://developers.ledger.com/docs/coin/ledger-live-cli/).
+- Plug in your Ledger device to your computer.
+- Run `ledger-live proxy` or `pnpm run:cli proxy`. A server starts and prints proxy URLs you can use from Ledger Live Mobile. For example:
   ```
   DEVICE_PROXY_URL=ws://localhost:8435
   DEVICE_PROXY_URL=ws://192.168.1.14:8435
-  Nano S proxy started on 192.168.1.14
+  Proxy started on 192.168.1.14 — waiting for devices...
   ```
 - Either
-  - First, do `export DEVICE_PROXY_URL=the_adress_given_by_the_server` or paste this variable environment in the `.env` file at the root of the project (create it if it doesn't exist)
+  - First, run `export DEVICE_PROXY_URL=<url_printed_by_the_proxy>` or set the same variable in the `.env` file at the root of the project (create it if it doesn't exist)
   - Then, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
   - OR
   - First, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
-  - Then, go to the settings tab, then _debug_ > _connectivity_ > _http transport_ and paste the IP (ex: 192.168.1.14)
-- When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the adress from above, just select it and it should work normally.
+  - Then, go to _Settings_ > _Debug_ > _Connectivity_ and set the proxy URL (for example `ws://192.168.1.14:8435`, or just `192.168.1.14:8435`). If you have devices plugged in and appearing in the logs of the proxy, they should also appear on that screen.
+- Android localhost/network notes:
+  - On Android emulator, `localhost` points to the emulator itself. Use `ws://10.0.2.2:8435` to reach the host machine.
+  - If you prefer to keep `ws://localhost:8435`, use ADB reverse port mapping:
+    - `adb reverse tcp:8435 tcp:8435`
+    - then set `DEVICE_PROXY_URL=ws://localhost:8435`
+  - Remove the mapping with `adb reverse --remove tcp:8435` when finished.
+- When prompted to choose a Nano device in Ledger Live Mobile, you will see your Ledger device available through the proxy URL above. Select it and continue as usual.
 
 ### Extra Docs 📄
 

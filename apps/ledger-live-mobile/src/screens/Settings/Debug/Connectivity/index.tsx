@@ -6,6 +6,7 @@ import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import SelectDevice, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
+import { ProxyDiscoverySettings } from "./ProxyDiscoverySettings";
 import {
   ReactNavigationHeaderOptions,
   StackNavigatorNavigation,
@@ -42,12 +43,7 @@ export default function Connectivity() {
 
   return (
     <SettingsNavigationScrollView>
-      <SettingsRow
-        title="HTTP Transport"
-        desc="Configure how LLM sees a proxy device"
-        iconLeft={<IconsLegacy.DevicesAltMedium size={32} color="black" />}
-        onPress={() => navigation.navigate(ScreenName.DebugHttpTransport)}
-      />
+      <ProxyDiscoverySettings />
       {!device ? (
         <Box p={6}>
           <SelectDevice

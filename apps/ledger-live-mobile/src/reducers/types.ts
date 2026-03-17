@@ -293,6 +293,7 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   deprecationDoNotRemind: string[];
+  wsProxyUrl: string | null;
 };
 
 export type NotificationsSettings = {

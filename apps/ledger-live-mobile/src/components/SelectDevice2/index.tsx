@@ -3,7 +3,6 @@ import { Platform, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
 import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -38,12 +37,12 @@ import {
   useBleDevicesScanning,
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
 import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
@@ -53,7 +52,9 @@ import {
   mapScannedDeviceToDisplayedAvailableDevice,
   mapHidDeviceToDisplayedAvailableDevice,
   mapDeviceLikeToDisplayedDevice,
+  mapWsProxyDeviceToDisplayedAvailableDevice,
 } from "./mappers";
+import { useProxyDiscovery } from "~/transport/useProxyDiscovery";
 
 export type { SetHeaderOptionsRequest };
 
@@ -133,7 +134,6 @@ export default function SelectDevice({
 }: Props) {
   const { t } = useTranslation();
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
-  const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -154,7 +154,7 @@ export default function SelectDevice({
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   /**
-   * FIXME: Swapping between mock and real hooks is not ideal.
+   * NOTE: Swapping between mock and real hooks is not ideal.
    * This is a temporary workaround to keep e2e tests working until transport-level mocking is implemented
    * directly with the DMK, which will allow real hooks to work transparently with mocked transports.
    * Previously it was working because the discovery mocks were done directly inside the legacy HID and BLE transports.
@@ -162,10 +162,15 @@ export default function SelectDevice({
    */
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
 
+  /** Discovery: WebSocket Proxy Devices */
+  const { proxyDevices } = useProxyDiscovery();
+
+  /** Discovery: USB Devices */
   const mockHidState = useMockHidDevicesDiscovery(isMockMode);
   const realHidState = useHidDevicesDiscovery(!isMockMode);
   const { hidDevices } = isMockMode ? mockHidState : realHidState;
 
+  /** Discovery: BLE Devices */
   const scanningEnabled =
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
 
@@ -268,7 +273,7 @@ export default function SelectDevice({
 
       const isMockEnv = getEnv("MOCK");
       const isNonBleDebugDevice =
-        deviceId.includes("httpdebug") || deviceId.startsWith("speculos|");
+        deviceId.includes("wsHidProxy") || deviceId.startsWith("speculos|");
       if (!wired && !isMockEnv && !isNonBleDebugDevice) {
         setSelectedBleDevice(displayedDevice);
       } else {
@@ -337,33 +342,6 @@ export default function SelectDevice({
   ]);
 
   /**
-   * Discover debug HTTP proxy devices
-   */
-  useEffect(() => {
-    const filter = ({ id }: { id: string }) => ["httpdebug"].includes(id);
-    const sub = discoverDevices(filter).subscribe(e => {
-      if (e.type === "remove") setProxyDevice(undefined);
-      if (e.type === "add") {
-        const { name, deviceModel, id, wired } = e;
-
-        if (!deviceModel) return;
-
-        const newDevice = {
-          deviceName: name,
-          modelId: deviceModel.id,
-          deviceId: id,
-          wired,
-        };
-
-        setProxyDevice((maybeDevice: Device | undefined) => {
-          return maybeDevice || newDevice;
-        });
-      }
-    });
-    return () => sub.unsubscribe();
-  }, []);
-
-  /**
    * Auto selection of the last connected device
    */
   useAutoSelectDevice({
@@ -391,24 +369,16 @@ export default function SelectDevice({
       })
       .sort((a, b) => Number(b.available) - Number(a.available));
 
-    if (hidDevices.length > 0) {
-      devices = [mapHidDeviceToDisplayedAvailableDevice(hidDevices[0]), ...devices];
-    }
-    if (ProxyDevice) {
-      devices = [
-        {
-          device: ProxyDevice,
-          available: true,
-          discoveredDevice: makeMockDiscoveredDevice(ProxyDevice),
-        },
-        ...devices,
-      ];
-    }
+    devices = [
+      ...hidDevices.map(mapHidDeviceToDisplayedAvailableDevice),
+      ...proxyDevices.map(mapWsProxyDeviceToDisplayedAvailableDevice),
+      ...devices,
+    ];
 
     return filterByDeviceModelId
       ? devices.filter(d => d.device.modelId === filterByDeviceModelId)
       : devices;
-  }, [bleKnownDevices, filteredScannedDevices, hidDevices, ProxyDevice, filterByDeviceModelId]);
+  }, [bleKnownDevices, filteredScannedDevices, proxyDevices, hidDevices, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
@@ -643,7 +613,7 @@ export default function SelectDevice({
                   )}
                   {Platform.OS === "android" &&
                     hidDevices.length === 0 &&
-                    ProxyDevice === undefined && (
+                    proxyDevices.length === 0 && (
                       <Text
                         color="neutral.c100"
                         variant="large"

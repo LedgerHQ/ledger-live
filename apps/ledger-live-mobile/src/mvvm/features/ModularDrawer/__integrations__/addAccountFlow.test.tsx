@@ -2,10 +2,12 @@ import React from "react";
 import { act, render, waitFor } from "@tests/test-renderer";
 import { ModularDrawerSharedNavigator, WITH_ACCOUNT_SELECTION } from "./shared";
 import { BTC_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
+import { useHidDevicesDiscovery } from "@ledgerhq/live-dmk-mobile";
 import { Account } from "@ledgerhq/types-live";
-import { of, Observable } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Observable } from "rxjs";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 // Needed for receive navigator
 jest.mock("@ledgerhq/live-config/LiveConfig", () => {
@@ -40,19 +42,12 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
   useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-jest.mock("@ledgerhq/live-common/hw/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/hw/index"),
-  discoverDevices: jest.fn((_filter?: (module: { id: string }) => boolean) => {
-    const deviceEvent = {
-      type: "add" as const,
-      id: "usb|1",
-      name: "Ledger Stax",
-      deviceModel: { id: DeviceModelId.stax },
-      wired: true,
-    };
-    return of(deviceEvent);
-  }),
+jest.mock("@ledgerhq/live-dmk-mobile", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-mobile"),
+  useHidDevicesDiscovery: jest.fn(() => ({ hidDevices: [], error: null })),
 }));
+
+const mockUseHidDevicesDiscovery = jest.mocked(useHidDevicesDiscovery);
 
 jest.mock("~/hooks/deviceActions", () => ({
   __esModule: true,
@@ -131,6 +126,21 @@ const advanceTimers = () => {
 };
 
 describe("AddAccountFlow with MAD", () => {
+  beforeEach(() => {
+    mockUseHidDevicesDiscovery.mockReturnValue({
+      hidDevices: [
+        {
+          deviceId: "usb|1",
+          deviceName: "Ledger Stax",
+          wired: true,
+          modelId: DeviceModelId.stax,
+          discoveredDevice: {} as DiscoveredDevice,
+        },
+      ],
+      error: null,
+    });
+  });
+
   it("should do the add account flow then go back to the previous screen", async () => {
     const { getByText, queryByText, user } = render(
       <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,

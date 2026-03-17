@@ -306,6 +306,7 @@ export enum SettingsActionTypes {
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
   DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
+  SET_WS_PROXY_URL = "SET_WS_PROXY_URL",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -403,6 +404,7 @@ export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starr
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetSelectedTabPortfolioAssetsPayload =
   SettingsState["selectedTabPortfolioAssets"];
+export type SettingsSetWsProxyUrlPayload = SettingsState["wsProxyUrl"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -461,7 +463,8 @@ export type SettingsPayload =
   | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
-  | SettingsSetHasSeenWalletV4TourPayload;
+  | SettingsSetHasSeenWalletV4TourPayload
+  | SettingsSetWsProxyUrlPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

@@ -77,6 +77,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetWsProxyUrlPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -174,6 +175,7 @@ export const INITIAL_STATE: SettingsState = {
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
   deprecationDoNotRemind: [],
+  wsProxyUrl: null,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -669,6 +671,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
   }),
+
+  [SettingsActionTypes.SET_WS_PROXY_URL]: (state, action) => ({
+    ...state,
+    wsProxyUrl: (action as Action<SettingsSetWsProxyUrlPayload>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -894,3 +901,4 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const wsProxyUrlSelector = (state: State) => state.settings.wsProxyUrl;

@@ -46,7 +46,6 @@ export enum ScreenName {
   DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
   DebugContentCards = "DebugContentCards",
-  DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
   DebugPerformance = "DebugPerformance",
   DebugLogs = "DebugLogs",

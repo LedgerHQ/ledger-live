@@ -7,6 +7,7 @@ import {
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { wsProxyTransportFactory } from "@ledgerhq/live-dmk-ws-proxy-client";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
 
@@ -24,6 +25,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
       .addTransport(RNHidTransportFactory)
+      .addTransport(wsProxyTransportFactory) // NB: safe to add even in prod as it's a noop if the WS proxy URL is not set
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig({ firmwareDistributionSalt })
       .build();

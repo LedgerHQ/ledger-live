@@ -67,6 +67,7 @@ import {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetWsProxyUrlPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -292,6 +293,10 @@ export const setSelectedTabPortfolioAssets =
 
 export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
   SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
+);
+
+export const setWsProxyUrl = createAction<SettingsSetWsProxyUrlPayload>(
+  SettingsActionTypes.SET_WS_PROXY_URL,
 );
 
 type PortfolioRangeOption = {

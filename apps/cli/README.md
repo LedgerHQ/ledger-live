@@ -444,13 +444,9 @@ Usage: ledger-live portfolio  # Get a portfolio summary for accounts
  -g, --disableAutofillGaps    : if set, disable the autofill of gaps to evaluate the rates availability
 
 Usage: ledger-live proxy
- -d, --device <String>        : provide a specific HID path of a device
- -f, --file <String>          : in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.
  -v, --verbose                : verbose mode
  -s, --silent                 : do not output the proxy logs
-     --disable-auto-skip      : auto skip apdu that don't replay instead of error
- -p, --port <String>          : specify the http port to use (default: 8435)
- -r, --record                 : see the description of --file
+ -p, --port <String>          : specify the WebSocket proxy port to use (default: 8435)
 
 Usage: ledger-live receive    # Receive crypto-assets (verify on device)
  -d, --device <String>        : provide a specific HID path of a device
