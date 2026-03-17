@@ -11020,7 +11020,7 @@ importers:
         version: 30.2.0
       typescript:
         specifier: 'catalog:'
-        version: 5.8.3
+        version: 5.9.3
 
   tests/dummy-live-app:
     dependencies:
