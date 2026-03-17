@@ -228,8 +228,16 @@ describe("listOperations (MSW integration)", () => {
       expect(op.asset).toEqual({
         type: "spl-token",
         assetReference: USDC_MINT,
+        assetOwner: TEST_ADDRESS,
       });
       expect(op.tx.hash).toBe("sig-token-out");
+      expect(op.details).toEqual({
+        ledgerOpType: "OUT",
+        assetAmount: "2000000",
+        assetSenders: [TEST_ADDRESS],
+        assetRecipients: [TEST_RECIPIENT],
+        internal: true,
+      });
     });
 
     it("should return an IN token operation when recipient's token balance increases", async () => {
@@ -304,6 +312,14 @@ describe("listOperations (MSW integration)", () => {
       expect(op.asset).toEqual({
         type: "spl-token",
         assetReference: USDC_MINT,
+        assetOwner: TEST_ADDRESS,
+      });
+      expect(op.details).toEqual({
+        ledgerOpType: "IN",
+        assetAmount: "3000000",
+        assetSenders: [TEST_RECIPIENT],
+        assetRecipients: [TEST_ADDRESS],
+        internal: true,
       });
     });
   });
@@ -382,6 +398,7 @@ describe("listOperations (MSW integration)", () => {
       expect(op.asset).toEqual({
         type: "spl-token-2022",
         assetReference: PYUSD_MINT,
+        assetOwner: TEST_ADDRESS,
       });
     });
 

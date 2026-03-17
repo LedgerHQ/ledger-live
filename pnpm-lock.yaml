@@ -5903,6 +5903,12 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -5924,6 +5930,9 @@ importers:
       bip39:
         specifier: ^3.1.0
         version: 3.1.0
+      bs58:
+        specifier: 'catalog:'
+        version: 4.0.1
       docker-compose:
         specifier: ^1
         version: 1.1.0
@@ -5940,6 +5949,9 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
+      '@types/bs58':
+        specifier: 'catalog:'
+        version: 4.0.4
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
@@ -6591,6 +6603,9 @@ importers:
       '@ledgerhq/hw-app-polkadot':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-polkadot
+      '@ledgerhq/hw-app-solana':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-solana
       '@ledgerhq/hw-app-str':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-str

@@ -102,6 +102,7 @@ function makeOperation(
   asset: AssetInfo,
   meta: TxMeta,
   operationIndex: number,
+  details?: Record<string, unknown>,
 ): Operation {
   return {
     id: `${address}-${meta.hash}-${opType}-${operationIndex}`,
@@ -110,6 +111,7 @@ function makeOperation(
     recipients,
     value,
     asset,
+    ...(details ? { details } : {}),
     tx: {
       hash: meta.hash,
       block: {
@@ -199,8 +201,13 @@ function parseNativeOperations(
  * Zero-delta tokens are silently skipped.
  * operationIndex starts at 1 (0 is reserved for the native operation).
  *
- * Counterparty lookup: for an IN, we search postTokenBalances for another owner of the same
- * mint; for an OUT, we search preTokenBalances. Falls back to the first different accountKey.
+ * Token operations are marked `internal: true` in their details so that the
+ * generic-alpaca bridge (`getAccountShape`) excludes them from the parent
+ * account's operations list — they only surface as sub-account operations.
+ * Without this flag, a single token transfer would produce duplicate parent
+ * operations (one native + one token) with potentially different IDs when
+ * the native op type differs from the token op type (e.g. send-all with
+ * ATA close yields native IN + token OUT).
  */
 function parseTokenOperations(
   address: string,
@@ -222,6 +229,7 @@ function parseTokenOperations(
     const asset: AssetInfo = {
       type: tokenType,
       assetReference: mint,
+      assetOwner: address,
     };
 
     const opType = delta > 0n ? "IN" : "OUT";
@@ -230,8 +238,8 @@ function parseTokenOperations(
     const counterparty = findTokenCounterparty(
       address,
       mint,
-      opType === "IN" ? preTokenBalances : postTokenBalances,
-      opType === "IN" ? postTokenBalances : preTokenBalances,
+      preTokenBalances,
+      postTokenBalances,
       tx.transaction.message.accountKeys.map(k => k.pubkey.toBase58()),
     );
 
@@ -239,7 +247,13 @@ function parseTokenOperations(
     const recipients = opType === "IN" ? [address] : counterparty ? [counterparty] : [];
 
     ops.push(
-      makeOperation(address, opType, value, senders, recipients, asset, meta, operationIndex),
+      makeOperation(address, opType, value, senders, recipients, asset, meta, operationIndex, {
+        ledgerOpType: opType,
+        assetAmount: value.toString(),
+        assetSenders: senders,
+        assetRecipients: recipients,
+        internal: true,
+      }),
     );
     operationIndex++;
   }
@@ -298,22 +312,23 @@ function computeTokenBalanceDeltas(
 /**
  * Best-effort counterparty detection for token transfers.
  *
- * 1. Look for another owner of the same mint in the "destination" balance list
- *    (postTokenBalances for IN, preTokenBalances for OUT).
- * 2. Fall back to the first account key that is not the owner — rough heuristic
- *    for when the counterparty's token account is not in the balance arrays
- *    (e.g. account closed after transfer).
+ * Searches both post and pre token balance arrays for another wallet owner
+ * of the same mint. Post is checked first because the recipient may not exist
+ * in pre when their ATA is created in the same transaction.
+ *
+ * Falls back to the first different account key when neither array has an
+ * owner-populated entry for a counterparty.
  */
 function findTokenCounterparty(
   ownerAddress: string,
   mint: string,
-  _preTokenBalances: TokenBalance[],
+  preTokenBalances: TokenBalance[],
   postTokenBalances: TokenBalance[],
   accountKeys: string[],
 ): string | undefined {
-  const counterpartyEntry = postTokenBalances.find(
-    b => b.owner !== ownerAddress && b.mint === mint,
-  );
-  if (counterpartyEntry?.owner) return counterpartyEntry.owner;
+  for (const balances of [postTokenBalances, preTokenBalances]) {
+    const entry = balances.find(b => b.owner && b.owner !== ownerAddress && b.mint === mint);
+    if (entry?.owner) return entry.owner;
+  }
   return accountKeys.find(k => k !== ownerAddress);
 }

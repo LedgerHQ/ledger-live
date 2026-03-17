@@ -627,7 +627,18 @@ describe("listOperations", () => {
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
-      expect(tokenOps[0].asset).toEqual({ type: "spl-token", assetReference: USDC_MINT });
+      expect(tokenOps[0].asset).toEqual({
+        type: "spl-token",
+        assetReference: USDC_MINT,
+        assetOwner: TEST_ADDRESS,
+      });
+      expect(tokenOps[0].details).toEqual({
+        ledgerOpType: "IN",
+        assetAmount: "1000000",
+        assetSenders: [],
+        assetRecipients: [TEST_ADDRESS],
+        internal: true,
+      });
     });
 
     it("should fall back to accountKeys for counterparty when not in token balances", async () => {
@@ -748,6 +759,78 @@ describe("listOperations", () => {
       )!;
       expect(bonkOp.type).toBe("IN");
       expect(bonkOp.value).toBe(9_000_000n);
+    });
+
+    it("should find counterparty in postTokenBalances when absent from preTokenBalances (new ATA)", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeTxWithTokenBalances(
+          [
+            {
+              accountIndex: 0,
+              mint: USDC_MINT,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID_STR,
+              uiTokenAmount: { amount: "5000000", decimals: 6, uiAmount: 5.0 },
+            },
+          ],
+          [
+            {
+              accountIndex: 0,
+              mint: USDC_MINT,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID_STR,
+              uiTokenAmount: { amount: "3000000", decimals: 6, uiAmount: 3.0 },
+            },
+            {
+              accountIndex: 1,
+              mint: USDC_MINT,
+              owner: TEST_RECIPIENT,
+              programId: TOKEN_PROGRAM_ID_STR,
+              uiTokenAmount: { amount: "2000000", decimals: 6, uiAmount: 2.0 },
+            },
+          ],
+          [TEST_ADDRESS, TEST_RECIPIENT],
+        ),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      const tokenOps = result.items.filter(op => op.asset.type !== "native");
+      expect(tokenOps).toHaveLength(1);
+      expect(tokenOps[0].type).toBe("OUT");
+      expect(tokenOps[0].recipients).toEqual([TEST_RECIPIENT]);
+    });
+
+    it("should include internal: true in token operation details", async () => {
+      const blockTime = 1700000000;
+      mockGetSignaturesForAddress.mockResolvedValue([
+        { signature: "sig1", slot: 100, blockTime, err: null },
+      ]);
+      mockGetParsedTransactions.mockResolvedValue([
+        makeTxWithTokenBalances(
+          [],
+          [
+            {
+              accountIndex: 0,
+              mint: USDC_MINT,
+              owner: TEST_ADDRESS,
+              programId: TOKEN_PROGRAM_ID_STR,
+              uiTokenAmount: { amount: "1000000", decimals: 6, uiAmount: 1.0 },
+            },
+          ],
+          [TEST_ADDRESS],
+        ),
+      ]);
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+      const tokenOps = result.items.filter(op => op.asset.type !== "native");
+      expect(tokenOps).toHaveLength(1);
+      expect(tokenOps[0].details).toEqual(expect.objectContaining({ internal: true }));
     });
   });
 });

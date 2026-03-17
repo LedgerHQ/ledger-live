@@ -35,6 +35,7 @@ type RpcToConnection = {
   sendTransaction: "sendTransaction";
   getMinimumBalanceForRentExemption: "getMinimumBalanceForRentExemption";
   getRecentPrioritizationFees: "getRecentPrioritizationFees";
+  getSlot: "getSlot";
 };
 
 type ConnectionResult<M extends keyof Connection> = Connection[M] extends (

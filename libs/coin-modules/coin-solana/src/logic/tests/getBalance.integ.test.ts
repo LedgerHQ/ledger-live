@@ -26,6 +26,7 @@ describe("getBalance (integration)", () => {
         "assetReference",
         expect.stringMatching(/^[1-9A-HJ-NP-Za-km-z]{32,44}$/),
       );
+      expect(b.asset).toHaveProperty("assetOwner", FUNDED_ADDRESS);
       expect(b.value).toBeGreaterThanOrEqual(0n);
     }
   });

@@ -1,22 +1,10 @@
 import { derivePath } from "ed25519-hd-key";
 import { generateMnemonic, mnemonicToSeed } from "bip39";
-import { Keypair, VersionedMessage, VersionedTransaction } from "@solana/web3.js";
-import { SolanaAddress, SolanaSignature, SolanaSigner } from "@ledgerhq/coin-solana/signer";
+import { Keypair, VersionedTransaction } from "@solana/web3.js";
+import bs58 from "bs58";
+import type { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Solana";
 
-function getAddress(keyPair: Keypair): Promise<SolanaAddress> {
-  const address = keyPair.publicKey.toBuffer();
-  return Promise.resolve({ address });
-}
-
-function signTransaction(keyPair: Keypair, transaction: Buffer): Promise<SolanaSignature> {
-  const tx = new VersionedTransaction(VersionedMessage.deserialize(transaction));
-  tx.sign([keyPair]);
-
-  const signature = Buffer.from(tx.signatures[0] ?? []);
-  return Promise.resolve({ signature });
-}
-
-export async function buildSigner(): Promise<SolanaSigner> {
+export async function buildSigner(): Promise<Signer> {
   const mnemonic = generateMnemonic();
   const seed = await mnemonicToSeed(mnemonic);
   const seedHex = seed.toString("hex");
@@ -24,14 +12,19 @@ export async function buildSigner(): Promise<SolanaSigner> {
   const keyPair = (path: string) => Keypair.fromSeed(derivePath(`m/${path}`, seedHex).key);
 
   return {
-    getAddress: (path: string) => getAddress(keyPair(path)),
-    signTransaction: (path: string, transaction: Buffer) =>
-      signTransaction(keyPair(path), transaction),
-    getAppConfiguration: () => {
-      throw new Error("Not implemented");
+    getAddress: async (path: string) => {
+      const kp = keyPair(path);
+      const address = kp.publicKey.toBuffer();
+      const publicKey = bs58.encode(address);
+      return { address, publicKey };
     },
-    signMessage: () => {
-      throw new Error("Not implemented");
+    signTransaction: async (path: string, txBase64: string) => {
+      const kp = keyPair(path);
+      const txBuffer = Buffer.from(txBase64, "base64");
+      const tx = VersionedTransaction.deserialize(txBuffer);
+      tx.sign([kp]);
+      const signature = Buffer.from(tx.signatures[0] ?? []);
+      return signature.toString("hex");
     },
   };
 }

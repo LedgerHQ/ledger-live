@@ -66,7 +66,7 @@ describe("getBalance", () => {
     expect(result).toHaveLength(2);
     expect(result[1]).toEqual({
       value: 5_000_000n,
-      asset: { type: "spl-token", assetReference: USDC_MINT },
+      asset: { type: "spl-token", assetReference: USDC_MINT, assetOwner: TEST_ADDRESS },
     });
     expect(mockGetParsedToken2022AccountsByOwner).not.toHaveBeenCalled();
   });
@@ -98,7 +98,7 @@ describe("getBalance", () => {
     expect(result).toHaveLength(2);
     expect(result[1]).toEqual({
       value: 10_000_000n,
-      asset: { type: "spl-token-2022", assetReference: PYUSD_MINT },
+      asset: { type: "spl-token-2022", assetReference: PYUSD_MINT, assetOwner: TEST_ADDRESS },
     });
     expect(mockGetParsedToken2022AccountsByOwner).toHaveBeenCalledWith(TEST_ADDRESS);
   });
@@ -127,7 +127,7 @@ describe("getBalance", () => {
     expect(result).toHaveLength(2);
     expect(result[1]).toEqual({
       value: 10_000_000n,
-      asset: { type: "spl-token", assetReference: USDC_MINT },
+      asset: { type: "spl-token", assetReference: USDC_MINT, assetOwner: TEST_ADDRESS },
     });
   });
 

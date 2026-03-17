@@ -125,7 +125,7 @@ describe("getBalance (MSW integration)", () => {
       });
       expect(result[1]).toEqual({
         value: 5_000_000n,
-        asset: { type: "spl-token", assetReference: USDC_MINT },
+        asset: { type: "spl-token", assetReference: USDC_MINT, assetOwner: TEST_ADDRESS },
       });
     });
   });
@@ -185,7 +185,7 @@ describe("getBalance (MSW integration)", () => {
       });
       expect(result[1]).toEqual({
         value: 10_000_000n,
-        asset: { type: "spl-token-2022", assetReference: PYUSD_MINT },
+        asset: { type: "spl-token-2022", assetReference: PYUSD_MINT, assetOwner: TEST_ADDRESS },
       });
     });
   });

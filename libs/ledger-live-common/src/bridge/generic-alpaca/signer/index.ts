@@ -8,6 +8,7 @@ import { DerivationType, LedgerSigner as TaquitoLedgerSigner } from "@taquito/le
 import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
 import Tezos from "@ledgerhq/hw-app-tezos";
 import { context as evmContext, getAddress as evmGetAddress } from "./Eth";
+import { context as solanaContext, getAddress as solanaGetAddress } from "./Solana";
 import { context as xrpContext, getAddress as xrpGetAddress } from "./Xrp";
 
 const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
@@ -92,6 +93,12 @@ export function getSigner(network: string): AlpacaSigner {
       return {
         getAddress: evmGetAddress,
         context: evmContext,
+      };
+    }
+    case "solana": {
+      return {
+        getAddress: solanaGetAddress,
+        context: solanaContext,
       };
     }
   }

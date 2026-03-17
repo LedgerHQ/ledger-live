@@ -31,10 +31,15 @@ export async function getBalance(
     locked: lockedLamports,
   };
 
-  const splBalances = mapTokenAccountsToBalances(splTokenAccounts, PARSED_PROGRAMS.SPL_TOKEN);
+  const splBalances = mapTokenAccountsToBalances(
+    splTokenAccounts,
+    PARSED_PROGRAMS.SPL_TOKEN,
+    address,
+  );
   const token2022Balances = mapTokenAccountsToBalances(
     token2022Accounts,
     PARSED_PROGRAMS.SPL_TOKEN_2022,
+    address,
   );
 
   return [nativeBalance, ...splBalances, ...token2022Balances];
@@ -43,6 +48,7 @@ export async function getBalance(
 function mapTokenAccountsToBalances(
   accounts: ReadonlyArray<ParsedOnChainTokenAccount>,
   tokenProgram: SolanaTokenProgram,
+  ownerAddress: string,
 ): Balance[] {
   const balancesByMint = new Map<string, bigint>();
 
@@ -57,6 +63,7 @@ function mapTokenAccountsToBalances(
     asset: {
       type: tokenProgram,
       assetReference: mint,
+      assetOwner: ownerAddress,
     },
   }));
 }

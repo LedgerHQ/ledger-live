@@ -1,11 +1,14 @@
 import {
   AlpacaApi,
+  AssetInfo,
+  Balance,
   BroadcastConfig,
   Cursor,
   FeeEstimation,
   ListOperationsOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
@@ -13,17 +16,20 @@ import { craftRawTransaction } from "../logic/craftRawTransaction";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
+import { getNextSequence } from "../logic/getNextSequence";
+import { getAssetFromToken, getTokenFromAsset } from "../logic/getTokenFromAsset";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
+import { validateAddress } from "../logic/validateAddress";
+import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaApi {
+export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaApi & BridgeApi {
   coinConfig.setCoinConfig(() => ({
     ...config,
     status: { type: "active" as const },
   }));
-
   const api = getChainAPI({ endpoint: endpointByCurrencyId(currencyId) });
 
   return {
@@ -71,14 +77,24 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     getStakes: (_address: string, _cursor?: Cursor) => {
       throw new Error("getStakes is not supported");
     },
-    validateIntent: () => {
-      throw new Error("validateIntent is not supported");
+    validateIntent: (
+      intent: TransactionIntent,
+      balances: Balance[],
+      customFees?: FeeEstimation,
+    ) => {
+      return validateIntent(intent, balances, customFees);
     },
-    getNextSequence: () => {
-      throw new Error("getNextSequence is not supported");
+    getNextSequence: (address: string) => {
+      return getNextSequence(api, address);
     },
-    validateAddress: () => {
-      throw new Error("validateAddress is not supported");
+    validateAddress: (address: string, parameters) => {
+      return validateAddress(address, parameters);
+    },
+    getTokenFromAsset: (asset: AssetInfo) => {
+      return getTokenFromAsset(currencyId, asset);
+    },
+    getAssetFromToken: (token, owner) => {
+      return getAssetFromToken(token, owner);
     },
   };
 }
