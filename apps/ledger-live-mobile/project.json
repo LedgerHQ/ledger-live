@@ -8,6 +8,22 @@
         }
       ]
     },
+    "lint:ci": {
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
+    },
+    "lint:i18n": {
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
+    },
     "e2e:ci": {
       "outputs": [
         "{projectRoot}/artifacts/**"
