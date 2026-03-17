@@ -1,9 +1,11 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Provider } from "react-redux";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName, NavigatorName } from "~/const";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AddAccountsNavigator from "LLM/features/Accounts/Navigator";
+import { createStore, withReadOnlyDisabled } from "@tests/test-renderer";
 
 import { Button } from "@ledgerhq/native-ui";
 import {
@@ -48,6 +50,7 @@ type MockModularDrawerComponentProps = {
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   flow?: string;
+  useDeviceSelectionState?: boolean;
 };
 
 const MockModularDrawerComponent = ({
@@ -103,7 +106,7 @@ const MockModularDrawerComponent = ({
   );
 };
 
-export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentProps) => (
+const StackNavigatorContent = (props: MockModularDrawerComponentProps) => (
   <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
     <Stack.Screen name={ScreenName.MockedModularDrawer}>
       {() => <MockModularDrawerComponent {...props} />}
@@ -125,3 +128,22 @@ export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentPr
     />
   </Stack.Navigator>
 );
+
+const ModularDrawerWithDeviceSelectionStore = (props: MockModularDrawerComponentProps) => {
+  const store = useMemo(() => createStore({ overrideInitialState: withReadOnlyDisabled }), []);
+  return (
+    <Provider store={store}>
+      <StackNavigatorContent {...props} />
+    </Provider>
+  );
+};
+
+export const ModularDrawerSharedNavigator = (props: MockModularDrawerComponentProps) => {
+  const { useDeviceSelectionState = false } = props;
+
+  if (useDeviceSelectionState) {
+    return <ModularDrawerWithDeviceSelectionStore {...props} />;
+  }
+
+  return <StackNavigatorContent {...props} />;
+};

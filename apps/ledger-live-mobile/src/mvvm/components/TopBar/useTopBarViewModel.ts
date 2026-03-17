@@ -3,7 +3,12 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { track } from "~/analytics";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useSelector } from "~/context/hooks";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSyncIndicator } from "./hooks/useSyncIndicator";
 
 export function useTopBarViewModel(
@@ -13,6 +18,8 @@ export function useTopBarViewModel(
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
   const page = screenName ?? ScreenName.Portfolio;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { navigateToRebornFlow } = useRebornFlow();
   const { hasAccounts, isError, isPending, listOfErrorAccountNames, syncAccessibilityLabel } =
     useSyncIndicator();
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
@@ -26,15 +33,20 @@ export function useTopBarViewModel(
 
   const onMyLedgerPress = useCallback(() => {
     track("menuentry_clicked", { button: "MyLedger", page });
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
-      params: {
-        tab: undefined,
-        searchQuery: undefined,
-        updateModalOpened: undefined,
-      },
-    });
-  }, [navigation, page]);
+    if (readOnlyModeEnabled) {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.myLedger);
+      navigateToRebornFlow();
+    } else {
+      navigation.navigate(NavigatorName.MyLedger, {
+        screen: ScreenName.MyLedgerChooseDevice,
+        params: {
+          tab: undefined,
+          searchQuery: undefined,
+          updateModalOpened: undefined,
+        },
+      });
+    }
+  }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
 
   const onDiscoverPress = useCallback(() => {
     track("menuentry_clicked", { button: "Discover", page });

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { Linking, StyleProp, ViewStyle } from "react-native";
@@ -11,6 +11,9 @@ import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName } from "~/const";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "../TransferButton";
 import BuyDeviceBanner, {
@@ -50,6 +53,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
 
   const { page } = useAnalytics();
 
+  const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
@@ -77,11 +81,17 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   );
 
   const onNavigateRecover = useCallback(() => {
+    if (readOnlyModeEnabled) {
+      onClose?.();
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.ledgerRecover);
+      dispatch(openRebornBuyDeviceDrawer());
+      return;
+    }
     if (quickAccessURI) {
       Linking.canOpenURL(quickAccessURI).then(() => Linking.openURL(quickAccessURI));
     }
     onClose?.();
-  }, [onClose, quickAccessURI]);
+  }, [readOnlyModeEnabled, onClose, quickAccessURI, dispatch]);
 
   const buttonsList: ButtonItem[] = [
     SEND && {

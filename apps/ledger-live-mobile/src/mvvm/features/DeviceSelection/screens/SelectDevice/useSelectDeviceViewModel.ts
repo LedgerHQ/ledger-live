@@ -8,6 +8,10 @@ import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { DeviceSelectionNavigationProps, DeviceSelectionNavigatorParamsList } from "../../types";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
+import { setOriginFlow } from "~/analytics/originFlow";
 
 export default function useSelectDeviceViewModel(
   route: RouteProp<
@@ -15,11 +19,15 @@ export default function useSelectDeviceViewModel(
     ScreenName.SelectDevice
   >,
 ) {
-  const { context, currency } = route.params;
+  const params = route.params ?? {};
+  const { context, currency, onCloseNavigation, sourceScreenName } = params;
   const navigation = useNavigation<DeviceSelectionNavigationProps["navigation"]>();
+  const dispatch = useDispatch();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | null>(null);
   const action = useAppDeviceAction();
   const isFocused = useIsFocused();
+  const hasRedirectedRef = useRef(false);
 
   const onDeviceUpdated = useRef<(() => void) | undefined>(undefined);
 
@@ -63,6 +71,16 @@ export default function useSelectDeviceViewModel(
     prepareCurrency(currency);
   }, [currency]);
 
+  useEffect(() => {
+    if (!readOnlyModeEnabled || hasRedirectedRef.current) return;
+    hasRedirectedRef.current = true;
+    onCloseNavigation?.();
+    navigation.getParent()?.goBack();
+    const source = sourceScreenName ?? "Device Selection";
+    setOriginFlow(source);
+    dispatch(openRebornBuyDeviceDrawer());
+  }, [readOnlyModeEnabled, onCloseNavigation, sourceScreenName, navigation, dispatch]);
+
   return {
     onResult,
     device,
@@ -71,5 +89,7 @@ export default function useSelectDeviceViewModel(
     onClose,
     selectDevice,
     registerDeviceSelection,
+    readOnlyModeEnabled,
+    currency,
   };
 }

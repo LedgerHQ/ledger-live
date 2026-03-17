@@ -5,6 +5,8 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import { ModalOnDisabledClickComponentProps } from "../index";
 import CurrencyIcon from "../../CurrencyIcon";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { NavigatorName, ScreenName } from "~/const";
 import Button from "../../wrappedUi/Button";
 import {
@@ -46,6 +48,7 @@ function ZeroBalanceDisabledModalContent({
 
   const goToBuy = useCallback(() => {
     if (shouldUseLegacyRebornFlow && !hasOrderedNano) {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.buy);
       navigateToRebornFlow();
       return;
     }
@@ -69,6 +72,7 @@ function ZeroBalanceDisabledModalContent({
 
   const goToReceive = useCallback(() => {
     if (shouldUseLegacyRebornFlow && !hasOrderedNano) {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveFlow);
       navigateToRebornFlow();
       return;
     }

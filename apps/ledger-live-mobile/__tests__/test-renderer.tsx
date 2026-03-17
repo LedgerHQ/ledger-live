@@ -112,6 +112,15 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
 
 export type ReduxStore = ReturnType<typeof createStore>;
 
+export { createStore };
+
+export function withReadOnlyDisabled(state: State): State {
+  return {
+    ...state,
+    settings: { ...state.settings, readOnlyModeEnabled: false },
+  };
+}
+
 function CountervaluesProviders({
   children,
   store,

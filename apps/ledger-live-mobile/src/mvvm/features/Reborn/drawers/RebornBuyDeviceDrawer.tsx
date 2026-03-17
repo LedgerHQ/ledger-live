@@ -1,5 +1,6 @@
 import React from "react";
 import { TrackScreen } from "~/analytics";
+import { getOriginFlow } from "~/analytics/originFlow";
 import useRebornBuyDeviceViewModel from "./useRebornBuyDeviceViewModel";
 import {
   Text,
@@ -45,9 +46,16 @@ const items = [
 type ViewProps = ReturnType<typeof useRebornBuyDeviceViewModel>;
 
 function View({ t, setupDevice, buyLedger }: Readonly<Omit<ViewProps, "isOpen" | "handleClose">>) {
+  const originFlow = getOriginFlow() || undefined;
   return (
     <>
-      <TrackScreen category="RebornDrawer" name="Upsell Flex" type="drawer" />
+      <TrackScreen
+        category="RebornDrawer"
+        name="Upsell Flex"
+        type="drawer"
+        refreshSource={false}
+        source={originFlow}
+      />
 
       <Image
         source={require("../assets/ConnectDevice.webp")}

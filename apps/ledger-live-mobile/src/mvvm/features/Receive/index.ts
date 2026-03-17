@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
 
@@ -68,6 +70,7 @@ export function useOpenReceiveDrawer({
 
   const handleOnclick = useCallback(
     (fromReceiveOptionsDrawer: boolean = false) => {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveFlow);
       if (showNoahMenu && !fromReceiveOptionsDrawer) {
         openReceiveOptionsDrawer({
           currency: currency,

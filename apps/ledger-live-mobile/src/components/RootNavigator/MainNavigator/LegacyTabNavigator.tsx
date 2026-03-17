@@ -9,6 +9,8 @@ import MyLedgerNavigator, { ManagerTabIcon } from "../MyLedgerNavigator";
 import DiscoverNavigator from "../DiscoverNavigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { Tab } from "./tabNavigator";
 import type { LegacyTabNavigatorProps } from "./types";
 
@@ -78,6 +80,7 @@ export function LegacyTabNavigator({
                   parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
                 }
               } else if (readOnlyModeEnabled) {
+                setOriginFlow(HOOKS_TRACKING_LOCATIONS.earn);
                 navigateToRebornFlow();
               } else
                 navigation.navigate(NavigatorName.Earn, {
@@ -163,6 +166,7 @@ export function LegacyTabNavigator({
                   parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
                 }
               } else if (readOnlyModeEnabled) {
+                setOriginFlow(HOOKS_TRACKING_LOCATIONS.myLedger);
                 navigateToRebornFlow();
               } else {
                 navigation.jumpTo(NavigatorName.MyLedger, {

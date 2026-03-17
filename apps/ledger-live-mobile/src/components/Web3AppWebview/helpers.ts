@@ -35,6 +35,7 @@ import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
 import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
+import { setOriginFlow } from "~/analytics/originFlow";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import {
@@ -60,6 +61,10 @@ export function useWebView(
   onStateChange: WebviewProps["onStateChange"],
 ) {
   const serverRef = useRef<WalletAPIServer | undefined>(undefined);
+
+  useEffect(() => {
+    setOriginFlow(manifest.name);
+  }, [manifest.name]);
 
   const tracking = useMemo(
     () =>
@@ -465,6 +470,7 @@ function useUiHook({ manifest }: Props): UiHook {
 
         const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
+        setOriginFlow(flow);
         openModularDrawer?.({
           source: source,
           flow: flow,
