@@ -8,6 +8,7 @@ const mockDisconnectAllSessions = jest.fn();
 
 jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => ({
   setWalletConnect: () => ({ disconnectAllSessions: mockDisconnectAllSessions }),
+  getWalletConnect: () => ({ disconnectAllSessions: mockDisconnectAllSessions }),
   clearWalletConnect: jest.fn(),
 }));
 

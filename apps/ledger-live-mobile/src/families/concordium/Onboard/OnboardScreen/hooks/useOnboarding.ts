@@ -52,6 +52,7 @@ export function useOnboarding(
   const startOnboarding = useCallback(() => {
     unsubscribe();
     completedRef.current = false;
+    setCompletedAccount(null);
     setCreateStatus(CreateStatus.PREPARING);
 
     const bridge = getConcordiumBridge(currency);
