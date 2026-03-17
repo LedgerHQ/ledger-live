@@ -69,6 +69,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
         run: pnpm turbo lint:i18n --filter="live-mobile"
+        continue-on-error: true  # TODO: Remove once release branch is back-merged into develop (see JIRA)
       - name: check for dead code
         run: pnpm mobile knip-check
         shell: bash
