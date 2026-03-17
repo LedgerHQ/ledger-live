@@ -103,9 +103,19 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
     updateTransaction(t => {
       if (t.family !== "aleo") return t;
 
+      if (t.mode === "transfer_public" || t.mode === "convert_public_to_private") {
+        return {
+          ...t,
+          properties: undefined,
+        };
+      }
+
       return {
         ...t,
-        amountRecord: record.decryptedData,
+        properties: {
+          ...(t.properties ?? { feeRecord: null }),
+          amountRecord: record.decryptedData,
+        },
       };
     });
   };
@@ -132,7 +142,7 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
           <StyledButton
             key={record.commitment}
             type="button"
-            $checked={record.decryptedData === transaction.amountRecord}
+            $checked={record.decryptedData === transaction.properties?.amountRecord}
             onClick={() => selectRecord(record)}
           >
             {formatCurrencyUnit(unit, new BigNumber(record.microcredits), formatConfig)}

@@ -19,19 +19,25 @@ export type Transaction = TransactionCommon & {
 } & (
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
-        amountRecord: AleoDecryptedRecordResponse | null;
-        feeRecord: AleoDecryptedRecordResponse | null;
+        properties: {
+          amountRecord: AleoDecryptedRecordResponse | null;
+          feeRecord: AleoDecryptedRecordResponse | null;
+        };
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
-        amountRecord: AleoDecryptedRecordResponse | null;
-        feeRecord: AleoDecryptedRecordResponse | null;
+        properties: {
+          amountRecord: AleoDecryptedRecordResponse | null;
+          feeRecord: AleoDecryptedRecordResponse | null;
+        };
       }
   );
 
@@ -41,19 +47,25 @@ export type TransactionRaw = TransactionCommonRaw & {
 } & (
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
-        amountRecord: string | null;
-        feeRecord: string | null;
+        properties: {
+          amountRecord: string | null;
+          feeRecord: string | null;
+        };
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+        properties?: never;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
-        amountRecord: string | null;
-        feeRecord: string | null;
+        properties: {
+          amountRecord: string | null;
+          feeRecord: string | null;
+        };
       }
   );
 

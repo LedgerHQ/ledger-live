@@ -50,8 +50,10 @@ export const mockedTransferPrivateTransactionRaw: TransactionRaw = {
   fees: "0",
   useAllAmount: false,
   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-  amountRecord: JSON.stringify(mockedDecryptedRecord),
-  feeRecord: JSON.stringify(mockedDecryptedRecord),
+  properties: {
+    amountRecord: JSON.stringify(mockedDecryptedRecord),
+    feeRecord: JSON.stringify(mockedDecryptedRecord),
+  },
 };
 
 export const mockedTransferPrivateTransaction: Transaction = {
@@ -61,8 +63,10 @@ export const mockedTransferPrivateTransaction: Transaction = {
   fees: new BigNumber(0),
   useAllAmount: false,
   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-  amountRecord: mockedDecryptedRecord,
-  feeRecord: mockedDecryptedRecord,
+  properties: {
+    amountRecord: mockedDecryptedRecord,
+    feeRecord: mockedDecryptedRecord,
+  },
 };
 
 export const mockedTransferPrivateNullRecordsTransactionRaw: TransactionRaw = {
@@ -72,8 +76,10 @@ export const mockedTransferPrivateNullRecordsTransactionRaw: TransactionRaw = {
   fees: "0",
   useAllAmount: false,
   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-  amountRecord: null,
-  feeRecord: null,
+  properties: {
+    amountRecord: null,
+    feeRecord: null,
+  },
 };
 
 export const mockedTransferPrivateNullRecordsTransaction: Transaction = {
@@ -83,8 +89,10 @@ export const mockedTransferPrivateNullRecordsTransaction: Transaction = {
   fees: new BigNumber(0),
   useAllAmount: false,
   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-  amountRecord: null,
-  feeRecord: null,
+  properties: {
+    amountRecord: null,
+    feeRecord: null,
+  },
 };
 
 export const mockedConvertPrivateToPublicTransactionRaw: TransactionRaw = {
@@ -94,8 +102,10 @@ export const mockedConvertPrivateToPublicTransactionRaw: TransactionRaw = {
   fees: "0",
   useAllAmount: false,
   mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-  amountRecord: JSON.stringify(mockedDecryptedRecord),
-  feeRecord: JSON.stringify(mockedDecryptedRecord),
+  properties: {
+    amountRecord: JSON.stringify(mockedDecryptedRecord),
+    feeRecord: JSON.stringify(mockedDecryptedRecord),
+  },
 };
 
 export const mockedConvertPrivateToPublicTransaction: Transaction = {
@@ -105,8 +115,10 @@ export const mockedConvertPrivateToPublicTransaction: Transaction = {
   fees: new BigNumber(0),
   useAllAmount: false,
   mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-  amountRecord: mockedDecryptedRecord,
-  feeRecord: mockedDecryptedRecord,
+  properties: {
+    amountRecord: mockedDecryptedRecord,
+    feeRecord: mockedDecryptedRecord,
+  },
 };
 
 export const mockedConvertPrivateToPublicNullRecordsTransactionRaw: TransactionRaw = {
@@ -116,8 +128,10 @@ export const mockedConvertPrivateToPublicNullRecordsTransactionRaw: TransactionR
   fees: "0",
   useAllAmount: false,
   mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-  amountRecord: null,
-  feeRecord: null,
+  properties: {
+    amountRecord: null,
+    feeRecord: null,
+  },
 };
 
 export const mockedConvertPrivateToPublicNullRecordsTransaction: Transaction = {
@@ -127,6 +141,8 @@ export const mockedConvertPrivateToPublicNullRecordsTransaction: Transaction = {
   fees: new BigNumber(0),
   useAllAmount: false,
   mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-  amountRecord: null,
-  feeRecord: null,
+  properties: {
+    amountRecord: null,
+    feeRecord: null,
+  },
 };

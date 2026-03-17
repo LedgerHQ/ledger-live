@@ -66,13 +66,15 @@ export const AleoSendStepRecipient = ({
                 if (t.family !== "aleo") return t;
 
                 if (value === "public") {
-                  return { ...t, mode: TRANSACTION_TYPE.TRANSFER_PUBLIC };
+                  return { ...t, mode: TRANSACTION_TYPE.TRANSFER_PUBLIC, properties: undefined };
                 }
                 return {
                   ...t,
                   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-                  amountRecord: null,
-                  feeRecord: null,
+                  properties: {
+                    amountRecord: null,
+                    feeRecord: null,
+                  },
                 };
               });
             }}

@@ -74,14 +74,21 @@ export const SelfTransferStepRecipient = ({
             onChange={value => {
               updateTransaction(t => {
                 if (t.family !== "aleo") return t;
+
                 if (value === "public") {
-                  return { ...t, mode: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE };
+                  return {
+                    ...t,
+                    mode: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+                    properties: undefined,
+                  };
                 }
                 return {
                   ...t,
                   mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-                  amountRecord: null,
-                  feeRecord: null,
+                  properties: {
+                    amountRecord: null,
+                    feeRecord: null,
+                  },
                 };
               });
             }}
