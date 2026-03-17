@@ -2,12 +2,9 @@ import { AccountIdentifier } from "@icp-sdk/canisters/ledger/icp";
 import { Expiry, SubmitRequestType } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 export { Cbor } from "@icp-sdk/core/agent";
+import { ICP_FEES } from "../consts";
 import { ledgerIdlFactory, getCanisterIdlFunc, encodeCanisterIdlFunc } from "./candid";
-import {
-  ICP_FEES,
-  MAINNET_LEDGER_CANISTER_ID,
-  DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
-} from "./consts";
+import { MAINNET_LEDGER_CANISTER_ID, DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS } from "./consts";
 import { derivePrincipalFromPubkey, validatePublicKey } from "./public-key";
 import { validateAddress } from "./validation";
 

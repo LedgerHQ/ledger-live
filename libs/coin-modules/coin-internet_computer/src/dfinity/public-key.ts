@@ -2,7 +2,7 @@
  * Public key utilities for Internet Computer accounts
  */
 import { AccountIdentifier } from "@icp-sdk/canisters/ledger/icp";
-import { DerEncodedPublicKey } from "@icp-sdk/core/agent";
+import type { DerEncodedPublicKey } from "@icp-sdk/core/agent";
 import { Secp256k1PublicKey } from "@icp-sdk/core/identity/secp256k1";
 import { Principal } from "@icp-sdk/core/principal";
 
