@@ -6,5 +6,5 @@ runs:
     - run: pnpm i --filter="!./apps/**"
       shell: bash
 
-    - run: pnpm build:coin-tester-modules:deps
+    - run: pnpm turbo build --filter="@ledgerhq/coin-tester-*"
       shell: bash
