@@ -93,11 +93,12 @@ export type EditTransactionModalConfig = {
   };
 };
 
-export type SummaryNetworkFeesRowProps = {
+export type SummaryNetworkFeesRowProps<T extends TransactionCommon = TransactionCommon> = {
   feeTooHigh: Error;
   feesUnit: Unit;
   estimatedFees: BigNumber;
   feesCurrency: TokenCurrency | CryptoCurrency;
+  transaction: T;
 };
 
 /**
@@ -375,9 +376,19 @@ export type LLDCoinFamily<
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
 
   /**
+   * Replace Amount row on Summary Step
+   */
+  StepSummaryAmountRow?: React.ComponentType<{
+    transaction: T;
+    amount: BigNumber;
+    unit: Unit | undefined;
+    currency: Currency;
+  }>;
+
+  /**
    * Replace Networkfees row on Summary Step
    */
-  StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
+  StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps<T>>;
 
   /**
    * Allow to add specific component in Send modal below the recipient address
@@ -393,6 +404,11 @@ export type LLDCoinFamily<
     transaction: T;
     status: TS;
   }>;
+
+  /**
+   * Allow to add specific component in Send modal below the total spent block in Summary Step
+   */
+  StepSummaryPostAlert?: React.ComponentType;
 
   /**
    * It was for Hedera specifc, when we do not find any account it show a specific component
