@@ -16,7 +16,7 @@ export default function StepPair({
   onPaired,
 }: Readonly<{
   currency: CryptoCurrency;
-  onPaired: () => void;
+  onPaired: (sessionTopic: string) => void;
 }>) {
   const { pairStatus, walletConnectUri, startPairing } = usePairing(currency, onPaired);
   const { isInstalled, openIdApp, storeUrl } = useIdAppDetection();
@@ -89,14 +89,6 @@ export default function StepPair({
                 </Flex>
               )}
             </Flex>
-          )}
-
-          {pairStatus === PairStatus.SUCCESS && (
-            <Alert type="success">
-              <Text>
-                <Trans i18nKey="concordium.onboard.pair.success" />
-              </Text>
-            </Alert>
           )}
 
           {pairStatus === PairStatus.ERROR && (

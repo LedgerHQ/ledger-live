@@ -1,11 +1,17 @@
 import React from "react";
-import { Linking, ScrollView, TouchableOpacity } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
+import ExternalLink from "~/components/ExternalLink";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { Trans } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 
-export default function StepOnboard({ onAgree }: Readonly<{ onAgree: () => void }>) {
+type Props = Readonly<{
+  onAgree: () => void;
+  onCancel: () => void;
+}>;
+
+export default function StepOnboard({ onAgree, onCancel }: Props) {
   const learnMoreUrl = useLocalizedUrl(urls.concordium.learnMore);
 
   return (
@@ -22,24 +28,40 @@ export default function StepOnboard({ onAgree }: Readonly<{ onAgree: () => void 
             </Text>
 
             {[1, 2, 3, 4].map(i => (
-              <Text key={i} variant="body" color="neutral.c80">
-                {"\u2022 "}
-                <Trans i18nKey={`concordium.onboard.acknowledge.list.${i}`} />
-              </Text>
+              <Flex key={i} flexDirection="row" columnGap={8}>
+                <Text variant="body" color="neutral.c80">
+                  {"\u2022"}
+                </Text>
+                <Flex flexDirection="column" flex={1} rowGap={4}>
+                  <Text variant="body" fontWeight="semiBold" color="neutral.c100">
+                    <Trans i18nKey={`concordium.onboard.acknowledge.list.${i}.title`} />
+                  </Text>
+                  <Text variant="body" color="neutral.c80">
+                    <Trans i18nKey={`concordium.onboard.acknowledge.list.${i}.description`} />
+                  </Text>
+                </Flex>
+              </Flex>
             ))}
 
-            <TouchableOpacity activeOpacity={0.5} onPress={() => Linking.openURL(learnMoreUrl)}>
-              <Alert.UnderlinedText>
-                <Trans i18nKey="common.learnMore" />
-              </Alert.UnderlinedText>
-            </TouchableOpacity>
+            <Flex flexDirection="row" alignItems="center" flexWrap="wrap" columnGap={4}>
+              <Text variant="body" color="neutral.c80">
+                <Trans i18nKey="concordium.onboard.acknowledge.guide" />
+              </Text>
+              <ExternalLink
+                text={<Trans i18nKey="common.learnMore" />}
+                onPress={() => Linking.openURL(learnMoreUrl)}
+              />
+            </Flex>
           </Flex>
         </Alert>
       </ScrollView>
 
-      <Flex px={6} pb={10}>
-        <Button type="main" onPress={onAgree}>
+      <Flex px={6} pb={10} rowGap={16}>
+        <Button type="main" onPress={onAgree} size="large">
           <Trans i18nKey="concordium.onboard.acknowledge.allow" />
+        </Button>
+        <Button type="default" onPress={onCancel}>
+          <Trans i18nKey="common.cancel" />
         </Button>
       </Flex>
     </Flex>
