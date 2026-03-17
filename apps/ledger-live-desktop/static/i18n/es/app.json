@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "Cancelar",
-        "description" : "Enviando 0 {{ticker}} a tu propia dirección."
+        "description" : "Enviando 0 {{ticker}} a tu propia dirección. La cancelación no está garantizada. Si la red procesa tu transacción original antes de esta solicitud de cancelación, los fondos se enviarán igualmente al receptor."
       },
       "steps" : {
         "method" : {
@@ -1499,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ no puede usar la Firma Visible con esta transacción.",
+      "subtitle" : "Usa cualquier otro dispositivo Ledger para verificar los detalles de esta transacción antes de firmarla. Sin la Firma Visible, corres el riesgo de perder todos tus activos.",
+      "continue" : "Continúa por tu cuenta y riesgo."
+    },
+    "info" : {
+      "title" : "El {{date}} finalizará la compatibilidad de {{coinName}} con el {{device}}™ mediante Ledger Live™.",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a todos los proveedores de servicios de Ledger Live y recibir una atención al cliente de la máxima calidad.",
+      "reminder" : "No volver a recordármelo"
+    },
+    "error" : {
+      "title" : "{{device}}™ no es compatible con esta función",
+      "subtitle" : "Pásate hoy mismo a un dispositivo Ledger más moderno para poder acceder a las funciones más recientes de Ledger Live."
+    },
+    "update" : "Descubre tu programa de renovación",
+    "learnMore" : "Más información",
+    "continue" : "Continuar"
+  },
   "currentAddress" : {
     "title" : "Dirección actual",
     "for" : "Dirección de <1><0>{{name}}</0></1>",
@@ -2154,6 +2173,24 @@
       }
     }
   },
+  "buyDeviceModal" : {
+    "title" : "Conecta un dispositivo Ledger",
+    "subtitle" : "Conecta un dispositivo Ledger para aprovechar todo el potencial de tu Ledger Wallet.",
+    "0" : {
+      "title" : "Titularidad real",
+      "desc" : "Tus claves privadas nunca salen del dispositivo."
+    },
+    "1" : {
+      "title" : "Opera de forma segura",
+      "desc" : "Verifica las transacciones en una pantalla segura."
+    },
+    "2" : {
+      "title" : "Accede a la wallet más potente",
+      "desc" : "Gestiona miles de activos desde un mismo sitio."
+    },
+    "connectCTA" : "Conectar",
+    "buyCTA" : "Compra tu dispositivo Ledger"
+  },
   "fund" : {
     "title" : "Agregar fondos",
     "titleCrypto" : "Agregar fondos en {{currency}}",
@@ -2371,6 +2408,24 @@
     "addressNotFound" : "Dirección no encontrada",
     "alreadyUsed" : "Ya utilizado · {{date}}",
     "recentSendWillAppear" : "Tus envíos anteriores aparecerán aquí",
+    "securityInfo" : {
+      "title" : "¿Cómo enviar de forma segura?",
+      "items" : {
+        "compatibility" : "Asegúrate de que la dirección del receptor sea compatible con la red seleccionada",
+        "review" : "Revisa los detalles de tu transacción en la pantalla segura de tu Ledger.",
+        "smallAmount" : "En caso de duda, envía primero una cantidad pequeña"
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "Esta dirección no está en tu historial reciente. Si tienes alguna duda, envía primero una cantidad pequeña."
+      },
+      "dialog" : {
+        "title" : "Historial de envíos recientes",
+        "description" : "Tu historial reciente te permite ver al instante si ya has enviado a una dirección específica o no. Esto podría evitar posibles errores de copiar y pegar o hackeos. Tu historial contiene las últimas 12 direcciones a las que has enviado cripto con Ledger Wallet.",
+        "cta" : "Entendido"
+      }
+    },
     "relativeDate" : {
       "justNow" : "Ahora",
       "minutesAgo_one" : "Hace 1 min",
@@ -2440,17 +2495,26 @@
       "confirm" : "Confirmar",
       "maxFee" : "Tarifa máxima ({{unit}})",
       "maxPriorityFee" : "Tarifa de prioridad máxima ({{unit}})",
-      "gasLimit" : "Limite de gas ({{unit}})",
       "feePerByte" : "Monto de la tarifa ({{unit}})",
       "suggested" : "Sugerida",
       "nextBlock" : "Siguiente bloque",
       "networkFeesInFiat" : "Tarifas de red en {{currency}}",
       "invalidValue" : "Ingresa un número válido",
       "belowMinimum" : "El mínimo es {{min}}",
-      "maxFeeBelowPriorityFee" : "La tarifa máxima debe ser mayor o igual que la tarifa de prioridad máxima"
+      "maxFeeBelowPriorityFee" : "La tarifa máxima debe ser mayor o igual que la tarifa de prioridad máxima",
+      "feeAsset" : "Activo sujeto a tarifa",
+      "feesAmount" : "Monto de la tarifa ({{unit}})",
+      "payFeesIn" : "Pagar tarifas en"
     },
     "coinControl" : {
-      "title" : "Control de monedas"
+      "title" : "Control de monedas",
+      "strategy" : "La estrategia ",
+      "learnMore" : "Más información",
+      "coinToSend" : "Monedas a enviar",
+      "changeToReturn" : "Cambio para devolver",
+      "enterAmount" : "Ingresar importe",
+      "amountToSendInCurrency" : "Monto a enviar en ({{ticker}})",
+      "amountInputLabel" : "Importe a enviar"
     }
   },
   "releaseNotes" : {
@@ -5025,7 +5089,7 @@
     }
   },
   "theme" : {
-    "system" : "Selecciona el tema del sistema",
+    "system" : "Sistema",
     "light" : "Claro",
     "dusk" : "Atardecer",
     "dark" : "Oscuro"
@@ -6630,6 +6694,10 @@
       "title" : "No se puede acelerar ni cancelar",
       "description" : "Esta transacción ya se ha validado"
     },
+    "InvalidTransactionError" : {
+      "title" : "Transacción no válida",
+      "description" : "La transacción ya no coincide con el estado de la blockchain. Por favor, inicia el flujo de nuevo."
+    },
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
@@ -7699,7 +7767,16 @@
     }
   },
   "analytics" : {
-    "title" : "Análisis"
+    "title" : "Análisis",
+    "allocation" : {
+      "title" : "Asignación de activos",
+      "columns" : {
+        "name" : "Nombre",
+        "balance" : "Saldo",
+        "value" : "Valor",
+        "allocation" : "Asignación"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8001,6 +8078,8 @@
     "title" : "Explorar mercado",
     "genericError" : "La conexión ha fallado",
     "cta" : "Ver todo",
+    "scrollLeft" : "Desplaza a la izquierda",
+    "scrollRight" : "Desplaza a la derecha",
     "fearAndGreed" : {
       "title" : "Sentimiento"
     }
@@ -8030,6 +8109,11 @@
   "assets" : {
     "cryptos" : "Cripto",
     "stablecoins" : "Monedas estables",
+    "cryptoAccounts" : "Cuentas cripto",
+    "accountsCount_one" : "{{count}} cuenta",
+    "accountsCount_other" : "{{count}} cuentas",
+    "noCryptoAccounts" : "Aún no hay cuentas",
+    "add" : "Agregar",
     "columns" : {
       "name" : "Nombre",
       "price" : "Precio",
@@ -8048,15 +8132,10 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Lista de cuentas afectadas: {{accounts}}. Pulsa para reintentar",
-      "emptyErrorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo. Pulsa para reintentar",
+      "errorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo.\n Lista de cuentas afectadas: {{accounts}}. Pulsa para reintentar",
+      "emptyErrorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo.\n Pulsa para reintentar",
       "upToDate" : "Estás al día",
-      "minutesAgo_one" : "Última sincronización: Hace {{count}} minuto. Pulsa para actualizar",
-      "minutesAgo_other" : "Última sincronización: Hace {{count}} minutos. Pulsa para actualizar",
-      "hoursAgo_one" : "Última sincronización: Hace {{count}} hora. Pulsa para actualizar",
-      "hoursAgo_other" : "Última sincronización: Hace {{count}} horas. Pulsa para actualizar",
-      "daysAgo_one" : "Última sincronización: Hace {{count}} día. Pulsa para actualizar",
-      "daysAgo_other" : "Última sincronización: Hace {{count}} días. Pulsa para actualizar"
+      "lastSync" : "Última sincronización: {{timeAgo}} Pulsa para actualizar"
     },
     "notificationIndicator" : {
       "tooltip" : "Notificaciones"
@@ -8176,6 +8255,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "Autotransferencia",
+      "headerActionTooltip" : "No tienes fondos para realizar una transferencia a ti mismo",
+      "modal" : {
+        "title" : "Autotransferencia",
+        "stepRecipient" : {
+          "selectLabel" : "Transferir desde"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "Saldo privado",
+        "public" : "Saldo público",
+        "lastUpdate" : "Última actualización",
+        "switchBalance" : "Cambiar la fuente del saldo"
+      }
+    },
     "account" : {
       "availableBalance" : "Saldo disponible",
       "availableBalanceTooltip" : "Saldo que puede transferirse",
@@ -8194,22 +8291,22 @@
   "updater" : {
     "newUpdateAvailable" : "Nueva actualización disponible",
     "downloadProgress" : "{{progress}}%",
-    "errorTryAgain" : "Error al actualizar, inténtalo de nuevo",
-    "installAndRelaunch" : "Instalar actualización y ejecutar de nuevo"
+    "errorTryAgain" : "Error al actualizar. Intentar de nuevo",
+    "installAndRelaunch" : "Nueva actualización. Instalar y reiniciar"
   },
   "walletV4Tour" : {
     "slides" : {
       "portfolio" : {
-        "title" : "Permuta sin esfuerzo",
-        "description" : "Adapta la asignación de tu portfolio en cualquier momento con la seguridad de tu dispositivo Ledger"
+        "title" : "Una visión más clara de tu portfolio",
+        "description" : "Consulta tu saldo total de un vistazo y pulsa \"Hoy\" para profundizar."
       },
       "navigation" : {
-        "title" : "Todo en su sitio",
-        "description" : "Ahora, Mi Ledger y Discover están en la parte superior. Permutas y Tarjeta se han desplazado a la barra lateral para facilitar el acceso."
+        "title" : "Accede a las acciones clave más rápido",
+        "description" : "Accede al instante a las acciones de Recibir, Comprar, Vender y Enviar."
       },
       "actions" : {
-        "title" : "Actúa a la velocidad del mercado",
-        "description" : "Detecta tendencias del mercado con el nuevo banner y opera al instante."
+        "title" : "Observa las tendencias del mercado al instante",
+        "description" : "Visualiza rápidamente las tendencias actuales directamente en tu portfolio para pasar de los datos a la acción."
       }
     },
     "cta" : {
