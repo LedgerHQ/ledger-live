@@ -20,7 +20,6 @@ export * from "./lwmNewWordingOptInNotificationsDrawer";
 export * from "./nanoOnboardingFundWallet";
 export * from "./newsfeedPage";
 export * from "./npsRatingsPrompt";
-export * from "./postOnboardingAssetsTransfer";
 export * from "./ratingsPrompt";
 export * from "./referralProgramDesktopSidebar";
 export * from "./storyly";

@@ -9,7 +9,6 @@ import { NavigatorName, ScreenName } from "~/const";
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
   disabled: false,
-  featureFlagId: "postOnboardingAssetsTransfer",
   Icon: Icons.Lock,
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
