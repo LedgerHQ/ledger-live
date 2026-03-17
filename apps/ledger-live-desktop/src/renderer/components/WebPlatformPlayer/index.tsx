@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
+import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -10,7 +11,6 @@ import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
-import { usePerpsHandlers } from "../WebPTXPlayer/PerpsHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";

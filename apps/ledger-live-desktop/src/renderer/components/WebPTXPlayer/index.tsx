@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
+import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar } from "./TopBar";
@@ -11,7 +12,6 @@ import { usePTXCustomHandlers } from "./CustomHandlers";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { usePerpsHandlers } from "./PerpsHandlers";
 
 export const Container = styled.div`
   display: flex;
