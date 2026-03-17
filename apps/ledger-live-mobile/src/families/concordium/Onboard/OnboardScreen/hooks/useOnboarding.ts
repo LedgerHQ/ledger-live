@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
@@ -12,6 +13,7 @@ export enum CreateStatus {
   PREPARING = "PREPARING",
   SUBMITTING = "SUBMITTING",
   SUCCESS = "SUCCESS",
+  DEVICE_LOCKED = "DEVICE_LOCKED",
   ERROR = "ERROR",
 }
 
@@ -84,7 +86,9 @@ export function useOnboarding(
             message: error instanceof Error ? error.message : String(error),
           });
           unsubscribe();
-          if (isSessionExpiredError(error)) {
+          if (error instanceof LockedDeviceError) {
+            setCreateStatus(CreateStatus.DEVICE_LOCKED);
+          } else if (isSessionExpiredError(error)) {
             onSessionExpired();
           } else {
             setCreateStatus(CreateStatus.ERROR);

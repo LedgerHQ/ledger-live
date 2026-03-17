@@ -1,6 +1,7 @@
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { Subject } from "rxjs";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
@@ -129,6 +130,22 @@ describe("useOnboarding", () => {
 
     await waitFor(() => {
       expect(onSessionExpired).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should transition to DEVICE_LOCKED on LockedDeviceError", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.error(new LockedDeviceError());
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.DEVICE_LOCKED);
+      expect(onSessionExpired).not.toHaveBeenCalled();
     });
   });
 
