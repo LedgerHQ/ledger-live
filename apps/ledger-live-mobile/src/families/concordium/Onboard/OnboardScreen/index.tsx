@@ -155,8 +155,7 @@ export default function OnboardScreen() {
         return (
           <StepCreate
             currency={cryptoCurrency}
-            deviceId={device.deviceId}
-            modelId={device.modelId}
+            device={device}
             creatableAccount={creatableAccount}
             accountName={accountName}
             sessionTopic={sessionTopic}
