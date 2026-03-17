@@ -1,6 +1,5 @@
-import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
@@ -46,7 +45,7 @@ export type TraceBlockCallAction = {
 };
 
 export function isTraceBlockCallAction(
-  action: TraceBlockOtherAction,
+  action: Record<string, unknown>,
 ): action is TraceBlockCallAction {
   return (
     typeof action.from === "string" &&

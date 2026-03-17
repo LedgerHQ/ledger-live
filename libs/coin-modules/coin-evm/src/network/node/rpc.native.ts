@@ -4,4 +4,3 @@
 import "react-native-get-random-values";
 import "@ethersproject/shims";
 export * from "./rpc.common";
-export * as default from "./rpc.common";

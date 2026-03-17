@@ -5,14 +5,13 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
-jest.mock("./network/node/rpc.common", () => ({
-  ...jest.requireActual("./network/node/rpc.common"),
-  getOptimismAdditionalFees: jest.fn(),
-  getScrollAdditionalFees: jest.fn(),
+jest.mock("./network/node/index", () => ({
+  ...jest.requireActual("./network/node/index"),
+  getNodeApi: jest.fn((...args: unknown[]) =>
+    jest.requireActual("./network/node/index").getNodeApi(...args),
+  ),
 }));
 
-const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
-const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import { getCoinConfig } from "./config";
 import { makeAccount, makeOperation, makeTokenAccount } from "./fixtures/common.fixtures";
 import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
@@ -24,9 +23,13 @@ import {
   getSyncHash,
   mergeSubAccounts,
 } from "./logic";
-import { getOptimismAdditionalFees, getScrollAdditionalFees } from "./network/node/rpc.common";
+import { getNodeApi } from "./network/node/index";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockGetOptimismAdditionalFees = jest.fn();
+const mockGetScrollAdditionalFees = jest.fn();
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
@@ -210,6 +213,13 @@ describe("EVM Family", () => {
 
       beforeEach(() => {
         jest.clearAllMocks();
+        mockGetNodeApi.mockImplementation(
+          () =>
+            ({
+              getOptimismAdditionalFees: mockGetOptimismAdditionalFees,
+              getScrollAdditionalFees: mockGetScrollAdditionalFees,
+            }) as any,
+        );
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
