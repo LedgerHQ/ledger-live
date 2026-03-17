@@ -1528,6 +1528,74 @@ describe("logic utils", () => {
       expect(timestamps).toEqual([mirrorTx1.consensus_timestamp]);
     });
 
+    it("should filter out child mirror transactions (parent_consensus_timestamp !== null) when they have a corresponding ERC20 transfer", () => {
+      const rootTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: "hash-root",
+        name: "CONTRACTCALL",
+        nonce: 0,
+        parent_consensus_timestamp: null,
+      });
+      const childTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+        transaction_hash: "hash-child-1",
+        name: "CONTRACTCALL",
+        nonce: 1,
+        parent_consensus_timestamp: rootTx.consensus_timestamp,
+      });
+
+      const erc20ForChild1 = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: childTx1.consensus_timestamp,
+          transaction_hash: childTx1.transaction_hash,
+        }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [rootTx, childTx1],
+        enrichedERC20Transfers: [erc20ForChild1],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.merged).toEqual([
+        { type: "erc20", data: erc20ForChild1 },
+        { type: "mirror", data: rootTx },
+      ]);
+    });
+
+    it("should keep child mirror transactions when there is no corresponding ERC20 transfer", () => {
+      const rootTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: "hash-root",
+        name: "CONTRACTCALL",
+        parent_consensus_timestamp: null,
+      });
+      const childTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+        transaction_hash: "hash-child",
+        name: "CRYPTOTRANSFER",
+        parent_consensus_timestamp: rootTx.consensus_timestamp,
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [rootTx, childTx],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      // without ERC20 data, child transactions are not filtered
+      expect(result.merged).toEqual([
+        { type: "mirror", data: childTx },
+        { type: "mirror", data: rootTx },
+      ]);
+    });
+
     it("should not trigger delay detection for non-CONTRACTCALL transactions", () => {
       const mockMirrorTx1 = getMockedMirrorTransaction({
         consensus_timestamp: `1000.000000000`,

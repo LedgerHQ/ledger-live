@@ -857,6 +857,49 @@ describe("createApi", () => {
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
+    it("returns IN/OUT operations for mint and burn of amUSDC", async () => {
+      const ownerAccountId = MAINNET_TEST_ACCOUNTS.withTokens.accountIdWithErc20;
+      const { items: ops } = await api.listOperations(ownerAccountId, {
+        minHeight: 0,
+        limit: 10,
+        cursor: "1749584382.000000000",
+        order: "asc",
+      });
+
+      const zeroAddress = "0x0000000000000000000000000000000000000000";
+      const mintTxHash = "1Ed3RfhFN0VQIyFfUrkljtsV9CzbzYNt3LJqqQyHsbiyKoVbJFhGkZwvqr3k0rYJ";
+      const burnTxHash = "45Y5pSeY7ULMqJObvAtOow8AjamVNlG3XGbGLt5UrCP2HOdrQ4PzQfXqFlY4GDwd";
+
+      const mintOperation = ops.find(op => op.tx.hash === mintTxHash);
+      const burnOperation = ops.find(op => op.tx.hash === burnTxHash);
+      const expectedAsset = {
+        type: "erc20",
+        assetReference: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+        assetOwner: ownerAccountId,
+      };
+
+      expect(mintOperation).toMatchObject({
+        type: "IN",
+        recipients: [ownerAccountId],
+        senders: [zeroAddress],
+        asset: expectedAsset,
+        tx: {
+          fees: 30080000n,
+          feesPayer: ownerAccountId,
+        },
+      });
+      expect(burnOperation).toMatchObject({
+        type: "OUT",
+        recipients: [zeroAddress],
+        senders: [ownerAccountId],
+        asset: expectedAsset,
+        tx: {
+          fees: 52800000n,
+          feesPayer: ownerAccountId,
+        },
+      });
+    });
+
     it("returns staking operations with correct metadata", async () => {
       const cursor = "1762202113.000000000";
       const { items: ops } = await api.listOperations(
