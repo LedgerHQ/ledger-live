@@ -41,17 +41,29 @@ function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
   };
 }
 
-// Map of request batcher by Currency (shared across factory-created API instances)
-const tokenBalancesBatchersMap = new Map<
-  CryptoCurrency,
-  Batcher<
-    {
-      address: string;
-      contract: string;
-    },
-    BigNumber
-  >
->();
+function makeGetTokenBalance(
+  config: LedgerNodeConfig,
+  fetch: LedgerFetch,
+  tokenBalancesBatchersMap: Map<
+    CryptoCurrency,
+    Batcher<
+      {
+        address: string;
+        contract: string;
+      },
+      BigNumber
+    >
+  >,
+): NodeApi["getTokenBalance"] {
+  return async (currency, address, contractAddress) => {
+    if (!tokenBalancesBatchersMap.has(currency)) {
+      const batcher = makeBatcher(makeGetBatchTokenBalances(config, fetch), { currency });
+      tokenBalancesBatchersMap.set(currency, batcher);
+    }
+    const requestBatcher = tokenBalancesBatchersMap.get(currency)!;
+    return requestBatcher({ address, contract: contractAddress });
+  };
+}
 
 function makeGetTransaction(
   config: LedgerNodeConfig,
@@ -120,20 +132,6 @@ function makeGetBatchTokenBalances(
       data: input,
     });
     return balances.map(({ balance }) => new BigNumber(balance));
-  };
-}
-
-function makeGetTokenBalance(
-  config: LedgerNodeConfig,
-  fetch: LedgerFetch,
-): NodeApi["getTokenBalance"] {
-  return async (currency, address, contractAddress) => {
-    if (!tokenBalancesBatchersMap.has(currency)) {
-      const batcher = makeBatcher(makeGetBatchTokenBalances(config, fetch), { currency });
-      tokenBalancesBatchersMap.set(currency, batcher);
-    }
-    const requestBatcher = tokenBalancesBatchersMap.get(currency)!;
-    return requestBatcher({ address, contract: contractAddress });
   };
 }
 
@@ -339,10 +337,14 @@ function makeGetScrollAdditionalFees(
 
 export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
   const fetch = makeFetchWithRetries(config);
+  const tokenBalancesBatchersMap = new Map<
+    CryptoCurrency,
+    Batcher<{ address: string; contract: string }, BigNumber>
+  >();
   return {
     getBlockByHeight: makeGetBlockByHeight(config, fetch),
     getCoinBalance: makeGetCoinBalance(config, fetch),
-    getTokenBalance: makeGetTokenBalance(config, fetch),
+    getTokenBalance: makeGetTokenBalance(config, fetch, tokenBalancesBatchersMap),
     getTransactionCount: makeGetTransactionCount(config, fetch),
     getTransaction: makeGetTransaction(config, fetch),
     getGasEstimation: makeGetGasEstimation(config, fetch),
