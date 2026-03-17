@@ -3,6 +3,8 @@
   "compilerOptions": {
     "lib": ["es2020", "dom"],
     "outDir": "lib",
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types", "../../../../node_modules/@types"],
     "composite": true,
     "declaration": true,
     "declarationMap": true,

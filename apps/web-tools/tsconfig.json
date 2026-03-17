@@ -3,7 +3,9 @@
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types", "../../node_modules/@types"]
   },
   "include": ["src"],
   "exclude": ["rsbuild.config.ts"]

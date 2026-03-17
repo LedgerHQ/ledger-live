@@ -8,7 +8,9 @@
       "es2020",
       "dom"
     ],
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": ["node", "jest"],
+    "typeRoots": ["node_modules/@types", "../../node_modules/@types"]
   },
   "include": [
     "src/**/*"
