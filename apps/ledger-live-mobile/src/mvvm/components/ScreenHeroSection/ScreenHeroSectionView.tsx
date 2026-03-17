@@ -18,6 +18,7 @@ const contentAreaStyle: LumenViewStyle = {
 
 const ctasStyle: LumenViewStyle = {
   paddingHorizontal: "s16",
+  paddingBottom: "s8",
 };
 
 export const ScreenHeroSectionView = ({
