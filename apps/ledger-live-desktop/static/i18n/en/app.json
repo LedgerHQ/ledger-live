@@ -8305,6 +8305,11 @@
         "public": "Public balance",
         "lastUpdate": "Last update",
         "switchBalance": "Switch balance source"
+      },
+      "recordPicker": {
+        "label": "Available records",
+        "noRecords": "No records available",
+        "noRecordsAlert": "You don't have any records available. Perform self transfer or receive private funds to get started."
       }
     },
     "account": {

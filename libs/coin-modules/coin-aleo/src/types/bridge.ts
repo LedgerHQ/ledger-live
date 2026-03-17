@@ -11,6 +11,7 @@ import type {
 import type { TRANSACTION_TYPE } from "../constants";
 import type { AleoTransactionType } from "./api";
 import type { ProvableApi, AleoUnspentRecord } from "./logic";
+import type { AleoDecryptedRecordResponse } from "./sdk";
 
 export type Transaction = TransactionCommon & {
   family: "aleo";
@@ -21,12 +22,16 @@ export type Transaction = TransactionCommon & {
       }
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        amountRecord: AleoDecryptedRecordResponse | null;
+        feeRecord: AleoDecryptedRecordResponse | null;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        amountRecord: AleoDecryptedRecordResponse | null;
+        feeRecord: AleoDecryptedRecordResponse | null;
       }
   );
 
@@ -39,12 +44,16 @@ export type TransactionRaw = TransactionCommonRaw & {
       }
     | {
         mode: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+        amountRecord: string | null;
+        feeRecord: string | null;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        amountRecord: string | null;
+        feeRecord: string | null;
       }
   );
 
