@@ -103,7 +103,7 @@ const sendRaw = async <T>(path: string, data: Buffer) => {
  * Fetches STX balance for an address
  */
 export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
-  const data = await fetch<BalanceResponse>(`/extended/v1/address/${addr}/stx`);
+  const data = await fetch<BalanceResponse>(`/extended/v2/addresses/${addr}/balances/stx`);
   return data;
 };
 
