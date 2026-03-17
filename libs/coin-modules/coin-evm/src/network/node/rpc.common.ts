@@ -4,6 +4,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { delay } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
@@ -11,7 +12,7 @@ import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.jso
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import { ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
-import { FeeHistory } from "../../types";
+import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
 import {
@@ -21,6 +22,9 @@ import {
   LogWithAddress,
   TransactionReceipt,
   TraceBlockItem,
+  TransactionInfo,
+  BlockByHeightResult,
+  BlockReceiptInfo,
   isTraceBlockCallAction,
 } from "./types";
 
@@ -117,365 +121,341 @@ export async function withApi<T>(
   }
 }
 
-/**
- * Get a transaction by hash
- */
+async function getTransaction(
+  api: JsonRpcProvider,
+  txHash: string,
+): Promise<TransactionInfo> {
+  const [tx, receipt] = await Promise.all([
+    api.getTransaction(txHash),
+    api.getTransactionReceipt(txHash),
+  ]);
+
+  if (!tx || !receipt) {
+    throw new Error("Transaction or receipt not found");
+  }
+
+  return {
+    hash: tx.hash,
+    blockHeight: tx.blockNumber ?? undefined,
+    blockHash: tx.blockHash ?? undefined,
+    nonce: tx.nonce,
+    gasUsed: receipt.gasUsed.toString(),
+    gasPrice: receipt.gasPrice.toString(),
+    status: receipt.status,
+    value: tx.value.toString(),
+    from: tx.from,
+    to: tx.to ?? undefined,
+    erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
+  };
+}
+
 function makeGetTransaction(nodeConfig: ExternalNodeConfig): NodeApi["getTransaction"] {
-  return (currency, txHash) =>
-    withApi(
-      currency,
-      async api => {
-        const [tx, receipt] = await Promise.all([
-          api.getTransaction(txHash),
-          api.getTransactionReceipt(txHash),
-        ]);
-
-        if (!tx || !receipt) {
-          throw new Error("Transaction or receipt not found");
-        }
-
-        return {
-          hash: tx.hash,
-          blockHeight: tx.blockNumber ?? undefined,
-          blockHash: tx.blockHash ?? undefined,
-          nonce: tx.nonce,
-          gasUsed: receipt.gasUsed.toString(),
-          gasPrice: receipt.gasPrice.toString(),
-          status: receipt.status,
-          value: tx.value.toString(),
-          from: tx.from,
-          to: tx.to ?? undefined,
-          erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
-        };
-      },
-      nodeConfig,
-    );
+  return (currency, txHash) => withApi(currency, api => getTransaction(api, txHash), nodeConfig);
 }
 
-/**
- * Get the balance of an address
- */
+async function getCoinBalance(
+  api: JsonRpcProvider,
+  address: string,
+): Promise<BigNumber> {
+  const balance = await api.getBalance(normalizeAddress(address));
+  return new BigNumber(balance.toString());
+}
+
 function makeGetCoinBalance(nodeConfig: ExternalNodeConfig): NodeApi["getCoinBalance"] {
-  return (currency, address) =>
-    withApi(
-      currency,
-      async api => {
-        const balance = await api.getBalance(normalizeAddress(address));
-        return new BigNumber(balance.toString());
-      },
-      nodeConfig,
-    );
+  return (currency, address) => withApi(currency, api => getCoinBalance(api, address), nodeConfig);
 }
-/**
- * Get the balance of an address
- */
+async function getTokenBalance(
+  api: JsonRpcProvider,
+  address: string,
+  contractAddress: string,
+): Promise<BigNumber> {
+  const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
+  const balance = await erc20.balanceOf(normalizeAddress(address));
+  return new BigNumber(balance.toString());
+}
+
 function makeGetTokenBalance(nodeConfig: ExternalNodeConfig): NodeApi["getTokenBalance"] {
   return (currency, address, contractAddress) =>
-    withApi(
-      currency,
-      async api => {
-        const erc20 = new ethers.Contract(normalizeAddress(contractAddress), ERC20Abi, api);
-        const balance = await erc20.balanceOf(normalizeAddress(address));
-        return new BigNumber(balance.toString());
-      },
-      nodeConfig,
-    );
+    withApi(currency, api => getTokenBalance(api, address, contractAddress), nodeConfig);
 }
-/**
- * Get account nonce
- */
+async function getTransactionCount(
+  api: JsonRpcProvider,
+  address: string,
+): Promise<number> {
+  return api.getTransactionCount(normalizeAddress(address), "pending");
+}
+
 function makeGetTransactionCount(nodeConfig: ExternalNodeConfig): NodeApi["getTransactionCount"] {
   return (currency, address) =>
-    withApi(
-      currency,
-      async api => api.getTransactionCount(normalizeAddress(address), "pending"),
-      nodeConfig,
-    );
+    withApi(currency, api => getTransactionCount(api, address), nodeConfig);
 }
 
-/**
- * Get an estimated gas limit for a transaction.
- * Uses retries: 0 so we don't retry when estimation fails for valid reasons (e.g. insufficient funds).
- */
+async function getGasEstimation(
+  api: JsonRpcProvider,
+  account: Pick<Account, "freshAddress">,
+  transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
+): Promise<BigNumber> {
+  const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
+  const value = BigInt(transaction.amount.toFixed(0));
+  const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
+
+  try {
+    const gasEstimation = await api.estimateGas({
+      ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
+      from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
+      value,
+      data,
+    });
+
+    return new BigNumber(gasEstimation.toString());
+  } catch (e) {
+    log("error", "EVM Family: Gas Estimation Error", e);
+    throw new GasEstimationError();
+  }
+}
+
 function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEstimation"] {
   return (account, transaction) =>
-    withApi(
-      account.currency,
-      async api => {
-        const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
-        const value = BigInt(transaction.amount.toFixed(0));
-        const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
-
-        try {
-          const gasEstimation = await api.estimateGas({
-            ...(to ? { to } : /* istanbul ignore next: no problem not having a to */ {}),
-            from: normalizeAddress(account.freshAddress), // Necessary as no signature to infer the sender
-            value,
-            data,
-          });
-
-          return new BigNumber(gasEstimation.toString());
-        } catch (e) {
-          log("error", "EVM Family: Gas Estimation Error", e);
-          throw new GasEstimationError();
-        }
-      },
-      { ...nodeConfig, retries: 0 },
-    );
+    withApi(account.currency, api => getGasEstimation(api, account, transaction), {
+      ...nodeConfig,
+      retries: 0,
+    });
 }
 
-/**
- * Get an estimation of fees on the network
- */
+async function getFeeData(
+  api: JsonRpcProvider,
+  currency: CryptoCurrency,
+  transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
+): Promise<FeeData> {
+  const block = await api.getBlock("latest");
+  const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
+    ? false
+    : transaction.type === 2 && Boolean(block?.baseFeePerGas);
+
+  const feeData = await (async (): Promise<
+    | {
+        maxPriorityFeePerGas: BigNumber;
+        maxFeePerGas: BigNumber;
+        nextBaseFee: BigNumber;
+        gasPrice?: undefined;
+      }
+    | {
+        maxPriorityFeePerGas?: undefined;
+        maxFeePerGas?: undefined;
+        nextBaseFee?: undefined;
+        gasPrice: BigNumber;
+      }
+  > => {
+    if (currencySupports1559) {
+      const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
+        "0x5", // Fetching the history for 5 blocks
+        "latest", // from the latest block
+        [50], // 50% percentile sample
+      ]);
+      // Taking the average priority fee used on the last 5 blocks
+      const maxPriorityFeeAverage = feeHistory.reward
+        ? feeHistory.reward
+            .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
+            .dividedToIntegerBy(feeHistory.reward.length)
+        : new BigNumber(0);
+
+      // A maxPriorityFeePerGas too low might make a transaction stuck forever
+      // As a safety measure, if maxPriorityFeePerGas is zero
+      // we enforce a 1 Gwei value
+      const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
+        ? getMaxPriorityFeePerGas(currency)
+        : maxPriorityFeeAverage;
+
+      const nextBaseFee = new BigNumber(
+        feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1],
+      );
+
+      return {
+        maxPriorityFeePerGas,
+        maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
+        nextBaseFee,
+      };
+    } else {
+      const gasPrice = (await api.getFeeData()).gasPrice;
+
+      return {
+        gasPrice: new BigNumber(gasPrice?.toString() ?? "0"),
+      };
+    }
+  })();
+
+  return {
+    maxFeePerGas: feeData.maxFeePerGas ? new BigNumber(feeData.maxFeePerGas.toString()) : null,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
+      ? new BigNumber(feeData.maxPriorityFeePerGas.toString())
+      : null,
+    gasPrice: feeData.gasPrice ? new BigNumber(feeData.gasPrice.toString()) : null,
+    nextBaseFee: feeData.nextBaseFee ? new BigNumber(feeData.nextBaseFee.toString()) : null,
+  };
+}
+
 function makeGetFeeData(nodeConfig: ExternalNodeConfig): NodeApi["getFeeData"] {
   return (currency, transaction) =>
-    withApi(
-      currency,
-      async api => {
-        const block = await api.getBlock("latest");
-        const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
-          ? false
-          : transaction.type === 2 && Boolean(block?.baseFeePerGas);
-
-        const feeData = await (async (): Promise<
-          | {
-              maxPriorityFeePerGas: BigNumber;
-              maxFeePerGas: BigNumber;
-              nextBaseFee: BigNumber;
-              gasPrice?: undefined;
-            }
-          | {
-              maxPriorityFeePerGas?: undefined;
-              maxFeePerGas?: undefined;
-              nextBaseFee?: undefined;
-              gasPrice: BigNumber;
-            }
-        > => {
-          if (currencySupports1559) {
-            const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
-              "0x5", // Fetching the history for 5 blocks
-              "latest", // from the latest block
-              [50], // 50% percentile sample
-            ]);
-            // Taking the average priority fee used on the last 5 blocks
-            const maxPriorityFeeAverage = feeHistory.reward
-              ? feeHistory.reward
-                  .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
-                  .dividedToIntegerBy(feeHistory.reward.length)
-              : new BigNumber(0);
-
-            // A maxPriorityFeePerGas too low might make a transaction stuck forever
-            // As a safety measure, if maxPriorityFeePerGas is zero
-            // we enforce a 1 Gwei value
-            const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
-              ? getMaxPriorityFeePerGas(currency)
-              : maxPriorityFeeAverage;
-
-            const nextBaseFee = new BigNumber(
-              feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1],
-            );
-
-            return {
-              maxPriorityFeePerGas,
-              maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
-              nextBaseFee,
-            };
-          } else {
-            const gasPrice = (await api.getFeeData()).gasPrice;
-
-            return {
-              gasPrice: new BigNumber(gasPrice?.toString() ?? "0"),
-            };
-          }
-        })();
-
-        return {
-          maxFeePerGas: feeData.maxFeePerGas
-            ? new BigNumber(feeData.maxFeePerGas.toString())
-            : null,
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
-            ? new BigNumber(feeData.maxPriorityFeePerGas.toString())
-            : null,
-          gasPrice: feeData.gasPrice ? new BigNumber(feeData.gasPrice.toString()) : null,
-          nextBaseFee: feeData.nextBaseFee ? new BigNumber(feeData.nextBaseFee.toString()) : null,
-        };
-      },
-      nodeConfig,
-    );
+    withApi(currency, api => getFeeData(api, currency, transaction), nodeConfig);
 }
 
-/**
- * Broadcast a serialized transaction and returns its hash.
- * Uses retries: 0 so we don't retry on broadcast failures (e.g. insufficient funds).
- */
+async function broadcastTransaction(
+  api: JsonRpcProvider,
+  signedTxHex: string,
+): Promise<string> {
+  try {
+    const { hash } = await api.broadcastTransaction(signedTxHex);
+    return hash;
+  } catch (e) {
+    if (hasErrorCode(e, "INSUFFICIENT_FUNDS")) {
+      log("error", "EVM Family: Wrong estimation of fees", e);
+      throw new InsufficientFunds();
+    }
+    throw e;
+  }
+}
+
 function makeBroadcastTransaction(nodeConfig: ExternalNodeConfig): NodeApi["broadcastTransaction"] {
   return (currency, signedTxHex) =>
-    withApi(
-      currency,
-      async api => {
-        try {
-          const { hash } = await api.broadcastTransaction(signedTxHex);
-          return hash;
-        } catch (e) {
-          if (hasErrorCode(e, "INSUFFICIENT_FUNDS")) {
-            log("error", "EVM Family: Wrong estimation of fees", e);
-            throw new InsufficientFunds();
-          }
-          throw e;
-        }
-      },
-      { ...nodeConfig, retries: 0 },
-    );
+    withApi(currency, api => broadcastTransaction(api, signedTxHex), {
+      ...nodeConfig,
+      retries: 0,
+    });
 }
 
-/**
- * Get the informations about a block by block height
- */
-function makeGetBlockByHeight(nodeConfig: ExternalNodeConfig): NodeApi["getBlockByHeight"] {
-  return (currency, blockHeight = "latest", prefetchTxs = false) =>
-    withApi(
-      currency,
-      async api => {
-        const block = await api.getBlock(blockHeight, prefetchTxs);
+async function getBlockByHeight(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+  prefetchTxs: boolean,
+): Promise<BlockByHeightResult> {
+  const block = await api.getBlock(blockHeight, prefetchTxs);
 
-        if (!block) {
-          throw new Error(`Block ${blockHeight} not found`);
-        }
+  if (!block) {
+    throw new Error(`Block ${blockHeight} not found`);
+  }
 
-        if (!block.hash) {
-          throw new Error(`Block ${blockHeight} is missing hash`);
-        }
+  if (!block.hash) {
+    throw new Error(`Block ${blockHeight} is missing hash`);
+  }
 
-        const transactionHashes =
-          block.transactions === undefined
-            ? undefined
-            : block.transactions.map((tx, index) => {
-                if (typeof tx !== "string") {
-                  throw new TypeError(
-                    `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
-                  );
-                }
-                return tx;
-              });
-
-        const prefetchedTransactions = prefetchTxs
-          ? getPrefetchedBlockTransactions(block)
-          : undefined;
-        const transactions = prefetchedTransactions?.map((tx, index) => {
-          if (!isPrefetchedBlockTransaction(tx))
-            throw new Error(
-              `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
+  const transactionHashes =
+    block.transactions === undefined
+      ? undefined
+      : block.transactions.map((tx, index) => {
+          if (typeof tx !== "string") {
+            throw new TypeError(
+              `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
             );
-
-          return {
-            hash: tx.hash,
-            value: tx.value.toString(),
-            from: tx.from,
-            to: tx.to ?? undefined,
-          };
+          }
+          return tx;
         });
 
-        return {
-          hash: block.hash,
-          height: block.number ?? 0,
-          // timestamp is returned in seconds by getBlock, we need milliseconds
-          timestamp: block.timestamp * 1000,
-          parentHash: block.parentHash,
-          ...(transactions !== undefined && { transactions }),
-          ...(transactionHashes !== undefined && { transactionHashes }),
-        };
-      },
-      nodeConfig,
-    );
+  const prefetchedTransactions = prefetchTxs ? getPrefetchedBlockTransactions(block) : undefined;
+  const transactions = prefetchedTransactions?.map((tx, index) => {
+    if (!isPrefetchedBlockTransaction(tx))
+      throw new Error(
+        `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
+      );
+
+    return {
+      hash: tx.hash,
+      value: tx.value.toString(),
+      from: tx.from,
+      to: tx.to ?? undefined,
+    };
+  });
+
+  return {
+    hash: block.hash,
+    height: block.number ?? 0,
+    // timestamp is returned in seconds by getBlock, we need milliseconds
+    timestamp: block.timestamp * 1000,
+    parentHash: block.parentHash,
+    ...(transactions !== undefined && { transactions }),
+    ...(transactionHashes !== undefined && { transactionHashes }),
+  };
 }
 
-/**
- * Get all transaction receipts for a block in one RPC call.
- * This method is not supported by all RPC providers.
- */
+function makeGetBlockByHeight(nodeConfig: ExternalNodeConfig): NodeApi["getBlockByHeight"] {
+  return (currency, blockHeight = "latest", prefetchTxs = false) =>
+    withApi(currency, api => getBlockByHeight(api, blockHeight, prefetchTxs), nodeConfig);
+}
+
+async function getBlockReceipts(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<BlockReceiptInfo[]> {
+  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  let receipts: unknown;
+  try {
+    receipts = await api.send("eth_getBlockReceipts", [blockTag]);
+  } catch (error) {
+    if (isUnsupportedRpcMethodError(error)) {
+      throw new UnsupportedRpcMethodError(
+        "eth_getBlockReceipts is not supported by this RPC provider",
+        {
+          method: "eth_getBlockReceipts",
+          rawError: error,
+        },
+      );
+    }
+    throw error;
+  }
+
+  if (!Array.isArray(receipts)) throw new Error("Invalid eth_getBlockReceipts response");
+
+  return receipts.map((receipt, index) => {
+    if (!isTransactionReceipt(receipt))
+      throw new Error(`Malformed eth_getBlockReceipts response at index ${index}`);
+
+    return {
+      hash: receipt.transactionHash,
+      gasUsed: BigInt(receipt.gasUsed).toString(),
+      gasPrice: BigInt(receipt.effectiveGasPrice ?? receipt.gasPrice ?? "0x0").toString(),
+      status: receipt.status === null ? null : Number(receipt.status),
+      erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
+    };
+  });
+}
+
 function makeGetBlockReceipts(
   nodeConfig: ExternalNodeConfig,
 ): Exclude<NodeApi["getBlockReceipts"], undefined> {
   return (currency, blockHeight = "latest") =>
-    withApi(
-      currency,
-      async api => {
-        const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-        let receipts: unknown;
-        try {
-          receipts = await api.send("eth_getBlockReceipts", [blockTag]);
-        } catch (error) {
-          if (isUnsupportedRpcMethodError(error)) {
-            throw new UnsupportedRpcMethodError(
-              "eth_getBlockReceipts is not supported by this RPC provider",
-              {
-                method: "eth_getBlockReceipts",
-                rawError: error,
-              },
-            );
-          }
-          throw error;
-        }
-
-        if (!Array.isArray(receipts)) throw new Error("Invalid eth_getBlockReceipts response");
-
-        return receipts.map((receipt, index) => {
-          if (!isTransactionReceipt(receipt))
-            throw new Error(`Malformed eth_getBlockReceipts response at index ${index}`);
-
-          return {
-            hash: receipt.transactionHash,
-            gasUsed: BigInt(receipt.gasUsed).toString(),
-            gasPrice: BigInt(receipt.effectiveGasPrice ?? receipt.gasPrice ?? "0x0").toString(),
-            status: receipt.status === null ? null : Number(receipt.status),
-            erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
-          };
-        });
-      },
-      nodeConfig,
-    );
+    withApi(currency, api => getBlockReceipts(api, blockHeight), nodeConfig);
 }
 
-/**
- * Get execution traces for a block via trace_block RPC.
- * Not supported by all RPC providers (e.g. Fantom supports it).
- * @see https://www.quicknode.com/docs/ethereum/trace_block
- */
+async function traceBlock(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  let traces: unknown;
+  try {
+    traces = await api.send("trace_block", [blockTag]);
+  } catch (error) {
+    if (isUnsupportedRpcMethodError(error)) {
+      throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
+        method: "trace_block",
+        rawError: error,
+      });
+    }
+    throw error;
+  }
+
+  if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
+
+  return traces.map((trace, index) => {
+    if (!isTraceBlockItem(trace)) {
+      throw new Error(`Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`);
+    }
+    return trace;
+  });
+}
+
 function makeTraceBlock(nodeConfig: ExternalNodeConfig): NonNullable<NodeApi["traceBlock"]> {
   return (currency, blockHeight = "latest") =>
-    withApi(
-      currency,
-      async api => {
-        const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-        let traces: unknown;
-        try {
-          traces = await api.send("trace_block", [blockTag]);
-        } catch (error) {
-          if (isUnsupportedRpcMethodError(error)) {
-            throw new UnsupportedRpcMethodError(
-              "trace_block is not supported by this RPC provider",
-              {
-                method: "trace_block",
-                rawError: error,
-              },
-            );
-          }
-          throw error;
-        }
-
-        if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
-
-        return traces.map((trace, index) => {
-          if (!isTraceBlockItem(trace)) {
-            throw new Error(
-              `Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`,
-            );
-          }
-          return trace;
-        });
-      },
-      nodeConfig,
-    );
+    withApi(currency, api => traceBlock(api, blockHeight), nodeConfig);
 }
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
@@ -539,89 +519,70 @@ function isTransactionReceipt(value: unknown): value is TransactionReceipt {
   );
 }
 
-/**
- * ⚠️ Blockchain specific
- *
- * For a layer 2 like Optimism, additional fees are needed in order to
- * take into account layer 1 settlement estimated cost.
- * This gas price is served through a smart contract oracle.
- *
- * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
- */
+async function getOptimismAdditionalFees(
+  api: JsonRpcProvider,
+  currency: CryptoCurrency,
+  transaction: string,
+): Promise<BigNumber> {
+  if (
+    !["optimism", "optimism_sepolia", "base", "base_sepolia", "blast", "blast_sepolia"].includes(
+      currency.id,
+    )
+  ) {
+    return new BigNumber(0);
+  }
+
+  if (!transaction) {
+    return new BigNumber(0);
+  }
+
+  const optimismGasOracle = new ethers.Contract(
+    // contract address provided here
+    // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
+    "0x420000000000000000000000000000000000000F",
+    OptimismGasPriceOracleAbi,
+    api,
+  );
+  const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
+  return new BigNumber(additionalL1Fees.toString());
+}
+
 function makeGetOptimismAdditionalFees(
   nodeConfig: ExternalNodeConfig,
 ): NodeApi["getOptimismAdditionalFees"] {
   return async (currency, transaction) =>
-    withApi(
-      currency,
-      async api => {
-        if (
-          ![
-            "optimism",
-            "optimism_sepolia",
-            "base",
-            "base_sepolia",
-            "blast",
-            "blast_sepolia",
-          ].includes(currency.id)
-        ) {
-          return new BigNumber(0);
-        }
-
-        if (!transaction) {
-          return new BigNumber(0);
-        }
-
-        const optimismGasOracle = new ethers.Contract(
-          // contract address provided here
-          // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
-          "0x420000000000000000000000000000000000000F",
-          OptimismGasPriceOracleAbi,
-          api,
-        );
-        const additionalL1Fees = await optimismGasOracle.getL1Fee(transaction);
-        return new BigNumber(additionalL1Fees.toString());
-      },
-      nodeConfig,
-    );
+    withApi(currency, api => getOptimismAdditionalFees(api, currency, transaction), nodeConfig);
 }
 
-/**
- * ⚠️ Blockchain specific
- *
- * For a layer 2 like Scroll, additional fees are needed in order to
- * take into account layer 1 settlement estimated cost.
- * This gas price is served through a smart contract oracle.
- *
- * @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/
- */
+async function getScrollAdditionalFees(
+  api: JsonRpcProvider,
+  currency: CryptoCurrency,
+  transaction: string,
+): Promise<BigNumber> {
+  if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+    return new BigNumber(0);
+  }
+
+  if (!transaction) {
+    return new BigNumber(0);
+  }
+
+  const scrollGasOracle = new ethers.Contract(
+    // contract address provided here
+    // @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/#estimating-the-l1-data-fee
+    "0x5300000000000000000000000000000000000002",
+    ScrollGasPriceOracleAbi,
+    api,
+  );
+  const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
+  return new BigNumber(additionalL1Fees.toString());
+}
+
 function makeGetScrollAdditionalFees(
   nodeConfig: ExternalNodeConfig,
 ): NodeApi["getScrollAdditionalFees"] {
   return (currency, transaction) =>
-    withApi(
-      currency,
-      async api => {
-        if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
-          return new BigNumber(0);
-        }
-
-        if (!transaction) {
-          return new BigNumber(0);
-        }
-
-        const scrollGasOracle = new ethers.Contract(
-          // contract address provided here
-          // @see https://docs.scroll.io/en/developers/transaction-fees-on-scroll/#estimating-the-l1-data-fee
-          "0x5300000000000000000000000000000000000002",
-          ScrollGasPriceOracleAbi,
-          api,
-        );
-        const additionalL1Fees = await scrollGasOracle.getL1Fee(transaction);
-        return new BigNumber(additionalL1Fees.toString());
-      },
-      nodeConfig,
-    );
+    withApi(currency, api => getScrollAdditionalFees(api, currency, transaction), nodeConfig);
 }
 
 /* Get default maxPriorityFeePerGas by chain */
