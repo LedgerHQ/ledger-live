@@ -186,7 +186,10 @@ function getPublicKey(seed: Buffer, path: string): Promise<BitcoinAddress> {
   return Promise.resolve({
     bitcoinAddress: address,
     publicKey: Buffer.from(uncompressed).toString("hex"),
-    chainCode: Buffer.from(chainCode).toString("hex"),
+    chainCode: (Buffer.isBuffer(chainCode)
+      ? chainCode
+      : Buffer.from(new Uint8Array(chainCode))
+    ).toString("hex"),
   });
 }
 

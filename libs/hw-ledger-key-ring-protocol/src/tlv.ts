@@ -17,16 +17,16 @@ export interface TLVField {
 
 export type TLVReaderParams = { tlv: TLVField; offset: number };
 
-function pushTLV(a: Uint8Array, t: number, l: number, v: Uint8Array): Uint8Array {
-  const c = new Uint8Array(a.length + 2 + l);
+function pushTLV(a: Uint8Array, t: number, l: number, v: Uint8Array): Uint8Array<ArrayBuffer> {
+  const c: Uint8Array<ArrayBuffer> = new Uint8Array(a.length + 2 + l);
   c.set(a);
   c.set(new Uint8Array([t, l]), a.length);
   c.set(v, a.length + 2);
   return c;
 }
 
-function push(a: Uint8Array, b: Uint8Array): Uint8Array {
-  const c = new Uint8Array(a.length + b.length);
+function push(a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> {
+  const c: Uint8Array<ArrayBuffer> = new Uint8Array(a.length + b.length);
   c.set(a);
   c.set(b, a.length);
   return c;
@@ -161,47 +161,47 @@ export const TLV = {
   push,
   pushTLV,
 
-  pushString: function (a: Uint8Array, b: string): Uint8Array {
+  pushString: function (a: Uint8Array, b: string): Uint8Array<ArrayBuffer> {
     const encoded = new TextEncoder().encode(b);
     return pushTLV(a, 0x04, encoded.length, encoded);
   },
 
-  pushByte: function (a: Uint8Array, b: number): Uint8Array {
+  pushByte: function (a: Uint8Array, b: number): Uint8Array<ArrayBuffer> {
     return pushTLV(a, 0x01, 1, new Uint8Array([b]));
   },
 
-  pushInt16: function (a: Uint8Array, b: number): Uint8Array {
+  pushInt16: function (a: Uint8Array, b: number): Uint8Array<ArrayBuffer> {
     const bytes = BigEndian.shortToArray(b);
     return pushTLV(a, 0x01, 2, bytes);
   },
 
-  pushInt32: function (a: Uint8Array, b: number): Uint8Array {
+  pushInt32: function (a: Uint8Array, b: number): Uint8Array<ArrayBuffer> {
     const bytes = BigEndian.numberToArray(b);
     return pushTLV(a, 0x01, 4, bytes);
   },
 
-  pushHash: function (a: Uint8Array, b: Uint8Array): Uint8Array {
+  pushHash: function (a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> {
     return pushTLV(a, 0x02, b.length, b);
   },
 
-  pushSignature: function (a: Uint8Array, b: Uint8Array): Uint8Array {
+  pushSignature: function (a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> {
     return pushTLV(a, 0x03, b.length, b);
   },
 
-  pushBytes: function (a: Uint8Array, b: Uint8Array): Uint8Array {
+  pushBytes: function (a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> {
     return pushTLV(a, 0x05, b.length, b);
   },
 
-  pushNull: function (a: Uint8Array): Uint8Array {
+  pushNull: function (a: Uint8Array): Uint8Array<ArrayBuffer> {
     return pushTLV(a, 0x00, 0, new Uint8Array(0));
   },
 
-  pushPublicKey: function (a: Uint8Array, b: Uint8Array): Uint8Array {
+  pushPublicKey: function (a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> {
     return pushTLV(a, 0x06, b.length, b);
   },
 
-  pushDerivationPath: function (a: Uint8Array, b: number[]): Uint8Array {
-    let bytes = new Uint8Array();
+  pushDerivationPath: function (a: Uint8Array, b: number[]): Uint8Array<ArrayBuffer> {
+    let bytes: Uint8Array<ArrayBuffer> = new Uint8Array();
     for (let i = 0; i < b.length; i++) {
       bytes = push(bytes, BigEndian.numberToArray(b[i]));
     }

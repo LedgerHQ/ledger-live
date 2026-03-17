@@ -172,7 +172,7 @@ export class StreamTreeCipher {
     const sharedKeyPair = await this.getGroupKeypair(tree, path);
     const secret = crypto.ecdh(sharedKeyPair, ephemeralKey);
 
-    let decrypted = new Uint8Array(0);
+    let decrypted: Uint8Array = new Uint8Array(0);
     switch (this._mode) {
       case StreamTreeCipherMode.AES_256_CBC: {
         decrypted = crypto.decrypt(secret, nonce, encryptedMessage);

@@ -104,7 +104,7 @@ Frames/encodes an APDU message into HID USB packets/frames
 
 *   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The APDU message to send, in a Buffer containing \[cla, ins, p1, p2, data length, data(if not empty)]
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** an array of HID USB frames ready to be sent
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)<[ArrayBuffer](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer)>>** an array of HID USB frames ready to be sent
 
 ### reduceResponse
 

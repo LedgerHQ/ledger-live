@@ -147,7 +147,7 @@ function codeToInject() {
     contrastAmount: number,
     ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson",
     bitsPerPixel: 1 | 4,
-  ): { imageDataResult: Uint8ClampedArray; hexRawResult: string } {
+  ): { imageDataResult: ImageDataArray; hexRawResult: string } {
     let hexRawResult = "";
     const filteredImageData = [];
     const data = imageData.data;

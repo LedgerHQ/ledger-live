@@ -39,7 +39,7 @@ const createHIDframing = (channel: number, packetSize: number) => {
      * @param apdu The APDU message to send, in a Buffer containing [cla, ins, p1, p2, data length, data(if not empty)]
      * @returns an array of HID USB frames ready to be sent
      */
-    makeBlocks(apdu: Buffer): Buffer[] {
+    makeBlocks(apdu: Buffer): Uint8Array<ArrayBuffer>[] {
       // Encodes the APDU length in 2 bytes before the APDU itself.
       // The length is measured as the number of bytes.
       // As the size of the APDU `data` should have been added in 1 byte just before `data`,
@@ -52,7 +52,7 @@ const createHIDframing = (channel: number, packetSize: number) => {
       // Fills data with 0-padding
       data = Buffer.concat([data, Buffer.alloc(nbBlocks * blockSize - data.length + 1).fill(0)]);
 
-      const blocks: Buffer[] = [];
+      const blocks: Uint8Array<ArrayBuffer>[] = [];
 
       for (let i = 0; i < nbBlocks; i++) {
         const head = Buffer.alloc(5);
@@ -63,7 +63,8 @@ const createHIDframing = (channel: number, packetSize: number) => {
         // `slice` and not `subarray`: this might not be a Node Buffer, but probably only a Uint8Array
         const chunk = data.slice(i * blockSize, (i + 1) * blockSize);
 
-        blocks.push(Buffer.concat([head, chunk]));
+        // Ensure browser transports get a BufferSource-compatible typed array
+        blocks.push(new Uint8Array(Buffer.concat([head, chunk])));
       }
 
       return blocks;
