@@ -46,6 +46,7 @@ import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
 import { INITIAL_STATE as PORTFOLIO_REFRESH_INITIAL_STATE } from "~/reducers/portfolioRefresh";
 import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/deeplinkInstallApp";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
@@ -58,6 +59,7 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
+  featureFlags: FEATURE_FLAGS_INITIAL_STATE,
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
@@ -98,13 +100,23 @@ type CountervaluesChildren = React.ComponentProps<typeof CountervaluesProvider>[
 type WrapperProps = { children?: NavigationChildren };
 
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
+  const state = overrideInitialState(INITIAL_STATE);
+
+  // Bridge: mirror legacy settings overrides into the new featureFlags slice
+  // so tests that set state.settings.overriddenFeatureFlags still work with
+  // the selector proxies that now read from state.featureFlags.overrides.
+  const legacyOverrides = state.settings.overriddenFeatureFlags;
+  if (legacyOverrides && Object.keys(legacyOverrides).length > 0) {
+    state.featureFlags = { ...state.featureFlags, overrides: legacyOverrides };
+  }
+
   return configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       applyLlmRTKApiMiddlewares(
         getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
       ),
-    preloadedState: overrideInitialState(INITIAL_STATE),
+    preloadedState: state,
     devTools: false,
   });
 }
