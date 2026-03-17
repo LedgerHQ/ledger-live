@@ -138,7 +138,7 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
       <Label>
         {t("aleo.shared.recordPicker.label")}: {unspentRecords.length}
       </Label>
-      <Flex flexDirection="column" rowGap="0.5rem">
+      <Flex flexDirection="column" rowGap="0.5rem" maxHeight="300px" overflowY="auto">
         {unspentRecords.map(record => (
           <StyledButton
             key={record.commitment}
