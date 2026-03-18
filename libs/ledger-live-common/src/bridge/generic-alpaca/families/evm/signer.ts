@@ -1,6 +1,5 @@
 import { filter, firstValueFrom } from "rxjs";
 import { EvmAddress, EvmSignature, EvmSigner } from "@ledgerhq/coin-evm/types/signer";
-import { CreateSigner, executeWithSigner } from "../../setup";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import Transport from "@ledgerhq/hw-transport";
@@ -9,6 +8,8 @@ import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/services/type
 import { Signature } from "ethers";
 import type { DomainServiceResolution } from "@ledgerhq/types-live";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import { CreateSigner, executeWithSigner } from "../../../setup";
+import type { AlpacaSigner } from "../../types";
 
 export type Signer = {
   getAddress: (path: string) => Promise<EvmAddress>;
@@ -72,5 +73,9 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
   };
 };
 
-export const context = executeWithSigner(createSigner);
-export const getAddress = resolver(context);
+const context = executeWithSigner(createSigner);
+
+export default {
+  context,
+  getAddress: resolver(context),
+} satisfies AlpacaSigner;
