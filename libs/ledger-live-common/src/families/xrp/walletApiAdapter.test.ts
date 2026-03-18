@@ -1,8 +1,8 @@
 import { Account } from "@ledgerhq/types-live";
 import { RippleTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
-import { Transaction } from "@ledgerhq/coin-xrp/types";
 import xrp from "./walletApiAdapter";
+import { Transaction } from "./types";
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   describe("should properly get infos for XRP platform tx", () => {

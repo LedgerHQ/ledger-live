@@ -34,6 +34,3 @@ export const InsufficientFunds = createCustomErrorClass("InsufficientFunds");
 // Nfts
 export const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 export const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
-
-// Broadcast
-export const InvalidTransactionError = createCustomErrorClass("InvalidTransactionError");

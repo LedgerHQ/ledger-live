@@ -972,8 +972,8 @@ export const expectedCurrencyList = [
   {
     type: "CryptoCurrency",
     id: "coreum",
-    ticker: "COREUM",
-    name: "Coreum",
+    ticker: "TX",
+    name: "TX",
     family: "cosmos",
     color: "#6DD39A",
     decimals: 6,

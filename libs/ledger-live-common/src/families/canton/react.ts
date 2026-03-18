@@ -4,7 +4,7 @@ import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getParentAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import BigNumber from "bignumber.js";
 
 export type UseCantonAcceptOrRejectOfferOptions = {

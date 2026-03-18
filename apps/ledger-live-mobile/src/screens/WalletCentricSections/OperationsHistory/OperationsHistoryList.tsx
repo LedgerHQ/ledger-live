@@ -6,7 +6,7 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import SectionHeader from "~/components/SectionHeader";
 import { ViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
-import { flattenAccounts } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { OperationRowContainer } from "./OperationRowContainer";
 
 const keyExtractor = (operation: Operation) => operation.id;

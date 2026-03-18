@@ -28,6 +28,7 @@ _In case of visual features, please attach screenshots or video recordings to de
 ### ❓ Context
 
 - **JIRA or GitHub link**: <!-- Attach the relevant ticket number if applicable. (e.g., [JIRA-123] for Jira or #123 for a Github issue) -->
+- **ADR link (if any)**: <!-- Attach the relevant architectural decision record if applicable. -->
 
 
 ---

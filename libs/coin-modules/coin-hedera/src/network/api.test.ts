@@ -294,6 +294,8 @@ describe("findTransactionByContractCall", () => {
       entity_id: "0.0.1234",
       name: "CONTRACTCALL",
       node: null,
+      nonce: 0,
+      parent_consensus_timestamp: null,
     };
 
     mockedNetwork.mockResolvedValueOnce(
@@ -393,6 +395,8 @@ describe("findTransactionByContractCallV2", () => {
       transaction_id: `${mockPayerAddress}-${mockConsensusTimestamp}`,
       name: "CONTRACTCALL",
       node: null,
+      nonce: 0,
+      parent_consensus_timestamp: null,
     };
 
     mockedNetwork.mockResolvedValueOnce(

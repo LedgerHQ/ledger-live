@@ -1,5 +1,5 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isEIP712Message } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, DeviceId, TypedEvmMessage } from "@ledgerhq/types-live";
 import { ethers } from "ethers";
 import { EvmSignature, EvmSigner, EvmSignerEvent } from "./types/signer";

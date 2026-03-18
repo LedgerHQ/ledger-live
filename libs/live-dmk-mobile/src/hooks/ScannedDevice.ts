@@ -1,4 +1,4 @@
-import { DeviceId } from "@ledgerhq/device-management-kit";
+import { DeviceId, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type ScannedDevice = {
@@ -6,4 +6,5 @@ export type ScannedDevice = {
   deviceName: string;
   wired: boolean;
   modelId: DeviceModelId;
+  discoveredDevice: DiscoveredDevice;
 };

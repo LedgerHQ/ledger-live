@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import { IconAccount, IconOperation, IconResources, Transaction } from "./index";
 

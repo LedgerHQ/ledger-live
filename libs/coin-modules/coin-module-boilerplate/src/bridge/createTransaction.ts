@@ -8,7 +8,4 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   amount: new BigNumber(0),
   recipient: "",
   fee: null,
-  memo: undefined,
-  networkInfo: null,
-  feeCustomUnit: null,
 });

@@ -1,4 +1,4 @@
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getDefaultAccountName } from "./accountName";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 

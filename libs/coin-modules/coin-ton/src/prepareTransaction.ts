@@ -1,4 +1,4 @@
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { TonAccount, Transaction } from "./types";

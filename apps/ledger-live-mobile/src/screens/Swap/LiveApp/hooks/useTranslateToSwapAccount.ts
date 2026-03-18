@@ -2,7 +2,7 @@ import { useSelector } from "~/context/hooks";
 import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { walletSelector } from "~/reducers/wallet";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 

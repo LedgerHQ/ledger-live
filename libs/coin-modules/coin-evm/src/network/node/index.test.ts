@@ -1,8 +1,6 @@
 import { AssertionError, fail } from "assert";
 import { getCoinConfig } from "../../config";
 import { UnknownNode } from "../../errors";
-import ledgerNodeApi from "./ledger";
-import rpcNodeApi from "./rpc";
 import { getNodeApi } from "./index";
 
 jest.mock("../../config");
@@ -17,7 +15,7 @@ describe("EVM Family", () => {
         });
 
         try {
-          await getNodeApi({
+          getNodeApi({
             id: "not-existing",
           } as any);
           fail("Promise should have been rejected");
@@ -34,23 +32,47 @@ describe("EVM Family", () => {
           return { info: { node: { type: "external", uri: "working" } } };
         });
 
-        const node = await getNodeApi({
+        const node = getNodeApi({
           id: "external",
         } as any);
 
-        expect(node).toBe(rpcNodeApi);
+        expect(node).toEqual(
+          expect.objectContaining({
+            getTransaction: expect.any(Function),
+            getBlockByHeight: expect.any(Function),
+            getCoinBalance: expect.any(Function),
+            getTransactionCount: expect.any(Function),
+            getGasEstimation: expect.any(Function),
+            getFeeData: expect.any(Function),
+            broadcastTransaction: expect.any(Function),
+            getOptimismAdditionalFees: expect.any(Function),
+            getScrollAdditionalFees: expect.any(Function),
+          }),
+        );
       });
 
-      it("should return the ledger api", async () => {
+      it("should return the ledger api", () => {
         mockGetConfig.mockImplementationOnce((): any => {
           return { info: { node: { type: "ledger", explorerId: "eth" } } };
         });
 
-        const node = await getNodeApi({
+        const node = getNodeApi({
           id: "ledger-supported",
         } as any);
 
-        expect(node).toBe(ledgerNodeApi);
+        expect(node).toEqual(
+          expect.objectContaining({
+            getTransaction: expect.any(Function),
+            getBlockByHeight: expect.any(Function),
+            getCoinBalance: expect.any(Function),
+            getTransactionCount: expect.any(Function),
+            getGasEstimation: expect.any(Function),
+            getFeeData: expect.any(Function),
+            broadcastTransaction: expect.any(Function),
+            getOptimismAdditionalFees: expect.any(Function),
+            getScrollAdditionalFees: expect.any(Function),
+          }),
+        );
       });
     });
   });

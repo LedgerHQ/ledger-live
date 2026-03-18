@@ -73,7 +73,7 @@ import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   FlowName,

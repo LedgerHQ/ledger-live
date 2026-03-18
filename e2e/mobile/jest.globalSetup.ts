@@ -12,7 +12,7 @@ import { session as detoxSession, config as detoxConfig } from "detox/internals"
 import * as fs from "fs/promises";
 import * as path from "path";
 import { exec } from "child_process";
-import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/lib/e2e/speculosCI";
+import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/e2e/speculosCI";
 import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
 import { NANO_APP_CATALOG_PATH } from "./utils/constants";

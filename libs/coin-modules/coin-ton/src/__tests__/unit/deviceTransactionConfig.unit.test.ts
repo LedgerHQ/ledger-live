@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { toNano } from "@ton/core";
 import BigNumber from "bignumber.js";
 import { TOKEN_TRANSFER_MAX_FEE } from "../../constants";

@@ -1,13 +1,13 @@
-import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { decodeAccountId, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
   encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";

@@ -1,5 +1,8 @@
-import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import {
+  findSubAccountById,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { computeAlgoMaxSpendable } from "./bridgeLogic";

@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useOnboardingWidgetVisibility } from "../useOnboardingWidgetVisibility";
 

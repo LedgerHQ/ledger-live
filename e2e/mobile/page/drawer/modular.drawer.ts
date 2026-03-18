@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Feature_ModularDrawer } from "@ledgerhq/types-live";
 import { getFlags } from "../../bridge/server";
-import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isIos } from "../../helpers/commonHelpers";
 
 export default class ModularDrawer {
@@ -162,6 +162,14 @@ export default class ModularDrawer {
       detoxExpect(getElementById(this.accountItem)).not.toBeVisible();
       return;
     }
+    for (const account of accounts) {
+      const accountItemId = this.accountItemNameId(account);
+      await detoxExpect(getElementById(accountItemId)).toBeVisible();
+    }
+  }
+
+  @Step("Validate account name(s) visible on account list")
+  async validateAccountNames(accounts: string[]): Promise<void> {
     for (const account of accounts) {
       const accountItemId = this.accountItemNameId(account);
       await detoxExpect(getElementById(accountItemId)).toBeVisible();

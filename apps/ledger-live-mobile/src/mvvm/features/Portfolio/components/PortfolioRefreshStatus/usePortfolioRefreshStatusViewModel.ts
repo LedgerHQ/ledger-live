@@ -22,10 +22,19 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
   const { t } = useTranslation();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
   const legacyIsRefreshing = useSelector(selectIsRefreshing);
-  const { syncPhase } = usePortfolioBalance();
+  const { syncPhase, isManualRefreshLoading } = usePortfolioBalance();
+
+  // Stays true for the entire sync cycle once the user triggers a refresh;
+  // reset when sync leaves "syncing" (either "synced" or "failed"). Never set at cold start.
+  const wasUserTriggeredRef = useRef(false);
+  if (isManualRefreshLoading) {
+    wasUserTriggeredRef.current = true;
+  } else if (syncPhase !== "syncing") {
+    wasUserTriggeredRef.current = false;
+  }
 
   const isSyncing = shouldDisplayBalanceRefreshRework
-    ? syncPhase === "syncing"
+    ? syncPhase === "syncing" && wasUserTriggeredRef.current
     : legacyIsRefreshing;
 
   const [outcome, setOutcome] = useState<RefreshOutcome>(null);

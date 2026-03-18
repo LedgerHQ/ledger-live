@@ -9,6 +9,10 @@ import {
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { craftRawTransaction } from "../logic/craftRawTransaction";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
@@ -28,20 +32,22 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): AlpacaA
     combine: (tx: string, signature: string, _pubkey?: string) => {
       return combine(tx, signature);
     },
-    craftTransaction: (_intent: TransactionIntent, _customFees?: FeeEstimation) => {
-      throw new Error("craftTransaction is not supported");
+    craftTransaction: (intent: TransactionIntent, customFees?: FeeEstimation) => {
+      return craftTransaction(api, intent, customFees);
     },
-    craftRawTransaction: (_tx: string, _sender: string, _publicKey: string, _sequence: bigint) => {
-      throw new Error("craftRawTransaction is not supported");
+    craftRawTransaction: (tx: string, sender: string, _publicKey: string, _sequence: bigint) => {
+      return craftRawTransaction(tx, sender);
     },
     estimateFees: (
-      _intent: TransactionIntent,
-      _customFeesParameters?: FeeEstimation["parameters"],
+      intent: TransactionIntent,
+      customFeesParameters?: FeeEstimation["parameters"],
     ) => {
-      throw new Error("estimateFees is not supported");
+      return estimateFees(api, intent, customFeesParameters);
     },
-    getBalance: (_address: string) => {
-      throw new Error("getBalance is not supported");
+    getBalance: (address: string) => {
+      return getBalance(api, address, {
+        token2022Enabled: config.token2022Enabled,
+      });
     },
     lastBlock: () => {
       return lastBlock(api);

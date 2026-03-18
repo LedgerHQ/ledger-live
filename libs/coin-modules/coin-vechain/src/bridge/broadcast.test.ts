@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import { broadcast } from "./broadcast";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { submit } from "../network";
 import { VechainSDKTransaction } from "../types";
 import { Account } from "@ledgerhq/types-live";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../network");
 jest.mock("../types", () => ({
   ...jest.requireActual("../types"),

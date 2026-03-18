@@ -1,4 +1,4 @@
-import { Page, Stake, Reward } from "@ledgerhq/coin-framework/lib/api/types";
+import { Page, Stake, Reward } from "@ledgerhq/coin-framework/api/types";
 import type { SuiCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";

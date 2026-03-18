@@ -1,11 +1,12 @@
 import { HttpManagerApiRepository, ApplicationV2Entity } from "@ledgerhq/device-core";
-import { version } from "../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device as CryptoWallet } from "./enum/Device";
 import { sanitizeError } from "./index";
 import * as fs from "fs";
 import * as path from "path";
+
+const liveCommonVersion = "34.64.0"; // live-common version isn't really necessary here, so we can hardcode it
 
 export function getSpeculosModel(): DeviceModelId {
   const speculosDevice = process.env.SPECULOS_DEVICE;
@@ -50,7 +51,7 @@ export async function getNanoAppCatalog(
   device: DeviceModelId,
   deviceFirmware: string,
 ): Promise<ApplicationV2Entity[]> {
-  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
   const targetId = getDeviceTargetId(device);
   return await repository.catalogForDevice({
     provider: 1,
@@ -66,7 +67,7 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
   if (cached) return cached;
 
   const providerId = 1;
-  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
 
   const deviceVersion = await repository.getDeviceVersion({
     targetId: getDeviceTargetId(device),

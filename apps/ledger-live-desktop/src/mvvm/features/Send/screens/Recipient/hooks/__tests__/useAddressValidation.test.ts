@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -18,7 +18,7 @@ import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 
 jest.mock("LLD/hooks/redux");
 jest.mock("@ledgerhq/domain-service/hooks/index");
-jest.mock("@ledgerhq/coin-framework/sanction/index");
+jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
 jest.mock("../useFormattedAccountBalance");

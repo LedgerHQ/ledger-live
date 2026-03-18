@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation } from "@react-navigation/native";
@@ -29,7 +30,7 @@ const generateMockAccounts = (currencies: CryptoCurrency[], tokens: string): Acc
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());
 
   return currencies.map(currency =>
-    genAccount(String(Math.random()), {
+    genAccount(uuid(), {
       currency,
       tokenIds,
     }),

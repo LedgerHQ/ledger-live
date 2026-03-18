@@ -1,15 +1,17 @@
 import React from "react";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-import { useTranslation } from "~/context/Locale";
-import { PromisableButton } from "@ledgerhq/native-ui/lib/components/cta/Button/index";
-import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { StyleSheet } from "react-native";
-import { useDispatch } from "~/context/hooks";
-import { track, TrackScreen } from "~/analytics";
-import { PAGE_NAME } from "../const";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { PromisableButton } from "@ledgerhq/native-ui/components/cta/Button/index";
+import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { setTutorial } from "~/actions/largeMoverLandingPage";
+import { track, TrackScreen } from "~/analytics";
+import { useDispatch } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
+import { PAGE_NAME } from "../const";
 
 export const OverlayTutorial = () => {
+  const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const handleCloseOverlay = () => {
@@ -33,7 +35,13 @@ export const OverlayTutorial = () => {
       <TrackScreen name="Large_Mover_Tutorial" />
       <BlurView style={StyleSheet.absoluteFill} blurAmount={20} blurType="dark" />
 
-      <Flex flex={1} justifyContent="space-between" alignItems="center" padding={6}>
+      <Flex
+        flex={1}
+        justifyContent="space-between"
+        alignItems="center"
+        padding={6}
+        paddingBottom={insets.bottom}
+      >
         <Flex flex={1} justifyContent="center" alignItems="center">
           <Flex paddingBottom={4}>
             <Icons.Swipe size="XXL" color="constant.white" />

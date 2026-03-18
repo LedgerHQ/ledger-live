@@ -28,6 +28,21 @@ jest.mock("./logic/validateMemo", () => {
   };
 });
 
+const mockGetMaybeVoteAccount = jest.fn();
+const mockGetStakeAccountAddressWithSeed = jest.fn();
+const mockGetStakeAccountMinimumBalanceForRentExemption = jest.fn();
+jest.mock("./network/chain/web3", () => {
+  const actual = jest.requireActual("./network/chain/web3");
+  return {
+    ...actual,
+    getMaybeVoteAccount: (...args: unknown[]) => mockGetMaybeVoteAccount(...args),
+    getStakeAccountAddressWithSeed: (...args: unknown[]) =>
+      mockGetStakeAccountAddressWithSeed(...args),
+    getStakeAccountMinimumBalanceForRentExemption: (...args: unknown[]) =>
+      mockGetStakeAccountMinimumBalanceForRentExemption(...args),
+  };
+});
+
 describe("testing prepareTransaction", () => {
   const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
 
@@ -263,6 +278,72 @@ describe("testing prepareTransaction", () => {
       );
     },
   );
+
+  describe("stake.createAccount and stake.split (createWithSeed-compatible seed)", () => {
+    const voteAccAddress = "Vote111111111111111111111111111111111111111111";
+    const stakeAccAddress = "StakeAccountAddr111111111111111111111111111";
+    const STAKE_SEED_MAX_BYTES = 32;
+
+    beforeEach(() => {
+      mockGetMaybeVoteAccount.mockResolvedValue({});
+      mockGetStakeAccountAddressWithSeed.mockResolvedValue(stakeAccAddress);
+      mockGetStakeAccountMinimumBalanceForRentExemption.mockResolvedValue(123456);
+    });
+
+    it("should derive stake.createAccount command with seed <= 32 bytes", async () => {
+      const stakeCreateTx = transaction({
+        kind: "stake.createAccount",
+        uiState: { delegate: { voteAccAddress } },
+      });
+      (stakeCreateTx as { amount?: BigNumber }).amount = new BigNumber(1000);
+
+      const preparedTransaction = await prepareTransaction(
+        {
+          currency: { units: [{ magnitude: 9 }] },
+          freshAddress: "Sender11111111111111111111111111111111",
+          spendableBalance: new BigNumber(1e9),
+        } as unknown as SolanaAccount,
+        stakeCreateTx,
+        {} as ChainAPI,
+      );
+
+      const command = preparedTransaction.model.commandDescriptor?.command;
+      expect(command !== undefined && command !== null).toBe(true);
+      expect(command?.kind).toBe("stake.createAccount");
+      if (command?.kind === "stake.createAccount") {
+        expect(command.seed).toMatch(/^stake:[0-9a-f]{26}$/);
+        expect(Buffer.byteLength(command.seed, "utf8")).toBeLessThanOrEqual(STAKE_SEED_MAX_BYTES);
+        expect(command.stakeAccAddress).toBe(stakeAccAddress);
+      }
+    });
+
+    it("should derive stake.split command with seed <= 32 bytes", async () => {
+      const stakeSplitTx = transaction({
+        kind: "stake.split",
+        uiState: { stakeAccAddr: stakeAccAddress },
+      });
+      (stakeSplitTx as { amount?: BigNumber }).amount = new BigNumber(500);
+
+      const preparedTransaction = await prepareTransaction(
+        {
+          currency: { units: [{ magnitude: 9 }] },
+          freshAddress: "Sender11111111111111111111111111111111",
+          solanaResources: { stakes: [] },
+        } as unknown as SolanaAccount,
+        stakeSplitTx,
+        {} as ChainAPI,
+      );
+
+      const command = preparedTransaction.model.commandDescriptor?.command;
+      expect(command !== undefined && command !== null).toBe(true);
+      expect(command?.kind).toBe("stake.split");
+      if (command?.kind === "stake.split") {
+        expect(command.seed).toMatch(/^stake:[0-9a-f]{26}$/);
+        expect(Buffer.byteLength(command.seed, "utf8")).toBeLessThanOrEqual(STAKE_SEED_MAX_BYTES);
+        expect(command.splitStakeAccAddr).toBe(stakeAccAddress);
+      }
+    });
+  });
 });
 
 function api(estimatedFees?: number) {

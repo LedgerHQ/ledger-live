@@ -1,4 +1,3 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   NotEnoughBalance,
   NotEnoughBalanceInParentAccount,
@@ -9,6 +8,7 @@ import {
   FeeTooHigh,
   InvalidAddress,
 } from "@ledgerhq/errors";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { isValidSuiAddress } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";

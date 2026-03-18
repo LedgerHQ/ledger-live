@@ -11,7 +11,7 @@ export {
   groupAccountsOperationsByDay,
   addPendingOperation,
   emptyHistoryCache,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 export * from "./formatters";
 export * from "./helpers";
 export { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";

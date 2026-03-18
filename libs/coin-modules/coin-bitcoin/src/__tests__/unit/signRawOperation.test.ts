@@ -46,8 +46,8 @@ jest.mock("../../wallet-btc", () => ({
   default: {},
 }));
 
-jest.mock("@ledgerhq/coin-framework/derivation", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-framework/derivation");
+jest.mock("@ledgerhq/ledger-wallet-framework/derivation", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/derivation");
   return {
     ...actual,
     isSegwitDerivationMode: () => true,

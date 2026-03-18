@@ -1,0 +1,44 @@
+name: "Nx affected packages and paths"
+description: "Outputs affected Nx project names and their filesystem paths (for use with contains() in workflow conditions). Does not checkout or setup the workspace. When base/head are omitted, Nx uses its own defaults (e.g. from Git)."
+
+inputs:
+  base:
+    description: "Base ref for affected calculation (e.g. origin/main). Omit to use Nx default."
+    required: false
+  head:
+    description: "Head ref for affected calculation (e.g. HEAD). Omit to use Nx default."
+    required: false
+
+outputs:
+  packages:
+    description: "Newline-separated list of affected project names"
+    value: ${{ steps.nx-affected.outputs.packages }}
+  paths:
+    description: "Newline-separated list of affected project root paths (deduplicated)"
+    value: ${{ steps.nx-affected.outputs.paths }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get affected packages and paths
+      id: nx-affected
+      env:
+        BASE: ${{ inputs.base }}
+        HEAD: ${{ inputs.head }}
+        ACTION_PATH: ${{ github.action_path }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const path = require('path');
+          const scriptPath = path.join(process.env.ACTION_PATH, 'get-affected-packages-and-paths.js');
+          const { getAffectedPackagesAndPaths } = require(scriptPath);
+          const { packages: packageNames, paths: pathsDeduped } = await getAffectedPackagesAndPaths({
+            base: process.env.BASE || '',
+            head: process.env.HEAD || '',
+            exec,
+          });
+          const fs = require('fs');
+          const out = process.env.GITHUB_OUTPUT;
+          const eol = '\nEOF\n';
+          fs.appendFileSync(out, 'packages<<EOF\n' + packageNames.join('\n') + eol);
+          fs.appendFileSync(out, 'paths<<EOF\n' + pathsDeduped.join('\n') + eol);

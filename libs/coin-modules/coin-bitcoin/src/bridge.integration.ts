@@ -1,6 +1,6 @@
 import { DatasetTest } from "@ledgerhq/types-live";
 import { Buffer as OriginalBuffer } from "buffer";
-// import { testBridge } from "@ledgerhq/coin-framework/test-helpers/bridge-integration-suite";
+// import { testBridge } from "@ledgerhq/ledger-wallet-framework/test-helpers/bridge-integration-suite";
 
 import type { Transaction } from "./types";
 import bitcoin from "./datasets/bitcoin";

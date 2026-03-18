@@ -1,4 +1,7 @@
-import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  findSubAccountById,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";

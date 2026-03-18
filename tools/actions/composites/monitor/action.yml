@@ -41,7 +41,7 @@ runs:
       run: pnpm i --filter="coin-modules-monitoring..." --silent
       shell: bash
     - name: Build dependencies
-      run: pnpm build:llc
+      run: pnpm turbo build --filter=./libs/ledger-live-common
       shell: bash
     - name: Build coin-modules-monitoring
       run: pnpm coin:modules:monitoring build

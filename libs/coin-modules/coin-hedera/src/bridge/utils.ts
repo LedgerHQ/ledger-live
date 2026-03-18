@@ -1,13 +1,13 @@
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
   encodeTokenAccountId,
   findSubAccountById,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+} from "@ledgerhq/ledger-wallet-framework/account";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

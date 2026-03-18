@@ -37,8 +37,8 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
   },
 }));
 
-jest.mock("@ledgerhq/coin-framework/account/helpers", () => ({
-  ...jest.requireActual("@ledgerhq/coin-framework/account/helpers"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/helpers"),
   getMainAccount: jest.fn(() => mockAccount),
   getAccountCurrency: jest.fn(() => ({ id: "bitcoin", ticker: "BTC", units: [] })),
 }));

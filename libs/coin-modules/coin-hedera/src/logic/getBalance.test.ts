@@ -1,7 +1,9 @@
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import hederaCoinConfig from "../config";
+import { HederaAddAccountError } from "../errors";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
@@ -302,5 +304,29 @@ describe("getBalance", () => {
     (networkUtils.getERC20BalancesForAccountV2 as jest.Mock).mockRejectedValue(error);
 
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
+  });
+
+  it.each([
+    {
+      name: "HederaAddAccountError",
+      error: new HederaAddAccountError(),
+    },
+    {
+      name: "404 error",
+      error: new LedgerAPI4xx("", { status: 404, url: undefined, method: "GET" }),
+    },
+  ])("should return empty results on $name", async ({ error }) => {
+    const address = "0.0.0";
+
+    (apiClient.getAccount as jest.Mock).mockRejectedValue(error);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getNodes as jest.Mock).mockResolvedValue({ nodes: [] });
+    (networkUtils.getERC20BalancesForAccountV2 as jest.Mock).mockResolvedValue([]);
+
+    const result = await getBalance(mockCurrency, address);
+
+    expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
+    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(result).toEqual([]);
   });
 });

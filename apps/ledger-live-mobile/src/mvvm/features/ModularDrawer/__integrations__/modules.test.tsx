@@ -100,6 +100,7 @@ describe("ModularDrawer modules integration", () => {
   it("should display market trend on the left at assetSelection step", async () => {
     const { getByText, queryAllByText, user } = render(
       <ModularDrawerSharedNavigator
+        useDeviceSelectionState={false}
         assetsConfiguration={{
           leftElement: "marketTrend",
         }}
@@ -125,6 +126,7 @@ describe("ModularDrawer modules integration", () => {
   it("should display market trend on the right at assetSelection step", async () => {
     const { getByText, queryAllByText, user } = render(
       <ModularDrawerSharedNavigator
+        useDeviceSelectionState={false}
         assetsConfiguration={{
           rightElement: "marketTrend",
         }}
@@ -248,6 +250,7 @@ describe("ModularDrawer modules integration", () => {
 
       const { getByText, getAllByTestId, user } = render(
         <ModularDrawerSharedNavigator
+          useDeviceSelectionState={false}
           assetsConfiguration={{
             leftElement: "apy",
           }}

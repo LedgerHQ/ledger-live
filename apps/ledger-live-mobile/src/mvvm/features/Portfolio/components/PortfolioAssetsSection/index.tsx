@@ -16,22 +16,15 @@ export const PortfolioAssetsSection = ({
   openAddModal,
   onHeightChange,
 }: PortfolioAssetsSectionProps) => {
-  if (isAccountListUIEnabled) {
-    return (
-      <AnimatedContainer onHeightChange={onHeightChange}>
-        <Box px={6} key="PortfolioAssets">
-          <PortfolioAssets
-            hideEmptyTokenAccount={hideEmptyTokenAccount}
-            openAddModal={openAddModal}
-          />
-        </Box>
-      </AnimatedContainer>
-    );
-  }
-
-  return (
+  const content = (
     <Box px={6} key="PortfolioAssets">
       <PortfolioAssets hideEmptyTokenAccount={hideEmptyTokenAccount} openAddModal={openAddModal} />
     </Box>
   );
+
+  if (isAccountListUIEnabled) {
+    return <AnimatedContainer onHeightChange={onHeightChange}>{content}</AnimatedContainer>;
+  }
+
+  return content;
 };

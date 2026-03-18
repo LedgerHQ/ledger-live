@@ -386,6 +386,12 @@ describe("createApi", () => {
       expect(balances[0].value).toBe(0n);
     });
 
+    it("returns empty result for non-existent account", async () => {
+      const balances = await api.getBalance("0.0.0");
+
+      expect(balances).toEqual([]);
+    });
+
     it("returns native asset for account without tokens", async () => {
       const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId);
       const nativeBalance = balances.filter(b => b.asset.type === "native");
@@ -581,6 +587,22 @@ describe("createApi", () => {
       const transaction = block.transactions.find(tx => tx.hash === txHash);
 
       expect(transaction?.details?.memo).toBe("test");
+    });
+
+    it("derives fees payer from transfers for failed transactions", async () => {
+      const blockHeight = 176175512;
+      const txPaidBySender = "zlE5fX0N44XgMzi9jxr9G4gcCwuAQ4v75wYVXmqBqE808wLKhc/aS+3ZZFl1XOzp";
+      const txNotPaidBySender = "su9qFNvTpteObMCdqJZ8UxKmgB0UFafqPbwjpawBKzAzJOPwCgpQz6TLCL80oZXd";
+
+      const block = await api.getBlock(blockHeight);
+      const firstTx = block.transactions.find(tx => tx.hash === txPaidBySender);
+      const secondTx = block.transactions.find(tx => tx.hash === txNotPaidBySender);
+
+      expect(firstTx?.failed).toBe(true);
+      expect(firstTx?.feesPayer).toBe("0.0.10067173");
+
+      expect(secondTx?.failed).toBe(true);
+      expect(secondTx?.feesPayer).toBe("0.0.23");
     });
 
     it("correctly identifies erc20 operations in blocks", async () => {
@@ -839,6 +861,49 @@ describe("createApi", () => {
       });
       // every transfer operation should have a fees payer
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("returns IN/OUT operations for mint and burn of amUSDC", async () => {
+      const ownerAccountId = MAINNET_TEST_ACCOUNTS.withTokens.accountIdWithErc20;
+      const { items: ops } = await api.listOperations(ownerAccountId, {
+        minHeight: 0,
+        limit: 10,
+        cursor: "1749584382.000000000",
+        order: "asc",
+      });
+
+      const zeroAddress = "0x0000000000000000000000000000000000000000";
+      const mintTxHash = "1Ed3RfhFN0VQIyFfUrkljtsV9CzbzYNt3LJqqQyHsbiyKoVbJFhGkZwvqr3k0rYJ";
+      const burnTxHash = "45Y5pSeY7ULMqJObvAtOow8AjamVNlG3XGbGLt5UrCP2HOdrQ4PzQfXqFlY4GDwd";
+
+      const mintOperation = ops.find(op => op.tx.hash === mintTxHash);
+      const burnOperation = ops.find(op => op.tx.hash === burnTxHash);
+      const expectedAsset = {
+        type: "erc20",
+        assetReference: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+        assetOwner: ownerAccountId,
+      };
+
+      expect(mintOperation).toMatchObject({
+        type: "IN",
+        recipients: [ownerAccountId],
+        senders: [zeroAddress],
+        asset: expectedAsset,
+        tx: {
+          fees: 30080000n,
+          feesPayer: ownerAccountId,
+        },
+      });
+      expect(burnOperation).toMatchObject({
+        type: "OUT",
+        recipients: [zeroAddress],
+        senders: [ownerAccountId],
+        asset: expectedAsset,
+        tx: {
+          fees: 52800000n,
+          feesPayer: ownerAccountId,
+        },
+      });
     });
 
     it("returns staking operations with correct metadata", async () => {

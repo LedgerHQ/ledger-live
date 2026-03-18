@@ -52,7 +52,6 @@ import {
   shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { captureException } from "~/sentry/renderer";
 import {
   transformToBigNumbers,
   useGetSwapTrackingProperties,
@@ -540,7 +539,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
     setWebviewState(state);
 
     if (!state?.loading && state?.isAppUnavailable && !isOffline) {
-      captureException(
+      logger.critical(
         new UnableToLoadSwapLiveError(
           '"Failed to load swap live app using WebPlatformPlayer in SwapWeb",',
         ),

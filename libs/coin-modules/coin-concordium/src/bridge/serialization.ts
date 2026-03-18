@@ -1,5 +1,7 @@
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import type { ConcordiumAccount, ConcordiumAccountRaw } from "../types";
+import BigNumber from "bignumber.js";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import type { Account, AccountRaw, Operation, OperationType } from "@ledgerhq/types-live";
+import type { ConcordiumAccount, ConcordiumAccountRaw, RawOperation } from "../types";
 
 export function isConcordiumAccount(account: Account): account is ConcordiumAccount {
   return account.currency?.family === "concordium" && "concordiumResources" in account;
@@ -39,4 +41,25 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): 
   Object.assign(account, {
     concordiumResources: accountRaw.concordiumResources,
   });
+}
+
+export function mapRawOperationToBridgeOperation(op: RawOperation, accountId: string): Operation {
+  const type: OperationType = op.type;
+
+  const extra: Record<string, unknown> = op.memo ? { memo: op.memo } : {};
+
+  return {
+    id: encodeOperationId(accountId, op.hash, type),
+    hash: op.hash,
+    accountId,
+    type,
+    value: new BigNumber(op.value),
+    fee: new BigNumber(op.fee),
+    blockHash: op.blockHash,
+    blockHeight: op.blockHeight,
+    senders: [op.sender],
+    recipients: [op.recipient],
+    date: op.date,
+    extra,
+  };
 }

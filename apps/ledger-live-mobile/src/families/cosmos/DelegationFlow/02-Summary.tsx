@@ -29,7 +29,7 @@ import { CosmosDelegationFlowParamList } from "./types";
 import Config from "react-native-config";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import TranslatedError from "~/components/TranslatedError";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 

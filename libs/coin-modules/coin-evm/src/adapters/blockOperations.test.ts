@@ -1,4 +1,9 @@
 import type { BlockOperation } from "@ledgerhq/coin-framework/api/index";
+import type {
+  TraceBlockCallAction,
+  TraceBlockItem,
+  TraceBlockOtherAction,
+} from "../network/node/types";
 import {
   LedgerExplorerOperation,
   LedgerExplorerERC20TransferEvent,
@@ -9,6 +14,7 @@ import {
 import {
   ledgerTransactionToBlockOperations,
   rpcTransactionToBlockOperations,
+  traceBlockItemsToOperationsByHash,
 } from "./blockOperations";
 
 describe("EVM Family", () => {
@@ -138,6 +144,178 @@ describe("EVM Family", () => {
               amount: 1000000n,
             },
           ]);
+        });
+      });
+
+      describe("traceBlockItemsToOperationsByHash", () => {
+        const makeAction = (overrides: Partial<TraceBlockCallAction>): TraceBlockCallAction => ({
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+          callType: "call",
+          value: "1000000000000000000",
+          ...overrides,
+        });
+
+        const makeTraceItem = (
+          overrides: Partial<TraceBlockItem> & { transactionHash: string },
+        ): TraceBlockItem =>
+          ({
+            action: makeAction(overrides?.action || {}),
+            result: { gasUsed: "0x5208", output: "0x" },
+            blockHash: "0xabc",
+            blockNumber: 1,
+            transactionPosition: 0,
+            traceAddress: [],
+            subtraces: 0,
+            type: "call",
+            ...overrides,
+          }) as TraceBlockItem;
+
+        const makeOtherAction = (overrides: TraceBlockOtherAction = {}): TraceBlockOtherAction => ({
+          ...overrides,
+        });
+
+        const makeRewardTraceItem = (overrides: Partial<TraceBlockItem> = {}): TraceBlockItem =>
+          ({
+            action: makeOtherAction({
+              author: "0x8f81e2e3f8b46467523463835f965ffe476e1c9e",
+              rewardType: "block",
+              value: "0x0",
+            }),
+            blockHash: "0x6c508acd5fb899025f59582d097b7d693e2efd538576d9709747272960e76663",
+            blockNumber: 19500620,
+            result: null,
+            subtraces: 0,
+            traceAddress: [],
+            transactionHash: null,
+            transactionPosition: null,
+            type: "reward",
+            ...overrides,
+          }) as TraceBlockItem;
+
+        it("should group native value transfers by transaction hash", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({ transactionHash: "0xhash1" }),
+            makeTraceItem({
+              transactionHash: "0xhash2",
+              action: makeAction({ value: "500000000000000000" }),
+            }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(2);
+          expect(byHash.get("0xhash1")).toEqual([
+            {
+              type: "transfer",
+              address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              asset: { type: "native" },
+              amount: -1000000000000000000n,
+            },
+            {
+              type: "transfer",
+              address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              asset: { type: "native" },
+              amount: 1000000000000000000n,
+            },
+          ]);
+          expect(byHash.get("0xhash2")).toEqual([
+            {
+              type: "transfer",
+              address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              peer: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              asset: { type: "native" },
+              amount: -500000000000000000n,
+            },
+            {
+              type: "transfer",
+              address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+              peer: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+              asset: { type: "native" },
+              amount: 500000000000000000n,
+            },
+          ]);
+        });
+
+        it("should skip traces with result.error", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({
+              transactionHash: "0xhash1",
+              result: { gasUsed: "0x5208", output: "0x", error: "revert" },
+            }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
+        });
+
+        it("should skip traces with error = 'Reverted'", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({
+              transactionHash: "0xhash1",
+              error: "Reverted",
+            }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
+        });
+
+        it("should skip traces with zero value", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({
+              transactionHash: "0xhash1",
+              action: makeAction({ value: "0" }),
+            }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
+        });
+
+        it("should merge multiple traces for the same transaction hash", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({ transactionHash: "0xsame" }),
+            makeTraceItem({
+              transactionHash: "0xsame",
+              action: makeAction({ value: "500000000000000000" }),
+            }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(1);
+          expect(byHash.get("0xsame")).toHaveLength(4);
+        });
+
+        it("should skip reward traces", () => {
+          const items: TraceBlockItem[] = [makeRewardTraceItem()];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
+        });
+
+        it("should include only call traces when mixed with reward traces", () => {
+          const items: TraceBlockItem[] = [
+            makeRewardTraceItem(),
+            makeTraceItem({ transactionHash: "0xhash1" }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(1);
+          expect(byHash.get("0xhash1")).toHaveLength(2);
+        });
+
+        it("should return empty map for empty input", () => {
+          const byHash = traceBlockItemsToOperationsByHash([]);
+          expect(byHash.size).toBe(0);
         });
       });
 

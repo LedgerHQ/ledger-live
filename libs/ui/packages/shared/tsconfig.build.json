@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "customConditions": []
+  },
   "exclude": [
     "node_modules",
     "./scripts",

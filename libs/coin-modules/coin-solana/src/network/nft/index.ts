@@ -1,4 +1,7 @@
-import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framework/nft/types";
+import {
+  CollectionMetadataInput,
+  NftMetadataInput,
+} from "@ledgerhq/ledger-wallet-framework/nft/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

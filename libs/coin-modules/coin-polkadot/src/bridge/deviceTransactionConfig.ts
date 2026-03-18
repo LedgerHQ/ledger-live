@@ -1,7 +1,7 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
 import { isStash } from "./utils";

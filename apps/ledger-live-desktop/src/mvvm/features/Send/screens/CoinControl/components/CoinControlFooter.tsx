@@ -2,9 +2,7 @@ import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
 import { ChangeToReturn } from "./ChangeToReturn";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import type { FeePresetOption } from "../../../hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "../../../hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "../../../hooks/useFeePresetLegends";
+import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 
@@ -12,14 +10,7 @@ type AmountFooterProps = Readonly<{
   changeToReturnFormatted: string;
   changeToReturnLabel: string;
   enterAmountPlaceholder: string;
-  feesRowLabel: string;
-  feesRowValue: string;
-  feesRowStrategyLabel: string;
-  selectedFeeStrategy: string | null;
-  feePresetOptions: readonly FeePresetOption[];
-  fiatByPreset: FeeFiatMap;
-  legendByPreset: FeePresetLegendMap;
-  onSelectFeeStrategy: (strategy: string) => void;
+  networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -32,14 +23,7 @@ export function CoinControlFooter({
   changeToReturnFormatted,
   changeToReturnLabel,
   enterAmountPlaceholder,
-  feesRowLabel,
-  feesRowValue,
-  feesRowStrategyLabel,
-  selectedFeeStrategy,
-  feePresetOptions,
-  fiatByPreset,
-  legendByPreset,
-  onSelectFeeStrategy,
+  networkFees,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -67,18 +51,18 @@ export function CoinControlFooter({
       />
       <NetworkFeesMenu
         display={{
-          label: feesRowLabel,
-          value: feesRowValue,
-          strategyLabel: feesRowStrategyLabel,
+          label: networkFees.feesRowLabel,
+          value: networkFees.feesRowValue,
+          strategyLabel: networkFees.feesRowStrategyLabel,
         }}
         selection={{
-          selectedStrategy: selectedFeeStrategy,
-          onSelectStrategy: onSelectFeeStrategy,
+          selectedStrategy: networkFees.selectedFeeStrategy,
+          onSelectStrategy: networkFees.onSelectFeeStrategy,
         }}
         presets={{
-          options: feePresetOptions,
-          fiatByPreset,
-          legendByPreset,
+          options: networkFees.feePresetOptions,
+          fiatByPreset: networkFees.fiatByPreset,
+          legendByPreset: networkFees.legendByPreset,
         }}
       />
       <Button

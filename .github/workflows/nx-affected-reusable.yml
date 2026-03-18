@@ -1,0 +1,96 @@
+name: "[All Platforms] - Determine Affected (Nx) - Called"
+
+on:
+  workflow_call:
+    inputs:
+      base_branch:
+        description: "Base branch"
+        type: string
+        required: true
+      head_branch:
+        description: "Head branch"
+        type: string
+        required: true
+      affected_debug:
+        description: "Enable verbose debug output for nx affected merge-base diagnostics"
+        type: boolean
+        required: false
+        default: false
+    outputs:
+      packages:
+        description: "Newline-separated list of affected packages"
+        value: ${{ jobs.nx-affected.outputs.packages }}
+      paths:
+        description: "Newline-separated list of affected paths"
+        value: ${{ jobs.nx-affected.outputs.paths }}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  nx-affected:
+    name: "Determine Affected (Nx)"
+    runs-on: ubuntu-22.04
+    outputs:
+      packages: ${{ steps.nx-affected.outputs.packages }}
+      paths: ${{ steps.nx-affected.outputs.paths }}
+    steps:
+      - name: Checkout head branch
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ inputs.base_branch }} --depth=1
+
+      # Debug: refs and merge-base (remove after diagnosing CI vs local mismatch)
+      - name: Debug refs and merge-base for nx affected
+        if: ${{ inputs.affected_debug }}
+        run: |
+          echo "=== Refs after checkout + fetch ==="
+          git branch -a
+          echo "=== HEAD commit ==="
+          git rev-parse HEAD
+          echo "=== Local base branch ref (${{ inputs.base_branch }}) ==="
+          git rev-parse ${{ inputs.base_branch }} 2>/dev/null || echo "(ref not found)"
+          echo "=== origin/${{ inputs.base_branch }} (remote-tracking) ==="
+          git rev-parse origin/${{ inputs.base_branch }} 2>/dev/null || echo "(ref not found)"
+          echo "=== Merge base: HEAD vs local ${{ inputs.base_branch }} ==="
+          git merge-base HEAD ${{ inputs.base_branch }} 2>/dev/null || echo "(merge-base failed)"
+          echo "=== Merge base: HEAD vs origin/${{ inputs.base_branch }} ==="
+          git merge-base HEAD origin/${{ inputs.base_branch }} 2>/dev/null || echo "(merge-base failed)"
+          echo "=== Base ref passed to composite: origin/${{ inputs.base_branch }} ==="
+
+      - uses: actions/github-script@v7
+        id: clean-refs
+        with:
+          script: |
+            const head_branch = "${{ inputs.head_branch }}";
+            const base_branch = "${{ inputs.base_branch }}";
+
+            const newHeadBranch = head_branch.replace("refs/heads/", "");
+            const newBaseBranch = base_branch.replace("refs/heads/", "");
+
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
+            core.setOutput("base_ref", "origin/" + newBaseBranch);
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - name: Install dev dependencies for root workspace
+        run: pnpm i -D -F "ledger-live" --ignore-scripts
+
+      - name: Get affected packages and paths
+        id: nx-affected
+        uses: ./tools/actions/composites/nx-affected-packages
+        with:
+          base: ${{ steps.clean-refs.outputs.base_ref }}
+          head: HEAD

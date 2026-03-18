@@ -3,10 +3,10 @@
 import invariant from "invariant";
 import expect from "expect";
 import { DeviceModelId } from "@ledgerhq/devices";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import { acceptTransaction } from "./bot-deviceActions";
 import type { Transaction } from "../types";
 

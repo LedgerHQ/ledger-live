@@ -114,25 +114,6 @@ describe("Concordium Api (testnet)", () => {
     });
   });
 
-  describe("getBlock", () => {
-    it("returns block with transaction info", async () => {
-      const lastBlock = await api.lastBlock();
-      const targetHeight = lastBlock.height - 10;
-
-      const result = await api.getBlock(targetHeight);
-
-      expect(result.info.height).toBe(targetHeight);
-      expect(result.info.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-      expect(result.info.time).toBeInstanceOf(Date);
-      expect(result.transactions).toBeInstanceOf(Array);
-
-      result.transactions.forEach(tx => {
-        expect(tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-        expect(tx.fees).toBeGreaterThanOrEqual(BigInt(0));
-      });
-    });
-  });
-
   describe("craftTransaction", () => {
     const RECIPIENT = ADDRESS_PRISTINE;
 
@@ -250,6 +231,10 @@ describe("Concordium Api (testnet)", () => {
   });
 
   describe("unsupported methods", () => {
+    it("getBlock throws not supported error", async () => {
+      await expect(async () => api.getBlock(100)).rejects.toThrow("getBlock is not supported");
+    });
+
     it("getStakes throws not supported error", async () => {
       await expect(async () => api.getStakes(ADDRESS_WITH_BALANCE)).rejects.toThrow();
     });

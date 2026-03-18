@@ -1,5 +1,5 @@
 import groupBy from "lodash/groupBy";
-import { formatError } from "@ledgerhq/coin-framework/bot/formatters";
+import { formatError } from "@ledgerhq/ledger-wallet-framework/bot/formatters";
 import { formatOperation, formatAccount } from "../account";
 import { toSignedOperationRaw, formatTransaction, formatTransactionStatus } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";

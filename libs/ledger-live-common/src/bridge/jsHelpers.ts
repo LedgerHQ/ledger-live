@@ -1,7 +1,7 @@
 import { firstValueFrom, from } from "rxjs";
-import { makeAccountBridgeReceive as commonMakeAccountBridgeReceive } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeAccountBridgeReceive as commonMakeAccountBridgeReceive } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
-import { GetAddressOptions, Result } from "@ledgerhq/coin-framework/derivation";
+import { GetAddressOptions, Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import Transport from "@ledgerhq/hw-transport";
 import { withDevice } from "../hw/deviceAccess";
 import getAddress from "../hw/getAddress";
@@ -14,7 +14,7 @@ export {
   mergeNfts,
   mergeOps,
   sameOp,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
 export function getAddr(deviceId: string, opts: GetAddressOptions): Promise<Result> {
   return firstValueFrom(

@@ -1,7 +1,7 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { Transaction } from "./types";
 
 const confirmWording: Record<string, string> = {

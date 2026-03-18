@@ -6,7 +6,7 @@ import { DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
 jest.mock("~/renderer/hooks/useBuyDeviceIntercept", () => ({
   useBuyDeviceIntercept: () => true,

@@ -1,11 +1,11 @@
-import { SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import { BigNumber } from "bignumber.js";
 import { acceptTransaction } from "./speculos-deviceActions";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/bot/specs", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/bot/specs", () => ({
   deviceActionFlow: jest.fn(config => config),
   formatDeviceAmount: jest.fn((currency, amount) => `${amount.toString()} ${currency.ticker}`),
   SpeculosButton: {

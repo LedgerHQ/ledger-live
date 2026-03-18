@@ -1,8 +1,8 @@
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runPortfolioTransactionsHistoryTest } from "./portfolio";
 
 runPortfolioTransactionsHistoryTest(
-  Currency.ETH,
+  Account.ETH_1,
   ["B2CQA-929"],
   [
     "@NanoSP",
@@ -15,4 +15,5 @@ runPortfolioTransactionsHistoryTest(
     "@ethereum",
     "@family-evm",
   ],
+  Account.ETH_1.accountName,
 );

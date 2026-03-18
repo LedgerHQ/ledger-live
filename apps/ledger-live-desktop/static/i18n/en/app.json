@@ -4610,7 +4610,6 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -8054,7 +8053,9 @@
       },
       "title": "Checking the blockchain..."
     },
-    "connectYourDevice": { "title": "Connect and unlock your device" },
+    "connectYourDevice": {
+      "title": "Connect and unlock your device"
+    },
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
@@ -8161,7 +8162,8 @@
       "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
       "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
       "upToDate": "You're up to date",
-      "lastSync": "Last sync: {{timeAgo}}. Tap to refresh"
+      "lastSync": "Last sync: {{timeAgo}}. Tap to refresh",
+      "refreshing": "Refreshing..."
     },
     "notificationIndicator": {
       "tooltip": "Notifications"
@@ -8317,6 +8319,15 @@
       "type": {
         "public": "Public",
         "private": "Private"
+      }
+    },
+    "send": {
+      "stepRecipient": {
+        "selectLabel": "Send from"
+      },
+      "summary": {
+        "coveredByProvable": "Covered by Provable",
+        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
       }
     }
   },

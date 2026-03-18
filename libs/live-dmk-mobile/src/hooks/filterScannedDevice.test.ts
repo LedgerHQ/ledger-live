@@ -1,14 +1,20 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { filterScannedDevice } from "./filterScannedDevice";
 import { ScannedDevice } from "./ScannedDevice";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 describe("filterScannedDevice", () => {
+  const mockDiscoveredDevice = {
+    id: "mock-discovered-device",
+  } as DiscoveredDevice;
+
   // Mock device data for testing
   const mockDevice: ScannedDevice = {
     deviceId: "device-123",
     deviceName: "Test Device",
     wired: false,
     modelId: DeviceModelId.nanoX,
+    discoveredDevice: mockDiscoveredDevice,
   };
 
   const mockDevice2: ScannedDevice = {
@@ -16,6 +22,7 @@ describe("filterScannedDevice", () => {
     deviceName: "Test Device 2",
     wired: true,
     modelId: DeviceModelId.nanoS,
+    discoveredDevice: mockDiscoveredDevice,
   };
 
   const mockDevice3: ScannedDevice = {
@@ -23,6 +30,7 @@ describe("filterScannedDevice", () => {
     deviceName: "Test Device 3",
     wired: false,
     modelId: DeviceModelId.stax,
+    discoveredDevice: mockDiscoveredDevice,
   };
 
   describe("when no filters are provided", () => {

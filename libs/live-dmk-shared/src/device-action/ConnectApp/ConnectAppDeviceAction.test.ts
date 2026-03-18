@@ -2,6 +2,7 @@ import type {
   ApplicationDependency,
   GetDeviceMetadataDAOutput,
   InstallOrUpdateAppsDAIntermediateValue,
+  OpenAppWithDependenciesDAIntermediateValue,
   DeviceSessionState,
 } from "@ledgerhq/device-management-kit";
 import {
@@ -74,7 +75,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       currentIndex: 0,
       currentProgress: 0.5,
     },
-  };
+  } as InstallOrUpdateAppsDAIntermediateValue;
 
   const INSTALL_RESULT = {
     successfullyInstalled: [{ versionName: "1inch" }] as any[],
@@ -85,6 +86,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
   const OPEN_APP_RESULT = {
     deviceMetadata: DEVICE_METADATA,
     installResult: INSTALL_RESULT,
+  };
+
+  const OPEN_APP_INTERMEDIATE_VALUE: OpenAppWithDependenciesDAIntermediateValue = {
+    ...INSTALL_INTERMEDIATE_VALUE,
+    step: "os.openAppWithDependencies.steps.installOrUpdateApps",
   };
 
   beforeEach(() => {
@@ -176,7 +182,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Connect app without derivation", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
         setupGetDeviceStatusMock(DEVICE_STATUS);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -254,7 +260,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Connect app with derivation", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
         setupGetDeviceStatusMock(DEVICE_STATUS);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -438,7 +444,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceStatusMock(DEVICE_STATUS);
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Bitcoin" },
@@ -698,7 +704,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Open app error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE, true);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE, true);
         setupGetDeviceStatusMock(DEVICE_STATUS);
 
         const deviceAction = new ConnectAppDeviceAction({
@@ -774,7 +780,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Get derivation error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, INSTALL_INTERMEDIATE_VALUE);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
         setupGetDeviceStatusMock(DEVICE_STATUS);
 
         const deviceAction = new ConnectAppDeviceAction({

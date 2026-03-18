@@ -239,6 +239,7 @@ const StepSummary = (props: StepProps) => {
             feesUnit={feesUnit}
             estimatedFees={estimatedFees}
             feesCurrency={feesCurrency}
+            transaction={transaction}
           />
         ) : (
           <>

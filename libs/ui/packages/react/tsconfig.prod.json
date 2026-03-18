@@ -3,7 +3,8 @@
   "compilerOptions": {
     "composite": false,
     "incremental": false,
-    "declaration": true
+    "declaration": true,
+    "customConditions": []
   },
   "exclude": [
     "node_modules",

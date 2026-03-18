@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
 import type { Transaction, VechainSigner } from "../types";
 import { VechainSDKTransaction } from "../types";

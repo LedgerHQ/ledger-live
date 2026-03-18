@@ -8,7 +8,6 @@ import {
   getAccountNonce,
   getTransactions,
   getTransactionCost,
-  getOperations,
 } from "./proxyClient";
 
 describe("proxyClient", () => {
@@ -16,7 +15,6 @@ describe("proxyClient", () => {
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
   const PUBLIC_KEY = "aa".repeat(32);
-  const ACCOUNT_ID = "js:2:concordium:test:";
 
   beforeAll(() => {
     setupTestnetCoinConfig();
@@ -242,89 +240,6 @@ describe("proxyClient", () => {
 
       expect(result1.cost).toBe(result2.cost);
       expect(result1.energy).toBe(result2.energy);
-    });
-  });
-
-  describe("getOperations", () => {
-    it("should return operations for account", async () => {
-      const result = await getOperations(currencyId, {
-        address: ADDRESS_WITH_BALANCE,
-        accountId: ACCOUNT_ID,
-      });
-
-      expect(Array.isArray(result)).toBe(true);
-    });
-
-    it("should return empty array for pristine account", async () => {
-      const result = await getOperations(currencyId, {
-        address: ADDRESS_PRISTINE,
-        accountId: ACCOUNT_ID,
-      });
-
-      expect(result).toEqual([]);
-    });
-
-    it("should respect size parameter", async () => {
-      const size = 5;
-      const result = await getOperations(currencyId, {
-        address: ADDRESS_WITH_BALANCE,
-        accountId: ACCOUNT_ID,
-        size,
-      });
-
-      expect(result.length).toBeLessThanOrEqual(size);
-    });
-
-    it("should return operations with valid structure", async () => {
-      const result = await getOperations(currencyId, {
-        address: ADDRESS_WITH_BALANCE,
-        accountId: ACCOUNT_ID,
-        size: 10,
-      });
-
-      if (result.length > 0) {
-        result.forEach(operation => {
-          expect(operation).toHaveProperty("id");
-          expect(operation).toHaveProperty("hash");
-          expect(operation).toHaveProperty("accountId");
-          expect(operation).toHaveProperty("type");
-          expect(operation).toHaveProperty("value");
-          expect(operation).toHaveProperty("fee");
-          expect(operation).toHaveProperty("senders");
-          expect(operation).toHaveProperty("recipients");
-          expect(operation).toHaveProperty("date");
-
-          expect(["IN", "OUT"]).toContain(operation.type);
-          expect(operation.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-          expect(operation.date).toBeInstanceOf(Date);
-        });
-      }
-    });
-
-    it("should filter transactions by type", async () => {
-      const result = await getOperations(currencyId, {
-        address: ADDRESS_WITH_BALANCE,
-        accountId: ACCOUNT_ID,
-        size: 100,
-      });
-
-      if (result.length > 0) {
-        result.forEach(operation => {
-          // Only transfer and transferWithMemo should be included
-          expect(["IN", "OUT"]).toContain(operation.type);
-        });
-      }
-    });
-
-    it("should handle network errors gracefully", async () => {
-      // Even with invalid address, should return empty array instead of throwing
-      const invalidAddress = "invalid-address";
-      const result = await getOperations(currencyId, {
-        address: invalidAddress,
-        accountId: ACCOUNT_ID,
-      });
-
-      expect(Array.isArray(result)).toBe(true);
     });
   });
 

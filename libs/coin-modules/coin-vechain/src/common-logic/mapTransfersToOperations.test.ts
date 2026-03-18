@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import { TransferLog, EventLog } from "../types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 
 // Mock dependencies before importing the function under test
 jest.mock("../network", () => ({
   getFees: jest.fn(),
 }));
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   encodeOperationId: jest.fn(),
 }));
 jest.mock("@vechain/sdk-core", () => ({

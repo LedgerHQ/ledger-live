@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, TRANSACTION_TYPE } from "../constants";

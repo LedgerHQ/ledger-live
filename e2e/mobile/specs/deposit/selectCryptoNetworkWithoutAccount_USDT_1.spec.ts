@@ -1,4 +1,4 @@
-import { assetAvailableNetworks } from "@ledgerhq/live-common/lib/e2e/data/assetsDrawer";
+import { assetAvailableNetworks } from "@ledgerhq/live-common/e2e/data/assetsDrawer";
 import { runSelectCryptoNetworkTest } from "./deposit";
 
 const testConfig = {

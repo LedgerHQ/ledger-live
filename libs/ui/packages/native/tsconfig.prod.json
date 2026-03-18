@@ -7,12 +7,10 @@
     "target": "esnext",
     "noEmit": false,
     "jsx": "react-jsx",
-    "types": [
-      "react",
-      "react-native"
-    ],
+    "types": ["react", "react-native"],
     "rootDir": "./src",
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "customConditions": []
   },
   "include": ["src/**/*"]
 }

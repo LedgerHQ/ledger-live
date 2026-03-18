@@ -48,6 +48,13 @@ export function CoinControlScreenInner({
     transactionActions,
   });
 
+  const onAmountChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      viewModel.onAmountChange(event.currentTarget.value);
+    },
+    [viewModel],
+  );
+
   return (
     <>
       <CoinControlScreenView
@@ -56,7 +63,7 @@ export function CoinControlScreenInner({
         changeToReturnFormatted={viewModel.changeToReturnFormatted}
         onSelectStrategy={viewModel.onSelectStrategy}
         amountValue={viewModel.amountValue}
-        onAmountChange={viewModel.onAmountChange}
+        onAmountChange={onAmountChange}
         amountError={viewModel.amountError}
         strategyLabel={viewModel.strategyLabel}
         learnMoreLabel={viewModel.learnMoreLabel}
@@ -66,14 +73,7 @@ export function CoinControlScreenInner({
         enterAmountPlaceholder={viewModel.enterAmountPlaceholder}
         amountToSendLabel={viewModel.amountToSendLabel}
         amountInputLabel={viewModel.amountInputLabel}
-        feesRowLabel={viewModel.feesRowLabel}
-        feesRowValue={viewModel.feesRowValue}
-        feesRowStrategyLabel={viewModel.feesRowStrategyLabel}
-        selectedFeeStrategy={viewModel.selectedFeeStrategy}
-        feePresetOptions={viewModel.feePresetOptions}
-        fiatByPreset={viewModel.fiatByPreset}
-        legendByPreset={viewModel.legendByPreset}
-        onSelectFeeStrategy={viewModel.onSelectFeeStrategy}
+        networkFees={viewModel.networkFees}
         reviewLabel={viewModel.reviewLabel}
         reviewShowIcon={viewModel.reviewShowIcon}
         reviewDisabled={viewModel.reviewDisabled}

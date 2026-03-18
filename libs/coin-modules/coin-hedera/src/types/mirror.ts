@@ -24,7 +24,9 @@ export interface HederaMirrorTransaction {
   charged_tx_fee: number;
   transaction_hash: string;
   transaction_id: string;
+  nonce: number;
   consensus_timestamp: string;
+  parent_consensus_timestamp: string | null;
   entity_id: string | null;
   result: string;
   node: string | null;

@@ -4,7 +4,7 @@ import { DerivationModes } from "./types";
 import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
-import { UnsupportedDerivation } from "@ledgerhq/coin-framework/errors";
+import { UnsupportedDerivation } from "@ledgerhq/ledger-wallet-framework/errors";
 import varuint from "varuint-bitcoin";
 import { NetworkInfoResponse } from "./explorer/types";
 import { bech32m } from "../bech32m";

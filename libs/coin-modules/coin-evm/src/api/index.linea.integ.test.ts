@@ -1,5 +1,6 @@
-import { Api, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -23,7 +24,7 @@ describe("Linea (etherscan explorer)", () => {
     const FROM = "0x224D8Fd7aB6AD4c6eb4611Ce56EF35Dec2277F03";
     const TO = "0x9F41fE989C556d8b312Ce398b7f7B5Ac90919a73";
 
-    let module: Api<MemoNotSupported, BufferTxData>;
+    let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
     beforeAll(() => {
       const lineaConfig: EvmConfig = {

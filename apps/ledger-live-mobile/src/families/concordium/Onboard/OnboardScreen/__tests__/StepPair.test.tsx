@@ -92,18 +92,13 @@ describe("StepPair", () => {
     ).toBeDefined();
   });
 
-  it("should show success alert", () => {
-    setupMocks({ pairStatus: PairStatus.SUCCESS }, { isInstalled: null });
-    render(<StepPair currency={currency} onPaired={onPaired} />);
-
-    expect(screen.getByText("Successfully paired with Concordium ID App.")).toBeDefined();
-  });
-
   it("should show error alert with retry button", () => {
     setupMocks({ pairStatus: PairStatus.ERROR }, { isInstalled: null });
     render(<StepPair currency={currency} onPaired={onPaired} />);
 
-    expect(screen.getByText("Failed to pair with Concordium ID App.")).toBeDefined();
+    expect(
+      screen.getByText("Failed to connect to Concordium ID App. Please try again."),
+    ).toBeDefined();
     expect(screen.getByText("Retry")).toBeDefined();
   });
 

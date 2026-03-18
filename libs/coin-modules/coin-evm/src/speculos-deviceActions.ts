@@ -1,12 +1,12 @@
 /* istanbul ignore file: not reaching userland - bot only. */
 
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction, State } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 

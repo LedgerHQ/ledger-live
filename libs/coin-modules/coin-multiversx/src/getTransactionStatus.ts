@@ -1,4 +1,3 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   NotEnoughBalance,
@@ -9,6 +8,7 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";

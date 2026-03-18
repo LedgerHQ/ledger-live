@@ -1,6 +1,6 @@
-import type { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import type { SuiSigner } from "../types";
 import { ensureAddressFormat } from "../utils";

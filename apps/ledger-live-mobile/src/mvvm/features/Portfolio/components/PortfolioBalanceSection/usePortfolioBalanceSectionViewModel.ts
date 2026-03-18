@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
-import { selectIsRefreshing } from "~/reducers/portfolioRefresh";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePersistedPortfolioBalance } from "./usePersistedPortfolioBalance";
 import {
   PortfolioBalanceState,
   PortfolioBalanceSectionProps,
@@ -18,7 +19,6 @@ export const usePortfolioBalanceSectionViewModel = ({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
-  const isRefreshing = useSelector(selectIsRefreshing);
 
   const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
 
@@ -27,28 +27,24 @@ export const usePortfolioBalanceSectionViewModel = ({
   const latestBalance = lastItem?.value ?? 0;
   const unit = counterValueCurrency.units[0];
 
-  // Sticky balanceAvailable: stays false while syncing so the shimmer covers
-  // the entire cycle (Skeleton -> Animate balance, no shimmer).
-  const [balanceUnavailable, setBalanceUnavailable] = useState(!rawBalanceAvailable);
-  useEffect(() => {
-    if (!rawBalanceAvailable) {
-      setBalanceUnavailable(true);
-    } else if (syncPhase !== "syncing") {
-      setBalanceUnavailable(false);
-    }
-  }, [rawBalanceAvailable, syncPhase]);
+  const effectiveLatestBalance = usePersistedPortfolioBalance(
+    latestBalance,
+    syncPhase,
+    counterValueCurrency.ticker,
+  );
 
-  const balanceAvailable = !balanceUnavailable;
+  // If MMKV has a cached balance from a previous session, treat it as available
+  // immediately so the cached value is shown at cold start instead of a skeleton.
+  const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
 
-  const frozenBalanceRef = useRef(latestBalance);
-  useEffect(() => {
-    if (syncPhase !== "syncing") {
-      frozenBalanceRef.current = latestBalance;
-    }
-  }, [syncPhase, latestBalance]);
+  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
+    rawBalanceAvailable: effectiveRawBalanceAvailable,
+    syncPhase,
+    latestBalance: effectiveLatestBalance,
+    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+  });
 
-  const shouldFreezeBalance = shouldDisplayBalanceRefreshRework && syncPhase === "syncing";
-  const balance = shouldFreezeBalance ? frozenBalanceRef.current : latestBalance;
+  const effectiveIsLoading = syncPhase === "syncing";
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {
@@ -60,17 +56,18 @@ export const usePortfolioBalanceSectionViewModel = ({
     return "normal";
   }, [isReadOnlyMode, showAssets]);
 
-  const isLoading = shouldDisplayBalanceRefreshRework
-    ? syncPhase === "syncing"
-    : !rawBalanceAvailable || isRefreshing;
+  const isAnalyticPillVisible =
+    state === "normal" &&
+    (balanceAvailable || (shouldDisplayBalanceRefreshRework && effectiveIsLoading));
 
   return {
     state,
-    balance,
+    balance: displayedBalance,
     countervalueChange,
     unit,
     isBalanceAvailable: balanceAvailable,
-    isLoading,
+    isAnalyticPillVisible,
+    isLoading: effectiveIsLoading,
     shouldDisplayBalanceRefreshRework,
     onToggleDiscreetMode: toggleDiscreetMode,
   };

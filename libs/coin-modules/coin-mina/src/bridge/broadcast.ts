@@ -1,4 +1,4 @@
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcastTransaction } from "../api";
 import { MinaSignedTransaction } from "../types/common";

@@ -18,17 +18,15 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { BaseStyledProps } from "@ledgerhq/native-ui/lib/components/styled";
+import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { getFreshAccountAddress } from "~/utils/address";
 import CopyButton from "LLM/components/CopyButton";
 import ShareButton from "LLM/components/ShareButton";
 
-type ScreenProps = CompositeScreenProps<
+type Props = CompositeScreenProps<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
-
-type Props = ScreenProps;
 
 export default function Confirmation({ route }: Props) {
   const { colors } = useTheme();

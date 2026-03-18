@@ -1,4 +1,4 @@
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import uniqBy from "lodash/uniqBy";
 

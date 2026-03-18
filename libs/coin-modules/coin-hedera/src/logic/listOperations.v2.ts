@@ -1,6 +1,9 @@
-import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import {
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -22,6 +25,7 @@ import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
   createStakingRewardOperationHash,
+  extractFeesPayer,
   getMemoFromBase64,
   getSyntheticBlock,
   mergeTransactionsFromDifferentSources,
@@ -47,10 +51,12 @@ function getCommonMirrorOperationData(
   const hasFailed = rawTx.result !== "SUCCESS";
   const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
+  const feesPayer = extractFeesPayer(rawTx);
   const extra: HederaOperationExtra = {
     pagingToken: rawTx.consensus_timestamp,
     consensusTimestamp: rawTx.consensus_timestamp,
     transactionId: rawTx.transaction_id,
+    feesPayer,
     ...(memo && { memo }),
   };
 
@@ -109,6 +115,21 @@ function createStakingRewardOperation({
   };
 }
 
+function getOperationTypeFromERC20Details({
+  transferType,
+  senderEvmAddress,
+  evmAddress,
+}: {
+  transferType: string;
+  senderEvmAddress: string;
+  evmAddress: string;
+}): OperationType {
+  if (transferType === "mint") return "IN";
+  if (transferType === "burn") return "OUT";
+
+  return senderEvmAddress.toLowerCase() === evmAddress.toLowerCase() ? "OUT" : "IN";
+}
+
 async function processERC20TokenTransfer({
   enrichedERC20Transfer,
   evmAddress,
@@ -142,11 +163,15 @@ async function processERC20TokenTransfer({
 
   const commonFields = {
     ...commonData,
-    type: senderEvmAddress.toLowerCase() === evmAddress.toLowerCase() ? "OUT" : "IN",
+    type: getOperationTypeFromERC20Details({
+      transferType: enrichedERC20Transfer.transfer.transfer_type,
+      senderEvmAddress,
+      evmAddress,
+    }),
     contract: token.contractAddress,
     standard: "erc20",
     blockHeight: commonData.blockHeight,
-    blockHash: enrichedERC20Transfer.contractCallResult.block_hash,
+    blockHash: commonData.blockHash,
     senders: [senderAddress],
     recipients: [recipientAddress],
     fee: new BigNumber(enrichedERC20Transfer.mirrorTransaction.charged_tx_fee),

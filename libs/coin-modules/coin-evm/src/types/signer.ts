@@ -1,4 +1,4 @@
-import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 

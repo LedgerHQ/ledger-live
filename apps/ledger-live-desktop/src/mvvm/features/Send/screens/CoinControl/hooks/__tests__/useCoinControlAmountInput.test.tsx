@@ -8,7 +8,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 
-jest.mock("@ledgerhq/coin-framework/account/helpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
   useMaybeAccountUnit: jest.fn(() => ({ magnitude: 8, code: "BTC", name: "Bitcoin" })),
 }));
@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/live-common/flows/send/amount/utils/amountInput", () => ({
 }));
 
 const { getMainAccount, getAccountCurrency } = jest.requireMock(
-  "@ledgerhq/coin-framework/account/helpers",
+  "@ledgerhq/ledger-wallet-framework/account/helpers",
 );
 
 function createBitcoinTransaction(overrides?: Partial<Transaction>): Transaction {

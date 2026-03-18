@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";

@@ -29,7 +29,8 @@
     "**/e2e/**",
     "**/*.config.*",
     "**/scripts/**",
-    "**/tools/**"
+    "**/tools/**",
+    "**/.eslintrc.guardrails.js"
   ],
   "workspaces": {
     "./apps/ledger-live-desktop": {
@@ -65,7 +66,12 @@
     },
     "./apps/ledger-live-mobile": {
       "entry": ["index.js", "src/families/**"],
-      "ignore": ["src/**/*.android.*", "src/**/*.ios.*", "babel-plugin-inject-collapsable.js"],
+      "ignore": [
+        "src/**/*.android.*",
+        "src/**/*.ios.*",
+        "babel-plugin-inject-collapsable.js",
+        "src/devTools/perfUtils.ts"
+      ],
       "ignoreDependencies": [
         "@react-native-masked-view/masked-view",
         "@react-native/assets-registry",

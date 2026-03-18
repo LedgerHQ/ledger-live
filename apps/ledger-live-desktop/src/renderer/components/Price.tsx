@@ -92,7 +92,7 @@ export default function Price({
       withActivityColor
         ? colors[withActivityColor]
         : !withActivityCurrencyColor
-          ? resolvedColor ?? theme.colors.neutral.c100
+          ? (resolvedColor ?? theme.colors.neutral.c100)
           : getCurrencyColor(from, bgColor),
     [
       bgColor,

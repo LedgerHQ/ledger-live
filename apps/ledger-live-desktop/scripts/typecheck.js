@@ -9,6 +9,12 @@ const projectDirectory = path.resolve(__dirname, "..");
 
 const excluded = [].map(p => path.resolve(projectDirectory, p));
 
+const appSourcePrefixes = [
+  path.resolve(projectDirectory, "src") + path.sep,
+  path.resolve(projectDirectory, "tests") + path.sep,
+  path.resolve(projectDirectory, "tools") + path.sep,
+];
+
 function compile() {
   const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());
   const program = ts.createProgram(config.fileNames, {
@@ -21,10 +27,11 @@ function compile() {
   let nbOfFilteredDiagnostics = 0;
 
   const allDiagnostics = ts.getPreEmitDiagnostics(program).filter(diag => {
-    // Exclude non ts(x) files and files in non-typed zones
+    if (!diag.file) return true;
+    const fileName = diag.file.fileName;
+    const isAppSource = appSourcePrefixes.some(prefix => fileName.startsWith(prefix));
     const pass =
-      /\.tsx?/.test(diag.file.fileName) &&
-      excluded.every(zone => !diag.file.fileName.startsWith(zone));
+      /\.tsx?/.test(fileName) && isAppSource && excluded.every(zone => !fileName.startsWith(zone));
     if (!pass) nbOfFilteredDiagnostics++;
     return pass;
   });
@@ -42,7 +49,7 @@ function compile() {
     console.log("‾‾‾‾‾‾  ‾‾‾‾‾");
 
     const errorsByFile = allDiagnostics.reduce((acc, diag) => {
-      const fileName = diag.file.fileName;
+      const fileName = diag.file ? diag.file.fileName : "<global>";
       acc[fileName] = (acc[fileName] || 0) + 1;
       return acc;
     }, {});

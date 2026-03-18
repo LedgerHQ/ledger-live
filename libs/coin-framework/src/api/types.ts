@@ -1,6 +1,3 @@
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation as LiveOperation } from "@ledgerhq/types-live";
-
 // NOTE: from types-live
 export type BroadcastConfig = {
   mevProtected: boolean;
@@ -727,24 +724,3 @@ export type AlpacaApi<
     parameters: Partial<AddressValidationCurrencyParameters>,
   ) => Promise<boolean>;
 };
-
-export type ChainSpecificRules = {
-  getAccountShape: (address: string) => void;
-  getTransactionStatus: {
-    throwIfPendingOperation?: boolean;
-  };
-};
-
-export type BridgeApi = {
-  getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
-  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
-  computeIntentType?: (transaction: Record<string, unknown>) => string;
-  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
-  validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
-};
-
-export type Api<
-  MemoType extends Memo = MemoNotSupported,
-  TxDataType extends TxData = TxDataNotSupported,
-> = AlpacaApi<MemoType, TxDataType> & BridgeApi;

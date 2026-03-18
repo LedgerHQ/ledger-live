@@ -10,6 +10,4 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   useAllAmount: false,
   fee: null,
   memo: undefined,
-  networkInfo: null,
-  feeCustomUnit: null,
 });

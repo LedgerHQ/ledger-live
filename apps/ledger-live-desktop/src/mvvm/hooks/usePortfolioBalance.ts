@@ -18,8 +18,11 @@ import {
 } from "~/renderer/reducers/syncRefresh";
 import { track } from "~/renderer/analytics/segment";
 import { useSyncSources } from "./useSyncSources";
-import { useSyncLifecycle, type SyncPhase } from "./useSyncLifecycle";
-import { useManualRefresh } from "./useManualRefresh";
+import {
+  useSyncLifecycle,
+  type SyncPhase,
+} from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
+import { useManualRefresh } from "@ledgerhq/live-common/bridge/react/useManualRefresh";
 import { useAccountsSyncStatus } from "LLD/components/TopBar/hooks/useAccountsSyncStatus";
 import { DEFAULT_PORTFOLIO_RANGE } from "LLD/utils/constants";
 

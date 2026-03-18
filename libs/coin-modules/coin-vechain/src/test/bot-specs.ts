@@ -6,9 +6,9 @@ import type {
   TransactionRes,
   TransactionTestInput,
   SpeculosTransport,
-} from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { Transaction } from "../types";
-import { pickSiblings, botTest, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import { pickSiblings, botTest, SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import speculosDeviceActions from "./bot-deviceActions";

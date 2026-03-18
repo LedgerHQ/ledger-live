@@ -346,7 +346,7 @@ export class SwapPage extends AppPage {
   }
 
   @step("Expect asset or account selected $0 to be displayed")
-  async expectSelectedAssetDisplayed(asset: string, electronApp: ElectronApplication) {
+  async expectSelectedAssetDisplayed(asset: string | RegExp, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
   }

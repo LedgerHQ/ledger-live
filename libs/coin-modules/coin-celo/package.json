@@ -57,42 +57,52 @@
       "default": "./lib-es/api/index.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
     "./cli-transaction": {
+      "@ledgerhq/source": "./src/test/cli-transaction.ts",
       "require": "./lib/test/cli-transaction.js",
       "default": "./lib-es/test/cli-transaction.js"
     },
     "./hw-getAddress": {
+      "@ledgerhq/source": "./src/signer/hw-getAddress.ts",
       "require": "./lib/signer/hw-getAddress.js",
       "default": "./lib-es/signer/hw-getAddress.js"
     },
     "./preload": {
+      "@ledgerhq/source": "./src/bridge/preload.ts",
       "require": "./lib/bridge/preload.js",
       "default": "./lib-es/bridge/preload.js"
     },
     "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./bridge": {
+      "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
     },
     "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
     },
     "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -115,6 +125,7 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -154,7 +165,7 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
   }
 }

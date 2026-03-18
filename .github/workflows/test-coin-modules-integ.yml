@@ -85,7 +85,7 @@ jobs:
         run: pnpm i --filter="!./apps/**"
 
       - name: Build
-        run: pnpm build:coin-modules:deps
+        run: pnpm turbo build --filter="@ledgerhq/coin-*"
 
       - name: Test (PR)
         if: ${{ github.event_name == 'pull_request' }}

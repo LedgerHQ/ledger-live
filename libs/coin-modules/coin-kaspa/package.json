@@ -51,6 +51,7 @@
       "default": "./lib-es/account/index.js"
     },
     "./batcher/*": {
+      "@ledgerhq/source": "./src/batcher/*.ts",
       "require": "./lib/batcher/*.js",
       "default": "./lib-es/batcher/*.js"
     },
@@ -59,6 +60,7 @@
       "default": "./lib-es/bot/index.js"
     },
     "./bridge": {
+      "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
     },
@@ -67,6 +69,7 @@
       "default": "./lib-es/currencies/index.js"
     },
     "./nft/*": {
+      "@ledgerhq/source": "./src/nft/*.ts",
       "require": "./lib/nft/*.js",
       "default": "./lib-es/nft/*.js"
     },
@@ -75,10 +78,12 @@
       "default": "./lib-es/serialization/index.js"
     },
     "./transaction/*": {
+      "@ledgerhq/source": "./src/transaction/*.ts",
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -91,6 +96,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

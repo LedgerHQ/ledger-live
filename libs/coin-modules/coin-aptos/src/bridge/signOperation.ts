@@ -1,6 +1,6 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";

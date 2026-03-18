@@ -3,7 +3,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-na
 import { scheduleOnRN } from "react-native-worklets";
 import styled from "styled-components/native";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 
 export default memo(Collapsible);
 

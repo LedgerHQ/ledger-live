@@ -1,5 +1,5 @@
 import { EvmSignature, EvmAddress } from "@ledgerhq/coin-evm/types/signer";
-import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { EIP712Message } from "@ledgerhq/types-live";
 import type { CeloTx, RLPEncodedTx, LegacyEncodedTx } from "../types";
 

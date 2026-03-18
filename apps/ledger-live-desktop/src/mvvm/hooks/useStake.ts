@@ -10,7 +10,7 @@ import {
   getAccountCurrency,
   getAccountSpendableBalance,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { useVersionedStakePrograms } from "./useVersionedStakePrograms";

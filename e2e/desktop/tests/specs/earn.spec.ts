@@ -47,6 +47,26 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataWithAddressCommand(account)],
+      featureFlags: {
+        // TODO: sync Firebase environments and remove this override when final variant is chosen
+        stakePrograms: {
+          enabled: true,
+          params: {
+            list: ["ethereum"],
+            redirects: {
+              "ethereum/erc20/usd__coin": {
+                platform: "earn",
+                name: "Earn - Deposit",
+                queryParams: {
+                  cryptoAssetId: "ethereum/erc20/usd__coin",
+                  intent: "deposit",
+                  deposit: "stablecoin",
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     const family = getFamilyByCurrencyId(account.currency.id);

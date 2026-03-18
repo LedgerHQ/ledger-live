@@ -1,5 +1,5 @@
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 
 // Mock the CryptoAssets module

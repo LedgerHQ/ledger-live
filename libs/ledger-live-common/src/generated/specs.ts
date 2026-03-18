@@ -23,7 +23,7 @@ import tezos from "@ledgerhq/coin-tezos/specs";
 import ton from "@ledgerhq/coin-ton/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import vechain from "@ledgerhq/coin-vechain/specs";
-import xrp from "@ledgerhq/coin-xrp/specs";
+import xrp from "../families/xrp/bot/specs";
 import mina from "@ledgerhq/coin-mina/specs";
 
 export default {

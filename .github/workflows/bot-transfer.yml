@@ -54,7 +54,7 @@ jobs:
       - name: install and build
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live"
-          pnpm build:cli
+          pnpm turbo build --filter=@ledgerhq/live-cli
           cd apps/cli
           npm link
       - name: bot transfer

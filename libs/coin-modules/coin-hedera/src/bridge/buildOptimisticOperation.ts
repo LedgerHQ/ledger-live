@@ -1,5 +1,5 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";

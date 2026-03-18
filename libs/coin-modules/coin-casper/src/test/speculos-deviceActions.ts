@@ -1,5 +1,5 @@
-import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
-import { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 
 import { casperAccountHashFromPublicKey } from "../bridge/bridgeHelpers/addresses";
 import { CASPER_NETWORK } from "../consts";

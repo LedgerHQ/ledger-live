@@ -11,8 +11,8 @@ import { Transaction } from "../../../generated/types";
 import BigNumber from "bignumber.js";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-framework/account/index"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index"),
   getFeesUnit: () => ({
     name: "wei",
     code: "ETH",

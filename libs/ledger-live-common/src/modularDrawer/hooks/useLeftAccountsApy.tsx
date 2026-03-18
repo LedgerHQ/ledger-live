@@ -1,25 +1,20 @@
 import React from "react";
-import {
-  AccountDataItem,
-  AccountModuleParams,
-  ApyIndicatorComponent,
-  CreateAccountsCountAndApy,
-  NetworkWithCount,
-} from "../utils/type";
+import { AccountModuleParams, NetworkWithCount, NetworkConfigurationOptions } from "../utils/type";
 import { useInterestRatesByCurrencies } from "../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
 
 export function useLeftAccountsApyModule(
   params: AccountModuleParams,
-  useAccountData: (params: AccountModuleParams) => AccountDataItem[],
-  accountsCountAndApy: CreateAccountsCountAndApy,
-  ApyIndicator: ApyIndicatorComponent,
+  {
+    useAccountData,
+    accountsCountAndApy,
+    ApyIndicator,
+  }: Pick<NetworkConfigurationOptions, "useAccountData" | "accountsCountAndApy" | "ApyIndicator">,
 ): Array<NetworkWithCount> {
   const { networks } = params;
   const accountData = useAccountData(params);
   const interestRates = useInterestRatesByCurrencies(networks);
 
-  // Map each account to its APY info using the shared utility
   return accountData.map(({ asset, label, count }) => {
     const { interestRate, interestRatePercentageRounded } = getInterestRateForAsset(
       asset,

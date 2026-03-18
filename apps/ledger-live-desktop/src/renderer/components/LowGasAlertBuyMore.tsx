@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import Alert from "~/renderer/components/Alert";
-import { Account } from "@ledgerhq/types-live/lib/account";
+import { Account } from "@ledgerhq/types-live/account";
 import { Flex } from "@ledgerhq/react-ui";
 import TranslatedError from "~/renderer/components/TranslatedError";
 

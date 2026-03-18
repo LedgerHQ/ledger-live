@@ -31,27 +31,15 @@
       "api": [
         "lib/api/index"
       ],
-      "deviceTransactionConfig": [
-        "lib/deviceTransactionConfig"
-      ],
       "logic": [
         "lib/logic/index"
-      ],
-      "specs": [
-        "lib/test/bot-specs"
-      ],
-      "transaction": [
-        "lib/transaction"
       ],
       "types": [
         "lib/types/index"
       ],
       "*": [
         "lib/*",
-        "lib/bridge/*",
         "lib/logic/*",
-        "lib/signer/*",
-        "lib/test/*",
         "lib/types/*"
       ]
     }
@@ -60,38 +48,27 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
-    "./deviceTransactionConfig": {
-      "require": "./lib/deviceTransactionConfig.js",
-      "default": "./lib-es/deviceTransactionConfig.js"
-    },
     "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
       "require": "./lib/logic/index.js",
       "default": "./lib-es/logic/index.js"
     },
-    "./signer": {
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
-    },
-    "./specs": {
-      "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/test/bot-specs.js"
-    },
-    "./transaction": {
-      "require": "./lib/transaction.js",
-      "default": "./lib-es/transaction.js"
-    },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
@@ -101,10 +78,8 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
@@ -140,7 +115,7 @@
     "test-watch": "jest --watch",
     "test-integ": "jest --config=jest.integ.config.js --passWithNoTests",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
   }
 }

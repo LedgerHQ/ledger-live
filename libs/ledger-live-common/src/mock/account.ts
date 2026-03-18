@@ -2,12 +2,12 @@ import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import type { GenAccountOptions } from "@ledgerhq/coin-framework/mocks/account";
+import type { GenAccountOptions } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
   genAccount as genAccountCommon,
   genOperation,
   ensureNoNegative,
-} from "@ledgerhq/coin-framework/mocks/account";
+} from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "../bridge";
 import perFamilyMock from "../generated/mock";
 import { CosmosAccount } from "../families/cosmos/types";

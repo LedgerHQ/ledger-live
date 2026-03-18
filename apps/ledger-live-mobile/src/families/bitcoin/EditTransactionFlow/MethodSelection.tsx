@@ -10,7 +10,7 @@ import type {
   Transaction as BtcTransaction,
   TransactionRaw,
 } from "@ledgerhq/coin-bitcoin/types";
-import { isOldestBitcoinPendingOperation } from "@ledgerhq/coin-framework/operation";
+import { isOldestBitcoinPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

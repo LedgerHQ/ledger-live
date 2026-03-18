@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/mocks/helpers";
+export * from "@ledgerhq/ledger-wallet-framework/mocks/helpers";

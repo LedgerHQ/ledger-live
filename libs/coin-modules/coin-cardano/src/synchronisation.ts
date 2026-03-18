@@ -1,13 +1,13 @@
-import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   AccountShapeInfo,
   GetAccountShape,
   mergeOps,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { utils as TyphonUtils, address as TyphonAddress } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";

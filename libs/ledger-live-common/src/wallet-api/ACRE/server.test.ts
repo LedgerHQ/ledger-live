@@ -141,7 +141,7 @@ const mockAccount: Account = {
   nfts: [],
 };
 
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   getParentAccount: jest.fn(),
   getMainAccount: jest.fn(),
   makeEmptyTokenAccount: jest.fn(),
@@ -177,7 +177,7 @@ describe("ACRE Server Handlers", () => {
 
     // Mock the account functions
     const { makeEmptyTokenAccount, getMainAccount, getParentAccount } = jest.requireMock(
-      "@ledgerhq/coin-framework/account/index",
+      "@ledgerhq/ledger-wallet-framework/account/index",
     );
     makeEmptyTokenAccount.mockReturnValue({
       type: "TokenAccount",

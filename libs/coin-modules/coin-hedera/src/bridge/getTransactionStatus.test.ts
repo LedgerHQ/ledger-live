@@ -1,4 +1,3 @@
-import * as accountHelpers from "@ledgerhq/coin-framework/account";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -7,6 +6,7 @@ import {
   ClaimRewardsFeesWarning,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import * as accountHelpers from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
@@ -45,8 +45,8 @@ jest.mock("../logic/utils", () => ({
   checkAccountTokenAssociationStatus: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-framework/account", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-framework/account");
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/account");
   return {
     ...actual,
     findSubAccountById: jest.fn(actual.findSubAccountById),
@@ -85,7 +85,7 @@ describe("getTransactionStatus", () => {
     mockCheckAccountTokenAssociationStatus.mockResolvedValue(true);
     // Reset findSubAccountById to use actual implementation
     mockFindSubAccountById.mockImplementation(
-      jest.requireActual("@ledgerhq/coin-framework/account").findSubAccountById,
+      jest.requireActual("@ledgerhq/ledger-wallet-framework/account").findSubAccountById,
     );
   });
 

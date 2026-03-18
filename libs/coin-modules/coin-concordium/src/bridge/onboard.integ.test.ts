@@ -276,8 +276,6 @@ describe("onboard (testnet integration)", () => {
       const config = coinConfig.getCoinConfig();
 
       expect(config.networkType).toBe(TESTNET_COIN_CONFIG.networkType);
-      expect(config.grpcUrl).toBe(TESTNET_COIN_CONFIG.grpcUrl);
-      expect(config.grpcPort).toBe(TESTNET_COIN_CONFIG.grpcPort);
       expect(config.proxyUrl).toBe(TESTNET_COIN_CONFIG.proxyUrl);
       expect(config.minReserve).toBe(TESTNET_COIN_CONFIG.minReserve);
     });

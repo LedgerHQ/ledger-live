@@ -1,28 +1,20 @@
-import { getCoinConfig } from "../config";
-import { getTransaction } from "../network/node/rpc.common";
+import { getNodeApi } from "../network/node";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
-jest.mock("../config");
-jest.mock("../network/node/rpc.common", () => ({
-  getTransaction: jest.fn(),
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
 }));
 
-const mockGetConfig = jest.mocked(getCoinConfig);
-const mockGetTransaction = getTransaction as jest.Mock;
+const mockGetNodeApi = jest.mocked(getNodeApi);
 
 describe("isTransactionConfirmed", () => {
-  beforeEach(() => {
-    mockGetConfig.mockImplementation((): any => {
-      return {
-        info: {
-          node: { type: "external" },
-        },
-      };
-    });
-  });
+  const nodeApiMock = mockNodeApi();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetNodeApi.mockReturnValue(nodeApiMock);
   });
 
   test("should return true if blockHeight is not null", async () => {
@@ -30,12 +22,12 @@ describe("isTransactionConfirmed", () => {
     const hash = "transactionHash";
     const blockHeight = 12345;
 
-    mockGetTransaction.mockResolvedValue({ blockHeight } as any);
+    nodeApiMock.getTransaction.mockResolvedValue({ blockHeight } as any);
 
     const result = await isTransactionConfirmed({ currency, hash });
 
     expect(result).toBe(true);
-    expect(mockGetTransaction).toHaveBeenCalledWith(currency, hash);
+    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(currency, hash);
   });
 
   test("should return false if blockHeight is null", async () => {
@@ -43,11 +35,11 @@ describe("isTransactionConfirmed", () => {
     const hash = "transactionHash";
     const blockHeight = null;
 
-    mockGetTransaction.mockResolvedValue({ blockHeight } as any);
+    nodeApiMock.getTransaction.mockResolvedValue({ blockHeight } as any);
 
     const result = await isTransactionConfirmed({ currency, hash });
 
     expect(result).toBe(false);
-    expect(mockGetTransaction).toHaveBeenCalledWith(currency, hash);
+    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(currency, hash);
   });
 });

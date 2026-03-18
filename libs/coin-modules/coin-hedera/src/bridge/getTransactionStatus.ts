@@ -1,4 +1,3 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -6,6 +5,7 @@ import {
   RecipientRequired,
   ClaimRewardsFeesWarning,
 } from "@ledgerhq/errors";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

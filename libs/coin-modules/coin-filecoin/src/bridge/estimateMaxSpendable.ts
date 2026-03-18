@@ -1,9 +1,9 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import {
   InvalidAddress,
   NotEnoughBalanceInParentAccount,
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchBalances, fetchEstimatedFees } from "../api";

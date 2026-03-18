@@ -1,6 +1,8 @@
 import { Stake } from "@ledgerhq/coin-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
+import { isExternalNodeConfig } from "../network/node/types";
 import type {
   StakeCreate,
   StakingContractConfig,
@@ -53,60 +55,69 @@ const getAmountFromDecoded = (currencyId: string, decoded: unknown): bigint => {
   return extractor ? extractor(decoded) : 0n;
 };
 
+// TODO: tech debt: the call should be implemented in the node API as an optional function (like traceBlock)
 const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
   const { currency, config, address, currencyId, validatorAddress } = stakingContract;
+  const node = getCoinConfig(currency).info.node;
+  if (!isExternalNodeConfig(node)) {
+    throw new Error("Currency doesn't have an RPC node provided");
+  }
 
-  return withApi(currency, async rpcProvider => {
-    try {
-      const params = buildTransactionParams(
-        currencyId,
-        "getStakedBalance",
-        address,
-        0n,
-        validatorAddress,
-        address,
-      );
+  return withApi(
+    currency,
+    async rpcProvider => {
+      try {
+        const params = buildTransactionParams(
+          currencyId,
+          "getStakedBalance",
+          address,
+          0n,
+          validatorAddress,
+          address,
+        );
 
-      const encodedData = encodeStakingData({
-        currencyId,
-        operation: "getStakedBalance",
-        config,
-        params,
-      });
+        const encodedData = encodeStakingData({
+          currencyId,
+          operation: "getStakedBalance",
+          config,
+          params,
+        });
 
-      const result = await rpcProvider.call({
-        to: config.contractAddress,
-        data: encodedData,
-      });
+        const result = await rpcProvider.call({
+          to: config.contractAddress,
+          data: encodedData,
+        });
 
-      const decoded = decodeStakingResult(currencyId, "getStakedBalance", config, result);
-      const amount = getAmountFromDecoded(currencyId, decoded);
+        const decoded = decodeStakingResult(currencyId, "getStakedBalance", config, result);
+        const amount = getAmountFromDecoded(currencyId, decoded);
 
-      if (amount === 0n) {
+        if (amount === 0n) {
+          return null;
+        }
+
+        return {
+          uid: `${config.contractAddress}-${validatorAddress}-${address}`,
+          address,
+          delegate: validatorAddress,
+          state: "active",
+          asset: {
+            type: "native",
+            name: currency.name,
+            unit: currency.units[0],
+          },
+          amount,
+          details: {
+            contractAddress: config.contractAddress,
+            validator: validatorAddress,
+          },
+        };
+      } catch (error) {
+        console.error("Staking fetch failed", error);
         return null;
       }
-
-      return {
-        uid: `${config.contractAddress}-${validatorAddress}-${address}`,
-        address,
-        delegate: validatorAddress,
-        state: "active",
-        asset: {
-          type: "native",
-          name: currency.name,
-          unit: currency.units[0],
-        },
-        amount,
-        details: {
-          contractAddress: config.contractAddress,
-          validator: validatorAddress,
-        },
-      };
-    } catch (error) {
-      console.error("Staking fetch failed", error);
-      return null;
-    }
-  });
+    },
+    node,
+  );
 };
 
 const getStakesForValidators = async (

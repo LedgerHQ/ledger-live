@@ -1,11 +1,14 @@
-import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account";
 import type {
   GetAccountShape,
   IterateResultBuilder,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { Result } from "@ledgerhq/coin-framework/derivation";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

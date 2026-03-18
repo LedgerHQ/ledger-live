@@ -1,6 +1,9 @@
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 

@@ -1,4 +1,7 @@
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 import {
@@ -92,7 +95,7 @@ export function useNetworkFees({
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
   const selectedPresetFiatValue =
     selectedFeeStrategy && selectedFeeStrategy !== "custom"
-      ? fiatByPreset[selectedFeeStrategy] ?? null
+      ? (fiatByPreset[selectedFeeStrategy] ?? null)
       : null;
 
   const onSelectFeeStrategy = useCallback(
@@ -126,3 +129,5 @@ export function useNetworkFees({
     legendByPreset,
   };
 }
+
+export type NetworkFeesViewModel = ReturnType<typeof useNetworkFees>;

@@ -5,7 +5,6 @@ import type {
   TransactionCommonRaw,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 type NetworkInfo = {
   fees: BigNumber;
@@ -48,7 +47,6 @@ export type GenericTransaction = TransactionCommon & {
   };
   tag?: number | null | undefined;
   nonce?: BigNumber | null | undefined;
-  feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
   data?: Buffer;
@@ -85,7 +83,6 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   };
   tag?: number | null | undefined;
   nonce?: string | null | undefined;
-  feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
   data?: string;

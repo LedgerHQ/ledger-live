@@ -11,6 +11,7 @@ export interface PageViewModelResult {
   readonly isScrollAtUpperBound: boolean;
   readonly isWallet40Enabled: boolean;
   readonly shouldDisplayWallet40MainNav: boolean;
+  readonly shouldDisplayBrazePlacement: boolean;
   readonly pathname: string;
   readonly onClickScrollUp: () => void;
   readonly shouldRenderRightPanel: boolean;
@@ -21,8 +22,11 @@ export const usePageViewModel = (): PageViewModelResult => {
   const [isScrollUpButtonVisible, setScrollUpButtonVisibility] = useState(false);
   const [isScrollAtUpperBound, setScrollAtUpperBound] = useState(true);
   const { pathname } = useLocation();
-  const { isEnabled: isWallet40Enabled, shouldDisplayWallet40MainNav } =
-    useWalletFeaturesConfig("desktop");
+  const {
+    isEnabled: isWallet40Enabled,
+    shouldDisplayWallet40MainNav,
+    shouldDisplayBrazePlacement,
+  } = useWalletFeaturesConfig("desktop");
   const { shouldDisplay: isRightPanelEnabled } = useRightPanelViewModel();
 
   const shouldRenderRightPanel = isRightPanelPage(pathname) && isRightPanelEnabled;
@@ -83,6 +87,7 @@ export const usePageViewModel = (): PageViewModelResult => {
     isScrollAtUpperBound,
     isWallet40Enabled,
     shouldDisplayWallet40MainNav,
+    shouldDisplayBrazePlacement,
     pathname,
     onClickScrollUp,
     shouldRenderRightPanel,

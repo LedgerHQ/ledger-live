@@ -1,10 +1,11 @@
 import type {
-  Api,
+  AlpacaApi,
   CraftedTransaction,
   Operation,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -35,7 +36,7 @@ import {
   getRewards,
 } from "../logic";
 import {
-  extractFeesPayer,
+  extractInitiator,
   mapIntentToSDKOperation,
   getOperationValue,
   getBlockHash,
@@ -45,7 +46,10 @@ import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 import type { EstimateFeesParams, HederaMemo, HederaOperationExtra } from "../types";
 
-export function createApi(config: HederaConfig, currencyId: string): Api<HederaMemo> {
+export function createApi(
+  config: HederaConfig,
+  currencyId: string,
+): AlpacaApi<HederaMemo> & BridgeApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -185,9 +189,10 @@ export function createApi(config: HederaConfig, currencyId: string): Api<HederaM
             }
           : { type: "native" };
 
-        const feesPayer = liveOp.extra?.transactionId
-          ? extractFeesPayer(liveOp.extra.transactionId)
-          : undefined;
+        // Prefer inferred payer from operation extra, fallback to transaction_id parsing for legacy ops.
+        let feesPayer = liveOp.extra?.feesPayer;
+        if (!feesPayer && liveOp.extra?.transactionId)
+          feesPayer = extractInitiator(liveOp.extra.transactionId);
 
         // REWARD operations append a suffix to the tx.hash to ensure uniqueness
         const hash =
