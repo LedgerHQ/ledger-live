@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
-import { http, HttpResponse, bypass } from "msw";
+import { http, HttpResponse } from "msw";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
@@ -11,6 +11,7 @@ import type {
   EtherscanERC721Event,
   EtherscanInternalTransaction,
   EtherscanOperation,
+  LedgerExplorerER1155TransferEvent,
   LedgerExplorerOperation,
 } from "@ledgerhq/coin-evm/types/index";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
@@ -75,6 +76,160 @@ const explorerLedgerOperationByAddress: Record<
   string,
   Map<string, LedgerExplorerOperation> | null
 > = {};
+
+const filterSortPaginate = <T extends { blockNumber: string }>(
+  items: T[],
+  searchParams: URLSearchParams,
+): T[] => {
+  const startblock = parseInt(searchParams.get("startblock") || "0", 10);
+  const endblockParam = searchParams.get("endblock");
+  const endblock = endblockParam !== null ? parseInt(endblockParam, 10) : Infinity;
+  const sort = searchParams.get("sort") || "asc";
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const offsetParam = searchParams.get("offset");
+  const offset = offsetParam !== null ? parseInt(offsetParam, 10) : undefined;
+
+  let results = items.filter(op => {
+    const block = parseInt(op.blockNumber, 10);
+    return block >= startblock && block <= endblock;
+  });
+
+  results.sort((a, b) => {
+    const blockA = parseInt(a.blockNumber, 10);
+    const blockB = parseInt(b.blockNumber, 10);
+    return sort === "asc" ? blockA - blockB : blockB - blockA;
+  });
+
+  if (offset !== undefined && offset > 0) {
+    const start = (page - 1) * offset;
+    results = results.slice(start, start + offset);
+  }
+
+  return results;
+};
+
+const buildLedgerExplorerResponse = (address: string, searchParams: URLSearchParams) => {
+  const fromHeight = parseInt(searchParams.get("from_height") || "0", 10);
+  const batchSize = parseInt(searchParams.get("batch_size") || "0", 10);
+  const order = searchParams.get("order") || "ascending";
+  const paginationToken = searchParams.get("token");
+  const cursorOffset = paginationToken ? parseInt(paginationToken, 10) : 0;
+
+  let ops = [...(explorerLedgerOperationByAddress[address] || new Map()).values()];
+
+  ops = ops.filter(op => op.block.height >= fromHeight);
+
+  ops.sort((a, b) =>
+    order === "ascending" ? a.block.height - b.block.height : b.block.height - a.block.height,
+  );
+
+  if (batchSize > 0) {
+    const page = ops.slice(cursorOffset, cursorOffset + batchSize);
+    const nextOffset = cursorOffset + batchSize;
+    return { data: page, token: nextOffset < ops.length ? String(nextOffset) : null };
+  }
+
+  return { data: ops, token: null };
+};
+
+const buildEtherscanExplorerResponse = (
+  address: string | null,
+  searchParams: URLSearchParams,
+): {
+  status: string;
+  message: string;
+  result:
+    | EtherscanOperation[]
+    | EtherscanERC20Event[]
+    | EtherscanERC721Event[]
+    | EtherscanERC1155Event[]
+    | EtherscanInternalTransaction[];
+} => {
+  const action = searchParams.get("action");
+  const addr = address || "";
+
+  switch (action) {
+    case "txlist":
+      return {
+        status: "1",
+        message: "OK",
+        result: filterSortPaginate(
+          [...(explorerEtherscanOperationByAddress[addr] || new Map()).values()],
+          searchParams,
+        ),
+      };
+    case "tokentx":
+      return {
+        status: "1",
+        message: "OK",
+        result: filterSortPaginate(
+          [...(explorerEtherscanERC20EventsByAddress[addr] || new Map()).values()],
+          searchParams,
+        ),
+      };
+    case "tokennfttx":
+      return {
+        status: "1",
+        message: "OK",
+        result: filterSortPaginate(
+          [...(explorerEtherscanERC721EventsByAddress[addr] || new Map()).values()],
+          searchParams,
+        ),
+      };
+    case "token1155tx":
+      return {
+        status: "1",
+        message: "OK",
+        result: filterSortPaginate(
+          [...(explorerEtherscanERC1155EventsByAddress[addr] || new Map()).values()],
+          searchParams,
+        ),
+      };
+    case "txlistinternal":
+      return {
+        status: "1",
+        message: "OK",
+        result: filterSortPaginate(
+          [...(explorerEtherscanInternalByAddress[addr] || new Map()).values()],
+          searchParams,
+        ),
+      };
+    default:
+      return {
+        status: "1",
+        message: "OK",
+        result: [],
+      };
+  }
+};
+
+const buildLedgerExplorer1155Transfers = (
+  transfersMap: [string, string][],
+): LedgerExplorerER1155TransferEvent["transfers"] => {
+  const transfer = Object.fromEntries(transfersMap) as { id: string; value: string };
+
+  return [{ id: transfer.id, value: transfer.value }];
+};
+
+/** test-only helper to seed the etherscan mock store */
+export const _seedEtherscanOperations = (address: string, ops: EtherscanOperation[]) => {
+  if (!explorerEtherscanOperationByAddress[address]) {
+    explorerEtherscanOperationByAddress[address] = new Map();
+  }
+  for (const op of ops) {
+    explorerEtherscanOperationByAddress[address]!.set(op.hash, op);
+  }
+};
+
+/** test-only helper to seed the ledger explorer mock store */
+export const _seedLedgerOperations = (address: string, ops: LedgerExplorerOperation[]) => {
+  if (!explorerLedgerOperationByAddress[address]) {
+    explorerLedgerOperationByAddress[address] = new Map();
+  }
+  for (const op of ops) {
+    explorerLedgerOperationByAddress[address]!.set(op.hash, op);
+  }
+};
 
 export const resetIndexer = () => {
   setBlock(0);
@@ -414,7 +569,7 @@ const handleERC1155Log = async (log: ethers.Log, provider: ethers.JsonRpcProvide
             sender: from,
             receiver: to,
             operator,
-            transfers: [Object.fromEntries(transfersMap) as { id: string; value: string }],
+            transfers: buildLedgerExplorer1155Transfers(transfersMap),
           },
         ],
       }
@@ -438,7 +593,7 @@ const handleERC1155Log = async (log: ethers.Log, provider: ethers.JsonRpcProvide
             sender: from,
             receiver: to,
             operator,
-            transfers: [Object.fromEntries(transfersMap) as { id: string; value: string }],
+            transfers: buildLedgerExplorer1155Transfers(transfersMap),
           },
         ],
         approval_events: [],
@@ -464,12 +619,13 @@ const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider
   const block = await provider.getBlock(blockNumber, true);
 
   for (const transaction of block?.transactions || []) {
+    const getTraces = (): Promise<TraceTransaction[]> =>
+      provider.send("trace_transaction", [transaction]).catch((): TraceTransaction[] => []);
+
     const [tx, receipt, traces] = await Promise.all([
       provider.getTransaction(transaction),
       provider.getTransactionReceipt(transaction),
-      provider.send("trace_transaction", [transaction]).catch(() => []) as Promise<
-        TraceTransaction[]
-      >,
+      getTraces(),
     ]);
 
     const code = tx?.to ? await provider.getCode(tx?.to) : false;
@@ -925,55 +1081,18 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
 
   if (currencyConfig.explorer.type === "ledger") {
     handlers.push(
-      http.get("*.ledger.com/blockchain/v4/*/address/*/txs", async ({ request, params }) => {
-        const address = params["2"] as string;
-        const response = await fetch(bypass(request)).then(res => res.json());
-        const opsMap = explorerLedgerOperationByAddress[address || ""] || new Map();
-        response.data.push(...opsMap.values());
-
-        return HttpResponse.json(response);
+      http.get("*.ledger.com/blockchain/v4/*/address/*/txs", ({ request, params }) => {
+        const address = typeof params["2"] === "string" ? params["2"] : "";
+        const searchParams = new URL(request.url).searchParams;
+        return HttpResponse.json(buildLedgerExplorerResponse(address, searchParams));
       }),
     );
   } else if (currencyConfig.explorer.type !== "none") {
     handlers.push(
-      http.get(currencyConfig.explorer.uri, async ({ request }) => {
-        const uri = new URL(request.url).searchParams;
-        const address = uri.get("address");
-        const action = uri.get("action");
-        const response = await fetch(bypass(request)).then(res => res.json());
-
-        switch (action) {
-          case "txlist": {
-            const opsMap = explorerEtherscanOperationByAddress[address || ""] || new Map();
-            response.result.push(...opsMap.values());
-            break;
-          }
-          case "tokentx": {
-            const erc20EventsMap =
-              explorerEtherscanERC20EventsByAddress[address || ""] || new Map();
-            response.result.push(...erc20EventsMap.values());
-            break;
-          }
-          case "tokennfttx": {
-            const erc721EventsMap =
-              explorerEtherscanERC721EventsByAddress[address || ""] || new Map();
-            response.result.push(...erc721EventsMap.values());
-            break;
-          }
-          case "token1155tx": {
-            const erc1155EventsMap =
-              explorerEtherscanERC1155EventsByAddress[address || ""] || new Map();
-            response.result.push(...erc1155EventsMap.values());
-            break;
-          }
-          case "txlistinternal": {
-            const internalMap = explorerEtherscanInternalByAddress[address || ""] || new Map();
-            response.result.push(...internalMap.values());
-            break;
-          }
-        }
-
-        return HttpResponse.json(response);
+      http.get(currencyConfig.explorer.uri, ({ request }) => {
+        const searchParams = new URL(request.url).searchParams;
+        const address = searchParams.get("address");
+        return HttpResponse.json(buildEtherscanExplorerResponse(address, searchParams));
       }),
     );
   }
