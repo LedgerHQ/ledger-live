@@ -6,12 +6,12 @@ import {
   getMockedFeeAuthorization,
 } from "../__tests__/fixtures/api.fixture";
 import { broadcast } from "./broadcast";
-import { deserializeTransaction } from "./utils";
+import { fromHex } from "./utils";
 
 jest.mock("../network/api");
 jest.mock("./utils");
 
-const mockDeserializeTransaction = jest.mocked(deserializeTransaction);
+const mockFromHex = jest.mocked(fromHex);
 
 describe("broadcast", () => {
   const mockAccount = getMockedAccount();
@@ -22,7 +22,7 @@ describe("broadcast", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockDeserializeTransaction.mockReturnValue({
+    mockFromHex.mockReturnValue({
       authorization: mockAuthorization,
       feeAuthorization: mockFeeAuthorization,
     });
@@ -32,8 +32,8 @@ describe("broadcast", () => {
   it("should broadcast transaction and return the transaction id", async () => {
     const result = await broadcast({ account: mockAccount, signedTx: mockSignedTx });
 
-    expect(mockDeserializeTransaction).toHaveBeenCalledTimes(1);
-    expect(mockDeserializeTransaction).toHaveBeenCalledWith(mockSignedTx);
+    expect(mockFromHex).toHaveBeenCalledTimes(1);
+    expect(mockFromHex).toHaveBeenCalledWith(mockSignedTx);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledTimes(1);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledWith({
       currency: mockAccount.currency,
@@ -46,7 +46,7 @@ describe("broadcast", () => {
   });
 
   it("should call API without feeAuthorization when absent in signed transaction payload", async () => {
-    mockDeserializeTransaction.mockReturnValue({
+    mockFromHex.mockReturnValue({
       authorization: mockAuthorization,
     });
 

@@ -1,64 +1,79 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { sdkClient } from "../network/sdk";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
+import {
+  mockTxIntentFeePrivate,
+  mockTxIntentTransferPublic,
+} from "../__tests__/fixtures/transaction.fixture";
+import type { FeeConfiguration, Intent } from "../types";
 import { craftTransaction } from "./craftTransaction";
-import { mapTransactionIntentToSdkIntent, serializeTransaction } from "./utils";
+import { mapTransactionIntentToSdkIntent, toHex } from "./utils";
 
 jest.mock("../network/sdk");
 jest.mock("./utils");
 
 const mockCurrency = getMockedCurrency();
 const mockViewKey = "AViewKey1mockviewkey";
-const mockIntent: TransactionIntent = {
-  intentType: "transaction",
-  asset: { type: "native" },
+const mockSdkIntent: Intent = {
   type: "transfer_public",
-  amount: BigInt(1000),
-  sender: "aleo1sender",
-  recipient: "aleo1recipient",
+  amount: "1000",
+  to: "aleo1recipient",
 };
-const mockMappedIntent = { mapped: "intent" } as any;
-const mockSdkResponse = { foo: "bar" } as any;
+const mockSdkResponse = getMockedPreparedRequestResponse({
+  network_id: 0,
+  function_name: "transfer_public",
+  inputs: [],
+  input_types: [],
+});
 const mockSerializedTx = "7b227478223a2273657269616c697a6564227d";
+const mockFeeConfiguration: FeeConfiguration = {
+  function_name: "fee_public",
+  max_base_fee: "1000",
+  max_priority_fee: "10",
+};
 
 describe("craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(mapTransactionIntentToSdkIntent).mockReturnValue(mockMappedIntent);
+    jest.mocked(mapTransactionIntentToSdkIntent).mockReturnValue(mockSdkIntent);
     jest.mocked(sdkClient.createRequestFromIntent).mockResolvedValue(mockSdkResponse);
-    jest.mocked(serializeTransaction).mockReturnValue(mockSerializedTx);
+    jest.mocked(toHex).mockReturnValue(mockSerializedTx);
   });
 
   it("should craft transaction by mapping intent, calling SDK and serializing response", async () => {
     const result = await craftTransaction({
       currency: mockCurrency,
-      txIntent: mockIntent,
+      txIntent: mockTxIntentTransferPublic,
+      feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
     });
 
     expect(result).toEqual({ transaction: mockSerializedTx });
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledTimes(1);
-    expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockIntent);
+    expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockTxIntentTransferPublic);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
       currency: mockCurrency,
-      intent: mockMappedIntent,
+      intent: mockSdkIntent,
+      feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
     });
-    expect(serializeTransaction).toHaveBeenCalledTimes(1);
-    expect(serializeTransaction).toHaveBeenCalledWith(mockSdkResponse);
+    expect(toHex).toHaveBeenCalledTimes(1);
+    expect(toHex).toHaveBeenCalledWith(mockSdkResponse);
   });
 
   it("should omit viewKey from request when not provided", async () => {
     await craftTransaction({
       currency: mockCurrency,
-      txIntent: mockIntent,
+      txIntent: mockTxIntentTransferPublic,
+      feeConfiguration: null,
     });
 
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
       currency: mockCurrency,
-      intent: mockMappedIntent,
+      intent: mockSdkIntent,
+      feeConfiguration: null,
     });
   });
 
@@ -68,9 +83,22 @@ describe("craftTransaction", () => {
     await expect(
       craftTransaction({
         currency: mockCurrency,
-        txIntent: mockIntent,
+        txIntent: mockTxIntentTransferPublic,
+        feeConfiguration: mockFeeConfiguration,
         viewKey: mockViewKey,
       }),
     ).rejects.toThrow("sdk error");
+  });
+
+  it("should craft fee_private intent and call SDK", async () => {
+    await craftTransaction({
+      currency: mockCurrency,
+      txIntent: mockTxIntentFeePrivate,
+      feeConfiguration: mockFeeConfiguration,
+    });
+
+    expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockTxIntentFeePrivate);
+    expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
+    expect(toHex).toHaveBeenCalledTimes(1);
   });
 });

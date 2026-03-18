@@ -27,13 +27,13 @@ import type {
   TransactionSelfTransfer,
   AleoAccount,
   Intent,
-  PreparedRequestResponse,
   AleoTransactionIntentData,
   AleoPublicTransaction,
   AleoOperationExtra,
   TransactionPublic,
   TransactionPrivate,
   AleoCoinConfig,
+  AleoUnspentRecord,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -343,39 +343,71 @@ export function mapTransactionIntentToSdkIntent(
   const amount = txIntent.amount.toString();
 
   switch (type) {
-    case "transfer_public":
-    case "transfer_public_to_private": {
+    case TRANSACTION_TYPE.TRANSFER_PUBLIC: {
       return {
-        type,
+        type: "transfer_public",
         amount,
         to,
       };
     }
-    case "fee_public": {
-      if (!hasSpecificIntentData(txIntent, type)) {
-        throw new Error(`aleo: intent data is required for ${type}`);
-      }
+    case TRANSACTION_TYPE.TRANSFER_PRIVATE: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
 
       return {
-        type,
-        base_fee: txIntent.amount.toString(),
+        type: "transfer_private",
+        amount,
+        to,
+        record: txIntent.data.record,
+      };
+    }
+    case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE: {
+      return {
+        type: "transfer_public_to_private",
+        amount,
+        to,
+      };
+    }
+    case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC: {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+
+      return {
+        type: "transfer_private_to_public",
+        amount,
+        to,
+        record: txIntent.data.record,
+      };
+    }
+    case "fee_public": {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+
+      return {
+        type: "fee_public",
         execution_id: txIntent.data.executionId,
+        base_fee: txIntent.amount.toString(),
         priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
       };
     }
-    // NOTE: transfer_private, transfer_private_to_public, and fee_private are intentionally not supported here.
-    // These are part of a separate task for "private send/receive" functionality and will be implemented later.
+    case "fee_private": {
+      invariant(hasSpecificIntentData(txIntent, type), `aleo: intent data is required for ${type}`);
+
+      return {
+        type: "fee_private",
+        execution_id: txIntent.data.executionId,
+        base_fee: txIntent.amount.toString(),
+        priority_fee: (txIntent.data.priorityFee ?? 0).toString(),
+        record: txIntent.data.record,
+      };
+    }
     default: {
       throw new Error(`aleo: unsupported intent type: ${type}`);
     }
   }
 }
-
-export function serializeTransaction(tx: PreparedRequestResponse): string {
+export function toHex(tx: unknown): string {
   return Buffer.from(JSON.stringify(tx)).toString("hex");
 }
 
-export function deserializeTransaction<T extends Record<string, unknown>>(txHex: string): T {
+export function fromHex<T>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
 
@@ -407,4 +439,104 @@ export function getAvailableBalance(account: AleoAccount, transaction: Transacti
       // @ts-expect-error - runtime check to ensure all transaction types are handled
       throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
   }
+}
+
+export function createTransactionIntent({
+  account,
+  transaction,
+}: {
+  account: AleoAccount;
+  transaction: Transaction;
+}): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
+  const isPrivateTx = isPrivateTransaction(transaction);
+  const commonFields = {
+    intentType: "transaction",
+    amount: BigInt(transaction.amount.toString()),
+    asset: { type: "native" },
+    recipient: transaction.recipient,
+    sender: account.freshAddress,
+    type: transaction.mode,
+    ...(transaction.useAllAmount && { useAllAmount: true }),
+  } as const;
+
+  if (isPrivateTx) {
+    const commitment = transaction.properties.amountRecordCommitment;
+    invariant(commitment, "aleo: missing amount record commitment");
+    const amountRecord = getRecordByCommitment({ account, commitment });
+    invariant(amountRecord, `aleo: no amount record found for commitment ${commitment}`);
+
+    return {
+      ...commonFields,
+      data: {
+        type: transaction.mode,
+        record: amountRecord.decryptedData,
+      },
+    };
+  }
+
+  return commonFields;
+}
+
+export function createFeeTransactionIntent({
+  account,
+  transaction,
+  executionId,
+  baseFee,
+  priorityFee,
+}: {
+  account: AleoAccount;
+  transaction: Transaction;
+  executionId: string;
+  baseFee: number;
+  priorityFee: number;
+}): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
+  const isPrivateTx = isPrivateTransaction(transaction);
+  const commonFields = {
+    intentType: "transaction",
+    amount: BigInt(baseFee.toString()),
+    asset: { type: "native" },
+    recipient: transaction.recipient,
+    sender: account.freshAddress,
+  } as const;
+
+  if (isPrivateTx) {
+    const commitment = transaction.properties.feeRecordCommitment;
+    invariant(commitment, "aleo: missing fee record commitment");
+    const feeRecord = getRecordByCommitment({ account, commitment });
+    invariant(feeRecord, "aleo: fee record is required for private tx fee intent");
+
+    return {
+      ...commonFields,
+      type: "fee_private",
+      data: {
+        type: "fee_private",
+        priorityFee,
+        executionId,
+        record: feeRecord.decryptedData,
+      },
+    };
+  }
+
+  return {
+    ...commonFields,
+    type: "fee_public",
+    data: {
+      type: "fee_public",
+      priorityFee,
+      executionId,
+    },
+  };
+}
+
+export function getRecordByCommitment({
+  account,
+  commitment,
+}: {
+  account: AleoAccount;
+  commitment: string;
+}): AleoUnspentRecord | null {
+  const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords;
+  invariant(unspentPrivateRecords, "aleo: unspent private records are required");
+
+  return unspentPrivateRecords.find(record => record.commitment === commitment) ?? null;
 }

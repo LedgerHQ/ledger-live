@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import type { TxDataNotSupported } from "@ledgerhq/coin-framework/api/types";
+import type {
+  MemoNotSupported,
+  TransactionIntent,
+  TxDataNotSupported,
+} from "@ledgerhq/coin-framework/api/types";
 import type { TRANSACTION_TYPE } from "../constants";
 import type {
   AleoJWT,
@@ -35,7 +39,28 @@ export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION
 export type AleoTransactionIntentData =
   | TxDataNotSupported
   | {
+      type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+      record: AleoDecryptedRecordResponse;
+    }
+  | {
+      type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+      record: AleoDecryptedRecordResponse;
+    }
+  | {
       type: "fee_public";
       priorityFee?: number;
       executionId: string;
+    }
+  | {
+      type: "fee_private";
+      priorityFee?: number;
+      executionId: string;
+      record: AleoDecryptedRecordResponse;
     };
+
+export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
+
+export interface SignedAleoTransaction {
+  authorization: string;
+  feeAuthorization: string;
+}

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { apiClient } from "../network/api";
 import type { AleoAccount } from "../types";
-import { deserializeTransaction } from "./utils";
+import { fromHex } from "./utils";
 
 export async function broadcast({
   account,
@@ -14,7 +14,7 @@ export async function broadcast({
   invariant(jwt, `aleo: jwt token is missing for ${account.freshAddress}`);
 
   // get authorization and feeAuthorization from signed transaction
-  const { authorization, feeAuthorization } = deserializeTransaction<{
+  const { authorization, feeAuthorization } = fromHex<{
     authorization: Record<string, unknown>;
     feeAuthorization?: Record<string, unknown>;
   }>(signedTx);

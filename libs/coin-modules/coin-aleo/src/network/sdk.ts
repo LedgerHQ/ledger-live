@@ -7,6 +7,7 @@ import type {
   AleoEncryptedRegistrationResponse,
   PreparedRequestResponse,
   Intent,
+  FeeConfiguration,
 } from "../types/sdk";
 
 async function encryptRegistrationPayload({
@@ -99,10 +100,12 @@ async function decryptCiphertext({
 async function createRequestFromIntent({
   currency,
   intent,
+  feeConfiguration,
   viewKey,
 }: {
   currency: CryptoCurrency;
   intent: Intent;
+  feeConfiguration: FeeConfiguration | null;
   viewKey?: string;
 }): Promise<PreparedRequestResponse> {
   const { sdkUrl } = getNetworkConfig(currency);
@@ -112,6 +115,7 @@ async function createRequestFromIntent({
     url: `${sdkUrl}/transactions/request`,
     data: {
       intent,
+      fee: feeConfiguration,
       ...(viewKey && { view_key: viewKey }),
     },
   });

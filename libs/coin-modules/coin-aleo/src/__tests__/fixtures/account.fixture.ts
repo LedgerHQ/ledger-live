@@ -1,6 +1,13 @@
 import BigNumber from "bignumber.js";
-import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../../types";
+import type {
+  AleoAccount,
+  AleoAccountRaw,
+  AleoResources,
+  AleoResourcesRaw,
+  AleoUnspentRecord,
+} from "../../types";
 import { getMockedCurrency } from "./currency.fixture";
+import { getMockedRecord } from "./api.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
 const defaultBalance = new BigNumber(100000);
@@ -33,6 +40,20 @@ export const mockAleoResourcesRaw: AleoResourcesRaw = {
   privateBalance: mockAleoResources.privateBalance?.toString() ?? null,
   unspentPrivateRecords: JSON.stringify(mockAleoResources.unspentPrivateRecords),
   lastPrivateSyncDate: mockAleoResources.lastPrivateSyncDate?.toISOString() ?? null,
+};
+
+export const mockUnspentRecord1: AleoUnspentRecord = {
+  ...getMockedRecord(),
+  commitment: "record-1-commitment",
+  microcredits: "10000",
+  decryptedData: { owner: "", data: { record: "record-1-data" }, nonce: "", version: 1 },
+};
+
+export const mockUnspentRecord2: AleoUnspentRecord = {
+  ...getMockedRecord(),
+  commitment: "record-2-commitment",
+  microcredits: "2000",
+  decryptedData: { owner: "", data: { record: "record-2-data" }, nonce: "", version: 1 },
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {
