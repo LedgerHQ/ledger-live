@@ -165,7 +165,7 @@ describe("EVM Family", () => {
             blockHash: "0xabc",
             blockNumber: 1,
             transactionPosition: 0,
-            traceAddress: [],
+            traceAddress: [0],
             subtraces: 0,
             type: "call",
             ...overrides,
@@ -311,6 +311,16 @@ describe("EVM Family", () => {
 
           expect(byHash.size).toBe(1);
           expect(byHash.get("0xhash1")).toHaveLength(2);
+        });
+
+        it("should skip top-level traces (traceAddress=[]) since their value is already in the RPC tx", () => {
+          const items: TraceBlockItem[] = [
+            makeTraceItem({ transactionHash: "0xhash1", traceAddress: [] }),
+          ];
+
+          const byHash = traceBlockItemsToOperationsByHash(items);
+
+          expect(byHash.size).toBe(0);
         });
 
         it("should return empty map for empty input", () => {

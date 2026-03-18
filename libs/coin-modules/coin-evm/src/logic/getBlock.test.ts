@@ -114,7 +114,7 @@ describe("getBlock", () => {
       blockNumber: 12345,
       transactionHash: "0xtx1",
       transactionPosition: 0,
-      traceAddress: [],
+      traceAddress: [0],
       subtraces: 0,
       type: "call",
       ...overrides,
