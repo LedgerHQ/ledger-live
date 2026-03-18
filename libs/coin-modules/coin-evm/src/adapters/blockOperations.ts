@@ -81,6 +81,13 @@ function extractActionFields(
   if (!item.transactionHash) return null;
   if (!isTraceBlockCallAction(action)) return null;
 
+  // The trace_block RPC returns ALL execution traces, including the top-level call (traceAddress: []).
+  // This top-level call's native value transfer is identical to the RPC transaction's value field,
+  // which rpcTransactionToBlockOperations already converts to BlockOperations.
+  // When traceBlockItemsToOperationsByHash processed the top-level trace without filtering it out,
+  // the same native transfer appeared twice after merging.
+  if (item.traceAddress.length === 0) return null;
+
   const value = BigInt(action.value);
   if (value === 0n) return null;
 
