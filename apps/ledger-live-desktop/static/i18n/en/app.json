@@ -7728,7 +7728,7 @@
     },
     "noAccounts": {
       "title": "You need an account to access this app.",
-      "add": "Add Account"
+      "select": "Select Account"
     }
   },
   "recoverRestore": {
