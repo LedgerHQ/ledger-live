@@ -11,6 +11,7 @@ import {
   CreditCardFill,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName } from "~/const";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
@@ -59,16 +60,19 @@ export const useMainTabBarViewModel = ({
   const activeRouteName = state.routes[state.index].name;
   const { t } = useTranslation();
 
-  const tabItems: readonly TabItemConfig[] = useMemo(
-    () =>
-      state.routes.map(route => ({
+  const tabItems: readonly TabItemConfig[] = useMemo(() => {
+    const earnLabelKey = getStakeLabelLocaleBased();
+    return state.routes.map(route => {
+      const labelKey =
+        route.name === NavigatorName.Earn ? earnLabelKey : (LABELKEY_MAP[route.name] ?? route.name);
+      return {
         value: route.name,
-        label: t(LABELKEY_MAP[route.name] ?? route.name),
+        label: t(labelKey),
         testID: TAB_TEST_IDS[route.name],
         ...TAB_ICONS[route.name],
-      })),
-    [state.routes, t],
-  );
+      };
+    });
+  }, [state.routes, t]);
 
   const navigateToTab = useCallback(
     (targetRoute: { key: string; name: string }, value: string) => {

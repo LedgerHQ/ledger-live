@@ -6,6 +6,10 @@ import { NavigatorName } from "~/const";
 import { MainTabBar } from "../index";
 import type { MainTabBarProps } from "../types";
 
+jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
+  getStakeLabelLocaleBased: () => "account.earn",
+}));
+
 const Tab = createBottomTabNavigator();
 
 function StubScreen({ label }: { readonly label: string }) {
