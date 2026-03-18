@@ -8342,7 +8342,7 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Covered by Provable",
+        "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
       }
     }
