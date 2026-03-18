@@ -466,11 +466,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         if (e.nativeEvent?.data) {
           try {
             const msg = JSON.parse(e.nativeEvent.data);
-            if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+            if (Config.DETOX && msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
               webviewLogStore.addNetworkLog(msg.payload);
               return;
             }
-            if (msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+            if (Config.DETOX && msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
               webviewLogStore.addConsoleLog(msg.payload);
               return;
             }

@@ -5,6 +5,7 @@ import {
   attachSpeculosStartupErrorToAllure,
   resetStderrCaptureForCurrentTest,
   installConsoleCapture,
+  uninstallConsoleCapture,
 } from "./utils/loggingUtils";
 import { getLogs } from "./bridge/server";
 import { Circus } from "@jest/types";
@@ -153,6 +154,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   async teardown() {
     try {
+      uninstallConsoleCapture();
       if (this.global.webSocket?.wss) {
         this.global.webSocket.wss.close();
         this.global.webSocket.wss = undefined;

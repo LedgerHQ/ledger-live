@@ -27,6 +27,10 @@ export function installConsoleCapture(): void {
   process.stderr.write = captureStderr;
 }
 
+export function uninstallConsoleCapture(): void {
+  process.stderr.write = originalStderrWrite;
+}
+
 export function resetStderrCaptureForCurrentTest(): void {
   stderrChunks.length = 0;
 }
