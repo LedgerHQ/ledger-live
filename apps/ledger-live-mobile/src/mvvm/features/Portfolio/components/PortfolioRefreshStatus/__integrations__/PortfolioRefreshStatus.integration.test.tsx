@@ -14,8 +14,11 @@ jest.mock("react-native-reanimated", () => {
     useAnimatedStyle: () => ({}),
     useAnimatedReaction: () => {},
     withTiming: (toValue: unknown) => toValue,
+    withRepeat: (animation: unknown) => animation,
     withDelay: (_delay: number, animation: unknown) => animation,
     withSpring: (toValue: unknown) => toValue,
+    cancelAnimation: () => {},
+    useReducedMotion: () => false,
     default: {
       View: RN.View,
       Text: RN.Text,

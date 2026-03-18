@@ -96,7 +96,9 @@ module.exports = {
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
     "^@features/(.*)$": "<rootDir>/../../features/$1/src",
-    "^@ledgerhq/(lumen-ui-rnative|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
+    "^@ledgerhq/lumen-ui-rnative$":
+      "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
+    "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
     "^react$": "<rootDir>/node_modules/react",
     "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",

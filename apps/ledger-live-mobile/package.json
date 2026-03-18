@@ -160,6 +160,7 @@
     "expo": "catalog:",
     "expo-crypto": "catalog:",
     "expo-file-system": "catalog:",
+    "expo-haptics": "catalog:",
     "expo-image-loader": "catalog:",
     "expo-image-manipulator": "catalog:",
     "expo-keep-awake": "catalog:",

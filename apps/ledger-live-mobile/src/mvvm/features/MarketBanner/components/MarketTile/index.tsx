@@ -5,7 +5,7 @@ import {
   TileTitle,
   TileDescription,
   Text,
-  TileSpot,
+  Spot,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import { getChangePercentage } from "@ledgerhq/live-common/market/utils/index";
@@ -46,7 +46,7 @@ const MarketTile = ({ item, index, range, onPress }: MarketTileProps) => {
       accessibilityHint={t("marketBanner.tile.accessibilityHint")}
       accessibilityRole="button"
     >
-      <TileSpot size={40} appearance="icon" icon={renderIcon} />
+      <Spot size={40} appearance="icon" icon={renderIcon} />
       <TileContent>
         <TileTitle>{capitalizedTicker}</TileTitle>
         <TileDescription>
