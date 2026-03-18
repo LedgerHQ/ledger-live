@@ -152,7 +152,7 @@ async function processERC20TokenTransfer({
     contract: token.contractAddress,
     standard: "erc20",
     blockHeight: commonData.blockHeight,
-    blockHash: enrichedERC20Transfer.contractCallResult.block_hash,
+    blockHash: commonData.blockHash,
     senders: [senderAddress],
     recipients: [recipientAddress],
     fee: new BigNumber(enrichedERC20Transfer.mirrorTransaction.charged_tx_fee),
