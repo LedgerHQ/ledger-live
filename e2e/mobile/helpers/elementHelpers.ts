@@ -397,8 +397,8 @@ export const WebElementHelpers = {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, index).tap());
   },
 
-  async tapWebElementByElement(element: WebElement): Promise<void> {
-    await retryUntilTimeout(async () => element.tap());
+  async tapWebElementByElement(element: WebElement, timeout = DEFAULT_TIMEOUT / 10): Promise<void> {
+    await retryUntilTimeout(async () => element.tap(), timeout);
   },
 
   async typeTextByWebTestId(id: string, text: string): Promise<void> {

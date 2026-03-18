@@ -33,7 +33,7 @@ export default class EarnDashboardPage {
         name: "Stader Labs",
         url: `staderlabs.com/${account.currency.ticker.toLowerCase()}`,
       },
-      Kiln_staking_Pool: { name: "Kiln staking Pool", url: "kiln.fi%2F%3Ffocus%3Dpooled" },
+      Kiln_staking_Pool: { name: "Kiln staking Pool", url: "ledger-staking.widget.kiln.fi/earn" },
     };
   };
 
@@ -72,8 +72,10 @@ export default class EarnDashboardPage {
         break;
       }
       case this.providers(account).Kiln_staking_Pool.name: {
-        jestExpect(url).toContain(account.currency.id);
         jestExpect(url).toContain(this.providers(account).Kiln_staking_Pool.url);
+        jestExpect(url).toContain("focus=pooled");
+        jestExpect(url).toContain(account.currency.id);
+        jestExpect(url).toContain(account.address);
         break;
       }
       default:
@@ -139,7 +141,7 @@ export default class EarnDashboardPage {
     const tabTestId = tabName === "My Rewards" ? "tab-assets" : "tab-earn-more";
     try {
       const button = getWebElementByTestId(tabTestId, 0, "data-test-id");
-      await tapWebElementByElement(button);
+      await tapWebElementByElement(button, 10000);
     } catch {
       console.log(`${tabName} tab is not visible`);
     }
