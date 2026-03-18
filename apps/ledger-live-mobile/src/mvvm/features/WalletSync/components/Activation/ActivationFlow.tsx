@@ -95,10 +95,7 @@ const ActivationFlow = ({
         return (
           <>
             <TrackScreen category={AnalyticsPage.ChooseSyncMethod} />
-            <ChooseSyncMethod
-              onScanMethodPress={navigateToQrCodeMethod}
-              onConnectDevicePress={onCreateKey}
-            />
+            <ChooseSyncMethod onScanMethodPress={navigateToQrCodeMethod} />
           </>
         );
       case Steps.QrCodeMethod:
