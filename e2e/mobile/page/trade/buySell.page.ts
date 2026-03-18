@@ -141,10 +141,39 @@ export default class BuySellPage {
     jestExpect(normalizeText(currentPaymentMethod).toLowerCase()).toContain(paymentMethod);
   }
 
+  @Step("Get available providers")
+  async getAvailableProviders(): Promise<string[]> {
+    await waitWebElementByTestId(this.providersList);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, undefined, false);
+    if (expandButton) {
+      await tapWebElementByTestId(this.expandButtonId);
+    }
+    const providerNames = await getWebElementsText(
+      '[data-testid^="provider_title_"][data-testid$="_title_container"] > span:first-child',
+    );
+    return providerNames;
+  }
+
+  @Step("Select random provider")
+  async selectRandomProvider(): Promise<string> {
+    const providers = await this.getAvailableProviders();
+    if (providers.length === 0) {
+      throw new Error("No providers available");
+    }
+    const randomIndex = Math.floor(Math.random() * providers.length);
+    const selected = providers[randomIndex];
+    const selectedName = selected.toLowerCase().replace(/[^a-z0-9]/g, "");
+    console.log(`Randomly selected provider: ${selected} (${selectedName})`);
+
+    await scrollToWebElement(getWebElementByTestId(this.provider(selectedName)));
+    await tapWebElementByTestId(this.provider(selectedName));
+    return selected;
+  }
+
   @Step("Select provider")
   async selectProvider(provider: string) {
     await waitWebElementByTestId(this.providersList);
-    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, undefined, false);
     if (expandButton) {
       await tapWebElementByTestId(this.expandButtonId);
     }

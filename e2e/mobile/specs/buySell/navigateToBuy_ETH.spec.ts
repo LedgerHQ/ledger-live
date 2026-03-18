@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runNavigateToBuyFromMarketPageTest, runNavigateToBuyFromAssetPageTest } from "./buySell";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 const usdtBuySell = {
   crypto: TokenAccount.ETH_USDT_1,
@@ -17,7 +16,6 @@ const ethBuySell = {
   operation: OperationType.Buy,
 };
 
-const provider = Provider.MOONPAY;
 const paymentMethod = "card";
 
 const tags = [
@@ -31,12 +29,6 @@ const tags = [
   "@family-evm",
 ];
 
-runNavigateToBuyFromMarketPageTest(usdtBuySell, provider, paymentMethod, ["B2CQA-3414"], tags);
+runNavigateToBuyFromMarketPageTest(usdtBuySell, paymentMethod, ["B2CQA-3414"], tags);
 
-runNavigateToBuyFromAssetPageTest(
-  ethBuySell,
-  provider,
-  paymentMethod,
-  ["B2CQA-3392"],
-  [...tags, "@smoke"],
-);
+runNavigateToBuyFromAssetPageTest(ethBuySell, paymentMethod, ["B2CQA-3392"], [...tags, "@smoke"]);
