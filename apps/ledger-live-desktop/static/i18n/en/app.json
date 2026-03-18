@@ -8305,6 +8305,13 @@
         "public": "Public balance",
         "lastUpdate": "Last update",
         "switchBalance": "Switch balance source"
+      },
+      "recordPicker": {
+        "label": "Available records",
+        "noRecords": "No records available",
+        "noRecordsAlert": "You don't have any records available. Perform self transfer or receive private funds to get started.",
+        "alert": "Maximum spendable amount depends on maximum value your selected Record. Fees are sponsored by Provable for Ledger users.",
+        "recordsLimit": "Maximum {{max}} records are shown"
       }
     },
     "account": {
