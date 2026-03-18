@@ -235,6 +235,7 @@
     "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
+    "@ledgerhq/live-signer-hyperliquid": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
+import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -63,6 +64,8 @@ export default function WebPlatformPlayer({
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const { mobileView, setMobileView } = useMobileView();
 
+  const customPerpsHandlers = usePerpsHandlers(accounts);
+
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
@@ -70,8 +73,15 @@ export default function WebPlatformPlayer({
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
       ...props.customHandlers,
+      ...customPerpsHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers, props.customHandlers, customDeeplinkHandlers]);
+  }, [
+    customACREHandlers,
+    customPTXHandlers,
+    props.customHandlers,
+    customDeeplinkHandlers,
+    customPerpsHandlers,
+  ]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);

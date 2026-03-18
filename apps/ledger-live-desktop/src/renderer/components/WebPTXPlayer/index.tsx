@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
+import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar } from "./TopBar";
@@ -44,15 +45,18 @@ export default function WebPTXPlayer({ manifest, inputs, Loader, basePath }: Web
   const { mobileView, setMobileView } = useMobileView();
 
   const accounts = useSelector(flattenAccountsSelector);
+
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customPerpsHandlers = usePerpsHandlers(accounts);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
+      ...customPerpsHandlers,
     };
-  }, [customDeeplinkHandlers, customPTXHandlers]);
+  }, [customDeeplinkHandlers, customPTXHandlers, customPerpsHandlers]);
 
   return (
     <Container>

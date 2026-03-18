@@ -297,6 +297,8 @@
     "src/wallet-api/CustomLogger/server.ts",
     "src/wallet-api/CustomDeeplink/server.ts",
     "src/wallet-api/Exchange/server.ts",
+    "src/wallet-api/Perps/server.ts",
+    "src/wallet-api/Perps/types.ts",
     "src/wallet-api/helpers.ts",
     "src/wallet-api/LocalLiveAppProvider/index.tsx",
     "src/wallet-api/react.ts",

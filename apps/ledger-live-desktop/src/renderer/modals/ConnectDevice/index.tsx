@@ -6,18 +6,29 @@ import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 
 export type Data = {
-  onCancel?: (reason: string) => void;
   appName?: string;
+  requireLatestFirmware?: boolean;
+  allowPartialDependencies?: boolean;
+  skipAppInstallIfNotFound?: boolean;
+  onCancel?: (reason: string) => void;
   onResult: (result: AppResult) => void;
 };
 
-export default function ConnectDevice({ appName = "BOLOS" }: Data) {
+export default function ConnectDevice({
+  appName = "BOLOS",
+  requireLatestFirmware,
+  allowPartialDependencies,
+  skipAppInstallIfNotFound,
+}: Data) {
   const action = useConnectAppAction();
   const request = useMemo(() => {
     return {
       appName,
+      requireLatestFirmware,
+      allowPartialDependencies,
+      skipAppInstallIfNotFound,
     };
-  }, [appName]);
+  }, [appName, requireLatestFirmware, allowPartialDependencies, skipAppInstallIfNotFound]);
 
   return (
     <Modal

@@ -34,13 +34,13 @@ import {
   type ApplicationDependency,
   type ApplicationConstraint,
   type ApplicationVersionConstraint,
-  type DeviceManagementKit,
   DeviceModelId,
 } from "@ledgerhq/device-management-kit";
 import { ConnectAppDeviceAction } from "@ledgerhq/live-dmk-shared";
 import { ConnectAppEventMapper } from "./connectAppEventMapper";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
 import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
+import { isDmkTransport } from "./dmkUtils";
 /**
  * Represents the deprecation status of a device.
  *
@@ -529,17 +529,6 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectAppEve
       sub.unsubscribe();
     };
   });
-};
-
-const isDmkTransport = (
-  transport: Transport,
-): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
-  return (
-    "dmk" in transport &&
-    transport.dmk !== undefined &&
-    "sessionId" in transport &&
-    transport.sessionId !== undefined
-  );
 };
 
 const appNameToDependency = (appName: string): ApplicationDependency => {

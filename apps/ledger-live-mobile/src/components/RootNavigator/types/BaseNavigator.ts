@@ -313,6 +313,9 @@ export type BaseNavigatorStackParamList = {
 
   [ScreenName.DeviceConnect]: {
     appName?: string;
+    requireLatestFirmware?: boolean;
+    allowPartialDependencies?: boolean;
+    skipAppInstallIfNotFound?: boolean;
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
   };
