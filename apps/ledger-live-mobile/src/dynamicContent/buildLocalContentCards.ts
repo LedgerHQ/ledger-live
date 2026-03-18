@@ -84,12 +84,19 @@ const ACTION_SAMPLES = [
     title: "Buy",
     description: "Buy crypto with card or bank transfer",
     link: "ledgerlive://buy",
+    image: SAMPLE_IMAGE,
   },
-  { title: "Swap", description: "Exchange crypto in-app", link: "ledgerlive://swap" },
+  {
+    title: "Swap",
+    description: "Exchange crypto in-app",
+    link: "ledgerlive://swap",
+    icon: "Dollar",
+  },
   {
     title: "Stake",
     description: "Earn rewards on your assets",
     link: "ledgerlive://earn",
+    icon: "Snow",
   },
 ];
 
@@ -124,7 +131,8 @@ export function buildSampleActionCarousel(): {
       {
         title: item.title,
         description: item.description,
-        image: SAMPLE_IMAGE,
+        ...(item.image ? { image: item.image } : {}),
+        ...(item.icon ? { icon: item.icon } : {}),
         link: item.link,
         order: String(index),
       },
