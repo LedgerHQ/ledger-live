@@ -10,6 +10,9 @@
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
     "back" : "戻る",
+    "fee" : "手数料",
+    "stake" : "ステーキング",
+    "validator" : "バリデータ",
     "delete" : "削除",
     "paste" : "貼り付け",
     "yes" : "はい",
@@ -1601,6 +1604,25 @@
     "bannerCta" : "セットアップを開始",
     "continue" : "続行"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™はこのトランザクションにクリア署名できません",
+      "subtitle" : "署名する前に、他のLedgerデバイスを使用してこのトランザクションの詳細を認証してください。クリア署名がない場合、すべての資産を失うリスクがあります。",
+      "continue" : "以降の操作は自己責任となります"
+    },
+    "info" : {
+      "title" : "{{date}}をもって、Ledger Live™経由の{{device}}™での{{coinName}}サポートは終了いたします。",
+      "subtitle" : "Ledger Liveの全サービスプロバイダー、最適なサポートをご利用いただくために、最新のLedgerデバイスへのアップグレードをご検討ください",
+      "reminder" : "今後、このメッセージを表示しない"
+    },
+    "error" : {
+      "title" : "{{device}}™はこの機能をサポートしていません",
+      "subtitle" : "Ledger Liveの最新機能をすべてご利用いただくためにも、最新のLedgerデバイスへのアップグレードをおすすめいたします。"
+    },
+    "update" : "最適なアップグレードプランをチェック",
+    "learnMore" : "詳細はこちら",
+    "continue" : "続行"
+  },
   "purchaseDevice" : {
     "pageTitle" : "デバイスを購入",
     "debugDrawers" : {
@@ -2759,9 +2781,9 @@
       }
     },
     "refreshStatus" : {
-      "refreshing" : "更新中 - 最終更新：{{timeAgo}}",
-      "refreshingInitial" : "更新中...",
-      "upToDate" : "最新の状態"
+      "refreshing" : "更新中...",
+      "upToDate" : "最新の状態",
+      "syncError" : "一部のアカウントの同期に失敗しました"
     }
   },
   "addAccountsModal" : {
@@ -4432,7 +4454,7 @@
     },
     "cancel" : {
       "title" : "キャンセル",
-      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。"
+      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルは保証されません。このキャンセルリクエストの前にネットワークが元のトランザクションを処理した場合、資金は受取人に送られます。"
     },
     "error" : {
       "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルすることはできません。",
@@ -4441,6 +4463,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "速度を上げたり、キャンセルすることはできません",
         "description" : "このトランザクションはすでに検証済みです"
+      },
+      "InvalidTransactionError" : {
+        "title" : "無効なトランザクション",
+        "description" : "トランザクションは、当該ブロックチェーンの状態と一致していません。最初からやり直してください。"
       }
     }
   },
@@ -6237,6 +6263,52 @@
       "newAddressTRC20" : "有効化するには、こちらのアドレスに0.1 TRX以上を送る必要があります。"
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "アドレスをコピーしました！",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "再デリゲート",
+      "earn" : "報酬獲得"
+    },
+    "stakeBanner" : {
+      "title" : "MINAで報酬を獲得",
+      "altTitle" : "MINAのデリゲート（委任）管理",
+      "description" : "MINAをブロックプロデューサーにデリゲートして、ブロック生成による報酬を獲得。報酬はデリゲート量に応じて分配されます。",
+      "altDescription" : "デリゲート設定の変更や、MINAトークンのデリゲート解除ができます。 "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "デリゲート先：",
+      "stakedBalance" : "ステーキング済み残高",
+      "producerAddress" : "プロデューサーアドレス",
+      "delegatedToTooltip" : "デリゲート先のブロックプロデューサー名",
+      "stakedBalanceTooltip" : "現在このバリデーターにステーキングされているMINAの総量",
+      "producerAddressTooltip" : "デリゲート先のブロックプロデューサーの公開アドレス"
+    },
+    "delegators" : "デリゲーター",
+    "memoPlaceholder" : "任意のメモ",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "バリデーターを選択",
+        "connectDevice" : "デバイスを接続",
+        "confirmation" : "確認"
+      },
+      "title" : "MINAをステーキング",
+      "help" : "以下の一覧からバリデーターを選択し、MINAトークンをデリゲートしてください。",
+      "success" : {
+        "title" : "トランザクションの送信に成功しました",
+        "description" : "デリゲーションの変更リクエストが送信されました。"
+      },
+      "error" : {
+        "title" : "トランザクションの送信中にエラーが発生しました。"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "showAll" : "すべて表示",
+      "showLess" : "表示を減らす",
+      "iDelegate" : "デリゲートする"
+    }
+  },
   "stellar" : {
     "token" : "資産",
     "memo" : {
@@ -6641,9 +6713,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "任意のメモ"
   },
   "near" : {
     "info" : {
@@ -7706,6 +7775,10 @@
       "description" : "資産を保護して、さらに活用しましょう。",
       "buttonLabel" : "次のステップを見る"
     },
+    "widget" : {
+      "title" : "次は、ウォレット設定を完了します。",
+      "subtitle" : "まずはウォレットへの入金から始めましょう。"
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Ledgerデバイスのセットアップ"
@@ -8541,6 +8614,40 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "現在、Concordiumアドレスを検証できません。Concordiumのエクスプローラーにアドレスを貼り付け、間違いがないか必ず再確認してください。",
+      "verifyLink" : "認証する"
+    },
+    "onboard" : {
+      "title" : "Concordiumのオンボーディング",
+      "acknowledge" : {
+        "title" : "確認事項",
+        "description" : "Concordiumの利用には外部での本人確認が必要です。以下の重要なセキュリティ警告を必ずお読みください：",
+        "list" : {
+          "1" : "アドレスの確認ができません – Ledgerデバイス上でConcordiumの受取アドレスを確認・検証することができません。資金を受け取る前に、必ず手動でアドレスを確認してください。",
+          "2" : "Concordium IDアプリは別のシードを使用します – Concordiumアプリでは「新しい」24単語を作成してください。Ledgerのリカバリーフレーズ（シード）は「絶対に」入力しないでください。",
+          "3" : "Ledger Wallet外部へ移動します – 本人確認は外部のConcordiumウォレットアプリで行われます。これは、Concordiumのブロックチェーンプロトコルにより必須の手順です。",
+          "4" : "取引署名のセキュリティは維持されます – 取引の署名やアカウント作成は、引き続きLedgerデバイスのみで行われます。"
+        },
+        "allow" : "同意する"
+      },
+      "pair" : {
+        "title" : "Concordium IDアプリに接続",
+        "connecting" : "接続しています...",
+        "scanQRCodeOrDownload" : "別のデバイスでQRコードをスキャンするか、Concordium IDアプリをダウンロードして続行します。",
+        "openIdApp" : "Concordium IDアプリを開く",
+        "success" : "Concordium IDアプリとペアリングに成功しました。",
+        "error" : "Concordium IDアプリとのペアリングに失敗しました。"
+      },
+      "create" : {
+        "title" : "アカウントを作成",
+        "prepare" : {
+          "title" : "アカウントを作成するには、以下のコードがConcordium IDアプリ上のものと一致しているか確認してください"
+        }
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "市場ムード指数",
     "description" : "市場ムード指数は、市場の心理状態を示しています。0から100の範囲で推移し、数値が低いほど「極度の恐怖」を、高いほど「極度の貪欲」を示します。",
@@ -8598,5 +8705,43 @@
     "swap" : "スワップ",
     "earn" : "報酬獲得",
     "card" : "カード"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "同期エラー",
+      "syncing" : "同期中",
+      "default" : "同期する"
+    },
+    "bottomSheet" : {
+      "title" : "一部のアカウントを同期できませんでした",
+      "description" : "一時的なネットワークの問題が発生しました。資産は安全です。影響を受けたアカウント：{{accounts}}",
+      "close" : "閉じる"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "{{appName}}をインストールしますか？",
+      "genericDescription" : "{{appName}}アプリがLedgerデバイスにインストールされます。",
+      "recoveryKeyDescription" : "Recovery Key Updaterアプリを使用して、Ledger Staxで直接アップデートすることができます。",
+      "installCTA" : "{{appName}}をインストール"
+    },
+    "deviceSelection" : {
+      "title" : "Ledgerを選ぶ"
+    },
+    "installing" : {
+      "title" : "{{appName}}をインストール中...",
+      "description" : "{{productName}}を接続したままにしてください。",
+      "resolving" : "インストールを準備中...",
+      "connecting" : "デバイスに接続中..."
+    },
+    "success" : {
+      "title" : "{{appName}}が正常にインストールされました",
+      "genericDescription" : "Ledgerデバイスで{{appName}}アプリを使用できるようになりました。",
+      "recoveryKeyDescription" : "Ledgerデバイスでアプリを開始し、Ledger Recovery Keyのアップデートを確認します。"
+    },
+    "error" : {
+      "title" : "{{appName}}のインストールに失敗しました。",
+      "description" : "インストール中に問題が発生しました。もう一度お試しください。"
+    }
   }
 }
