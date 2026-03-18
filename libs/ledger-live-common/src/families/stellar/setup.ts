@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
-import makeCliTools from "@ledgerhq/coin-stellar/test/cli";
-import stellarResolver from "@ledgerhq/coin-stellar/signer/index";
+import makeCliTools from "./cli";
+import stellarResolver from "./getAddress";
 import Stellar from "@ledgerhq/hw-app-str";
 import Transport from "@ledgerhq/hw-transport";
 import { CreateSigner, createResolver } from "../../bridge/setup";

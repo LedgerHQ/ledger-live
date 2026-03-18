@@ -2,7 +2,7 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { StrKey } from "@stellar/stellar-sdk";
-import { StellarSigner } from "../types/signer";
+import { StellarSigner } from "./types";
 
 function getAddress(signerContext: SignerContext<StellarSigner>): GetAddressFn {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

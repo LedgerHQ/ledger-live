@@ -1,8 +1,8 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import {
+import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
@@ -10,8 +10,8 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
   FeeData,
   FeeDataRaw,
   GasOptions,
@@ -20,7 +20,7 @@ import {
   GenericTransactionRaw,
   OperationCommon,
 } from "./types";
-import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
+import type { StellarMemo } from "@ledgerhq/coin-stellar/types/model";
 
 type BigNumberToBigIntDeep<T> = T extends BigNumber
   ? bigint

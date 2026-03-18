@@ -1,10 +1,10 @@
-import { StellarMemo, StellarOperationExtra } from "./types";
+import type { StellarMemo } from "./types";
 
 /**
  * Format stellar memo value for display.
  */
-export const formatMemo = (extra: StellarOperationExtra): string | undefined => {
-  const memo: StellarMemo | string | undefined = extra.memo;
+export const formatMemo = (extra: { memo?: StellarMemo | string }): string | undefined => {
+  const memo = extra.memo;
 
   // for backward compatibility for previous operation structure, as there is no
   // data migration system in place

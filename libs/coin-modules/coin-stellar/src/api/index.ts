@@ -167,10 +167,10 @@ async function operationsFromHeight(
       options.cursor = state.apiNextCursor;
     }
     try {
-      const [operations, nextCursor] = await listOperations(address, options);
+      const { items: operations, next: nextCursor } = await listOperations(address, options);
       state.accumulator.push(...operations);
-      state.apiNextCursor = nextCursor;
-      state.continueIterations = nextCursor !== "";
+      state.apiNextCursor = nextCursor ?? "";
+      state.continueIterations = !!nextCursor;
     } catch (e: unknown) {
       if (e instanceof LedgerAPI4xx && (e as unknown as { status: number }).status === 429) {
         log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");

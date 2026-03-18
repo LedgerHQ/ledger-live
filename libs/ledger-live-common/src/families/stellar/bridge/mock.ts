@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { Transaction } from "@ledgerhq/coin-stellar/types/index";
+import type { Transaction } from "../types";
 import { StellarSourceHasMultiSign, StellarWrongMemoFormat } from "@ledgerhq/coin-stellar/errors";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";

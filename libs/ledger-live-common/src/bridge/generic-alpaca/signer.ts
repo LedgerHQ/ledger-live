@@ -1,6 +1,3 @@
-import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
-import Stellar from "@ledgerhq/hw-app-str";
-import { StrKey } from "@stellar/stellar-sdk";
 import { CreateSigner, executeWithSigner } from "../setup";
 import Transport from "@ledgerhq/hw-transport";
 import type { AlpacaSigner } from "./types";
@@ -9,30 +6,7 @@ import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
 import Tezos from "@ledgerhq/hw-app-tezos";
 import evmSigner from "./families/evm/signer";
 import xrpSigner from "./families/xrp/signer";
-
-const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
-  const stellar = new Stellar(transport);
-  const originalSignTransaction = stellar.signTransaction;
-  // Return the original Stellar instance with overridden methods
-  return Object.assign(stellar, {
-    signTransaction: async (path: string, transaction: string) => {
-      const unsignedPayload: Buffer = Buffer.from(transaction, "base64");
-      const { signature } = await originalSignTransaction(path, unsignedPayload);
-      return signature.toString("base64");
-    },
-    getAddress: async (path: string, verify?: boolean) => {
-      const { rawPublicKey } = await stellar.getPublicKey(path, verify);
-      const publicKey = StrKey.encodeEd25519PublicKey(rawPublicKey);
-      return {
-        path,
-        address: publicKey,
-        publicKey: publicKey,
-      };
-    },
-  });
-};
-
-const signerContextStellar = executeWithSigner(createSignerStellar);
+import stellarSigner from "./families/stellar/signer";
 
 const createSignerTezos: CreateSigner<
   Tezos & { createLedgerSigner: (path: string, prompt: boolean, derivationType: number) => any }
@@ -74,10 +48,7 @@ export function getSigner(network: string): AlpacaSigner {
       return xrpSigner;
     }
     case "stellar": {
-      return {
-        getAddress: stellarGetAddress(signerContextStellar),
-        context: signerContextStellar,
-      };
+      return stellarSigner;
     }
     case "tezos": {
       return {
