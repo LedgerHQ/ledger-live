@@ -10,7 +10,7 @@ export type InfiniteLoaderProps = React.ComponentProps<typeof BaseInfiniteLoader
  * Pass mock={false} to override when you need the real animation.
  */
 function InfiniteLoader(props: InfiniteLoaderProps) {
-  return <BaseInfiniteLoader mock={props.mock ?? !!Config.DETOX} {...props} />;
+  return <BaseInfiniteLoader {...props} mock={props.mock ?? !!Config.DETOX} />;
 }
 
 export default InfiniteLoader;

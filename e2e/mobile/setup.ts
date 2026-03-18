@@ -1,7 +1,8 @@
 import { device } from "detox";
-import { isWallet40, launchApp, setupEnvironment } from "./helpers/commonHelpers";
+import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { close as closeBridge } from "./bridge/server";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { setAllureDescription } from "./helpers/allure/allure-helper";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
