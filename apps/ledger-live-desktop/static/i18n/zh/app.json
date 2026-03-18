@@ -153,7 +153,8 @@
     "memoTag" : {
       "learnMore" : "详细了解“标签/备忘标签”"
     },
-    "memo" : "备忘标签"
+    "memo" : "备忘标签",
+    "stake" : "质押"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -237,7 +238,7 @@
       },
       "cancel" : {
         "title" : "取消",
-        "description" : "发送 0 {{ticker}} 到您自己的地址。"
+        "description" : "发送 0 {{ticker}} 到您自己的地址。不保证取消。如果网络在此次取消请求之前处理了您的原始交易，资金仍会发送给接收方。"
       },
       "steps" : {
         "method" : {
@@ -1499,6 +1500,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
+    "continue" : "继续"
+  },
   "currentAddress" : {
     "title" : "当前地址",
     "for" : "<1><0>{{name}}</0></1> 的地址。",
@@ -2154,6 +2174,24 @@
       }
     }
   },
+  "buyDeviceModal" : {
+    "title" : "连接 Ledger 设备",
+    "subtitle" : "连接 Ledger 设备，解锁 Ledger Wallet 的全部功能。",
+    "0" : {
+      "title" : "完全所有权",
+      "desc" : "您的私钥永远不会离开设备。"
+    },
+    "1" : {
+      "title" : "安全交易",
+      "desc" : "在安全屏幕上验证交易。"
+    },
+    "2" : {
+      "title" : "使用功能强大的钱包",
+      "desc" : "一站式管理数千种资产。"
+    },
+    "connectCTA" : "连接",
+    "buyCTA" : "购买 Ledger 设备"
+  },
   "fund" : {
     "title" : "资金",
     "titleCrypto" : "资金 {{currency}}",
@@ -2371,6 +2409,24 @@
     "addressNotFound" : "未找到地址",
     "alreadyUsed" : "已使用 · {{date}}",
     "recentSendWillAppear" : "您最近的发送会显示在此处",
+    "securityInfo" : {
+      "title" : "如何安全发送？",
+      "items" : {
+        "compatibility" : "确保接收方地址与所选网络兼容",
+        "review" : "请在您的 Ledger 安全屏幕上查看交易详细信息",
+        "smallAmount" : "如果不确定，先发送少量资金"
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "此地址不在您的近期历史记录中。如有疑问，请先发送小额资金。"
+      },
+      "dialog" : {
+        "title" : "最近发送历史记录",
+        "description" : "最近记录允许您即时查看自己是否已向特定地址发送过。这可以防止潜在的复制/粘贴错误或黑客攻击。您的历史记录中包含您最近 12 个使用 Ledger Wallet 发送加密货币的地址。",
+        "cta" : "知道了"
+      }
+    },
     "relativeDate" : {
       "justNow" : "刚刚",
       "minutesAgo_one" : "1 分钟前",
@@ -2440,17 +2496,26 @@
       "confirm" : "确认",
       "maxFee" : "最高费用 ({{unit}})",
       "maxPriorityFee" : "最高优先费用 ({{unit}})",
-      "gasLimit" : "Gas 限值 ({{unit}})",
       "feePerByte" : "费用数额 ({{unit}})",
       "suggested" : "建议",
       "nextBlock" : "下一个区块",
       "networkFeesInFiat" : "网络费用为 {{currency}}",
       "invalidValue" : "输入有效的数字",
       "belowMinimum" : "最小值为 {{min}}",
-      "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用"
+      "maxFeeBelowPriorityFee" : "最高费用必须大于或等于最高优先费用",
+      "feeAsset" : "手续费资产",
+      "feesAmount" : "费用数额 ({{unit}})",
+      "payFeesIn" : "手续费支付资产"
     },
     "coinControl" : {
-      "title" : "币控制（UTXO 管理）"
+      "title" : "币控制（UTXO 管理）",
+      "strategy" : "策略",
+      "learnMore" : "了解更多",
+      "coinToSend" : "发送币种",
+      "changeToReturn" : "要返还的零钱",
+      "enterAmount" : "输入数额",
+      "amountToSendInCurrency" : "发送数额为 ({{ticker}})",
+      "amountInputLabel" : "发送数额"
     }
   },
   "releaseNotes" : {
@@ -5025,7 +5090,7 @@
     }
   },
   "theme" : {
-    "system" : "选择系统主题",
+    "system" : "系统",
     "light" : "亮色",
     "dusk" : "暗蓝",
     "dark" : "深黑"
@@ -6630,6 +6695,10 @@
       "title" : "无法加速或取消",
       "description" : "此交易已经过验证"
     },
+    "InvalidTransactionError" : {
+      "title" : "无效交易",
+      "description" : "该交易不再与区块链状态相匹配。请重新开始流程。"
+    },
     "SequenceNumberError" : {
       "title" : "序列号错误",
       "description" : "请关闭窗口，稍后再重试"
@@ -7316,6 +7385,50 @@
     "memoPlaceholder" : "输入标签/备忘标签",
     "memoWarningText" : "当使用 Memo 标签时，请仔细核对接收方的信息。"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "费用",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "更改委托",
+      "earn" : "赚取"
+    },
+    "stakeBanner" : {
+      "title" : "使用 MINA 赚取奖励",
+      "altTitle" : "管理您的 MINA 委托",
+      "description" : "将您的 MINA 委托给区块生产者，从区块生产中赚取奖励。奖励将根据您的委托数额进行分配。",
+      "altDescription" : "更改您的委托设置或解除委托您的 MINA 代币。 ",
+      "changeCTA" : "更改"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "已委托给",
+      "stakedBalance" : "已质押余额",
+      "producerAddress" : "生产者地址",
+      "delegatedToTooltip" : "您要委托的区块生产者名称",
+      "stakedBalanceTooltip" : "目前已质押给该验证者的 MINA 总数额",
+      "producerAddressTooltip" : "您要委托的区块生产者的公开地址"
+    },
+    "delegators" : "委托者",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "选择验证者",
+        "connectDevice" : "连接设备",
+        "confirmation" : "确认"
+      },
+      "title" : "质押 MINA",
+      "help" : "从下方列表中选择一个您要委托 MINA 代币的验证者。",
+      "success" : {
+        "title" : "交易已成功广播",
+        "description" : "您的委托变更请求已广播。"
+      },
+      "error" : {
+        "title" : "广播交易时发生错误"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "质押总额",
+      "commission" : "佣金"
+    }
+  },
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
@@ -7699,7 +7812,16 @@
     }
   },
   "analytics" : {
-    "title" : "数据分析"
+    "title" : "数据分析",
+    "allocation" : {
+      "title" : "资产配置",
+      "columns" : {
+        "name" : "名称",
+        "balance" : "余额",
+        "value" : "价值",
+        "allocation" : "配置"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8001,6 +8123,8 @@
     "title" : "探索市场",
     "genericError" : "连接失败",
     "cta" : "查看全部",
+    "scrollLeft" : "向左滚动",
+    "scrollRight" : "向右滚动",
     "fearAndGreed" : {
       "title" : "情绪"
     }
@@ -8030,6 +8154,11 @@
   "assets" : {
     "cryptos" : "加密货币",
     "stablecoins" : "稳定币",
+    "cryptoAccounts" : "加密货币账户",
+    "accountsCount_one" : "{{count}} 个账户",
+    "accountsCount_other" : "{{count}} 个账户",
+    "noCryptoAccounts" : "尚无账户",
+    "add" : "添加",
     "columns" : {
       "name" : "名称",
       "price" : "价格",
@@ -8048,15 +8177,11 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "出现临时网络问题。您的资产安全无虞。受影响的账户列表：{{accounts}}点按重试",
-      "emptyErrorToolTip" : "出现临时网络问题。您的资产安全无虞。点按重试",
+      "errorToolTip" : "出现临时网络问题。您的资产安全无虞。\n 受影响的账户列表：{{accounts}}点按重试",
+      "emptyErrorToolTip" : "出现临时网络问题。您的资产安全无虞。\n 点按重试",
       "upToDate" : "已同步至最新状态",
-      "minutesAgo_one" : "上次同步时间：{{count}} 分钟前。点按刷新",
-      "minutesAgo_other" : "上次同步时间：{{count}} 分钟前。点按刷新",
-      "hoursAgo_one" : "上次同步时间：{{count}} 小时前。点按刷新",
-      "hoursAgo_other" : "上次同步时间：{{count}} 小时前。点按刷新",
-      "daysAgo_one" : "上次同步时间：{{count}} 天前。点按刷新",
-      "daysAgo_other" : "上次同步时间：{{count}} 天前。点按刷新"
+      "lastSync" : "上次同步：{{timeAgo}}点按刷新",
+      "refreshing" : "刷新中..."
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8176,6 +8301,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "自助转账",
+      "headerActionTooltip" : "您没有任何资金，无法执行自助转账",
+      "modal" : {
+        "title" : "自助转账",
+        "stepRecipient" : {
+          "selectLabel" : "转移自"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "私密余额",
+        "public" : "公开余额",
+        "lastUpdate" : "最新更新",
+        "switchBalance" : "切换余额来源"
+      }
+    },
     "account" : {
       "availableBalance" : "可用余额",
       "availableBalanceTooltip" : "可转账余额",
@@ -8189,27 +8332,32 @@
         "public" : "公开",
         "private" : "私密"
       }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "来自"
+      }
     }
   },
   "updater" : {
     "newUpdateAvailable" : "有新的可用更新",
     "downloadProgress" : "{{progress}}%",
-    "errorTryAgain" : "更新时出错，请重试",
-    "installAndRelaunch" : "安装更新并重新启动"
+    "errorTryAgain" : "更新时出错请重试",
+    "installAndRelaunch" : "有新更新。立即安装并重新启动"
   },
   "walletV4Tour" : {
     "slides" : {
       "portfolio" : {
-        "title" : "轻松互换",
-        "description" : "随时灵活调整资产配置，安全始终由 Ledger 签署设备守护"
+        "title" : "更清楚地展示您的资产组合",
+        "description" : "一目了然地查看您的总余额，点按“今天”可深入了解。"
       },
       "navigation" : {
-        "title" : "一切井然有序",
-        "description" : "“我的 Ledger”和“探索”现已置于顶部。“互换”和“卡”已移至侧边栏，方便快速访问。"
+        "title" : "更快访问关键操作功能",
+        "description" : "即时进行接收、买入、卖出和发送操作。"
       },
       "actions" : {
-        "title" : "操作响应，与市场同速",
-        "description" : "通过全新横幅洞察市场趋势，即时交易。"
+        "title" : "快速查看市场趋势",
+        "description" : "在资产组合中快速查看热门趋势，从洞察到行动，一步到位。"
       }
     },
     "cta" : {
