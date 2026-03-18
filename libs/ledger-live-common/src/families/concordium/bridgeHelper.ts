@@ -1,4 +1,4 @@
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getCurrencyBridge } from "../../bridge/index";
 import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
 import type { CurrencyBridge } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

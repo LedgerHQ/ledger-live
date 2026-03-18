@@ -4,7 +4,7 @@ import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
-import { getConcordiumBridge } from "../../helpers";
+import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";
 
 const MAX_EXPIRED_RETRIES = 3;
 

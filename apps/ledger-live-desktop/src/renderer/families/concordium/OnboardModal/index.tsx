@@ -5,7 +5,7 @@ import {
   ConcordiumWalletConnect,
   clearWalletConnect,
 } from "@ledgerhq/coin-concordium/network/walletConnect";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -134,9 +134,7 @@ class OnboardModal extends PureComponent<Props, State> {
     };
 
     if (props.currency) {
-      // getCurrencyBridge returns the generic CurrencyBridge type; we know this is Concordium
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      this.concordiumBridge = getCurrencyBridge(props.currency) as ConcordiumCurrencyBridge;
+      this.concordiumBridge = getConcordiumBridge(props.currency);
     }
   }
 
