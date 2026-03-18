@@ -69,7 +69,7 @@ describe("Stacks API", () => {
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockApiUrl}/extended/v1/address/${mockAddress}/stx`,
+        url: `${mockApiUrl}/extended/v2/addresses/${mockAddress}/balances/stx`,
       });
       expect(result).toEqual(mockBalanceResponse);
     });
