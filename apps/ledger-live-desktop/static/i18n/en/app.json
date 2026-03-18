@@ -8310,7 +8310,7 @@
         "label": "Available records",
         "noRecords": "No records available",
         "noRecordsAlert": "You don't have any records available. Perform self transfer or receive private funds to get started.",
-        "alert": "Maximum spendable amount depends on maximum value your selected Record. Fees are sponsored by Provable for Ledger users.",
+        "alert": "The maximum spendable amount depends on the maximum value of your selected record. Fees are sponsored by Provable for Ledger users.",
         "recordsLimit": "Maximum {{max}} records are shown"
       }
     },

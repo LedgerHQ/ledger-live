@@ -330,7 +330,7 @@ describe("StepRecordPicker", () => {
     expect(screen.getByTestId("aleo-pick-records-alert")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Maximum spendable amount depends on maximum value your selected Record. Fees are sponsored by Provable for Ledger users.",
+        "The maximum spendable amount depends on the maximum value of your selected record. Fees are sponsored by Provable for Ledger users.",
       ),
     ).toBeInTheDocument();
   });
