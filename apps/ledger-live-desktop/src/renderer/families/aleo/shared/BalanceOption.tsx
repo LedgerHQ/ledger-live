@@ -105,10 +105,10 @@ export const BalanceOption = ({
             <BalanceLabel $checked={checked} $disabled={disabled}>
               {label}
             </BalanceLabel>
-            {lastSyncDate && lastSyncTime && (
+            {lastSyncDate && (
               <LastUpdateText>
-                <Trans i18nKey="aleo.shared.balanceSelector.lastUpdate" />: {lastSyncDate} (
-                {lastSyncTime})
+                <Trans i18nKey="aleo.shared.balanceSelector.lastUpdate" />:{" "}
+                {lastSyncTime ? `${lastSyncDate} (${lastSyncTime})` : lastSyncDate}
               </LastUpdateText>
             )}
           </Flex>

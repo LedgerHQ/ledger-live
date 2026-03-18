@@ -8311,7 +8311,8 @@
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
-        "lastUpdate": "Last update",
+        "lastUpdate": "Last updated",
+        "recently": "Recently",
         "switchBalance": "Switch balance source"
       },
       "recordPicker": {
