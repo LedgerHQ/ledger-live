@@ -31,7 +31,7 @@ const baseTxIntentFields = {
   intentType: "transaction",
   asset: { type: "native" },
   sender: "aleo1sender",
-  recipient: "aleo1recipient",
+  recipient: "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f",
 } as const satisfies Partial<AleoTransactionIntent>;
 
 export const mockTxIntentTransferPublic: AleoTransactionIntent = {
@@ -72,8 +72,9 @@ export const mockTxIntentFeePublic: AleoTransactionIntent = {
   type: "fee_public",
   data: {
     type: "fee_public",
-    executionId: "exec123",
-    priorityFee: 5000,
+    executionId:
+      "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
+    priorityFee: 5000n,
   },
 };
 
@@ -83,8 +84,9 @@ export const mockTxIntentFeePrivate: AleoTransactionIntent = {
   type: "fee_private",
   data: {
     type: "fee_private",
-    executionId: "exec456",
-    priorityFee: 6000,
+    executionId:
+      "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
+    priorityFee: 6000n,
     record: mockUnspentRecord2.decryptedData,
   },
 };

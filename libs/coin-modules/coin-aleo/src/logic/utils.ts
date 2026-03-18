@@ -487,13 +487,13 @@ export function createFeeTransactionIntent({
   account: AleoAccount;
   transaction: Transaction;
   executionId: string;
-  baseFee: number;
-  priorityFee: number;
+  baseFee: BigNumber;
+  priorityFee: BigNumber;
 }): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
   const isPrivateTx = isPrivateTransaction(transaction);
   const commonFields = {
     intentType: "transaction",
-    amount: BigInt(baseFee.toString()),
+    amount: BigInt(baseFee.toFixed(0)),
     asset: { type: "native" },
     recipient: transaction.recipient,
     sender: account.freshAddress,
@@ -510,7 +510,7 @@ export function createFeeTransactionIntent({
       type: "fee_private",
       data: {
         type: "fee_private",
-        priorityFee,
+        priorityFee: BigInt(priorityFee.toFixed(0)),
         executionId,
         record: feeRecord.decryptedData,
       },
@@ -522,7 +522,7 @@ export function createFeeTransactionIntent({
     type: "fee_public",
     data: {
       type: "fee_public",
-      priorityFee,
+      priorityFee: BigInt(priorityFee.toFixed(0)),
       executionId,
     },
   };

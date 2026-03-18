@@ -45,15 +45,25 @@ export const mockAleoResourcesRaw: AleoResourcesRaw = {
 export const mockUnspentRecord1: AleoUnspentRecord = {
   ...getMockedRecord(),
   commitment: "record-1-commitment",
-  microcredits: "10000",
-  decryptedData: { owner: "", data: { record: "record-1-data" }, nonce: "", version: 1 },
+  microcredits: "800000",
+  decryptedData: {
+    owner: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f.private",
+    data: { microcredits: "800000u64.private" },
+    nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
+    version: 1,
+  },
 };
 
 export const mockUnspentRecord2: AleoUnspentRecord = {
   ...getMockedRecord(),
   commitment: "record-2-commitment",
-  microcredits: "2000",
-  decryptedData: { owner: "", data: { record: "record-2-data" }, nonce: "", version: 1 },
+  microcredits: "600000",
+  decryptedData: {
+    owner: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f.private",
+    data: { microcredits: "600000u64.private" },
+    nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
+    version: 1,
+  },
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {

@@ -53,6 +53,9 @@ import {
   isSelfTransferTransaction,
   isPublicTransaction,
   isPrivateTransaction,
+  createTransactionIntent,
+  createFeeTransactionIntent,
+  getRecordByCommitment,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -868,13 +871,16 @@ describe("mapTransactionIntentToSdkIntent", () => {
 
   it("should map fee_public intent with priorityFee to SDK intent", () => {
     const intent = mockTxIntentFeePublic;
+    if (!hasSpecificIntentData(intent, "fee_public")) {
+      throw new Error("guard: expected fee_public intent data");
+    }
 
     const result = mapTransactionIntentToSdkIntent(intent);
 
     expect(result).toEqual({
       type: intent.type,
       base_fee: intent.amount.toString(),
-      execution_id: "exec123",
+      execution_id: intent.data.executionId,
       priority_fee: "5000",
     });
   });
@@ -907,12 +913,15 @@ describe("mapTransactionIntentToSdkIntent", () => {
 
   it("should map fee_private intent to SDK intent with correct fields", () => {
     const intent = mockTxIntentFeePrivate;
+    if (!hasSpecificIntentData(intent, "fee_private")) {
+      throw new Error("guard: expected fee_private intent data");
+    }
 
     const result = mapTransactionIntentToSdkIntent(intent);
 
     expect(result).toEqual({
       type: "fee_private",
-      execution_id: "exec456",
+      execution_id: intent.data.executionId,
       base_fee: intent.amount.toString(),
       priority_fee: "6000",
       record: mockUnspentRecord2.decryptedData,
@@ -1092,5 +1101,228 @@ describe("isPrivateTransaction", () => {
     const transaction = getMockedTransaction({ mode });
 
     expect(isPrivateTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("createTransactionIntent", () => {
+  const mockAccount = getMockedAccount({
+    aleoResources: {
+      ...mockAleoResources,
+      unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+    },
+  });
+
+  it("should create a public transaction intent with base fields", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      amount: new BigNumber(500000),
+      recipient: "aleo1recipient",
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: {
+        type: "native",
+      },
+      type: transaction.mode,
+      amount: BigInt(transaction.amount.toString()),
+      recipient: transaction.recipient,
+      sender: mockAccount.freshAddress,
+    });
+  });
+
+  it("should include useAllAmount when set to true", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      useAllAmount: true,
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result.useAllAmount).toBe(true);
+  });
+
+  it("should include data with record for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: null,
+      },
+    });
+
+    const result = createTransactionIntent({ account: mockAccount, transaction });
+
+    expect(result).toMatchObject({
+      type: transaction.mode,
+      data: {
+        type: transaction.mode,
+        record: mockUnspentRecord1.decryptedData,
+      },
+    });
+  });
+});
+
+describe("createFeeTransactionIntent", () => {
+  const mockPublicAccount = getMockedAccount();
+  const mockPrivateAccount = getMockedAccount({
+    aleoResources: {
+      ...mockAleoResources,
+      unspentPrivateRecords: [mockUnspentRecord2],
+    },
+  });
+  const executionId = "auth-123";
+  const baseFee = new BigNumber(1000);
+  const priorityFee = new BigNumber(0);
+
+  it("should create a fee_public intent for a public transaction", () => {
+    const transaction = getMockedTransaction({ mode: TRANSACTION_TYPE.TRANSFER_PUBLIC });
+
+    const result = createFeeTransactionIntent({
+      account: mockPublicAccount,
+      transaction,
+      executionId,
+      baseFee,
+      priorityFee,
+    });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: {
+        type: "native",
+      },
+      type: "fee_public",
+      amount: BigInt(1000),
+      recipient: transaction.recipient,
+      sender: mockPublicAccount.freshAddress,
+      data: {
+        type: "fee_public",
+        priorityFee: BigInt(0),
+        executionId,
+      },
+    });
+  });
+
+  it("should create a fee_private intent for a private transaction with a feeRecordCommitment", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+
+    const result = createFeeTransactionIntent({
+      account: mockPrivateAccount,
+      transaction,
+      executionId,
+      baseFee,
+      priorityFee,
+    });
+
+    expect(result).toEqual({
+      intentType: "transaction",
+      asset: {
+        type: "native",
+      },
+      type: "fee_private",
+      amount: BigInt(1000),
+      recipient: transaction.recipient,
+      sender: mockPrivateAccount.freshAddress,
+      data: {
+        type: "fee_private",
+        priorityFee: BigInt(0),
+        executionId,
+        record: mockUnspentRecord2.decryptedData,
+      },
+    });
+  });
+
+  it("should throw when feeRecord is missing for a private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() =>
+      createFeeTransactionIntent({
+        account: mockPrivateAccount,
+        transaction,
+        executionId,
+        baseFee,
+        priorityFee,
+      }),
+    ).toThrow("aleo: missing fee record commitment");
+  });
+});
+
+describe("getRecordByCommitment", () => {
+  it("should return the record matching the commitment", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord2.commitment,
+    });
+
+    expect(result).toEqual(mockUnspentRecord2);
+  });
+
+  it("should return null when no record matches the commitment", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: "non-existent-commitment",
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null from empty records array", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should throw when unspent private records are missing", () => {
+    const account = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: null,
+      },
+    });
+
+    expect(() =>
+      getRecordByCommitment({
+        account,
+        commitment: mockUnspentRecord1.commitment,
+      }),
+    ).toThrow("aleo: unspent private records are required");
   });
 });

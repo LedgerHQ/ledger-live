@@ -48,19 +48,14 @@ export type AleoTransactionIntentData =
     }
   | {
       type: "fee_public";
-      priorityFee?: number;
+      priorityFee?: bigint;
       executionId: string;
     }
   | {
       type: "fee_private";
-      priorityFee?: number;
+      priorityFee?: bigint;
       executionId: string;
       record: AleoDecryptedRecordResponse;
     };
 
 export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
-
-export interface SignedAleoTransaction {
-  authorization: string;
-  feeAuthorization: string;
-}

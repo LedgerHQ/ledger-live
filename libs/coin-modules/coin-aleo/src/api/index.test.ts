@@ -44,7 +44,7 @@ describe("createApi", () => {
     amount: BigInt(1000),
     sender: "aleo1sender1234567890123456789012345678901234567",
     recipient: "aleo1recipient123456789012345678901234567890",
-    data: { type: "fee_public", priorityFee: 1040, executionId: "ex1test" },
+    data: { type: "fee_public", priorityFee: 1040n, executionId: "ex1test" },
   });
 
   it("should set the coin config value", () => {
@@ -89,11 +89,11 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should throw unsupported error", () => {
+    it("should throw unsupported error", async () => {
       const api = createApi(mockConfig, "aleo");
 
       // @ts-expect-error - it should throw no matter what the input is
-      expect(api.craftTransaction({})).rejects.toThrow("craftTransaction is not supported");
+      await expect(api.craftTransaction({})).rejects.toThrow("craftTransaction is not supported");
     });
   });
 

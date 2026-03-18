@@ -69,11 +69,6 @@ export type Intent =
   | FeePrivateIntent
   | FeePublicIntent;
 
-export interface PrepareRequestBody {
-  view_key: string;
-  intent: Intent;
-}
-
 export interface FeeConfiguration {
   function_name: "fee_private" | "fee_public";
   max_base_fee: string;
