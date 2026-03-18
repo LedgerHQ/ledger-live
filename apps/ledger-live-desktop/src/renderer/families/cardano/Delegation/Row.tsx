@@ -50,13 +50,13 @@ const Row = ({ account, delegation }: Props) => {
       : shortAddressPreview(delegation.poolId);
   }
   return (
-    <Wrapper data-testid="delegation-row">
-      <Value data-testid="delegation-pool-name">
+    <Wrapper>
+      <Value>
         <Ellipsis fontSize={3} color="neutral.c70">
           <Text ff="Inter|SemiBold">{name}</Text>
         </Ellipsis>
       </Value>
-      <Value data-testid="delegation-amount">
+      <Value>
         <FormattedVal
           ff="Inter|SemiBold"
           val={account.balance}
@@ -66,7 +66,7 @@ const Row = ({ account, delegation }: Props) => {
           color="neutral.c80"
         />
       </Value>
-      <Value data-testid="delegation-rewards">
+      <Value>
         <FormattedVal
           ff="Inter|SemiBold"
           val={delegation.rewards}
