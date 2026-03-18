@@ -1,3 +1,7 @@
+# 2.145.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.143.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

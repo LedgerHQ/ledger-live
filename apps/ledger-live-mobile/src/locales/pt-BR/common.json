@@ -1601,6 +1601,25 @@
     "bannerCta" : "Iniciar configuração",
     "continue" : "Continuar"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
+    "continue" : "Continuar"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Comprar Dispositivo",
     "debugDrawers" : {
@@ -2759,9 +2778,9 @@
       }
     },
     "refreshStatus" : {
-      "refreshing" : "Atualizando - Última atualização {{timeAgo}}",
-      "refreshingInitial" : "Atualizando…",
-      "upToDate" : "Você está em dia"
+      "refreshing" : "Atualizando…",
+      "upToDate" : "Você está em dia",
+      "syncError" : "Algumas contas falharam ao sincronizar"
     }
   },
   "addAccountsModal" : {
@@ -4432,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "Cancelar",
-      "description" : "Enviando 0 {{ticker}} ao seu próprio endereço."
+      "description" : "Enviando 0 {{ticker}} para seu próprio endereço. O cancelamento não é garantido. Se a rede processar sua transação original antes dessa solicitação de cancelamento, os fundos ainda serão enviados ao destinatário."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Você não tem a opção de cancelar a transação porque não há fundos suficientes em sua conta.",
@@ -4441,6 +4460,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "Não pode ser acelerada nem cancelada",
         "description" : "Essa transação já foi validada"
+      },
+      "InvalidTransactionError" : {
+        "title" : "Transação inválida",
+        "description" : "A transação não corresponde mais ao estado da blockchain. Inicie o fluxo novamente."
       }
     }
   },
@@ -7706,6 +7729,10 @@
       "description" : "Proteja seus ativos e vá além.",
       "buttonLabel" : "Veja os próximos passos"
     },
+    "widget" : {
+      "title" : "Em seguida, termine de configurar a carteira",
+      "subtitle" : "Comece depositando fundos na sua carteira."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Configurar seu dispositivo Ledger"
@@ -8541,6 +8568,40 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "Não é possível verificar seu endereço Concordium no momento. Certifique-se de verificar novamente colando seu endereço no explorador Concordium.",
+      "verifyLink" : "Verificar"
+    },
+    "onboard" : {
+      "title" : "Onboarding Concordium",
+      "acknowledge" : {
+        "title" : "Reconhecimento",
+        "description" : "O Concordium exige uma verificação externa de identidade. Leia estas importantes advertências de segurança:",
+        "list" : {
+          "1" : "Sem verificação de endereço – a sua Ledger não consegue verificar os endereços de recebimento Concordium. Verifique manualmente os endereços antes de receber fundos.",
+          "2" : "O aplicativo Concordium ID usa uma seed separada – Você criará NOVAS 24 palavras no aplicativo Concordium. NUNCA use sua seed da Ledger.",
+          "3" : "Você será redirecionado para fora da Ledger Wallet – A verificação de identidade é feita no aplicativo externo Concordium Wallet. Isso é exigido pelo protocolo blockchain da Concordium.",
+          "4" : "A assinatura da transação permanece segura – somente o seu dispositivo Ledger pode assinar transações e criar contas."
+        },
+        "allow" : "Concordo"
+      },
+      "pair" : {
+        "title" : "Conectar ao aplicativo Concordium ID",
+        "connecting" : "Conectando...",
+        "scanQRCodeOrDownload" : "Escaneie o QR code com outro dispositivo ou baixe o aplicativo Concordium ID para continuar.",
+        "openIdApp" : "Abra o aplicativo Concordium ID",
+        "success" : "Conectado com sucesso ao aplicativo Concordium ID.",
+        "error" : "Falha ao emparelhar com o aplicativo Concordium ID."
+      },
+      "create" : {
+        "title" : "Criar conta",
+        "prepare" : {
+          "title" : "Para criar uma conta, insira o código abaixo no aplicativo Concordium ID"
+        }
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "Índice de Sentimento",
     "description" : "O índice de sentimento mostra o estado emocional do mercado. O índice vai de 0 a 100: números baixos sinalizam medo intenso, enquanto números altos refletem ganância extrema.",
@@ -8598,5 +8659,43 @@
     "swap" : "Trocar",
     "earn" : "Ganhar",
     "card" : "Cartão"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "Erro de sincronização",
+      "syncing" : "Sincronizando",
+      "default" : "Sincronizar"
+    },
+    "bottomSheet" : {
+      "title" : "Não foi possível sincronizar algumas contas",
+      "description" : "Houve um problema temporário na rede. Seus ativos estão seguros. Lista de contas afetadas: {{accounts}}.",
+      "close" : "Fechar"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "Instalar {{appName}}?",
+      "genericDescription" : "O aplicativo {{appName}} será instalado no seu dispositivo Ledger.",
+      "recoveryKeyDescription" : "Você poderá atualizar diretamente em sua Ledger Stax com o aplicativo Recovery Key Updater.",
+      "installCTA" : "Instalar {{appName}}"
+    },
+    "deviceSelection" : {
+      "title" : "Escolha a Ledger"
+    },
+    "installing" : {
+      "title" : "Instalando {{appName}}…",
+      "description" : "Mantenha sua {{productName}} conectada",
+      "resolving" : "Preparando instalação…",
+      "connecting" : "Conectando ao dispositivo…"
+    },
+    "success" : {
+      "title" : "{{appName}} instalado com sucesso",
+      "genericDescription" : "Agora você pode usar o aplicativo {{appName}} no seu dispositivo Ledger.",
+      "recoveryKeyDescription" : "Execute o aplicativo em seu dispositivo Ledger para verificar se há atualizações do Ledger Recovery Key."
+    },
+    "error" : {
+      "title" : "Falha ao instalar {{appName}}",
+      "description" : "Algo deu errado durante a instalação. Tente novamente."
+    }
   }
 }

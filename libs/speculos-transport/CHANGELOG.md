@@ -1,5 +1,37 @@
 # @ledgerhq/speculos-transport
 
+## 0.7.0
+
+### Minor Changes
+
+- [#15224](https://github.com/LedgerHQ/ledger-live/pull/15224) [`0eec459`](https://github.com/LedgerHQ/ledger-live/commit/0eec459415a0a0223695c87a890fb593deb303cf) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Update Speculos port selection range to prevent port in use on linux
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025), [`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc), [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d)]:
+  - @ledgerhq/devices@8.12.0
+  - @ledgerhq/hw-transport-node-speculos@6.33.0
+  - @ledgerhq/logs@6.16.0
+  - @ledgerhq/live-env@2.30.0
+  - @ledgerhq/live-dmk-speculos@0.8.1
+  - @ledgerhq/live-promise@0.2.2
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#15224](https://github.com/LedgerHQ/ledger-live/pull/15224) [`0eec459`](https://github.com/LedgerHQ/ledger-live/commit/0eec459415a0a0223695c87a890fb593deb303cf) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Update Speculos port selection range to prevent port in use on linux
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025), [`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc), [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d)]:
+  - @ledgerhq/devices@8.12.0-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.33.0-next.0
+  - @ledgerhq/logs@6.16.0-next.0
+  - @ledgerhq/live-env@2.30.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.8.1-next.0
+  - @ledgerhq/live-promise@0.2.2-next.0
+
 ## 0.6.0
 
 ### Minor Changes

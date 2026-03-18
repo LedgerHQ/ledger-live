@@ -1,5 +1,31 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.17.0
+
+### Minor Changes
+
+- [#15038](https://github.com/LedgerHQ/ledger-live/pull/15038) [`20a2915`](https://github.com/LedgerHQ/ledger-live/commit/20a2915559e589c838600366b26394fad669a712) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Adapt mobile E2E tests to support Wallet 4.0 feature flag toggle via CI checkbox or env var
+
+- [#15151](https://github.com/LedgerHQ/ledger-live/pull/15151) [`868bd15`](https://github.com/LedgerHQ/ledger-live/commit/868bd158de9a5242c5edd3f1ffabe6cc0f1a5c22) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#15038](https://github.com/LedgerHQ/ledger-live/pull/15038) [`20a2915`](https://github.com/LedgerHQ/ledger-live/commit/20a2915559e589c838600366b26394fad669a712) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Adapt mobile E2E tests to support Wallet 4.0 feature flag toggle via CI checkbox or env var
+
+- [#15151](https://github.com/LedgerHQ/ledger-live/pull/15151) [`868bd15`](https://github.com/LedgerHQ/ledger-live/commit/868bd158de9a5242c5edd3f1ffabe6cc0f1a5c22) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0-next.0
+
 ## 0.16.0
 
 ### Minor Changes
