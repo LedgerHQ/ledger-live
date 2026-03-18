@@ -117,6 +117,7 @@ export function usePortfolioBalance() {
     syncPhase,
     isBalanceLoading,
     isColdStart,
+    isManualRefreshLoading,
     allAccounts,
     accountsWithError,
     listOfErrorAccountNames,

@@ -22,6 +22,7 @@ export const PortfolioBalanceSectionView = ({
   countervalueChange,
   unit,
   isBalanceAvailable,
+  isAnalyticPillVisible,
   isLoading,
   shouldDisplayBalanceRefreshRework,
   onToggleDiscreetMode,
@@ -44,6 +45,15 @@ export const PortfolioBalanceSectionView = ({
       return `portfolio-balance-${state}`;
     }
     return isBalanceAvailable ? "portfolio-balance-normal" : "portfolio-balance-loading";
+  };
+
+  const renderAnalyticPill = () => {
+    if (!isAnalyticPillVisible) return null;
+    return (
+      <Box lx={{ flexDirection: "row", alignItems: "center", marginTop: "s12" }}>
+        <AnalyticPill valueChange={countervalueChange} />
+      </Box>
+    );
   };
 
   const renderContent = () => {
@@ -82,16 +92,7 @@ export const PortfolioBalanceSectionView = ({
             {discreet && <DiscreetModeIcon />}
           </Box>
         </Pressable>
-
-        <Box
-          lx={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginTop: "s12",
-          }}
-        >
-          <AnalyticPill valueChange={countervalueChange} />
-        </Box>
+        {renderAnalyticPill()}
       </>
     );
   };
