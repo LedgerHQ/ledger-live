@@ -54,6 +54,7 @@ import { fetchTrustchain } from "./actions/trustchain";
 import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
+import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
 
 const rootNode = document.getElementById("react-root");
 
@@ -227,6 +228,25 @@ async function init() {
   const marketState = await getKey("app", "market");
   if (marketState) {
     store.dispatch(importMarketState(marketState));
+  }
+
+  const persistedFeatureFlags = await getKey("app", "featureFlags");
+  if (persistedFeatureFlags) {
+    store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
+    store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
+  } else if (
+    initialSettings?.overriddenFeatureFlags &&
+    Object.keys(initialSettings.overriddenFeatureFlags).length > 0
+  ) {
+    const filteredOverrides = Object.fromEntries(
+      Object.entries(initialSettings.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
+    );
+    store.dispatch(
+      setAllOverrides(
+        filteredOverrides as Parameters<typeof setAllOverrides>[0],
+      ),
+    );
+    store.dispatch(setBannerVisible(initialSettings.featureFlagsButtonVisible ?? false));
   }
 
   webFrame.setVisualZoomLevelLimits(1, 1);

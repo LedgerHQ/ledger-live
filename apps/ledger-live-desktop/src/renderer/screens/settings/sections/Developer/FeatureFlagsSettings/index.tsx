@@ -20,13 +20,12 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
 import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
-import { featureFlagsButtonVisibleSelector } from "~/renderer/reducers/settings";
-import { setFeatureFlagsButtonVisible } from "~/renderer/actions/settings";
+import { featureFlagsBannerVisibleSelector, setBannerVisible } from "@shared/feature-flags";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
-  const featureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
+  const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
   const { isFeature, resetFeatures } = useFeatureFlags();
   const [focusedName, setFocusedName] = useState<string | undefined>();
@@ -106,9 +105,9 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
     setActiveTabIndex(index);
   }, []);
 
-  const setFeatureFlagButtonVisible = useCallback(() => {
-    dispatch(setFeatureFlagsButtonVisible(!featureFlagsButtonVisible));
-  }, [dispatch, featureFlagsButtonVisible]);
+  const setFeatureFlagBannerVisible = useCallback(() => {
+    dispatch(setBannerVisible(!featureFlagsBannerVisible));
+  }, [dispatch, featureFlagsBannerVisible]);
 
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
@@ -132,8 +131,8 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
             <Text>{t("settings.developer.showButtonDesc")}</Text>
             <Switch
               name="button-feature-flags-visibible"
-              selected={featureFlagsButtonVisible}
-              onChange={setFeatureFlagButtonVisible}
+              selected={featureFlagsBannerVisible}
+              onChange={setFeatureFlagBannerVisible}
             />
           </Flex>
           <Button

@@ -75,6 +75,7 @@ export * from "./currencyStacks";
 export * from "./currencyStargaze";
 export * from "./currencyStory";
 export * from "./currencySui";
+export * from "./currencySuiTestnet";
 export * from "./currencySyscoin";
 export * from "./currencyTelosEvm";
 export * from "./currencyTon";

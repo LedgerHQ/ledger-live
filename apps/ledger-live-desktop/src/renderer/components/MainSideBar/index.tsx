@@ -8,9 +8,9 @@ import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { Infinite } from "@ledgerhq/lumen-ui-react/symbols";
 import {
-  featureFlagsButtonVisibleSelector,
-  overriddenFeatureFlagsSelector,
-} from "~/renderer/reducers/settings";
+  featureFlagsBannerVisibleSelector,
+  featureFlagsOverridesSelector,
+} from "@shared/feature-flags";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken } from "~/renderer/styles/helpers";
@@ -186,10 +186,10 @@ const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   ) : null;
 };
 const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
-  const isFeatureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
-  const overriddenFeatureFlags = useSelector(overriddenFeatureFlagsSelector);
+  const isFeatureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
+  const overriddenFeatureFlags = useSelector(featureFlagsOverridesSelector);
   const { t } = useTranslation();
-  return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
+  return isFeatureFlagsBannerVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
     <Tag
       data-testid="drawer-feature-flags-button"
       to="/settings/developer"
