@@ -22,6 +22,7 @@ export default class BuySellPage {
 
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   buyQuickAmountButtonId = (amount: "400" | "800" | "1600") => `buy-amount-button-${amount}`;
+  sellPercentageButtonId = (pct: "25%" | "50%" | "75%" | "max") => pct;
   amountInputSectionId = () => `${this.amountInputSectionBaseId}-input`;
   countryListSelector = (locale: string) => `country-option-${locale.split("-")[1].toLowerCase()}`;
   currencyListSelector = (curr: string) => `fiat-option-${curr}`;
@@ -40,10 +41,17 @@ export default class BuySellPage {
       getWebElementsByIdAndText("", page === "Buy" ? "You will pay" : "You will sell"),
     ).toExist();
     await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
-    await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("400"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("800"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("1600"))).toExist();
-    await detoxExpect(getWebElementByTestId(this.fiatAmountOptionButtonId)).toExist();
+    if (page === "Buy") {
+      await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("400"))).toExist();
+      await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("800"))).toExist();
+      await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("1600"))).toExist();
+      await detoxExpect(getWebElementByTestId(this.fiatAmountOptionButtonId)).toExist();
+    } else {
+      await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("25%"))).toExist();
+      await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("50%"))).toExist();
+      await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("75%"))).toExist();
+      await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("max"))).toExist();
+    }
   }
 
   @Step("Select currency")
@@ -96,6 +104,11 @@ export default class BuySellPage {
       const value = await getValueByWebTestId(this.amountInputSectionId());
       jestExpect(normalizeText(value)).toBe(expected);
     }
+  }
+
+  @Step("Tap sell percentage button")
+  async tapSellPercentageButton(percentage: "25%" | "50%" | "75%" | "max") {
+    await tapWebElementByTestId(this.sellPercentageButtonId(percentage));
   }
 
   @Step("Set amount to pay")
