@@ -147,6 +147,8 @@ PODS:
     - ExpoModulesCore
   - ExpoFont (13.3.2):
     - ExpoModulesCore
+  - ExpoHaptics (14.1.4):
+    - ExpoModulesCore
   - ExpoImageManipulator (13.1.7):
     - EXImageLoader
     - ExpoModulesCore
@@ -2808,6 +2810,7 @@ DEPENDENCIES:
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@14.1.5_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8d4f5e_437882c4c7615832de65b9d2f3d25360/node_modules/expo-crypto/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@18.1.11_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d_8038309ebf44ea46aed5989233848551/node_modules/expo-file-system/ios`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@13.3.2_363258475871bbd677d6166de800f3d7/node_modules/expo-font/ios`)"
+  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@14.1.4_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8d4f5_b9263c434cfd32854af40c4cc1e4ca29/node_modules/expo-haptics/ios`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@13.1.7_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=46_c4a66dfa736c68bc96dc46085868e4f3/node_modules/expo-image-manipulator/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@14.1.4_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8d_60b653d6cb99678413261feb029a3d07/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cf_09451534d09b9a7d7d177d4de70db930/node_modules/expo-modules-core`)"
@@ -2995,6 +2998,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-file-system@18.1.11_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d_8038309ebf44ea46aed5989233848551/node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../../../node_modules/.pnpm/expo-font@13.3.2_363258475871bbd677d6166de800f3d7/node_modules/expo-font/ios"
+  ExpoHaptics:
+    :path: "../../../node_modules/.pnpm/expo-haptics@14.1.4_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=461d44d8d4f5_b9263c434cfd32854af40c4cc1e4ca29/node_modules/expo-haptics/ios"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@13.1.7_expo-modules-core@2.5.0_react-native@0.79.7_patch_hash=46_c4a66dfa736c68bc96dc46085868e4f3/node_modules/expo-image-manipulator/ios"
   ExpoKeepAwake:
@@ -3258,6 +3263,7 @@ SPEC CHECKSUMS:
   ExpoCrypto: a9f1d75baeea6ef8b03c1660621585196c382e85
   ExpoFileSystem: 7f92f7be2f5c5ed40a7c9efc8fa30821181d9d63
   ExpoFont: cf508bc2e6b70871e05386d71cab927c8524cc8e
+  ExpoHaptics: 0ff6e0d83cd891178a306e548da1450249d54500
   ExpoImageManipulator: 1e06e7a1e56f454e75d01b7032c1e44963bfc865
   ExpoKeepAwake: bf0811570c8da182bfb879169437d4de298376e7
   ExpoModulesCore: 471ae18809dc8a5c9a623193a317eef6048a4f8a

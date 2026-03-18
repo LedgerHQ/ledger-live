@@ -17,7 +17,7 @@ export function ReceiveOptionsDialog({ onClose, onGoToAccount }: ReceiveOptionsD
     <Dialog open onOpenChange={open => !open && onClose()}>
       <DialogContent>
         <TrackPage category="receive_drawer" type="drawer" />
-        <DialogHeader appearance="extended" title={t("receive.title")} />
+        <DialogHeader appearance="expanded" title={t("receive.title")} />
         <DialogBody className="px-16! pt-12">
           <ReceiveOptionsView onGoToBank={handleGoToBank} onGoToCrypto={handleGoToCrypto} />
         </DialogBody>

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Tile, TileSpot, TileTitle, TileContent } from "@ledgerhq/lumen-ui-react";
+import { Tile, Spot, TileTitle, TileContent } from "@ledgerhq/lumen-ui-react";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { PerformanceIndicator } from "./PerformanceIndicator";
 import { useNavigate } from "react-router";
@@ -51,7 +51,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
               onClick={onAssetClick(item.id)}
               data-testid={`market-banner-asset-${item.id}`}
             >
-              <TileSpot
+              <Spot
                 size={40}
                 appearance="icon"
                 icon={() => <AssetIcon item={item} getCapitalizedTicker={getCapitalizedTicker} />}
