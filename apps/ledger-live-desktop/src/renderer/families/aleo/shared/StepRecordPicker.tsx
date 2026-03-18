@@ -159,8 +159,6 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
         rowGap="0.5rem"
         maxHeight="300px"
         overflowY="auto"
-        role="radiogroup"
-        aria-label={t("aleo.shared.recordPicker.label")}
       >
         {unspentRecords.map(record => {
           const date = new Date(record.block_timestamp * 1000);
@@ -171,8 +169,6 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
               key={record.commitment}
               type="button"
               $checked={isSelected}
-              role="radio"
-              aria-checked={isSelected}
               onClick={() => selectRecord(record)}
             >
               {formatCurrencyUnit(unit, new BigNumber(record.microcredits), formatConfig)}
