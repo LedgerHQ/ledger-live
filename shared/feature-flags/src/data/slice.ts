@@ -9,17 +9,17 @@ import { FEATURE_FLAGS_DEFAULTS } from "../constants";
 import { getResolutionConfig } from "../config";
 import { resolveFeature, resolveAll } from "./utils";
 
-const initialState: FeatureFlagsState = {
+export const FEATURE_FLAGS_INITIAL_STATE: FeatureFlagsState = {
   overrides: {},
   remote: {},
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  resolved: structuredClone(FEATURE_FLAGS_DEFAULTS) as FeatureFlagsState["resolved"],
+  resolved: FEATURE_FLAGS_DEFAULTS as FeatureFlagsState["resolved"],
   bannerVisible: false,
 };
 
 const featureFlagsSlice = createSlice({
   name: "featureFlags",
-  initialState,
+  initialState: FEATURE_FLAGS_INITIAL_STATE,
   reducers: {
     setOverride(state, action: PayloadAction<{ key: FeatureId; value: Feature | undefined }>) {
       const { key, value } = action.payload;
