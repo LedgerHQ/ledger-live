@@ -79,11 +79,7 @@ export function useRecipientSearchState({
   }, [result.error, isBridgeInvalidAddress, searchValue]);
 
   const showBridgeRecipientError =
-    showSearchResults &&
-    !!bridgeRecipientError &&
-    !isBridgeInvalidAddress &&
-    !showSanctionedBanner &&
-    !hasAnyMatches;
+    showSearchResults && hasBridgeRecipientError && !showAddressValidationError;
 
   const showBridgeRecipientWarning =
     showSearchResults &&

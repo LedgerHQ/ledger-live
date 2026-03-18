@@ -28,22 +28,40 @@ export const EditOperationCard = ({
   const navigation = useNavigation();
 
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const { enabled: isEditBtcTxEnabled, params: bitcoinParams } = useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
-  const isCurrencySupported =
+  const isEvmCurrencySupported =
     params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+  const isBitcoinCurrencySupported =
+    bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) ||
+    false;
+
+  const showEvmEdit = isEditEvmTxEnabled && isEvmCurrencySupported;
+  const showBtcEdit = isEditBtcTxEnabled && isBitcoinCurrencySupported;
 
   const onEditTransactionCardPress = useCallback(() => {
-    navigation.navigate(NavigatorName.EvmEditTransaction, {
-      screen: ScreenName.EvmEditTransactionMethodSelection,
-      params: {
-        operation: oldestEditableOperation,
-        account,
-        parentAccount,
-      },
-    });
-  }, [account, oldestEditableOperation, parentAccount, navigation]);
+    if (showBtcEdit) {
+      navigation.navigate(NavigatorName.BitcoinEditTransaction, {
+        screen: ScreenName.BitcoinEditTransactionMethodSelection,
+        params: {
+          operation: oldestEditableOperation,
+          account,
+          parentAccount,
+        },
+      });
+    } else if (showEvmEdit) {
+      navigation.navigate(NavigatorName.EvmEditTransaction, {
+        screen: ScreenName.EvmEditTransactionMethodSelection,
+        params: {
+          operation: oldestEditableOperation,
+          account,
+          parentAccount,
+        },
+      });
+    }
+  }, [account, oldestEditableOperation, parentAccount, navigation, showBtcEdit, showEvmEdit]);
 
-  if (!isEditEvmTxEnabled || !isCurrencySupported) {
+  if (!showEvmEdit && !showBtcEdit) {
     return null;
   }
 

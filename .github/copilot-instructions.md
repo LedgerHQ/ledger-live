@@ -19,6 +19,17 @@ This is the **ledger-live** monorepo — a pnpm + turborepo workspace containing
 
 Every PR that changes user-facing behavior or library APIs must include a changeset (`pnpm changeset`). Flag PRs that add features or fix bugs without one.
 
+## Privacy & Security — `@ledgerhq/client-ids`
+
+Sensitive identifiers (DeviceId, UserId, DatadogId) must always use the `@ledgerhq/client-ids` library:
+
+- **Never** use raw string IDs for devices, users, or analytics.
+- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@ledgerhq/client-ids/ids`.
+- ID values are only accessible through explicit export methods (e.g., `exportUserIdForSomething()`).
+- Every export method must be allowlisted in `libs/client-ids/export-rules.json` with a justification.
+- Export IDs only at system boundaries (API calls, persistence) — never in the middle of processing.
+- `toString()` and `toJSON()` return `[DeviceId:REDACTED]` by default — this is by design.
+
 ## Dependency Review
 
 When a PR adds or updates dependencies in any `package.json`:

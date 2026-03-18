@@ -26,7 +26,7 @@ const Wallet40MyLedgerBanner = ({
           alignItems: "center",
           justifyContent: "space-between",
           backgroundColor: "accent",
-          borderRadius: "md",
+          borderRadius: "xl",
           padding: "s16",
         }}
       >

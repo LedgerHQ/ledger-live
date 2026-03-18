@@ -1,7 +1,12 @@
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getLastBlock } from "../../network/grpcClient";
+import { getConsensusInfo } from "../../network/proxyClient";
 
-export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
-  return getLastBlock(currency);
+export async function lastBlock(currencyId: string): Promise<BlockInfo> {
+  const info = await getConsensusInfo(currencyId);
+
+  return {
+    height: info.lastFinalizedBlockHeight,
+    hash: info.lastFinalizedBlock,
+    time: new Date(info.lastFinalizedTime ?? Date.now()),
+  };
 }

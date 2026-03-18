@@ -23,6 +23,9 @@ jest.mock("../../wallet-btc", () => {
     getWalletAccount: jest.fn((_account: any) => ({
       xpub: { explorer: currentExplorer, crypto: {} },
       derivationMode: "native_segwit",
+      params: {
+        currency: "bitcoin",
+      },
     })),
     CoinSelect: DummyStrategy,
     DeepFirst: DummyStrategy,

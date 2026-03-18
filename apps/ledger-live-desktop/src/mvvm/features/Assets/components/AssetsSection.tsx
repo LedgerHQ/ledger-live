@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
 import { DataTableRoot, DataTable } from "@ledgerhq/lumen-ui-react";
 import { Row } from "@tanstack/react-table";
-import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { AssetsSectionHeader } from "./AssetsSectionHeader";
 import { useTable } from "../hooks/useTable";
-import { AssetSectionData } from "../types";
+import { AssetSectionData, AssetTableItem } from "../types";
 
 export const AssetSection = ({
   sectionId,
@@ -17,7 +16,7 @@ export const AssetSection = ({
   const table = useTable(items);
 
   const onRowClick = useCallback(
-    (row: Row<CategorizedAssetItem>) => {
+    (row: Row<AssetTableItem>) => {
       onItemClick(row.original);
     },
     [onItemClick],

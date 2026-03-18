@@ -20,8 +20,8 @@ describe("syncAmountInputs", () => {
     const setCryptoInputValue = jest.fn();
     const setFiatInputValue = jest.fn();
 
-    const lastTransactionAmountRef = { current: null };
-    const lastFiatAmountRef = { current: null };
+    const lastTransactionAmountRef: { current: BigNumber | null } = { current: null };
+    const lastFiatAmountRef: { current: BigNumber | null } = { current: null };
     const lastUseAllAmountRef = { current: false };
     const lastUserInputTimeRef = { current: 0 };
 

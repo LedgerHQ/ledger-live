@@ -110,7 +110,7 @@ export const assetsDataApi = createApi({
         return {
           url: `${baseUrl}/assets`,
           params: {
-            category: queryArg.category,
+            categories: queryArg.category,
             product: queryArg.product,
             pageSize: 100,
             minVersion: queryArg.version,

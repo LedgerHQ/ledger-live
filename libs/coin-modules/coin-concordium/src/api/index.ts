@@ -1,5 +1,6 @@
 import type {
   AlpacaApi,
+  Balance,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -8,10 +9,9 @@ import type {
   Reward,
   Stake,
   TransactionIntent,
+  TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import {
   serializeTransfer,
@@ -33,25 +33,25 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
+import { validateAddress } from "../bridge/validateAddress";
 
-export function createApi(config: ConcordiumConfig): AlpacaApi<ConcordiumMemo> {
+export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-  const currency = getCryptoCurrencyById("concordium");
 
   return {
-    broadcast: (tx: string) => broadcast(tx, currency),
+    broadcast: (tx: string) => broadcast(tx, currencyId),
     combine,
     craftTransaction: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
-      craftTransaction(transactionIntent, currency),
+      craftTransaction(transactionIntent, currencyId),
     craftRawTransaction,
     estimateFees: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
-      estimateFees(transactionIntent, currency),
-    getBalance: (address: string) => getBalance(address, currency),
-    lastBlock: () => lastBlock(currency),
+      estimateFees(transactionIntent, currencyId),
+    getBalance: (address: string) => getBalance(address, currencyId),
+    lastBlock: () => lastBlock(currencyId),
     listOperations: (address: string, options: ListOperationsOptions) =>
-      listOperations(address, options, currency),
-    getBlock: (height: number) => getBlock(height, currency),
-    getBlockInfo: (height: number) => getBlockInfo(height, currency),
+      listOperations(address, options, currencyId),
+    getBlock: (height: number) => getBlock(height, currencyId),
+    getBlockInfo: (height: number) => getBlockInfo(height, currencyId),
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -61,14 +61,25 @@ export function createApi(config: ConcordiumConfig): AlpacaApi<ConcordiumMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 
 async function craftTransaction(
   transactionIntent: TransactionIntent<ConcordiumMemo>,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currency);
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currencyId);
   const memo =
     "memo" in transactionIntent && transactionIntent.memo?.type === "string"
       ? transactionIntent.memo.value
@@ -90,14 +101,14 @@ async function craftTransaction(
 
 async function estimateFees(
   transactionIntent: TransactionIntent<ConcordiumMemo>,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<FeeEstimation> {
   const memo =
     "memo" in transactionIntent && transactionIntent.memo?.type === "string"
       ? transactionIntent.memo.value
       : undefined;
 
-  const estimation = await estimateFeesLogic(currency, memo);
+  const estimation = await estimateFeesLogic(currencyId, memo);
 
   return { value: estimation.cost };
 }

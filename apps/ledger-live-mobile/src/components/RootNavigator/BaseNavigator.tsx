@@ -74,6 +74,7 @@ import {
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
+import BitcoinEditTransactionNavigator from "~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
@@ -82,6 +83,7 @@ import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCu
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
+import { DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection } from "LLM/features/DeeplinkInstallApp";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -614,6 +616,11 @@ export default function BaseNavigator() {
           component={EditTransactionNavigator}
         />
         <Stack.Screen
+          name={NavigatorName.BitcoinEditTransaction}
+          options={{ headerShown: false }}
+          component={BitcoinEditTransactionNavigator}
+        />
+        <Stack.Screen
           name={NavigatorName.AnalyticsOptInPrompt}
           options={{ headerShown: false }}
           component={AnalyticsOptInPromptNavigator}
@@ -643,6 +650,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
           component={DeviceSelectionNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={ScreenName.DeeplinkInstallAppDeviceSelection}
+          component={DeeplinkInstallAppDeviceSelection}
           options={{ headerShown: false }}
         />
 

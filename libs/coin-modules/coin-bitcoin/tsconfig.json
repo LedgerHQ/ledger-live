@@ -5,10 +5,10 @@
     "declarationMap": true,
     "downlevelIteration": true,
     "lib": ["es2021", "dom"],
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "coininfo", "bs58check/base"],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true,
     "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["src/**/*", "types.d.ts"]
+  "include": ["src/**/*"]
 }

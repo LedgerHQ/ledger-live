@@ -14,6 +14,10 @@ export type PaginationConfig = {
   operations?: number;
 };
 
+// SyncConfig syncType value used to differentiate sync for Transparent and/or Shielded transactions
+export const SYNC_TYPE_TRANSPARENT = 0x01;
+export const SYNC_TYPE_SHIELDED = SYNC_TYPE_TRANSPARENT << 1;
+
 /**
  *
  */
@@ -22,4 +26,5 @@ export type SyncConfig = {
   // allows to disable the synchronization part – typically to only paginate more
   withoutSynchronize?: boolean;
   blacklistedTokenIds?: string[];
+  syncType?: number;
 };

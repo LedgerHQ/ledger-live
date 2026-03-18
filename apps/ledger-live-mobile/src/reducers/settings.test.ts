@@ -3,12 +3,13 @@ import reducer, {
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
   resolvedThemeSelector,
+  themeSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import { importSettings } from "../actions/settings";
+import { importSettings, setTheme } from "../actions/settings";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -133,6 +134,41 @@ describe("resolvedThemeSelector", () => {
       expect(resolvedThemeSelector(createState("system", null))).toBe("dark");
       expect(resolvedThemeSelector(createState("system", undefined))).toBe("dark");
     });
+  });
+});
+
+describe("default theme", () => {
+  it("should have theme set to 'dark' in initial state", () => {
+    expect(SETTINGS_INITIAL_STATE.theme).toBe("dark");
+  });
+});
+
+describe("SETTINGS_SET_THEME", () => {
+  it("should update theme when setTheme action is dispatched", () => {
+    const stateAfterLight = reducer(SETTINGS_INITIAL_STATE, setTheme("light"));
+    expect(stateAfterLight.theme).toBe("light");
+
+    const stateAfterDark = reducer(stateAfterLight, setTheme("dark"));
+    expect(stateAfterDark.theme).toBe("dark");
+
+    const stateAfterSystem = reducer(stateAfterDark, setTheme("system"));
+    expect(stateAfterSystem.theme).toBe("system");
+  });
+
+  it("should reflect theme change in resolvedThemeSelector", () => {
+    const stateWithLight: State = {
+      ...({} as State),
+      settings: reducer(SETTINGS_INITIAL_STATE, setTheme("light")),
+    };
+    expect(themeSelector(stateWithLight)).toBe("light");
+    expect(resolvedThemeSelector(stateWithLight)).toBe("light");
+
+    const stateWithDark: State = {
+      ...({} as State),
+      settings: reducer(SETTINGS_INITIAL_STATE, setTheme("dark")),
+    };
+    expect(themeSelector(stateWithDark)).toBe("dark");
+    expect(resolvedThemeSelector(stateWithDark)).toBe("dark");
   });
 });
 

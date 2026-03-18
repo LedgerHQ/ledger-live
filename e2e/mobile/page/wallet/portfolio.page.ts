@@ -1,10 +1,11 @@
 import { Step } from "jest-allure2-reporter/api";
-import { openDeeplink } from "../../helpers/commonHelpers";
+import { isWallet40, openDeeplink } from "../../helpers/commonHelpers";
 import { getFlags } from "../../bridge/server";
 import { Feature_Noah } from "@ledgerhq/types-live";
 
 export default class PortfolioPage {
   addNewOrExistingAccount = "add-new-account-button";
+  assetsListId = "AssetsList";
   baseLink = "portfolio";
   baseAssetItem = "assetItem-";
   zeroBalance = "$0.00";
@@ -14,7 +15,7 @@ export default class PortfolioPage {
   readOnlyItemsId = "PortfolioReadOnlyItems";
   accountsListView = "PortfolioAccountsList";
   emptyPortfolioListId = "PortfolioEmptyList";
-  portfolioSettingsButtonId = "settings-icon";
+  portfolioSettingsButtonId = "topbar-settings";
   addAccountCta = "add-account-cta";
   allocationSectionTitleId = "portfolio-allocation-section";
   transactionHistorySectionTitleId = "portfolio-transaction-history-section";
@@ -158,18 +159,34 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.accountsListView)).toBeVisible();
   }
 
+  @Step("Wait for Portfolio with accounts")
+  async waitForPortfolioWithAccounts() {
+    await waitForElementById(this.accountsListView, 10000);
+  }
+
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    await waitForElementById(this.accountsListView, 10000);
-    await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
-
-    if (await IsIdVisible(this.assetItemId(currencyName))) {
-      await tapById(this.assetItemId(currencyName));
+    if (isWallet40) {
+      await this.goToAccountsW40(currencyName);
     } else {
-      await tapById(this.showAllAssetsButton);
-      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
-      await tapById(this.assetItemId(currencyName));
+      await waitForElementById(this.accountsListView, 10000);
+      await scrollToId(this.allocationSectionTitleId, this.accountsListView, 400);
+
+      if (await IsIdVisible(this.assetItemId(currencyName))) {
+        await tapById(this.assetItemId(currencyName));
+      } else {
+        await tapById(this.showAllAssetsButton);
+        await scrollToId(this.assetItemId(currencyName), this.accountsListView);
+        await tapById(this.assetItemId(currencyName));
+      }
     }
+  }
+
+  @Step("Go to asset's accounts from portfolio wallet 40")
+  async goToAccountsW40(currencyName: string) {
+    await waitForElementById(this.accountsListView, 10000);
+    await scrollToId(this.assetItemId(currencyName));
+    await tapById(this.assetItemId(currencyName));
   }
 
   @Step("Check quick action buttons visibility")
@@ -219,7 +236,7 @@ export default class PortfolioPage {
 
   @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
-    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
+    await scrollToId(this.assetsListId);
     if (await IsIdVisible(this.showAllAssetsButton)) {
       await tapById(this.showAllAssetsButton);
       await scrollToId(this.assetItemId(currencyName), this.accountsListView);

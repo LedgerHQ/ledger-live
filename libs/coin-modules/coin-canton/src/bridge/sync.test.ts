@@ -1,5 +1,5 @@
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import * as accountBalance from "../common-logic/account/getBalance";
 import * as config from "../config";
@@ -141,12 +141,13 @@ const createMockCantonAccountShapeInfo = (
 describe("makeGetAccountShape", () => {
   const fakeSignerContext = {} as any;
 
-  const defaultInfo = {
+  const defaultInfo: AccountShapeInfo<CantonAccount> = {
     address: "addr1",
     currency: sampleCurrency,
     derivationMode: "",
     derivationPath: "44'/0'/0'/0/0",
     deviceId: "fakeDevice",
+    index: 0,
     initialAccount: undefined,
   };
 
@@ -189,7 +190,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -209,7 +210,7 @@ describe("makeGetAccountShape", () => {
     ]);
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -223,7 +224,7 @@ describe("makeGetAccountShape", () => {
     mockedGetBalance.mockResolvedValue([]);
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -247,7 +248,7 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toMatchObject({
@@ -276,7 +277,7 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toMatchObject({
@@ -304,7 +305,7 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toMatchObject({
@@ -332,7 +333,7 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
     expect(shape).toMatchObject({
@@ -380,7 +381,7 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -401,16 +402,15 @@ describe("makeGetAccountShape", () => {
     });
 
     const infoWithXpub = createMockCantonAccountShapeInfo({
-      deviceId: undefined, // No device
       initialAccount: {
         xpub: "test-party-id",
         cantonResources: {
-          publicKey: undefined, // Missing publicKey
           instrumentUtxoCounts: {},
           pendingTransferProposals: [],
         },
       } as unknown as CantonAccount,
     });
+    delete infoWithXpub.deviceId;
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
     const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
@@ -428,7 +428,6 @@ describe("makeGetAccountShape", () => {
     });
 
     const infoWithPublicKey = createMockCantonAccountShapeInfo({
-      deviceId: undefined, // No device
       initialAccount: {
         xpub: "", // Missing xpub
         cantonResources: {
@@ -438,6 +437,7 @@ describe("makeGetAccountShape", () => {
         },
       } as unknown as CantonAccount,
     });
+    delete infoWithPublicKey.deviceId;
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
     const shape = await getAccountShape(infoWithPublicKey, { paginationConfig: {} });
@@ -454,7 +454,6 @@ describe("makeGetAccountShape", () => {
     });
 
     const infoWithBoth = createMockCantonAccountShapeInfo({
-      deviceId: undefined, // No device
       initialAccount: {
         xpub: "test-party-id",
         cantonResources: {
@@ -464,6 +463,7 @@ describe("makeGetAccountShape", () => {
         },
       } as unknown as CantonAccount,
     });
+    delete infoWithBoth.deviceId;
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
     const shape = await getAccountShape(infoWithBoth, { paginationConfig: {} });
@@ -545,7 +545,7 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 

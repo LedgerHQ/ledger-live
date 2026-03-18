@@ -62,6 +62,7 @@ declare global {
   var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;
   var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
   var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
+  var IsIdPresent: typeof NativeElementHelpers.isIdPresent;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
   var scrollToId: typeof NativeElementHelpers.scrollToId;
   var scrollToText: typeof NativeElementHelpers.scrollToText;

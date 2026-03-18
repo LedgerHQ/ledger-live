@@ -38,7 +38,17 @@
     "src/constants/env.ts",
     "src/constants/index.ts",
     "src/supportedFeatures.ts",
-    "src/fixtures/common.fixtures.ts"
+    "src/fixtures/common.fixtures.ts",
+    "src/buildRbfTransaction.ts",
+    "src/editTransaction/getEditTransactionPatch.ts",
+    "src/editTransaction/getFormattedFeeFields.ts",
+    "src/editTransaction/getMinEditTransactionFees.ts",
+    "src/editTransaction/getTransactionStatus.ts",
+    "src/editTransaction/hasMinimumFunds.ts",
+    "src/editTransaction/index.ts",
+    "src/editTransaction/isStrategyDisabled.ts",
+    "src/editTransaction/isTransactionConfirmed.ts",
+    "src/operation.ts"
   ],
   "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "ignoreUnused": []

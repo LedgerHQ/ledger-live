@@ -37,6 +37,7 @@ describe("getBlock ERC20 transfers", () => {
           type: "blockscout",
           uri: "https://evmexplorer.velas.com/api",
         },
+        showNfts: true,
       };
       module = createApi(velasEvmConfig, "velas_evm");
     });
@@ -66,6 +67,7 @@ describe("getBlock ERC20 transfers", () => {
         op =>
           op.type === "transfer" &&
           op.asset.type === expectedAsset.type &&
+          "assetReference" in op.asset &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
       // there are two transfer operations for the expected token,
@@ -94,6 +96,7 @@ describe("getBlock ERC20 transfers", () => {
           type: "ledger",
           explorerId: "bnb",
         },
+        showNfts: true,
       };
       module = createApi(bscConfig, "bsc");
     });
@@ -123,6 +126,7 @@ describe("getBlock ERC20 transfers", () => {
         op =>
           op.type === "transfer" &&
           op.asset.type === expectedAsset.type &&
+          "assetReference" in op.asset &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
       // there are two transfer operations for the expected token,

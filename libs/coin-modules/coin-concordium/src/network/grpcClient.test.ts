@@ -1,12 +1,4 @@
-import { createTestCryptoCurrency } from "../test/testHelpers";
-import {
-  getClient,
-  withClient,
-  getLastBlock,
-  getBlockInfoByHeight,
-  getBlockByHeight,
-  getOperations,
-} from "./grpcClient";
+import { getClient, withClient, getBlockByHeight, getOperations } from "./grpcClient";
 
 // Type definitions for gRPC callbacks
 type GrpcCallback<T> = (error: Error | null, response: T | null) => void;
@@ -23,7 +15,7 @@ jest.mock("@grpc/grpc-js", () => ({
     concordium: {
       v2: {
         Queries: jest.fn().mockImplementation(() => ({
-          GetConsensusInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetConsensusInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetConsensusStatusResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -43,7 +35,7 @@ jest.mock("@grpc/grpc-js", () => ({
               callback(null, { blocks: response });
             }
           },
-          GetBlockInfo: <T>(_req: T, callback: GrpcCallback<T>) => {
+          GetBlockInfo: (_req: any, callback: GrpcCallback<any>) => {
             const response = mockGetBlockInfoResponse();
             if (response instanceof Error) {
               callback(response, null);
@@ -74,17 +66,13 @@ jest.mock("../config", () => ({
   __esModule: true,
   default: {
     getCoinConfig: jest.fn().mockReturnValue({
-      grpcUrl: "https://grpc.concordium.com",
-      grpcPort: 20000,
+      grpcUrl: "https://ccd-node-testnet.coin.ledger-test.com",
+      grpcPort: 443,
     }),
   },
 }));
 
-const createMockCurrency = () =>
-  createTestCryptoCurrency({
-    id: "concordium",
-    family: "concordium",
-  });
+const currencyId = "concordium_testnet";
 
 describe("grpcClient", () => {
   beforeEach(() => {
@@ -93,16 +81,14 @@ describe("grpcClient", () => {
 
   describe("getClient", () => {
     it("should create a new client for currency", () => {
-      const currency = createMockCurrency();
-      const client = getClient(currency);
+      const client = getClient(currencyId);
 
       expect(client).not.toBeUndefined();
     });
 
     it("should return cached client on subsequent calls", () => {
-      const currency = createMockCurrency();
-      const client1 = getClient(currency);
-      const client2 = getClient(currency);
+      const client1 = getClient(currencyId);
+      const client2 = getClient(currencyId);
 
       expect(client1).toBe(client2);
     });
@@ -110,151 +96,38 @@ describe("grpcClient", () => {
 
   describe("withClient", () => {
     it("should execute function with client", async () => {
-      const currency = createMockCurrency();
       const mockFn = jest.fn().mockResolvedValue("result");
 
-      const result = await withClient(currency, mockFn);
+      const result = await withClient(currencyId, mockFn);
 
       expect(result).toBe("result");
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it("should retry on failure", async () => {
-      const currency = createMockCurrency();
       const mockFn = jest
         .fn()
         .mockRejectedValueOnce(new Error("First failure"))
         .mockResolvedValueOnce("success");
 
-      const result = await withClient(currency, mockFn, 1);
+      const result = await withClient(currencyId, mockFn, 1);
 
       expect(result).toBe("success");
       expect(mockFn).toHaveBeenCalledTimes(2);
     });
 
     it("should throw after all retries exhausted", async () => {
-      const currency = createMockCurrency();
       const mockFn = jest.fn().mockRejectedValue(new Error("Always fails"));
 
-      await expect(withClient(currency, mockFn, 1)).rejects.toThrow("Always fails");
+      await expect(withClient(currencyId, mockFn, 1)).rejects.toThrow("Always fails");
       expect(mockFn).toHaveBeenCalledTimes(2); // initial + 1 retry
     });
 
     it("should use default retries when not specified", async () => {
-      const currency = createMockCurrency();
       const mockFn = jest.fn().mockRejectedValue(new Error("Fails"));
 
-      await expect(withClient(currency, mockFn)).rejects.toThrow("Fails");
+      await expect(withClient(currencyId, mockFn)).rejects.toThrow("Fails");
       expect(mockFn).toHaveBeenCalledTimes(2); // DEFAULT_RETRIES = 1
-    });
-  });
-
-  describe("getLastBlock", () => {
-    it("should return last finalized block info", async () => {
-      const mockHash = "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890";
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: mockHash,
-        lastFinalizedTime: { value: "1700000000000" },
-      });
-
-      const currency = createMockCurrency();
-      const result = await getLastBlock(currency);
-
-      expect(result).toEqual({
-        height: 1000,
-        hash: mockHash,
-        time: new Date(1700000000000),
-      });
-    });
-
-    it("should call getConsensusStatus on client", async () => {
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        lastFinalizedTime: { value: "1000" },
-      });
-
-      const currency = createMockCurrency();
-      await getLastBlock(currency);
-
-      expect(mockGetConsensusStatusResponse).toHaveBeenCalled();
-    });
-  });
-
-  describe("getBlockInfoByHeight", () => {
-    it("should return block info at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 500n,
-        blockHash: "abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-
-      const currency = createMockCurrency();
-      const result = await getBlockInfoByHeight(currency, 500);
-
-      expect(result.height).toBe(500);
-      expect(result.hash).toBe("abc456abc456abc456abc456abc456abc456abc456abc456abc456abc456abc4");
-    });
-
-    it("should throw error when no blocks found at height", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([]);
-
-      const currency = createMockCurrency();
-
-      await expect(getBlockInfoByHeight(currency, 999)).rejects.toThrow(
-        "No blocks found at height 999",
-      );
-    });
-
-    it("should include parent block info when height > 0", async () => {
-      mockGetBlocksAtHeightResponse
-        .mockReturnValueOnce([
-          { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-        ])
-        .mockReturnValueOnce([
-          { value: "def123def123def123def123def123def123def123def123def123def123def1" },
-        ]);
-
-      mockGetBlockInfoResponse
-        .mockReturnValueOnce({
-          blockHeight: 500n,
-          blockHash: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
-          blockSlotTime: new Date("2024-01-02"),
-        })
-        .mockReturnValueOnce({
-          blockHeight: 499n,
-          blockHash: "def123def123def123def123def123def123def123def123def123def123def1",
-          blockSlotTime: new Date("2024-01-01"),
-        });
-
-      const currency = createMockCurrency();
-      const result = await getBlockInfoByHeight(currency, 500);
-
-      expect(result.parent).not.toBeUndefined();
-      expect(result.parent?.height).toBe(499);
-      expect(result.parent?.hash).toBe(
-        "def123def123def123def123def123def123def123def123def123def123def1",
-      );
-    });
-
-    it("should not include parent for height 0", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "0000000000000000000000000000000000000000000000000000000000000000" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue({
-        blockHeight: 0n,
-        blockHash: "0000000000000000000000000000000000000000000000000000000000000000",
-        blockSlotTime: new Date("2024-01-01"),
-      });
-
-      const currency = createMockCurrency();
-      const result = await getBlockInfoByHeight(currency, 0);
-
-      expect(result.parent).toBeUndefined();
     });
   });
 
@@ -270,8 +143,7 @@ describe("grpcClient", () => {
       });
       mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.info.height).toBe(100);
       expect(result.transactions).toEqual([]);
@@ -306,8 +178,7 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.transactions).toHaveLength(1);
       expect(result.transactions[0].hash).toBe("txhash");
@@ -337,8 +208,7 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.transactions).toHaveLength(1);
       expect(result.transactions[0].failed).toBe(true);
@@ -375,8 +245,7 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.transactions).toHaveLength(1);
     });
@@ -386,14 +255,13 @@ describe("grpcClient", () => {
     beforeEach(() => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
     });
 
     it("should return empty array when minHeight exceeds current height", async () => {
-      const currency = createMockCurrency();
-      const result = await getOperations(currency, "address", { minHeight: 2000 });
+      const result = await getOperations(currencyId, "address", { minHeight: 2000 });
 
       expect(result).toEqual({ items: [], next: undefined });
     });
@@ -427,8 +295,9 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const { items: operations } = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { items: operations } = await getOperations(currencyId, "my-address", {
+        minHeight: 100,
+      });
 
       expect(operations.length).toBeGreaterThanOrEqual(0);
     });
@@ -462,8 +331,9 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const { items: operations } = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { items: operations } = await getOperations(currencyId, "my-address", {
+        minHeight: 100,
+      });
 
       // Should not include transactions not involving my-address
       expect(
@@ -476,7 +346,7 @@ describe("grpcClient", () => {
     it("should return empty cursor when at chain tip", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "100",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -489,8 +359,7 @@ describe("grpcClient", () => {
       });
       mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
 
-      const currency = createMockCurrency();
-      const { next: cursor } = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { next: cursor } = await getOperations(currencyId, "my-address", { minHeight: 100 });
 
       expect(cursor).toBeUndefined();
     });
@@ -498,7 +367,7 @@ describe("grpcClient", () => {
     it("should return next block height as cursor when more blocks exist", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "2000",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -511,9 +380,8 @@ describe("grpcClient", () => {
       });
       mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
 
-      const currency = createMockCurrency();
       // Scan from height 100, will hit MAX_BLOCKS_TO_SCAN (1000) limit at height 1100
-      const { next: cursor } = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { next: cursor } = await getOperations(currencyId, "my-address", { minHeight: 100 });
 
       // Next height should be 1101 (endHeight + 1 where endHeight = 100 + 1000)
       expect(cursor).toBe(JSON.stringify(1101));
@@ -522,7 +390,7 @@ describe("grpcClient", () => {
     it("should return correct cursor when scan ends before MAX_BLOCKS_TO_SCAN", async () => {
       mockGetConsensusStatusResponse.mockReturnValue({
         lastFinalizedBlockHeight: "150",
-        lastFinalizedBlock: "hash",
+        lastFinalizedBlock: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00",
         lastFinalizedTime: { value: "1700000000000" },
       });
       mockGetBlocksAtHeightResponse.mockReturnValue([
@@ -535,9 +403,8 @@ describe("grpcClient", () => {
       });
       mockGetBlockTransactionEventsStream.mockReturnValue((async function* () {})());
 
-      const currency = createMockCurrency();
       // Scan from 100 to 150 (current height)
-      const { next: cursor } = await getOperations(currency, "my-address", { minHeight: 100 });
+      const { next: cursor } = await getOperations(currencyId, "my-address", { minHeight: 100 });
 
       // At chain tip, should return empty cursor
       expect(cursor).toBeUndefined();
@@ -545,33 +412,6 @@ describe("grpcClient", () => {
   });
 
   describe("error handling", () => {
-    it("should handle and throw getLastBlock errors", async () => {
-      mockGetConsensusStatusResponse.mockReturnValue(new Error("Connection failed"));
-
-      const currency = createMockCurrency();
-
-      await expect(getLastBlock(currency)).rejects.toThrow("Connection failed");
-    });
-
-    it("should handle and throw getBlockInfoByHeight errors when GetBlocksAtHeight fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue(new Error("Network error"));
-
-      const currency = createMockCurrency();
-
-      await expect(getBlockInfoByHeight(currency, 100)).rejects.toThrow("Network error");
-    });
-
-    it("should handle and throw getBlockInfoByHeight errors when GetBlockInfo fails", async () => {
-      mockGetBlocksAtHeightResponse.mockReturnValue([
-        { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
-      ]);
-      mockGetBlockInfoResponse.mockReturnValue(new Error("Block not found"));
-
-      const currency = createMockCurrency();
-
-      await expect(getBlockInfoByHeight(currency, 100)).rejects.toThrow("Block not found");
-    });
-
     it("should handle and throw getBlockByHeight errors", async () => {
       mockGetBlocksAtHeightResponse.mockReturnValue([
         { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
@@ -585,19 +425,12 @@ describe("grpcClient", () => {
         throw new Error("Stream error");
       });
 
-      const currency = createMockCurrency();
-
-      await expect(getBlockByHeight(currency, 100)).rejects.toThrow("Stream error");
+      await expect(getBlockByHeight(currencyId, 100)).rejects.toThrow("Stream error");
     });
   });
 
   describe("transaction type parsing", () => {
     beforeEach(() => {
-      mockGetConsensusStatusResponse.mockReturnValue({
-        lastFinalizedBlockHeight: "1000",
-        lastFinalizedBlock: "hash",
-        lastFinalizedTime: { value: "1700000000000" },
-      });
       mockGetBlocksAtHeightResponse.mockReturnValue([
         { value: "abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00abcdef00" },
       ]);
@@ -630,8 +463,7 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.transactions).toHaveLength(1);
       expect(result.transactions[0].hash).toBe("txhash");
@@ -658,8 +490,7 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.transactions).toHaveLength(1);
       expect(result.transactions[0].hash).toBe("encrypted-tx");
@@ -685,8 +516,7 @@ describe("grpcClient", () => {
         })(),
       );
 
-      const currency = createMockCurrency();
-      const result = await getBlockByHeight(currency, 100);
+      const result = await getBlockByHeight(currencyId, 100);
 
       expect(result.transactions).toHaveLength(1);
     });

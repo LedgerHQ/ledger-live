@@ -7,7 +7,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import MarketList from "./MarketList";
 import { useMarket } from "LLD/features/Market/hooks/useMarket";
 import SearchInputComponent from "./components/SearchInputComponent";
-import { useMarketListVirtualization } from "./MarketList/useMarketListVirtualization";
+import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarketListVirtualization";
 
 const Container = styled(Flex).attrs({
   flex: "1",

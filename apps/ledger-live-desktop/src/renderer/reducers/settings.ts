@@ -12,6 +12,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
+  DeviceInfo,
   DeviceModelInfo,
   Feature,
   FeatureId,
@@ -128,6 +129,7 @@ export type SettingsState = {
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
+  deprecationDoNotRemind: string[];
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -157,7 +159,7 @@ export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
   ...getInitialLanguageAndLocale(),
-  theme: null,
+  theme: "dark",
   region: null,
   orderAccounts: "balance|desc",
   countervalueFirst: false,
@@ -228,6 +230,18 @@ export const INITIAL_STATE: SettingsState = {
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
+  deprecationDoNotRemind: [],
+};
+
+export const AFTER_ONBOARDING_STATE: SettingsState = {
+  ...INITIAL_STATE,
+  hasCompletedOnboarding: true,
+  loaded: true,
+  lastSeenDevice: {
+    modelId: DeviceModelId.nanoS,
+    deviceInfo: {} as DeviceInfo,
+    apps: [],
+  },
 };
 
 /* Handlers */
@@ -273,6 +287,7 @@ type HandlersPayloads = {
 
   MARKET_ADD_STARRED_COINS: string;
   MARKET_REMOVE_STARRED_COINS: string;
+  DEPRECATION_DO_NOT_REMIND: string;
 
   SET_HAS_BEEN_UPSOLD_RECOVER: boolean;
   SET_ONBOARDING_USE_CASE: OnboardingUseCase;
@@ -323,6 +338,7 @@ const handlers: SettingsHandlers = {
       ...filteredPayload,
     };
   },
+
   FETCH_SETTINGS: (state, { payload: settings }) => {
     const filteredSettings = filterValidSettings(settings);
     return {
@@ -418,6 +434,12 @@ const handlers: SettingsHandlers = {
       ...state,
       supportedCounterValues: payload,
       counterValue: activeCounterValue,
+    };
+  },
+  DEPRECATION_DO_NOT_REMIND: (state: SettingsState, { payload }) => {
+    return {
+      ...state,
+      deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload],
     };
   },
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: (state: SettingsState, { payload }) => ({
@@ -616,10 +638,10 @@ export const countervalueFirstSelector = createSelector(
 );
 export const developerModeSelector = (state: State): boolean => state.settings.developerMode;
 export const lastUsedVersionSelector = (state: State): string => state.settings.lastUsedVersion;
-export const userThemeSelector = (state: State): "dark" | "light" | undefined | null => {
+export const userThemeSelector = (state: State): "dark" | "light" | null => {
   const savedVal = state.settings.theme;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return ["dark", "light"].includes(savedVal as string) ? (savedVal as "dark" | "light") : "dark";
+  if (savedVal === "dark" || savedVal === "light") return savedVal;
+  return null;
 };
 
 type LanguageAndUseSystemLanguage = {
@@ -770,7 +792,6 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
     return null;
   return lastSeenDevice;
 };
-export const hasOnboardedDeviceSelector = (state: State) => lastSeenDeviceSelector(state) !== null;
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
@@ -801,3 +822,8 @@ export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.al
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+
+// Last onboarded device is the device set when a user goes through the onboarding flow.
+// Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
+export const hasOnboardedDeviceSelector = (state: State) =>
+  !!lastOnboardedDeviceSelector(state) || lastSeenDeviceSelector(state) !== null;

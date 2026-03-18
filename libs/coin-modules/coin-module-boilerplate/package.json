@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "4.16.0",
+  "version": "4.17.0",
   "description": "Boilerplate coin integration",
   "keywords": [
     "Ledger",
@@ -124,10 +124,10 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
+    "watch": "tsc --watch --project tsconfig.build.json",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

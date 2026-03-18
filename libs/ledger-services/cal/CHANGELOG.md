@@ -1,5 +1,29 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.14.0
+
+### Minor Changes
+
+- [#15098](https://github.com/LedgerHQ/ledger-live/pull/15098) [`17423fa`](https://github.com/LedgerHQ/ledger-live/commit/17423fa88b3aa95beee57ff05f77aeeb8e9bc36e) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add Swaps.xyz to swap partners
+
+### Patch Changes
+
+- Updated dependencies [[`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc), [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d)]:
+  - @ledgerhq/live-env@2.30.0
+  - @ledgerhq/live-network@2.4.1
+
+## 1.14.0-next.0
+
+### Minor Changes
+
+- [#15098](https://github.com/LedgerHQ/ledger-live/pull/15098) [`17423fa`](https://github.com/LedgerHQ/ledger-live/commit/17423fa88b3aa95beee57ff05f77aeeb8e9bc36e) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add Swaps.xyz to swap partners
+
+### Patch Changes
+
+- Updated dependencies [[`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc), [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d)]:
+  - @ledgerhq/live-env@2.30.0-next.0
+  - @ledgerhq/live-network@2.4.1-next.0
+
 ## 1.13.0
 
 ### Minor Changes

@@ -12,7 +12,7 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Activate Private Balance", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -53,7 +53,7 @@ for (const account of accounts) {
       },
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.expectAccountVisibility(account.account.accountName);
         await app.account.clickShowBalance();

@@ -9,7 +9,6 @@ import { join } from "node:path";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { retry } from "@ledgerhq/live-promise";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Block,
   BlockInfo,
@@ -129,12 +128,12 @@ const DEFAULT_RETRIES = 1;
 const RETRY_DELAY = 1000;
 const MAX_BLOCKS_TO_SCAN = 1000;
 
-function createGrpcClient(currency: CryptoCurrency): GRPCClient {
-  const { grpcUrl: address, grpcPort: port } = coinConfig.getCoinConfig(currency);
+function createGrpcClient(currencyId: string): GRPCClient {
+  const { grpcUrl: address, grpcPort: port } = coinConfig.getCoinConfig(currencyId);
 
   try {
-    const protoPath = join(__dirname, "proto/v2/concordium/service.proto");
-    const protoDir = join(__dirname, "proto");
+    const protoPath = join(__dirname, "../../proto/v2/concordium/service.proto");
+    const protoDir = join(__dirname, "../../proto");
 
     const packageDefinition = protoLoader.loadSync(protoPath, {
       keepCase: false,
@@ -157,23 +156,23 @@ function createGrpcClient(currency: CryptoCurrency): GRPCClient {
   }
 }
 
-const CLIENTS_BY_CURRENCY = new Map<CryptoCurrency["id"], GRPCClient>();
+const CLIENTS_BY_CURRENCY = new Map<string, GRPCClient>();
 
-export function getClient(currency: CryptoCurrency): GRPCClient {
-  const existing = CLIENTS_BY_CURRENCY.get(currency.id);
+export function getClient(currencyId: string): GRPCClient {
+  const existing = CLIENTS_BY_CURRENCY.get(currencyId);
   if (existing) return existing;
 
-  const client = createGrpcClient(currency);
-  CLIENTS_BY_CURRENCY.set(currency.id, client);
+  const client = createGrpcClient(currencyId);
+  CLIENTS_BY_CURRENCY.set(currencyId, client);
   return client;
 }
 
 export async function withClient<T>(
-  currency: CryptoCurrency,
+  currencyId: string,
   execute: (client: GRPCClient) => Promise<T>,
   retries = DEFAULT_RETRIES,
 ): Promise<T> {
-  const client = getClient(currency);
+  const client = getClient(currencyId);
 
   return retry(() => execute(client), {
     maxRetry: retries,
@@ -199,35 +198,30 @@ async function streamToList<T>(stream: AsyncIterable<T>): Promise<T[]> {
 /**
  * Get the last finalized block information.
  *
- * Used by: history/lastBlock.ts
+ * Used exclusively by getOperations to determine the current blockchain height and validate minHeight.
  *
- * @param currency - The cryptocurrency configuration
+ * @param currencyId - The cryptocurrency ID
  * @returns Block metadata (height, hash, time) of the last finalized block
  */
-export async function getLastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
-  try {
-    return await withClient(currency, async client => {
-      return new Promise<BlockInfo>((resolve, reject) => {
-        client.GetConsensusInfo({}, (error, response) => {
-          if (error) {
-            reject(error);
-            return;
-          }
+async function getLastBlock(currencyId: string): Promise<BlockInfo> {
+  return withClient(currencyId, async client => {
+    return new Promise<BlockInfo>((resolve, reject) => {
+      client.GetConsensusInfo({}, (error, response) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-          const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
+        const { lastFinalizedBlockHeight, lastFinalizedBlock, lastFinalizedTime } = response;
 
-          resolve({
-            height: Number(lastFinalizedBlockHeight?.value || 0),
-            hash: lastFinalizedBlock?.value?.toString("hex") || "",
-            time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
-          });
+        resolve({
+          height: Number(lastFinalizedBlockHeight?.value || 0),
+          hash: lastFinalizedBlock?.value?.toString("hex") || "",
+          time: new Date(lastFinalizedTime?.value ? Number(lastFinalizedTime.value) : Date.now()),
         });
       });
     });
-  } catch (error) {
-    log("concordium-grpc", "getLastBlock", { error });
-    throw error;
-  }
+  });
 }
 
 function handleBlocksResponse(
@@ -253,7 +247,7 @@ function handleBlocksResponse(
  * Note: Concordium can have multiple blocks at the same height (forks),
  * but we typically use the first one as the canonical block.
  */
-async function getBlockHashesAtHeight(currency: CryptoCurrency, height: number): Promise<string[]> {
+async function getBlockHashesAtHeight(currencyId: string, height: number): Promise<string[]> {
   const fetchBlocks = (client: GRPCClient): Promise<string[]> => {
     return new Promise<string[]>((resolve, reject) => {
       client.GetBlocksAtHeight(
@@ -264,7 +258,7 @@ async function getBlockHashesAtHeight(currency: CryptoCurrency, height: number):
   };
 
   try {
-    return await withClient(currency, fetchBlocks);
+    return await withClient(currencyId, fetchBlocks);
   } catch (error) {
     log("concordium-grpc", "getBlockHashesAtHeight", { error });
     throw error;
@@ -278,9 +272,9 @@ async function getBlockHashesAtHeight(currency: CryptoCurrency, height: number):
  *
  * Converts gRPC response types to Ledger Live BlockInfo format.
  */
-async function getBlockInfo(currency: CryptoCurrency, blockHash: string): Promise<BlockInfo> {
+async function getBlockInfo(currencyId: string, blockHash: string): Promise<BlockInfo> {
   try {
-    return await withClient(currency, async client => {
+    return await withClient(currencyId, async client => {
       return new Promise<BlockInfo>((resolve, reject) => {
         client.GetBlockInfo(
           { given: { value: Buffer.from(blockHash, "hex") } },
@@ -308,50 +302,6 @@ async function getBlockInfo(currency: CryptoCurrency, blockHash: string): Promis
 }
 
 /**
- * Get block metadata by height, including parent block reference.
- *
- * Used by: history/getBlockInfo.ts
- *
- * Composes: getBlockHashesAtHeight + getBlockInfo (for block and parent)
- *
- * @param currency - The cryptocurrency configuration
- * @param height - Block height to query
- * @returns Block metadata with parent block reference (if height > 0)
- */
-export async function getBlockInfoByHeight(
-  currency: CryptoCurrency,
-  height: number,
-): Promise<BlockInfo> {
-  try {
-    const blockHashes = await getBlockHashesAtHeight(currency, height);
-
-    if (blockHashes.length === 0) {
-      throw new Error(`No blocks found at height ${height}`);
-    }
-
-    const blockHash = blockHashes[0];
-    const result = await getBlockInfo(currency, blockHash);
-
-    if (height > 0) {
-      const parentHashes = await getBlockHashesAtHeight(currency, height - 1);
-
-      if (parentHashes.length > 0) {
-        const parentBlockInfo = await getBlockInfo(currency, parentHashes[0]);
-        result.parent = {
-          height: parentBlockInfo.height,
-          hash: parentBlockInfo.hash!,
-        };
-      }
-    }
-
-    return result;
-  } catch (error) {
-    log("concordium-grpc", "getBlockInfoByHeight", { error });
-    throw error;
-  }
-}
-
-/**
  * Internal helper: Stream transaction events from a block.
  *
  * Wraps: GetBlockTransactionEvents gRPC method
@@ -360,11 +310,11 @@ export async function getBlockInfoByHeight(
  * filtering out non-account transactions and processing transfer effects.
  */
 async function getBlockTransactionEvents(
-  currency: CryptoCurrency,
+  currencyId: string,
   blockHash: string,
 ): Promise<AsyncIterable<BlockTransactionEvent>> {
   try {
-    return await withClient(currency, async client => {
+    return await withClient(currencyId, async client => {
       const request = {
         given: { value: Buffer.from(blockHash, "hex") },
       };
@@ -446,26 +396,26 @@ async function getBlockTransactionEvents(
  * Parses transaction events into Ledger Live Block format with operations
  * (transfers IN/OUT). Filters to account transactions only.
  *
- * @param currency - The cryptocurrency configuration
+ * @param currencyId - The cryptocurrency ID
  * @param height - Block height to query
  * @returns Full block with metadata and parsed transactions
  */
-export async function getBlockByHeight(currency: CryptoCurrency, height: number): Promise<Block> {
+export async function getBlockByHeight(currencyId: string, height: number): Promise<Block> {
   try {
-    const blockHashes = await getBlockHashesAtHeight(currency, height);
+    const blockHashes = await getBlockHashesAtHeight(currencyId, height);
 
     if (blockHashes.length === 0) {
       throw new Error(`No blocks found at height ${height}`);
     }
 
     const blockHash = blockHashes[0];
-    const info = await getBlockInfo(currency, blockHash);
+    const info = await getBlockInfo(currencyId, blockHash);
 
     if (height > 0) {
-      const parentHashes = await getBlockHashesAtHeight(currency, height - 1);
+      const parentHashes = await getBlockHashesAtHeight(currencyId, height - 1);
 
       if (parentHashes.length > 0) {
-        const parentBlockInfo = await getBlockInfo(currency, parentHashes[0]);
+        const parentBlockInfo = await getBlockInfo(currencyId, parentHashes[0]);
         info.parent = {
           height: parentBlockInfo.height,
           hash: parentBlockInfo.hash!,
@@ -473,7 +423,7 @@ export async function getBlockByHeight(currency: CryptoCurrency, height: number)
       }
     }
 
-    const transactionStream = await getBlockTransactionEvents(currency, blockHash);
+    const transactionStream = await getBlockTransactionEvents(currencyId, blockHash);
     const transactionEvents = await streamToList(transactionStream);
 
     const transactions: BlockTransaction[] = transactionEvents
@@ -525,7 +475,7 @@ export async function getBlockByHeight(currency: CryptoCurrency, height: number)
           feesPayer: sender,
         };
       })
-      .filter((tx): tx is BlockTransaction => tx !== null);
+      .filter(tx => tx !== null);
 
     return {
       info,
@@ -629,18 +579,18 @@ function processTransactionForAddress(
  * filtering for transactions where the address is sender or recipient.
  * Returns operations sorted by date (newest first).
  *
- * @param currency - The cryptocurrency configuration
+ * @param currencyId - The cryptocurrency ID
  * @param address - The account address to filter operations for
  * @param options - Pagination/filtering parameters (minHeight determines scan start)
- * @returns Array of operations and cursor (stringified next block height if more results, empty string otherwise)
+ * @returns Page containing matching operations and an optional cursor for pagination
  */
 export async function getOperations(
-  currency: CryptoCurrency,
+  currencyId: string,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   try {
-    const { height: currentHeight } = await getLastBlock(currency);
+    const { height: currentHeight } = await getLastBlock(currencyId);
 
     if (options.minHeight > currentHeight) {
       return { items: [], next: undefined };
@@ -654,14 +604,14 @@ export async function getOperations(
     const operations: Operation[] = [];
 
     for (let height = startHeight; height <= endHeight; height++) {
-      const blockHashes = await getBlockHashesAtHeight(currency, height);
+      const blockHashes = await getBlockHashesAtHeight(currencyId, height);
 
       if (blockHashes.length === 0) continue;
 
       const blockHash = blockHashes[0];
-      const blockInfo = await getBlockInfo(currency, blockHash);
+      const blockInfo = await getBlockInfo(currencyId, blockHash);
 
-      const transactionStream = await getBlockTransactionEvents(currency, blockHash);
+      const transactionStream = await getBlockTransactionEvents(currencyId, blockHash);
       const transactionEvents = await streamToList(transactionStream);
 
       for (const event of transactionEvents) {

@@ -6,7 +6,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { useCurrencyData } from "../useMarketDataProvider";
-import { countervaluesApi } from "../../state-manager/countervaluesApi";
+import { marketApi } from "../../state-manager/marketApi";
 import { server } from "@tests/server";
 import { createTestStore, createWrapper } from "@tests/test-helpers/testUtils";
 
@@ -27,13 +27,13 @@ describe("useCurrencyData", () => {
   afterEach(() => {
     server.events.removeListener("request:start", requestListener);
     server.resetHandlers();
-    store.dispatch(countervaluesApi.util.resetApiState());
+    store.dispatch(marketApi.util.resetApiState());
   });
 
   afterAll(() => server.close());
 
   beforeEach(() => {
-    store = createTestStore([countervaluesApi], { disableSerializableCheck: true });
+    store = createTestStore([marketApi], { disableSerializableCheck: true });
     requestCount = 0;
     lastRequestUrl = null;
     requestListener = ({ request }: { request: Request }) => {

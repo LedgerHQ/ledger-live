@@ -295,7 +295,7 @@ describe("sync.ts", () => {
       ]);
 
       mockListOperations.mockResolvedValue({
-        operations: [newOperation],
+        operations: [newOperation as any],
         nextCursor: null,
       });
 
@@ -665,7 +665,10 @@ describe("sync.ts", () => {
       });
 
       const accountWithOps = { ...mockInitialAccount, operations: [oldPublicOp] };
-      mockListOperations.mockResolvedValueOnce({ operations: [newPublicOp], nextCursor: null });
+      mockListOperations.mockResolvedValueOnce({
+        operations: [newPublicOp as any],
+        nextCursor: null,
+      });
       mockListPrivateOperations.mockResolvedValueOnce([newPrivateOp]);
       mockPatchPublicOperations.mockResolvedValueOnce([newPublicOp, oldPublicOp]);
 
@@ -755,7 +758,10 @@ describe("sync.ts", () => {
       mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
       const newPublicOp = getMockedOperation({ id: "pub_op", hash: "at1pub" });
       const privateRecord = getMockedRecord();
-      mockListOperations.mockResolvedValueOnce({ operations: [newPublicOp], nextCursor: null });
+      mockListOperations.mockResolvedValueOnce({
+        operations: [newPublicOp as any],
+        nextCursor: null,
+      });
       mockGetAccountOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
 
       await getAccountShape(

@@ -65,7 +65,7 @@ export default async () => {
       await initDetox();
       await launchApp();
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-      await NativeElementHelpers.waitForElementById("settings-icon", 120_000);
+      await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
 
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));

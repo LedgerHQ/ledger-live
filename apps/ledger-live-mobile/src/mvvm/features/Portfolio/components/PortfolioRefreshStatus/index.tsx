@@ -1,5 +1,6 @@
 import React from "react";
 import { Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,9 +9,9 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 import { usePortfolioRefreshStatusViewModel } from "./usePortfolioRefreshStatusViewModel";
+import { AnimatedCheckmark, CONTENT_FADE_MS } from "./AnimatedCheckmark";
 
 const FADE_DURATION_MS = 300;
-const CONTENT_FADE_MS = 150;
 const VISIBLE_HEIGHT = 60;
 
 const innerStyle = {
@@ -29,7 +30,7 @@ const StatusText = ({ testID, children }: { testID: string; children: string }) 
 );
 
 export const PortfolioRefreshStatus = () => {
-  const { isVisible, isRefreshing, refreshingLabel, upToDateLabel } =
+  const { isVisible, isRefreshing, outcome, refreshingLabel, upToDateLabel, syncErrorLabel } =
     usePortfolioRefreshStatusViewModel();
 
   const opacity = useSharedValue(0);
@@ -84,8 +85,22 @@ export const PortfolioRefreshStatus = () => {
       );
     }
 
-    if (isVisible) {
-      return <StatusText testID="portfolio-refresh-status-up-to-date">{upToDateLabel}</StatusText>;
+    if (outcome === "error") {
+      return (
+        <>
+          <Warning size={16} color="error" />
+          <StatusText testID="portfolio-refresh-status-error">{syncErrorLabel}</StatusText>
+        </>
+      );
+    }
+
+    if (outcome === "success") {
+      return (
+        <>
+          <AnimatedCheckmark />
+          <StatusText testID="portfolio-refresh-status-up-to-date">{upToDateLabel}</StatusText>
+        </>
+      );
     }
 
     return null;

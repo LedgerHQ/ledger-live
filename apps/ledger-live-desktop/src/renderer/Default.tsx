@@ -103,6 +103,7 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
+const Cryptos = lazy(() => import("LLD/features/Cryptos"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
 
 const LoaderWrapper = styled.div`
@@ -216,9 +217,11 @@ const RecoverPlayerWithFeatureToggle = () => {
 const MainAppContent = ({
   shouldDisplayMarketBanner,
   shouldDisplayWallet40MainNav,
+  shouldDisplayAssetSection,
 }: {
   shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
+  shouldDisplayAssetSection: boolean;
 }) => (
   <>
     <Routes>
@@ -237,6 +240,16 @@ const MainAppContent = ({
         <Route path="/" element={withSuspense(Dashboard)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
+        <Route
+          path="/cryptos"
+          element={
+            shouldDisplayAssetSection ? (
+              withSuspense(Cryptos)({})
+            ) : (
+              <Navigate to="/accounts" replace />
+            )
+          }
+        />
         <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
         <Route path="/card/:appId?" element={withSuspense(Card)({})} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
@@ -272,20 +285,19 @@ export const MainAppLayout = () => {
     shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
-  //TODO: Remove this once testing is done
-  const walletFeatureFlag = useFeature("lwdWallet40");
-  const walletParams = walletFeatureFlag?.params;
-  const backgroundEnabled = isWallet40Enabled && Boolean(walletParams?.background);
-  const backgroundImage = backgroundEnabled ? getPageBackground(pathname, theme) : undefined;
+  const backgroundImage = shouldDisplayWallet40MainNav
+    ? getPageBackground(pathname, theme)
+    : undefined;
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
 
   useEffect(() => {
-    if (backgroundEnabled) preloadBackgrounds();
-  }, [backgroundEnabled]);
+    if (shouldDisplayWallet40MainNav) preloadBackgrounds();
+  }, [shouldDisplayWallet40MainNav]);
 
   return (
     <>
@@ -310,6 +322,7 @@ export const MainAppLayout = () => {
           <MainAppContent
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+            shouldDisplayAssetSection={shouldDisplayAssetSection}
           />
         </div>
       ) : (
@@ -326,6 +339,7 @@ export const MainAppLayout = () => {
           <MainAppContent
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+            shouldDisplayAssetSection={shouldDisplayAssetSection}
           />
         </Box>
       )}

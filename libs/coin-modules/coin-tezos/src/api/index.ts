@@ -12,7 +12,11 @@ import {
   Stake,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getRevealFee } from "@taquito/taquito";
@@ -32,6 +36,7 @@ import {
 } from "../logic";
 import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import { getTezosToolkit } from "../logic/tezosToolkit";
+import { validateAddress } from "../logic/validateAddress";
 import api from "../network/tzkt";
 import {
   DUST_MARGIN_MUTEZ,
@@ -39,9 +44,9 @@ import {
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
-import type { TezosApi, TezosFeeEstimation } from "./types";
+import type { TezosFeeEstimation } from "./types";
 
-export function createApi(config: TezosConfig): TezosApi {
+export function createApi(config: TezosConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -62,8 +67,7 @@ export function createApi(config: TezosConfig): TezosApi {
     listOperations: operations,
     getStakes,
     validateIntent,
-    // required by signer to compute next valid sequence/counter
-    getSequence: async (address: string) => {
+    getNextSequence: async (address: string) => {
       const accountInfo = await api.getAccountByAddress(address);
       return accountInfo.type === "user" ? BigInt(accountInfo.counter + 1) : 0n;
     },
@@ -79,6 +83,7 @@ export function createApi(config: TezosConfig): TezosApi {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateAddress,
   };
 }
 

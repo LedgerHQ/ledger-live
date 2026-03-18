@@ -100,6 +100,11 @@ jest.mock("src/renderer/analytics/segment", () => ({
   useTrack: jest.fn(),
 }));
 
+jest.mock("src/renderer/analytics/originFlow", () => ({
+  getOriginFlow: jest.fn(() => ""),
+  setOriginFlow: jest.fn(),
+}));
+
 jest.mock("src/sentry/renderer", () => ({
   captureException: jest.fn(),
   captureBreadcrumb: jest.fn(),

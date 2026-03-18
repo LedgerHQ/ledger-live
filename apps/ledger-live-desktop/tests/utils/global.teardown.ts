@@ -10,7 +10,6 @@ export default async function globalTeardown() {
   if (process.env.CI) {
     // Hardcode specific feature flags for teardown
     const hardcodedFeatureFlags = {
-      welcomeScreenVideoCarousel: { enabled: false },
       noah: { enabled: false },
     };
 

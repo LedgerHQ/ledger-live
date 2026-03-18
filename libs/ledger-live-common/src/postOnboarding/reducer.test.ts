@@ -5,6 +5,7 @@ import reducer, {
   initialState,
   postOnboardingDeviceModelIdSelector,
   postOnboardingSelector,
+  walletEntryPointEligibleForPortfolioSelector,
 } from "./reducer";
 
 import {
@@ -13,6 +14,7 @@ import {
   setPostOnboardingActionCompleted,
   clearPostOnboardingLastActionCompleted,
   hidePostOnboardingWalletEntryPoint,
+  setPostOnboardingWalletEntryPointEligibility,
 } from "./actions";
 
 const initializationParamsA: Parameters<typeof initPostOnboarding> = [
@@ -31,6 +33,7 @@ const stateA0: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -50,6 +53,7 @@ const stateA1: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -69,6 +73,7 @@ const stateA2: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -88,6 +93,7 @@ const stateA3: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -107,6 +113,7 @@ const stateA4: PostOnboardingState = {
   deviceModelId: DeviceModelId.nanoX,
   walletEntryPointDismissed: true, // stateA3 -> hidePostOnboardingWalletEntryPoint()
   entryPointFirstDisplayedDate: null,
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [
     PostOnboardingActionId.claimMock,
     PostOnboardingActionId.migrateAssetsMock,
@@ -133,6 +140,7 @@ const stateB0 = {
   deviceModelId: DeviceModelId.nanoS,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [PostOnboardingActionId.claimMock],
   actionsCompleted: { [PostOnboardingActionId.claimMock]: false },
   lastActionCompleted: null,
@@ -144,6 +152,7 @@ const stateB1 = {
   deviceModelId: DeviceModelId.nanoS,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [PostOnboardingActionId.claimMock],
   actionsCompleted: { [PostOnboardingActionId.claimMock]: true },
   lastActionCompleted: PostOnboardingActionId.claimMock,
@@ -162,6 +171,7 @@ const stateC0 = {
   deviceModelId: DeviceModelId.nanoSP,
   walletEntryPointDismissed: false,
   entryPointFirstDisplayedDate: new Date("2020-01-20"),
+  walletEntryPointEligibleForPortfolio: null,
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
@@ -223,6 +233,36 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toEqual(stateA4);
   });
 
+  it("it should handle setPostOnboardingWalletEntryPointEligibility", () => {
+    state = stateA0;
+    state = reducer(state, setPostOnboardingWalletEntryPointEligibility(true));
+    expect(state.walletEntryPointEligibleForPortfolio).toBe(true);
+
+    state = reducer(state, setPostOnboardingWalletEntryPointEligibility(false));
+    expect(state.walletEntryPointEligibleForPortfolio).toBe(false);
+
+    const stateBefore = state;
+    state = reducer(state, {
+      type: "POST_ONBOARDING_SET_WALLET_ENTRY_POINT_ELIGIBILITY",
+      // @ts-expect-error - testing with null payload
+      payload: null,
+    });
+    expect(state).toBe(stateBefore);
+    expect(state.walletEntryPointEligibleForPortfolio).toBe(false);
+
+    state = reducer(state, {
+      type: "POST_ONBOARDING_SET_WALLET_ENTRY_POINT_ELIGIBILITY",
+      payload: undefined,
+    });
+    expect(state).toBe(stateBefore);
+    state = reducer(state, {
+      type: "POST_ONBOARDING_SET_WALLET_ENTRY_POINT_ELIGIBILITY",
+      // @ts-expect-error - testing with string payload
+      payload: "true",
+    });
+    expect(state).toBe(stateBefore);
+  });
+
   it("it should handle successive actions properly", () => {
     // initializing state with new device & set of actions
     state = reducer(state, initPostOnboarding(...initializationParamsA));
@@ -275,7 +315,7 @@ describe("postOnboarding reducer (& action creators)", () => {
 
 describe("postOnboarding selectors", () => {
   it("should keep valid device ids", () => {
-    const stateValidDeviceId = {
+    const stateValidDeviceId: PostOnboardingState = {
       deviceModelId: DeviceModelId.nanoX,
       walletEntryPointDismissed: false,
       entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -283,6 +323,7 @@ describe("postOnboarding selectors", () => {
       actionsCompleted: {},
       lastActionCompleted: null,
       postOnboardingInProgress: false,
+      walletEntryPointEligibleForPortfolio: null,
     };
     const storeState = { postOnboarding: stateValidDeviceId };
 
@@ -303,7 +344,8 @@ describe("postOnboarding selectors", () => {
   });
 
   it('should sanitize "nanoFTS" device ids to "stax"', () => {
-    const stateValidDeviceId = {
+    const stateValidDeviceId: PostOnboardingState = {
+      // @ts-expect-error - testing with "nanoFTS" device id
       deviceModelId: "nanoFTS",
       walletEntryPointDismissed: false,
       entryPointFirstDisplayedDate: new Date("2020-01-20"),
@@ -311,7 +353,8 @@ describe("postOnboarding selectors", () => {
       actionsCompleted: {},
       lastActionCompleted: null,
       postOnboardingInProgress: false,
-    } as unknown as PostOnboardingState;
+      walletEntryPointEligibleForPortfolio: null,
+    };
     const storeState = { postOnboarding: stateValidDeviceId };
 
     const postOnboarding = postOnboardingSelector(storeState);
@@ -331,5 +374,26 @@ describe("postOnboarding selectors", () => {
 
     const deviceModelId = postOnboardingDeviceModelIdSelector(storeState);
     expect(deviceModelId).toEqual(DeviceModelId.stax);
+  });
+
+  it("should return walletEntryPointEligibleForPortfolio from state", () => {
+    const storeStateTrue = {
+      postOnboarding: {
+        ...initialState,
+        walletEntryPointEligibleForPortfolio: true,
+      },
+    };
+    expect(walletEntryPointEligibleForPortfolioSelector(storeStateTrue)).toBe(true);
+
+    const storeStateFalse = {
+      postOnboarding: {
+        ...initialState,
+        walletEntryPointEligibleForPortfolio: false,
+      },
+    };
+    expect(walletEntryPointEligibleForPortfolioSelector(storeStateFalse)).toBe(false);
+
+    const storeStateNull = { postOnboarding: initialState };
+    expect(walletEntryPointEligibleForPortfolioSelector(storeStateNull)).toBe(null);
   });
 });

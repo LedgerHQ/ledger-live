@@ -15,15 +15,10 @@
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/live-env",
-    "rxjs"
-  ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
+  "ignoreUnused": ["@ledgerhq/live-env", "rxjs"],
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
   "ignoreUnimported": [
+    "src/deviceTransactionConfig.ts",
     "src/globals.d.ts",
     "src/supportedFeatures.ts"
   ]

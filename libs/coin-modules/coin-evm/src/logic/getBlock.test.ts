@@ -1,10 +1,15 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
+import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
 import { getNodeApi } from "../network/node";
+import { safeEncodeEIP55 } from "../utils";
 import { getBlock } from "./getBlock";
 
 jest.mock("../network/node");
+jest.mock("../network/explorer/etherscan", () => ({
+  getInternalTransactionsByBlock: jest.fn().mockResolvedValue([]),
+}));
 
 describe("getBlock", () => {
   beforeEach(() => {
@@ -81,11 +86,14 @@ describe("getBlock", () => {
     expect(result.transactions[0].hash).toBe("0xtx1");
 
     // Check native transfer operations (tx1 has value: 1000)
-    const tx1NativeOps = result.transactions[0].operations.filter(op => op.asset.type === "native");
+    const tx1Operations = result.transactions[0].operations as Array<{
+      asset: { type: string; assetReference?: string };
+    }>;
+    const tx1NativeOps = tx1Operations.filter(op => op.asset.type === "native");
     expect(tx1NativeOps).toHaveLength(2); // sender and receiver
 
     // Check ERC20 transfer operations (tx1 has one ERC20 transfer)
-    const tx1Erc20Ops = result.transactions[0].operations.filter(op => op.asset.type === "erc20");
+    const tx1Erc20Ops = tx1Operations.filter(op => op.asset.type === "erc20");
     expect(tx1Erc20Ops).toHaveLength(2); // sender and receiver
     expect(tx1Erc20Ops[0].asset.assetReference).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
 
@@ -217,5 +225,107 @@ describe("getBlock", () => {
 
     await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow("timeout");
     expect(mockGetTransaction).not.toHaveBeenCalled();
+  });
+
+  it("merges internal transactions from explorer into block transactions", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    const mockGetBlockByHeight = jest.fn().mockResolvedValueOnce({
+      hash: "0xabc123",
+      height: 12345,
+      timestamp: new Date("2025-01-15T10:30:00Z").getTime(),
+      parentHash: "0xparent123",
+      transactions: [
+        {
+          hash: "0xtx1",
+          value: "0",
+          from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          to: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        },
+      ],
+    });
+    const mockGetBlockReceipts = jest.fn().mockResolvedValue([
+      {
+        hash: "0xtx1",
+        gasUsed: "21000",
+        gasPrice: "20000000000",
+        status: 1,
+        erc20Transfers: [],
+      },
+    ]);
+
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: mockGetBlockByHeight,
+      getBlockReceipts: mockGetBlockReceipts,
+      getTransaction: jest.fn(),
+    } as any);
+
+    const from = "0x224d8fd7ab6ad4c6eb4611ce56ef35dec2277f03";
+    const to = "0x9f41fe989c556d8b312ce398b7f7b5ac90919a73";
+    const amount = 240000481795678944n;
+    const internalTx = {
+      blockNumber: "12345",
+      timeStamp: "1635100060",
+      hash: "0xtx1",
+      from,
+      to,
+      value: amount.toString(),
+      contractAddress: "",
+      input: "",
+      type: "call",
+      gas: "21000",
+      gasUsed: "0",
+      traceId: "0",
+      isError: "0",
+      errCode: "",
+    };
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockResolvedValueOnce([internalTx]);
+
+    const result = await getBlock({} as CryptoCurrency, 12345);
+
+    const encodedFrom = safeEncodeEIP55(from);
+    const encodedTo = safeEncodeEIP55(to);
+    expect(result.transactions[0].operations).toContainEqual(
+      expect.objectContaining({
+        type: "transfer",
+        address: encodedFrom,
+        peer: encodedTo,
+        asset: { type: "native" },
+        amount: -amount,
+      }),
+    );
+    expect(result.transactions[0].operations).toContainEqual(
+      expect.objectContaining({
+        type: "transfer",
+        address: encodedTo,
+        peer: encodedFrom,
+        asset: { type: "native" },
+        amount: amount,
+      }),
+    );
+  });
+
+  it("fails when getInternalTransactionsByBlock fails", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValue({
+        hash: "0xabc",
+        height: 12345,
+        timestamp: Date.now(),
+        parentHash: "0xparent",
+        transactions: [],
+      }),
+      getBlockReceipts: jest.fn().mockResolvedValue([]),
+      getTransaction: jest.fn(),
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow("explorer error");
   });
 });

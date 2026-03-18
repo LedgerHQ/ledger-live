@@ -83,13 +83,13 @@ describe("useStablecoinTickers", () => {
     expect(result.current.tickers).toBe(firstRef);
   });
 
-  it("should pass AssetCategory.Stablecoin to the query", () => {
+  it("should pass AssetCategory.Stablecoins to the query", () => {
     mockUseGetAssetsByCategoryQuery.mockReturnValue(defaultMockValues);
 
     renderHook(() => useStablecoinTickers(hookParams.product, hookParams.version));
 
     expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith({
-      category: AssetCategory.Stablecoin,
+      category: AssetCategory.Stablecoins,
       product: hookParams.product,
       version: hookParams.version,
     });

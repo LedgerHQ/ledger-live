@@ -48,7 +48,7 @@ function buildAccountBridge(signerContext: SignerContext) {
   });
 
   const getAddress = resolver(signerContext);
-  const injectGetAddressParams = (account: BitcoinAccount): any => {
+  const injectGetAddressParams = (account: BitcoinAccount) => {
     const perCoin = perCoinLogic[account.currency.id];
 
     if (perCoin && perCoin.injectGetAddressParams) {

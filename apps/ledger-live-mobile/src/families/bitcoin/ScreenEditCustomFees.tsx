@@ -13,12 +13,13 @@ import LText from "~/components/LText";
 import TextInput from "~/components/FocusedTextInput";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { popToScreen } from "~/helpers/navigationHelpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import type { BitcoinEditTransactionParamList } from "./EditTransactionFlow/EditTransactionParamList";
 
 const options = {
   title: i18next.t("send.summary.fees"),
@@ -28,11 +29,22 @@ const options = {
 type Navigation = CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.BitcoinEditCustomFees>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.BitcoinEditCustomFees>
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.BitcoinEditCustomFees>,
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.BitcoinEditCustomFees>
+  | StackNavigatorProps<BitcoinEditTransactionParamList, ScreenName.BitcoinEditCustomFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 type Props = Navigation;
+
+const popToBitcoinEditSummary = (
+  navigation: { popTo: (navigator: NavigatorName, params: unknown) => void },
+  params: unknown,
+) => {
+  navigation.popTo(NavigatorName.BitcoinEditTransaction, {
+    screen: ScreenName.EditTransactionSummary,
+    params,
+  });
+};
 
 function BitcoinEditCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -52,17 +64,30 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   const onValidateText = useCallback(() => {
     if (BigNumber(ownSatPerByte || 0).isZero()) return;
     Keyboard.dismiss();
-    setSatPerByte && setSatPerByte(BigNumber(ownSatPerByte || 0));
+    if (setSatPerByte) {
+      setSatPerByte(BigNumber(ownSatPerByte || 0));
+    }
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
-    popToScreen(navigation, currentNavigation, {
+    const updatedTransaction = bridge.updateTransaction(transaction, {
+      feePerByte: BigNumber(ownSatPerByte || 0),
+      feesStrategy: "custom",
+    });
+
+    const nextParams = {
       ...route.params,
       accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        feePerByte: BigNumber(ownSatPerByte || 0),
-        feesStrategy: "custom",
-      }),
-    });
+      transaction: updatedTransaction,
+    };
+
+    const isBitcoinEditFlow = currentNavigation === ScreenName.EditTransactionSummary;
+
+    if (isBitcoinEditFlow) {
+      popToBitcoinEditSummary(navigation, nextParams);
+      return;
+    }
+
+    popToScreen(navigation, currentNavigation, nextParams);
   }, [setSatPerByte, ownSatPerByte, account, parentAccount, route.params, navigation, transaction]);
   return (
     <SafeAreaView

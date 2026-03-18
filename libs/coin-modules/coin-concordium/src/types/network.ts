@@ -1,3 +1,55 @@
+/**
+ * Response from /v0/consensusInfo
+ * Subset of Concordium node's GetConsensusInfo relevant for wallet operations
+ */
+export interface ConsensusInfoResponse {
+  bestBlock: string;
+  bestBlockHeight: number;
+  genesisBlock: string;
+  genesisTime: string;
+  lastFinalizedBlock: string;
+  lastFinalizedBlockHeight: number;
+  lastFinalizedTime?: string;
+  epochDuration: number;
+  protocolVersion: number;
+  genesisIndex: number;
+  currentEraGenesisBlock: string;
+  currentEraGenesisTime: string;
+  slotDuration?: number;
+  concordiumBFTStatus?: {
+    currentTimeoutDuration: number;
+    currentRound: number;
+    currentEpoch: number;
+    triggerBlockTime: string;
+  };
+}
+
+/**
+ * Response from /v0/blockInfo/{blockHash}
+ */
+export interface BlockInfoResponse {
+  blockHash: string;
+  blockHeight: number;
+  blockSlotTime: string;
+  blockParent: string;
+  blockBaker: number | null;
+  finalized: boolean;
+  transactionCount: number;
+  transactionEnergyCost: number;
+  transactionsSize: number;
+  genesisIndex: number;
+  eraBlockHeight: number;
+  protocolVersion: number;
+  round?: number;
+  epoch?: number;
+}
+
+/**
+ * Response from /v0/blocksAtHeight/{blockHeight}
+ * Returns an array of block hashes at the given height.
+ */
+export type BlocksAtHeightResponse = string[];
+
 export interface TransactionQueryParams {
   limit?: number;
   order?: "a" | "d"; // ascending or descending

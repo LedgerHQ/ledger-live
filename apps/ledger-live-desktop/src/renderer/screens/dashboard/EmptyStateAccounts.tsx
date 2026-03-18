@@ -11,6 +11,8 @@ import { useTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 
@@ -28,6 +30,12 @@ const EmptyStateAccounts = () => {
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     "emptyStateAccounts",
   );
+
+  const handleAddAccount = useCallback(() => {
+    setOriginFlow(HOOKS_TRACKING_LOCATIONS.addAccountModal);
+    openAssetFlow();
+  }, [openAssetFlow]);
+
   return (
     <Box
       alignItems="center"
@@ -71,7 +79,7 @@ const EmptyStateAccounts = () => {
         >
           <Button
             primary
-            onClick={openAssetFlow}
+            onClick={handleAddAccount}
             data-testid="portfolio-empty-state-add-account-button"
           >
             {t("emptyState.accounts.buttons.addAccount")}

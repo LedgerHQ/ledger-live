@@ -23,6 +23,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   const { colors } = useTheme();
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
+  const { isEmbeddedSwap, sponsored } = route.params;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const syncAccounts = useSyncAllAccounts();
   const supportsSwapTabRoute = hasSwapTabRoute(navigation.getState());
@@ -80,6 +81,8 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         providerName={provider}
         targetCurrency={toCurrency?.id}
         sourceCurrency={fromCurrency?.id}
+        isEmbeddedSwap={isEmbeddedSwap !== undefined ? String(isEmbeddedSwap) : undefined}
+        sponsored={sponsored !== undefined ? String(sponsored) : undefined}
         avoidDuplicates={true}
       />
       <View style={styles.wrapper}>

@@ -7,7 +7,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Observable, of, Subscription, throwError } from "rxjs";
 import {
   AccountShapeInfo,
   bip32asBuffer,
@@ -64,6 +64,10 @@ describe("makeSync", () => {
     // When
     const accountUpdater = makeSync({
       getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
+      postSync: (initial: Account, acc: Account) => ({
+        ...acc,
+        lastSyncDate: new Date("2024-05-12T17:04:42"),
+      }),
     })(account, {} as SyncConfig);
     const updater = await firstValueFrom(accountUpdater);
     const newAccount = updater(account);
@@ -144,6 +148,166 @@ describe("makeSync", () => {
 
     // Then
     expect(newAccount.id).toEqual(account.id);
+  });
+
+  it("supports getAccountShape returning an Observable", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const accountUpdater = makeSync({
+      getAccountShape: () => of({} as Account),
+    })(account, {} as SyncConfig);
+    const updater = await firstValueFrom(accountUpdater);
+    const newAccount = updater(account);
+    expect(newAccount).toBeDefined();
+    expect(newAccount.id).not.toEqual(account.id);
+  });
+
+  it("emits multiple updater events when getAccountShape Observable emits multiple shapes", async () => {
+    const account = createAccount({
+      id: "multi",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const sync$ = makeSync({
+      getAccountShape: () => of({} as Account, {} as Account, {} as Account),
+    })(account, {} as SyncConfig);
+    const updaters: Array<(a: Account) => Account> = [];
+    await new Promise<void>((resolve, reject) => {
+      let sub: ReturnType<typeof sync$.subscribe> | null = null;
+      sub = sync$.subscribe({
+        next: updater => updaters.push(updater),
+        error: err => {
+          sub?.unsubscribe();
+          reject(err);
+        },
+        complete: () => resolve(),
+      });
+    });
+    expect(updaters).toHaveLength(3);
+  });
+
+  it("tears down inner subscription when sync Observable is unsubscribed", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    let resolveShape: (value: Partial<Account>) => void;
+    const shapePromise = new Promise<Partial<Account>>(resolve => {
+      resolveShape = resolve;
+    });
+    const nextSpy = jest.fn();
+    const completeSpy = jest.fn();
+    const sync$ = makeSync({
+      getAccountShape: () => shapePromise,
+    })(account, {} as SyncConfig);
+    const sub = sync$.subscribe({
+      next: nextSpy,
+      complete: completeSpy,
+    });
+    sub.unsubscribe();
+    resolveShape!({} as Account);
+    await new Promise(r => setImmediate(r));
+    expect(nextSpy).not.toHaveBeenCalled();
+    expect(completeSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not forward observer error when unsubscribed before shape errors", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    let rejectShape: (reason: unknown) => void;
+    const shapePromise = new Promise<Partial<Account>>((_, reject) => {
+      rejectShape = reject;
+    });
+    const errorSpy = jest.fn();
+    const sync$ = makeSync({
+      getAccountShape: () => shapePromise,
+    })(account, {} as SyncConfig);
+    const sub = sync$.subscribe({ error: errorSpy });
+    sub.unsubscribe();
+    rejectShape!(new Error("shape error"));
+    await new Promise(r => setImmediate(r));
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not forward getAccountShape rejection when already unsubscribed", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    let rejectGetAccountShape: (reason: unknown) => void;
+    const getAccountShapePromise = new Promise<Partial<Account>>((_, reject) => {
+      rejectGetAccountShape = reject;
+    });
+    const errorSpy = jest.fn();
+    const sync$ = makeSync({
+      getAccountShape: () => getAccountShapePromise,
+    })(account, {} as SyncConfig);
+    const sub = sync$.subscribe({ error: errorSpy });
+    sub.unsubscribe();
+    rejectGetAccountShape!(new Error("getAccountShape failed"));
+    await new Promise(r => setImmediate(r));
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("unsubscribes inner subscription when cancelled during shape subscribe", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const nextSpy = jest.fn();
+    const completeSpy = jest.fn();
+    const errorSpy = jest.fn();
+    // eslint-disable-next-line prefer-const
+    let sub: Subscription;
+    const sync$ = makeSync({
+      getAccountShape: () =>
+        new Observable<Partial<Account>>(() => {
+          setImmediate(() => sub?.unsubscribe());
+        }),
+    })(account, {} as SyncConfig);
+    sub = sync$.subscribe({
+      next: nextSpy,
+      complete: completeSpy,
+      error: errorSpy,
+    });
+    await new Promise(r => setImmediate(r));
+    expect(nextSpy).not.toHaveBeenCalled();
+    expect(completeSpy).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("errors when getAccountShape rejects", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const sync$ = makeSync({
+      getAccountShape: () => Promise.reject(new Error("getAccountShape failed")),
+    })(account, {} as SyncConfig);
+    await expect(firstValueFrom(sync$)).rejects.toThrow("getAccountShape failed");
+  });
+
+  it("errors when getAccountShape returns an Observable that errors", async () => {
+    const account = createAccount({
+      id: "12",
+      creationDate: new Date("2024-05-12T17:04:12"),
+      lastSyncDate: new Date("2024-05-12T17:04:12"),
+    });
+    const sync$ = makeSync({
+      getAccountShape: (_accountShape, _config) =>
+        throwError(() => new Error("Observable shape error")),
+    })(account, {} as SyncConfig);
+    await expect(firstValueFrom(sync$)).rejects.toThrow("Observable shape error");
   });
 });
 
@@ -489,6 +653,212 @@ describe("makeScanAccounts", () => {
         }
       },
     });
+  });
+
+  it("emits discovered event before complete", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    const events: Array<{ type: string; account?: Account }> = [];
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: info =>
+        Promise.resolve({
+          id: `acc-${info.index}`,
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    await new Promise<void>((resolve, reject) => {
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).subscribe({
+        next: event => events.push(event),
+        complete: () => resolve(),
+        error: reject,
+      });
+    });
+    const discovered = events.filter(e => e.type === "discovered");
+    expect(discovered.length).toBeGreaterThan(0);
+    expect(discovered.map(e => e.account?.id)).toContain("acc-0");
+    const lastEvent = events[events.length - 1];
+    expect(lastEvent.type).toBe("discovered");
+  });
+
+  it("accepts Observable from getAccountShape", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () =>
+        of({
+          id: "obs-acc-id",
+          balanceHistoryCache: createEmptyHistoryCache(),
+        }),
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    const result = await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }),
+    );
+    expect(result.type).toBe("discovered");
+    expect(result.account.id).toBe("obs-acc-id");
+  });
+
+  it("handles multi-emission Observable from getAccountShape", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    const events: Array<{ type: string; account?: Account }> = [];
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: (info: AccountShapeInfo) =>
+        new Observable(subscriber => {
+          subscriber.next({
+            id: `multi-obs-acc-${info.index}-intermediate`,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          subscriber.next({
+            id: `multi-obs-acc-${info.index}-final`,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+          subscriber.complete();
+        }),
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    await new Promise<void>((resolve, reject) => {
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).subscribe({
+        next: event => events.push(event),
+        complete: () => resolve(),
+        error: reject,
+      });
+    });
+    const discovered = events.filter(e => e.type === "discovered");
+    expect(discovered.length).toBeGreaterThan(0);
+    const firstDiscovered = discovered[0];
+    expect(firstDiscovered.account?.id).toBe("multi-obs-acc-0-final");
+  });
+  it("propagates error when getAccountShape Observable errors", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () => throwError(() => new Error("Observable shape error")),
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    await expect(
+      firstValueFrom(
+        scanAccounts({
+          currency,
+          deviceId: "deviceId",
+          syncConfig: { paginationConfig: {} },
+        }),
+      ),
+    ).rejects.toThrow("Observable shape error");
+  });
+
+  it("when empty account skip is hit, continues to next derivation mode and still emits accounts", async () => {
+    const currency = getCryptoCurrencyById("ethereum");
+    const resolversByPath: Record<string, { address: string; path: string; publicKey: string }> =
+      {};
+    const getAddressFn = jest.fn((_deviceId: string, opts: { path: string }) => {
+      const path = opts.path;
+      if (!resolversByPath[path]) {
+        resolversByPath[path] = {
+          address: `0x${path.slice(-8)}`,
+          path,
+          publicKey: `pk-${path}`,
+        };
+      }
+      return Promise.resolve(resolversByPath[path]);
+    });
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: info => {
+        if (info.derivationMode === "ethM") {
+          return Promise.resolve({
+            id: `ethM-${info.index}`,
+            used: false,
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+        }
+        return Promise.resolve({
+          id: "ethMM-account",
+          used: true,
+          balanceHistoryCache: createEmptyHistoryCache(),
+        });
+      },
+      getAddressFn,
+    });
+    const events: Array<{ type: string; account?: Account }> = [];
+    await new Promise<void>((resolve, reject) => {
+      scanAccounts({
+        currency,
+        deviceId: "deviceId",
+        syncConfig: { paginationConfig: {} },
+      }).subscribe({
+        next: e => events.push(e),
+        complete: () => resolve(),
+        error: reject,
+      });
+    });
+    const discovered = events.filter(e => e.type === "discovered");
+    expect(discovered.length).toBeGreaterThanOrEqual(1);
+    const ethMMAccount = discovered.find(e => e.account?.id === "ethMM-account");
+    expect(ethMMAccount).toBeDefined();
+    expect(ethMMAccount!.account!.used).toBe(true);
+  });
+
+  it("does not call complete when subscription is unsubscribed before scan finishes", async () => {
+    const addressResolver = {
+      address: "address",
+      path: "path",
+      publicKey: "publicKey",
+    };
+    const currency = getCryptoCurrencyById("algorand");
+    let resolveFirstShape: (value: Partial<Account>) => void;
+    const firstShapePromise = new Promise<Partial<Account>>(resolve => {
+      resolveFirstShape = resolve;
+    });
+    const completeSpy = jest.fn();
+    const scanAccounts = makeScanAccounts({
+      getAccountShape: () => firstShapePromise,
+      getAddressFn: () => Promise.resolve(addressResolver),
+    });
+    const sub = scanAccounts({
+      currency,
+      deviceId: "deviceId",
+      syncConfig: { paginationConfig: {} },
+    }).subscribe({
+      next: () => {},
+      complete: completeSpy,
+      error: () => {},
+    });
+    sub.unsubscribe();
+    resolveFirstShape!({
+      id: "late-acc",
+      balanceHistoryCache: createEmptyHistoryCache(),
+    });
+    await new Promise(r => setImmediate(r));
+    expect(completeSpy).not.toHaveBeenCalled();
   });
 });
 

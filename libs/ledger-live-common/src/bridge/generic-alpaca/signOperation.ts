@@ -99,7 +99,7 @@ export const genericSignOperation =
 
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-            const sequenceNumber = await alpacaApi.getSequence(transactionIntent.sender);
+            const sequenceNumber = await alpacaApi.getNextSequence(transactionIntent.sender);
             transactionIntent.sequence = sequenceNumber;
           }
 

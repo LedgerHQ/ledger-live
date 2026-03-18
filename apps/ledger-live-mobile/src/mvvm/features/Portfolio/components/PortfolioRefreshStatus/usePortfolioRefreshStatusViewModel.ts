@@ -1,54 +1,66 @@
 import { useState, useEffect, useRef } from "react";
-import { formatTimeAgo, MINUTE_MS } from "@ledgerhq/live-common/utils/timeAgo";
 import { useSelector } from "~/context/hooks";
-import { useTranslation, useLocale } from "~/context/Locale";
-import { selectIsRefreshing, selectLastSyncTimestampSnapshot } from "~/reducers/portfolioRefresh";
+import { useTranslation } from "~/context/Locale";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { selectIsRefreshing } from "~/reducers/portfolioRefresh";
+import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 
 export const UP_TO_DATE_VISIBLE_DURATION_MS = 3_000;
+
+type RefreshOutcome = "success" | "error" | null;
 
 interface UsePortfolioRefreshStatusViewModelResult {
   isVisible: boolean;
   isRefreshing: boolean;
   refreshingLabel: string;
   upToDateLabel: string;
+  syncErrorLabel: string;
+  outcome: RefreshOutcome;
 }
 
 export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusViewModelResult => {
   const { t } = useTranslation();
-  const { locale } = useLocale();
-  const isRefreshing = useSelector(selectIsRefreshing);
-  const lastSyncTimestampSnapshot = useSelector(selectLastSyncTimestampSnapshot);
+  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
+  const legacyIsRefreshing = useSelector(selectIsRefreshing);
+  const { syncPhase } = usePortfolioBalance();
 
-  const [showUpToDate, setShowUpToDate] = useState(false);
-  const prevIsRefreshing = useRef(isRefreshing);
+  const isSyncing = shouldDisplayBalanceRefreshRework
+    ? syncPhase === "syncing"
+    : legacyIsRefreshing;
+
+  const [outcome, setOutcome] = useState<RefreshOutcome>(null);
+  const prevIsSyncingRef = useRef(isSyncing);
 
   useEffect(() => {
-    if (prevIsRefreshing.current && !isRefreshing) {
-      setShowUpToDate(true);
-      const timer = setTimeout(() => setShowUpToDate(false), UP_TO_DATE_VISIBLE_DURATION_MS);
-      prevIsRefreshing.current = isRefreshing;
-      return () => clearTimeout(timer);
+    if (isSyncing) {
+      setOutcome(null);
+      prevIsSyncingRef.current = true;
+      return;
     }
-    prevIsRefreshing.current = isRefreshing;
-  }, [isRefreshing]);
 
-  const isStale =
-    lastSyncTimestampSnapshot !== null && Date.now() - lastSyncTimestampSnapshot >= MINUTE_MS;
+    if (!prevIsSyncingRef.current) return;
+    prevIsSyncingRef.current = false;
 
-  const timeAgo =
-    isStale && lastSyncTimestampSnapshot !== null
-      ? formatTimeAgo(lastSyncTimestampSnapshot, locale)
-      : null;
+    const result: RefreshOutcome = syncPhase === "failed" ? "error" : "success";
+    setOutcome(result);
 
-  const refreshingLabel =
-    timeAgo === null
-      ? t("portfolio.refreshStatus.refreshingInitial")
-      : t("portfolio.refreshStatus.refreshing", { timeAgo });
+    const timer = setTimeout(() => setOutcome(null), UP_TO_DATE_VISIBLE_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [isSyncing, syncPhase]);
+
+  useEffect(() => {
+    if (!shouldDisplayBalanceRefreshRework) return;
+    if (outcome === "success" && syncPhase === "failed") {
+      setOutcome("error");
+    }
+  }, [syncPhase, outcome, shouldDisplayBalanceRefreshRework]);
 
   return {
-    isVisible: isRefreshing || showUpToDate,
-    isRefreshing,
-    refreshingLabel,
+    isVisible: isSyncing || outcome !== null,
+    isRefreshing: isSyncing,
+    outcome,
+    refreshingLabel: t("portfolio.refreshStatus.refreshing"),
     upToDateLabel: t("portfolio.refreshStatus.upToDate"),
+    syncErrorLabel: t("portfolio.refreshStatus.syncError"),
   };
 };

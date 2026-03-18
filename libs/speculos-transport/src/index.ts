@@ -122,8 +122,8 @@ async function isPortAvailable(port: number): Promise<boolean> {
 }
 
 async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
-  const BASE_PORT = 30000;
-  const MAX_PORT = 60000;
+  const BASE_PORT = 61000;
+  const MAX_PORT = 65535;
   const MAX_PORT_RETRIES = 10;
 
   for (let attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
@@ -331,6 +331,18 @@ export async function createSpeculosDevice(
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
+    } else if (data.includes("is in use by another program")) {
+      if (maxRetry > 0) {
+        log("speculos", "port in use by another program, retrying with next port");
+        await destroy();
+        resolveReady(false);
+      } else {
+        rejectReady(
+          new Error(
+            `Speculos could not bind to port (already in use). Another container or process may be holding it. Last stderr: ${latestStderr || ""}`,
+          ),
+        );
+      }
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");

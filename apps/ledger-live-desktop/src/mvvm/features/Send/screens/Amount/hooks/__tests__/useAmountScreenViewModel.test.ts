@@ -14,12 +14,31 @@ import { createMockAccount } from "../../../Recipient/__integrations__/__fixture
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/coin-framework/account/helpers");
 jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+  getSendDescriptor: jest.fn(),
   sendFeatures: {
     hasFeePresets: () => false,
     shouldEstimateFeePresetsWithBridge: () => false,
     hasCustomFees: () => false,
     hasCoinControl: () => false,
+    getFeePresetOptions: jest.fn(() => []),
   },
+}));
+
+const onSelectFeeStrategy = jest.fn();
+
+jest.mock("../../../../hooks/useNetworkFees", () => ({
+  useNetworkFees: () => ({
+    feesRowLabel: "Network Fees",
+    feesRowValue: "--",
+    feesRowStrategyLabel: "Medium",
+    showNetworkFees: true,
+    showFeePresets: false,
+    selectedFeeStrategy: null,
+    onSelectFeeStrategy,
+    feePresetOptions: [],
+    fiatByPreset: {},
+    legendByPreset: {},
+  }),
 }));
 
 jest.mock("../useAmountInput", () => ({
@@ -38,22 +57,6 @@ jest.mock("../useAmountInput", () => ({
 
 jest.mock("../useQuickActions", () => ({
   useQuickActions: () => [],
-}));
-
-jest.mock("../useFeeInfo", () => ({
-  useFeeInfo: () => ({ feeSummary: null }),
-}));
-
-jest.mock("../useFeePresetOptions", () => ({
-  useFeePresetOptions: () => [],
-}));
-
-jest.mock("../useFeePresetFiatValues", () => ({
-  useFeePresetFiatValues: () => ({}),
-}));
-
-jest.mock("../useFeePresetLegends", () => ({
-  useFeePresetLegends: () => ({}),
 }));
 
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError");
@@ -155,6 +158,83 @@ describe("useAmountScreenViewModel", () => {
     expect(result.current.amountMessage).toEqual({
       type: "error",
       text: "StellarSourceHasMultiSign",
+    });
+  });
+
+  describe("onSelectFeeStrategy", () => {
+    function buildBaseParams(currency = getCryptoCurrencyById("bitcoin")) {
+      mockedGetAccountCurrency.mockReturnValue(currency);
+      const account = createMockAccount({ id: "acc", currency });
+      const transaction = {
+        family: "bitcoin",
+        recipient: "bc1q",
+        amount: new BigNumber(0),
+        useAllAmount: false,
+        feesStrategy: "custom" as const,
+        customFeeRate: new BigNumber(10),
+        feePerByte: new BigNumber(5),
+      } as unknown as Transaction;
+      const status = {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: new BigNumber(0),
+      } as TransactionStatus;
+      const updateTransaction = jest.fn();
+      return { account, transaction, status, updateTransaction };
+    }
+
+    it("clears custom fee overrides when switching to a preset strategy", () => {
+      const { account, transaction, status, updateTransaction } = buildBaseParams();
+
+      const { result } = renderHook(
+        () =>
+          useAmountScreenViewModel({
+            account,
+            parentAccount: null,
+            transaction,
+            status,
+            bridgePending: false,
+            bridgeError: null,
+            uiConfig: { hasFeePresets: true } as never,
+            transactionActions: { updateTransaction } as never,
+          }),
+        { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
+      );
+
+      result.current.onSelectFeeStrategy("medium");
+
+      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not clear custom fee overrides when selecting the custom strategy", () => {
+      const { account, transaction, status, updateTransaction } = buildBaseParams();
+      const txWithCustomFees = {
+        ...transaction,
+        feesStrategy: "medium" as const,
+        customFeeRate: new BigNumber(10),
+        feePerByte: new BigNumber(5),
+      } as unknown as Transaction;
+
+      const { result } = renderHook(
+        () =>
+          useAmountScreenViewModel({
+            account,
+            parentAccount: null,
+            transaction: txWithCustomFees,
+            status,
+            bridgePending: false,
+            bridgeError: null,
+            uiConfig: { hasFeePresets: true } as never,
+            transactionActions: { updateTransaction } as never,
+          }),
+        { initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } } },
+      );
+
+      result.current.onSelectFeeStrategy("custom");
+
+      expect(onSelectFeeStrategy).toHaveBeenCalledTimes(1);
     });
   });
 

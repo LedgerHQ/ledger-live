@@ -25,6 +25,7 @@ import {
   TINYBAR_SCALE,
   OP_TYPES_EXCLUDING_FEES,
   HEDERA_TRANSACTION_NAMES,
+  STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -698,7 +699,7 @@ export const mergeTransactionsFromDifferentSources = ({
 }) => {
   let merged: MergedTransaction[] = [];
   let nextCursor: string | null = null;
-  const latestHgraphIndexedTimestampSeconds = latestHgraphIndexedTimestampNs.dividedBy(10 ** 9);
+  const latestHgraphIndexedTimestampSeconds = nanosToSeconds(latestHgraphIndexedTimestampNs);
 
   // merge both transaction sources
   merged.push(
@@ -770,3 +771,19 @@ export const mergeTransactionsFromDifferentSources = ({
 
   return { merged, nextCursor };
 };
+
+export function millisToSeconds(millis: number | BigNumber): BigNumber {
+  return new BigNumber(millis).dividedBy(10 ** 3);
+}
+
+export function secondsToNanos(seconds: number | BigNumber): BigNumber {
+  return new BigNumber(seconds).multipliedBy(10 ** 9);
+}
+
+export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
+  return new BigNumber(nanos).dividedBy(10 ** 9);
+}
+
+export function createStakingRewardOperationHash(hash: string): string {
+  return `${hash}${STAKING_REWARD_HASH_SUFFIX}`;
+}

@@ -1,12 +1,12 @@
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
-  ApyIndicator,
   AssetItem,
   AssetType,
   MarketPriceIndicator,
   MarketPercentIndicator,
 } from "@ledgerhq/native-ui/pre-ldls/index";
+import { ApyIndicator } from "../../components/ApyIndicator";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import SkeletonList from "../../components/Skeleton/SkeletonList";
@@ -75,8 +75,8 @@ const AssetSelection = ({
   const listRef = useRef<FlatList>(null);
 
   const expandToFullHeight = () => {
-    snapToIndex(1);
     if (formattedAssets.length > 0) {
+      snapToIndex(1);
       listRef.current?.scrollToIndex({ index: 0 });
     }
   };
@@ -97,7 +97,7 @@ const AssetSelection = ({
   const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,
   });
-  const formattedAssets = transformAssets(availableAssets);
+  const formattedAssets = transformAssets(availableAssets ?? []);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {

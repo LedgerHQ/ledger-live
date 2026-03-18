@@ -15,7 +15,7 @@ import darkEmptyStateAccount from "~/renderer/images/dark-empty-state-account.sv
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import styled from "styled-components";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
@@ -35,7 +35,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const currency = getAccountCurrency(account);
   const { isCurrencyAvailable } = useRampCatalog();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
   const hasTokens =
@@ -48,10 +48,11 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
       state: {
         currency: currency?.id,
         account: mainAccount?.id,
-        mode: "buy", // buy or sell
+        mode: "buy",
+        returnTo: location.pathname,
       },
     });
-  }, [currency, navigate, mainAccount]);
+  }, [currency, navigate, mainAccount, location.pathname]);
   if (!mainAccount) return null;
   return (
     <Box mt={10} alignItems="center" selectable>

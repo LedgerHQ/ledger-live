@@ -105,7 +105,8 @@ function FormLocalManifest({
       const parseCheck = LiveAppManifestSchema.shape.content.shape[contentKey].safeParse({
         en: value,
       }).success;
-      const optional = LiveAppManifestSchema.shape.content.shape[contentKey].isOptional();
+      const optional =
+        LiveAppManifestSchema.shape.content.shape[contentKey].safeParse(undefined).success;
       const path = `content.${contentKey}.en`;
 
       return (
@@ -146,7 +147,7 @@ function FormLocalManifest({
                       const networkKeySchema =
                         LiveAppManifestDappSchema.shape[dappKey].element.shape[networkKey];
 
-                      const optional = networkKeySchema.isOptional();
+                      const optional = networkKeySchema.safeParse(undefined).success;
                       const parseCheck = networkKeySchema.safeParse(value).success;
                       const path = `dapp.${dappKey}.${index}.${networkKey}`;
 
@@ -172,7 +173,7 @@ function FormLocalManifest({
             const path = `dapp.${dappKey}`;
             const shape = LiveAppManifestDappSchema.shape[dappKey];
             const parseCheck = shape.safeParse(value).success;
-            const optional = shape.isOptional();
+            const optional = shape.safeParse(undefined).success;
 
             if (dappKey === "provider") {
               return (
@@ -285,7 +286,7 @@ function FormLocalManifest({
                     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     LiveAppManifestSchema.shape[key as keyof LiveAppManifestSchemaType];
                   const parseCheck = formKeySchema.safeParse(value).success;
-                  const optional = formKeySchema.isOptional();
+                  const optional = formKeySchema.safeParse(undefined).success;
                   const path = `${key}`;
 
                   if (key === "platforms") {

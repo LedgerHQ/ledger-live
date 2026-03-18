@@ -17,8 +17,16 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market });
+  const {
+    onBuy,
+    onStake,
+    onSwap,
+    onSell,
+    availableOnBuy,
+    availableOnSwap,
+    availableOnStake,
+    availableOnSell,
+  } = useMarketActions({ currency, page: Page.Market });
 
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
@@ -47,6 +55,8 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
     const items: MarketAction[] = [];
     if (availableOnBuy)
       items.push({ type: "buy", label: t("accounts.contextMenu.buy"), onClick: onBuy });
+    if (availableOnSell)
+      items.push({ type: "sell", label: t("accounts.contextMenu.sell"), onClick: onSell });
     if (availableOnSwap)
       items.push({ type: "swap", label: t("accounts.contextMenu.swap"), onClick: onSwap });
     if (availableOnStake)
@@ -57,9 +67,11 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
     availableOnBuy,
     availableOnSwap,
     availableOnStake,
+    availableOnSell,
     onBuy,
     onSwap,
     onStake,
+    onSell,
     earnStakeLabelCoin,
     t,
   ]);

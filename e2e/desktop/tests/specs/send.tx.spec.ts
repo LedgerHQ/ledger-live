@@ -262,7 +262,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
       });
@@ -295,7 +295,7 @@ test.describe("Send flows", () => {
             await addBugLink([transaction.bugTicket]);
           }
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -320,7 +320,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionsAmountInvalid) {
     test.describe("Check invalid amount input error", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
       });
@@ -347,7 +347,7 @@ test.describe("Send flows", () => {
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -370,7 +370,7 @@ test.describe("Send flows", () => {
     );
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionInputValid.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionInputValid)],
     });
@@ -398,7 +398,7 @@ test.describe("Send flows", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           transactionInputValid.accountToDebit.accountName,
         );
@@ -416,7 +416,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionAddressValid) {
     test.describe("Send funds step 1 (Recipient) - positive cases (Button enabled)", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           liveDataWithRecipientAddressCommand(transaction.transaction, { useScheme: true }),
@@ -448,7 +448,7 @@ test.describe("Send flows", () => {
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -470,7 +470,7 @@ test.describe("Send flows", () => {
   for (const transaction of transactionsAddressInvalid) {
     test.describe("Send funds step 1 (Recipient) - negative cases (Button disabled)", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           async (appjsonPath: string) => {
@@ -523,7 +523,7 @@ test.describe("Send flows", () => {
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-          await app.layout.goToAccounts();
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(
             transaction.transaction.accountToDebit.accountName,
           );
@@ -552,7 +552,7 @@ test.describe("Send flows", () => {
     });
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(transactionEnsAddress)],
     });
@@ -580,7 +580,7 @@ test.describe("Send flows", () => {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(
           transactionEnsAddress.accountToDebit.accountName,
         );

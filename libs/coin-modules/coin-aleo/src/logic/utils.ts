@@ -28,6 +28,8 @@ import type {
   AleoTransactionIntentData,
   AleoPublicTransaction,
   AleoOperationExtra,
+  TransactionPublic,
+  TransactionPrivate,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -279,8 +281,22 @@ export function isSelfTransferTransaction(
   transaction: Transaction,
 ): transaction is TransactionSelfTransfer {
   return (
-    transaction.type === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
-    transaction.type === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  );
+}
+
+export function isPublicTransaction(transaction: Transaction): transaction is TransactionPublic {
+  return (
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_PUBLIC
+  );
+}
+
+export function isPrivateTransaction(transaction: Transaction): transaction is TransactionPrivate {
+  return (
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE
   );
 }
 
@@ -355,12 +371,36 @@ export function serializeTransaction(tx: PreparedRequestResponse): string {
   return Buffer.from(JSON.stringify(tx)).toString("hex");
 }
 
-export function deserializeTransaction(txHex: string): PreparedRequestResponse {
+export function deserializeTransaction<T extends Record<string, unknown>>(txHex: string): T {
   return JSON.parse(Buffer.from(txHex, "hex").toString());
 }
+
 // this function is used to extract the fields that should be displayed in the operation details
 export const getOperationDetailsExtraFields = (
   extra: AleoOperationExtra,
 ): OperationDetailsExtraField[] => {
   return [{ key: "functionId", value: extra.functionId }];
 };
+
+/**
+ * Returns the spendable balance for a given Aleo transaction mode.
+ *
+ * Aleo accounts maintain two balances:
+ * - public balance, used for public transfers and for converting public funds into private funds
+ * - private balance, used for shielded transfers and for converting private funds back into public funds
+ */
+export function getAvailableBalance(account: AleoAccount, transaction: Transaction): BigNumber {
+  switch (transaction.mode) {
+    // spending public balance
+    case TRANSACTION_TYPE.TRANSFER_PUBLIC:
+    case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
+      return account.aleoResources?.transparentBalance ?? new BigNumber(0);
+    // spending private balance
+    case TRANSACTION_TYPE.TRANSFER_PRIVATE:
+    case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
+      return account.aleoResources?.privateBalance ?? new BigNumber(0);
+    default:
+      // @ts-expect-error - runtime check to ensure all transaction types are handled
+      throw new Error(`aleo: unsupported tx mode for balance calculation: ${transaction.mode}`);
+  }
+}

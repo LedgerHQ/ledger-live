@@ -3,6 +3,7 @@ import { writeFileSync } from "fs";
 import { ElectronApplication } from "@playwright/test";
 import { OnboardingPage } from "tests/page/onboarding.page";
 import { launchApp } from "./electronUtils";
+import { getFeatureFlags } from "./featureFlagUtils";
 
 const environmentFilePath = "allure-results/environment.properties";
 
@@ -25,9 +26,8 @@ export default async function globalTeardown() {
 
     await new OnboardingPage(page).waitForLaunch();
 
-    const featureFlags = await page.evaluate(() => {
-      return window.getAllFeatureFlags("en");
-    });
+    const featureFlags = await getFeatureFlags(page);
+
     const appEnvs = await page.evaluate(() => {
       return window.getAllEnvs();
     });

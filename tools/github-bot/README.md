@@ -1,6 +1,8 @@
 # live-github-bot
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) to enhance developer experience on the ledger-live repository
+> **Deprecated.** Slash command functionality has been moved to a GitHub Action. Use the [comment-commands](../../.github/workflows/comment-commands.yml) workflow instead (triggered by commenting `/regen-pods`, `/regen-doc`, `/generate-screenshots`, or `/full-lld-tests` on a PR). This bot is preserved for reference and for any non-command features (e.g. upToDate, lintCommits) that may still run elsewhere.
+
+A GitHub App built with [Probot](https://github.com/probot/probot) to enhance developer experience on the ledger-live repository.
 
 In short, `live-github-bot` is a tool deployed to Vercel which accepts incoming requests based on some Github Events.  
 It provides us with useful actions and tools we can provide for developers, as well as a deeper developer experience when working on Ledger Live mono repo.  

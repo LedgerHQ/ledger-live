@@ -109,7 +109,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
-  theme: "system",
+  theme: "dark",
   osTheme: undefined,
   customLockScreenType: null,
   lastSeenCustomImage: {
@@ -171,6 +171,7 @@ export const INITIAL_STATE: SettingsState = {
   isPostOnboardingFlow: false,
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
+  deprecationDoNotRemind: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -644,6 +645,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
   }),
+
+  [SettingsActionTypes.DEPRECATION_DO_NOT_REMIND]: (state: SettingsState, { payload }) => {
+    return {
+      ...state,
+      deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload as string],
+    };
+  },
 
   [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
     ...state,

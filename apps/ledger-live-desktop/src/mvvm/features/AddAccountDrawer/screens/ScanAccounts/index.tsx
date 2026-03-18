@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { userThemeSelector } from "~/renderer/reducers/settings";
+import { themeSelector } from "~/renderer/actions/general";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ScrollContainer } from "../../components/ScrollContainer";
@@ -36,7 +36,7 @@ const ScanAccounts = ({
 }: Props) => {
   const source = useSelector(modularDrawerSourceSelector);
   const { colors } = useTheme();
-  const currentTheme = useSelector(userThemeSelector);
+  const currentTheme = useSelector(themeSelector);
   const { t } = useTranslation();
 
   const {
@@ -98,7 +98,7 @@ const ScanAccounts = ({
         source={source}
         flow={ADD_ACCOUNT_FLOW_NAME}
       />
-      {scanning ? <LoadingOverlay theme={currentTheme || "dark"} /> : null}
+      {scanning ? <LoadingOverlay theme={currentTheme} /> : null}
       <Flex marginBottom={24}>
         <Text
           color="neutral.c100"

@@ -5,6 +5,7 @@ import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "
 
 export const SEND_FLOW_STEP = {
   RECIPIENT: "RECIPIENT",
+  RECENT_HISTORY: "RECENT_HISTORY",
   AMOUNT: "AMOUNT",
   CUSTOM_FEES: "CUSTOM_FEES",
   COIN_CONTROL: "COIN_CONTROL",

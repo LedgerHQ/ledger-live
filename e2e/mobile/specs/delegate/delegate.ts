@@ -54,6 +54,7 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       }
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
+
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 
@@ -96,6 +97,7 @@ export async function runDelegateCelo(
       const currencyId = delegation.account.currency.id;
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
+
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 
@@ -144,6 +146,7 @@ export async function runDelegateTezos(
       await app.speculos.activateExpertMode();
 
       await app.portfolio.goToAccounts(delegation.account.currency.name);
+
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 

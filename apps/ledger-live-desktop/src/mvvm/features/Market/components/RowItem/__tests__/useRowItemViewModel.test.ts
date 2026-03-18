@@ -8,6 +8,7 @@ const mockNavigate = jest.fn();
 const mockOnBuy = jest.fn();
 const mockOnSwap = jest.fn();
 const mockOnStake = jest.fn();
+const mockOnSell = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -38,9 +39,11 @@ const allActionsAvailable = {
   onBuy: mockOnBuy,
   onSwap: mockOnSwap,
   onStake: mockOnStake,
+  onSell: mockOnSell,
   availableOnBuy: true,
   availableOnSwap: true,
   availableOnStake: true,
+  availableOnSell: true,
 };
 
 describe("useRowItemViewModel", () => {
@@ -82,9 +85,11 @@ describe("useRowItemViewModel", () => {
       onBuy: mockOnBuy,
       onSwap: mockOnSwap,
       onStake: mockOnStake,
+      onSell: mockOnSell,
       availableOnBuy: false,
       availableOnSwap: false,
       availableOnStake: false,
+      availableOnSell: false,
     });
 
     const { result } = renderHook(() =>
@@ -102,6 +107,7 @@ describe("useRowItemViewModel", () => {
   it("returns only available actions when currency has ledgerIds", () => {
     mockedUseMarketActions.mockReturnValue({
       ...allActionsAvailable,
+      availableOnSell: false,
       availableOnStake: false,
     });
 
@@ -118,7 +124,7 @@ describe("useRowItemViewModel", () => {
     expect(result.current.hasActions).toBe(true);
   });
 
-  it("returns all 3 actions when all are available", () => {
+  it("returns all 4 actions when all are available", () => {
     const { result } = renderHook(() =>
       useRowItemViewModel({
         currency: bitcoinCurrency,
@@ -127,12 +133,13 @@ describe("useRowItemViewModel", () => {
       }),
     );
 
-    expect(result.current.actions).toHaveLength(3);
-    expect(result.current.actions.map(a => a.type)).toEqual(["buy", "swap", "stake"]);
+    expect(result.current.actions).toHaveLength(4);
+    expect(result.current.actions.map(a => a.type)).toEqual(["buy", "sell", "swap", "stake"]);
     expect(result.current.actions[0].onClick).toBe(mockOnBuy);
-    expect(result.current.actions[1].onClick).toBe(mockOnSwap);
-    expect(result.current.actions[2].onClick).toBe(mockOnStake);
-    expect(result.current.actions[2].label).toBe("Earn");
+    expect(result.current.actions[1].onClick).toBe(mockOnSell);
+    expect(result.current.actions[2].onClick).toBe(mockOnSwap);
+    expect(result.current.actions[3].onClick).toBe(mockOnStake);
+    expect(result.current.actions[3].label).toBe("Earn");
   });
 
   it("returns correct currentPriceChangePercentage based on range", () => {

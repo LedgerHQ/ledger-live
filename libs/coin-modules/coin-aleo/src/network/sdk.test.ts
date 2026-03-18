@@ -13,7 +13,7 @@ jest.mock("../logic/utils");
 
 describe("sdkClient", () => {
   const mockCurrency = getMockedCurrency();
-  const mockNetworkConfig = {
+  const mockNetworkConfig: ReturnType<typeof getNetworkConfig> = {
     nodeUrl: "https://node.aleo.network",
     sdkUrl: "https://sdk.aleo.network",
     networkType: "mainnet",
@@ -30,7 +30,7 @@ describe("sdkClient", () => {
     };
 
     it("should call getNetworkConfig with the provided currency", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await sdkClient.encryptRegistrationPayload({
         currency: mockCurrency,
@@ -44,7 +44,7 @@ describe("sdkClient", () => {
     });
 
     it("should call network with correct method, url and data", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await sdkClient.encryptRegistrationPayload({
         currency: mockCurrency,
@@ -66,7 +66,7 @@ describe("sdkClient", () => {
     });
 
     it("should return res.data from the network response", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await sdkClient.encryptRegistrationPayload({
         currency: mockCurrency,
@@ -79,13 +79,13 @@ describe("sdkClient", () => {
     });
 
     it("should construct the URL using sdkUrl from getNetworkConfig", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
         nodeUrl: "https://node.testnet.aleo.network",
         sdkUrl: "https://sdk.testnet.aleo.network",
         networkType: "testnet",
       };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await sdkClient.encryptRegistrationPayload({
         currency: mockCurrency,
@@ -128,7 +128,7 @@ describe("sdkClient", () => {
     };
 
     it("should successfully decrypt a record", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData });
+      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData, status: 200 });
 
       const result = await sdkClient.decryptRecord({
         currency: mockCurrency,
@@ -177,7 +177,7 @@ describe("sdkClient", () => {
     };
 
     it("should call network with correct method, url, headers and data", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData });
+      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData, status: 200 });
 
       await sdkClient.decryptCiphertext(mockParams);
 
@@ -200,7 +200,7 @@ describe("sdkClient", () => {
     });
 
     it("should return res.data from the network response", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData });
+      jest.mocked(network).mockResolvedValue({ data: mockDecryptedData, status: 200 });
 
       const result = await sdkClient.decryptCiphertext(mockParams);
 
@@ -232,7 +232,7 @@ describe("sdkClient", () => {
     };
 
     beforeEach(() => {
-      jest.mocked(network).mockResolvedValue({ data: mockPreparedRequestResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockPreparedRequestResponse, status: 200 });
     });
 
     it("should create a transaction request from intent", async () => {
@@ -257,7 +257,7 @@ describe("sdkClient", () => {
     });
 
     it("should use correct SDK URL from network config", async () => {
-      const testnetConfig = {
+      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
         nodeUrl: "https://node.testnet.aleo.network",
         sdkUrl: "https://sdk.testnet.aleo.network",
         networkType: "testnet",
@@ -339,7 +339,7 @@ describe("sdkClient", () => {
         inputs: ["aleo1toaddress", "1000u64"],
         input_types: ["address", "u64"],
       };
-      jest.mocked(network).mockResolvedValue({ data: responseWithMetadata });
+      jest.mocked(network).mockResolvedValue({ data: responseWithMetadata, status: 200 });
 
       const result = await sdkClient.createRequestFromIntent({
         currency: mockCurrency,

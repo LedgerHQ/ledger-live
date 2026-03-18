@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "6.18.0",
+  "version": "6.19.0",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -44,8 +44,8 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./errors": {
       "require": "./lib/types/errors.js",
@@ -100,11 +100,11 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

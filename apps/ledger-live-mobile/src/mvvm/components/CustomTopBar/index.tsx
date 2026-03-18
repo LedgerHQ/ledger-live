@@ -11,6 +11,7 @@ export type TopBarActionIcon = {
   callback: () => void;
   testID: string;
   accessibilityLabel: string;
+  loading?: boolean;
 };
 
 type CustomTopBarProps = {
@@ -47,6 +48,7 @@ export function CustomTopBar({ onMyLedgerPress, customIcons }: Readonly<CustomTo
             appearance="transparent"
             icon={item.icon}
             size="md"
+            loading={item.loading}
           />
         ))}
       </Box>

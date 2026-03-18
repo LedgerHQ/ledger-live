@@ -23,6 +23,14 @@ import network from "@ledgerhq/live-network/network";
 
 const mockedGetUserHashes = jest.mocked(getUserHashes);
 const mockedNetwork = jest.mocked(network);
+const createAxiosResponse = <T>(data: T): Awaited<ReturnType<typeof network>> =>
+  ({
+    data,
+    status: 200,
+    statusText: "OK",
+    headers: {},
+    config: {},
+  }) as Awaited<ReturnType<typeof network>>;
 
 describe("HttpManagerApiRepository", () => {
   let httpManagerApiRepository: HttpManagerApiRepository;
@@ -40,6 +48,7 @@ describe("HttpManagerApiRepository", () => {
   test("fetchLatestFirmware should call network() with the correct parameters", async () => {
     mockedGetUserHashes.mockReturnValue({
       firmwareSalt: "mockedFirmwareSalt",
+      endpointOverrides100: 0,
     });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
       current_se_firmware_final_version: 888,
@@ -67,6 +76,7 @@ describe("HttpManagerApiRepository", () => {
   test("fetchLatestFirmware should return null if data.result is null", async () => {
     mockedGetUserHashes.mockReturnValue({
       firmwareSalt: "mockedFirmwareSalt",
+      endpointOverrides100: 0,
     });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
       current_se_firmware_final_version: 888,
@@ -74,11 +84,11 @@ describe("HttpManagerApiRepository", () => {
       providerId: 12,
       userId: "userId",
     };
-    mockedNetwork.mockResolvedValue({
-      data: {
+    mockedNetwork.mockResolvedValue(
+      createAxiosResponse({
         result: "null",
-      },
-    });
+      }),
+    );
 
     const result = await httpManagerApiRepository.fetchLatestFirmware(params);
 
@@ -88,6 +98,7 @@ describe("HttpManagerApiRepository", () => {
   test("fetchLatestFirmware should return data.se_firmware_osu_version", async () => {
     mockedGetUserHashes.mockReturnValue({
       firmwareSalt: "mockedFirmwareSalt",
+      endpointOverrides100: 0,
     });
     const params: Parameters<typeof httpManagerApiRepository.fetchLatestFirmware>[0] = {
       current_se_firmware_final_version: 888,
@@ -95,12 +106,12 @@ describe("HttpManagerApiRepository", () => {
       providerId: 12,
       userId: "userId",
     };
-    mockedNetwork.mockResolvedValue({
-      data: {
+    mockedNetwork.mockResolvedValue(
+      createAxiosResponse({
         result: "mockedResult",
         se_firmware_osu_version: "mockedOsuFirmware",
-      },
-    });
+      }),
+    );
 
     const result = await httpManagerApiRepository.fetchLatestFirmware(params);
 
@@ -119,9 +130,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("fetchMcus should return data", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     const result = await httpManagerApiRepository.fetchMcus();
 
@@ -177,9 +186,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getDeviceVersion should return data", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     const result = await httpManagerApiRepository.getDeviceVersion({
       targetId: 123,
@@ -212,9 +219,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getCurrentOSU should return data", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     const result = await httpManagerApiRepository.getCurrentOSU({
       deviceId: 123,
@@ -278,9 +283,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getCurrentFirmware should return data", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     const result = await httpManagerApiRepository.getCurrentFirmware({
       deviceId: 123,
@@ -303,9 +306,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getFinalFirmwareById should return data", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     const result = await httpManagerApiRepository.getFinalFirmwareById(123);
 
@@ -326,9 +327,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getAppsByHash should throw a NetworkDown error if data is null", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: null,
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse(null));
 
     await expect(httpManagerApiRepository.getAppsByHash(["mockedHash"])).rejects.toThrow(
       NetworkDown,
@@ -336,9 +335,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getAppsByHash should throw a NetworkDown error if data is not an array", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     await expect(httpManagerApiRepository.getAppsByHash(["mockedHash"])).rejects.toThrow(
       NetworkDown,
@@ -346,9 +343,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("getAppsByHash should return data if it's an array", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: ["mockedData"],
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse(["mockedData"]));
 
     const result = await httpManagerApiRepository.getAppsByHash(["mockedHash"]);
 
@@ -373,9 +368,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("catalogForDevice should throw a NetworkDown error if data is null", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: null,
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse(null));
 
     await expect(
       httpManagerApiRepository.catalogForDevice({
@@ -387,9 +380,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("catalogForDevice should throw a NetworkDown error if data is not an array", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: "mockedData",
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse("mockedData"));
 
     await expect(
       httpManagerApiRepository.catalogForDevice({
@@ -401,9 +392,7 @@ describe("HttpManagerApiRepository", () => {
   });
 
   test("catalogForDevice should return data if it's an array", async () => {
-    mockedNetwork.mockResolvedValue({
-      data: ["mockedData"],
-    });
+    mockedNetwork.mockResolvedValue(createAxiosResponse(["mockedData"]));
 
     const result = await httpManagerApiRepository.catalogForDevice({
       targetId: 123,
@@ -455,8 +444,8 @@ describe("HttpManagerApiRepository", () => {
       .spyOn(httpManagerApiRepository, "getCurrentFirmware")
       .mockReturnValue(Promise.resolve({ id: mockedCurrentFirmwareId } as FinalFirmware));
 
-    mockedNetwork.mockResolvedValue({
-      data: [
+    mockedNetwork.mockResolvedValue(
+      createAxiosResponse([
         {
           language: "french",
           language_package_version: [
@@ -487,8 +476,8 @@ describe("HttpManagerApiRepository", () => {
             } as LanguagePackageEntity,
           ],
         },
-      ] as LanguagePackageResponseEntity[],
-    });
+      ] as LanguagePackageResponseEntity[]),
+    );
 
     const result = await httpManagerApiRepository.getLanguagePackagesForDevice(
       {} as unknown as DeviceInfoEntity,

@@ -62,7 +62,7 @@ async function extractExportMethods(filePath) {
 async function findUsages(functionName) {
   try {
     const { stdout } = await execAsync(
-      `grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --exclude-dir=lib --exclude-dir=lib-es --exclude-dir=node_modules --exclude-dir=.next -l "${functionName}" .`,
+      `grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --exclude-dir=lib --exclude-dir=lib-es --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=build --exclude-dir=generated --exclude-dir=dist --exclude-dir=.expo -l "${functionName}" .`,
       {
         cwd: rootDir,
         encoding: "utf-8",
@@ -102,6 +102,8 @@ async function checkFunction(sourceFile, functionName, allowedFiles, rules) {
       !file.includes(".webpack/") &&
       !file.includes(".bundle.js") &&
       !file.includes(".next/") &&
+      !file.includes("/build/") &&
+      !file.includes("/generated/") &&
       !file.includes("CHANGELOG") &&
       file !== sourceFile &&
       !finalAllowedFiles.includes(file),
@@ -167,6 +169,8 @@ async function main() {
             !file.includes(".webpack/") &&
             !file.includes(".bundle.js") &&
             !file.includes(".next/") &&
+            !file.includes("/build/") &&
+            !file.includes("/generated/") &&
             !file.includes("CHANGELOG") &&
             file !== sourceFile &&
             !file.startsWith(sourceDir + "/"),

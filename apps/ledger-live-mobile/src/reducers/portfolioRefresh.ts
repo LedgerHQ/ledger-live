@@ -5,11 +5,15 @@ import { State } from "~/reducers/types";
 export interface PortfolioRefreshState {
   isRefreshing: boolean;
   lastSyncTimestampSnapshot: number | null;
+  hasCompletedInitialSync: boolean;
+  lastUserSyncClickTimestamp: number;
 }
 
 export const INITIAL_STATE: PortfolioRefreshState = {
   isRefreshing: false,
   lastSyncTimestampSnapshot: null,
+  hasCompletedInitialSync: false,
+  lastUserSyncClickTimestamp: 0,
 };
 
 const portfolioRefreshSlice = createSlice({
@@ -24,15 +28,32 @@ const portfolioRefreshSlice = createSlice({
       state.isRefreshing = false;
       state.lastSyncTimestampSnapshot = null;
     },
+    setHasCompletedInitialSync: (state, action: PayloadAction<boolean>) => {
+      state.hasCompletedInitialSync = action.payload;
+    },
+    setLastUserSyncClickTimestamp: (state, action: PayloadAction<number>) => {
+      state.lastUserSyncClickTimestamp = action.payload;
+    },
   },
 });
 
-export const { setRefreshStarted, setRefreshCompleted } = portfolioRefreshSlice.actions;
+export const {
+  setRefreshStarted,
+  setRefreshCompleted,
+  setHasCompletedInitialSync,
+  setLastUserSyncClickTimestamp,
+} = portfolioRefreshSlice.actions;
 
 export const selectIsRefreshing = (state: State) => state.portfolioRefresh.isRefreshing;
 
 export const selectLastSyncTimestampSnapshot = (state: State) =>
   state.portfolioRefresh.lastSyncTimestampSnapshot;
+
+export const selectHasCompletedInitialSync = (state: State) =>
+  state.portfolioRefresh.hasCompletedInitialSync;
+
+export const selectLastUserSyncClickTimestamp = (state: State) =>
+  state.portfolioRefresh.lastUserSyncClickTimestamp;
 
 export const selectLastSyncTimestamp = createSelector(
   (state: State) => state.accounts.active,

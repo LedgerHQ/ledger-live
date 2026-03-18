@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import {
-  ApyIndicator,
   AssetList,
   AssetType,
   MarketPercentIndicator,
@@ -20,6 +19,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
+import { ApyIndicator } from "LLD/features/ModularDrawer/components/ApyIndicator";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];

@@ -6,7 +6,7 @@ const emptySet = new Set<string>();
 
 export function useStablecoinTickers(product: "llm" | "lld", version: string) {
   const { data, isLoading } = useGetAssetsByCategoryQuery({
-    category: AssetCategory.Stablecoin,
+    category: AssetCategory.Stablecoins,
     product,
     version,
   });

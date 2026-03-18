@@ -10,5 +10,6 @@ export function useCategorizedAssetsFromPortfolio() {
   return {
     categorizedAssets,
     isLoadingStablecoinTickers,
+    stablecoinTickers,
   };
 }

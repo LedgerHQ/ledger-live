@@ -1,74 +1,14 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { swapSetup, waitSwapReady } from "../../../bridge/server";
+import { waitSwapReady } from "../../../bridge/server";
 import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { setEnv } from "@ledgerhq/live-env";
-import { allure } from "jest-allure2-reporter/api";
+import { beforeAllFunctionSwap, liveDataCommand, liveDataWithAddressCommand } from "../swap.setup";
+import { isWallet40 } from "../../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
-const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
-  CLI.liveData({
-    currency: currencyApp.name,
-    index,
-    add: true,
-    appjson: userdataPath,
-  });
-
-const liveDataWithAddressCommand = (account: Account) => async (userdataPath?: string) => {
-  await CLI.liveData({
-    currency: account.currency.speculosApp.name,
-    index: account.index,
-    add: true,
-    appjson: userdataPath,
-  });
-
-  const { address } = await CLI.getAddress({
-    currency: account.currency.speculosApp.name,
-    path: account.accountPath,
-    derivationMode: account.derivationMode,
-  });
-
-  account.address = address;
-  if (account.parentAccount) {
-    account.parentAccount.address = address;
-  }
-
-  return address;
-};
-
-async function beforeAllFunction(options: ApplicationOptions) {
-  await app.init({
-    userdata: options.userdata,
-    speculosApp: options.speculosApp,
-    featureFlags: {
-      ptxSwapLiveAppMobile: {
-        enabled: true,
-        params: {
-          manifest_id:
-            process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws",
-        },
-      },
-      llmAnalyticsOptInPrompt: {
-        enabled: true,
-        params: {
-          variant: ABTestingVariants.variantA,
-          entryPoints: [],
-        },
-      },
-    },
-    cliCommandsOnApp: options.cliCommandsOnApp,
-  });
-  await app.portfolio.waitForPortfolioPageToLoad();
-  const readyPromise = waitSwapReady();
-  await app.swap.openViaDeeplink();
-  await swapSetup();
-  await readyPromise;
-}
 
 export function runSwapWithoutAccountTest(
   asset1: Account,
@@ -109,7 +49,7 @@ export function runSwapWithoutAccountTest(
 
   describe("Swap a coin for which you have no account yet", () => {
     beforeAll(async () => {
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
         speculosApp: asset2.currency.speculosApp,
         cliCommandsOnApp:
@@ -151,7 +91,7 @@ export function runSwapWithDifferentSeedTest(
   describe("Swap - Using different seed", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: userData,
         speculosApp: AppInfos.EXCHANGE,
       });
@@ -194,7 +134,7 @@ export function runSwapLandingPageTest(
   describe("Swap - Landing page", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
         speculosApp: AppInfos.EXCHANGE,
         cliCommandsOnApp: [
@@ -239,7 +179,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   describe("Swap - with too low amount (throwing UI errors)", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
         speculosApp: AppInfos.EXCHANGE,
         cliCommandsOnApp: [
@@ -293,7 +233,7 @@ export function runUserRefusesTransactionTest(
   describe("Swap - Rejected on device", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         speculosApp: AppInfos.EXCHANGE,
         cliCommandsOnApp: [
           {
@@ -338,7 +278,7 @@ export function runSwapHistoryOperationsTest(
   describe("Swap history", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
@@ -367,7 +307,7 @@ export function runExportSwapHistoryOperationsTest(
   describe("Swap history", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "swap-history",
         speculosApp: AppInfos.EXCHANGE,
       });
@@ -394,7 +334,7 @@ export function runSwapWithSendMaxTest(
   describe("Swap - Send Max", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
         speculosApp: AppInfos.EXCHANGE,
         cliCommandsOnApp: [
@@ -468,7 +408,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
   describe("Swap - Switch You send and You receive currency", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "speculos-tests-app",
         speculosApp: AppInfos.EXCHANGE,
       });
@@ -490,57 +430,6 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
   });
 }
 
-export function runSwapCheckProvider(
-  fromAccount: Account,
-  toAccount: Account,
-  provider: Provider,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  describe("Swap - Provider redirection", () => {
-    beforeAll(async () => {
-      await app.speculos.setExchangeDependencies(fromAccount, toAccount);
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        speculosApp: AppInfos.EXCHANGE,
-        cliCommandsOnApp: [
-          {
-            app: fromAccount.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(fromAccount),
-          },
-          {
-            app: toAccount.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(toAccount),
-          },
-        ],
-      });
-    });
-
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    it(`Swap test provider redirection (${provider.uiName})`, async () => {
-      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
-
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        minAmount,
-        true,
-      );
-
-      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      await app.swapLiveApp.goToProviderLiveApp(provider.uiName);
-      if (provider.uiName === "1inch") {
-        allure.issue("QAA-854");
-        allure.statusDetails({ message: "Skipping 1inch URL verification due to QAA-854" });
-        return;
-      }
-      await app.swapLiveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
-    });
-  });
-}
-
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
   const validateSwapAssetsPage = async (accountFrom: string, accountTo: string) => {
     await app.swapLiveApp.expectSwapLiveApp();
@@ -550,7 +439,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
 
   describe("Swap - Entry Points", () => {
     beforeAll(async () => {
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "speculos-tests-app",
         speculosApp: AppInfos.EXCHANGE,
       });
@@ -560,9 +449,13 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     tags.forEach(tag => $Tag(tag));
     it("Access Swap from different entry points", async () => {
       await app.portfolio.openViaDeeplink();
-      await app.transferMenuDrawer.open();
       let readyPromise = waitSwapReady();
-      await app.transferMenuDrawer.navigateToSwap();
+      if (isWallet40) {
+        await app.mainNavigation.tapWallet40Tab("swap");
+      } else {
+        await app.transferMenuDrawer.open();
+        await app.transferMenuDrawer.navigateToSwap();
+      }
       await readyPromise;
       await validateSwapAssetsPage(account.currency.ticker, "");
 
@@ -592,7 +485,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
   describe(`Swap - Error message when network fees are above account balance (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
-      await beforeAllFunction({
+      await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
         speculosApp: AppInfos.EXCHANGE,
         cliCommandsOnApp: [

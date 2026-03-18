@@ -237,7 +237,7 @@
       },
       "cancel" : {
         "title" : "キャンセル",
-        "description" : "0{{ticker}}をお客様のアドレスに送信中です。"
+        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルは保証されません。このキャンセルリクエストの前にネットワークが元のトランザクションを処理した場合、資金は受取人に送られます。"
       },
       "steps" : {
         "method" : {
@@ -1499,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™はこのトランザクションにクリア署名できません",
+      "subtitle" : "署名する前に、他のLedgerデバイスを使用してこのトランザクションの詳細を認証してください。クリア署名がない場合、すべての資産を失うリスクがあります。",
+      "continue" : "以降の操作は自己責任となります"
+    },
+    "info" : {
+      "title" : "{{date}}をもって、Ledger Live™経由の{{device}}™での{{coinName}}サポートは終了いたします。",
+      "subtitle" : "Ledger Liveの全サービスプロバイダー、最適なサポートをご利用いただくために、最新のLedgerデバイスへのアップグレードをご検討ください",
+      "reminder" : "今後、このメッセージを表示しない"
+    },
+    "error" : {
+      "title" : "{{device}}™はこの機能をサポートしていません",
+      "subtitle" : "Ledger Liveの最新機能をすべてご利用いただくためにも、最新のLedgerデバイスへのアップグレードをおすすめいたします。"
+    },
+    "update" : "お客様に最適なアップグレードプランをご確認ください",
+    "learnMore" : "詳細はこちら",
+    "continue" : "続行"
+  },
   "currentAddress" : {
     "title" : "現在のアドレス",
     "for" : "<1><0>{{name}}</0></1>のアドレス",
@@ -2154,6 +2173,24 @@
       }
     }
   },
+  "buyDeviceModal" : {
+    "title" : "Ledgerデバイスを接続",
+    "subtitle" : "Ledger Walletの機能を最大限にご活用いただくには、Ledgerデバイスを接続してください。",
+    "0" : {
+      "title" : "完全な所有権",
+      "desc" : "秘密鍵がデバイスの外に出ることはありません。"
+    },
+    "1" : {
+      "title" : "安全な取引",
+      "desc" : "取引内容は、安全なデバイス画面で確認・承認できます。"
+    },
+    "2" : {
+      "title" : "最強のウォレット機能へアクセス",
+      "desc" : "数千種類の暗号資産をこれ一つで管理。"
+    },
+    "connectCTA" : "接続",
+    "buyCTA" : "Ledgerデバイスを購入する"
+  },
   "fund" : {
     "title" : "入金",
     "titleCrypto" : "{{currency}}を入金",
@@ -2371,6 +2408,24 @@
     "addressNotFound" : "住所が見つかりません",
     "alreadyUsed" : "使用ずみ・{{date}}",
     "recentSendWillAppear" : "最近の送付がこちらに表示されます",
+    "securityInfo" : {
+      "title" : "安全に送付するには？",
+      "items" : {
+        "compatibility" : "受取人のアドレスが、選択したネットワークと互換性があることを確認する。",
+        "review" : "Ledgerのセキュアスクリーンで取引の詳細を確認してください。",
+        "smallAmount" : "疑わしい場合は、最初に少量の数量を送付してみてください"
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "このアドレスは、最近の履歴にありません。不安な場合は、まず少額を送金してください。"
+      },
+      "dialog" : {
+        "title" : "最近の送信履歴",
+        "description" : "最近の履歴では、すでに特定のアドレスに送付したかどうかを即座に確認できます。これにより、コピー/貼り付けのエラーやハッキングを防ぐことができます。履歴には、Ledger Walletを使用して暗号資産を送付した直近の12件のアドレスが含まれています。",
+        "cta" : "了解"
+      }
+    },
     "relativeDate" : {
       "justNow" : "たった今",
       "minutesAgo_one" : "1分前",
@@ -2440,17 +2495,26 @@
       "confirm" : "確認",
       "maxFee" : "最大手数料 ({{unit}})",
       "maxPriorityFee" : "最大優先手数料 ({{unit}})",
-      "gasLimit" : "ガス制限（{{unit}}）",
       "feePerByte" : "手数料金額 ({{unit}})",
       "suggested" : "提案済み",
       "nextBlock" : "次のブロック",
       "networkFeesInFiat" : "{{currency}}のネットワーク手数料",
       "invalidValue" : "有効な数字を入力してください",
       "belowMinimum" : "最小値は{{min}}です",
-      "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上でなければなりません"
+      "maxFeeBelowPriorityFee" : "最大手数料は最大優先手数料以上でなければなりません",
+      "feeAsset" : "手数料用の資産",
+      "feesAmount" : "手数料金額 ({{unit}})",
+      "payFeesIn" : "手数料の支払い："
     },
     "coinControl" : {
-      "title" : "コインコントロール"
+      "title" : "コインコントロール",
+      "strategy" : "戦略",
+      "learnMore" : "詳細はこちら",
+      "coinToSend" : "送付するコイン",
+      "changeToReturn" : "戻される差額",
+      "enterAmount" : "数量を入力",
+      "amountToSendInCurrency" : "送金金額 ({{ticker}})",
+      "amountInputLabel" : "送付額"
     }
   },
   "releaseNotes" : {
@@ -5025,7 +5089,7 @@
     }
   },
   "theme" : {
-    "system" : "システムテーマを選択",
+    "system" : "システム",
     "light" : "ライト",
     "dusk" : "夕暮れ",
     "dark" : "ダーク"
@@ -6630,6 +6694,10 @@
       "title" : "速度を上げたり、キャンセルすることはできません",
       "description" : "このトランザクションはすでに検証済みです"
     },
+    "InvalidTransactionError" : {
+      "title" : "無効なトランザクション",
+      "description" : "トランザクションは、当該ブロックチェーンの状態と一致していません。最初からやり直してください。"
+    },
     "SequenceNumberError" : {
       "title" : "シーケンス番号エラー",
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
@@ -7699,7 +7767,16 @@
     }
   },
   "analytics" : {
-    "title" : "アナリティクス"
+    "title" : "アナリティクス",
+    "allocation" : {
+      "title" : "資産配分",
+      "columns" : {
+        "name" : "名前",
+        "balance" : "残高",
+        "value" : "価値",
+        "allocation" : "配分"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8001,6 +8078,8 @@
     "title" : "市場を見る",
     "genericError" : "接続に失敗",
     "cta" : "すべて表示",
+    "scrollLeft" : "左にスクロール",
+    "scrollRight" : "右にスクロール",
     "fearAndGreed" : {
       "title" : "市場ムード"
     }
@@ -8030,6 +8109,11 @@
   "assets" : {
     "cryptos" : "暗号資産",
     "stablecoins" : "ステーブルコイン",
+    "cryptoAccounts" : "暗号資産アカウント",
+    "accountsCount_one" : "{{count}}アカウント",
+    "accountsCount_other" : "{{count}}アカウント",
+    "noCryptoAccounts" : "まだアカウントがありません",
+    "add" : "追加",
     "columns" : {
       "name" : "名前",
       "price" : "価格",
@@ -8048,15 +8132,10 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。影響を受けたアカウント：{{accounts}}クリックして再試行",
-      "emptyErrorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。クリックして再試行",
+      "errorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。\n 影響を受けたアカウント：{{accounts}}クリックして再試行",
+      "emptyErrorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。\n クリックして再試行",
       "upToDate" : "最新の状態",
-      "minutesAgo_one" : "最終同期：{{count}}分前。クリックして更新",
-      "minutesAgo_other" : "最終同期：{{count}}分前。クリックして更新",
-      "hoursAgo_one" : "最終同期：{{count}}時間前。クリックして更新",
-      "hoursAgo_other" : "最終同期：{{count}}時間前。クリックして更新",
-      "daysAgo_one" : "最終同期：{{count}}日前。クリックして更新",
-      "daysAgo_other" : "最終同期：{{count}}日前。クリックして更新"
+      "lastSync" : "最終同期：{{timeAgo}}クリックして更新"
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8176,6 +8255,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "自己送金",
+      "headerActionTooltip" : "自己送金を実行するための資金がありません。",
+      "modal" : {
+        "title" : "自己送金",
+        "stepRecipient" : {
+          "selectLabel" : "転送元"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "プライベート残高",
+        "public" : "公開残高",
+        "lastUpdate" : "最終更新日",
+        "switchBalance" : "残高元を切り替える"
+      }
+    },
     "account" : {
       "availableBalance" : "利用可能残高",
       "availableBalanceTooltip" : "送金可能な残高",
@@ -8194,22 +8291,22 @@
   "updater" : {
     "newUpdateAvailable" : "新しいアップデートがあります",
     "downloadProgress" : "{{progress}}%",
-    "errorTryAgain" : "アップデート中にエラーが発生しました。再試行してください。",
-    "installAndRelaunch" : "アップデートをインストールして再起動"
+    "errorTryAgain" : "更新中にエラーが発生再試行",
+    "installAndRelaunch" : "新しいアップデート。インストールして再起動"
   },
   "walletV4Tour" : {
     "slides" : {
       "portfolio" : {
-        "title" : "手軽にスワップ",
-        "description" : "Ledgerデバイスのセキュリティを活用して、いつでもポートフォリオの配分を調整できます。"
+        "title" : "ポートフォリオがさらに見やすく",
+        "description" : "残高を一目で確認。「今日」をタップすると、さらに詳細を見ることができます。"
       },
       "navigation" : {
-        "title" : "必要な機能を、最適な場所へ",
-        "description" : "「My Ledger」と「アプリ一覧」は画面上部へ。「スワップ」と「カード」はアクセスしやすくなるようにサイドバーへ移動しました。"
+        "title" : "主要な機能へすばやくアクセス",
+        "description" : "受け取る、購入、売却、送付のアクションに即座にアクセス。"
       },
       "actions" : {
-        "title" : "市場の動きを逃さない",
-        "description" : "新しいバナーで市場トレンドをチェックし、すぐに取引を開始できます。"
+        "title" : "市場のトレンドをすばやくチェック",
+        "description" : "ポートフォリオからトレンドを直接確認。市場の動きをチェックして、すぐに次のアクションへ。"
       }
     },
     "cta" : {

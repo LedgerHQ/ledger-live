@@ -152,4 +152,7 @@ export const MAINNET_TEST_ACCOUNTS = {
     accountId: "0.0.9806001",
     publicKey: "0283ef0997da7161c9a3aec45c57f4e074cb67916c97c1e5339d9f988e702e0450",
   },
+  withStakingHistory: {
+    accountId: "0.0.10083165",
+  },
 };

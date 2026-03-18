@@ -14,6 +14,8 @@ const mockOperations: Page<Op> = {
         failed: false,
         block: {
           height: 5,
+          hash: "block-hash-1",
+          time: new Date("2024-03-20T10:00:00.000Z"),
         },
       },
       id: "1",
@@ -33,6 +35,8 @@ const mockOperations: Page<Op> = {
         failed: false,
         block: {
           height: 5,
+          hash: "block-hash-2",
+          time: new Date("2024-03-20T11:00:00.000Z"),
         },
       },
       id: "2",

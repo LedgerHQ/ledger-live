@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 import network from "@ledgerhq/live-network";
 import WS from "isomorphic-ws";
 import querystring from "querystring";

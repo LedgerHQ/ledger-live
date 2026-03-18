@@ -1,7 +1,5 @@
 import {
   AlpacaApi,
-  Block,
-  BlockInfo,
   Cursor,
   ListOperationsOptions,
   Page,
@@ -12,6 +10,8 @@ import {
   Stake,
   TransactionIntent,
   CraftedTransaction,
+  TransactionValidation,
+  Balance,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
@@ -20,9 +20,12 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   listOperations as logicListOperations,
   lastBlock,
   Options,
+  validateAddress,
 } from "../logic";
 import type { TronMemo } from "../types";
 
@@ -45,12 +48,8 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     getBalance,
     lastBlock,
     listOperations,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -60,6 +59,17 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 

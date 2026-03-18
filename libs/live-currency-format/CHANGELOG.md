@@ -1,5 +1,29 @@
 # @ledgerhq/live-currency-format
 
+## 0.6.0
+
+### Minor Changes
+
+- [#15134](https://github.com/LedgerHQ/ledger-live/pull/15134) [`42bf9b7`](https://github.com/LedgerHQ/ledger-live/commit/42bf9b7c40c04c7d2eeffba30b778be0b123bfd0) Thanks [@Canestin](https://github.com/Canestin)! - fix: missing mantra balances
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025), [`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc), [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d)]:
+  - @ledgerhq/types-cryptoassets@7.35.0
+  - @ledgerhq/live-env@2.30.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#15134](https://github.com/LedgerHQ/ledger-live/pull/15134) [`42bf9b7`](https://github.com/LedgerHQ/ledger-live/commit/42bf9b7c40c04c7d2eeffba30b778be0b123bfd0) Thanks [@Canestin](https://github.com/Canestin)! - fix: missing mantra balances
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025), [`fd24208`](https://github.com/LedgerHQ/ledger-live/commit/fd242082615ef0af25f0f5f96389b7406fc194dc), [`8cb2da1`](https://github.com/LedgerHQ/ledger-live/commit/8cb2da1f175f143666abcb66ef94bd230456846d)]:
+  - @ledgerhq/types-cryptoassets@7.35.0-next.0
+  - @ledgerhq/live-env@2.30.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

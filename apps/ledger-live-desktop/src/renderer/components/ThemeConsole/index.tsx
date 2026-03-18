@@ -2,7 +2,7 @@ import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setTheme } from "~/renderer/actions/settings";
 import { themeSelector } from "~/renderer/actions/general";
-import { useTheme, ThemeMode, IconButton } from "@ledgerhq/lumen-ui-react";
+import { IconButton } from "@ledgerhq/lumen-ui-react";
 import { Moon, Sun } from "@ledgerhq/lumen-ui-react/symbols";
 
 const STORAGE_KEY = "theme-console-position";
@@ -46,7 +46,6 @@ const getInitialPosition = () => {
 const ThemeConsole = () => {
   const dispatch = useDispatch();
   const currentTheme = useSelector(themeSelector);
-  const { setMode } = useTheme();
   const [position, setPosition] = useState(getInitialPosition);
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -98,9 +97,8 @@ const ThemeConsole = () => {
     };
   }, [isDragging]);
 
-  const handleChangeTheme = (theme: ThemeMode) => {
+  const handleChangeTheme = (theme: string) => {
     dispatch(setTheme(theme));
-    setMode(theme);
   };
 
   return (

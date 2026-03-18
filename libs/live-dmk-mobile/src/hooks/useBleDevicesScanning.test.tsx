@@ -15,7 +15,7 @@ const dmk = {
   getDeviceSessionState: jest.fn(),
   listenToAvailableDevices: jest.fn(),
   stopDiscovering: jest.fn(),
-} as unknown as DeviceManagementKit;
+};
 
 // Mock device data for tests
 const mockDevice1 = {
@@ -138,8 +138,12 @@ describe("useBleDevicesScanning", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(dmkUtils.getDeviceManagementKit).mockReturnValue(dmk);
-    jest.mocked(dmkUtils.useDeviceManagementKit).mockReturnValue(dmk);
+    jest
+      .mocked(dmkUtils.getDeviceManagementKit)
+      .mockReturnValue(dmk as unknown as DeviceManagementKit);
+    jest
+      .mocked(dmkUtils.useDeviceManagementKit)
+      .mockReturnValue(dmk as unknown as DeviceManagementKit);
     dmk.getDeviceSessionState.mockReturnValue(new Observable());
     dmk.listenToAvailableDevices.mockImplementation(mockListenToAvailableDevices);
     dmk.stopDiscovering.mockImplementation(mockStopDiscovering);

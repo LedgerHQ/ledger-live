@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 
 type TranslatedErrorMessages = {
   title: string;
-  description: string;
+  description?: string;
 };
 
 /**
@@ -35,12 +35,19 @@ export function useTranslatedBridgeError(error: Error | undefined): TranslatedEr
     const genericTitleKey = "errors.generic.title";
     const genericDescriptionKey = "errors.generic.description";
 
+    const hasSpecificTitle = title !== titleKey;
+    const hasSpecificDescription = description !== descriptionKey;
+    let translatedDescription: string | undefined;
+
+    if (hasSpecificDescription) {
+      translatedDescription = description;
+    } else if (!hasSpecificTitle) {
+      translatedDescription = t(genericDescriptionKey, args as Record<string, unknown>);
+    }
+
     return {
-      title: title === titleKey ? t(genericTitleKey, args as Record<string, unknown>) : title,
-      description:
-        description === descriptionKey
-          ? t(genericDescriptionKey, args as Record<string, unknown>)
-          : description,
+      title: hasSpecificTitle ? title : t(genericTitleKey, args as Record<string, unknown>),
+      description: translatedDescription,
     };
   }, [error, t]);
 }

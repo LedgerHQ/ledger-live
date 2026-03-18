@@ -1,5 +1,4 @@
 import {
-  Api,
   Block,
   Cursor,
   Page,
@@ -8,6 +7,7 @@ import {
   Stake,
   CraftedTransaction,
   TransactionIntent,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type AlgorandCoinConfig } from "../config";
 import {
@@ -22,8 +22,9 @@ import {
   listOperations,
 } from "../logic";
 import type { AlgorandMemo } from "../types";
+import { validateAddress } from "../validateAddress";
 
-export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
+export function createApi(config: AlgorandCoinConfig): AlpacaApi<AlgorandMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -39,8 +40,8 @@ export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
     getBlock(_height: number): Promise<Block> {
       throw new Error("getBlock is not supported for Algorand");
     },
-    getSequence(_address: string): Promise<bigint> {
-      throw new Error("getSequence is not applicable for Algorand");
+    getNextSequence(_address: string): Promise<bigint> {
+      throw new Error("getNextSequence is not applicable for Algorand");
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported for Algorand");
@@ -59,5 +60,6 @@ export function createApi(config: AlgorandCoinConfig): Api<AlgorandMemo> {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported for Algorand");
     },
+    validateAddress,
   };
 }

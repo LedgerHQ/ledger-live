@@ -7,6 +7,6 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   account,
   signedOperation: { signature, operation },
 }) => {
-  const hash = await broadcastLogic(signature, account.currency);
+  const hash = await broadcastLogic(signature, account.currency.id);
   return patchOperationWithHash(operation, hash);
 };

@@ -14,7 +14,6 @@ test.use({
       enabled: false,
     },
     noah: { enabled: false },
-    welcomeScreenVideoCarousel: { enabled: false },
   },
   simulateCamera: path.join(
     __dirname,

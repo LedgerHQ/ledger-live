@@ -1,44 +1,21 @@
 import { useCallback, useEffect, useReducer } from "react";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { hasAccountsSelector, isUpToDateSelector } from "~/renderer/reducers/accounts";
-import {
-  selectLastUserSyncClickTimestamp,
-  setLastUserSyncClickTimestamp,
-} from "~/renderer/reducers/syncRefresh";
-import { getEnv } from "@ledgerhq/live-env";
+import { useLocation } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 
-import { usePortfolioBalanceSync } from "LLD/hooks/usePortfolioBalanceSync";
-import { useAccountsSyncStatus } from "./useAccountsSyncStatus";
+import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
 import { useActivityIndicatorTooltip } from "./useActivityIndicatorTooltip";
 import { getActivityIndicatorIcon } from "../utils/getActivityIndicatorIcon";
-import {
-  PLAYWRIGHT_CLICK_SPIN_DURATION_MS,
-  TOOLTIP_UPDATE_INTERVAL_MS,
-  USER_CLICK_SPIN_DURATION_MS,
-} from "../utils/constants";
-import { isRecentUserSyncClick } from "../utils/syncRefreshUtils";
+import { TOOLTIP_UPDATE_INTERVAL_MS } from "../utils/constants";
 
-/**
- * Activity indicator state for the TopBar sync button.
- * When isRotating is true, the sync action should be non-interactive (disabled).
- */
 export const useActivityIndicator = () => {
-  const dispatch = useDispatch();
-  const hasAccounts = useSelector(hasAccountsSelector);
-  const accountsWithUpToDateCheck = useSelector(isUpToDateSelector);
-  const lastUserSyncClickTimestamp = useSelector(selectLastUserSyncClickTimestamp);
-  const {
-    isBalanceLoading,
-    stableSyncPending,
-    hasCvOrBridgeError,
-    hasWalletSyncError,
-    triggerRefresh,
-  } = usePortfolioBalanceSync();
+  const location = useLocation();
   const [, forceTooltipUpdate] = useReducer((tick: number) => tick + 1, 0);
 
-  const { allAccounts, listOfErrorAccountNames, areAllAccountsUpToDate } =
-    useAccountsSyncStatus(accountsWithUpToDateCheck);
+  const { hasAccounts, syncPhase, allAccounts, listOfErrorAccountNames, handleSync } =
+    usePortfolioBalance();
+
+  const isRotating = syncPhase === "syncing";
+  const isError = syncPhase === "failed";
 
   const lastSyncMs = Math.max(...allAccounts.map(a => a.lastSyncDate?.getTime() ?? 0), 0);
 
@@ -49,14 +26,6 @@ export const useActivityIndicator = () => {
     return () => clearInterval(id);
   }, [needsTooltipUpdates]);
 
-  const isError = hasCvOrBridgeError || !areAllAccountsUpToDate || hasWalletSyncError;
-  const isPlaywrightRun = getEnv("PLAYWRIGHT_RUN");
-  const userClickSpinMs = isPlaywrightRun
-    ? PLAYWRIGHT_CLICK_SPIN_DURATION_MS
-    : USER_CLICK_SPIN_DURATION_MS;
-  const isUserClick = isRecentUserSyncClick(lastUserSyncClickTimestamp, userClickSpinMs);
-  const isRotating = isBalanceLoading || (isUserClick && stableSyncPending);
-
   const icon = getActivityIndicatorIcon(isError, isRotating);
   const tooltip = useActivityIndicatorTooltip({
     isRotating,
@@ -65,31 +34,22 @@ export const useActivityIndicator = () => {
     lastSyncMs,
   });
 
-  const handleSync = useCallback(() => {
-    const now = Date.now();
-    dispatch(setLastUserSyncClickTimestamp(now));
-    triggerRefresh();
-    track("SyncRefreshClick", {
-      triggered_after_sync_error: isError,
-    });
-  }, [dispatch, triggerRefresh, isError]);
-
   const onTooltipShow = useCallback(() => {
     if (isError) {
       track("SyncErrorList", {
+        page: location.pathname,
         currencies: listOfErrorAccountNames
           ? listOfErrorAccountNames.split("/").filter(Boolean)
           : [],
       });
     }
-  }, [isError, listOfErrorAccountNames]);
+  }, [isError, listOfErrorAccountNames, location.pathname]);
 
   return {
     hasAccounts,
     handleSync,
     isError,
     isRotating,
-    isDisabled: isRotating,
     tooltip,
     icon,
     onTooltipShow: isError ? onTooltipShow : undefined,

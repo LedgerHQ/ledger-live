@@ -5,11 +5,16 @@ import { createMockAccount } from "./test/fixtures";
 import { CantonAccount } from "./types";
 
 describe("isAccountEmpty", () => {
-  const createCantonAccount = (overrides: Partial<CantonAccount> = {}): CantonAccount => {
+  const createCantonAccount = (
+    overrides: Omit<Partial<CantonAccount>, "cantonResources"> & {
+      cantonResources?: Partial<CantonAccount["cantonResources"]>;
+    } = {},
+  ): CantonAccount => {
     const baseAccount = createMockAccount(overrides);
     return {
       ...baseAccount,
       cantonResources: {
+        isOnboarded: false,
         instrumentUtxoCounts: {},
         pendingTransferProposals: [],
         ...overrides.cantonResources,
@@ -27,18 +32,11 @@ describe("isAccountEmpty", () => {
           type: "TokenCurrency",
           id: "token-id",
           contractAddress: "0x123",
+          tokenType: "cip20",
           name: "Test Token",
           ticker: "TEST",
-          decimals: 18,
-          parentCurrency: {
-            id: "ethereum",
-            type: "CryptoCurrency",
-            name: "Ethereum",
-            ticker: "ETH",
-            family: "evm",
-            units: [],
-            explorerViews: [],
-          },
+          units: [{ name: "Test Token", code: "TEST", magnitude: 18 }],
+          parentCurrency: createMockAccount().currency,
         },
         balance: new BigNumber(0),
         spendableBalance: new BigNumber(0),
@@ -52,7 +50,6 @@ describe("isAccountEmpty", () => {
         },
         swapHistory: [],
         creationDate: new Date(),
-        balanceHistory: [],
       };
 
       expect(isAccountEmpty(tokenAccount)).toBe(false);
@@ -128,9 +125,10 @@ describe("isAccountEmpty", () => {
               type: "TokenCurrency",
               id: "token-id",
               contractAddress: "0x123",
+              tokenType: "cip20",
               name: "Test Token",
               ticker: "TEST",
-              decimals: 18,
+              units: [{ name: "Test Token", code: "TEST", magnitude: 18 }],
               parentCurrency: createMockAccount().currency,
             },
             balance: new BigNumber(0),
@@ -145,7 +143,6 @@ describe("isAccountEmpty", () => {
             },
             swapHistory: [],
             creationDate: new Date(),
-            balanceHistory: [],
           },
         ],
         cantonResources: {
@@ -167,6 +164,7 @@ describe("isAccountEmpty", () => {
           pendingTransferProposals: [
             {
               contract_id: "contract-123",
+              instrument_admin: "admin-123",
               sender: "sender-address",
               receiver: "receiver-address",
               instrument_id: "instrument-123",
@@ -208,9 +206,10 @@ describe("isAccountEmpty", () => {
               type: "TokenCurrency",
               id: "token-id",
               contractAddress: "0x123",
+              tokenType: "cip20",
               name: "Test Token",
               ticker: "TEST",
-              decimals: 18,
+              units: [{ name: "Test Token", code: "TEST", magnitude: 18 }],
               parentCurrency: createMockAccount().currency,
             },
             balance: new BigNumber(0),
@@ -225,7 +224,6 @@ describe("isAccountEmpty", () => {
             },
             swapHistory: [],
             creationDate: new Date(),
-            balanceHistory: [],
           },
         ],
         cantonResources: {
@@ -247,6 +245,7 @@ describe("isAccountEmpty", () => {
           pendingTransferProposals: [
             {
               contract_id: "contract-456",
+              instrument_admin: "admin-456",
               sender: "sender-address",
               receiver: "receiver-address",
               instrument_id: "instrument-456",
@@ -274,9 +273,10 @@ describe("isAccountEmpty", () => {
               type: "TokenCurrency",
               id: "token-id",
               contractAddress: "0x123",
+              tokenType: "cip20",
               name: "Test Token",
               ticker: "TEST",
-              decimals: 18,
+              units: [{ name: "Test Token", code: "TEST", magnitude: 18 }],
               parentCurrency: createMockAccount().currency,
             },
             balance: new BigNumber(100),
@@ -291,7 +291,6 @@ describe("isAccountEmpty", () => {
             },
             swapHistory: [],
             creationDate: new Date(),
-            balanceHistory: [],
           },
         ],
         cantonResources: {
@@ -302,6 +301,7 @@ describe("isAccountEmpty", () => {
           pendingTransferProposals: [
             {
               contract_id: "contract-789",
+              instrument_admin: "admin-789",
               sender: "sender-address",
               receiver: "receiver-address",
               instrument_id: "instrument-789",
@@ -320,12 +320,12 @@ describe("isAccountEmpty", () => {
       const accountWithUndefinedSubAccounts = createCantonAccount({
         operationsCount: 0,
         balance: new BigNumber(0),
-        subAccounts: undefined,
         cantonResources: {
           instrumentUtxoCounts: {},
           pendingTransferProposals: [],
         },
       });
+      delete accountWithUndefinedSubAccounts.subAccounts;
 
       expect(isAccountEmpty(accountWithUndefinedSubAccounts)).toBe(true);
     });

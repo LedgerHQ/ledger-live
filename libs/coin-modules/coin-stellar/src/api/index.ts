@@ -31,6 +31,7 @@ import {
   getTokenFromAsset,
   getAssetFromToken,
 } from "../logic";
+import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
 import { StellarBurnAddressError, StellarMemo } from "../types";
 
@@ -66,9 +67,8 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       throw new Error("getRewards is not supported");
     },
     validateIntent,
-    getSequence: async (address: string) => {
+    getNextSequence: async (address: string) => {
       const sequence = await fetchSequence(address);
-      // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return BigInt(sequence.plus(1).toFixed());
     },
     getTokenFromAsset,
@@ -87,6 +87,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateAddress,
   };
 }
 

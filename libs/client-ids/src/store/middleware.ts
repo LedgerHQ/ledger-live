@@ -1,5 +1,5 @@
 import { Middleware } from "@reduxjs/toolkit";
-import { IdentitiesState } from "./types";
+import { IdentitiesState, isDummyUserId } from "./types";
 import { identitiesSlice } from "./slice";
 import { pushDevicesApi, createPushDevicesRequest } from "../api/api";
 import { getEnv } from "@ledgerhq/live-env";
@@ -31,21 +31,20 @@ export interface SyncMiddlewareConfig<State = unknown> {
   getIdentitiesState: (state: State) => IdentitiesState;
 
   /**
-   * Function to get user ID (equipment_id) asynchronously
-   * This is managed by apps, not by the identities store
-   */
-  getUserId: (state: State) => Promise<string>;
-
-  /**
    * Selector to get analytics consent from the global state
    * This avoids duplicating analytics consent in the identities state
    */
   getAnalyticsConsent: (state: State) => boolean;
+
+  /**
+   * Optional: resolve userId (e.g. from legacy app user). Used by mobile until it migrates to identities store.
+   * Desktop uses identities state only and does not pass this.
+   */
+  getUserId?: (state: State) => Promise<string>;
 }
 
 /**
  * Check if identities state needs to be synced
- * Note: userId check is done in attemptSync since getUserId is async
  */
 function shouldSync<State>(state: State, config: SyncMiddlewareConfig<State>): boolean {
   // Bypass sync if PUSH_DEVICES_SERVICE_URL is not configured
@@ -63,6 +62,11 @@ function shouldSync<State>(state: State, config: SyncMiddlewareConfig<State>): b
   const analyticsConsent = config.getAnalyticsConsent(state);
 
   if (!analyticsConsent) {
+    return false;
+  }
+
+  // When userId is dummy, allow sync only if config provides getUserId (e.g. mobile legacy)
+  if (isDummyUserId(identitiesState.userId) && !config.getUserId) {
     return false;
   }
 
@@ -88,18 +92,28 @@ async function attemptSync<State>(
   dispatch: Dispatch,
 ): Promise<void> {
   const identitiesState = config.getIdentitiesState(state);
-  const userId = await config.getUserId(state);
   const analyticsConsent = config.getAnalyticsConsent(state);
 
-  // Skip sync if no userId, no consent, or no device IDs
-  if (!userId || !analyticsConsent || identitiesState.deviceIds.length === 0) {
+  if (!analyticsConsent || identitiesState.deviceIds.length === 0) {
     return;
   }
 
   const pushDevicesServiceUrl = getEnv("PUSH_DEVICES_SERVICE_URL");
   if (!pushDevicesServiceUrl) {
-    // If the endpoint URL is not configured, skip sync
     return;
+  }
+
+  let userId: string;
+  if (isDummyUserId(identitiesState.userId)) {
+    if (!config.getUserId) {
+      return;
+    }
+    userId = await config.getUserId(state);
+    if (typeof userId !== "string" || userId.trim() === "") {
+      return; // Skip sync until legacy user is available; do not record as failure
+    }
+  } else {
+    userId = identitiesState.userId.exportUserIdForPushDevicesService();
   }
 
   const request = createPushDevicesRequest(userId, identitiesState.deviceIds);

@@ -1601,6 +1601,25 @@
     "bannerCta" : "开始设置",
     "continue" : "继续"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™ 无法清晰透明地签署此交易",
+      "subtitle" : "使用任何其他 Ledger 设备验证此交易的详请后再签名。没有透明签名，您可能会失去所有资产。",
+      "continue" : "继续操作，风险自担"
+    },
+    "info" : {
+      "title" : "自 {{date}} 起，{{device}}™ 将终止通过 Ledger Live™ 支持 {{coinName}}",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有 Ledger Live 服务提供商并优化客户服务",
+      "reminder" : "不再提醒"
+    },
+    "error" : {
+      "title" : "{{device}}™ 不支持此功能",
+      "subtitle" : "立即升级到较新的 Ledger 设备，以确保可以访问所有最新的 Ledger Live 功能。"
+    },
+    "update" : "探索您的升级计划",
+    "learnMore" : "了解更多",
+    "continue" : "继续"
+  },
   "purchaseDevice" : {
     "pageTitle" : "购买设备",
     "debugDrawers" : {
@@ -2759,9 +2778,9 @@
       }
     },
     "refreshStatus" : {
-      "refreshing" : "正在刷新 - 上次更新 {{timeAgo}}",
-      "refreshingInitial" : "刷新中...",
-      "upToDate" : "已同步至最新状态"
+      "refreshing" : "刷新中...",
+      "upToDate" : "已同步至最新状态",
+      "syncError" : "部分账户同步失败"
     }
   },
   "addAccountsModal" : {
@@ -4432,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "取消",
-      "description" : "发送 0 {{ticker}} 到您自己的地址。"
+      "description" : "发送 0 {{ticker}} 到您自己的地址。不保证取消。如果网络在此次取消请求之前处理了您的原始交易，资金仍会发送给接收方。"
     },
     "error" : {
       "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
@@ -4441,6 +4460,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "无法加速或取消",
         "description" : "此交易已经过验证"
+      },
+      "InvalidTransactionError" : {
+        "title" : "无效交易",
+        "description" : "该交易不再与区块链状态相匹配。请重新开始流程。"
       }
     }
   },
@@ -7706,6 +7729,10 @@
       "description" : "保护您的资产，探索更多可能。",
       "buttonLabel" : "查看后续步骤"
     },
+    "widget" : {
+      "title" : "接着，完成钱包设置",
+      "subtitle" : "首先为您的钱包充值。"
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "设置您的 Ledger 设备"
@@ -8541,6 +8568,40 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "目前无法核实您的 Concordium 地址。请务必将地址粘贴到 Concordium 浏览器中进行仔细核对。",
+      "verifyLink" : "验证"
+    },
+    "onboard" : {
+      "title" : "Concordium 引导流程",
+      "acknowledge" : {
+        "title" : "确认声明",
+        "description" : "Concordium 需要进行外部身份验证。请阅读以下重要安全提示：",
+        "list" : {
+          "1" : "无法核实地址 —— Ledger 设备无法核实 Concordium 接收地址。接收资金之前，请人工核实地址。",
+          "2" : "Concordium ID 应用程序使用独立的助记词 —— 您需要在 Concordium 应用程序中创建新的 24 个助记词。切勿使用您的 Ledger 助记词。",
+          "3" : "您将被重定向到 Ledger Wallet 以外——身份验证将在外部 Concordium Wallet 应用程序中完成。这是 Concordium 区块链协议的要求。",
+          "4" : "交易签署始终安全——只有您的 Ledger 设备可以签署交易和创建账户。"
+        },
+        "allow" : "同意"
+      },
+      "pair" : {
+        "title" : "连接到 Concordium ID 应用程序",
+        "connecting" : "正在连接...",
+        "scanQRCodeOrDownload" : "请使用另一台设备扫描二维码，或下载 Concordium ID 应用程序以继续。",
+        "openIdApp" : "打开 Concordium ID 应用程序",
+        "success" : "已成功与 Concordium ID 应用程序配对。",
+        "error" : "与 Concordium ID 应用程序配对失败。"
+      },
+      "create" : {
+        "title" : "创建账户",
+        "prepare" : {
+          "title" : "要创建账户，请在 Concordium ID 应用程序中匹配以下代码"
+        }
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "情绪指数",
     "description" : "情绪指数反映了市场的情绪状态。其数值范围为 0 至 100，数值越低表示越恐惧，数值越高表示越贪婪。",
@@ -8598,5 +8659,43 @@
     "swap" : "互换",
     "earn" : "赚取",
     "card" : "卡"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "同步错误",
+      "syncing" : "同步中",
+      "default" : "同步"
+    },
+    "bottomSheet" : {
+      "title" : "无法同步某些账户",
+      "description" : "出现临时网络问题。您的资产安全无虞。受影响的账户列表：{{accounts}}",
+      "close" : "关闭"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "安装 {{appName}}？",
+      "genericDescription" : "{{appName}} 应用程序将安装在您的 Ledger 设备上。",
+      "recoveryKeyDescription" : "您将能够直接在您的 Ledger Stax 上使用 Recovery Key Updater 应用程序进行更新。",
+      "installCTA" : "安装 {{appName}}"
+    },
+    "deviceSelection" : {
+      "title" : "选择 Ledger"
+    },
+    "installing" : {
+      "title" : "正在安装 {{appName}}……",
+      "description" : "请保持 {{productName}} 连接",
+      "resolving" : "正在准备安装……",
+      "connecting" : "正在连接设备……"
+    },
+    "success" : {
+      "title" : "{{appName}} 已成功安装",
+      "genericDescription" : "您现在可以在您的 Ledger 设备上使用 {{appName}} 应用程序。",
+      "recoveryKeyDescription" : "在您的 Ledger 设备上打开应用程序，以检查是否有 Ledger Recovery Key 更新。"
+    },
+    "error" : {
+      "title" : "安装 {{appName}} 失败",
+      "description" : "安装过程中出错了。请重试。"
+    }
   }
 }

@@ -36,7 +36,9 @@ export const Trend = ({ valueChange }: TrendProps) => {
       <span className="body-2 text-base">·</span>
       <span className="flex items-center body-2 text-base">
         {t("portfolio.today")}
-        <ChevronRight className="text-base" />
+        <span className="inline-flex rounded-md transition-all duration-300 ease-out group-hover:bg-base-transparent-hover">
+          <ChevronRight className="text-base" />
+        </span>
       </span>
     </div>
   );

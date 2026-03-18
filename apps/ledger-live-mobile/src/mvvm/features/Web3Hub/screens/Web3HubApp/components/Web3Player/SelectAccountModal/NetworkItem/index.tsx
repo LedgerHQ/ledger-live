@@ -17,7 +17,7 @@ export default function NetworkItem({ currency, onPress }: Props) {
   return (
     <TouchableOpacity onPress={handlePress}>
       <Flex pt={6} px={6} flexDirection={"row"} alignItems={"center"}>
-        <CircleCurrencyIcon currency={currency} size={50} />
+        <CircleCurrencyIcon currency={currency} size={50} sizeRatio={1} />
 
         <Text flex={1} pl={4} variant="large" fontWeight="semiBold" numberOfLines={1}>
           {currency.name}

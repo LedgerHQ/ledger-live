@@ -15,6 +15,8 @@ export type SendStepConfig = FlowStepConfig<SendFlowStep> &
     titleKey?: string;
     /** Explicit step to navigate to when the user presses Back. */
     backTarget?: SendFlowStep;
+    /** Whether the "Available $XX" description is shown in the header. Defaults to true when showTitle is true. */
+    showAvailable?: boolean;
   }>;
 
 export type SendFlowConfig = FlowConfig<SendFlowStep, SendStepConfig>;

@@ -77,6 +77,7 @@ export enum ScreenName {
   DelegationSummary = "DelegationSummary",
   DelegationValidationError = "DelegationValidationError",
   DelegationValidationSuccess = "DelegationValidationSuccess",
+  DeeplinkInstallAppDeviceSelection = "DeeplinkInstallAppDeviceSelection",
   DeveloperCustomManifest = "DeveloperCustomManifest",
   DeveloperSettings = "DeveloperSettings",
   DeviceConnect = "DeviceConnect",
@@ -301,6 +302,9 @@ export enum ScreenName {
   EditTransactionSummary = "EditTransactionSummary",
   EvmEditTransactionMethodSelection = "EvmEditTransactionMethodSelection",
 
+  // Bitcoin
+  BitcoinEditTransactionMethodSelection = "BitcoinEditTransactionMethodSelection",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -341,6 +345,8 @@ export enum ScreenName {
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
   CantonOnboardAccount = "CantonOnboardAccount",
+  // Concordium
+  ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -622,6 +628,9 @@ export enum NavigatorName {
   // Evm
   EvmEditTransaction = "EvmEditTransaction",
 
+  // Bitcoin
+  BitcoinEditTransaction = "BitcoinEditTransaction",
+
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
   PolkadotUnbondFlow = "PolkadotUnbondFlow",
@@ -662,6 +671,7 @@ export enum NavigatorName {
   SuiUndelegateFlow = "SuiUndelegateFlow",
 
   CantonOnboard = "CantonOnboard",
+  ConcordiumOnboard = "ConcordiumOnboard",
 
   // Tab
   Main = "Main",

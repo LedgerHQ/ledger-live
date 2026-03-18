@@ -10,11 +10,12 @@ import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
 import { AddAccount } from "./components/AddAccount";
 import { PerpsEntryPoint } from "./components/PerpsEntryPoint";
-import { PORTFOLIO_TRACKING_PAGE_NAME } from "./utils/constants";
+import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
 import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
 import Assets from "LLD/features/Assets";
+import { CryptoAddressesBanner } from "LLD/components/CryptoAddressesBanner";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -59,10 +60,12 @@ export const PortfolioView = memo(function PortfolioView({
 
           <PortfolioBannerContent />
           {shouldDisplayMarketBanner && <MarketBanner />}
-          {shouldDisplayAddAccountCta && <AddAccount />}
+
           <PerpsEntryPoint />
 
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
+          {shouldDisplayAddAccountCta && <AddAccount />}
+          {shouldDisplayAssetSection && <CryptoAddressesBanner />}
 
           {totalOperations > 0 && (
             <OperationsList

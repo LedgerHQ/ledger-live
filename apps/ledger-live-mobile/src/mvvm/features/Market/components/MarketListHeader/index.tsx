@@ -20,5 +20,5 @@ export function MarketListHeaderTitle() {
     return null;
   }
 
-  return <HeaderTitle titleKey="market.title" />;
+  return <HeaderTitle testID="market-list-header-title" titleKey="market.title" />;
 }

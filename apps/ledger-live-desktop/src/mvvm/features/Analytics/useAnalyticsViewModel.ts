@@ -1,19 +1,19 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import type { AnalyticsViewModel } from "./types";
 
-export default function useAnalyticsViewModel() {
+export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const navigate = useNavigate();
-  const { t } = useTranslation();
   const counterValue = useSelector(counterValueCurrencySelector);
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
-  const { shouldDisplayGraphRework } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayGraphRework, shouldDisplayAssetSection } =
+    useWalletFeaturesConfig("desktop");
 
   const navigateToDashboard = useCallback(() => {
     navigate("/");
@@ -23,7 +23,8 @@ export default function useAnalyticsViewModel() {
     navigateToDashboard,
     counterValue,
     selectedTimeRange,
-    t,
+
     shouldDisplayGraphRework,
+    shouldDisplayAssetSection,
   };
 }

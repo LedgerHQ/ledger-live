@@ -1,6 +1,7 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import type { BlockOperation, TransferBlockOperation } from "@ledgerhq/coin-framework/api/index";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
@@ -294,6 +295,61 @@ export const etherscanInternalTransactionToOperations = (
       }) as Operation,
   );
 };
+
+const NATIVE_ASSET = { type: "native" } as const;
+
+function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
+  return it.isError === "0" && BigInt(it.value) > 0n && !!it.from && !!it.to;
+}
+
+/**
+ * Converts valid internal transactions to BlockOperations grouped by transaction hash.
+ * Skips internal txs with isError === "1" or value === "0".
+ */
+export function internalTxsToOperationsByHash(
+  internalTxs: EtherscanInternalTransaction[],
+): Map<string, BlockOperation[]> {
+  const byHash = new Map<string, BlockOperation[]>();
+
+  for (const it of internalTxs) {
+    if (!isInternalTransactionValid(it)) continue;
+
+    const { from, to, value, hash } = it;
+    const encodedFrom = safeEncodeEIP55(from);
+    const encodedTo = safeEncodeEIP55(to);
+    const amount = BigInt(value);
+
+    const ops: BlockOperation[] = [];
+    const fromOp: TransferBlockOperation = {
+      type: "transfer",
+      address: encodedFrom,
+      ...(encodedTo ? { peer: encodedTo } : {}),
+      asset: NATIVE_ASSET,
+      amount: -amount,
+    };
+    const toOp: TransferBlockOperation = {
+      ...fromOp,
+      address: encodedTo,
+      ...(encodedFrom ? { peer: encodedFrom } : {}),
+      amount: amount,
+    };
+    if (encodedFrom) {
+      ops.push(fromOp);
+    }
+    if (encodedTo) {
+      ops.push(toOp);
+    }
+
+    let arr = byHash.get(hash);
+    if (arr === undefined) {
+      arr = [];
+      byHash.set(hash, arr);
+    }
+    arr.push(...ops);
+  }
+
+  return byHash;
+}
 
 export type PagingState = {
   // Pagination cursor boundary block (boundary between ).

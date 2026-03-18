@@ -112,7 +112,7 @@ export const RecipientScreenView = ({
               onSelect={handleAddressSelect}
               isSanctioned={showSanctionedBanner}
               isAddressComplete={isAddressComplete}
-              hasBridgeError={showBridgeRecipientError || showBridgeRecipientWarning}
+              hasBridgeError={showBridgeRecipientError}
             />
           )}
 

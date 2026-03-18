@@ -36,6 +36,10 @@ import {
   mapTransactionIntentToSdkIntent,
   hasSpecificIntentData,
   getOperationDetailsExtraFields,
+  getAvailableBalance,
+  isSelfTransferTransaction,
+  isPublicTransaction,
+  isPrivateTransaction,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -595,7 +599,7 @@ describe("getOperationTransactionType", () => {
     ["private", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
     ["public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
     ["public", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
-    ["public", "unknown_type"],
+    ["public", "unknown_type" as any],
   ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
     expect(getOperationTransactionType(transactionType)).toBe(expected);
   });
@@ -775,7 +779,12 @@ describe("splitPrivateAndPublicOperations", () => {
   });
 
   it("should treat operations without extra.transactionType as public", () => {
-    const opNoExtra = getMockedOperation({ id: "no-extra", extra: {} });
+    const opNoExtra = getMockedOperation({
+      id: "no-extra",
+      // Intentionally omit `transactionType` to exercise the defaulting logic.
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      extra: {} as AleoOperationExtra,
+    });
 
     const [privateOps, publicOps] = splitPrivateAndPublicOperations([opNoExtra]);
 
@@ -924,10 +933,9 @@ describe("mapTransactionIntentToSdkIntent", () => {
   });
 
   it("should throw for unsupported intent type", () => {
-    // @ts-expect-error - testing unsupported intent type
     const intent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
       ...baseIntent,
-      type: "custom_intent",
+      type: "custom_intent" as any,
     };
 
     expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
@@ -987,5 +995,85 @@ describe("getOperationDetailsExtraFields", () => {
     const result = getOperationDetailsExtraFields(extra);
 
     expect(result).toEqual([{ key: "functionId", value: "transfer_private_to_public" }]);
+  });
+});
+
+describe("getAvailableBalance", () => {
+  const mockTransparentBalance = new BigNumber(100);
+  const mockPrivateBalance = new BigNumber(200);
+  const mockAccount = getMockedAccount({
+    aleoResources: {
+      ...mockAleoResources,
+      transparentBalance: mockTransparentBalance,
+      privateBalance: mockPrivateBalance,
+    },
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_PUBLIC, mockTransparentBalance],
+    [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, mockTransparentBalance],
+    [TRANSACTION_TYPE.TRANSFER_PRIVATE, mockPrivateBalance],
+    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, mockPrivateBalance],
+  ])("should return correct balance for %s", (mode, expected) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(getAvailableBalance(mockAccount, transaction)).toStrictEqual(expected);
+  });
+
+  it.each([TRANSACTION_TYPE.TRANSFER_PUBLIC, TRANSACTION_TYPE.TRANSFER_PRIVATE])(
+    "should return zero when aleoResources is undefined (%s)",
+    mode => {
+      // @ts-expect-error - testing behavior when aleoResources is explicitly undefined
+      const brokenAccount = getMockedAccount({ aleoResources: undefined });
+      const transaction = getMockedTransaction({ mode });
+
+      expect(getAvailableBalance(brokenAccount, transaction)).toStrictEqual(new BigNumber(0));
+    },
+  );
+
+  it("should throw for an unsupported transaction mode", () => {
+    const unsupportedMode = "unsupported_mode";
+    // @ts-expect-error - testing unsupported mode
+    const transaction = getMockedTransaction({ mode: unsupportedMode });
+
+    expect(() => getAvailableBalance(mockAccount, transaction)).toThrow(
+      `aleo: unsupported tx mode for balance calculation: ${unsupportedMode}`,
+    );
+  });
+});
+
+describe("isSelfTransferTransaction", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [false, "other_type" as never],
+  ])("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isSelfTransferTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isPublicTransaction", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.TRANSFER_PUBLIC],
+    [true, TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    [false, "other_type" as never],
+  ])("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isPublicTransaction(transaction)).toBe(expected);
+  });
+});
+
+describe("isPrivateTransaction", () => {
+  it.each([
+    [true, TRANSACTION_TYPE.TRANSFER_PRIVATE],
+    [true, TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+    [false, "other_type" as never],
+  ])("should return %s for mode '%s'", (expected, mode) => {
+    const transaction = getMockedTransaction({ mode });
+
+    expect(isPrivateTransaction(transaction)).toBe(expected);
   });
 });

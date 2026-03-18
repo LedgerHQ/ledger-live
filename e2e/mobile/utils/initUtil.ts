@@ -2,7 +2,7 @@ import { loadConfig, setFeatureFlags } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { isSpeculosRemote } from "../helpers/commonHelpers";
+import { isSpeculosRemote, isWallet40 } from "../helpers/commonHelpers";
 import {
   deleteSpeculos,
   launchSpeculos,
@@ -308,6 +308,20 @@ export class InitializationManager {
 
     // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
-    if (featureFlags) await setFeatureFlags(featureFlags);
+    const defaultFlags = {
+      lwmWallet40: {
+        enabled: isWallet40,
+        params: {
+          mainNavigation: isWallet40,
+          marketBanner: isWallet40,
+          graphRework: isWallet40,
+          quickActionCtas: isWallet40,
+        },
+      },
+    };
+    await setFeatureFlags({
+      ...defaultFlags,
+      ...featureFlags,
+    });
   }
 }

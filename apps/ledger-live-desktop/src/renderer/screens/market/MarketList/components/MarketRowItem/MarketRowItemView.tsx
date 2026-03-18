@@ -21,6 +21,7 @@ const ACTION_ICONS: Record<MarketActionType, string> = {
   buy: "Plus",
   swap: "Trade",
   stake: "GraphGrow",
+  sell: "Minus",
 };
 
 type MarketRowItemViewProps = RowItemViewProps & {

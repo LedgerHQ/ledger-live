@@ -5,7 +5,7 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
@@ -40,7 +40,7 @@ const TIMEOUT = 30000;
 // Mock signer context for testing
 const keyPair = generateMockKeyPair();
 const mockSigner = createMockSigner(keyPair);
-const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
+const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => {
   return callback(mockSigner);
 });
 
@@ -117,7 +117,15 @@ describe.skip("sync (devnet)", () => {
           {
             ...ACCOUNT_SHAPE_INFO,
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialAccount: { xpub, operations } as Account,
+            initialAccount: {
+              xpub,
+              operations,
+              cantonResources: {
+                isOnboarded: true,
+                instrumentUtxoCounts: {},
+                pendingTransferProposals: [],
+              },
+            } as unknown as CantonAccount,
           },
           { paginationConfig: {} },
         );
@@ -138,13 +146,17 @@ describe.skip("sync (devnet)", () => {
         mockGetBalance.mockResolvedValue([
           {
             instrument_id: "Amulet",
+            admin_id: "native-admin",
             amount: "500",
             locked: false,
+            utxo_count: 1,
           },
           {
             instrument_id: "LockedAmulet",
+            admin_id: "native-admin",
             amount: "1000000",
             locked: true,
+            utxo_count: 1,
           },
         ]);
 
@@ -180,7 +192,15 @@ describe.skip("sync (devnet)", () => {
         };
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const initialAccount = { xpub, operations: [operation] } as Account;
+        const initialAccount = {
+          xpub,
+          operations: [operation],
+          cantonResources: {
+            isOnboarded: true,
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+          },
+        } as unknown as CantonAccount;
 
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(
