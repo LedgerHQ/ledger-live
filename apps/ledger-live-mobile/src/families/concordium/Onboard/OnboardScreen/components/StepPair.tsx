@@ -94,9 +94,9 @@ export default function StepPair({
           {pairStatus === PairStatus.ERROR && (
             <Flex alignItems="center">
               <Alert type="error">
-                <Text>
+                <Alert.BodyText>
                   <Trans i18nKey="concordium.onboard.pair.error" />
-                </Text>
+                </Alert.BodyText>
               </Alert>
             </Flex>
           )}

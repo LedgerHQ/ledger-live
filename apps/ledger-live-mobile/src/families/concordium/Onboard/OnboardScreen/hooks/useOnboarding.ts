@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import type { ConcordiumCurrencyBridge } from "@ledgerhq/coin-concordium";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
+import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";
 
 const CONFIRMATION_CODE_LENGTH = 4;
 
@@ -13,6 +13,7 @@ export enum CreateStatus {
   PREPARING = "PREPARING",
   SUBMITTING = "SUBMITTING",
   SUCCESS = "SUCCESS",
+  DEVICE_LOCKED = "DEVICE_LOCKED",
   ERROR = "ERROR",
 }
 
@@ -36,6 +37,7 @@ export function useOnboarding(
   onSessionExpired: () => void,
 ) {
   const [createStatus, setCreateStatus] = useState<CreateStatus>(CreateStatus.PREPARING);
+  const [completedAccount, setCompletedAccount] = useState<Account | null>(null);
   const confirmationCode = getConfirmationCode(sessionTopic);
   const subscriptionRef = useRef<Subscription | null>(null);
   const completedRef = useRef(false);
@@ -50,10 +52,10 @@ export function useOnboarding(
   const startOnboarding = useCallback(() => {
     unsubscribe();
     completedRef.current = false;
+    setCompletedAccount(null);
     setCreateStatus(CreateStatus.PREPARING);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const bridge = getCurrencyBridge(currency) as ConcordiumCurrencyBridge;
+    const bridge = getConcordiumBridge(currency);
     subscriptionRef.current = bridge
       .onboardAccount(currency.id, deviceId, creatableAccount)
       .subscribe({
@@ -74,6 +76,7 @@ export function useOnboarding(
           if ("account" in data) {
             completedRef.current = true;
             unsubscribe();
+            setCompletedAccount(data.account);
             setCreateStatus(CreateStatus.SUCCESS);
           }
         },
@@ -84,7 +87,9 @@ export function useOnboarding(
             message: error instanceof Error ? error.message : String(error),
           });
           unsubscribe();
-          if (isSessionExpiredError(error)) {
+          if (error instanceof LockedDeviceError) {
+            setCreateStatus(CreateStatus.DEVICE_LOCKED);
+          } else if (isSessionExpiredError(error)) {
             onSessionExpired();
           } else {
             setCreateStatus(CreateStatus.ERROR);
@@ -98,5 +103,5 @@ export function useOnboarding(
     return unsubscribe;
   }, [startOnboarding, unsubscribe]);
 
-  return { createStatus, confirmationCode, startOnboarding };
+  return { createStatus, confirmationCode, completedAccount, startOnboarding };
 }

@@ -1,35 +1,42 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
+import { useTheme } from "@react-navigation/native";
 import { Trans } from "~/context/Locale";
+import Animation from "~/components/Animation";
+import { ConnectYourDevice } from "~/components/DeviceAction/rendering";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { CreateStatus, useOnboarding } from "../hooks/useOnboarding";
 
 const RESEND_DELAY_SECONDS = 10;
 
 type Props = Readonly<{
   currency: CryptoCurrency;
-  deviceId: string;
+  device: Device;
   creatableAccount: Account;
   accountName: string | undefined;
   sessionTopic: string;
-  onCreated: () => void;
+  onCreated: (completedAccount: Account) => void;
   onSessionExpired: () => void;
 }>;
 
 export default function StepCreate({
   currency,
-  deviceId,
+  device,
   creatableAccount,
   accountName,
   sessionTopic,
   onCreated,
   onSessionExpired,
 }: Props) {
-  const { createStatus, confirmationCode, startOnboarding } = useOnboarding(
+  const { dark } = useTheme();
+  const theme = dark ? "dark" : "light";
+  const { createStatus, confirmationCode, completedAccount, startOnboarding } = useOnboarding(
     currency,
-    deviceId,
+    device.deviceId,
     creatableAccount,
     sessionTopic,
     onSessionExpired,
@@ -132,12 +139,24 @@ export default function StepCreate({
             </Flex>
           )}
 
+          {createStatus === CreateStatus.DEVICE_LOCKED && (
+            <ConnectYourDevice device={device} isLocked fullScreen={false} />
+          )}
+
           {createStatus === CreateStatus.SUBMITTING && (
-            <Alert type="info">
-              <Alert.BodyText>
-                <Trans i18nKey="concordium.onboard.create.keepDeviceNearby" />
-              </Alert.BodyText>
-            </Alert>
+            <Flex alignItems="center">
+              <Flex alignItems="center" justifyContent="center" height={150} mb={4}>
+                <Animation
+                  source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+                  style={getDeviceAnimationStyles(device.modelId)}
+                />
+              </Flex>
+              <Alert type="info">
+                <Alert.BodyText>
+                  <Trans i18nKey="concordium.onboard.create.keepDeviceNearby" />
+                </Alert.BodyText>
+              </Alert>
+            </Flex>
           )}
 
           {createStatus === CreateStatus.SUCCESS && (
@@ -158,15 +177,15 @@ export default function StepCreate({
         </Flex>
       </ScrollView>
 
-      {createStatus === CreateStatus.SUCCESS && (
+      {createStatus === CreateStatus.SUCCESS && completedAccount && (
         <Flex px={6} pb={10}>
-          <Button type="main" onPress={onCreated} size="large">
+          <Button type="main" onPress={() => onCreated(completedAccount)} size="large">
             <Trans i18nKey="common.continue" />
           </Button>
         </Flex>
       )}
 
-      {createStatus === CreateStatus.ERROR && (
+      {(createStatus === CreateStatus.DEVICE_LOCKED || createStatus === CreateStatus.ERROR) && (
         <Flex px={6} pb={10}>
           <Button type="main" onPress={startOnboarding}>
             <Trans i18nKey="common.retry" />

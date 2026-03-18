@@ -1,6 +1,7 @@
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { Subject } from "rxjs";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
@@ -15,6 +16,7 @@ let onboardSubject: Subject<unknown>;
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getCurrencyBridge: () => ({
     onboardAccount: () => onboardSubject.asObservable(),
+    pairWalletConnect: jest.fn(),
   }),
 }));
 
@@ -100,7 +102,7 @@ describe("useOnboarding", () => {
     });
   });
 
-  it("should transition to SUCCESS when result arrives", async () => {
+  it("should transition to SUCCESS and expose completed account when result arrives", async () => {
     const onSessionExpired = jest.fn();
     const { result } = renderHook(() =>
       useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
@@ -112,6 +114,7 @@ describe("useOnboarding", () => {
 
     await waitFor(() => {
       expect(result.current.createStatus).toBe(CreateStatus.SUCCESS);
+      expect(result.current.completedAccount).toBe(creatableAccount);
     });
   });
 
@@ -127,6 +130,22 @@ describe("useOnboarding", () => {
 
     await waitFor(() => {
       expect(onSessionExpired).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should transition to DEVICE_LOCKED on LockedDeviceError", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.error(new LockedDeviceError());
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.DEVICE_LOCKED);
+      expect(onSessionExpired).not.toHaveBeenCalled();
     });
   });
 

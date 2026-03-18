@@ -2,6 +2,8 @@ import React from "react";
 import { render, screen, userEvent } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepCreate from "../components/StepCreate";
 import { CreateStatus } from "../hooks/useOnboarding";
 
@@ -19,19 +21,32 @@ const sessionTopic = "ABCD1234sessiontopic";
 const onCreated = jest.fn();
 const onSessionExpired = jest.fn();
 
-const setupMock = (overrides: { createStatus: CreateStatus; confirmationCode?: string }) => {
+const completedAccount = genAccount("concordium-completed", { currency });
+
+const setupMock = (overrides: {
+  createStatus: CreateStatus;
+  confirmationCode?: string;
+  completedAccount?: typeof creatableAccount | null;
+}) => {
   mockUseOnboarding.mockReturnValue({
     createStatus: overrides.createStatus,
     confirmationCode: overrides.confirmationCode ?? "ABCD",
+    completedAccount: overrides.completedAccount ?? null,
     startOnboarding: mockStartOnboarding,
   });
+};
+
+const device: Device = {
+  deviceId: "device-id",
+  modelId: DeviceModelId.nanoX,
+  wired: false,
 };
 
 const renderStepCreate = () =>
   render(
     <StepCreate
       currency={currency}
-      deviceId="device-id"
+      device={device}
       creatableAccount={creatableAccount}
       accountName="Concordium 1"
       sessionTopic={sessionTopic}
@@ -69,12 +84,38 @@ describe("StepCreate", () => {
   });
 
   it("should show success alert in SUCCESS state", () => {
-    setupMock({ createStatus: CreateStatus.SUCCESS });
+    setupMock({ createStatus: CreateStatus.SUCCESS, completedAccount });
     renderStepCreate();
 
     expect(
       screen.getByText("Your Concordium account has been created successfully."),
     ).toBeDefined();
+  });
+
+  it("should call onCreated with completed account when Continue is pressed", async () => {
+    setupMock({ createStatus: CreateStatus.SUCCESS, completedAccount });
+    renderStepCreate();
+
+    await userEvent.press(screen.getByText("Continue"));
+
+    expect(onCreated).toHaveBeenCalledWith(completedAccount);
+  });
+
+  it("should show unlock device UI with retry button in DEVICE_LOCKED state", () => {
+    setupMock({ createStatus: CreateStatus.DEVICE_LOCKED });
+    renderStepCreate();
+
+    expect(screen.getByText("Unlock your device")).toBeDefined();
+    expect(screen.getByText("Retry")).toBeDefined();
+  });
+
+  it("should call startOnboarding on retry from DEVICE_LOCKED state", async () => {
+    setupMock({ createStatus: CreateStatus.DEVICE_LOCKED });
+    renderStepCreate();
+
+    await userEvent.press(screen.getByText("Retry"));
+
+    expect(mockStartOnboarding).toHaveBeenCalledTimes(1);
   });
 
   it("should show error alert with retry button in ERROR state", () => {
