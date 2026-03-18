@@ -7,6 +7,7 @@ import { PortfolioScreen as Portfolio } from "../screens/Portfolio";
 import ReadOnlyPortfolio from "../screens/ReadOnly";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { State } from "~/reducers/types";
+import { Account } from "@ledgerhq/types-live";
 
 type TestStackParamList = WalletTabNavigatorStackParamList;
 
@@ -81,11 +82,11 @@ export const overrideInitialStateWithPerpsEntryPoint =
   });
 
 export const overrideInitialStateWithAssetSection =
-  (assetSection: boolean) =>
+  (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
   (state: State): State => ({
     ...state,
     accounts: {
-      active: [mockAccount],
+      active: accounts,
     },
     settings: {
       ...state.settings,
@@ -95,3 +96,8 @@ export const overrideInitialStateWithAssetSection =
       },
     },
   });
+
+export const overrideInitialStateWithNoAccountsAndAssetSection =
+  (assetSection: boolean) =>
+  (state: State): State =>
+    overrideInitialStateWithAssetSection(assetSection, [])(state);

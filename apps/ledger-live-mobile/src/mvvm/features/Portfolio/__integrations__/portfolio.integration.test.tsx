@@ -8,6 +8,7 @@ import {
   overrideInitialStateWithGraphReworkAndReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
   overrideInitialStateWithAssetSection,
+  overrideInitialStateWithNoAccountsAndAssetSection,
 } from "./shared";
 
 describe("Portfolio Screen", () => {
@@ -106,9 +107,31 @@ describe("Portfolio Screen", () => {
       expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
     });
 
-    it("should not display the cryptos list when user has no accounts", async () => {
+    it("should not display the cryptos list when user has no accounts and assetSection is disabled", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithFeatureFlag,
+      });
+
+      await screen.findByTestId("PortfolioEmptyList");
+
+      expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+    });
+
+    it("should display the cryptos list with DADA API assets when no accounts and assetSection is enabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+      });
+
+      await screen.findByTestId("PortfolioEmptyList");
+
+      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(await screen.findByTestId("assetItem-Bitcoin")).toBeVisible();
+      expect(await screen.findByTestId("assetItem-Ethereum")).toBeVisible();
+    });
+
+    it("should not display the cryptos list when no accounts and assetSection is disabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(false),
       });
 
       await screen.findByTestId("PortfolioEmptyList");

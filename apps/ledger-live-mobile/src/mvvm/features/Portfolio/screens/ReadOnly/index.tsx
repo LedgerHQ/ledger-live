@@ -57,6 +57,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         key="noSigner"
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
         shouldDisplayAssetSection={shouldDisplayAssetSection}
+        isEmptyState
       />,
     ],
     [

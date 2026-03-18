@@ -15,6 +15,7 @@ export const PortfolioEmptySection = ({ isLNSUpsellBannerShown }: PortfolioEmpty
     return (
       <PortfolioNoAccountsContent
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        shouldDisplayAssetSection={shouldDisplayAssetSection}
         openAddModal={openAddModal}
         closeAddModal={closeAddModal}
         isAddModalOpened={isAddModalOpened}

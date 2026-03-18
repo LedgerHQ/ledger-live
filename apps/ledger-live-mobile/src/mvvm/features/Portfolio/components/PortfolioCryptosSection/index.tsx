@@ -13,10 +13,16 @@ import { useTranslation } from "~/context/Locale";
 import AssetListItem from "./AssetListItem";
 import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionViewModel";
 
-const PortfolioCryptosSectionComponent: React.FC = () => {
+interface PortfolioCryptosSectionProps {
+  isEmptyState?: boolean;
+}
+
+const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
+  isEmptyState,
+}) => {
   const { t } = useTranslation();
   const { assetsCount, hasMore, assetsToDisplay, onPressShowAll, onItemPress } =
-    usePortfolioCryptosSectionViewModel();
+    usePortfolioCryptosSectionViewModel({ isEmptyState });
 
   if (assetsCount === 0) return null;
 
@@ -48,7 +54,7 @@ const PortfolioCryptosSectionComponent: React.FC = () => {
           size="lg"
           isFull
           onPress={onPressShowAll}
-          lx={{ marginTop: "s24", marginBottom: "s48" }}
+          lx={{ marginTop: "s24", marginBottom: "s24" }}
         >
           {t("portfolio.seeAllAssets")}
         </Button>
