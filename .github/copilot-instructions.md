@@ -56,6 +56,8 @@ If in doubt, the lockfile diff should be explainable by the set of `package.json
 
 When a flow needs new coin-specific behaviour, the fix is to **extend the contract** (new optional slot) and implement it in the family folder, not to add branching in generic code. This keeps the codebase ready for modularisation and lazy loading. See `.cursor/rules/coin-families-contract.mdc` for the full rule and the Scan Device “no associated accounts” example.
 
+If a PR changes the coin-framework interface (`libs/coin-framework/src/api/types.ts`), the author should also update the developer portal accordingly (repository: https://github.com/LedgerHQ/developer-portal).
+
 ## Cross-team files (team-split convention)
 
 When a PR touches a file or directory that is **owned by or relevant to multiple teams**, suggest refactoring to the **team-split convention**: splitting reduces friction between teams in CODEOWNERS by giving each team clear ownership of its files.
