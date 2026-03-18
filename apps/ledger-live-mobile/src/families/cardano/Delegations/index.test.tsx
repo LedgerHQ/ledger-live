@@ -1,6 +1,5 @@
 import React from "react";
-import { fireEvent, screen } from "@tests/test-renderer";
-import { render } from "@tests/test-renderer";
+import { fireEvent, screen, render } from "@tests/test-renderer";
 import CardanoDelegations from "./index";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { NavigatorName, ScreenName } from "~/const";
