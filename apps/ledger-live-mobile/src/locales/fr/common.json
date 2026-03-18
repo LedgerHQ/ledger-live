@@ -10,6 +10,9 @@
     "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
+    "fee" : "Frais",
+    "stake" : "Staké",
+    "validator" : "Validateur",
     "delete" : "Effacer",
     "paste" : "Coller",
     "yes" : "Oui",
@@ -1601,6 +1604,25 @@
     "bannerCta" : "Démarrer",
     "continue" : "Continuer"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Le {{device}}™ ne peut pas signer cette transaction en clair",
+      "subtitle" : "Utilisez un autre appareil Ledger pour vérifier les détails de cette transaction avant de la signer. Sans la signature en clair, vous risquez de perdre tous vos actifs.",
+      "continue" : "Continuer malgré les risques"
+    },
+    "info" : {
+      "title" : "Fin de la prise en charge de {{coinName}} par le {{device}}™ via Ledger Live™ à compter du {{date}}",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder à tous les prestataires de services Ledger Live et de bénéficier d’une expérience optimale.",
+      "reminder" : "Ne plus me le rappeler"
+    },
+    "error" : {
+      "title" : "Le {{device}}™ ne prend pas en charge cette fonctionnalité",
+      "subtitle" : "Nous vous invitons à passer à un appareil plus récent dès aujourd’hui, afin de pouvoir accéder aux dernières fonctionnalités de Ledger Live."
+    },
+    "update" : "Découvrir la gamme",
+    "learnMore" : "En savoir plus",
+    "continue" : "Continuer"
+  },
   "purchaseDevice" : {
     "pageTitle" : "Achetez un appareil",
     "debugDrawers" : {
@@ -2759,9 +2781,9 @@
       }
     },
     "refreshStatus" : {
-      "refreshing" : "Actualisation – Dernière mise à jour {{timeAgo}}",
-      "refreshingInitial" : "Actualisation...",
-      "upToDate" : "Tout est à jour"
+      "refreshing" : "Actualisation...",
+      "upToDate" : "Tout est à jour",
+      "syncError" : "Échec de synchronisation pour certains comptes"
     }
   },
   "addAccountsModal" : {
@@ -4432,7 +4454,7 @@
     },
     "cancel" : {
       "title" : "Annuler",
-      "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
+      "description" : "Envoyez 0 {{ticker}} à votre propre adresse. L’annulation n’est pas garantie. Si le réseau traite votre transaction initiale avant cette demande d’annulation, vos actifs seront envoyés au bénéficiaire."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Vous ne pouvez pas annuler la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
@@ -4441,6 +4463,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "Impossible de l’accélérer ou de l’annuler",
         "description" : "Cette transaction a déjà été validée."
+      },
+      "InvalidTransactionError" : {
+        "title" : "Transaction invalide",
+        "description" : "Les conditions du réseau ont changé. Veuillez relancer votre opération."
       }
     }
   },
@@ -6237,6 +6263,52 @@
       "newAddressTRC20" : "Vous devez d’abord envoyer un minimum de 0,1 TRX à cette adresse pour l’activer."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "Adresse copiée",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Redéléguer",
+      "earn" : "Gagner"
+    },
+    "stakeBanner" : {
+      "title" : "Gagner des récompenses avec MINA",
+      "altTitle" : "Gérer votre délégation de MINA",
+      "description" : "Déléguez vos MINA à un producteur de blocs et percevez les récompenses générées. Les récompenses sont calculées en fonction du montant délégué.",
+      "altDescription" : "Modifiez vos paramètres de délégation ou arrêtez la délégation de vos MINA. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "Délégué à",
+      "stakedBalance" : "Solde de staking",
+      "producerAddress" : "Adresse du producteur",
+      "delegatedToTooltip" : "Nom du producteur de blocs auquel vous accordez la délégation",
+      "stakedBalanceTooltip" : "Montant total de MINA actuellement stakés avec ce validateur",
+      "producerAddressTooltip" : "Adresse publique du producteur de blocs auquel vous accordez la délégation"
+    },
+    "delegators" : "Délégants",
+    "memoPlaceholder" : "Mémo facultatif",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Choisir un validateur",
+        "connectDevice" : "Connecter votre appareil",
+        "confirmation" : "Confirmation"
+      },
+      "title" : "Staker des MINA",
+      "help" : "Pour déléguer vos MINA, sélectionnez un validateur dans la liste ci-dessous.",
+      "success" : {
+        "title" : "Transaction bien émise",
+        "description" : "Votre demande de modification de délégation a été envoyée."
+      },
+      "error" : {
+        "title" : "Erreur lors de l’émission de la transaction"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "showAll" : "Afficher tout",
+      "showLess" : "Afficher moins",
+      "iDelegate" : "Je délègue"
+    }
+  },
   "stellar" : {
     "token" : "Actifs",
     "memo" : {
@@ -6641,9 +6713,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "Mémo facultatif"
   },
   "near" : {
     "info" : {
@@ -7706,6 +7775,10 @@
       "description" : "Sécurisez vos actifs et exploitez tout leur potentiel.",
       "buttonLabel" : "Explorer"
     },
+    "widget" : {
+      "title" : "Finalisez la configuration de votre wallet",
+      "subtitle" : "Commencez par y déposer des actifs."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Configurez votre appareil Ledger"
@@ -8541,6 +8614,40 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "Impossible de vérifier votre adresse Concordium pour le moment. Veuillez la confirmer en la collant dans l’explorateur Concordium.",
+      "verifyLink" : "Vérifier"
+    },
+    "onboard" : {
+      "title" : "Ajout de Concordium",
+      "acknowledge" : {
+        "title" : "Avertissement",
+        "description" : "Concordium requiert une vérification externe de votre identité. Veuillez lire ces avertissements de sécurité :",
+        "list" : {
+          "1" : "L’adresse n’est pas vérifiée : votre appareil Ledger ne peut pas vérifier les adresses bénéficiaires sur Concordium. Vérifiez-les manuellement avant de recevoir des actifs.",
+          "2" : "L’application Concordium ID utilise une phrase de récupération différente : vous devrez créer une NOUVELLE phrase de 24 mots dans l’application. N’utilisez JAMAIS votre phrase Ledger.",
+          "3" : "Vous quitterez automatiquement Ledger Wallet : votre identité sera vérifiée dans l’application externe de Concordium. Cette étape est requise par la blockchain Concordium.",
+          "4" : "La signature des transactions reste sécurisée : seul votre appareil Ledger peut signer des transactions et créer des comptes."
+        },
+        "allow" : "Accepter"
+      },
+      "pair" : {
+        "title" : "Connexion à l’app Concordium ID",
+        "connecting" : "Connexion en cours...",
+        "scanQRCodeOrDownload" : "Scannez le code QR avec un autre appareil, ou téléchargez l’application Concordium ID pour continuer.",
+        "openIdApp" : "Ouvrir l’app Concordium ID",
+        "success" : "Appairage avec l’app Concordium ID réussi.",
+        "error" : "Échec de l’appairage avec l’app Concordium ID."
+      },
+      "create" : {
+        "title" : "Créer un compte",
+        "prepare" : {
+          "title" : "Pour créer un compte, saisissez le code ci-dessous dans l’application Concordium ID."
+        }
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "Sentiment du marché",
     "description" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
@@ -8598,5 +8705,43 @@
     "swap" : "Swap",
     "earn" : "Gagner",
     "card" : "Carte"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "Erreur de synchronisation",
+      "syncing" : "Synchronisation",
+      "default" : "Synchroniser"
+    },
+    "bottomSheet" : {
+      "title" : "Échec de la synchronisation de certains comptes",
+      "description" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité. Liste des comptes touchés : {{accounts}}.",
+      "close" : "Fermer"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "Installer {{appName}} ?",
+      "genericDescription" : "L’app {{appName}} sera installée sur votre appareil Ledger.",
+      "recoveryKeyDescription" : "Vous pourrez effectuer la mise à jour directement sur votre Ledger Stax à l’aide de l’app Recovery Key Updater.",
+      "installCTA" : "Installer {{appName}}"
+    },
+    "deviceSelection" : {
+      "title" : "Choisissez votre appareil Ledger"
+    },
+    "installing" : {
+      "title" : "Installation de {{appName}}...",
+      "description" : "Veuillez garder votre {{productName}} connecté",
+      "resolving" : "Préparation de l’installation...",
+      "connecting" : "Connexion à l’appareil..."
+    },
+    "success" : {
+      "title" : "{{appName}} installé",
+      "genericDescription" : "Vous pouvez maintenant utiliser l’app {{appName}} sur votre appareil Ledger.",
+      "recoveryKeyDescription" : "Lancez l’app sur votre appareil Ledger pour rechercher les mises à jour de votre Ledger Recovery Key."
+    },
+    "error" : {
+      "title" : "Échec de l’installation : {{appName}}",
+      "description" : "Une erreur est survenue pendant l’installation. Veuillez réessayer."
+    }
   }
 }
