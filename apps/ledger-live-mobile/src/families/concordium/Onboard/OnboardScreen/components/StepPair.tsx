@@ -48,7 +48,11 @@ export default function StepPair({
 
               {isInstalled === true && (
                 <Flex alignItems="center" pt={4}>
-                  <Button type="main" onPress={() => openIdApp(walletConnectUri)}>
+                  <Button
+                    type="main"
+                    onPress={() => openIdApp(walletConnectUri)}
+                    accessibilityRole="button"
+                  >
                     <Trans i18nKey="concordium.onboard.pair.openIdApp" />
                   </Button>
                 </Flex>
@@ -105,7 +109,7 @@ export default function StepPair({
 
       {pairStatus === PairStatus.ERROR && (
         <Flex px={6} pb={10}>
-          <Button type="main" onPress={startPairing}>
+          <Button type="main" onPress={startPairing} accessibilityRole="button">
             <Trans i18nKey="common.retry" />
           </Button>
         </Flex>

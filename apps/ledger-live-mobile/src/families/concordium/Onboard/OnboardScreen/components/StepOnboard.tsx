@@ -57,10 +57,10 @@ export default function StepOnboard({ onAgree, onCancel }: Props) {
       </ScrollView>
 
       <Flex px={6} pb={10} rowGap={16}>
-        <Button type="main" onPress={onAgree} size="large">
+        <Button type="main" onPress={onAgree} size="large" accessibilityRole="button">
           <Trans i18nKey="concordium.onboard.acknowledge.allow" />
         </Button>
-        <Button type="default" onPress={onCancel}>
+        <Button type="default" onPress={onCancel} accessibilityRole="button">
           <Trans i18nKey="common.cancel" />
         </Button>
       </Flex>
