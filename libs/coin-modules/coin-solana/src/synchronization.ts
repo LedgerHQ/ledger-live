@@ -8,12 +8,7 @@ import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, OperationType, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import {
-  InflationReward,
-  ParsedTransaction,
-  PublicKey,
-  StakeActivationData,
-} from "@solana/web3.js";
+import { ParsedTransaction, PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 
 import ky from "ky";
@@ -35,12 +30,11 @@ import { MintExtensions } from "./network/chain/account/tokenExtensions";
 import { DelegateInfo, WithdrawInfo } from "./network/chain/instruction/stake/types";
 import { parseQuiet } from "./network/chain/program";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
-import { getStakeAccounts } from "./network/chain/stake-activation/rpc";
+import { getStakeAccounts, StakeAccount } from "./network/chain/stake-activation/rpc";
 import {
   getAccountMinimumBalanceForRentExemption,
   getTokenAccruedInterestDelta,
   getTransactions,
-  ParsedOnChainStakeAccountWithInfo,
   toTokenAccountWithInfo,
   TransactionDescriptor,
 } from "./network/chain/web3";
@@ -62,11 +56,7 @@ export async function getAccount(
   balance: BigNumber;
   blockHeight: number;
   tokenAccounts: ParsedOnChainTokenAccountWithInfo[];
-  stakes: {
-    account: ParsedOnChainStakeAccountWithInfo;
-    activation: StakeActivationData;
-    reward: InflationReward | null;
-  }[];
+  stakes: StakeAccount[];
 }> {
   const [
     {

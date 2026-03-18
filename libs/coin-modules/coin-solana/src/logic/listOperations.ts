@@ -49,7 +49,7 @@ export async function listOperations(
   for (let i = 0; i < signatures.length; i++) {
     const sig = signatures[i];
     const tx = parsed[i];
-    if (!tx || !tx.meta || sig.blockTime === null || sig.blockTime === undefined) continue;
+    if (!tx?.meta || sig.blockTime === null || sig.blockTime === undefined) continue;
 
     if (minHeight > 0 && sig.slot < minHeight) continue;
 
@@ -95,17 +95,21 @@ function buildTxMeta(sig: ConfirmedSignatureInfo, tx: ParsedTransactionWithMeta)
   };
 }
 
-function makeOperation(
-  address: string,
-  opType: string,
-  value: bigint,
-  senders: string[],
-  recipients: string[],
-  asset: AssetInfo,
-  meta: TxMeta,
-  operationIndex: number,
-  details?: Record<string, unknown>,
-): Operation {
+type MakeOperationParams = {
+  address: string;
+  opType: string;
+  value: bigint;
+  senders: string[];
+  recipients: string[];
+  asset: AssetInfo;
+  meta: TxMeta;
+  operationIndex: number;
+  details?: Record<string, unknown>;
+};
+
+function makeOperation(params: MakeOperationParams): Operation {
+  const { address, opType, value, senders, recipients, asset, meta, operationIndex, details } =
+    params;
   return {
     id: `${address}-${meta.hash}-${opType}-${operationIndex}`,
     type: opType,
@@ -132,13 +136,8 @@ function makeOperation(
 /**
  * Derives a single native-SOL operation from a transaction's pre/post lamport balances.
  *
- * Operation type depends on the address role:
- *   - Fee payer (accountIndex 0): fee is subtracted from balanceDelta before classification.
- *     delta < 0 → OUT, delta > 0 → IN, delta == 0 → FEES (only fees were paid).
- *   - Other accounts: raw delta determines the type (IN / OUT / NONE).
- *
- * Counterparty is the first account whose lamport balance changed (heuristic — may be
- * inaccurate for complex multi-account transactions).
+ * Staking transactions (create+delegate, delegate, deactivate, withdraw) are detected
+ * from parsed instructions and mapped to DELEGATE / UNDELEGATE / WITHDRAW_UNBONDED types.
  */
 function parseNativeOperations(
   address: string,
@@ -149,51 +148,198 @@ function parseNativeOperations(
   const accountIndex = message.accountKeys.findIndex(k => k.pubkey.toBase58() === address);
   if (accountIndex < 0) return [];
 
-  const { preBalances, postBalances } = tx.meta!;
+  const txMeta = tx.meta!;
+  const { preBalances, postBalances } = txMeta;
   const balanceDelta = BigInt(postBalances[accountIndex]) - BigInt(preBalances[accountIndex]);
+
+  const stakingOp = detectStakingOperation(tx, balanceDelta);
+  if (stakingOp) {
+    return [
+      makeOperation({
+        address,
+        opType: stakingOp.opType,
+        value: stakingOp.value,
+        senders: [],
+        recipients: [],
+        asset: { type: "native" },
+        meta,
+        operationIndex: 0,
+        ...(stakingOp.details ? { details: stakingOp.details } : {}),
+      }),
+    ];
+  }
+
   const isFeePayer = accountIndex === 0;
-  const txFee = meta.fee;
+  const { opType, value } = classifyNativeTransfer(balanceDelta, isFeePayer, meta.fee);
 
-  let opType: string;
-  let value: bigint;
+  const counterparty = findNativeCounterparty(message.accountKeys, accountIndex, txMeta);
+  const { senders, recipients } = buildParties(opType, address, counterparty);
 
+  return [
+    makeOperation({
+      address,
+      opType,
+      value,
+      senders,
+      recipients,
+      asset: { type: "native" },
+      meta,
+      operationIndex: 0,
+    }),
+  ];
+}
+
+/**
+ * Classifies the native transfer direction from a lamport balance delta.
+ *
+ *   - Fee payer: fee is added back before classification.
+ *     delta < 0 → OUT, delta > 0 → IN, delta == 0 → FEES (only fees were paid).
+ *   - Other accounts: raw delta determines the type (IN / OUT / NONE).
+ */
+function classifyNativeTransfer(
+  balanceDelta: bigint,
+  isFeePayer: boolean,
+  txFee: bigint,
+): { opType: string; value: bigint } {
   if (isFeePayer) {
     const deltaWithoutFee = balanceDelta + txFee;
-    if (deltaWithoutFee < 0n) {
-      opType = "OUT";
-      value = -deltaWithoutFee;
-    } else if (deltaWithoutFee > 0n) {
-      opType = "IN";
-      value = deltaWithoutFee;
-    } else {
-      opType = "FEES";
-      value = txFee;
-    }
-  } else {
-    if (balanceDelta > 0n) {
-      opType = "IN";
-      value = balanceDelta;
-    } else if (balanceDelta < 0n) {
-      opType = "OUT";
-      value = -balanceDelta;
-    } else {
-      opType = "NONE";
-      value = 0n;
+    if (deltaWithoutFee < 0n) return { opType: "OUT", value: -deltaWithoutFee };
+    if (deltaWithoutFee > 0n) return { opType: "IN", value: deltaWithoutFee };
+    return { opType: "FEES", value: txFee };
+  }
+
+  if (balanceDelta > 0n) return { opType: "IN", value: balanceDelta };
+  if (balanceDelta < 0n) return { opType: "OUT", value: -balanceDelta };
+  return { opType: "NONE", value: 0n };
+}
+
+/**
+ * Heuristic counterparty: first account whose lamport balance changed.
+ * May be inaccurate for complex multi-account transactions.
+ */
+function findNativeCounterparty(
+  accountKeys: ParsedTransactionWithMeta["transaction"]["message"]["accountKeys"],
+  accountIndex: number,
+  txMeta: NonNullable<ParsedTransactionWithMeta["meta"]>,
+): string | undefined {
+  const { preBalances, postBalances } = txMeta;
+  const idx = accountKeys.findIndex(
+    (_k, i) => i !== accountIndex && BigInt(postBalances[i]) - BigInt(preBalances[i]) !== 0n,
+  );
+  return idx >= 0 ? accountKeys[idx].pubkey.toBase58() : undefined;
+}
+
+function buildParties(
+  opType: string,
+  address: string,
+  counterparty: string | undefined,
+): { senders: string[]; recipients: string[] } {
+  const otherParty = counterparty ? [counterparty] : [];
+
+  const isSender = opType === "OUT" || opType === "FEES";
+  const senders = isSender ? [address] : otherParty;
+
+  const recipients = opType === "IN" ? [address] : otherParty;
+
+  return { senders, recipients };
+}
+
+type ParsedIx = { program: string; type: string; info: Record<string, unknown> | undefined };
+
+function getParsedInstructions(tx: ParsedTransactionWithMeta): ParsedIx[] {
+  const results: ParsedIx[] = [];
+  for (const ix of tx.transaction.message.instructions) {
+    if (!("parsed" in ix)) continue;
+    const raw = ix as { program?: string; parsed?: unknown };
+    if (typeof raw.parsed !== "object" || raw.parsed === null) continue;
+    const parsed = raw.parsed as { type?: string; info?: Record<string, unknown> };
+    if (typeof parsed.type !== "string") continue;
+    results.push({
+      program: raw.program ?? "",
+      type: parsed.type,
+      info: parsed.info ?? undefined,
+    });
+  }
+  return results;
+}
+
+/**
+ * Detects staking program instructions and returns a typed operation.
+ *
+ * Value semantics (accounting for the generic-alpaca adapter which adds fee
+ * for DELEGATE and UNDELEGATE but not WITHDRAW_UNBONDED):
+ * - DELEGATE / UNDELEGATE: value = 0  (adapter adds fee → final = fee)
+ * - WITHDRAW_UNBONDED:    value = fee (adapter keeps as-is → final = fee)
+ */
+type StakingResult = {
+  opType: string;
+  value: bigint;
+  details: Record<string, unknown> | undefined;
+};
+
+function detectStakingOperation(
+  tx: ParsedTransactionWithMeta,
+  balanceDelta: bigint,
+): StakingResult | null {
+  const ixs = getParsedInstructions(tx);
+
+  if (ixs.length === 3) {
+    const [first, second, third] = ixs;
+    if (
+      first.program === "system" &&
+      (first.type === "createAccountWithSeed" || first.type === "createAccount") &&
+      second.program === "stake" &&
+      second.type === "initialize" &&
+      third.program === "stake" &&
+      third.type === "delegate"
+    ) {
+      return makeDelegateResult(third.info, balanceDelta);
     }
   }
 
-  const counterpartyIndex = message.accountKeys.findIndex(
-    (_k, idx) =>
-      idx !== accountIndex && BigInt(postBalances[idx]) - BigInt(preBalances[idx]) !== 0n,
-  );
-  const counterparty =
-    counterpartyIndex >= 0 ? message.accountKeys[counterpartyIndex].pubkey.toBase58() : undefined;
+  if (ixs.length !== 1) {
+    return null;
+  }
 
-  const senders =
-    opType === "OUT" || opType === "FEES" ? [address] : counterparty ? [counterparty] : [];
-  const recipients = opType === "IN" ? [address] : counterparty ? [counterparty] : [];
+  const ix = ixs[0];
+  if (ix.program !== "stake") {
+    return null;
+  }
 
-  return [makeOperation(address, opType, value, senders, recipients, { type: "native" }, meta, 0)];
+  switch (ix.type) {
+    case "delegate":
+      return makeDelegateResult(ix.info, balanceDelta);
+    case "deactivate":
+      return { opType: "UNDELEGATE", value: 0n, details: undefined };
+    case "withdraw": {
+      const stakeAccount = ix.info?.stakeAccount as string | undefined;
+      const lamports = ix.info?.lamports as number | undefined;
+      const txFee = BigInt(tx.meta!.fee);
+      return {
+        opType: "WITHDRAW_UNBONDED",
+        value: txFee,
+        details:
+          stakeAccount && lamports
+            ? { stake: { address: stakeAccount, amount: BigInt(lamports) } }
+            : undefined,
+      };
+    }
+    default:
+      return null;
+  }
+}
+
+function makeDelegateResult(
+  info: Record<string, unknown> | undefined,
+  balanceDelta: bigint,
+): StakingResult {
+  const voteAccount = info?.voteAccount as string | undefined;
+  const absDelta = balanceDelta < 0n ? -balanceDelta : balanceDelta;
+  return {
+    opType: "DELEGATE",
+    value: 0n,
+    details: voteAccount ? { stake: { address: voteAccount, amount: absDelta } } : undefined,
+  };
 }
 
 /**
@@ -206,10 +352,6 @@ function parseNativeOperations(
  * Token operations are marked `internal: true` in their details so that the
  * generic-alpaca bridge (`getAccountShape`) excludes them from the parent
  * account's operations list — they only surface as sub-account operations.
- * Without this flag, a single token transfer would produce duplicate parent
- * operations (one native + one token) with potentially different IDs when
- * the native op type differs from the token op type (e.g. send-all with
- * ATA close yields native IN + token OUT).
  */
 function parseTokenOperations(
   address: string,
@@ -221,46 +363,70 @@ function parseTokenOperations(
   if (preTokenBalances.length === 0 && postTokenBalances.length === 0) return [];
 
   const tokenChanges = computeTokenBalanceDeltas(address, preTokenBalances, postTokenBalances);
+  const accountKeys = tx.transaction.message.accountKeys.map(k => k.pubkey.toBase58());
   const ops: Operation[] = [];
   let operationIndex = 1;
 
   for (const [, change] of tokenChanges) {
-    const { mint, delta, tokenType } = change;
-    if (delta === 0n) continue;
+    if (change.delta === 0n) continue;
 
-    const asset: AssetInfo = {
-      type: tokenType,
-      assetReference: mint,
-      assetOwner: address,
-    };
-
-    const opType = delta > 0n ? "IN" : "OUT";
-    const value = delta > 0n ? delta : -delta;
-
-    const counterparty = findTokenCounterparty(
+    const op = buildTokenOperation(
       address,
-      mint,
+      change,
       preTokenBalances,
       postTokenBalances,
-      tx.transaction.message.accountKeys.map(k => k.pubkey.toBase58()),
+      accountKeys,
+      meta,
+      operationIndex,
     );
-
-    const senders = opType === "OUT" ? [address] : counterparty ? [counterparty] : [];
-    const recipients = opType === "IN" ? [address] : counterparty ? [counterparty] : [];
-
-    ops.push(
-      makeOperation(address, opType, value, senders, recipients, asset, meta, operationIndex, {
-        ledgerOpType: opType,
-        assetAmount: value.toString(),
-        assetSenders: senders,
-        assetRecipients: recipients,
-        internal: true,
-      }),
-    );
+    ops.push(op);
     operationIndex++;
   }
 
   return ops;
+}
+
+function buildTokenOperation(
+  address: string,
+  change: TokenChange,
+  preTokenBalances: TokenBalance[],
+  postTokenBalances: TokenBalance[],
+  accountKeys: string[],
+  meta: TxMeta,
+  operationIndex: number,
+): Operation {
+  const { mint, delta, tokenType } = change;
+  const asset: AssetInfo = { type: tokenType, assetReference: mint, assetOwner: address };
+
+  const opType = delta > 0n ? "IN" : "OUT";
+  const value = delta > 0n ? delta : -delta;
+
+  const counterparty = findTokenCounterparty(
+    address,
+    mint,
+    preTokenBalances,
+    postTokenBalances,
+    accountKeys,
+  );
+  const { senders, recipients } = buildParties(opType, address, counterparty);
+
+  return makeOperation({
+    address,
+    opType,
+    value,
+    senders,
+    recipients,
+    asset,
+    meta,
+    operationIndex,
+    details: {
+      ledgerOpType: opType,
+      assetAmount: value.toString(),
+      assetSenders: senders,
+      assetRecipients: recipients,
+      internal: true,
+    },
+  });
 }
 
 type TokenChange = { mint: string; delta: bigint; tokenType: SolanaTokenProgram };
