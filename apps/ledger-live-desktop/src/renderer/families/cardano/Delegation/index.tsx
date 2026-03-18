@@ -58,7 +58,7 @@ const Delegation = ({ account }: Props) => {
           />
         </>
       ) : (
-        <Wrapper horizontal data-testid="delegation-empty-state">
+        <Wrapper horizontal>
           <Box
             style={{
               maxWidth: "65%",
