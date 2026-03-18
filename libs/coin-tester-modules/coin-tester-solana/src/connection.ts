@@ -11,7 +11,11 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SolanaTokenProgram } from "@ledgerhq/coin-solana/types";
 import { getTokenAccountProgramId } from "@ledgerhq/coin-solana/helpers/token";
 
-const connection = new Connection("http://localhost:8899", "confirmed");
+const RPC_URL = "http://localhost:8899";
+// Fresh Connection per call to avoid stale blockhash cache across Agave restarts
+function getConnection() {
+  return new Connection(RPC_URL, "confirmed");
+}
 // `PAYER` is also the mint authority of the cloned tokens
 // Its account has been generated in advance and matches the config
 // files of the mints imported to the local validator.
@@ -32,6 +36,7 @@ export async function createSplAccount(
   amount: number,
   program: SolanaTokenProgram,
 ) {
+  const connection = getConnection();
   const programId = getTokenAccountProgramId(program);
   const associatedTokenAddress = await createAssociatedTokenAccountIdempotent(
     connection,
@@ -57,11 +62,12 @@ export async function createSplAccount(
 }
 
 export async function initVoteAccount() {
-  const voteAccounts = await connection.getVoteAccounts();
+  const voteAccounts = await getConnection().getVoteAccounts();
   VOTE_ACCOUNT = voteAccounts.current[0];
 }
 
 export async function initStakeAccount(address: string, amount: number) {
+  const connection = getConnection();
   const authority = new PublicKey(address);
   const transaction = StakeProgram.createAccount({
     fromPubkey: PAYER.publicKey,

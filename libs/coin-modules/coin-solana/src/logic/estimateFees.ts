@@ -1,4 +1,9 @@
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  FeeEstimation,
+  MemoNotSupported,
+  StringMemo,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
@@ -31,7 +36,7 @@ const BASE_TRANSACTION: Transaction = {
  */
 export async function estimateFees(
   api: ChainAPI,
-  intent: TransactionIntent,
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
   const kind = mapIntentToTxKind(intent);
@@ -342,7 +347,9 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
   throw new Error("next blockhash timeout");
 }
 
-function mapIntentToTxKind(intent: TransactionIntent): TransactionModel["kind"] {
+function mapIntentToTxKind(
+  intent: TransactionIntent<StringMemo | MemoNotSupported>,
+): TransactionModel["kind"] {
   if (isSolanaStakingTransactionIntent(intent)) {
     return intent.type as TransactionModel["kind"];
   }

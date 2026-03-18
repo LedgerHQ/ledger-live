@@ -27,6 +27,8 @@ export function getAlpacaApi(network: string, kind: string): AlpacaApi<any> & Br
         return require("./local/evm").createLocalEvmApi(currency.id);
       case "tezos":
         return require("./local/tezos").createLocalTezosApi(currency.id);
+      case "solana":
+        return require("./local/solana").createLocalSolanaApi(currency.id);
     }
   }
   return getNetworkAlpacaApi(network) satisfies Partial<AlpacaApi<any> & BridgeApi>;

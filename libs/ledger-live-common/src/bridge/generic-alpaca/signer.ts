@@ -19,6 +19,9 @@ export function getSigner(network: string): AlpacaSigner {
     case "evm": {
       return require("./families/evm/signer").default;
     }
+    case "solana": {
+      return require("./families/solana/signer").default;
+    }
   }
   throw new Error(`signer for ${network} not implemented`);
 }

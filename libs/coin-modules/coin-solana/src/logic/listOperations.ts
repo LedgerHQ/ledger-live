@@ -105,11 +105,13 @@ type MakeOperationParams = {
   meta: TxMeta;
   operationIndex: number;
   details?: Record<string, unknown>;
+  feesPayer?: string | undefined;
 };
 
 function makeOperation(params: MakeOperationParams): Operation {
   const { address, opType, value, senders, recipients, asset, meta, operationIndex, details } =
     params;
+  const feesPayer = "feesPayer" in params ? params.feesPayer : meta.feesPayer;
   return {
     id: `${address}-${meta.hash}-${opType}-${operationIndex}`,
     type: opType,
@@ -126,7 +128,7 @@ function makeOperation(params: MakeOperationParams): Operation {
         time: new Date(meta.blockTime * 1000),
       },
       fees: meta.fee,
-      feesPayer: meta.feesPayer,
+      ...(feesPayer ? { feesPayer } : {}),
       date: new Date(meta.blockTime * 1000),
       failed: meta.failed,
     },
@@ -164,6 +166,7 @@ function parseNativeOperations(
         asset: { type: "native" },
         meta,
         operationIndex: 0,
+        feesPayer: undefined,
         ...(stakingOp.details ? { details: stakingOp.details } : {}),
       }),
     ];
