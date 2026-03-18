@@ -6,6 +6,7 @@ import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import { getStakeAccountAddressWithSeed } from "../network/chain/web3";
 import { UserInputType } from "../signer";
+import type { SolanaTokenProgram, TokenTransferCommand } from "../types";
 import { Transaction, TransactionModel } from "../types";
 import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "../utils";
 import { buildVersionedTransaction } from "./craftTransaction";
@@ -33,7 +34,8 @@ export async function estimateFees(
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
   const kind = mapIntentToTxKind(intent);
-  const fee = await estimateTxFee(api, intent.sender, kind);
+  const tokenProgram = resolveTokenProgramFromAsset(intent.asset);
+  const fee = await estimateTxFee(api, intent.sender, kind, tokenProgram);
   return { value: BigInt(fee) };
 }
 
@@ -41,8 +43,9 @@ export async function estimateTxFee(
   api: ChainAPI,
   address: string,
   kind: TransactionModel["kind"],
+  tokenProgram?: SolanaTokenProgram,
 ) {
-  const tx = await createDummyTx(address, kind);
+  const tx = await createDummyTx(address, kind, tokenProgram);
   const [onChainTx] = await buildVersionedTransaction(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
@@ -62,7 +65,11 @@ export async function estimateTxFee(
   return fee;
 }
 
-const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
+const createDummyTx = (
+  address: string,
+  kind: TransactionModel["kind"],
+  tokenProgram?: SolanaTokenProgram,
+) => {
   switch (kind) {
     case "transfer":
       return createDummyTransferTx(address);
@@ -75,7 +82,7 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
     case "stake.withdraw":
       return createDummyStakeWithdrawTx(address);
     case "token.transfer":
-      return createDummyTokenTransferTx(address);
+      return createDummyTokenTransferTx(address, tokenProgram);
     case "token.approve":
       return createDummyTokenApproveTx(address);
     case "token.revoke":
@@ -189,29 +196,51 @@ const createDummyStakeWithdrawTx = (address: string): Transaction => {
   };
 };
 
-const createDummyTokenTransferTx = (address: string): Transaction => {
+const createDummyTokenTransferTx = (
+  address: string,
+  tokenProgram: SolanaTokenProgram = PARSED_PROGRAMS.SPL_TOKEN,
+): Transaction => {
+  const command: TokenTransferCommand = {
+    kind: "token.transfer",
+    amount: 0,
+    mintAddress: randomAddresses[0],
+    mintDecimals: 0,
+    tokenId: "",
+    ownerAddress: address,
+    ownerAssociatedTokenAccountAddress: randomAddresses[1],
+    recipientDescriptor: {
+      walletAddress: randomAddresses[1],
+      tokenAccAddress: randomAddresses[2],
+      shouldCreateAsAssociatedTokenAccount: true,
+      userInputType: UserInputType.SOL,
+    },
+    tokenProgram,
+  };
+
+  // Token-2022 tokens with a transfer-fee extension use a different
+  // instruction (transferCheckedWithFee) that consumes more compute units.
+  // Include a dummy transferFee so buildTokenTransferInstructions picks the
+  // right instruction variant for fee estimation.
+  if (tokenProgram === PARSED_PROGRAMS.SPL_TOKEN_2022) {
+    command.extensions = {
+      transferFee: {
+        feePercent: 0,
+        maxTransferFee: 0,
+        transferFee: 0,
+        feeBps: 0,
+        transferAmountIncludingFee: 0,
+        transferAmountExcludingFee: 0,
+      },
+    };
+  }
+
   return {
     ...BASE_TRANSACTION,
     model: {
       kind: "token.transfer",
       uiState: {} as any,
       commandDescriptor: {
-        command: {
-          kind: "token.transfer",
-          amount: 0,
-          mintAddress: randomAddresses[0],
-          mintDecimals: 0,
-          tokenId: "",
-          ownerAddress: address,
-          ownerAssociatedTokenAccountAddress: randomAddresses[1],
-          recipientDescriptor: {
-            walletAddress: randomAddresses[1],
-            tokenAccAddress: randomAddresses[2],
-            shouldCreateAsAssociatedTokenAccount: true,
-            userInputType: UserInputType.SOL,
-          },
-          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
-        },
+        command,
         ...commandDescriptorCommons,
       },
     },
@@ -320,4 +349,17 @@ function mapIntentToTxKind(intent: TransactionIntent): TransactionModel["kind"] 
     return "transfer";
   }
   throw new Error(`Unsupported intent type: ${intent.intentType}`);
+}
+
+/**
+ * Maps the intent asset type to the Solana token program identifier.
+ * Token-2022 assets produce a different instruction variant
+ * (transferCheckedWithFee) that affects compute-unit consumption.
+ */
+function resolveTokenProgramFromAsset(
+  asset: TransactionIntent["asset"],
+): SolanaTokenProgram | undefined {
+  if (asset.type === "native") return undefined;
+  if (asset.type === PARSED_PROGRAMS.SPL_TOKEN_2022) return PARSED_PROGRAMS.SPL_TOKEN_2022;
+  return PARSED_PROGRAMS.SPL_TOKEN;
 }

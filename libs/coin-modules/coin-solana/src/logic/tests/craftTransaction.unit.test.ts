@@ -15,6 +15,11 @@ import { buildVersionedTransaction, craftTransaction } from "../craftTransaction
 jest.mock("../../network/chain/web3", () => ({
   ...jest.requireActual("../../network/chain/web3"),
   buildTransferInstructions: jest.fn().mockResolvedValue([]),
+  buildTokenTransferInstructions: jest.fn().mockResolvedValue([]),
+  getMaybeMintAccount: jest.fn(),
+  getMaybeTokenMintProgram: jest.fn(),
+  getMaybeTokenAccount: jest.fn(),
+  findAssociatedTokenAccountPubkey: jest.fn(),
 }));
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
@@ -180,6 +185,259 @@ describe("craftTransaction", () => {
       api,
       expect.objectContaining({ memo: "test memo" }),
     );
+  });
+
+  describe("Token-2022 transfer fee", () => {
+    const {
+      getMaybeMintAccount,
+      getMaybeTokenMintProgram,
+      getMaybeTokenAccount,
+      findAssociatedTokenAccountPubkey,
+      buildTokenTransferInstructions,
+    } = jest.requireMock("../../network/chain/web3");
+
+    const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+    const CWIF_MINT = "7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1";
+    const SENDER_ATA = new PublicKey("AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ");
+
+    function setupTokenMocks(opts: {
+      mintDecimals?: number;
+      tokenProgram?: string;
+      transferFeeConfig?:
+        | {
+            newerTransferFee: { epoch: number; maximumFee: number; transferFeeBasisPoints: number };
+            olderTransferFee: { epoch: number; maximumFee: number; transferFeeBasisPoints: number };
+          }
+        | undefined;
+      recipientAtaExists?: boolean;
+      currentEpoch?: number;
+    }) {
+      const {
+        mintDecimals = 6,
+        tokenProgram = "spl-token-2022",
+        transferFeeConfig,
+        recipientAtaExists = true,
+        currentEpoch = 100,
+      } = opts;
+
+      const extensions = transferFeeConfig
+        ? [
+            {
+              extension: "transferFeeConfig",
+              state: {
+                ...transferFeeConfig,
+                transferFeeConfigAuthority: null,
+                withdrawWithheldAuthority: null,
+                withheldAmount: 0,
+              },
+            },
+          ]
+        : undefined;
+
+      getMaybeMintAccount.mockResolvedValue({
+        decimals: mintDecimals,
+        supply: "1000000000",
+        isInitialized: true,
+        mintAuthority: null,
+        freezeAuthority: null,
+        extensions,
+      });
+      getMaybeTokenMintProgram.mockResolvedValue(tokenProgram);
+      getMaybeTokenAccount.mockResolvedValue(recipientAtaExists ? { mint: CWIF_MINT } : undefined);
+      findAssociatedTokenAccountPubkey.mockResolvedValue(SENDER_ATA);
+      buildTokenTransferInstructions.mockResolvedValue([]);
+
+      const mockApi = {
+        getLatestBlockhash: mockGetLatestBlockhash,
+        getFeeForMessage: mockGetFeeForMessage,
+        getEpochInfo: jest.fn().mockResolvedValue({ epoch: currentEpoch }),
+        connection: {},
+      } as unknown as ChainAPI;
+
+      mockGetLatestBlockhash.mockResolvedValue({
+        blockhash: TEST_BLOCKHASH,
+        lastValidBlockHeight: 280064048,
+      });
+      mockGetFeeForMessage.mockResolvedValue(5000);
+
+      return mockApi;
+    }
+
+    it("should calculate transfer fee for Token-2022 token with transferFeeConfig", async () => {
+      const mockApi = setupTokenMocks({
+        transferFeeConfig: {
+          newerTransferFee: { epoch: 50, maximumFee: 1000000, transferFeeBasisPoints: 100 },
+          olderTransferFee: { epoch: 0, maximumFee: 500000, transferFeeBasisPoints: 50 },
+        },
+        currentEpoch: 100,
+      });
+
+      await craftTransaction(mockApi, {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 1000n,
+        asset: { type: "spl-token-2022", assetReference: CWIF_MINT, assetOwner: TEST_ADDRESS },
+      });
+
+      expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+        mockApi,
+        expect.objectContaining({
+          extensions: expect.objectContaining({
+            transferFee: expect.objectContaining({
+              transferFee: expect.any(Number),
+              transferAmountIncludingFee: expect.any(Number),
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should not set extensions for SPL token without transfer fee config", async () => {
+      const mockApi = setupTokenMocks({
+        tokenProgram: "spl-token",
+        transferFeeConfig: undefined,
+      });
+
+      await craftTransaction(mockApi, {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 1000n,
+        asset: { type: "spl-token", assetReference: USDC_MINT, assetOwner: TEST_ADDRESS },
+      });
+
+      expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+        mockApi,
+        expect.not.objectContaining({
+          extensions: expect.anything(),
+        }),
+      );
+    });
+
+    it("should use computeTransferFeeFromTotal for useAllAmount", async () => {
+      const mockApi = setupTokenMocks({
+        transferFeeConfig: {
+          newerTransferFee: { epoch: 50, maximumFee: 1000000, transferFeeBasisPoints: 100 },
+          olderTransferFee: { epoch: 0, maximumFee: 500000, transferFeeBasisPoints: 50 },
+        },
+        currentEpoch: 100,
+      });
+
+      await craftTransaction(mockApi, {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 500n,
+        useAllAmount: true,
+        asset: { type: "spl-token-2022", assetReference: CWIF_MINT, assetOwner: TEST_ADDRESS },
+      });
+
+      expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+        mockApi,
+        expect.objectContaining({
+          extensions: expect.objectContaining({
+            transferFee: expect.objectContaining({
+              transferAmountIncludingFee: 500,
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should cap transfer fee at maximumFee for send-all", async () => {
+      const mockApi = setupTokenMocks({
+        transferFeeConfig: {
+          newerTransferFee: { epoch: 50, maximumFee: 2, transferFeeBasisPoints: 5000 },
+          olderTransferFee: { epoch: 0, maximumFee: 1, transferFeeBasisPoints: 5000 },
+        },
+        currentEpoch: 100,
+      });
+
+      await craftTransaction(mockApi, {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 1000n,
+        useAllAmount: true,
+        asset: { type: "spl-token-2022", assetReference: CWIF_MINT, assetOwner: TEST_ADDRESS },
+      });
+
+      expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+        mockApi,
+        expect.objectContaining({
+          extensions: expect.objectContaining({
+            transferFee: expect.objectContaining({
+              transferFee: 2,
+              transferAmountIncludingFee: 1000,
+              transferAmountExcludingFee: 998,
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should use olderTransferFee when currentEpoch < newerTransferFee.epoch", async () => {
+      const mockApi = setupTokenMocks({
+        transferFeeConfig: {
+          newerTransferFee: { epoch: 200, maximumFee: 1000000, transferFeeBasisPoints: 500 },
+          olderTransferFee: { epoch: 0, maximumFee: 1000000, transferFeeBasisPoints: 100 },
+        },
+        currentEpoch: 100,
+      });
+
+      await craftTransaction(mockApi, {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 10000n,
+        useAllAmount: true,
+        asset: { type: "spl-token-2022", assetReference: CWIF_MINT, assetOwner: TEST_ADDRESS },
+      });
+
+      expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+        mockApi,
+        expect.objectContaining({
+          extensions: expect.objectContaining({
+            transferFee: expect.objectContaining({
+              feeBps: 100,
+              transferAmountIncludingFee: 10000,
+              transferFee: 100,
+              transferAmountExcludingFee: 9900,
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should create ATA when recipient does not have one", async () => {
+      const mockApi = setupTokenMocks({
+        recipientAtaExists: false,
+      });
+
+      await craftTransaction(mockApi, {
+        intentType: "transaction",
+        type: "send",
+        sender: TEST_ADDRESS,
+        recipient: TEST_RECIPIENT,
+        amount: 1000n,
+        asset: { type: "spl-token-2022", assetReference: CWIF_MINT, assetOwner: TEST_ADDRESS },
+      });
+
+      expect(buildTokenTransferInstructions).toHaveBeenCalledWith(
+        mockApi,
+        expect.objectContaining({
+          recipientDescriptor: expect.objectContaining({
+            shouldCreateAsAssociatedTokenAccount: true,
+          }),
+        }),
+      );
+    });
   });
 });
 

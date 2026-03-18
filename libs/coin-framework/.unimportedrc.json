@@ -16,6 +16,7 @@
     "src/errors.ts",
     "src/features/types.ts",
     "src/setup.ts",
+    "src/test/utils.ts",
     "src/utils.ts"
   ],
   "ignoreUnresolved": [
