@@ -153,7 +153,8 @@
     "memoTag" : {
       "learnMore" : "تعرّف على المزيد عن العلامة/الملاحظة (تسمية الوجهة)"
     },
-    "memo" : "ملاحظة (تسمية الوجهة)"
+    "memo" : "ملاحظة (تسمية الوجهة)",
+    "stake" : "تكديس"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -237,7 +238,7 @@
       },
       "cancel" : {
         "title" : "إلغاء",
-        "description" : "إرسال 0 {{ticker}} إلى عنوانك."
+        "description" : "إرسال {{ticker}} 0 إلى عنوانك. الإلغاء غير مضمون. إذا قامت الشبكة بمعالجة معاملتك الأصلية قبل طلب الإلغاء هذا، فسيتم إرسال الأموال إلى المستلم."
       },
       "steps" : {
         "method" : {
@@ -1499,6 +1500,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
+    "continue" : "متابعة"
+  },
   "currentAddress" : {
     "title" : "العنوان الحالي",
     "for" : "عنوان <1><0>{{name}}</0></1>",
@@ -2154,6 +2174,24 @@
       }
     }
   },
+  "buyDeviceModal" : {
+    "title" : "توصيل جهاز Ledger",
+    "subtitle" : "لفتح الإمكانات الكاملة لـ Ledger Wallet لديك، قم بتوصيل جهاز Ledger.",
+    "0" : {
+      "title" : "ملكية كاملة",
+      "desc" : "مفاتيحك الخاصة لا تغادر الجهاز مطلقاً."
+    },
+    "1" : {
+      "title" : "تداول بأمان",
+      "desc" : "تحقق من المعاملات على شاشة آمنة."
+    },
+    "2" : {
+      "title" : "قم بالوصول إلى المحفظة الأكثر قوةً",
+      "desc" : "قم بإدارة آلاف الأصول في مكان واحد."
+    },
+    "connectCTA" : "اتصال",
+    "buyCTA" : "قم بشراء جهازك Ledger"
+  },
   "fund" : {
     "title" : "تمويل",
     "titleCrypto" : "تمويل {{currency}}",
@@ -2371,6 +2409,24 @@
     "addressNotFound" : "لم يتم العثور على العنوان",
     "alreadyUsed" : "تم استخدامه بالفعل · {{date}}",
     "recentSendWillAppear" : "سيظهر ما أرسلته مؤخراً هنا",
+    "securityInfo" : {
+      "title" : "كيف ترسل بأمان؟",
+      "items" : {
+        "compatibility" : "تأكد من أن عنوان المستلم متوافق مع الشبكة التي تم اختيارها",
+        "review" : "راجع تفاصيل معاملتك على شاشة جهازك Ledger الآمنة",
+        "smallAmount" : "في حالة الشك، جرّب إرسال مبلغ صغير أولاً"
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "هذا العنوان ليس في سجلك الحديث. في حالة الشك، جرّب مبلغاً صغيراً أولاً."
+      },
+      "dialog" : {
+        "title" : "سِجل الإرسال الحديث",
+        "description" : "السِجل الحديث لديك يسمح لك بالتحقق على الفور مما إذا كنت قد أرسلت إلى عنوان معين من قبل أم لا. قد يمنع هذا أخطاء النسخ/اللصق المحتملة أو الاختراقات. يحتوي السجل الخاص بك على آخر 12 عنواناً أرسلت إليها الأصول المشفرة باستخدام Ledger Wallet.",
+        "cta" : "فهمت ذلك"
+      }
+    },
     "relativeDate" : {
       "justNow" : "الآن",
       "minutesAgo_one" : "منذ 1 دقيقة",
@@ -2440,17 +2496,26 @@
       "confirm" : "تأكيد",
       "maxFee" : "الحد الأقصى للرسوم ({{unit}})",
       "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unit}})",
-      "gasLimit" : "حد الغاز ({{unit}})",
       "feePerByte" : "مبلغ الرسوم ({{unit}})",
       "suggested" : "مُقترح",
       "nextBlock" : "الكتلة التالية",
       "networkFeesInFiat" : "رسوم الشبكة بعملة {{currency}}",
       "invalidValue" : "أدخل رقم صالح",
       "belowMinimum" : "الحد الأدنى هو {{min}}",
-      "maxFeeBelowPriorityFee" : "يجب أن يكون الحد الأقصى للرسوم أكبر من أو يساوي الحد الأقصى لرسوم الأولوية"
+      "maxFeeBelowPriorityFee" : "يجب أن يكون الحد الأقصى للرسوم أكبر من أو يساوي الحد الأقصى لرسوم الأولوية",
+      "feeAsset" : "الأصل الخاص بالرسوم",
+      "feesAmount" : "مبلغ الرسوم ({{unit}})",
+      "payFeesIn" : "ادفع الرسوم بـ"
     },
     "coinControl" : {
-      "title" : "التحكم في العملات"
+      "title" : "التحكم في العملات",
+      "strategy" : "الاستراتيجية",
+      "learnMore" : "تعرّف على المزيد",
+      "coinToSend" : "العملة المراد إرسالها",
+      "changeToReturn" : "المتبقي المراد إرجاعه",
+      "enterAmount" : "أدخل المبلغ",
+      "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
+      "amountInputLabel" : "المبلغ المطلوب إرساله"
     }
   },
   "releaseNotes" : {
@@ -5025,7 +5090,7 @@
     }
   },
   "theme" : {
-    "system" : "اختر سمة النظام",
+    "system" : "النظام",
     "light" : "فاتح",
     "dusk" : "غسق",
     "dark" : "داكن"
@@ -6630,6 +6695,10 @@
       "title" : "لا يمكن تسريعها أو إلغائها",
       "description" : "هذه المعاملة تم تأكيدها بالفعل"
     },
+    "InvalidTransactionError" : {
+      "title" : "معاملة غير صالحة",
+      "description" : "لم تعد المعاملة تتطابق مع حالة سلسلة الكتل (بلوكتشين). يرجى بدء التدفق مرة أخرى."
+    },
     "SequenceNumberError" : {
       "title" : "خطأ في رقم التسلسل",
       "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
@@ -7316,6 +7385,50 @@
     "memoPlaceholder" : "أدخِل علامة/ملاحظة (تسمية الوجهة)",
     "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "رسوم",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "تغيير التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. ",
+      "changeCTA" : "تغيير"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة"
+    }
+  },
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
@@ -7699,7 +7812,16 @@
     }
   },
   "analytics" : {
-    "title" : "التحليلات"
+    "title" : "التحليلات",
+    "allocation" : {
+      "title" : "توزيع الأصول",
+      "columns" : {
+        "name" : "الاسم",
+        "balance" : "الرصيد",
+        "value" : "القيمة",
+        "allocation" : "التخصيص"
+      }
+    }
   },
   "walletSync" : {
     "title" : "مزامنة Ledger",
@@ -8001,6 +8123,8 @@
     "title" : "استكشف السوق",
     "genericError" : "فشل الاتصال",
     "cta" : "عرض الكل",
+    "scrollLeft" : "التمرير لليسار",
+    "scrollRight" : "التمرير لليمين",
     "fearAndGreed" : {
       "title" : "الحالة المزاجية"
     }
@@ -8030,6 +8154,11 @@
   "assets" : {
     "cryptos" : "الأصول المشفرة",
     "stablecoins" : "العملات المستقرة",
+    "cryptoAccounts" : "حسابات الأصول المشفرة",
+    "accountsCount_one" : "{{count}} حساب",
+    "accountsCount_other" : "{{count}} حساب",
+    "noCryptoAccounts" : "لا توجد حسابات بعد",
+    "add" : "إضافة",
     "columns" : {
       "name" : "الاسم",
       "price" : "السعر",
@@ -8048,15 +8177,11 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. قائمة الحسابات المتأثرة: {{accounts}}. انقر لإعادة المحاولة",
-      "emptyErrorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. انقر لإعادة المحاولة",
+      "errorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة.\n قائمة الحسابات المتأثرة: {{accounts}}. انقر لإعادة المحاولة",
+      "emptyErrorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة.\n انقر لإعادة المحاولة",
       "upToDate" : "أنت على أحدث إصدار",
-      "minutesAgo_one" : "آخر مزامنة: منذ {{count}} دقيقة. انقر للتحديث",
-      "minutesAgo_other" : "آخر مزامنة: منذ {{count}} دقيقة. انقر للتحديث",
-      "hoursAgo_one" : "آخر مزامنة: منذ {{count}} ساعة. انقر للتحديث",
-      "hoursAgo_other" : "آخر مزامنة: منذ {{count}} ساعة. انقر للتحديث",
-      "daysAgo_one" : "آخر مزامنة: منذ {{count}} يوم. انقر للتحديث",
-      "daysAgo_other" : "آخر مزامنة: منذ {{count}} يوم. انقر للتحديث"
+      "lastSync" : "آخر مزامنة: {{timeAgo}} انقر للتحديث",
+      "refreshing" : "جارٍ التحديث..."
     },
     "notificationIndicator" : {
       "tooltip" : "الإشعارات"
@@ -8176,6 +8301,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "تحويل ذاتي",
+      "headerActionTooltip" : "ليس لديك أي أموال لإجراء تحويل ذاتي",
+      "modal" : {
+        "title" : "تحويل ذاتي",
+        "stepRecipient" : {
+          "selectLabel" : "تحويل من"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "الرصيد الخاص",
+        "public" : "الرصيد العام",
+        "lastUpdate" : "آخر تحديث",
+        "switchBalance" : "تغيير مصدر الرصيد"
+      }
+    },
     "account" : {
       "availableBalance" : "الرصيد المتاح",
       "availableBalanceTooltip" : "الرصيد الذي يمكن تحويله",
@@ -8189,27 +8332,36 @@
         "public" : "عام",
         "private" : "خاص"
       }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "Send from"
+      },
+      "summary" : {
+        "coveredByProvable" : "Covered by Provable",
+        "proofGenerationWarning" : "Aleo transaction requires proof generation. This may take some time."
+      }
     }
   },
   "updater" : {
     "newUpdateAvailable" : "متاح تحديث جديد",
     "downloadProgress" : "%{{progress}}",
-    "errorTryAgain" : "حدث خطأ أثناء التحديث، أعد المحاولة",
-    "installAndRelaunch" : "قم بتثبيت التحديث وإعادة التشغيل"
+    "errorTryAgain" : "حدث خطأ أثناء التحديث. يرجى إعادة المحاولة",
+    "installAndRelaunch" : "تحديث جديد. قم بالتثبيت وإعادة الإطلاق"
   },
   "walletV4Tour" : {
     "slides" : {
       "portfolio" : {
-        "title" : "المبادلة بدون عناء",
-        "description" : "قم بتكييف تخصيص محفظتك الاستثمارية في أي وقت عن طريق أمان جهازك Ledger"
+        "title" : "عرض أوضح لمحفظتك الاستثمارية",
+        "description" : "اطلع على رصيدك الإجمالي بلمحة، وانقر على ”Today (اليوم)“ للتعمق أكثر."
       },
       "navigation" : {
-        "title" : "كل شيء في مكانه الصحيح",
-        "description" : "My Ledger (جهازي Ledger) و Discover (اكتشف) موجودون الآن في الأعلى. تم نقل Swap (مبادلة) و Card (البطاقة) إلى الشريط الجانبي لوصول أسرع."
+        "title" : "قم بالوصول إلى الإجراءات الرئيسية بشكل أسرع",
+        "description" : "قم بالوصول إلى إجراءات Receive (تلقي) و Buy (شراء) و Sell (بيع) و Send (إرسال) على الفور."
       },
       "actions" : {
-        "title" : "إجراءات بسرعة السوق",
-        "description" : "حدد اتجاهات السوق بواسطة الشريط الجديد وتداول على الفور."
+        "title" : "اطلع على اتجاهات السوق فوراً",
+        "description" : "شاهد سريعاً ما الرائج مباشرةً في محفظتك الاستثمارية، وتحرك من الرؤى إلى الإجراءات."
       }
     },
     "cta" : {
