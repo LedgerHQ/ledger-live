@@ -153,7 +153,8 @@
     "memoTag" : {
       "learnMore" : "Weitere Informationen zu Tags/Memos"
     },
-    "memo" : "Memo"
+    "memo" : "Memo",
+    "stake" : "Staken"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -237,7 +238,7 @@
       },
       "cancel" : {
         "title" : "Abbrechen",
-        "description" : "Sendet 0 {{ticker}} an deine eigene Adresse."
+        "description" : "Es werden 0 {{ticker}} an deine eigene Adresse gesendet. Eine Stornierung kann nicht garantiert werden. Wenn das Netzwerk deine ursprüngliche Transaktion vor diesem Stornierungsantrag verarbeitet, werden die Assets trotzdem an den Empfänger überwiesen."
       },
       "steps" : {
         "method" : {
@@ -1499,6 +1500,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "Das Clear Signing dieser Transaktion ist mit der {{device}}™ nicht möglich",
+      "subtitle" : "Verwende ein anderes Ledger-Gerät, um die Details dieser Transaktion vor dem Signieren zu bestätigen. Ohne Clear Signing riskierst du, alle deine Assets zu verlieren.",
+      "continue" : "Handeln erfolgt auf eigenes Risiko"
+    },
+    "info" : {
+      "title" : "Am {{date}} endet die Unterstützung für {{coinName}} auf der {{device}}™ via Ledger Live™",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugang zu allen Ledger Live-Serviceanbietern und einen optimalen Kundensupport sicherzustellen",
+      "reminder" : "Nicht erneut erinnern"
+    },
+    "error" : {
+      "title" : "Diese Funktion wird von der {{device}}™ nicht unterstützt",
+      "subtitle" : "Rüste am besten gleich auf ein neueres Ledger-Gerät um, um den Zugriff auf alle neuen Ledger Live-Funktionen sicherzustellen."
+    },
+    "update" : "Upgrade-Programm entdecken",
+    "learnMore" : "Weitere Informationen",
+    "continue" : "Weiter"
+  },
   "currentAddress" : {
     "title" : "Aktuelle Adresse",
     "for" : "Adresse für <1><0>{{name}}</0></1>",
@@ -2154,6 +2174,24 @@
       }
     }
   },
+  "buyDeviceModal" : {
+    "title" : "Ledger-Gerät anschließen",
+    "subtitle" : "Wenn du das volle Potenzial von Ledger Wallet ausschöpfen möchtest, solltest du ein Ledger-Gerät anschließen.",
+    "0" : {
+      "title" : "Echtes Eigentum",
+      "desc" : "Deine privaten Schlüssel verlassen das Gerät zu keiner Zeit."
+    },
+    "1" : {
+      "title" : "Sicher traden",
+      "desc" : "Bestätige deine Transaktionen auf einem Secure Screen."
+    },
+    "2" : {
+      "title" : "Zugang zur wohl leistungsstärksten Wallet überhaupt",
+      "desc" : "Verwalte Tausende von Assets an einem zentralen Ort."
+    },
+    "connectCTA" : "Verbinden",
+    "buyCTA" : "Ledger-Gerät kaufen"
+  },
   "fund" : {
     "title" : "Finanzieren",
     "titleCrypto" : "{{currency}} finanzieren",
@@ -2371,6 +2409,24 @@
     "addressNotFound" : "Adresse nicht gefunden",
     "alreadyUsed" : "Bereits genutzt · {{date}}",
     "recentSendWillAppear" : "Deine letzten Transfers erscheinen hier",
+    "securityInfo" : {
+      "title" : "Wie versendet man sicher?",
+      "items" : {
+        "compatibility" : "Stelle sicher, dass die Empfängeradresse mit dem gewählten Netzwerk kompatibel ist",
+        "review" : "Überprüfe die Transaktionsdetails auf dem Secure Screen deines Ledger-Geräts.",
+        "smallAmount" : "Im Zweifelsfall sende zuerst einen kleinen Betrag."
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "Diese Adresse ist nicht in deinem aktuellen Verlauf enthalten. Im Zweifelsfall sende vorab einen kleinen Betrag."
+      },
+      "dialog" : {
+        "title" : "Jüngster Sendeverlauf",
+        "description" : "In deinem aktuellen Verlauf kannst du sofort erkennen, ob du bereits an eine bestimmte Adresse gesendet hast oder nicht. Dies könnte mögliche Fehler beim Kopieren und Einfügen oder das Hacken verhindern. Dein Verlauf enthält die letzten 12 Adressen, an die du über Ledger Wallet Krypto gesendet hast.",
+        "cta" : "Verstanden"
+      }
+    },
     "relativeDate" : {
       "justNow" : "Jetzt gerade",
       "minutesAgo_one" : "vor 1 Min.",
@@ -2440,17 +2496,26 @@
       "confirm" : "Bestätigen",
       "maxFee" : "Max. Gebühr ({{unit}})",
       "maxPriorityFee" : "Max. Prioritätsgebühr ({{unit}})",
-      "gasLimit" : "Gaslimit ({{unit}})",
       "feePerByte" : "Gebührenbetrag ({{unit}})",
       "suggested" : "Empfohlen",
       "nextBlock" : "Nächster Block",
       "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
       "invalidValue" : "Gib eine gültige Zahl ein.",
       "belowMinimum" : "Der Mindestbetrag beträgt {{min}}",
-      "maxFeeBelowPriorityFee" : "Die maximale Gebühr muss größer oder gleich der maximalen Prioritätsgebühr sein."
+      "maxFeeBelowPriorityFee" : "Die maximale Gebühr muss größer oder gleich der maximalen Prioritätsgebühr sein.",
+      "feeAsset" : "Gebührenpflichtiges Asset",
+      "feesAmount" : "Gebührenbetrag ({{unit}})",
+      "payFeesIn" : "Bezahl Gebühren in"
     },
     "coinControl" : {
-      "title" : "Coin-Kontrolle"
+      "title" : "Coin-Kontrolle",
+      "strategy" : "Strategie",
+      "learnMore" : "Weitere Informationen",
+      "coinToSend" : "Zu sendender Coin",
+      "changeToReturn" : "Wechseln zu Rückgabe",
+      "enterAmount" : "Betrag eingeben",
+      "amountToSendInCurrency" : "Zu sendender Betrag in {{ticker}}",
+      "amountInputLabel" : "Zu sendender Betrag"
     }
   },
   "releaseNotes" : {
@@ -5025,7 +5090,7 @@
     }
   },
   "theme" : {
-    "system" : "System-Theme auswählen",
+    "system" : "System",
     "light" : "Hell",
     "dusk" : "Mittel",
     "dark" : "Dunkel"
@@ -6630,6 +6695,10 @@
       "title" : "Beschleunigung oder Stornierung nicht möglich",
       "description" : "Diese Transaktion wurde bereits validiert"
     },
+    "InvalidTransactionError" : {
+      "title" : "Ungültige Transaktion",
+      "description" : "Die Transaktion stimmt nicht mehr mit dem Blockchain-Status überein. Bitte starte den Vorgang erneut."
+    },
     "SequenceNumberError" : {
       "title" : "Fehler in der Sequenznummer",
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
@@ -7316,6 +7385,50 @@
     "memoPlaceholder" : "Tag/Memo eingeben",
     "memoWarningText" : "Bei Verwendung eines Memos solltest du alle Angaben sorgfältig beim Empfänger verifizieren"
   },
+  "mina" : {
+    "percentageSymbol" : "%",
+    "fee" : "Gebühr",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "Delegierung ändern",
+      "earn" : "Verdienen"
+    },
+    "stakeBanner" : {
+      "title" : "Mit MINA Prämien verdienen",
+      "altTitle" : "Deine MINA-Delegation verwalten",
+      "description" : "Delegiere deine MINA an einen Blockproduzenten und verdiene Prämien aus der Blockproduktion. Die Prämien werden je nach Delegationsbetrag berechnet.",
+      "altDescription" : "Ändere deine Delegierungseinstellungen oder hebe die Delegierung deiner MINA-Token auf. ",
+      "changeCTA" : "Ändern"
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "delegiert an",
+      "stakedBalance" : "Kontostand gestaked",
+      "producerAddress" : "Produzentenadresse",
+      "delegatedToTooltip" : "Name des Blockproduzenten, an den du delegierst",
+      "stakedBalanceTooltip" : "MINA-Gesamtbetrag, der zurzeit bei diesem Validator gestaket ist",
+      "producerAddressTooltip" : "Öffentliche Adresse des Blockproduzenten, an den du delegierst"
+    },
+    "delegators" : "Delegatoren",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "Validator auswählen",
+        "connectDevice" : "Verbundenes Gerät",
+        "confirmation" : "Bestätigung"
+      },
+      "title" : "MINA staken",
+      "help" : "Wähle in der nachstehenden Liste einen Validator aus, um deine MINA-Token zu delegieren.",
+      "success" : {
+        "title" : "Transaktion erfolgreich übertragen",
+        "description" : "Dein Antrag auf Delegationsänderung wurde übertragen."
+      },
+      "error" : {
+        "title" : "Beim Übertragen der Transaktion ist ein Fehler aufgetreten"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision"
+    }
+  },
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
@@ -7699,7 +7812,16 @@
     }
   },
   "analytics" : {
-    "title" : "Analysen"
+    "title" : "Analysen",
+    "allocation" : {
+      "title" : "Vermögensaufteilung",
+      "columns" : {
+        "name" : "Name",
+        "balance" : "Saldo",
+        "value" : "Wert",
+        "allocation" : "Aufteilung"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8001,6 +8123,8 @@
     "title" : "Markt erkunden",
     "genericError" : "Verbindung fehlgeschlagen",
     "cta" : "Alles anzeigen",
+    "scrollLeft" : "Nach links scrollen",
+    "scrollRight" : "Nach rechts scrollen",
     "fearAndGreed" : {
       "title" : "Stimmung"
     }
@@ -8030,6 +8154,11 @@
   "assets" : {
     "cryptos" : "Kryptos",
     "stablecoins" : "Stablecoins",
+    "cryptoAccounts" : "Krypto-Konten",
+    "accountsCount_one" : "{{count}} Konto",
+    "accountsCount_other" : "{{count}} Konten",
+    "noCryptoAccounts" : "Noch keine Konten",
+    "add" : "Hinzufügen",
     "columns" : {
       "name" : "Name",
       "price" : "Preis",
@@ -8048,15 +8177,11 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher. Liste der betroffenen Konten: {{accounts}}. Zum Wiederholen tippen",
-      "emptyErrorToolTip" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher. Zum Wiederholen tippen",
+      "errorToolTip" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher.\n Liste der betroffenen Konten: {{accounts}}. Zum Wiederholen tippen",
+      "emptyErrorToolTip" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher.\n Zum Wiederholen tippen",
       "upToDate" : "Du bist auf dem aktuellen Stand",
-      "minutesAgo_one" : "Letzte Synchronisierung vor {{count}} Min. Zum Neuladen tippen",
-      "minutesAgo_other" : "Letzte Synchronisierung vor {{count}} Min. Zum Neuladen tippen",
-      "hoursAgo_one" : "Letzte Synchronisierung vor {{count}} Std. Zum Neuladen tippen",
-      "hoursAgo_other" : "Letzte Synchronisierung vor {{count}} Std. Zum Neuladen tippen",
-      "daysAgo_one" : "Letzte Synchronisierung vor {{count}} Tag. Zum Neuladen tippen",
-      "daysAgo_other" : "Letzte Synchronisierung vor {{count}} Tagen. Zum Neuladen tippen"
+      "lastSync" : "Letzte Synchronisierung: {{timeAgo}} Zum Neuladen tippen",
+      "refreshing" : "Wird neu geladen..."
     },
     "notificationIndicator" : {
       "tooltip" : "Benachrichtigungen"
@@ -8176,6 +8301,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "Selbstüberweisung",
+      "headerActionTooltip" : "Du hast kein Guthaben, um eine Selbstüberweisung durchzuführen",
+      "modal" : {
+        "title" : "Selbstüberweisung",
+        "stepRecipient" : {
+          "selectLabel" : "Übertragung von"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "Privater Saldo",
+        "public" : "Öffentlicher Saldo",
+        "lastUpdate" : "Letztes Update",
+        "switchBalance" : "Kontostandquelle wechseln"
+      }
+    },
     "account" : {
       "availableBalance" : "Verfügbares Guthaben",
       "availableBalanceTooltip" : "Übertragbares Guthaben",
@@ -8189,27 +8332,36 @@
         "public" : "Öffentlich",
         "private" : "Privat"
       }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "Senden von"
+      },
+      "summary" : {
+        "coveredByProvable" : "Abgesichert von Provable",
+        "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern."
+      }
     }
   },
   "updater" : {
     "newUpdateAvailable" : "Neues Update verfügbar",
     "downloadProgress" : "{{progress}} %",
-    "errorTryAgain" : "Fehler beim Update, bitte wiederholen",
-    "installAndRelaunch" : "Update installieren und neu starten"
+    "errorTryAgain" : "Fehler beim Update. Wiederholen",
+    "installAndRelaunch" : "Neues Update. Installieren und neu starten"
   },
   "walletV4Tour" : {
     "slides" : {
       "portfolio" : {
-        "title" : "Mühelos Swappen",
-        "description" : "Du kannst die Aufteilung deines Portfolios jederzeit mit der Sicherheit deines Ledger-Geräts anpassen"
+        "title" : "Ein besserer Überblick über dein Portfolio",
+        "description" : "Zeige dein Gesamtguthaben auf einen Blick an und tippe auf „Heute“, um weitere Details einzusehen."
       },
       "navigation" : {
-        "title" : "Alles ist am richtigen Platz",
-        "description" : "„My Ledger“ und „Entdecken“ sind ganz oben. Swap und Karte wurden für den schnelleren Zugriff in die Seitenleiste verschoben."
+        "title" : "Wichtige Funktionen im schnellen Zugriff",
+        "description" : "Greife sofort auf die Funktionen Empfangen, Kaufen, Verkaufen und Senden zu."
       },
       "actions" : {
-        "title" : "Maßnahmen im Markttempo",
-        "description" : "Erkenne Markttrends mit dem neuen Banner und trade sofort."
+        "title" : "Marktentwicklungen in Echtzeit verfolgen",
+        "description" : "Du kannst aktuelle Trends direkt in deinem Portfolio einsehen und Erkenntnisse sofort in Handeln umsetzen."
       }
     },
     "cta" : {
