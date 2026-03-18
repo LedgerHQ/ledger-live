@@ -1,15 +1,10 @@
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { Subject } from "rxjs";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { ConcordiumSessionExpiredError, LockedDeviceError } from "@ledgerhq/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  CreateStatus,
-  getConfirmationCode,
-  isSessionExpiredError,
-  useOnboarding,
-} from "../hooks/useOnboarding";
+import { CreateStatus, getConfirmationCode, useOnboarding } from "../hooks/useOnboarding";
 
 let onboardSubject: Subject<unknown>;
 
@@ -31,28 +26,6 @@ describe("getConfirmationCode", () => {
 
   it("should handle already uppercase input", () => {
     expect(getConfirmationCode("WXYZ9999")).toBe("WXYZ");
-  });
-});
-
-describe("isSessionExpiredError", () => {
-  it("should return true for no active session error", () => {
-    expect(
-      isSessionExpiredError(new Error("No active WalletConnect session for concordium_testnet")),
-    ).toBe(true);
-  });
-
-  it("should return true for pairing approval expired", () => {
-    expect(isSessionExpiredError(new Error("Pairing approval is expired. Please try again."))).toBe(
-      true,
-    );
-  });
-
-  it("should return false for other errors", () => {
-    expect(isSessionExpiredError(new Error("network failure"))).toBe(false);
-  });
-
-  it("should return false for unrelated expired errors", () => {
-    expect(isSessionExpiredError(new Error("certificate expired"))).toBe(false);
   });
 });
 
@@ -125,7 +98,7 @@ describe("useOnboarding", () => {
     );
 
     act(() => {
-      onboardSubject.error(new Error("No active WalletConnect session for concordium_testnet"));
+      onboardSubject.error(new ConcordiumSessionExpiredError());
     });
 
     await waitFor(() => {

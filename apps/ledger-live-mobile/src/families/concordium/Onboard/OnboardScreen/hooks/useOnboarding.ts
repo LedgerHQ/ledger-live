@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import {
+  ConcordiumPairingExpiredError,
+  ConcordiumSessionExpiredError,
+  LockedDeviceError,
+} from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
@@ -19,14 +23,6 @@ export enum CreateStatus {
 
 export function getConfirmationCode(sessionTopic: string): string {
   return sessionTopic.substring(0, CONFIRMATION_CODE_LENGTH).toUpperCase();
-}
-
-export function isSessionExpiredError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  return (
-    message.includes("No active WalletConnect session") ||
-    message.includes("Pairing approval is expired")
-  );
 }
 
 export function useOnboarding(
@@ -89,7 +85,10 @@ export function useOnboarding(
           unsubscribe();
           if (error instanceof LockedDeviceError) {
             setCreateStatus(CreateStatus.DEVICE_LOCKED);
-          } else if (isSessionExpiredError(error)) {
+          } else if (
+            error instanceof ConcordiumSessionExpiredError ||
+            error instanceof ConcordiumPairingExpiredError
+          ) {
             onSessionExpired();
           } else {
             setCreateStatus(CreateStatus.ERROR);

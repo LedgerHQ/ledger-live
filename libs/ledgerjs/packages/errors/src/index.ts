@@ -207,6 +207,16 @@ export const ReplacementTransactionUnderpriced = createCustomErrorClass(
 export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
 export const DustLimit = createCustomErrorClass("DustLimit");
 
+// Concordium family
+export const ConcordiumInsufficientFunds = createCustomErrorClass("ConcordiumInsufficientFunds");
+export const ConcordiumMemoTooLong = createCustomErrorClass("ConcordiumMemoTooLong");
+export const ConcordiumPairingExpiredError = createCustomErrorClass(
+  "ConcordiumPairingExpiredError",
+);
+export const ConcordiumSessionExpiredError = createCustomErrorClass(
+  "ConcordiumSessionExpiredError",
+);
+
 // Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 

@@ -7044,6 +7044,14 @@
     "ConcordiumInsufficientFunds": {
       "title": "Sorry, insufficient funds"
     },
+    "ConcordiumPairingExpiredError": {
+      "title": "Pairing expired",
+      "description": "The connection to Concordium ID App has timed out. Please try again."
+    },
+    "ConcordiumSessionExpiredError": {
+      "title": "Session expired",
+      "description": "The Concordium ID App session is no longer active. Please pair again."
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },

@@ -1,3 +1,4 @@
+import { ConcordiumSessionExpiredError } from "@ledgerhq/errors";
 import { firstValueFrom, toArray } from "rxjs";
 import coinConfig from "../config";
 import { submitCredential } from "../network/proxyClient";
@@ -121,7 +122,7 @@ describe("onboard (testnet integration)", () => {
       const observable = onboardAccount(currency.id, "test-device", account);
 
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
-        "No active WalletConnect session",
+        ConcordiumSessionExpiredError,
       );
     }, 15000);
 
