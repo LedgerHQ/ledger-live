@@ -55,7 +55,12 @@ function StepSummary(props: StepProps) {
         <Separator />
 
         <Box horizontal justifyContent="space-between" mt={1}>
-          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+          <Text
+            ff="Inter|Medium"
+            color="neutral.c60"
+            fontSize={4}
+            data-testid="undelegate-refund-label"
+          >
             <Trans i18nKey="cardano.unDelegation.refund" />
           </Text>
           <Box>
@@ -73,7 +78,12 @@ function StepSummary(props: StepProps) {
         </Box>
         <Separator />
         <Box horizontal justifyContent="space-between">
-          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+          <Text
+            ff="Inter|Medium"
+            color="neutral.c60"
+            fontSize={4}
+            data-testid="undelegate-fees-label"
+          >
             <Trans i18nKey="send.steps.details.fees" />
           </Text>
           <Box>
@@ -145,6 +155,7 @@ export function StepSummaryFooter({
       </Button>
       <Button
         id="undelegate-continue-button"
+        data-testid="undelegate-continue-button"
         disabled={!canNext}
         primary
         onClick={() => transitionTo("connectDevice")}
