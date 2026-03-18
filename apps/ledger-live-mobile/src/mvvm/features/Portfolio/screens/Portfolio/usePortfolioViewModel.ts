@@ -10,6 +10,7 @@ import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { track } from "~/analytics";
+import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 import {
   flattenAccountsSelector,
   hasNonTokenAccountsSelector,
@@ -40,6 +41,7 @@ interface UsePortfolioViewModelResult {
   isAddModalOpened: boolean;
   shouldDisplayGraphRework: boolean;
   backgroundColor: string;
+  isSyncError: boolean;
   openAddModal: () => void;
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
@@ -139,6 +141,9 @@ const usePortfolioViewModel = (navigation: {
     navigation.navigate(ScreenName.AnalyticsAllocation);
   }, [navigation]);
 
+  const { syncPhase } = usePortfolioBalance();
+  const isSyncError = syncPhase === "failed";
+
   return {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
@@ -152,6 +157,7 @@ const usePortfolioViewModel = (navigation: {
     isAddModalOpened,
     shouldDisplayGraphRework,
     backgroundColor,
+    isSyncError,
     openAddModal,
     closeAddModal,
     handleHeightChange,

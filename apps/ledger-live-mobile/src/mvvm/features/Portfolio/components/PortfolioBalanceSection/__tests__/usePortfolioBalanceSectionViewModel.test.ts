@@ -40,6 +40,8 @@ function makeReturn(
     isManualRefreshLoading: false,
     allAccounts: [],
     accountsWithError: [],
+    accountsImpactedByError: [],
+    errorCurrencyIds: [],
     listOfErrorAccountNames: "",
     areAllAccountsUpToDate: true,
     hasAccounts: true,
