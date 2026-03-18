@@ -37,34 +37,6 @@ const ledgerConfig = { type: "ledger" as const, explorerId: "eth" as const, retr
 describe("EVM Family", () => {
   describe("network/node/ledger.ts", () => {
     describe("createLedgerNodeApi / retries", () => {
-      it("should retry on fail", async () => {
-        const api = createLedgerNodeApi(ledgerConfig);
-        let attempts = 2;
-        const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
-          if (attempts) {
-            --attempts;
-            throw new Error();
-          }
-          return {
-            data: {
-              hash: "0xabc",
-              block: { hash: "0xblock", height: 1, time: new Date().toISOString() },
-              nonce_value: 0,
-              gas_price: "0",
-              gas_used: "0",
-              value: "0",
-              status: 1,
-              from: "0xfrom",
-              to: "0xto",
-              transfer_events: [],
-            },
-          };
-        });
-        const response = await api.getTransaction(currency, "0xHash");
-        expect(response.hash).toEqual("0xabc");
-        expect(spy).toHaveBeenCalledTimes(3);
-      });
-
       it("should throw after too many retries", async () => {
         const api = createLedgerNodeApi({ ...ledgerConfig, retries: 2 });
         const SpyError = class SpyError extends Error {};

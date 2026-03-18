@@ -14,12 +14,12 @@ import { USEI_TO_EVM_SCALE } from "../utils";
 
 jest.mock("@ledgerhq/live-network", () => jest.fn());
 jest.mock("../config");
-jest.mock("../network/node/rpc.common");
+jest.mock("../network/withApi");
 jest.mock("../network/node/types");
 
 const mockNetwork = jest.mocked(require("@ledgerhq/live-network"));
 const mockGetCoinConfig = jest.mocked(require("../config").getCoinConfig);
-const mockWithApi = jest.mocked(require("../network/node/rpc.common").withApi);
+const mockWithApi = jest.mocked(require("../network/withApi").withApi);
 const mockIsExternalNodeConfig = jest.mocked(require("../network/node/types").isExternalNodeConfig);
 
 const SEI_CURRENCY = { id: "sei_evm" } as CryptoCurrency;

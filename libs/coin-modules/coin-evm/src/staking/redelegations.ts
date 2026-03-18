@@ -9,7 +9,7 @@ import { STAKING_CONTRACTS } from "./contracts";
 import { getStakingABI } from "./abis";
 import { getValidatorAddressById } from "./validators/monad";
 import { getCoinConfig } from "../config";
-import { withApi } from "../network/node/rpc.common";
+import { withApi } from "../network/withApi";
 import { isExternalNodeConfig } from "../network/node/types";
 
 // ─── Cosmos Address Precompile ─────────────────────────────────────────────────

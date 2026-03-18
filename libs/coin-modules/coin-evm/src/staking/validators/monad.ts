@@ -8,7 +8,7 @@ import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { getCoinConfig } from "../../config";
-import { withApi } from "../../network/node/rpc.common";
+import { withApi } from "../../network/withApi";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
 import { getStakingABI } from "../abis";

@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import monadAbi from "../../abis/monad.abi.json";
 import { getCoinConfig } from "../../config";
-import { withApi } from "../../network/node/rpc.common";
+import { withApi } from "../../network/withApi";
 import { clearValidatorsCache, getValidators } from "./index";
 import { fetchMonadStakes, getValidatorAddressById } from "./monad";
 
@@ -11,7 +11,7 @@ jest.mock("../../config", () => ({
   __esModule: true,
   getCoinConfig: jest.fn(),
 }));
-jest.mock("../../network/node/rpc.common", () => ({
+jest.mock("../../network/withApi", () => ({
   __esModule: true,
   withApi: jest.fn(),
 }));
@@ -127,8 +127,16 @@ describe("staking/validators/monad", () => {
 
   it("fetches and maps a single page of validators from the precompile", async () => {
     const valDetails: Record<string, { stake: bigint; commission: bigint; secpPubkey: string }> = {
-      "1": { stake: 1_000n, commission: 10n ** 17n, secpPubkey: "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187" }, // 10%
-      "2": { stake: 500n, commission: 5n * 10n ** 16n, secpPubkey: "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54" }, // 5%
+      "1": {
+        stake: 1_000n,
+        commission: 10n ** 17n,
+        secpPubkey: "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+      }, // 10%
+      "2": {
+        stake: 500n,
+        commission: 5n * 10n ** 16n,
+        secpPubkey: "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54",
+      }, // 5%
     };
 
     const callMock = setupRpc(
@@ -141,7 +149,9 @@ describe("staking/validators/monad", () => {
     expect(await getValidators("monad")).toStrictEqual({
       items: [
         {
-          validatorAddress: ethers.computeAddress("0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187"),
+          validatorAddress: ethers.computeAddress(
+            "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+          ),
           validatorId: "1",
           name: "Validator 1",
           commission: 0.1,
@@ -150,7 +160,9 @@ describe("staking/validators/monad", () => {
           estimatedYearlyRewardsRate: 0,
         },
         {
-          validatorAddress: ethers.computeAddress("0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54"),
+          validatorAddress: ethers.computeAddress(
+            "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54",
+          ),
           validatorId: "2",
           name: "Validator 2",
           commission: 0.05,
@@ -173,7 +185,12 @@ describe("staking/validators/monad", () => {
     setupRpc(
       routeByName({
         getExecutionValidatorSet: () => encodeExecValSet(true, 0, [1n]),
-        getValidator: () => encodeGetValidator({ stake: 1_000n, commission: 0n, secpPubkey: "0x03e773631152aa98da046d945f0d410d85369e19764a7f9de77fcb896defe527df" }),
+        getValidator: () =>
+          encodeGetValidator({
+            stake: 1_000n,
+            commission: 0n,
+            secpPubkey: "0x03e773631152aa98da046d945f0d410d85369e19764a7f9de77fcb896defe527df",
+          }),
       }),
     );
     // Repo filename is the lowercase secp hex without the `0x` prefix.
@@ -185,7 +202,9 @@ describe("staking/validators/monad", () => {
     const page = await getValidators("monad");
 
     expect(page.items[0]).toMatchObject({
-      validatorAddress: ethers.computeAddress("0x03e773631152aa98da046d945f0d410d85369e19764a7f9de77fcb896defe527df"),
+      validatorAddress: ethers.computeAddress(
+        "0x03e773631152aa98da046d945f0d410d85369e19764a7f9de77fcb896defe527df",
+      ),
       name: "GalaxyDigital",
     });
     expect(mockedNetwork).toHaveBeenCalledWith(
@@ -204,7 +223,11 @@ describe("staking/validators/monad", () => {
         getValidator: valId =>
           valId === 1n
             ? new Error("rpc timeout")
-            : encodeGetValidator({ stake: 42n, commission: 0n, secpPubkey: "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54" }),
+            : encodeGetValidator({
+                stake: 42n,
+                commission: 0n,
+                secpPubkey: "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54",
+              }),
       }),
     );
 
@@ -212,7 +235,9 @@ describe("staking/validators/monad", () => {
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0]).toMatchObject({
-      validatorAddress: ethers.computeAddress("0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54"),
+      validatorAddress: ethers.computeAddress(
+        "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54",
+      ),
       name: "Validator 2",
       tokens: "42",
     });
@@ -335,7 +360,9 @@ describe("staking/validators/monad", () => {
       expect(firstPage).toStrictEqual({
         items: [
           {
-            validatorAddress: ethers.computeAddress("0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187"),
+            validatorAddress: ethers.computeAddress(
+              "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+            ),
             validatorId: "1",
             name: "Validator 1",
             commission: 0,
@@ -386,14 +413,15 @@ describe("staking/validators/monad", () => {
             encodeGetValidator({
               stake: 0n,
               commission: 0n,
-              secpPubkey:
-                "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+              secpPubkey: "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
             }),
         }),
       );
 
       expect(await getValidatorAddressById("monad", 7n)).toEqual(
-        ethers.computeAddress("0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187"),
+        ethers.computeAddress(
+          "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+        ),
       );
     });
 

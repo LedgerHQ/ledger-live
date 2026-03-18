@@ -31,6 +31,33 @@ export function isUnsupportedRpcMethodErrorMsg(error: unknown): boolean {
   return collectRpcErrorFields(error).messages.some(m => m.toLowerCase().includes(marker));
 }
 
+/**
+ * Verify that an error is a rate limit sent by a rpc node
+ *
+ * Error format is not the same for all providers so this function may not handle other kind of rate limit
+ *
+ * @param error error received in a try catch
+ * @returns true if the error is in a known rate limit format, false otherwise
+ */
+export function isRateLimitRpcMethodError(error: unknown): boolean {
+  const unsupportedCodes = new Set(["-32012", "-32029"]);
+  return collectRpcErrorFields(error).codes.some(code => unsupportedCodes.has(code));
+}
+
+/**
+ * Returns true when ethers has already exhausted its internal HTTP retries for a 429 rate-limit.
+ *
+ * Ethers typically surfaces this as a `responseStatus` string containing "exceeded maximum retry limit".
+ *
+ * @param error error received in a try catch
+ * @returns true if the error is come from EthersJs, false otherwise
+ */
+export function hasEthersRetriedOnRateLimit(error: unknown): boolean {
+  return collectRpcErrorFields(error).responseStatuses.some(status =>
+    status.toLowerCase().includes("exceeded maximum retry limit"),
+  );
+}
+
 function extractRpcErrorCode(key: string, field: unknown): string | null {
   if (key === "code") {
     return normalizeRpcErrorCode(field);
@@ -45,10 +72,15 @@ function extractRpcErrorMessage(key: string, field: unknown): string | null {
   return null;
 }
 
-/** Walks nested RPC / ethers error shapes once; collects `code` and `message` fields (incl. JSON in `responseBody`). */
-function collectRpcErrorFields(error: unknown): { codes: string[]; messages: string[] } {
+/** Walks nested RPC / ethers error shapes once; collects `code`, `message` and `responseStatus` fields (incl. JSON in `responseBody`). */
+function collectRpcErrorFields(error: unknown): {
+  codes: string[];
+  messages: string[];
+  responseStatuses: string[];
+} {
   const codes = new Set<string>();
   const messages: string[] = [];
+  const responseStatuses: string[] = [];
   const visited = new WeakSet<object>();
 
   const visit = (value: unknown): void => {
@@ -75,6 +107,8 @@ function collectRpcErrorFields(error: unknown): { codes: string[]; messages: str
         } catch {
           // ignore malformed response body
         }
+      } else if (key === "responseStatus" && typeof field === "string") {
+        responseStatuses.push(field);
       } else {
         visit(field);
       }
@@ -82,7 +116,7 @@ function collectRpcErrorFields(error: unknown): { codes: string[]; messages: str
   };
 
   visit(error);
-  return { codes: Array.from(codes), messages };
+  return { codes: Array.from(codes), messages, responseStatuses };
 }
 
 function normalizeRpcErrorCode(code: unknown): string | null {
