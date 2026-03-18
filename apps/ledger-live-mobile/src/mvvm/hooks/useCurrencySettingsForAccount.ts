@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
@@ -18,5 +19,5 @@ export function useCurrencySettingsForAccount(account: AccountLike) {
     (state: State) => currencySettingsForAccountSelector(state.settings, { account }),
     [account],
   );
-  return useSelector(selector);
+  return useSelector(selector, shallowEqual);
 }

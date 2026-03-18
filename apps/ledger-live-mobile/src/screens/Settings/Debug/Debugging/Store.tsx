@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components/native";
 import get from "lodash/get";
 import set from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
 import { BigNumber } from "bignumber.js";
 import { StyleSheet, ScrollView } from "react-native";
-import { useDispatch, useSelector } from "~/context/hooks";
+import { useDispatch, useStore } from "~/context/hooks";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import Share from "react-native-share";
@@ -28,7 +28,9 @@ const Separator = styled(Flex).attrs({
 })``;
 
 export default function Store() {
-  const state = useSelector(s => s);
+  const store = useStore();
+  const [state, setState] = useState<State>(() => store.getState());
+  useEffect(() => store.subscribe(() => setState(store.getState())), [store]);
   const { colors } = useTheme();
 
   const [hasMadeChanges, setHasMadeChanges] = useState(false);

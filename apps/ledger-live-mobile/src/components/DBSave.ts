@@ -1,11 +1,10 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
-import identity from "lodash/identity";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSelector } from "~/context/hooks";
+import { useStore } from "~/context/hooks";
 import { useTrackingPairs, useUserSettings } from "~/actions/general";
 import {
   saveAccounts,
@@ -28,7 +27,6 @@ import { exportMarketSelector } from "~/reducers/market";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
-import { Maybe } from "../types/helpers";
 import {
   extractPersistedCALFromState,
   persistedCALContentEqual,
@@ -39,8 +37,6 @@ import {
   exportCountervalues,
   hasNewCountervaluesToExport,
 } from "@ledgerhq/live-countervalues/logic";
-
-type MaybeState = Maybe<State>;
 
 type Props<Data, Stats> = {
   throttle: number;
@@ -57,50 +53,47 @@ function useDBSaveEffect<D, S>({
   getChangesStats,
   saveAtStart = false,
 }: Props<D, S>) {
-  const state: MaybeState = useSelector(identity);
+  const store = useStore();
   const forceSave = useRef(saveAtStart);
-  const lastSavedState = useRef(state);
+  const lastSavedState = useRef<State>(store.getState());
   const isSaving = useRef(false);
-  // we keep an updated version of current props in "latestProps" ref
   const latestProps = useRef({
     lense,
     save,
-    state,
     getChangesStats,
   });
   const checkForSave = useMemo(
     () =>
-      // throttle allow to not spam lense and save too much because they are costly
-      // nb it does not prevent race condition here. save must be idempotent and atomic
       throttleFn(async (): Promise<void> => {
-        if (isSaving.current) return checkForSave(); // if we are already saving, we re-schedule
-        const { lense, save, state, getChangesStats } = latestProps.current;
-        if (lastSavedState?.current && state) {
-          const changedStats = getChangesStats(lastSavedState.current, state); // we compare last saved with latest state
-          if (!changedStats && !forceSave.current) return; // if it's falsy, it means there is no changes
+        if (isSaving.current) return checkForSave();
+        const { lense, save, getChangesStats } = latestProps.current;
+        const state = store.getState();
+        if (lastSavedState.current && state) {
+          const changedStats = getChangesStats(lastSavedState.current, state);
+          if (!changedStats && !forceSave.current) return;
           isSaving.current = true;
           try {
-            await save(lense(state), changedStats); // we save it for real
+            await save(lense(state), changedStats);
           } finally {
             isSaving.current = false;
           }
-          lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
+          lastSavedState.current = state;
           forceSave.current = false;
         }
       }, throttle),
-    [throttle],
+    [throttle, store],
   );
   useFlushMechanism(checkForSave);
-  // each time a prop changes, we will checkForSave
+
   useEffect(() => {
-    latestProps.current = {
-      lense,
-      save,
-      state,
-      getChangesStats,
-    };
+    const unsubscribe = store.subscribe(() => checkForSave());
+    return unsubscribe;
+  }, [store, checkForSave]);
+
+  useEffect(() => {
+    latestProps.current = { lense, save, getChangesStats };
     checkForSave();
-  }, [lense, save, state, checkForSave, getChangesStats]);
+  }, [lense, save, checkForSave, getChangesStats]);
 }
 const flushes: Array<() => void> = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));

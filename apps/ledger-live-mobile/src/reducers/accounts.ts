@@ -166,7 +166,9 @@ const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b):
     flattenAccounts(b as AccountLikeArray).map(accountHash),
   ),
 );
-export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a);
+export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a, {
+  devModeChecks: { identityFunctionCheck: "never" },
+});
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
 
