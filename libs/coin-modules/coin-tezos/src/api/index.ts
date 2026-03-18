@@ -1,7 +1,5 @@
 import {
   type Balance,
-  Block,
-  BlockInfo,
   Cursor,
   ListOperationsOptions,
   Page,
@@ -28,6 +26,8 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   lastBlock,
   listOperations,
   rawEncode,
@@ -71,12 +71,8 @@ export function createApi(config: TezosConfig): AlpacaApi {
       const accountInfo = await api.getAccountByAddress(address);
       return accountInfo.type === "user" ? BigInt(accountInfo.counter + 1) : 0n;
     },
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },

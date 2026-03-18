@@ -3,6 +3,8 @@ export { combine } from "./combine";
 export { craftTransaction, rawEncode } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
+export { getBlock } from "./getBlock";
+export { getBlockInfo } from "./getBlockInfo";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { validateIntent } from "./validateIntent";
