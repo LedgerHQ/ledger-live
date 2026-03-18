@@ -2905,7 +2905,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "",
-      "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c412807b3f8778e876fe9e3ccd38a7e694852",
+      "blockHash": null,
       "blockHeight": 10,
       "extra": {},
       "fee": "0",
@@ -3105,7 +3105,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44",
-      "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d887c497724dcd52d6b58b8e6c3378584",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -3307,7 +3307,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
   [
     {
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c412807b3f8778e876fe9e3ccd38a7e694852",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -3335,7 +3335,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.7305122:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d887c497724dcd52d6b58b8e6c3378584",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -4001,7 +4001,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
-      "blockHash": "0xe2cbd241357c4e302918a92401868d6c52508724ec2dee80f5475af1c35d56a692dceb040c55418ec0f9092cf030ee90",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -4077,7 +4077,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
-      "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c412807b3f8778e876fe9e3ccd38a7e694852",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -4153,7 +4153,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "",
-      "blockHash": "0x93a5f12cb50c6091a9435f9b0619b825eb43e62307ad638c4498bba54f4b7be59c84e3956f893a172996ab96b0fa80bc",
+      "blockHash": null,
       "blockHeight": 10,
       "extra": {},
       "fee": "0",
@@ -4445,7 +4445,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "",
-      "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7836134fe07f4d23402dd8b76deee3dd7",
+      "blockHash": null,
       "blockHeight": 10,
       "extra": {},
       "fee": "0",
@@ -4488,7 +4488,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
   [
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0xe2cbd241357c4e302918a92401868d6c52508724ec2dee80f5475af1c35d56a692dceb040c55418ec0f9092cf030ee90",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -4517,7 +4517,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0xcdbd0227f60691af152a1d1226c8692944f25cf02e9385c09419bf1dc57c412807b3f8778e876fe9e3ccd38a7e694852",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -4545,7 +4545,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0x93a5f12cb50c6091a9435f9b0619b825eb43e62307ad638c4498bba54f4b7be59c84e3956f893a172996ab96b0fa80bc",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -4573,7 +4573,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7836134fe07f4d23402dd8b76deee3dd7",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -5070,7 +5070,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "",
-      "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d887c497724dcd52d6b58b8e6c3378584",
+      "blockHash": null,
       "blockHeight": 10,
       "extra": {},
       "fee": "0",
@@ -5084,7 +5084,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.10096785:hederaBip44",
-      "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7836134fe07f4d23402dd8b76deee3dd7",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -5163,7 +5163,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
   [
     {
       "accountId": "js:2:hedera:0.0.10096785:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0x782060bf6ae2a6810e5b47798bf90cd420f346c8c1dbb7f12064fa58900d928d887c497724dcd52d6b58b8e6c3378584",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
@@ -5191,7 +5191,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
     },
     {
       "accountId": "js:2:hedera:0.0.10096785:hederaBip44+hedera%2Ferc20%2Fbonzo~!underscore!~atoken~!underscore!~usdc~!underscore!~0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
-      "blockHash": "0x2932ac1afe6726350ea55660b30c83823c185a896c8a9b228e12007ee76c15a7836134fe07f4d23402dd8b76deee3dd7",
+      "blockHash": null,
       "blockHeight": 10,
       "contract": "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
       "extra": {
