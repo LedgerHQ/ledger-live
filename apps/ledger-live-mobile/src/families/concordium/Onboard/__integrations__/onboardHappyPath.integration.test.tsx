@@ -212,7 +212,7 @@ describe("Concordium onboarding happy path", () => {
 
   it("should complete onboarding via deep link when Concordium ID App is installed", async () => {
     jest.spyOn(Linking, "canOpenURL").mockResolvedValue(true);
-    jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
 
     const { user } = render(<OnboardScreen />, { overrideInitialState });
 
