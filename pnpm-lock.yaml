@@ -321,6 +321,12 @@ catalogs:
     msw:
       specifier: ^2.7.3
       version: 2.7.3
+    oxfmt:
+      specifier: 0.36.0
+      version: 0.36.0
+    oxlint:
+      specifier: 1.51.0
+      version: 1.51.0
     playwright:
       specifier: 1.51.1
       version: 1.51.1
@@ -1357,10 +1363,10 @@ importers:
         specifier: 13.5.4
         version: 13.5.4
       oxfmt:
-        specifier: ^0.36.0
+        specifier: 'catalog:'
         version: 0.36.0
       oxlint:
-        specifier: 1.51.0
+        specifier: 'catalog:'
         version: 1.51.0
       postcss:
         specifier: 8.5.6
@@ -2097,10 +2103,10 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@5.9.3)
       oxfmt:
-        specifier: ^0.36.0
+        specifier: 'catalog:'
         version: 0.36.0
       oxlint:
-        specifier: 1.51.0
+        specifier: 'catalog:'
         version: 1.51.0
       react-native-bundle-visualizer:
         specifier: 3.1.3
@@ -2135,19 +2141,6 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
-    optionalDependencies:
-      '@oxlint/binding-darwin-arm64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-darwin-x64':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-linux-x64-gnu':
-        specifier: 1.51.0
-        version: 1.51.0
-      '@oxlint/binding-win32-x64-msvc':
-        specifier: 1.51.0
-        version: 1.51.0
 
   apps/web-tools:
     dependencies:
@@ -2663,10 +2656,10 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0
       oxfmt:
-        specifier: ^0.36.0
+        specifier: 'catalog:'
         version: 0.36.0
       oxlint:
-        specifier: 1.51.0
+        specifier: 'catalog:'
         version: 1.51.0
       react:
         specifier: 19.0.0

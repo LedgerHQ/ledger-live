@@ -22,8 +22,8 @@
   },
   "devDependencies": {
     "tailwindcss": "catalog:",
-    "oxfmt": "^0.36.0",
-    "oxlint": "1.51.0",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "eslint": "8.57.0",
     "eslint-plugin-better-tailwindcss": "catalog:",
     "@typescript-eslint/parser": "catalog:",

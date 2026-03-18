@@ -169,6 +169,8 @@ catalog:
   playwright: 1.51.1
   allure-playwright: 3.2.1
   allure-js-commons: 3.2.1
+  oxlint: 1.51.0
+  oxfmt: 0.36.0
 
 overrides:
   node-abi: ^4.9.0
