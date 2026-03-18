@@ -86,8 +86,13 @@ export const DEFAULT_RETRIES_RPC_METHODS =
  * Without this, ethers will create a new provider and use the `eth_chainId` RPC call
  * at instanciation which could result in rate limits being reached
  * on some specific nodes (E.g. the main Optimism RPC)
+ * Keyed by currency id + RPC URI so the same chain with different uri gets distinct providers.
  */
 const PROVIDERS_BY_RPC: Record<string, JsonRpcProvider> = {};
+
+function providerCacheKey(currencyId: string, uri: string): string {
+  return `${currencyId}:${uri}`;
+}
 
 /**
  * Connects to RPC Node
@@ -105,11 +110,12 @@ export async function withApi<T>(
   const retries = nodeConfig.retries ?? DEFAULT_RETRIES_RPC_METHODS;
   return withRetries(
     async () => {
-      if (!PROVIDERS_BY_RPC[currency.id]) {
+      const key = providerCacheKey(currency.id, nodeConfig.uri);
+      if (!PROVIDERS_BY_RPC[key]) {
         const chainId = currency.ethereumLikeInfo?.chainId;
-        PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(nodeConfig.uri, chainId);
+        PROVIDERS_BY_RPC[key] = new JsonRpcProvider(nodeConfig.uri, chainId);
       }
-      const provider = PROVIDERS_BY_RPC[currency.id];
+      const provider = PROVIDERS_BY_RPC[key];
       return await execute(provider);
     },
     retries,
