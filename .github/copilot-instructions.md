@@ -1,6 +1,3 @@
-<!-- Source: .cursor/agents/code-reviewer.md -->
-<!-- Last synced: 2026-03-13 -->
-
 # Ledger Live Monorepo
 
 This is the **ledger-live** monorepo — a pnpm + turborepo workspace containing:
@@ -17,59 +14,33 @@ This is the **ledger-live** monorepo — a pnpm + turborepo workspace containing
 
 ## Changeset Requirement
 
-Every PR that changes user-facing behavior or library APIs must include a changeset (`pnpm changeset`). Flag PRs that add features or fix bugs without one.
+Every PR that changes user-facing behavior or library APIs must include a changeset (`pnpm changeset`).
 
 ## Privacy & Security — `@ledgerhq/client-ids`
 
-Sensitive identifiers (DeviceId, UserId, DatadogId) must always use the `@ledgerhq/client-ids` library:
+- Never use raw string IDs for devices, users, or analytics — use `DeviceId`, `UserId`, or `DatadogId` from `@ledgerhq/client-ids/ids`.
+- Export IDs only at system boundaries via allowlisted methods in `libs/client-ids/export-rules.json`.
 
-- **Never** use raw string IDs for devices, users, or analytics.
-- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@ledgerhq/client-ids/ids`.
-- ID values are only accessible through explicit export methods (e.g., `exportUserIdForSomething()`).
-- Every export method must be allowlisted in `libs/client-ids/export-rules.json` with a justification.
-- Export IDs only at system boundaries (API calls, persistence) — never in the middle of processing.
-- `toString()` and `toJSON()` return `[DeviceId:REDACTED]` by default — this is by design.
+## Dependency & Lockfile Review
 
-## Dependency Review
+- New dependencies must be justified and not duplicate existing capabilities.
+- Lockfile diffs must be scoped to the PR's `package.json` changes — flag unrelated version bumps or large rewrites.
 
-When a PR adds or updates dependencies in any `package.json`:
+## Coin-specific Logic
 
-- The dependency must be justified (not duplicating an existing capability).
-- Peer dependency compatibility must be verified.
-
-## Lockfile (pnpm-lock.yaml) Review
-
-When a PR touches `pnpm-lock.yaml`, check that the diff is **scoped to what the PR author actually changed** (e.g. the packages they added/updated in `package.json`). Flag the PR if the lockfile diff:
-
-- **Unrelated version bumps** — Resolutions or versions of packages that were not added, removed, or updated in this PR’s `package.json` changes.
-- **Large accidental rewrites** — Big reformatting, reordering, or mass version changes that go beyond the intended dependency change (e.g. running `pnpm install` in a different environment or with different pnpm/node).
-- **Unwanted bundle or duplicate entries** — New lockfile entries (packages or versions) that don’t correspond to the PR’s stated dependency changes, or duplicate/conflicting entries that suggest lockfile corruption or merge issues.
-
-If in doubt, the lockfile diff should be explainable by the set of `package.json` edits in the same PR; otherwise ask the author to regenerate the lockfile from a clean `pnpm install` and ensure only the intended dependency changes remain.
-
-## Coin-specific logic and families contract
-
-**Do not add coin-specific branches in generic UI.** Flag PRs that introduce `if (family === "evm")` (or similar) or coin-specific hooks in shared screens/ViewModels. Coin-specific behavior must live in **families/** and be exposed through the **families contract**:
-
-- **Desktop:** Optional slots on `LLDCoinFamily` in `apps/ledger-live-desktop/src/renderer/families/types.ts`; families implement in `families/<family>/`; generic code uses `getLLDCoinFamily(currency.family).SlotName` only (no family-name checks).
-- **Mobile:** Same idea: optional slots or generated maps (e.g. `NoAssociatedAccounts`), implemented per family; generic code looks up by contract, not by `family === "…"`.
-
-When a flow needs new coin-specific behaviour, the fix is to **extend the contract** (new optional slot) and implement it in the family folder, not to add branching in generic code. This keeps the codebase ready for modularisation and lazy loading. See `.cursor/rules/coin-families-contract.mdc` for the full rule and the Scan Device “no associated accounts” example.
-
-## Cross-team files (team-split convention)
-
-When a PR touches a file or directory that is **owned by or relevant to multiple teams**, suggest refactoring to the **team-split convention**: splitting reduces friction between teams in CODEOWNERS by giving each team clear ownership of its files.
-
-- Split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts` (one file or small set per team; index re-exports all).
-- For the full convention and examples, see **`.cursor/rules/team-split-convention.mdc`**. CODEOWNERS defines the allowed `team-*` slugs.
+- Never add `if (family === "...")` checks in generic UI — extend the families contract instead.
+- Desktop: use `LLDCoinFamily` slots in `apps/ledger-live-desktop/src/renderer/families/types.ts`.
+- Mobile: use optional slots or generated maps per family.
 
 ## Translations
 
-Only add or edit translation files for the **English** language:
+- Only edit English translation files: `apps/ledger-live-desktop/static/i18n/en/app.json` or `apps/ledger-live-mobile/src/locales/en/common.json`.
 
-- Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
-- Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`
+## Performance
 
-## Jest Test Mocks
-
-For test file changes, apply the rules in `.github/instructions/jest-mocks.instructions.md`.
+- Use `promiseAllBatched` from `libs/promise/src/promise.ts` instead of unbounded `Promise.all` for large arrays.
+- Use `Set.has()` instead of `Array.includes()` for repeated lookups.
+- Use `bigint` for Alpaca/API code and `BigNumber` for bridge code — never mix them.
+- Prefer `subarray` over `slice` for Buffer operations when the original is not mutated.
+- Avoid `useEffect` for derived state — compute during render or use `useMemo`.
+- Use `@ledgerhq/logs` instead of `console.log` for production logging.

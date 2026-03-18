@@ -2,41 +2,32 @@
 applyTo: "**/*.test.*,**/*.spec.*,**/__tests__/**,**/__integrations__/**"
 ---
 
-<!-- Source: .cursor/rules/jest-mocks.mdc -->
-<!-- Last synced: 2026-02-20 -->
-
 # Jest Mock Review
-
-When reviewing changes to test files, flag these patterns that cause flaky tests and mock cannibalization with parallel workers (`--maxWorkers=50%`).
 
 ## 1. Duplicate mocks
 
-**Flag:** `jest.mock("module")` in a test file when that module is already mocked in the app's jest-setup.
-
-**Check:** Scan the jest-setup file for the app:
-- Mobile: `apps/ledger-live-mobile/__tests__/jest-setup.js`
-- Desktop: `apps/ledger-live-desktop/tests/jestSetup.js`
-
-If the module appears in `jest.mock("...")` there, the test should not duplicate it.
-
-**Preferred:** Use the global mock and `jest.mocked(module.export).mockReturnValue(...)` in `beforeEach`.
+Flag `jest.mock("module")` in a test file when that module is already mocked in the app's jest-setup — use `jest.mocked(module).mockReturnValue(...)` in `beforeEach` instead.
 
 ## 2. Hooks at describe load time
 
-**Flag:** `renderHook(...).result.current` or any hook call at the top level of a `describe` block (outside `beforeEach` / `beforeAll` / test callbacks).
-
-This can crash Jest workers when running in parallel. Move into `beforeEach` or inside each test.
+Flag `renderHook(...).result.current` or any hook call at the top level of a `describe` block — move into `beforeEach` or inside each test.
 
 ## 3. `jest.restoreAllMocks()`
 
-**Flag:** Use of `jest.restoreAllMocks()` in test files.
-
-It restores **all** mocks including global ones from jest-setup, breaking other tests.
-
-**Preferred:** Use `jest.clearAllMocks()` or `mock.mockRestore()` for specific spies only.
+Flag use of `jest.restoreAllMocks()` — use `jest.clearAllMocks()` or `mock.mockRestore()` for specific spies only.
 
 ## 4. Wrong `beforeEach` order
 
-**Flag:** `jest.clearAllMocks()` called **after** `mockReturnValue()` or other mock configuration.
+Flag `jest.clearAllMocks()` called after mock configuration — call `clearAllMocks` first, then configure mocks.
 
-This clears the mock configuration. Call `clearAllMocks` first, then configure mocks.
+## 5. Excessive mocking
+
+Flag test files with more than 150 lines of mocks before actual tests — prefer MSW for network mocking and `overrideInitialState` for Redux state.
+
+## 6. Mocking components unnecessarily
+
+Flag mocks of React components when using the custom test renderer — use `overrideInitialState` or `overriddenFeatureFlags` instead.
+
+## 7. Network mocking
+
+Never mock axios or fetch directly — use MSW (Mock Service Worker) for all network mocking.
