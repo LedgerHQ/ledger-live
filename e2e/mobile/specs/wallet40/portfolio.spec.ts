@@ -61,7 +61,7 @@ describe("Wallet 4.0 - Portfolio", () => {
 
   it("navigates to the buy screen", async () => {
     await app.portfolio.pressQuickActionBuyButton();
-    await app.buySell.expectBuySellScreenToBeVisible("Buy");
+    await app.buySell.expectBuyScreenToBeVisible();
   });
 
   it("navigates to the swap screen", async () => {

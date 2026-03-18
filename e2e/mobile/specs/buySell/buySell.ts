@@ -27,7 +27,7 @@ export async function beforeAllFunction(options: ApplicationOptions) {
 }
 
 export async function handleBuyFlow(buySell: BuySell, paymentMethod: string) {
-  await app.buySell.expectBuySellScreenToBeVisible(buySell.operation);
+  await app.buySell.expectBuyScreenToBeVisible();
   await app.buySell.chooseAssetIfNotSelected(buySell.crypto);
   await app.buySell.verifyQuickAmountButtonsFunctionality();
   await app.buySell.setAmountToPay(buySell.amount);
@@ -40,7 +40,7 @@ export async function handleBuyFlow(buySell: BuySell, paymentMethod: string) {
 }
 
 export async function handleSellFlow(buySell: BuySell, paymentMethod: string, provider: Provider) {
-  await app.buySell.expectBuySellScreenToBeVisible(buySell.operation);
+  await app.buySell.expectSellScreenToBeVisible();
   await app.buySell.chooseAssetIfNotSelected(buySell.crypto);
   await app.buySell.tapSellPercentageButton("50%");
   await app.buySell.chooseCountryIfNotSelected(buySell.fiat);

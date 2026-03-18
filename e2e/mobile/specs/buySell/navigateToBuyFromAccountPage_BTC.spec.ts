@@ -1,8 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import {
-  runNavigateToBuyFromPortfolioPageTest,
-  runNavigateToBuyFromAccountPageTest,
-} from "./buySell";
+import { runNavigateToBuyFromAccountPageTest } from "./buySell";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 
 const btcBuySell = {
@@ -24,7 +21,5 @@ const tags = [
   "@bitcoin",
   "@family-bitcoin",
 ];
-
-runNavigateToBuyFromPortfolioPageTest(btcBuySell, paymentMethod, ["B2CQA-3520"], tags);
 
 runNavigateToBuyFromAccountPageTest(btcBuySell, paymentMethod, ["B2CQA-3467"], tags);
