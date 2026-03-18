@@ -747,11 +747,18 @@ export const mergeTransactionsFromDifferentSources = ({
       .map(item => [item.data.mirrorTransaction.transaction_hash, item.data]),
   );
 
-  // deduplicate CONTRACT_CALL transactions from mirror node if they are also present in erc20 transfers
+  // filter out mirror transactions based on ERC20 transfer data to avoid duplicates
   merged = merged.filter(item => {
     if (item.type !== "mirror") return true;
-    if (item.data.name !== HEDERA_TRANSACTION_NAMES.ContractCall) return true;
-    return !erc20TransferByMirrorHash.has(item.data.transaction_hash);
+
+    const isChildTransaction = item.data.parent_consensus_timestamp !== null;
+    const hasErc20Transfer = erc20TransferByMirrorHash.has(item.data.transaction_hash);
+
+    // ignore child transactions of CONTRACT_CALL if details from erc20 data source are available
+    if (isChildTransaction && hasErc20Transfer) return false;
+
+    // deduplicate CONTRACT_CALL transactions
+    return !hasErc20Transfer;
   });
 
   // sort merged transactions by consensus timestamp, keeping nanoseconds precision
