@@ -10,6 +10,9 @@
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
     "back" : "عودة",
+    "fee" : "الرسوم",
+    "stake" : "الحصة",
+    "validator" : "المدقق",
     "delete" : "حذف",
     "paste" : "لصق",
     "yes" : "نعم",
@@ -1601,6 +1604,25 @@
     "bannerCta" : "ابدأ الإعداد",
     "continue" : "متابعة"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "™{{device}} لا يستطيع التوقيع بوضوح لهذه المعاملة",
+      "subtitle" : "استخدم أي جهاز Ledger آخر للتحقق من تفاصيل هذه المعاملة قبل التوقيع. بدون التوقيع بوضوح، أنت تخاطر بفقدان كل أصولك.",
+      "continue" : "تابع على مسؤوليتك الخاصة"
+    },
+    "info" : {
+      "title" : "اعتباراً من {{date}}، سينتهي دعم {{coinName}} على ™{{device}} عبر ™Ledger Live",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل مزودي خدمات Ledger Live ودعم العملاء الأمثل",
+      "reminder" : "لا تُذكرني مرة أخرى"
+    },
+    "error" : {
+      "title" : "™{{device}} لا يدعم هذه الميزة",
+      "subtitle" : "قم بالترقية إلى جهاز Ledger أحدث اليوم حتى تضمن الوصول إلى كل ميزات Ledger Live الحديثة."
+    },
+    "update" : "اكتشف برنامج الترقية المناسب لك",
+    "learnMore" : "تعرّف على المزيد",
+    "continue" : "متابعة"
+  },
   "purchaseDevice" : {
     "pageTitle" : "شراء جهاز",
     "debugDrawers" : {
@@ -2759,9 +2781,9 @@
       }
     },
     "refreshStatus" : {
-      "refreshing" : "جارٍ التحديث - آخر تحديث {{timeAgo}}",
-      "refreshingInitial" : "جارٍ التحديث...",
-      "upToDate" : "أنت على أحدث إصدار"
+      "refreshing" : "جارٍ التحديث...",
+      "upToDate" : "أنت على أحدث إصدار",
+      "syncError" : "بعض الحسابات فشلت في المزامنة"
     }
   },
   "addAccountsModal" : {
@@ -4432,7 +4454,7 @@
     },
     "cancel" : {
       "title" : "إلغاء",
-      "description" : "إرسال 0 {{ticker}} إلى عنوانك."
+      "description" : "إرسال {{ticker}} 0 إلى عنوانك. الإلغاء غير مضمون. إذا قامت الشبكة بمعالجة معاملتك الأصلية قبل طلب الإلغاء هذا، فسيتم إرسال الأموال إلى المستلم."
     },
     "error" : {
       "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
@@ -4441,6 +4463,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "لا يمكن تسريعها أو إلغائها",
         "description" : "هذه المعاملة تم تأكيدها بالفعل"
+      },
+      "InvalidTransactionError" : {
+        "title" : "معاملة غير صالحة",
+        "description" : "لم تعد المعاملة تتطابق مع حالة سلسلة الكتل (بلوكتشين). يرجى بدء التدفق مرة أخرى."
       }
     }
   },
@@ -6237,6 +6263,52 @@
       "newAddressTRC20" : "تحتاج أولاً إلى إرسال على الأقل 0.1 TRX إلى هذا العنوان لتنشيطه."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "تم نسخ العنوان!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "إعادة التفويض",
+      "earn" : "اكسب"
+    },
+    "stakeBanner" : {
+      "title" : "اكسب مكافآت مع MINA",
+      "altTitle" : "قم بإدارة تفويض MINA خاصتك",
+      "description" : "قم بتفويض MINA خاصتك إلى مُنتِج كتل واكسب مكافآت من إنتاج الكتل. يتم توزيع المكافآت بناءً على مبلغ التفويض الخاص بك.",
+      "altDescription" : "قم بتغيير إعدادات التفويض أو إلغاء تفويض رموز MINA خاصتك. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "تم التفويض إلى",
+      "stakedBalance" : "الرصيد المُكدَّس",
+      "producerAddress" : "عنوان المُنتِج",
+      "delegatedToTooltip" : "اسم مُنتِج الكتل الذي تقوم بالتفويض إليه",
+      "stakedBalanceTooltip" : "مبلغ MINA الإجمالي المُكدَّس حالياً مع هذا المدقق",
+      "producerAddressTooltip" : "العنوان العام لمُنتِج الكتل الذي تقوم بالتفويض إليه"
+    },
+    "delegators" : "المفوِّضون",
+    "memoPlaceholder" : "ملاحظة اختيارية",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "اختر مدققاً",
+        "connectDevice" : "توصيل الجهاز",
+        "confirmation" : "تأكيد"
+      },
+      "title" : "تكديس MINA",
+      "help" : "اختر مدققاً من القائمة أدناه لتفويض رموز MINA خاصتك.",
+      "success" : {
+        "title" : "تم بث المعاملة بنجاح",
+        "description" : "طلب تغيير التفويض الخاص بك تم بثه."
+      },
+      "error" : {
+        "title" : "حدث خطأ أثناء بث المعاملة"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "commission" : "العمولة",
+      "showAll" : "عرض الكل",
+      "showLess" : "عرض أقل",
+      "iDelegate" : "أنا أفوّض"
+    }
+  },
   "stellar" : {
     "token" : "أصول",
     "memo" : {
@@ -6641,9 +6713,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "ملاحظة اختيارية"
   },
   "near" : {
     "info" : {
@@ -7706,6 +7775,10 @@
       "description" : "قم بتأمين أصولك المشفرة واتخذ خطوةً إضافيةً.",
       "buttonLabel" : "تعرف على التالي"
     },
+    "widget" : {
+      "title" : "بعد ذلك، قم بإنهاء إعداد المحفظة",
+      "subtitle" : "ابدأ بتمويل محفظتك."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "قم بإعداد جهازك Ledger"
@@ -8541,6 +8614,63 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "لا يمكن تأكيد صحة عنوان Concordium الخاص بك في الوقت الحالي. يُرجى التأكد جيداً من خلال لصق عنوانك في مستكشف Concordium.",
+      "verifyLink" : "تحقق"
+    },
+    "onboard" : {
+      "title" : "تهيئة Concordium",
+      "acknowledge" : {
+        "title" : "إقرار",
+        "description" : "Concordium يتطلب تحقق خارجي من الهويّة. يُرجى قراءة تحذيرات الأمان الهامة هذه:",
+        "list" : {
+          "1" : {
+            "title" : "No address verification",
+            "description" : "Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds."
+          },
+          "2" : {
+            "title" : "Concordium ID App uses a separate seed",
+            "description" : "You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed."
+          },
+          "3" : {
+            "title" : "You'll be redirected outside Ledger Live",
+            "description" : "Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol."
+          },
+          "4" : {
+            "title" : "Transaction signing stays secure",
+            "description" : "Only your Ledger device can sign transactions and create accounts."
+          }
+        },
+        "guide" : "Please read the guide before proceeding:",
+        "allow" : "موافقة"
+      },
+      "pair" : {
+        "title" : "الاتصال بتطبيق Concordium ID",
+        "connecting" : "جاري الاتصال...",
+        "scanQRCodeOrDownload" : "امسح كود QR ضوئياً بجهاز آخر، أو قم بتنزيل تطبيق Concordium ID للمتابعة.",
+        "openIdApp" : "افتح تطبيق Concordium ID",
+        "success" : "تم الاتصال بتطبيق Concordium ID بنجاح.",
+        "continue" : "متابعة",
+        "error" : "Failed to connect to Concordium ID App. Please try again."
+      },
+      "create" : {
+        "title" : "إنشاء حساب",
+        "prepare" : {
+          "title" : "لإنشاء حساب، طابق الكود أدناه في تطبيق Concordium ID",
+          "resendButton" : "إعادة إرسال التأكيد",
+          "resendDescription" : "Resend available in {{count}}s"
+        },
+        "submitting" : "Creating your account...",
+        "keepDeviceNearby" : "Approve the transaction on your Ledger device. Keep your Ledger nearby.",
+        "success" : "تمّ إنشاء حساب Concordium الخاص بك بنجاح.",
+        "error" : "فشل إنشاء الحساب. يُرجى إعادة المحاولة."
+      },
+      "finish" : {
+        "success" : "تمّ إنشاء حساب Concordium الخاص بك بنجاح."
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "مؤشر الحالة المزاجية",
     "description" : "مؤشر الحالة المزاجية يشير إلى الحالة العاطفية للسوق. يتراوح بين 0 و 100، حيث تشير القيمة الأقل إلى الخوف الشديد، والقيمة الأعلى إلى الطمع الشديد.",
@@ -8598,5 +8728,43 @@
     "swap" : "مبادلة",
     "earn" : "اكسب",
     "card" : "البطاقة"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "خطأ في المزامنة",
+      "syncing" : "جارٍ المزامنة",
+      "default" : "مزامنة"
+    },
+    "bottomSheet" : {
+      "title" : "تعذرت مزامنة بعض الحسابات",
+      "description" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. قائمة الحسابات المتأثرة: {{accounts}}.",
+      "close" : "إغلاق"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "تثبيت {{appName}}؟",
+      "genericDescription" : "سيتم تثبيت تطبيق {{appName}} على جهازك Ledger.",
+      "recoveryKeyDescription" : "ستتمكن من تحديث جهازك Ledger Stax مباشرةً عن طريق تطبيق Recovery Key Updater.",
+      "installCTA" : "قم بتثبيت {{appName}}"
+    },
+    "deviceSelection" : {
+      "title" : "اختر Ledger"
+    },
+    "installing" : {
+      "title" : "جارٍ تثبيت {{appName}}...",
+      "description" : "يرجى إبقاء جهازك {{productName}} متصلاً",
+      "resolving" : "جارٍ تحضير التثبيت...",
+      "connecting" : "جارٍ الاتصال بالجهاز..."
+    },
+    "success" : {
+      "title" : "تم تثبيت {{appName}} بنجاح",
+      "genericDescription" : "يمكنك الآن استخدام تطبيق {{appName}} على جهازك Ledger.",
+      "recoveryKeyDescription" : "قم بإطلاق التطبيق على جهازك Ledger للتحقق من تحديثات Ledger Recovery Key."
+    },
+    "error" : {
+      "title" : "فشل تثبيت {{appName}}",
+      "description" : "حدث خطأ ما أثناء التثبيت. يُرجى إعادة المحاولة."
+    }
   }
 }
