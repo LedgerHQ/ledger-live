@@ -10,6 +10,8 @@ import {
   TOP_BAR_CONTENT_HEIGHT,
   TOP_BAR_WRAPPER_PADDING_TOP,
 } from "LLM/hooks/useNavigationBarHeights";
+import Config from "react-native-config";
+import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
 
 const GRADIENT_STOPS = [
   { color: "base", offset: 0, opacity: 0.8 },
@@ -45,7 +47,13 @@ export const MainNavigatorTopBarHeader = () => {
     paddingTop: TOP_BAR_WRAPPER_PADDING_TOP,
   };
 
-  if (Platform.OS === "ios") {
+  // When Reduce Transparency is on (Accessibility), iOS strips blur and ProgressiveBlurView
+  // renders as a blank bar. We use our native module (UIAccessibility.isReduceTransparencyEnabled)
+  // for a reliable value; fall back to LinearGradient when on or when unavailable.
+  const reduceTransparencyEnabled = useReduceTransparencyEnabled();
+  const useBlurOnIos = Platform.OS === "ios" && !reduceTransparencyEnabled && !Config.DETOX;
+
+  if (useBlurOnIos) {
     return (
       <ProgressiveBlurView
         blurAmount={12}

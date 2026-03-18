@@ -1,19 +1,24 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { PromisableButton } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { BlurView } from "@sbaiahmed1/react-native-blur";
+import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { setTutorial } from "~/actions/largeMoverLandingPage";
 import { track, TrackScreen } from "~/analytics";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
+import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
 import { PAGE_NAME } from "../const";
 
 export const OverlayTutorial = () => {
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { theme } = useTheme();
+  const reduceTransparencyEnabled = useReduceTransparencyEnabled();
+
   const handleCloseOverlay = () => {
     dispatch(setTutorial(false));
     track("large_mover_tutorial", {
@@ -21,6 +26,7 @@ export const OverlayTutorial = () => {
       button: "Close tutorial",
     });
   };
+
   return (
     <Flex
       flex={1}
@@ -33,7 +39,14 @@ export const OverlayTutorial = () => {
       testID="overlay-tutorial"
     >
       <TrackScreen name="Large_Mover_Tutorial" />
-      <BlurView style={StyleSheet.absoluteFill} blurAmount={20} blurType="dark" />
+      {reduceTransparencyEnabled ? (
+        <View
+          style={[StyleSheet.absoluteFill, { backgroundColor: theme.colors.bg.base }]}
+          pointerEvents="none"
+        />
+      ) : (
+        <BlurView style={StyleSheet.absoluteFill} blurAmount={20} blurType="dark" />
+      )}
 
       <Flex
         flex={1}
