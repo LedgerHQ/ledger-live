@@ -142,7 +142,12 @@ export class EarnPage extends WebViewAppPage {
         break;
       }
       case "Kiln staking Pool": {
-        await this.expectUrlToContainAll(url, [account.currency.id, "kiln.fi%2F%3Ffocus%3Dpooled"]);
+        await this.expectUrlToContainAll(url, [
+          account.currency.id,
+          "ledger-staking.widget.kiln.fi/earn",
+          "focus=pooled",
+          account.address!,
+        ]);
         break;
       }
       default:
