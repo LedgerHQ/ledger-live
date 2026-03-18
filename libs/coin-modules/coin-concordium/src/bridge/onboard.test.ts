@@ -1,4 +1,9 @@
-import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  ConcordiumSessionExpiredError,
+  LockedDeviceError,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
 import {
@@ -151,7 +156,7 @@ describe("onboard", () => {
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
-        "No active WalletConnect session",
+        ConcordiumSessionExpiredError,
       );
     });
 

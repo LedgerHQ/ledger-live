@@ -5,6 +5,7 @@ import {
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import OnboardModal from "../index";
 import {
@@ -266,7 +267,7 @@ describe("OnboardModal", () => {
 
   it("should auto-retry when pairing session expires", async () => {
     mockPairWalletConnect
-      .mockReturnValueOnce(createMockPairErrorObservable(new Error("Session expired")))
+      .mockReturnValueOnce(createMockPairErrorObservable(new ConcordiumPairingExpiredError()))
       .mockReturnValueOnce(createMockPairObservable());
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });

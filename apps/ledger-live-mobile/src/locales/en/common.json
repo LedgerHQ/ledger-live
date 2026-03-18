@@ -176,6 +176,21 @@
       "title": "The rewards are smaller than the estimated fees to claim them.",
       "description": ""
     },
+    "ConcordiumInsufficientFunds": {
+      "title": "Sorry, insufficient funds"
+    },
+    "ConcordiumMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
+    "ConcordiumPairingExpiredError": {
+      "title": "Pairing expired",
+      "description": "The connection to Concordium ID App has timed out. Please try again."
+    },
+    "ConcordiumSessionExpiredError": {
+      "title": "Session expired",
+      "description": "The Concordium ID App session is no longer active. Please pair again."
+    },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."

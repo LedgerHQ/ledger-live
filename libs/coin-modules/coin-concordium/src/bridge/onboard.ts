@@ -1,5 +1,11 @@
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  ConcordiumPairingExpiredError,
+  ConcordiumSessionExpiredError,
+  LockedDeviceError,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
@@ -25,13 +31,13 @@ import { submitCredential } from "../network/proxyClient";
  * Wraps a promise with a 5-minute timeout that automatically cleans up when settled.
  * Prevents timer leaks and unhandled rejections when used in Promise.race().
  */
-const withTimeout = <T>(promise: Promise<T>, errorMessage: string): Promise<T> => {
+const withTimeout = <T>(promise: Promise<T>, error: Error): Promise<T> => {
   const REQUEST_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
   let timeoutId: NodeJS.Timeout;
 
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => {
-      reject(new Error(errorMessage));
+      reject(error);
     }, REQUEST_TIMEOUT_MS);
   });
 
@@ -68,7 +74,7 @@ export const buildOnboardAccount =
 
           const session = await walletConnect.getSession(network);
           if (!session) {
-            throw new Error(
+            throw new ConcordiumSessionExpiredError(
               `No active WalletConnect session for ${network}. Please pair with Concordium IDApp first.`,
             );
           }
@@ -197,10 +203,7 @@ export const buildPairWalletConnect =
           const walletConnectUri = `${CONCORDIUM_ID_APP_MOBILE_HOST}wallet-connect?encodedUri=${encodedUri}`;
           o.next({ status: ConcordiumPairingStatus.PREPARE, walletConnectUri });
 
-          const session = await withTimeout(
-            approval(),
-            "Pairing approval is expired. Please try again.",
-          );
+          const session = await withTimeout(approval(), new ConcordiumPairingExpiredError());
 
           o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
         } catch (error: unknown) {
