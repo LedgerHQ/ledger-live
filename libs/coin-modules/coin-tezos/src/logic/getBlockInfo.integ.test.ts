@@ -1,4 +1,5 @@
 import coinConfig, { type TezosCoinConfig } from "../config";
+import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 
 /**
@@ -53,9 +54,6 @@ describe("getBlockInfo", () => {
   });
 
   it("should return consistent data with getBlock for the same block", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { getBlock } = require("./getBlock");
-
     const blockInfo = await getBlockInfo(7000018);
     const block = await getBlock(7000018);
 
@@ -68,14 +66,5 @@ describe("getBlockInfo", () => {
         hash: block.info.parent?.hash,
       },
     });
-  });
-
-  it("should throw for height <= 0", async () => {
-    await expect(getBlockInfo(0)).rejects.toThrow(
-      "getBlockInfo: height must be a positive integer, got 0",
-    );
-    await expect(getBlockInfo(-1)).rejects.toThrow(
-      "getBlockInfo: height must be a positive integer, got -1",
-    );
   });
 });

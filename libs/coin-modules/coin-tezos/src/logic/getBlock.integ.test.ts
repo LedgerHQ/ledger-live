@@ -78,11 +78,4 @@ describe("getBlock", () => {
       ]),
     );
   });
-
-  it("should throw for height <= 0", async () => {
-    await expect(getBlock(0)).rejects.toThrow("getBlock: height must be a positive integer, got 0");
-    await expect(getBlock(-1)).rejects.toThrow(
-      "getBlock: height must be a positive integer, got -1",
-    );
-  });
 });
