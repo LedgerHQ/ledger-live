@@ -1,5 +1,17 @@
 # @ledgerhq/zcash-shielded
 
+## 0.7.0
+
+### Minor Changes
+
+- [#15014](https://github.com/LedgerHQ/ledger-live/pull/15014) [`70f6288`](https://github.com/LedgerHQ/ledger-live/commit/70f6288597722a1e8fd6b5884d843f27be87e9d8) Thanks [@semeano](https://github.com/semeano)! - Zcash: merge transparent and shielded ops
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0
+  - @ledgerhq/live-network@2.4.1
+
 ## 0.7.0-next.0
 
 ### Minor Changes

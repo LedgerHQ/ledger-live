@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.49.0
+
+### Minor Changes
+
+- [#14458](https://github.com/LedgerHQ/ledger-live/pull/14458) [`175471d`](https://github.com/LedgerHQ/ledger-live/commit/175471d9420ba21bba9245c21f5c8c5dbece418e) Thanks [@cseille](https://github.com/cseille)! - Display APY in green for non-UK users in Modular Asset Drawer.
+  Remove temporary APY indicator from pre-ldls, react-ui and native-ui components
+
+- [#14934](https://github.com/LedgerHQ/ledger-live/pull/14934) [`47f93a1`](https://github.com/LedgerHQ/ledger-live/commit/47f93a18490a59945c4e86dae4d92597b7ab9924) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): fix non-dom prop warnings and errors
+
 ## 0.49.0-next.0
 
 ### Minor Changes
