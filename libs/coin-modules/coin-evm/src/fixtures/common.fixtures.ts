@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 /* instanbul ignore file: don't test fixtures */
 
 import {
@@ -18,6 +19,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import "./cryptoAssetsStore.fixtures";
+import { ExternalNodeConfig } from "../config";
 
 export const makeAccount = (
   address: string,
@@ -197,3 +199,15 @@ export const deepFreeze = <T>(obj: T): Readonly<T> => {
   }
   return obj;
 };
+
+export function makeUniqueRandomCurrency(
+  partialCurrency?: Partial<CryptoCurrency>,
+): CryptoCurrency {
+  return { ...partialCurrency, id: crypto.randomUUID() } as unknown as CryptoCurrency;
+}
+
+export function makeUniqueRandomNodeConfig(
+  partialCurrency?: Partial<ExternalNodeConfig>,
+): ExternalNodeConfig {
+  return { ...partialCurrency, uri: crypto.randomUUID() } as unknown as ExternalNodeConfig;
+}

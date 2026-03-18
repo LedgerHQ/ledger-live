@@ -1,0 +1,71 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { JsonRpcProvider, FetchRequest } from "ethers";
+import { ExternalNodeConfig } from "../config";
+import { withRetries } from "./withRetries";
+
+export const RPC_TIMEOUT =
+  process.env.NODE_ENV === "test"
+    ? 100
+    : /* istanbul ignore next: prod values don't change the behaviour of the test */ 5000; // wait 5 sec after a fail
+export const DEFAULT_RETRIES_RPC_METHODS =
+  process.env.NODE_ENV === "test"
+    ? 1
+    : /* istanbul ignore next: prod values don't change the behaviour of the test */ 3;
+
+/**
+ * Cache for RPC providers to avoid recreating the connection on every usage of `withApi`
+ * Without this, ethers will create a new provider and use the `eth_chainId` RPC call
+ * at instanciation which could result in rate limits being reached
+ * on some specific nodes (E.g. the main Optimism RPC)
+ * Keyed by currency id + RPC URI so the same chain with different uri gets distinct providers.
+ */
+export const PROVIDERS_BY_RPC: Record<string, JsonRpcProvider> = {};
+
+function providerCacheKey(currencyId: string, uri: string): string {
+  return `${currencyId}:${uri}`;
+}
+
+/**
+ * Retry policy for API call on node
+ *
+ * Ethers has a built-in retry mechanism on http 429 status code, use `ethers-http-only` to use it only,
+ * otherwise `app-retries` to couple it with the application retries mecanism (function `withRetries`)
+ */
+export type RetryPolicy = "ethers-http-only" | "app-retries";
+
+/**
+ * Connects to RPC Node
+ *
+ * ⚠️ Make sure to always use a `StaticJsonRpcProvider` and not a `JsonRpcProvider`
+ * because the latter will use a `eth_chainId` before every request in order
+ * to check if the node used changed (as per EIP-1193 standard)
+ * @see https://github.com/ethers-io/ethers.js/issues/901
+ */
+export async function withApi<T>(
+  currency: CryptoCurrency,
+  execute: (api: JsonRpcProvider) => Promise<T>,
+  nodeConfig: ExternalNodeConfig,
+  retryPolicy: RetryPolicy = "app-retries",
+): Promise<T> {
+  const retries = nodeConfig.retries ?? DEFAULT_RETRIES_RPC_METHODS;
+  const fn = async (): Promise<T> => {
+    const key = providerCacheKey(currency.id, nodeConfig.uri);
+    if (!PROVIDERS_BY_RPC[key]) {
+      const chainId = currency.ethereumLikeInfo?.chainId;
+      const fetchRequest = new FetchRequest(nodeConfig.uri);
+      fetchRequest.setThrottleParams({
+        maxAttempts: retryPolicy === "ethers-http-only" ? retries : 1,
+      });
+      PROVIDERS_BY_RPC[key] = new JsonRpcProvider(fetchRequest, chainId);
+    }
+    const provider = PROVIDERS_BY_RPC[key];
+    return await execute(provider);
+  };
+
+  switch (retryPolicy) {
+    case "ethers-http-only":
+      return fn();
+    case "app-retries":
+      return withRetries(fn, retries, RPC_TIMEOUT);
+  }
+}

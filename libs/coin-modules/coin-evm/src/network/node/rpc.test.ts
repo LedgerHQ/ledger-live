@@ -3,7 +3,6 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import {
-  FetchRequest,
   JsonRpcProvider,
   Transaction,
   TransactionReceipt,
@@ -13,13 +12,9 @@ import {
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
-import { EvmTransactionLegacy, EvmTransactionEIP1559 } from "../../types";
-import {
-  createNodeApi,
-  DEFAULT_RETRIES_RPC_METHODS,
-  withApi,
-  parseERC20TransfersFromLogs,
-} from "./rpc.common";
+import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
+import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../withApi";
+import { createNodeApi, parseERC20TransfersFromLogs } from "./rpc.common";
 
 const nodeApi = createNodeApi({
   type: "external",
@@ -250,24 +245,6 @@ describe("EVM Family", () => {
         expect(p1).not.toBe(p2);
         expect(p1).toBeInstanceOf(JsonRpcProvider);
         expect(p2).toBeInstanceOf(JsonRpcProvider);
-      });
-
-      it("should disable ethers built-in HTTP retries by setting maxAttempts: 1 on FetchRequest", async () => {
-        const currency = {
-          ...fakeCurrency,
-          id: "provider_fetch_throttle_test" as CryptoCurrencyId,
-        } as CryptoCurrency;
-        const nodeConfig = {
-          type: "external" as const,
-          uri: "https://rpc-throttle-test.example",
-          retries: 0,
-        };
-
-        const setThrottleParamsSpy = jest.spyOn(FetchRequest.prototype, "setThrottleParams");
-
-        await withApi(currency, api => Promise.resolve(api), nodeConfig);
-
-        expect(setThrottleParamsSpy).toHaveBeenCalledWith({ maxAttempts: 1 });
       });
     });
 
