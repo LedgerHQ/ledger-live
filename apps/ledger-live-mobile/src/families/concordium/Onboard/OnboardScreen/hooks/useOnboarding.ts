@@ -5,7 +5,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
-import { getConcordiumBridge } from "../../helpers";
+import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";
 
 const CONFIRMATION_CODE_LENGTH = 4;
 
