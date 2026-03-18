@@ -109,9 +109,11 @@ describe.each(testAccounts)("Testing synchronisation", ({ id, unit, address, lcd
           expect(operation.recipients).toHaveLength(0);
           expect(operation.senders).toHaveLength(0);
 
+          const bech32Hrp = address.split("1")[0];
+          const valoperPrefix = new RegExp(`^${bech32Hrp}valoper`);
           const extra = operation.extra as { validators: { address: string; amount: BigNumber }[] };
           extra.validators.forEach(validator => {
-            expect(validator.address).toMatch(/^cosmos/);
+            expect(validator.address).toMatch(valoperPrefix);
             expect(validator.amount.isGreaterThanOrEqualTo(0)).toBe(true);
           });
         }
