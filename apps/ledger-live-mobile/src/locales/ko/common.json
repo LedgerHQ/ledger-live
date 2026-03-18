@@ -10,6 +10,9 @@
     "seeAll" : "모두 보기",
     "seeAllWithNumber" : "모두 보기 ({{number}})",
     "back" : "뒤로",
+    "fee" : "수수료",
+    "stake" : "스테이킹",
+    "validator" : "검증인",
     "delete" : "삭제",
     "paste" : "붙여넣기",
     "yes" : "예",
@@ -1601,6 +1604,25 @@
     "bannerCta" : "설정을 시작하세요",
     "continue" : "계속"
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™에서 이 트랜잭션의 클리어 서명을 수행할 수 없습니다.",
+      "subtitle" : "서명 전, 다른 Ledger 장치로 트랜잭션 세부 정보를 반드시 확인하세요. 클리어 서명 없이 진행하면, 보유 자산을 모두 잃을 수 있습니다.",
+      "continue" : "이후 단계를 진행하는 경우, 그 모든 책임은 전적으로 사용자에게 있습니다."
+    },
+    "info" : {
+      "title" : "{{date}}부터 Ledger Live™에서 {{device}} 장치를 통한 {{coinName}} 지원이 중단됩니다.",
+      "subtitle" : "원활한 Ledger Live 서비스 이용과 고객 지원을 위해 최신 Ledger 장치로 업그레이드하세요.",
+      "reminder" : "추가 알림을 보내지 마세요."
+    },
+    "error" : {
+      "title" : "{{device}}™에서는 이 기능을 지원하지 않습니다.",
+      "subtitle" : "지금 최신 Ledger 장치로 업그레이드하고, Ledger Live의 모든 기능을 이용해 보세요."
+    },
+    "update" : "업그레이드 프로그램 살펴보기",
+    "learnMore" : "자세히 알아보기",
+    "continue" : "계속"
+  },
   "purchaseDevice" : {
     "pageTitle" : "장치 구매",
     "debugDrawers" : {
@@ -2759,9 +2781,9 @@
       }
     },
     "refreshStatus" : {
-      "refreshing" : "새로고침 중 - 마지막 업데이트 {{timeAgo}}",
-      "refreshingInitial" : "새로고침 중",
-      "upToDate" : "최신 상태입니다"
+      "refreshing" : "새로고침 중",
+      "upToDate" : "최신 상태입니다",
+      "syncError" : "일부 계정이 동기화에 실패했습니다"
     }
   },
   "addAccountsModal" : {
@@ -4432,7 +4454,7 @@
     },
     "cancel" : {
       "title" : "취소",
-      "description" : "0의 {{ticker}}를 본인 주소로 전송하기"
+      "description" : "내 주소로 0 {{ticker}}를 전송합니다. 취소가 보장되지는 않습니다. 네트워크에서 이 취소 요청보다 기존 트랜잭션을 처리할 경우, 해당 자산은 여전히 기존 트랜잭션의 수령인에게 전송됩니다."
     },
     "error" : {
       "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
@@ -4441,6 +4463,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "속도를 높이거나 취소할 수 없음",
         "description" : "이 트랜잭션은 이미 검증되었습니다"
+      },
+      "InvalidTransactionError" : {
+        "title" : "유효하지 않은 트랜잭션",
+        "description" : "계정 상태가 변경되어 트랜잭션을 완료할 수 없습니다. 처음부터 다시 진행해 주세요."
       }
     }
   },
@@ -6237,6 +6263,52 @@
       "newAddressTRC20" : "활성화하려면 먼저 이 주소로 최소 0.1 TRX를 보내야 합니다."
     }
   },
+  "mina" : {
+    "copyLinkCopied" : "주소 복사 완료!",
+    "accountHeaderManageActions" : {
+      "changeDelegation" : "재위임",
+      "earn" : "수익 창출"
+    },
+    "stakeBanner" : {
+      "title" : "MINA로 보상 받기",
+      "altTitle" : "MINA 위임 관리하기",
+      "description" : "MINA를 블록 프로듀서에 위임하고 블록 생성을 통해 수익을 창출해보세요. 보상은 위임된 수량에 따라 분배됩니다.",
+      "altDescription" : "위임 설정을 변경하거나 MINA 토큰 위임을 해제하세요. "
+    },
+    "summaryFooter" : {
+      "delegatedTo" : "위임 대상",
+      "stakedBalance" : "스테이킹 잔액",
+      "producerAddress" : "프로듀서 주소",
+      "delegatedToTooltip" : "위임할 블록 프로듀서 이름",
+      "stakedBalanceTooltip" : "현재 이 검증인에게 스테이킹된 총 MINA 수량",
+      "producerAddressTooltip" : "위임할 블록 프로듀서의 공개 주소"
+    },
+    "delegators" : "위임자",
+    "memoPlaceholder" : "메모(선택)",
+    "selectValidator" : {
+      "stepLabels" : {
+        "chooseValidator" : "검증인 선택",
+        "connectDevice" : "장치 연결",
+        "confirmation" : "확인"
+      },
+      "title" : "MINA 스테이킹",
+      "help" : "아래 목록에서 MINA 토큰을 위임할 검증인을 선택하세요.",
+      "success" : {
+        "title" : "트랜잭션이 성공적으로 브로드캐스트되었습니다",
+        "description" : "위임 변경 요청이 브로드캐스트되었습니다."
+      },
+      "error" : {
+        "title" : "트랜잭션 브로드캐스트 중 오류가 발생했습니다"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "commission" : "수수료",
+      "showAll" : "모두 보기",
+      "showLess" : "접기",
+      "iDelegate" : "위임"
+    }
+  },
   "stellar" : {
     "token" : "자산",
     "memo" : {
@@ -6641,9 +6713,6 @@
         }
       }
     }
-  },
-  "mina" : {
-    "memoPlaceholder" : "메모(선택)"
   },
   "near" : {
     "info" : {
@@ -7706,6 +7775,10 @@
       "description" : "자산을 안전하게 관리하며 수익을 창출해 보세요.",
       "buttonLabel" : "다음 단계를 확인하세요"
     },
+    "widget" : {
+      "title" : "다음 단계: 지갑 설정 마무리",
+      "subtitle" : "먼저, 자산 충전부터 시작해 보세요."
+    },
     "actions" : {
       "deviceOnboarded" : {
         "titleCompleted" : "Ledger 장치 설정하기"
@@ -8541,6 +8614,40 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "현재 Concordium 주소를 확인할 수 없습니다. Concordium 탐색기에 주소를 붙여넣어 다시 확인하세요.",
+      "verifyLink" : "확인"
+    },
+    "onboard" : {
+      "title" : "Concordium 온보딩",
+      "acknowledge" : {
+        "title" : "확인",
+        "description" : "Concordium은 외부 신원 확인을 요구합니다. 다음의 보안 경고를 세심히 읽어 보세요.",
+        "list" : {
+          "1" : "주소 확인 불가 – Ledger 장치에서 Concordium 수신 주소를 확인할 수 없습니다. 자산 수령에 앞서 주소를 직접 확인하세요.",
+          "2" : "Concordium ID 앱은 별도의 시드 문구를 사용합니다 – Concordium 앱에서 새로운 24개의 단어를 생성해야 합니다. 절대 기존 Ledger 시드 문구를 사용하지 마세요.",
+          "3" : "Ledger Wallet 외부로 리디렉션됩니다 – 신원 확인은 외부 Concordium Wallet 앱에서 진행되며, 이는 Concordium 블록체인 프로토콜에 필요한 절차입니다.",
+          "4" : "트랜잭션 서명은 안전하게 관리됩니다 – 트랜잭션 서명과 계정 생성은 오직 Ledger 장치를 통해서만 가능합니다."
+        },
+        "allow" : "허용"
+      },
+      "pair" : {
+        "title" : "Concordium ID 앱 연결",
+        "connecting" : "연결 중...",
+        "scanQRCodeOrDownload" : "다른 기기로 QR 코드를 스캔하거나 Concordium ID 앱을 다운로드하여 계속 진행하세요.",
+        "openIdApp" : "Concordium ID 앱 실행하기",
+        "success" : "Concordium ID 앱과 성공적으로 페어링되었습니다.",
+        "error" : "Concordium ID 앱과 페어링에 실패했습니다."
+      },
+      "create" : {
+        "title" : "계정 생성하기",
+        "prepare" : {
+          "title" : "계정을 생성하려면 Concordium ID 앱에서 아래 코드를 입력하세요."
+        }
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "시장 심리 지수",
     "description" : "시장 심리 지수는 시장의 정서적 상태를 나타냅니다. 0~100 사이 수치로 표시되며, 값이 낮을수록 극도의 공포를, 값이 높을수록 극도의 탐욕을 의미합니다.",
@@ -8598,5 +8705,43 @@
     "swap" : "스왑",
     "earn" : "수익 창출",
     "card" : "카드"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "동기화 오류",
+      "syncing" : "동기화 중",
+      "default" : "동기화"
+    },
+    "bottomSheet" : {
+      "title" : "일부 계정을 동기화할 수 없습니다.",
+      "description" : "일시적인 네트워크 문제가 발생했습니다. 자산은 안전하니 안심하세요. 영향을 받은 계정 목록: {{accounts}}.",
+      "close" : "닫기"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "{{appName}} 앱을 설치하시겠습니까?",
+      "genericDescription" : "{{appName}} 앱이 Ledger 장치에 설치됩니다.",
+      "recoveryKeyDescription" : "Recovery Key Updater 앱을 사용하여 Ledger Stax에서 바로 업데이트할 수 있습니다.",
+      "installCTA" : "{{appName}} 설치"
+    },
+    "deviceSelection" : {
+      "title" : "Ledger 장치 선택"
+    },
+    "installing" : {
+      "title" : "{{appName}} 설치 중...",
+      "description" : "{{productName}} 연결을 유지하세요",
+      "resolving" : "설치 준비 중...",
+      "connecting" : "장치에 연결하는 중..."
+    },
+    "success" : {
+      "title" : "{{appName}} 앱이 성공적으로 설치되었습니다.",
+      "genericDescription" : "이제 Ledger 장치에서 {{appName}} 앱을 사용할 수 있습니다.",
+      "recoveryKeyDescription" : "Ledger 장치에서 앱을 실행하여 Ledger Recovery Key 업데이트를 확인하세요."
+    },
+    "error" : {
+      "title" : "{{appName}} 설치에 실패했습니다",
+      "description" : "설치 중 문제가 발생했습니다. 다시 시도해 주세요."
+    }
   }
 }
