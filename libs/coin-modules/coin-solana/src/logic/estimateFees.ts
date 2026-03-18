@@ -1,8 +1,8 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { isStakingTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
+import { isSolanaStakingTransactionIntent } from "../logic";
 import { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import { getStakeAccountAddressWithSeed } from "../network/chain/web3";
@@ -343,7 +343,7 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
 }
 
 function mapIntentToTxKind(intent: TransactionIntent): TransactionModel["kind"] {
-  if (isStakingTransactionIntent(intent) || intent.type === "stake.withdraw") {
+  if (isSolanaStakingTransactionIntent(intent)) {
     return intent.type as TransactionModel["kind"];
   }
   if (intent.asset.type !== "native") {
