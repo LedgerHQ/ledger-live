@@ -539,3 +539,26 @@ export function getRecordByCommitment({
 
   return unspentPrivateRecords.find(record => record.commitment === commitment) ?? null;
 }
+
+export const getNextSequenceNumber = (account: AleoAccount): BigNumber => {
+  const pendingSequenceNumbers = account.pendingOperations
+    .map(op => op.transactionSequenceNumber)
+    .filter((seq): seq is BigNumber => !!seq && !seq.isNaN());
+
+  return BigNumber.max(-1, ...pendingSequenceNumbers).plus(1);
+};
+
+export function getFunctionNameFromTransactionType(transactionType: TransactionType): string {
+  switch (transactionType) {
+    case TRANSACTION_TYPE.TRANSFER_PUBLIC:
+      return "transfer_public";
+    case TRANSACTION_TYPE.TRANSFER_PRIVATE:
+      return "transfer_private";
+    case TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE:
+      return "transfer_public_to_private";
+    case TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC:
+      return "transfer_private_to_public";
+    default:
+      throw new Error(`aleo: unsupported transaction type: ${transactionType}`);
+  }
+}
