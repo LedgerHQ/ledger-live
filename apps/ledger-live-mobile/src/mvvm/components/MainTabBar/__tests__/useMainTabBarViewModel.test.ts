@@ -1,8 +1,16 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { NavigatorName } from "~/const";
+import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import { scrollToTopEvent } from "../scrollToTopEvent";
 import { useMainTabBarViewModel } from "../useMainTabBarViewModel";
 import { track } from "~/analytics";
+
+jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
+  ...jest.requireActual("~/helpers/getStakeLabelLocaleBased"),
+  getEarnOrYieldSuffix: jest.fn(() => "earn" as const),
+}));
+
+const mockGetEarnOrYieldSuffix = jest.mocked(stakeLabelHelpers.getEarnOrYieldSuffix);
 
 const TAB_ROUTE_NAMES = [
   NavigatorName.Portfolio,
@@ -24,6 +32,38 @@ function createNavigation() {
 }
 
 describe("useMainTabBarViewModel", () => {
+  afterEach(() => {
+    mockGetEarnOrYieldSuffix.mockReset().mockReturnValue("earn");
+  });
+
+  describe("earn/yield label based on locale", () => {
+    it("should use 'Earn' label for non-GB users", () => {
+      mockGetEarnOrYieldSuffix.mockReturnValue("earn");
+
+      const state = createState(0);
+      const navigation = createNavigation();
+      const { result } = renderHook(() =>
+        useMainTabBarViewModel({ state: state as never, navigation: navigation as never }),
+      );
+
+      const earnTab = result.current.tabItems.find(item => item.value === NavigatorName.Earn);
+      expect(earnTab?.label).toBe("Earn");
+    });
+
+    it("should use 'Yield' label for GB users", () => {
+      mockGetEarnOrYieldSuffix.mockReturnValue("yield");
+
+      const state = createState(0);
+      const navigation = createNavigation();
+      const { result } = renderHook(() =>
+        useMainTabBarViewModel({ state: state as never, navigation: navigation as never }),
+      );
+
+      const earnTab = result.current.tabItems.find(item => item.value === NavigatorName.Earn);
+      expect(earnTab?.label).toBe("Yield");
+    });
+  });
+
   describe("scroll to top", () => {
     it("should emit scroll-to-top when re-pressing Home tab while already on Home", () => {
       const onScrollToTop = jest.fn();

@@ -3,8 +3,16 @@ import { View, Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigatorName } from "~/const";
+import * as stakeLabelHelpers from "~/helpers/getStakeLabelLocaleBased";
 import { MainTabBar } from "../index";
 import type { MainTabBarProps } from "../types";
+
+jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
+  ...jest.requireActual("~/helpers/getStakeLabelLocaleBased"),
+  getEarnOrYieldSuffix: jest.fn(() => "earn" as const),
+}));
+
+const mockGetEarnOrYieldSuffix = jest.mocked(stakeLabelHelpers.getEarnOrYieldSuffix);
 
 const Tab = createBottomTabNavigator();
 
@@ -70,5 +78,16 @@ describe("MainTabBar Integration", () => {
 
     const homeTab = screen.getByRole("tab", { name: "Home" });
     expect(homeTab).toHaveProp("accessibilityState", { selected: true });
+  });
+
+  it("should render 'Yield' instead of 'Earn' for GB users", () => {
+    mockGetEarnOrYieldSuffix.mockReturnValue("yield");
+
+    render(<TestNavigator />);
+
+    expect(screen.getByRole("tab", { name: "Yield" })).toBeVisible();
+    expect(screen.queryByRole("tab", { name: "Earn" })).toBeNull();
+
+    mockGetEarnOrYieldSuffix.mockReturnValue("earn");
   });
 });
