@@ -43,7 +43,7 @@ export function NoAccountScreen({ manifest, currentAccountHistDb }: NoAccountScr
           <Trans i18nKey="webview.noAccounts.title" />
         </Text>
         <Button marginTop={10} onPress={handleAddAccountPress} type="primary">
-          <Trans i18nKey="webview.noAccounts.add" />
+          <Trans i18nKey="webview.noAccounts.select" />
         </Button>
       </Flex>
     </View>

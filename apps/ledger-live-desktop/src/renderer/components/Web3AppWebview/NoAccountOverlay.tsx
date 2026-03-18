@@ -53,7 +53,7 @@ export const NoAccountOverlay = ({
           {t("webview.noAccounts.title")}
         </Text>
         <Button onClick={onSelectAccount} variant="main">
-          {t("webview.noAccounts.add")}
+          {t("webview.noAccounts.select")}
         </Button>
       </Flex>
     </Overlay>
