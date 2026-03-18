@@ -112,12 +112,12 @@ describe("PortfolioEmptySection", () => {
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
     });
 
-    it("should not render the cryptos section when assetSection flag is off", () => {
+    it("should render the read-only coins fallback when assetSection flag is off", async () => {
       renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
         overrideInitialState: overrideInitialStateWithAssetSection(false),
       });
 
-      expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
     });
 
     it("should render quick actions CTAs", () => {

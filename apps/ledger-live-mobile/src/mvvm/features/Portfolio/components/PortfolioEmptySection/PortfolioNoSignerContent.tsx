@@ -25,6 +25,10 @@ export const PortfolioNoSignerContent = ({
     <TransferDrawer />
     <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
     <MarketBanner />
-    {shouldDisplayAssetSection && <PortfolioCryptosSection isEmptyState={isEmptyState} />}
+    {shouldDisplayAssetSection ? (
+      <PortfolioCryptosSection isEmptyState={isEmptyState} />
+    ) : (
+      <PortfolioCryptosSection isReadOnly />
+    )}
   </Box>
 );

@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -10,9 +11,11 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { useDefaultAssets } from "./useDefaultAssets";
+import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 
 export const MAX_ASSETS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_ASSETS = 4;
+export const READ_ONLY_MAX_ASSETS = 5;
 
 export interface PortfolioCryptosSectionViewModelResult {
   assetsCount: number;
@@ -24,12 +27,15 @@ export interface PortfolioCryptosSectionViewModelResult {
 
 interface UsePortfolioCryptosSectionViewModelOptions {
   isEmptyState?: boolean;
+  isReadOnly?: boolean;
 }
 
 const usePortfolioCryptosSectionViewModel = ({
   isEmptyState = false,
+  isReadOnly = false,
 }: UsePortfolioCryptosSectionViewModelOptions = {}): PortfolioCryptosSectionViewModelResult => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+  const isAccountListUIEnabled = useFeature("llmAccountListUI")?.enabled;
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
@@ -56,7 +62,18 @@ const usePortfolioCryptosSectionViewModel = ({
 
   const defaultAssets = useDefaultAssets(isEmptyState);
 
-  const assets = isEmptyState ? defaultAssets : filteredAssets;
+  const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: READ_ONLY_MAX_ASSETS });
+  const readOnlyAssets = useMemo<Asset[]>(
+    () => sortedCryptoCurrencies.map(currency => ({ amount: 0, accounts: [], currency })),
+    [sortedCryptoCurrencies],
+  );
+
+  const assets = useMemo<Asset[]>(() => {
+    if (isEmptyState) return defaultAssets;
+    if (isReadOnly) return readOnlyAssets;
+    return filteredAssets;
+  }, [isEmptyState, isReadOnly, defaultAssets, readOnlyAssets, filteredAssets]);
+
   const assetsCount = assets.length;
 
   const assetsToDisplay = useMemo(
@@ -70,15 +87,21 @@ const usePortfolioCryptosSectionViewModel = ({
       type: "view",
       page: "Wallet",
     });
-    navigation.navigate(NavigatorName.Assets, {
-      screen: ScreenName.AssetsList,
-      params: {
-        sourceScreenName: ScreenName.Portfolio,
-        showHeader: true,
-        isSyncEnabled: true,
-      },
-    });
-  }, [navigation]);
+    if (!isReadOnly && isAccountListUIEnabled) {
+      navigation.navigate(NavigatorName.Assets, {
+        screen: ScreenName.AssetsList,
+        params: {
+          sourceScreenName: ScreenName.Portfolio,
+          showHeader: true,
+          isSyncEnabled: true,
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Assets,
+      });
+    }
+  }, [navigation, isAccountListUIEnabled, isReadOnly]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {
@@ -102,9 +125,15 @@ const usePortfolioCryptosSectionViewModel = ({
     [navigation],
   );
 
+  const hasMore = useMemo(() => {
+    if (isEmptyState) return false;
+    if (isReadOnly) return true;
+    return assetsCount > MAX_ASSETS_TO_DISPLAY;
+  }, [isEmptyState, isReadOnly, assetsCount]);
+
   return {
     assetsCount,
-    hasMore: isEmptyState ? false : assetsCount > MAX_ASSETS_TO_DISPLAY,
+    hasMore,
     assetsToDisplay,
     onPressShowAll,
     onItemPress,

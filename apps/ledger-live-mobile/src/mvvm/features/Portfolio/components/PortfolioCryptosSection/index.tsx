@@ -15,14 +15,16 @@ import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionVie
 
 interface PortfolioCryptosSectionProps {
   isEmptyState?: boolean;
+  isReadOnly?: boolean;
 }
 
 const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
   isEmptyState,
+  isReadOnly,
 }) => {
   const { t } = useTranslation();
   const { assetsCount, hasMore, assetsToDisplay, onPressShowAll, onItemPress } =
-    usePortfolioCryptosSectionViewModel({ isEmptyState });
+    usePortfolioCryptosSectionViewModel({ isEmptyState, isReadOnly });
 
   if (assetsCount === 0) return null;
 
