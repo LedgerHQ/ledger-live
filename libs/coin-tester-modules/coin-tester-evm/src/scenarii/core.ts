@@ -7,7 +7,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { killAnvil, spawnAnvil } from "../anvil";
-import { VITALIK, core, getBridges } from "../helpers";
+import { VITALIK, core, expectAddressInList, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { STCORE_ON_CORE } from "../tokenFixtures";
 import { buildSigner } from "../signer";
@@ -28,6 +28,8 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -49,6 +51,11 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
         ethers.parseUnits("20", STCORE_ON_CORE.units[0].magnitude).toString(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, STCORE_ON_CORE.contractAddress);
+      const subOp = latestOperation.subOperations?.[0];
+      expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+      expectAddressInList(subOp?.recipients, VITALIK);
     },
   };
 
@@ -63,6 +70,8 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 

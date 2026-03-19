@@ -10,9 +10,11 @@ import { listOperations } from "./listOperations";
 describe("listOperations", () => {
   const currency = {} as CryptoCurrency;
   const address = "address";
+
   afterEach(() => {
     jest.clearAllMocks();
   });
+
   const buildOperationsSpy = (explorer: ExplorerApi) =>
     jest.spyOn(explorer, "getOperations").mockResolvedValue({
       lastCoinOperations: [
@@ -218,6 +220,7 @@ describe("listOperations", () => {
       ],
       nextPagingToken: "",
     });
+
   it.each([
     ["an etherscan explorer", { type: "etherscan" }, etherscanExplorer.explorerApi],
     [
@@ -268,7 +271,7 @@ describe("listOperations", () => {
             type: "OUT",
             senders: ["address"],
             recipients: ["address2"],
-            value: 8n,
+            value: 28n,
             asset: { type: "native" },
             tx: {
               hash: "coin-op-2-tx-hash",
@@ -286,7 +289,7 @@ describe("listOperations", () => {
           },
           {
             id: "coin-op-6",
-            type: "NONE",
+            type: "IN",
             senders: ["contract-address"],
             recipients: ["address"],
             value: 0n,
@@ -307,10 +310,10 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-1",
-            type: "FEES",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address1"],
-            value: 0n,
+            value: 1n,
             asset: { type: "erc20", assetReference: "contract-address", assetOwner: "address" },
             tx: {
               hash: "token-op-1-tx-hash",
@@ -336,10 +339,10 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-2",
-            type: "NONE",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address2"],
-            value: 0n,
+            value: 2n,
             asset: {
               assetOwner: "address",
               assetReference: "contract-address",
@@ -359,7 +362,7 @@ describe("listOperations", () => {
             },
             details: {
               assetAmount: "2",
-              ledgerOpType: "IN",
+              ledgerOpType: "OUT",
               assetSenders: ["address"],
               assetRecipients: ["address2"],
               parentSenders: ["address1"],
@@ -369,10 +372,10 @@ describe("listOperations", () => {
           },
           {
             id: "token-op-3",
-            type: "FEES",
+            type: "OUT",
             senders: ["address"],
             recipients: ["address1"],
-            value: 0n,
+            value: 1n,
             asset: { type: "erc20", assetReference: "contract-address", assetOwner: "address" },
             tx: {
               hash: "token-op-3-tx-hash",
@@ -491,6 +494,352 @@ describe("listOperations", () => {
     });
   });
 
+  it("filters out operations where the requested address is not involved (case insensitive)", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const address = "address";
+    // Explorer returns: one native op for "address", and one internal op (same tx) where
+    // senders/recipients and parent senders/recipients do NOT include "address"
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-for-address",
+          accountId: "",
+          type: "OUT",
+          senders: [address.toUpperCase()],
+          recipients: ["address2"],
+          value: new BigNumber(100),
+          hash: "0xTxForAddress",
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: new BigNumber(10),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+        {
+          id: "coin-op-unrelated",
+          accountId: "",
+          type: "OUT",
+          senders: ["0xOtherA"],
+          recipients: ["0xOtherB"],
+          value: new BigNumber(0),
+          hash: "0xTxUnrelated",
+          blockHeight: 101,
+          blockHash: "0xBlockHash2",
+          fee: new BigNumber(10),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(2),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [],
+      lastNftOperations: [],
+      lastInternalOperations: [
+        {
+          id: "internal-op-unrelated",
+          accountId: "",
+          type: "IN",
+          senders: ["0xOtherA"],
+          recipients: ["0xOtherB"],
+          value: new BigNumber(50),
+          hash: "0xTxUnrelated",
+          blockHeight: 101,
+          blockHash: "0xBlockHash2",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(2),
+          extra: {},
+        },
+      ],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, address.toLowerCase(), {
+        minHeight: 1,
+        order: "asc",
+      }),
+    ).toEqual({
+      items: [
+        {
+          id: "coin-op-for-address",
+          type: "OUT",
+          senders: [address.toUpperCase()],
+          recipients: ["address2"],
+          value: 100n,
+          asset: { type: "native" },
+          tx: {
+            hash: "0xTxForAddress",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 10n,
+            feesPayer: "ADDRESS",
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: { sequence: BigNumber(1) },
+        },
+      ],
+      next: "",
+    });
+  });
+
+  it("should use token transfer value for ERC20 operations, not parent native value", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const erc20TransferValue = new BigNumber("666"); // The actual ERC20 amount
+    const parentNativeValue = new BigNumber("0"); // No native ETH transferred
+    const txFee = new BigNumber("21000000000000"); // Tx fees
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-erc20-tx",
+          accountId: "",
+          type: "FEES", // FEES type because it's a pure ERC20 transfer
+          senders: ["address1"],
+          recipients: ["address2"], // contract address
+          value: parentNativeValue,
+          hash: "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1",
+          blockHeight: 279040,
+          blockHash: "0x172b9bcb8f7d598227ab5f7f0ce",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-op-erc20",
+          accountId: "",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
+          contract: "address2",
+          value: erc20TransferValue, // The actual ERC20 transfer amount
+          hash: "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1",
+          blockHeight: 279040,
+          blockHash: "0x172b9bcb8f7d598227ab5f7f0ce",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+    ).toEqual({
+      items: [
+        {
+          id: "token-op-erc20",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
+          value: 666n,
+          asset: { type: "erc20", assetReference: "address2", assetOwner: "address1" },
+          tx: {
+            hash: "0x4235dc16c74aecb248ad1005f3a0c82582a25afe797e62ecc8f4eed86ca628a1",
+            block: {
+              height: 279040,
+              hash: "0x172b9bcb8f7d598227ab5f7f0ce",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            feesPayer: "address1",
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: {
+            ledgerOpType: "OUT",
+            assetAmount: "666",
+            assetSenders: ["address1"],
+            assetRecipients: ["0xD656ab767968Fb3954cb1a16D525B540e1AfA00d"],
+            parentSenders: ["address1"],
+            parentRecipients: ["address2"],
+            sequence: BigNumber(1),
+          },
+        },
+      ],
+      next: "",
+    });
+  });
+
+  it("leaves feesPayer undefined when token op has no parent coin op (no reference operation)", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const recipient = "0xrecipient";
+    const sender = "0xsender";
+    const txHash = "0xTokenTxNoParent";
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-other-tx",
+          accountId: "",
+          type: "OUT",
+          senders: [recipient],
+          recipients: ["0xOther"],
+          value: new BigNumber(0),
+          hash: "0xOtherTxHash",
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: new BigNumber(1),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-op-in",
+          accountId: "",
+          type: "IN",
+          senders: [sender],
+          recipients: [recipient],
+          contract: "0xUSDT",
+          value: new BigNumber(100),
+          hash: txHash,
+          blockHeight: 101,
+          blockHash: "0xBlockHash2",
+          fee: new BigNumber(0),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(2),
+          extra: {},
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations({} as CryptoCurrency, recipient, {
+      minHeight: 1,
+      order: "asc",
+    });
+    const tokenInOp = items.find(op => op.tx.hash === txHash && op.asset.type === "erc20");
+    expect(tokenInOp!.type).toBe("IN");
+    expect(tokenInOp!.tx.feesPayer).toBeUndefined();
+  });
+
+  it("should emit both native and token operations when tx has native value > 0 and token transfers", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const nativeTransferValue = new BigNumber("1000000000000000000"); // 1 ETH
+    const erc20TransferValue = new BigNumber("500000000"); // 500 USDC
+    const txFee = new BigNumber("21000000000000"); // Tx fees
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "coin-op-mixed-tx",
+          accountId: "",
+          type: "OUT", // OUT type because native ETH is transferred
+          senders: ["address1"],
+          recipients: ["address2"],
+          value: nativeTransferValue, // Native ETH transferred
+          hash: "0xMixedTransactionHash",
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [
+        {
+          id: "token-op-mixed-tx",
+          accountId: "",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address3"],
+          contract: "0xUSDCContract",
+          value: erc20TransferValue,
+          hash: "0xMixedTransactionHash", // Same tx hash
+          blockHeight: 100,
+          blockHash: "0xBlockHash",
+          fee: txFee,
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {},
+        },
+      ],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    expect(
+      await listOperations({} as CryptoCurrency, "address1", { minHeight: 1, order: "asc" }),
+    ).toEqual({
+      items: [
+        {
+          id: "coin-op-mixed-tx",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address2"],
+          value: 1000000000000000000n,
+          asset: { type: "native" },
+          tx: {
+            hash: "0xMixedTransactionHash",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            feesPayer: "address1",
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: { sequence: BigNumber(1) },
+        },
+        {
+          id: "token-op-mixed-tx",
+          type: "OUT",
+          senders: ["address1"],
+          recipients: ["address3"],
+          value: 500000000n,
+          asset: {
+            type: "erc20",
+            assetReference: "0xUSDCContract",
+            assetOwner: "address1",
+          },
+          tx: {
+            hash: "0xMixedTransactionHash",
+            block: {
+              height: 100,
+              hash: "0xBlockHash",
+              time: new Date("2025-02-20"),
+            },
+            fees: 21000000000000n,
+            feesPayer: "address1",
+            date: new Date("2025-02-20"),
+            failed: false,
+          },
+          details: {
+            ledgerOpType: "OUT",
+            assetAmount: "500000000",
+            assetSenders: ["address1"],
+            assetRecipients: ["address3"],
+            parentSenders: ["address1"],
+            parentRecipients: ["address2"],
+            sequence: BigNumber(1),
+          },
+        },
+      ],
+      next: "",
+    });
+  });
+
   // here is the table of behavior for pagination:
   const paginationBehaviors: {
     limit: number | undefined;
@@ -601,9 +950,847 @@ describe("listOperations", () => {
       order: "asc",
     });
     expect(result.map(op => ({ id: op.id, tx: { feesPayer: op.tx.feesPayer } }))).toEqual([
-      // { id: "coin-op-1", tx: { feesPayer: undefined } }, // should be returned with BACK-10510
+      { id: "coin-op-1", tx: { feesPayer: undefined } },
       { id: "token-op-1", tx: { feesPayer: undefined } },
       { id: "internal-op-1", tx: { feesPayer: undefined } },
     ]);
+  });
+
+  it("preserves semantic operation types (DELEGATE, NFT_*, etc.) instead of mapping to IN/OUT", async () => {
+    const address = "0xdelegator";
+    const stakingContract = "0xstaking";
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "delegate-op",
+          accountId: "",
+          type: "DELEGATE",
+          senders: [address],
+          recipients: [stakingContract],
+          value: new BigNumber(100),
+          hash: "0xdelegate-tx",
+          blockHeight: 100,
+          blockHash: "0xblock",
+          fee: new BigNumber(1),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          hasFailed: false,
+          extra: {},
+        },
+      ],
+      lastTokenOperations: [],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations({} as CryptoCurrency, address, {
+      minHeight: 0,
+      order: "asc",
+    });
+    expect(items).toHaveLength(1);
+    expect(items[0].type).toBe("DELEGATE");
+    expect(items[0].senders[0]).toBe(address);
+    expect(items[0].recipients[0]).toBe(stakingContract);
+  });
+
+  describe("Transaction to operation mapping should match the specification", () => {
+    const blockHeight = 100;
+    const blockHash = "0xblock";
+    const date = new Date("2025-02-20");
+
+    function mockGetOperations(
+      response: {
+        lastCoinOperations?: Array<{
+          type: string;
+          senders: string[];
+          recipients: string[];
+          value: number | string;
+          fee: number | string;
+          id?: string;
+          hash?: string;
+        }>;
+        lastTokenOperations?: Array<{
+          type: string;
+          senders: string[];
+          recipients: string[];
+          value: number | string;
+          contract: string;
+          fee: number | string;
+          id?: string;
+          hash?: string;
+        }>;
+        lastInternalOperations?: Array<{
+          type: string;
+          senders: string[];
+          recipients: string[];
+          value: number | string;
+          fee: number | string;
+          id?: string;
+          hash?: string;
+        }>;
+      },
+      sharedHash?: string,
+    ) {
+      const operationTxHash = sharedHash ?? "0xsingle";
+      const toBigNumber = (value: number | string) => new BigNumber(value);
+      const coinOps = (response.lastCoinOperations ?? []).map((op, i) => ({
+        id: `coin-op-${i}`,
+        accountId: "",
+        type: op.type,
+        senders: op.senders,
+        recipients: op.recipients,
+        value: toBigNumber(op.value),
+        hash: op.hash ?? operationTxHash,
+        blockHeight,
+        blockHash,
+        fee: toBigNumber(op.fee),
+        date,
+        transactionSequenceNumber: new BigNumber(1),
+        hasFailed: false,
+        extra: {},
+      }));
+      const tokenOps = (response.lastTokenOperations ?? []).map((op, i) => ({
+        id: `token-op-${i}`,
+        accountId: "",
+        type: op.type,
+        senders: op.senders,
+        recipients: op.recipients,
+        contract: op.contract,
+        value: toBigNumber(op.value),
+        hash: op.hash ?? operationTxHash,
+        blockHeight,
+        blockHash,
+        fee: toBigNumber(op.fee),
+        date,
+        transactionSequenceNumber: new BigNumber(1),
+        extra: {},
+      }));
+      const internalOps = (response.lastInternalOperations ?? []).map((op, i) => ({
+        id: `internal-op-${i}`,
+        accountId: "",
+        type: op.type,
+        senders: op.senders,
+        recipients: op.recipients,
+        value: toBigNumber(op.value),
+        hash: op.hash ?? operationTxHash,
+        blockHeight,
+        blockHash,
+        fee: toBigNumber(op.fee),
+        date,
+        transactionSequenceNumber: new BigNumber(1),
+        extra: {},
+      }));
+      return jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+        lastCoinOperations: coinOps as Operation[],
+        lastTokenOperations: tokenOps as Operation[],
+        lastNftOperations: [],
+        lastInternalOperations: internalOps as Operation[],
+        nextPagingToken: "",
+      });
+    }
+
+    it("Case 1: simple native transfer between EOAs", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      mockGetOperations({
+        lastCoinOperations: [
+          {
+            type: "OUT",
+            senders: ["address1"],
+            recipients: ["address2"],
+            value: 2,
+            fee: 1,
+          },
+        ],
+      });
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 sees 1 op: sender=address1, recipient=address2, amount=2, asset=native, fee=1, feePayer=address1
+      expect(address1Result.items).toHaveLength(1);
+      expect(address1Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address2 sees 1 op: sender=address1, recipient=address2, amount=2, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 2: native self send from EOA", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      mockGetOperations({
+        lastCoinOperations: [
+          {
+            type: "OUT",
+            senders: ["address1"],
+            recipients: ["address1"],
+            value: 2,
+            fee: 1,
+          },
+        ],
+      });
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: always 2 ops (OUT, IN, order not specified) for self-sends.
+      expect(result.items).toHaveLength(2);
+      expect(result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["address1"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+      expect(result.items[1]).toMatchObject({
+        type: "IN",
+        senders: ["address1"],
+        recipients: ["address1"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 2: when explorer returns IN+OUT for self-send, still 2 ops", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            { type: "IN", senders: ["address1"], recipients: ["address1"], value: 2, fee: 1 },
+            { type: "OUT", senders: ["address1"], recipients: ["address1"], value: 2, fee: 1 },
+          ],
+        },
+        "0xselfsend",
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      expect(result.items).toHaveLength(2);
+      expect(result.items[0].type).toBe("IN");
+      expect(result.items[1].type).toBe("OUT");
+      expect(result.items[0]).toMatchObject({
+        senders: ["address1"],
+        recipients: ["address1"],
+        value: 2n,
+      });
+      expect(result.items[1]).toMatchObject({
+        senders: ["address1"],
+        recipients: ["address1"],
+        value: 2n,
+      });
+    });
+
+    it("Case 3: simple ERC20 transfer between EOAs", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase3";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "FEES",
+              senders: ["address1"],
+              recipients: ["0xUSDTContract"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["address2"],
+              value: 2,
+              contract: "0xUSDTContract",
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 sees 1 op type=OUT, sender=address1, recipient=address2, amount=2, asset=USDT, fee=1, feePayer=address1
+      expect(address1Result.items).toHaveLength(1);
+      expect(address1Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address1" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address2 sees 1 op type=IN, sender=address1, recipient=address2, amount=2, asset=USDT, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address2" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 4: ERC20 self send from EOA", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "FEES",
+              senders: ["address1"],
+              recipients: ["0xUSDTContract"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["address1"],
+              value: 2,
+              contract: "0xUSDTContract",
+              fee: 1,
+            },
+          ],
+        },
+        "0xcase4",
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: always 2 ops (OUT, IN, order not specified) for token self-send.
+      expect(result.items).toHaveLength(2);
+      expect(result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["address1"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address1" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+      expect(result.items[1]).toMatchObject({
+        type: "IN",
+        senders: ["address1"],
+        recipients: ["address1"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address1" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 5: ETH transfer from smart contract", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase5";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastInternalOperations: [
+            {
+              type: "IN",
+              senders: ["contract1"],
+              recipients: ["address2"],
+              value: 2,
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 → 1 op type=OUT, sender=address1, recipient=contract1, amount=0, asset=native, fee=1, feePayer=address1
+      expect(address1Result.items).toHaveLength(1);
+      expect(address1Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address2 → 1 op type=IN, sender=contract1, recipient=address2, amount=2, asset=native, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["contract1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 6: ERC20 transfer from smart contract", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase6";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "OUT",
+              senders: ["address3"],
+              recipients: ["address2"],
+              value: 2,
+              contract: "0xUSDTContract",
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address3Result = await listOperations({} as CryptoCurrency, "address3", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 → 1 op type=OUT, sender=address1, recipient=contract1, amount=0, asset=native, fee=1, feePayer=address1
+      expect(address1Result.items).toHaveLength(1);
+      expect(address1Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address2 → 1 op type=IN, sender=address3, recipient=address2, amount=2, asset=USDT, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["address3"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address2" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address3 → 1 op type=OUT, sender=address3, recipient=address2, amount=2, asset=USDT, fee=1, feePayer=address1
+      expect(address3Result.items).toHaveLength(1);
+      expect(address3Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address3"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address3" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 7: ETH transfer to smart contract", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      mockGetOperations({
+        lastCoinOperations: [
+          {
+            type: "OUT",
+            senders: ["address1"],
+            recipients: ["contract1"],
+            value: 2,
+            fee: 1,
+          },
+        ],
+      });
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: 1 op type=OUT, sender=address1, recipient=contract1, amount=2, asset=native, fee=1, feePayer=address1
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 8: ERC20 transfer to smart contract", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "FEES",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 2,
+              contract: "0xUSDTContract",
+              fee: 1,
+            },
+          ],
+        },
+        "0xcase8",
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: 1 op type=OUT, sender=address1, recipient=contract1, amount=2, asset=USDT, fee=1, feePayer=address1
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address1" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 9: ETH transfer through smart contract", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase9";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 2,
+              fee: 1,
+            },
+          ],
+          lastInternalOperations: [
+            {
+              type: "IN",
+              senders: ["contract1"],
+              recipients: ["address2"],
+              value: 2,
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 → 1 op type=OUT, sender=address1, recipient=contract1, amount=2, asset=ETH, fee=1, feePayer=address1
+      expect(address1Result.items).toHaveLength(1);
+      expect(address1Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address2 → 1 op type=IN, sender=contract1, recipient=address2, amount=2, asset=ETH, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["contract1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 10: mixed assets smart contract interaction", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase10";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 1,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["address2"],
+              value: 2,
+              contract: "0xUSDTContract",
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 → 2 ops: (1) type=OUT address1→contract1, 1 ETH, fee=1; (2) type=OUT address1→address2, 2 USDT, fee=1, feePayer=address1
+      expect(address1Result.items).toHaveLength(2);
+      const nativeOp = address1Result.items.find(op => op.asset.type === "native");
+      const tokenOp = address1Result.items.find(op => op.asset.type === "erc20");
+      expect(nativeOp).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 1n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+      expect(tokenOp).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address1" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec: address2 → 1 op type=IN, sender=address1, recipient=address2, amount=2, asset=USDT, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["address1"],
+        recipients: ["address2"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xUSDTContract", assetOwner: "address2" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 11: Spoofed token transfer through smart contract", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase11";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "FEES",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 0,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "OUT",
+              senders: ["address2"],
+              recipients: ["address3"],
+              value: 2,
+              contract: "0xSCAMCOINContract",
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const address1Result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address2Result = await listOperations({} as CryptoCurrency, "address2", {
+        minHeight: 0,
+        order: "asc",
+      });
+      const address3Result = await listOperations({} as CryptoCurrency, "address3", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 → 1 or 2 ops (OUT and/or FEES), sender=address1, recipient=contract1, amount=0, fee=1
+      expect(address1Result.items.length).toBeGreaterThanOrEqual(1);
+      expect(address1Result.items.length).toBeLessThanOrEqual(2);
+      const addr1Op = address1Result.items.find(
+        o => o.senders[0] === "address1" && o.recipients[0] === "contract1",
+      );
+      expect(addr1Op).toMatchObject({
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 0n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+      expect(["OUT", "FEES"]).toContain(addr1Op!.type);
+
+      // Spec (spam not detected): address2 → 1 op type=OUT, sender=address2, recipient=address3, amount=2, asset=SCAMCOIN, fee=1, feePayer=address1
+      expect(address2Result.items).toHaveLength(1);
+      expect(address2Result.items[0]).toMatchObject({
+        type: "OUT",
+        senders: ["address2"],
+        recipients: ["address3"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xSCAMCOINContract", assetOwner: "address2" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+
+      // Spec (spam not detected): address3 → 1 op type=IN, sender=address2, recipient=address3, amount=2, asset=SCAMCOIN, fee=1, feePayer=address1
+      expect(address3Result.items).toHaveLength(1);
+      expect(address3Result.items[0]).toMatchObject({
+        type: "IN",
+        senders: ["address2"],
+        recipients: ["address3"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xSCAMCOINContract", assetOwner: "address3" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
+
+    it("Case 12: Smart contract token minting", async () => {
+      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+      const sharedTxHash = "0xcase12";
+      const zeroAddress = "0x0000000000000000000000000000000000000000";
+      mockGetOperations(
+        {
+          lastCoinOperations: [
+            {
+              type: "OUT",
+              senders: ["address1"],
+              recipients: ["contract1"],
+              value: 1,
+              fee: 1,
+            },
+          ],
+          lastTokenOperations: [
+            {
+              type: "IN",
+              senders: [zeroAddress],
+              recipients: ["address1"],
+              value: 2,
+              contract: "0xSTETHContract",
+              fee: 1,
+            },
+          ],
+        },
+        sharedTxHash,
+      );
+
+      const result = await listOperations({} as CryptoCurrency, "address1", {
+        minHeight: 0,
+        order: "asc",
+      });
+
+      // Spec: address1 → 2 ops: (1) type=OUT address1→contract1, 1 ETH, fee=1; (2) type=IN 0x0→address1, 2 STETH, fee=1, feePayer=address1
+      expect(result.items).toHaveLength(2);
+      const nativeOp = result.items.find(op => op.asset.type === "native");
+      const tokenOp = result.items.find(op => op.asset.type === "erc20");
+      expect(nativeOp).toMatchObject({
+        type: "OUT",
+        senders: ["address1"],
+        recipients: ["contract1"],
+        value: 1n,
+        asset: { type: "native" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+      expect(tokenOp).toMatchObject({
+        type: "IN",
+        senders: [zeroAddress],
+        recipients: ["address1"],
+        value: 2n,
+        asset: { type: "erc20", assetReference: "0xSTETHContract", assetOwner: "address1" },
+        tx: { fees: 1n, feesPayer: "address1" },
+      });
+    });
   });
 });

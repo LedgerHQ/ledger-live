@@ -6,7 +6,7 @@ import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
-import { callMyDealer, getBridges, scroll, VITALIK } from "../helpers";
+import { callMyDealer, expectAddressInList, getBridges, scroll, VITALIK } from "../helpers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_SCROLL } from "../tokenFixtures";
@@ -32,6 +32,8 @@ const makeScenarioTransactions = ({
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 
@@ -52,6 +54,11 @@ const makeScenarioTransactions = ({
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
         ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, USDC_ON_SCROLL.contractAddress);
+      const subOp = latestOperation.subOperations?.[0];
+      expectAddressInList(subOp?.senders, currentAccount.freshAddress);
+      expectAddressInList(subOp?.recipients, VITALIK);
     },
   };
 
@@ -66,6 +73,8 @@ const makeScenarioTransactions = ({
       expect(currentAccount.balance.toFixed()).toBe(
         previousAccount.balance.minus(latestOperation.value).toFixed(),
       );
+      expectAddressInList(latestOperation.senders, currentAccount.freshAddress);
+      expectAddressInList(latestOperation.recipients, VITALIK);
     },
   };
 

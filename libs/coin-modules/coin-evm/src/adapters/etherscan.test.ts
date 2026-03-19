@@ -66,7 +66,7 @@ describe("EVM Family", () => {
             blockHeight: 14923692,
             recipients: [""],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date("2022-06-08T00:02:50.000Z"),
             transactionSequenceNumber: new BigNumber(7),
@@ -124,7 +124,7 @@ describe("EVM Family", () => {
             blockHeight: 14923692,
             recipients: ["0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date("2022-06-08T00:02:50.000Z"),
             transactionSequenceNumber: new BigNumber(7),
@@ -181,7 +181,7 @@ describe("EVM Family", () => {
             blockHeight: 13807766,
             recipients: ["0x26E3fd2dEc89bF645BA7b41c4DdFad8454Ee6245"],
             senders: ["0x829BD824B016326A401d083B33D092293333A830"],
-            value: new BigNumber("143141441418750645").plus("1435640675553000"),
+            value: new BigNumber("143141441418750645"),
             fee: new BigNumber("1435640675553000"),
             date: new Date("2021-12-15T05:08:46.000Z"),
             transactionSequenceNumber: new BigNumber(11898499),
@@ -372,7 +372,7 @@ describe("EVM Family", () => {
               blockHeight: 14923692,
               recipients: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
               senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-              value: new BigNumber("7175807958763144"),
+              value: new BigNumber("1000"),
               fee: new BigNumber("7175807958762144"),
               date: new Date("2022-06-08T00:02:50.000Z"),
               transactionSequenceNumber: new BigNumber(7),
@@ -423,17 +423,15 @@ describe("EVM Family", () => {
             functionName: "transfer(address _to, uint256 _value)",
           };
 
-          // Successful Op
+          // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
           expect(etherscanOperationToOperations(accountId, etherscanOpFees)[0].value).toEqual(
-            new BigNumber(etherscanOpFees.value).plus(
-              new BigNumber(etherscanOpFees.gasPrice).times(etherscanOpFees.gasUsed),
-            ),
+            new BigNumber(etherscanOpFees.value),
           );
-          // Failing Op
+          // Failing Op (value = tx value, same as success)
           expect(
             etherscanOperationToOperations(accountId, { ...etherscanOpFees, isError: "1" })[0]
               .value,
-          ).toEqual(new BigNumber(etherscanOpFees.gasPrice).times(etherscanOpFees.gasUsed));
+          ).toEqual(new BigNumber(etherscanOpFees.value));
 
           const etherscanOpOut: EtherscanOperation = {
             blockNumber: "13807766",
@@ -458,16 +456,14 @@ describe("EVM Family", () => {
             functionName: "",
           };
 
-          // Successful Op
+          // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
           expect(etherscanOperationToOperations(accountId, etherscanOpOut)[0].value).toEqual(
-            new BigNumber(etherscanOpOut.value).plus(
-              new BigNumber(etherscanOpOut.gasPrice).times(etherscanOpOut.gasUsed),
-            ),
+            new BigNumber(etherscanOpOut.value),
           );
-          // Failing Op
+          // Failing Op (value = tx value, same as success)
           expect(
             etherscanOperationToOperations(accountId, { ...etherscanOpOut, isError: "1" })[0].value,
-          ).toEqual(new BigNumber(etherscanOpOut.gasPrice).times(etherscanOpOut.gasUsed));
+          ).toEqual(new BigNumber(etherscanOpOut.value));
 
           const etherscanOpIn: EtherscanOperation = {
             blockNumber: "13807766",
@@ -1517,7 +1513,7 @@ describe("EVM Family", () => {
             blockHeight: 12345678,
             recipients: ["0x0000000000000000000000000000000000001005"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date(1694851200 * 1000), // timestamp in ms
             transactionSequenceNumber: new BigNumber(7),
@@ -1575,7 +1571,7 @@ describe("EVM Family", () => {
             blockHeight: 12345678,
             recipients: ["0x0000000000000000000000000000000000001005"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date(1694851200 * 1000), // timestamp in ms
             transactionSequenceNumber: new BigNumber(7),
@@ -1631,7 +1627,7 @@ describe("EVM Family", () => {
             blockHeight: 12345678,
             recipients: ["0x0000000000000000000000000000000000001005"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date(1694851200 * 1000), // timestamp in ms
             transactionSequenceNumber: new BigNumber(7),
