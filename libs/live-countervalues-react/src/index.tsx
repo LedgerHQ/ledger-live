@@ -152,12 +152,12 @@ function Effect({
       batchStrategySolver,
       userSettings.granularitiesRates,
     ).then(
-      s => {
-        bridge.setState(s);
+      (s: unknown) => {
+        bridge.setState(s as Parameters<typeof bridge.setState>[0]);
         bridge.setStatePending(false);
       },
-      e => {
-        bridge.setStateError(e);
+      (e: unknown) => {
+        bridge.setStateError(e as Error);
         bridge.setStatePending(false);
       },
     );
