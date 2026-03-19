@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.146.0-next.1
+
+### Minor Changes
+
+- [#15551](https://github.com/LedgerHQ/ledger-live/pull/15551) [`166c038`](https://github.com/LedgerHQ/ledger-live/commit/166c038f05beca81af0c89d09a1147d50d7c20c4) Thanks [@deepyjr](https://github.com/deepyjr)! - Update wordings for Wallet 4.0 and rename Fear & Greed index levels
+
+### Patch Changes
+
+- Updated dependencies [[`166c038`](https://github.com/LedgerHQ/ledger-live/commit/166c038f05beca81af0c89d09a1147d50d7c20c4)]:
+  - @ledgerhq/live-common@34.66.0-next.1
+  - @ledgerhq/live-dmk-desktop@0.16.2-next.1
+
 ## 2.146.0-next.0
 
 ### Minor Changes
