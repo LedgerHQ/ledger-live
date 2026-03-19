@@ -1,5 +1,16 @@
 # @ledgerhq/live-dmk
 
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#15254](https://github.com/LedgerHQ/ledger-live/pull/15254) [`be83068`](https://github.com/LedgerHQ/ledger-live/commit/be83068b1580be86b1e97c1eb4c6b19db54ff2a4) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - add allowMissingApplication parameters to ConnectAppDA
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.34.1-next.0
+
 ## 0.21.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @features/market-banner
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#15180](https://github.com/LedgerHQ/ledger-live/pull/15180) [`ab7f79e`](https://github.com/LedgerHQ/ledger-live/commit/ab7f79e29b7a657589faadfedc2f6563cab28759) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(lwd): use oxlint instead of eslint, update CI and market-banner
+
 ## 0.4.0
 
 ### Minor Changes

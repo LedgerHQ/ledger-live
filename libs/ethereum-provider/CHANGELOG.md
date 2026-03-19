@@ -1,5 +1,11 @@
 # @ledgerhq/ethereum-provider
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#14907](https://github.com/LedgerHQ/ledger-live/pull/14907) [`dd98891`](https://github.com/LedgerHQ/ledger-live/commit/dd98891e9c2e1bd4795b8adcb64b3c8c45b9eb75) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace usages of Math.random() for id generation by uuid()
+
 ## 0.6.0
 
 ### Minor Changes
