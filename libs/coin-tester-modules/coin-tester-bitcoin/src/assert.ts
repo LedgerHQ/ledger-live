@@ -29,6 +29,7 @@ export function assertUtxoSpent(
 
 export function getNewChangeUtxos(prev: BitcoinAccount, curr: BitcoinAccount) {
   return curr.bitcoinResources.utxos.filter(
-    utxo => !findUtxo(prev, utxo.hash, utxo.outputIndex) && utxo.isChange,
+    (utxo: { hash: string; outputIndex: number; isChange: boolean }) =>
+      !findUtxo(prev, utxo.hash, utxo.outputIndex) && utxo.isChange,
   );
 }
