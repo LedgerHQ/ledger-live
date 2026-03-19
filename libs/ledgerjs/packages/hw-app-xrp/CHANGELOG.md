@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#14974](https://github.com/LedgerHQ/ledger-live/pull/14974) [`982d4af`](https://github.com/LedgerHQ/ledger-live/commit/982d4afbeb7faf3814c3e96ffb6e3e88b58dfe73) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update to TypeScript 5.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.34.1-next.0
+
 ## 6.35.0
 
 ### Minor Changes

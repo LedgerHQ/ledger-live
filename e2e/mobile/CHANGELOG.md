@@ -1,5 +1,15 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#15392](https://github.com/LedgerHQ/ledger-live/pull/15392) [`703907c`](https://github.com/LedgerHQ/ledger-live/commit/703907cacf6c37d5530b12e443dc1279d1a7ab04) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update e2e test currencies: replace Sepolia ETH with mainnet ETH and BTC Legacy with BTC Native SegWit
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+- [#14907](https://github.com/LedgerHQ/ledger-live/pull/14907) [`dd98891`](https://github.com/LedgerHQ/ledger-live/commit/dd98891e9c2e1bd4795b8adcb64b3c8c45b9eb75) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace usages of Math.random() for id generation by uuid()
+
 ## 0.17.0
 
 ### Minor Changes

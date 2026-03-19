@@ -1,5 +1,11 @@
 # @ledgerhq/live-currency-format
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#15367](https://github.com/LedgerHQ/ledger-live/pull/15367) [`01c81b1`](https://github.com/LedgerHQ/ledger-live/commit/01c81b112ab326eff436f0f3279a1225c073f897) Thanks [@Canestin](https://github.com/Canestin)! - refactor: rename Coreum to TX
+
 ## 0.6.0
 
 ### Minor Changes

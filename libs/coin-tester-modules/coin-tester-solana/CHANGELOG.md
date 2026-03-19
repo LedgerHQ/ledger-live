@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.14.0-next.0
+
+### Minor Changes
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+### Patch Changes
+
+- Updated dependencies [[`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05), [`a270b43`](https://github.com/LedgerHQ/ledger-live/commit/a270b438bf8aca99b795679fecce1b55dc249c12), [`6658d10`](https://github.com/LedgerHQ/ledger-live/commit/6658d10daafe2a5efadb0946456b061407ed8bf6), [`dd98891`](https://github.com/LedgerHQ/ledger-live/commit/dd98891e9c2e1bd4795b8adcb64b3c8c45b9eb75), [`dc37f21`](https://github.com/LedgerHQ/ledger-live/commit/dc37f215ac14ce2f5c6d0b3fd7c83b10a35926b6), [`01c81b1`](https://github.com/LedgerHQ/ledger-live/commit/01c81b112ab326eff436f0f3279a1225c073f897), [`d37431f`](https://github.com/LedgerHQ/ledger-live/commit/d37431fc370a406cf0b2331f0187297ec61ced5d), [`3ede91a`](https://github.com/LedgerHQ/ledger-live/commit/3ede91a3674a80c9309d305b871ec3b6e9849b41), [`307db00`](https://github.com/LedgerHQ/ledger-live/commit/307db00ad7d6dd029107d708968453e770f385e8)]:
+  - @ledgerhq/coin-solana@0.48.0-next.0
+  - @ledgerhq/coin-framework@7.0.0-next.0
+  - @ledgerhq/types-live@6.102.0-next.0
+  - @ledgerhq/cryptoassets@13.43.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.0.1-next.0
+  - @ledgerhq/coin-tester@0.18.0
+
 ## 1.13.1
 
 ### Patch Changes
