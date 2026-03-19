@@ -198,6 +198,56 @@ describe("EVM Family", () => {
           expect(e).toBeInstanceOf(SpyError);
         }
       });
+
+      it("provider cacheshould reuse the same JsonRpcProvider for the same currency id and same uri", async () => {
+        const currency = {
+          ...fakeCurrency,
+          id: "provider_cache_by_currency" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const nodeConfig = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
+        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig);
+        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig);
+
+        expect(first).toBe(second);
+        expect(first instanceof JsonRpcProvider).toBe(true);
+      });
+
+      it("provider cache should use distinct JsonRpcProviders for the same currency id but different uri", async () => {
+        const currency = {
+          ...fakeCurrency,
+          id: "provider_cache_by_currency" as CryptoCurrencyId,
+        } as CryptoCurrency;
+
+        const nodeConfig1 = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
+        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig1);
+
+        const nodeConfig2 = { ...nodeConfig1, uri: "https://rpc-b.example" };
+        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig2);
+
+        expect(first).not.toBe(second);
+        expect(first instanceof JsonRpcProvider).toBe(true);
+      });
+
+      it("provider cache should use distinct JsonRpcProviders for different currency ids", async () => {
+        const nodeConfig = {
+          type: "external" as const,
+          uri: "https://shared-rpc.example",
+          retries: 0,
+        };
+        const c1 = {
+          ...fakeCurrency,
+          id: "provider_cache_currency_one" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const c2 = {
+          ...fakeCurrency,
+          id: "provider_cache_currency_two" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const p1 = await withApi(c1, api => Promise.resolve(api), nodeConfig);
+        const p2 = await withApi(c2, api => Promise.resolve(api), nodeConfig);
+
+        expect(p1).not.toBe(p2);
+        expect(p1 instanceof JsonRpcProvider).toBe(true);
+      });
     });
 
     describe("getTransaction", () => {
