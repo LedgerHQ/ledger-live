@@ -3,13 +3,14 @@ min_version = '2026.3.1'
 [settings]
 experimental = true
 lockfile = true
+locked = true
 
 # Download the pre-compiled binaries
 ruby.compile = false
 
 [plugins]
-bundler = "jonathanmorley/asdf-bundler"
-cocoapods = "mise-plugins/mise-cocoapods"
+# bundler = "jonathanmorley/asdf-bundler"
+# cocoapods = "mise-plugins/mise-cocoapods"
 
 
 [tools]

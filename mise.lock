@@ -39,3 +39,35 @@ backend = "npm:npm"
 [[tools.pnpm]]
 version = "10.24.0"
 backend = "aqua:pnpm/pnpm"
+
+[tools.pnpm."platforms.linux-arm64"]
+checksum = "sha256:1447737a6e8003386507fdcdafa376289b4abfff5867c8ba6a189b2fded13a4b"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-linux-arm64"
+
+[tools.pnpm."platforms.linux-arm64-musl"]
+checksum = "sha256:59eddd6506a8f9cf373566bb356d22d71087a60a0e1730b1a2d7b23ce8e6f2ff"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-linuxstatic-arm64"
+
+[tools.pnpm."platforms.linux-x64"]
+checksum = "sha256:985824ae016db3c7bbd7b39dcb4e6f5740b11cce79f5c43d5e5e640768fd4806"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-linux-x64"
+
+[tools.pnpm."platforms.linux-x64-musl"]
+checksum = "sha256:432e8de6fdd4f7ad0d769fbd58ccca9d78bb58423255740cf46c5637424bc252"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-linuxstatic-x64"
+
+[tools.pnpm."platforms.macos-arm64"]
+checksum = "sha256:e3978826faa5fa7fdf63b752afc7a1bc4585ecd591b899fb956ebdd4e49f5db8"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-macos-arm64"
+
+[tools.pnpm."platforms.macos-x64"]
+checksum = "sha256:8694dabaa7d29ece4db8cfa62e0582637e6ce70138ee8e8c5dbd58a5d1c8513d"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-macos-x64"
+
+[tools.pnpm."platforms.windows-arm64"]
+checksum = "sha256:655daaadfe1e4c05423845e871db14d0966f7d7a1cf683ef8396c45ab5804f8d"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-win-arm64.exe"
+
+[tools.pnpm."platforms.windows-x64"]
+checksum = "sha256:e966e249a55c5d56d5d1844d220861b801c892148e763c66e95dadb9bd257d3f"
+url = "https://github.com/pnpm/pnpm/releases/download/v10.24.0/pnpm-win-x64.exe"
