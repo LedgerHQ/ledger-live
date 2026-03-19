@@ -8311,7 +8311,7 @@
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
-        "lastUpdate": "Last updated",
+        "lastUpdate": "Last updated: {{label}}",
         "recently": "Recently",
         "switchBalance": "Switch balance source"
       },

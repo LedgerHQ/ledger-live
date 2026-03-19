@@ -1,8 +1,8 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
 import { Flex } from "@ledgerhq/react-ui";
-import { Trans } from "react-i18next";
 
 interface ButtonState {
   $checked?: boolean;
@@ -97,6 +97,9 @@ export const BalanceOption = ({
   lastSyncDate,
   lastSyncTime,
 }: BalanceOptionProps) => {
+  const { t } = useTranslation();
+  const selfTransferLabel = lastSyncTime ? `${lastSyncDate} (${lastSyncTime})` : lastSyncDate;
+
   return (
     <StyledButton disabled={disabled} $checked={checked} type="button" onClick={onClick}>
       {isSelfTransfer ? (
@@ -107,8 +110,7 @@ export const BalanceOption = ({
             </BalanceLabel>
             {lastSyncDate && (
               <LastUpdateText>
-                <Trans i18nKey="aleo.shared.balanceSelector.lastUpdate" />:{" "}
-                {lastSyncTime ? `${lastSyncDate} (${lastSyncTime})` : lastSyncDate}
+                {t("aleo.shared.balanceSelector.lastUpdate", { label: selfTransferLabel })}
               </LastUpdateText>
             )}
           </Flex>
@@ -128,7 +130,7 @@ export const BalanceOption = ({
           </BalanceValue>
           {lastSyncDate && (
             <LastUpdateText>
-              <Trans i18nKey="aleo.shared.balanceSelector.lastUpdate" />: {lastSyncDate}
+              {t("aleo.shared.balanceSelector.lastUpdate", { label: lastSyncDate })}
             </LastUpdateText>
           )}
           {lastSyncTime && <LastSyncText>({lastSyncTime})</LastSyncText>}
