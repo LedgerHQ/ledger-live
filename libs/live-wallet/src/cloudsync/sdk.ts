@@ -104,7 +104,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
     const validated = data; // IMPORTANT: we intentionally don't take validated out of parse() because we need to keep the possible extra field that we don't handle yet and that need to be preserved on the distant data
     const base64 = await this.cipher.encrypt(trustchain, validated);
     const version = (this.getCurrentVersion() || 0) + 1;
-    const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
+    const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, (jwt: JWT) =>
       this.api.uploadData(jwt, this.slug, version, base64, trustchain),
     );
     switch (response.status) {
@@ -123,7 +123,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
    * If new data is retrieved, it will be decrypted and saveNewUpdate will be called as part of this atomic process.
    */
   async pull(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
-    const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
+    const response = await this.trustchainSdk.withAuth(trustchain, memberCredentials, (jwt: JWT) =>
       this.api.fetchData(jwt, this.slug, this.getCurrentVersion(), trustchain),
     );
     switch (response.status) {
@@ -152,7 +152,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
   }
 
   async destroy(trustchain: Trustchain, memberCredentials: MemberCredentials): Promise<void> {
-    await this.trustchainSdk.withAuth(trustchain, memberCredentials, jwt =>
+    await this.trustchainSdk.withAuth(trustchain, memberCredentials, (jwt: JWT) =>
       this.api.deleteData(jwt, this.slug, trustchain),
     );
     await this.saveNewUpdate({ type: "deleted-data" });
@@ -171,7 +171,7 @@ export class CloudSyncSDK<Schema extends ZodType, Data = z.infer<Schema>>
       this.trustchainSdk.withAuth(
         trustchain,
         memberCredentials,
-        jwt => Promise.resolve(jwt),
+        (jwt: JWT) => Promise.resolve(jwt),
         "refresh",
       );
     return this.api.listenNotifications(getFreshJwt, this.slug);
