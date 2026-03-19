@@ -1,6 +1,13 @@
 name: "Setup Caches"
 description: "Setup caches for faster running time"
 inputs:
+  use-mise:
+    description: "use mise instead of proto to install required tools"
+    default: "false"
+    required: false
+  gh-token:
+    description: "use the GITHUB_TOKEN to download binaries and avoid GitHub limits"
+    required: false
   install-proto:
     description: "true to install proto, false by default"
     required: false
@@ -44,6 +51,15 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Install mise and tools
+      if: inputs.use-mise == 'true'
+      uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3.6.1
+      with:
+        install: true
+        cache: true
+        reshim: true
+        github_token: ${{ inputs['gh-token'] }}
+
     - name: Setup proto
       if: inputs.install-proto == 'true'
       uses: moonrepo/setup-toolchain@v0
@@ -55,16 +71,18 @@ runs:
       run: proto upgrade
       shell: bash
 
-    - name: Setup the toolchain
-      shell: bash
-      run: proto use
-
     - name: Install Linux native build dependencies
       if: runner.os == 'Linux'
       shell: bash
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential pkg-config
+
+    - name: Setup the toolchain
+      # If we're not using mise, keep this behaviour of activating proto tools
+      if: inputs.use-mise == 'false'
+      shell: bash
+      run: proto use
 
     - uses: pnpm/action-setup@v4
       if: inputs.install-proto == 'true' && startsWith(env.CI_OS, 'windows')
@@ -113,9 +131,9 @@ runs:
       if: inputs.skip-pod-cache == 'true' && runner.os == 'macOS'
       shell: bash
       run: |
-          rm -rf ~/.cocoapods/
-          rm -rf ~/Library/Caches/CocoaPods
-          rm -rf apps/ledger-live-mobile/ios/Pods
+        rm -rf ~/.cocoapods/
+        rm -rf ~/Library/Caches/CocoaPods
+        rm -rf apps/ledger-live-mobile/ios/Pods
 
     - name: TurboRepo local caching server
       id: turborepo-cache-server

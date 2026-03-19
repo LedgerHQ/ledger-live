@@ -471,6 +471,8 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "true"
@@ -699,7 +701,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
