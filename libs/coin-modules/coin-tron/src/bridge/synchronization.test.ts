@@ -273,6 +273,70 @@ describe("sync", () => {
 
     expect(account).toMatchObject(expectedAccount);
   });
+
+  it("clones initial cacheTransactionInfoById before sync writes", async () => {
+    const address = "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N";
+    const existingCacheEntry = {
+      fee: 1,
+      blockNumber: 1,
+      withdraw_amount: 0,
+      unfreeze_amount: 0,
+    };
+    const frozenInitialCache = Object.freeze({
+      existingTx: existingCacheEntry,
+    });
+
+    mockFunctions.getLastBlock.mockResolvedValueOnce({ height: 0, hash: "", time: new Date() });
+    mockFunctions.fetchTronAccount.mockResolvedValueOnce([
+      {
+        address,
+        balance: 0,
+        trc20: [],
+        assetV2: [],
+      } as AccountTronAPI,
+    ]);
+    mockFunctions.fetchTronAccountTxs.mockImplementationOnce(async (_addr, _predicate, cache) => {
+      cache.newTx = {
+        fee: 2,
+        blockNumber: 2,
+        withdraw_amount: 0,
+        unfreeze_amount: 0,
+      };
+      return [];
+    });
+    mockFunctions.getTronAccountNetwork.mockResolvedValueOnce({
+      family: "tron",
+      freeNetUsed: BigNumber(0),
+      freeNetLimit: BigNumber(1),
+      netUsed: BigNumber(0),
+      netLimit: BigNumber(0),
+      energyUsed: BigNumber(0),
+      energyLimit: BigNumber(0),
+    } as NetworkInfo);
+    mockFunctions.getUnwithdrawnReward.mockResolvedValueOnce(BigNumber(0));
+
+    const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
+      ...dummyAccount,
+      id: `js:2:tron:${address}:`,
+      freshAddress: address,
+      tronResources: {
+        ...dummyAccount.tronResources,
+        cacheTransactionInfoById: frozenInitialCache,
+      },
+    });
+
+    expect(account.tronResources.cacheTransactionInfoById).toEqual({
+      existingTx: existingCacheEntry,
+      newTx: {
+        fee: 2,
+        blockNumber: 2,
+        withdraw_amount: 0,
+        unfreeze_amount: 0,
+      },
+    });
+    expect(account.tronResources.cacheTransactionInfoById).not.toBe(frozenInitialCache);
+    expect(frozenInitialCache).toEqual({ existingTx: existingCacheEntry });
+  });
 });
 
 describe("scanAccounts", () => {

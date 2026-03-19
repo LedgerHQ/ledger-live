@@ -96,7 +96,9 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   }
 
   const acc = tronAcc[0];
-  const cacheTransactionInfoById = initialAccount?.tronResources?.cacheTransactionInfoById || {};
+  const cacheTransactionInfoById = {
+    ...(initialAccount?.tronResources?.cacheTransactionInfoById ?? {}),
+  };
   const operationsPageSize = Math.min(
     MAX_OPERATIONS_PAGE_SIZE,
     getOperationsPageSize(initialAccount?.id, syncConfig),
