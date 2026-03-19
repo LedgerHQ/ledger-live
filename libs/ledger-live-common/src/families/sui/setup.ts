@@ -14,7 +14,7 @@ import { getCurrencyConfiguration } from "../../config";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const createSigner: CreateSigner<SuiSigner> = (transport: Transport) => {
-  return new Sui(transport, "default_sui_scramble_key");
+  return new Sui(transport, "default_sui_scramble_key") as unknown as SuiSigner;
 };
 
 const getCurrencyConfig = (currency?: CryptoCurrency): SuiCoinConfig => {
