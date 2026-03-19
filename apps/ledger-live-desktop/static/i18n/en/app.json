@@ -8121,11 +8121,11 @@
   },
   "fearAndGreed": {
     "levels": {
-      "extremeFear": "Fear+",
       "fear": "Fear",
+      "cautious": "Cautious",
       "neutral": "Neutral",
-      "greed": "Greed",
-      "extremeGreed": "Greed+"
+      "optimistic": "Optimistic",
+      "greedy": "Greedy"
     },
     "dialog": {
       "title": "Mood index",

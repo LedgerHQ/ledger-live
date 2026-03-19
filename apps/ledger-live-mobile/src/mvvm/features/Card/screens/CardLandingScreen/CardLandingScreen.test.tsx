@@ -48,7 +48,7 @@ describe("CardLandingScreen", () => {
 
     expect(getByTestId(CARD_LANDING_TEST_IDS.title).props.children).toBe("Spend your\ncrypto");
     expect(getByTestId(CARD_LANDING_TEST_IDS.subtitle).props.children).toBe(
-      "Pay online or in store with a crypto card",
+      "Pay online or in stores with a crypto card.",
     );
     expect(getByText(/Explore cards/i)).toBeVisible();
     expect(getByText(/I have a card/i)).toBeVisible();

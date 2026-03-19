@@ -9,21 +9,21 @@ import {
 describe("Fear and Greed utils", () => {
   describe("getFearAndGreedLevel", () => {
     it.each([
-      { value: 0, expected: "extremeFear" },
-      { value: 10, expected: "extremeFear" },
-      { value: 19, expected: "extremeFear" },
-      { value: 26, expected: "fear" },
-      { value: 35, expected: "fear" },
-      { value: 40, expected: "fear" },
+      { value: 0, expected: "fear" },
+      { value: 10, expected: "fear" },
+      { value: 19, expected: "fear" },
+      { value: 26, expected: "cautious" },
+      { value: 35, expected: "cautious" },
+      { value: 40, expected: "cautious" },
       { value: 46, expected: "neutral" },
       { value: 50, expected: "neutral" },
       { value: 55, expected: "neutral" },
-      { value: 61, expected: "greed" },
-      { value: 70, expected: "greed" },
-      { value: 75, expected: "greed" },
-      { value: 81, expected: "extremeGreed" },
-      { value: 90, expected: "extremeGreed" },
-      { value: 100, expected: "extremeGreed" },
+      { value: 61, expected: "optimistic" },
+      { value: 70, expected: "optimistic" },
+      { value: 75, expected: "optimistic" },
+      { value: 81, expected: "greedy" },
+      { value: 90, expected: "greedy" },
+      { value: 100, expected: "greedy" },
     ])("should return $expected for value $value", ({ value, expected }) => {
       expect(getFearAndGreedLevel(value)).toBe(expected);
     });
@@ -31,11 +31,11 @@ describe("Fear and Greed utils", () => {
 
   describe("getFearAndGreedTranslationKey", () => {
     it.each([
-      { value: 10, expected: "fearAndGreed.levels.extremeFear" },
-      { value: 35, expected: "fearAndGreed.levels.fear" },
+      { value: 10, expected: "fearAndGreed.levels.fear" },
+      { value: 35, expected: "fearAndGreed.levels.cautious" },
       { value: 50, expected: "fearAndGreed.levels.neutral" },
-      { value: 70, expected: "fearAndGreed.levels.greed" },
-      { value: 90, expected: "fearAndGreed.levels.extremeGreed" },
+      { value: 70, expected: "fearAndGreed.levels.optimistic" },
+      { value: 90, expected: "fearAndGreed.levels.greedy" },
     ])("should return $expected for value $value", ({ value, expected }) => {
       expect(getFearAndGreedTranslationKey(value)).toBe(expected);
     });
@@ -43,11 +43,11 @@ describe("Fear and Greed utils", () => {
 
   describe("getFearAndGreedColor", () => {
     it.each([
-      { value: 10, level: "extremeFear", color: "error" },
-      { value: 35, level: "fear", color: "warning" },
+      { value: 10, level: "fear", color: "error" },
+      { value: 35, level: "cautious", color: "warning" },
       { value: 50, level: "neutral", color: "muted" },
-      { value: 70, level: "greed", color: "success" },
-      { value: 90, level: "extremeGreed", color: "success" },
+      { value: 70, level: "optimistic", color: "success" },
+      { value: 90, level: "greedy", color: "success" },
     ])("should return $color for value $value ($level)", ({ value, level, color }) => {
       expect(getFearAndGreedColorKey(value)).toBe(FEAR_AND_GREED_COLORS[level]);
       expect(getFearAndGreedColorKey(value)).toBe(color);
@@ -57,11 +57,11 @@ describe("Fear and Greed utils", () => {
   describe("Constants", () => {
     describe("FEAR_AND_GREED_COLORS", () => {
       it.each([
-        { level: "extremeFear", color: "error" },
-        { level: "fear", color: "warning" },
+        { level: "fear", color: "error" },
+        { level: "cautious", color: "warning" },
         { level: "neutral", color: "muted" },
-        { level: "greed", color: "success" },
-        { level: "extremeGreed", color: "success" },
+        { level: "optimistic", color: "success" },
+        { level: "greedy", color: "success" },
       ])("should have correct color for $level", ({ level, color }) => {
         expect(FEAR_AND_GREED_COLORS[level]).toBe(color);
       });
@@ -69,11 +69,11 @@ describe("Fear and Greed utils", () => {
 
     describe("FEAR_AND_GREED_TRANSLATION_KEYS", () => {
       it.each([
-        { level: "extremeFear", key: "fearAndGreed.levels.extremeFear" },
         { level: "fear", key: "fearAndGreed.levels.fear" },
+        { level: "cautious", key: "fearAndGreed.levels.cautious" },
         { level: "neutral", key: "fearAndGreed.levels.neutral" },
-        { level: "greed", key: "fearAndGreed.levels.greed" },
-        { level: "extremeGreed", key: "fearAndGreed.levels.extremeGreed" },
+        { level: "optimistic", key: "fearAndGreed.levels.optimistic" },
+        { level: "greedy", key: "fearAndGreed.levels.greedy" },
       ])("should have correct key for $level", ({ level, key }) => {
         expect(FEAR_AND_GREED_TRANSLATION_KEYS[level]).toBe(key);
       });
@@ -82,10 +82,10 @@ describe("Fear and Greed utils", () => {
 
   describe("Boundary values", () => {
     it.each([
-      { value: 20, level: "extremeFear", color: "error" },
-      { value: 40, level: "fear", color: "warning" },
+      { value: 20, level: "fear", color: "error" },
+      { value: 40, level: "cautious", color: "warning" },
       { value: 60, level: "neutral", color: "muted" },
-      { value: 80, level: "greed", color: "success" },
+      { value: 80, level: "optimistic", color: "success" },
     ])("should handle boundary at $value ($level)", ({ value, level, color }) => {
       expect(getFearAndGreedLevel(value)).toBe(level);
       expect(getFearAndGreedColorKey(value)).toBe(color);
