@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.111.0-next.1
+
+### Minor Changes
+
+- [#15552](https://github.com/LedgerHQ/ledger-live/pull/15552) [`a938418`](https://github.com/LedgerHQ/ledger-live/commit/a938418fc0657bba9229cbf2a690696bc5d057e0) Thanks [@deepyjr](https://github.com/deepyjr)! - Add sync error analytics tracking (SyncError, SyncErrorList, SyncRefreshClick) and improve offline account error handling
+
 ## 3.111.0-next.0
 
 ### Minor Changes
