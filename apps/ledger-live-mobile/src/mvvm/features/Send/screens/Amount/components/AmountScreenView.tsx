@@ -5,7 +5,7 @@ import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { AmountInputSection } from "./AmountInputSection";
 import { QuickActionsRow } from "./QuickActionsRow";
-import { NetworkFeesRow } from "./NetworkFeesRow";
+import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { NumberKeyboard } from "./NumberKeyboard";
 import type { AmountScreenViewModel } from "../types";
 import { useTranslation } from "~/context/Locale";
