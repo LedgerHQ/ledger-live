@@ -2,7 +2,6 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
@@ -148,13 +147,7 @@ export class AccountPage extends AppPage {
     const tokenButton = this.accountButton(account.currency.name).or(
       this.accountButton(account.currency.ticker),
     );
-    if (await isWallet40Enabled(this.page)) {
-      // TODO: remove if condition and assert to be visible when defect is fixed
-      // Ticket: https://ledgerhq.atlassian.net/browse/LIVE-27751
-      await expect(tokenButton).toBeAttached();
-    } else {
-      await expect(tokenButton).toBeVisible();
-    }
+    await expect(tokenButton).toBeVisible();
   }
 
   @step("Expect `show more` button to show more operations")
