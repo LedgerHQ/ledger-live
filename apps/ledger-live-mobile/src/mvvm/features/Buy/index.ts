@@ -11,7 +11,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
 
-type UseOpenBuyProps = {
+type UseOpenBuySellProps = {
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
 };
@@ -39,7 +39,7 @@ function getAccountsForCurrency(
     });
 }
 
-export function useOpenBuy({ currency, sourceScreenName }: UseOpenBuyProps) {
+export function useOpenBuySell({ currency, sourceScreenName }: UseOpenBuySellProps) {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const shallowAccounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
@@ -50,15 +50,15 @@ export function useOpenBuy({ currency, sourceScreenName }: UseOpenBuyProps) {
     return getAccountsForCurrency(flattenedAccounts, shallowAccounts, currency);
   }, [currency, flattenedAccounts, shallowAccounts]);
 
-  const navigateToBuy = useCallback(
-    (account?: AccountLike, parentAccount?: Account) => {
+  const navigateToBuySell = useCallback(
+    (mode: "buy" | "sell", account?: AccountLike, parentAccount?: Account) => {
       const defaultAccountId = account?.id;
       const parentId = isTokenAccount(account)
         ? (parentAccount?.id ?? account.parentId)
         : undefined;
 
       navigation.navigate(NavigatorName.Exchange, {
-        screen: ScreenName.ExchangeBuy,
+        screen: mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell,
         params: {
           defaultCurrencyId: currency?.id,
           ...(defaultAccountId && { defaultAccountId }),
@@ -69,33 +69,40 @@ export function useOpenBuy({ currency, sourceScreenName }: UseOpenBuyProps) {
     [currency, navigation],
   );
 
-  const openAccountSelectionDrawer = useCallback(() => {
-    openDrawer({
-      currencies: currency ? [currency.id] : [],
-      flow: "buy",
-      source: sourceScreenName,
-      areCurrenciesFiltered: !!currency,
-      enableAccountSelection: true,
-      onAccountSelected: navigateToBuy,
-    });
-  }, [currency, openDrawer, sourceScreenName, navigateToBuy]);
+  const openAccountSelectionDrawer = useCallback(
+    (mode: "buy" | "sell") => {
+      openDrawer({
+        currencies: currency ? [currency.id] : [],
+        flow: mode,
+        source: sourceScreenName,
+        areCurrenciesFiltered: !!currency,
+        enableAccountSelection: true,
+        onAccountSelected: (account, parentAccount) =>
+          navigateToBuySell(mode, account, parentAccount),
+      });
+    },
+    [currency, openDrawer, sourceScreenName, navigateToBuySell],
+  );
 
-  const handleOpenBuy = useCallback(() => {
-    const accountCount = accountsForCurrency.length;
+  const handleOpenBuySell = useCallback(
+    (mode: "buy" | "sell") => {
+      const accountCount = accountsForCurrency.length;
 
-    if (accountCount === 0) {
-      navigateToBuy();
-      return;
-    }
+      if (accountCount === 0) {
+        navigateToBuySell(mode);
+        return;
+      }
 
-    if (accountCount === 1) {
-      const { account, parentAccount } = accountsForCurrency[0];
-      navigateToBuy(account, parentAccount);
-      return;
-    }
+      if (accountCount === 1) {
+        const { account, parentAccount } = accountsForCurrency[0];
+        navigateToBuySell(mode, account, parentAccount);
+        return;
+      }
 
-    openAccountSelectionDrawer();
-  }, [accountsForCurrency, navigateToBuy, openAccountSelectionDrawer]);
+      openAccountSelectionDrawer(mode);
+    },
+    [accountsForCurrency, navigateToBuySell, openAccountSelectionDrawer],
+  );
 
-  return { handleOpenBuy };
+  return { handleOpenBuySell };
 }

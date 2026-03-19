@@ -1,5 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { useOpenBuy } from "../index";
+import { useOpenBuySell } from "../index";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -28,7 +28,7 @@ function createBitcoinAccount(id: string): Account {
   return { ...account, id: `mock:1:bitcoin:${id}:` };
 }
 
-describe("useOpenBuy (Market / QuickActions origin)", () => {
+describe("useOpenBuySell (Market / QuickActions origin)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -36,7 +36,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
   test("should navigate to exchange buy with defaultAccountId when account for currency exists", () => {
     const account = createBitcoinAccount("account-1");
     const { result } = renderHook(
-      () => useOpenBuy({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+      () => useOpenBuySell({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -46,12 +46,39 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     );
 
     act(() => {
-      result.current.handleOpenBuy();
+      result.current.handleOpenBuySell("buy");
     });
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
+      params: expect.objectContaining({
+        defaultCurrencyId: bitcoin.id,
+        defaultAccountId: account.id,
+      }),
+    });
+    expect(mockOpenDrawer).not.toHaveBeenCalled();
+  });
+
+  test("should navigate to exchange sell with defaultAccountId when account for currency exists", () => {
+    const account = createBitcoinAccount("account-1");
+    const { result } = renderHook(
+      () => useOpenBuySell({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          accounts: { ...state.accounts, active: [account] },
+        }),
+      },
+    );
+
+    act(() => {
+      result.current.handleOpenBuySell("sell");
+    });
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeSell,
       params: expect.objectContaining({
         defaultCurrencyId: bitcoin.id,
         defaultAccountId: account.id,
@@ -67,7 +94,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     ethAccount.subAccounts = [tokenAccount];
 
     const { result } = renderHook(
-      () => useOpenBuy({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
+      () => useOpenBuySell({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -77,7 +104,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     );
 
     act(() => {
-      result.current.handleOpenBuy();
+      result.current.handleOpenBuySell("buy");
     });
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
@@ -90,7 +117,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
 
   test("should navigate to exchange buy with only defaultCurrencyId when no accounts exist", () => {
     const { result } = renderHook(
-      () => useOpenBuy({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+      () => useOpenBuySell({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -100,7 +127,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     );
 
     act(() => {
-      result.current.handleOpenBuy();
+      result.current.handleOpenBuySell("buy");
     });
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
@@ -116,7 +143,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
 
   test("should navigate to exchange buy with only defaultCurrencyId when no accounts exist for token", () => {
     const { result } = renderHook(
-      () => useOpenBuy({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
+      () => useOpenBuySell({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -126,7 +153,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     );
 
     act(() => {
-      result.current.handleOpenBuy();
+      result.current.handleOpenBuySell("buy");
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Exchange, {
@@ -143,7 +170,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
   test("should auto-select account when only one account exists for currency", () => {
     const account = createBitcoinAccount("single-btc");
     const { result } = renderHook(
-      () => useOpenBuy({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+      () => useOpenBuySell({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -153,7 +180,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     );
 
     act(() => {
-      result.current.handleOpenBuy();
+      result.current.handleOpenBuySell("buy");
     });
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
@@ -171,7 +198,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     const account1 = createBitcoinAccount("btc-1");
     const account2 = createBitcoinAccount("btc-2");
     const { result } = renderHook(
-      () => useOpenBuy({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
+      () => useOpenBuySell({ currency: bitcoin, sourceScreenName: SOURCE_SCREEN }),
       {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -181,7 +208,7 @@ describe("useOpenBuy (Market / QuickActions origin)", () => {
     );
 
     act(() => {
-      result.current.handleOpenBuy();
+      result.current.handleOpenBuySell("buy");
     });
 
     expect(mockOpenDrawer).toHaveBeenCalledTimes(1);
