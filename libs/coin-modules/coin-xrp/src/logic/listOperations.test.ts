@@ -208,6 +208,7 @@ describe("listOperations", () => {
       tx: expect.objectContaining({
         hash: "OFFER_HASH",
         fees: BigInt(5),
+        feesPayer: "sender",
         failed: false,
         block: {
           hash: "HASH_VALUE_BLOCK",
