@@ -334,6 +334,14 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/team-recover-software/         @ledgerhq/recover-software
 **/team-engagement/               @ledgerhq/engagement
 
+# Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
+**/.oxlintrc.*                                        @ledgerhq/platform
+**/.oxfmtrc.*                                         @ledgerhq/platform
+**/.eslintrc.*                                        @ledgerhq/platform
+**/tsconfig*                                          @ledgerhq/platform
+**/nx.json                                            @ledgerhq/platform
+**/knip.json                                          @ledgerhq/platform
+
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 .github/copilot-instructions.md
 libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
