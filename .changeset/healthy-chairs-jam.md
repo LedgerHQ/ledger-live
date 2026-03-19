@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/errors": patch
-"@ledgerhq/coin-tron": patch
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/errors": minor
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-evm": minor
 ---
 
 chore(coin-tron): throw `InvalidTransactionError` on expired transaction
