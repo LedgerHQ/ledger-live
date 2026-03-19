@@ -1310,7 +1310,7 @@ describe("getRecordByCommitment", () => {
     expect(result).toBeNull();
   });
 
-  it("should throw when unspent private records are missing", () => {
+  it("should return null when unspentPrivateRecords is null", () => {
     const account = getMockedAccount({
       aleoResources: {
         ...mockAleoResources,
@@ -1318,11 +1318,23 @@ describe("getRecordByCommitment", () => {
       },
     });
 
-    expect(() =>
-      getRecordByCommitment({
-        account,
-        commitment: mockUnspentRecord1.commitment,
-      }),
-    ).toThrow("aleo: unspent private records are required");
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it("should return null when aleoResources is undefined", () => {
+    const account = getMockedAccount();
+    delete account.aleoResources;
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockUnspentRecord1.commitment,
+    });
+
+    expect(result).toBeNull();
   });
 });
