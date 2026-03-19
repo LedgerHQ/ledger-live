@@ -4,6 +4,7 @@
   "globalDependencies": [
     "turbo.json",
     "tsconfig.base.json",
+    "mise.lock",
     "sonar-project.properties"
   ],
   "globalEnv": [
@@ -107,18 +108,11 @@
   "ui": "tui",
   "tasks": {
     "build:storybook": {
-      "dependsOn": [
-        "^build",
-        "prebuild:storybook"
-      ],
-      "outputs": [
-        "storybook-static/**"
-      ]
+      "dependsOn": ["^build", "prebuild:storybook"],
+      "outputs": ["storybook-static/**"]
     },
     "prebuild:storybook": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "build": {
       "dependsOn": ["^build"],
