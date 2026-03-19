@@ -57,6 +57,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAddModalOpened,
     shouldDisplayGraphRework,
     backgroundColor,
+    isSyncError,
     openAddModal,
     closeAddModal,
     handleHeightChange,
@@ -192,6 +193,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
           useSafeArea={!shouldDisplayWallet40MainNav}
           overrideRefreshControlProps={{ progressViewOffset }}
+          isError={isSyncError}
         />
         <AddAccountDrawer
           isOpened={isAddModalOpened}

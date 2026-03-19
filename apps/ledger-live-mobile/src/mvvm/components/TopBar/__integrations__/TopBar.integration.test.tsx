@@ -26,6 +26,7 @@ const defaultSyncState = {
   isPending: false,
   listOfErrorAccountNames: "",
   syncAccessibilityLabel: "Synchronize",
+  errorCurrencyIds: [],
 };
 
 describe("TopBar navigation", () => {
