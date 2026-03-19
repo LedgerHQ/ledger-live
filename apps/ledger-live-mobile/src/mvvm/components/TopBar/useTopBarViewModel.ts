@@ -20,10 +20,22 @@ export function useTopBarViewModel(
   const page = screenName ?? ScreenName.Portfolio;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { navigateToRebornFlow } = useRebornFlow();
-  const { hasAccounts, isError, isPending, listOfErrorAccountNames, syncAccessibilityLabel } =
-    useSyncIndicator();
+  const {
+    hasAccounts,
+    isError,
+    isPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
+    errorCurrencyIds,
+  } = useSyncIndicator();
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
-  const openSyncDrawer = useCallback(() => setIsSyncDrawerOpen(true), []);
+  const openSyncDrawer = useCallback(() => {
+    setIsSyncDrawerOpen(true);
+    track("SyncErrorList", {
+      currencies: errorCurrencyIds,
+      page,
+    });
+  }, [errorCurrencyIds, page]);
   const closeSyncDrawer = useCallback(() => setIsSyncDrawerOpen(false), []);
 
   const hasUnreadNotifications = useMemo(

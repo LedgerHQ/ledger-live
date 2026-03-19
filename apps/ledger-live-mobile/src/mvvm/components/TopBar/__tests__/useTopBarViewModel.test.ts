@@ -1,8 +1,10 @@
-import { renderHook, act, withReadOnlyDisabled } from "@tests/test-renderer";
+import { renderHook, withReadOnlyDisabled, act } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
+import { track } from "~/analytics";
 import { expectedNavigationParams } from "../const";
 import { useTopBarViewModel } from "../useTopBarViewModel";
+import { useSyncIndicator } from "../hooks/useSyncIndicator";
 
 const mockNavigate = jest.fn();
 
@@ -11,15 +13,18 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-jest.mock("../hooks/useSyncIndicator", () => ({
-  useSyncIndicator: () => ({
-    hasAccounts: false,
-    isError: false,
-    isPending: false,
-    listOfErrorAccountNames: "",
-    syncAccessibilityLabel: "Synchronize",
-  }),
-}));
+jest.mock("../hooks/useSyncIndicator");
+
+const mockedUseSyncIndicator = jest.mocked(useSyncIndicator);
+
+const defaultSyncState = {
+  hasAccounts: false,
+  isError: false,
+  isPending: false,
+  listOfErrorAccountNames: "",
+  syncAccessibilityLabel: "Synchronize",
+  errorCurrencyIds: [],
+};
 
 const mockNavigation = { navigate: mockNavigate };
 
@@ -36,6 +41,8 @@ const withWeb3Hub = (enabled: boolean) => (state: State) => ({
 describe("useTopBarViewModel", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
+    (track as jest.Mock).mockClear();
+    mockedUseSyncIndicator.mockReturnValue(defaultSyncState);
   });
 
   it("should call navigate with expected params when onMyLedgerPress is invoked", () => {
@@ -108,5 +115,29 @@ describe("useTopBarViewModel", () => {
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.settings.name);
+  });
+
+  describe("sync drawer", () => {
+    it("should open the drawer and track SyncErrorList with error currency ids on openSyncDrawer", () => {
+      mockedUseSyncIndicator.mockReturnValue({
+        ...defaultSyncState,
+        isError: true,
+        errorCurrencyIds: ["bitcoin", "ethereum"],
+      });
+
+      const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+
+      expect(result.current.isSyncDrawerOpen).toBe(false);
+
+      act(() => {
+        result.current.openSyncDrawer();
+      });
+
+      expect(result.current.isSyncDrawerOpen).toBe(true);
+      expect(track).toHaveBeenCalledWith("SyncErrorList", {
+        currencies: ["bitcoin", "ethereum"],
+        page: ScreenName.Portfolio,
+      });
+    });
   });
 });
