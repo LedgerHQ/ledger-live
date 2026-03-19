@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
-import type { WalletHandlers, ServerConfig } from "@ledgerhq/wallet-api-server";
+import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { Transport } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { Subject } from "rxjs";
@@ -48,9 +48,7 @@ function useTransport(postMessage: (message: string) => void | undefined): Trans
   }, [postMessage]);
 }
 
-function useDeviceTransport(
-  handlerDepsRef: React.RefObject<HandlerDeps | null>,
-): DeviceTransport {
+function useDeviceTransport(handlerDepsRef: React.RefObject<HandlerDeps | null>): DeviceTransport {
   const transportRef = useRef<Subject<BidirectionalEvent> | undefined>(undefined);
 
   const subscribe = useCallback((deviceId: string) => {
@@ -231,7 +229,10 @@ export function useWalletAPIServer({
     server.setHandler("bitcoin.signPsbt", createBitcoinSignPsbtHandler(getDeps));
     server.setHandler("transaction.sign", createTransactionSignHandler(getDeps));
     server.setHandler("transaction.signRaw", createTransactionSignRawHandler(getDeps));
-    server.setHandler("transaction.signAndBroadcast", createTransactionSignAndBroadcastHandler(getDeps));
+    server.setHandler(
+      "transaction.signAndBroadcast",
+      createTransactionSignAndBroadcastHandler(getDeps),
+    );
     server.setHandler("device.transport", createDeviceTransportHandler(getDeps));
     server.setHandler("device.select", createDeviceSelectHandler(getDeps));
     server.setHandler("device.open", createDeviceOpenHandler(getDeps));

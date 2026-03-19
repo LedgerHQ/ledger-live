@@ -2,7 +2,9 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { receiveOnAccountLogic } from "../../logic/receiveOnAccount";
 import type { HandlerDeps } from "../types";
 
-export function createAccountReceiveHandler(getDeps: () => HandlerDeps): WalletHandlers["account.receive"] {
+export function createAccountReceiveHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["account.receive"] {
   return ({ accountId, tokenCurrency }) => {
     const { uiAccountReceive, walletState, manifest, accounts, tracking } = getDeps();
     if (!uiAccountReceive) {

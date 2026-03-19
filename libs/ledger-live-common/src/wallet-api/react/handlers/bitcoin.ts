@@ -7,7 +7,9 @@ import {
 } from "../../logic/bitcoin";
 import type { HandlerDeps } from "../types";
 
-export function createBitcoinGetAddressHandler(getDeps: () => HandlerDeps): WalletHandlers["bitcoin.getAddress"] {
+export function createBitcoinGetAddressHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["bitcoin.getAddress"] {
   return ({ accountId, derivationPath }) => {
     const { manifest, accounts, tracking } = getDeps();
     return bitcoinFamilyAccountGetAddressLogic(
@@ -18,7 +20,9 @@ export function createBitcoinGetAddressHandler(getDeps: () => HandlerDeps): Wall
   };
 }
 
-export function createBitcoinGetAddressesHandler(getDeps: () => HandlerDeps): WalletHandlers["bitcoin.getAddresses"] {
+export function createBitcoinGetAddressesHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["bitcoin.getAddresses"] {
   return ({ accountId, intentions }) => {
     const { manifest, accounts, tracking } = getDeps();
     return bitcoinFamilyAccountGetAddressesLogic(
@@ -29,7 +33,9 @@ export function createBitcoinGetAddressesHandler(getDeps: () => HandlerDeps): Wa
   };
 }
 
-export function createBitcoinGetPublicKeyHandler(getDeps: () => HandlerDeps): WalletHandlers["bitcoin.getPublicKey"] {
+export function createBitcoinGetPublicKeyHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["bitcoin.getPublicKey"] {
   return ({ accountId, derivationPath }) => {
     const { manifest, accounts, tracking } = getDeps();
     return bitcoinFamilyAccountGetPublicKeyLogic(

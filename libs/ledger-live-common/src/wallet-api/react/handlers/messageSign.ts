@@ -4,7 +4,9 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { signMessageLogic } from "../../logic/signMessage";
 import type { HandlerDeps } from "../types";
 
-export function createMessageSignHandler(getDeps: () => HandlerDeps): WalletHandlers["message.sign"] {
+export function createMessageSignHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["message.sign"] {
   return ({ accountId, message, options }) => {
     const { uiMessageSign, manifest, accounts, tracking } = getDeps();
     if (!uiMessageSign) {

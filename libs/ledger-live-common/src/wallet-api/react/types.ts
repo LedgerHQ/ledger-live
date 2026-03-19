@@ -1,5 +1,11 @@
 import type { RefObject } from "react";
-import type { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  AnyMessage,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import type { WalletHandlers, ServerConfig } from "@ledgerhq/wallet-api-server";
 import type { WalletState } from "@ledgerhq/live-wallet/store";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";

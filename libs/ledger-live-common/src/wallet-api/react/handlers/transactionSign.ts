@@ -2,7 +2,9 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { signTransactionLogic } from "../../logic/signTransaction";
 import type { HandlerDeps } from "../types";
 
-export function createTransactionSignHandler(getDeps: () => HandlerDeps): WalletHandlers["transaction.sign"] {
+export function createTransactionSignHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["transaction.sign"] {
   return async ({ accountId, tokenCurrency, transaction, options }) => {
     const { uiTxSign, manifest, accounts, tracking } = getDeps();
     if (!uiTxSign) {
@@ -16,9 +18,7 @@ export function createTransactionSignHandler(getDeps: () => HandlerDeps): Wallet
       transaction,
       (account, parentAccount, signFlowInfos) => {
         currency =
-          account.type === "TokenAccount"
-            ? account.token.parentCurrency.id
-            : account.currency.id;
+          account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
         return new Promise((resolve, reject) => {
           let done = false;
           return uiTxSign({

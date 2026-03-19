@@ -7,7 +7,9 @@ import { getAccountBridge } from "../../../bridge";
 import { getMainAccount } from "../../../account";
 import type { HandlerDeps } from "../types";
 
-export function createBitcoinSignPsbtHandler(getDeps: () => HandlerDeps): WalletHandlers["bitcoin.signPsbt"] {
+export function createBitcoinSignPsbtHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["bitcoin.signPsbt"] {
   return async ({ accountId, psbt, broadcast }) => {
     const { uiTxSignRaw, uiTxBroadcast, manifest, accounts, tracking } = getDeps();
     if (!uiTxSignRaw) {
@@ -61,9 +63,7 @@ export function createBitcoinSignPsbtHandler(getDeps: () => HandlerDeps): Wallet
           let optimisticOperation: Operation = signedOperation.operation;
 
           const networkId =
-            account.type === "TokenAccount"
-              ? account.token.parentCurrency.id
-              : account.currency.id;
+            account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
 
           const broadcastTrackingData = {
             sourceCurrency:

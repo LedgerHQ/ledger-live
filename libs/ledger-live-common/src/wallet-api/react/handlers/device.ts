@@ -2,7 +2,9 @@ import semver from "semver";
 import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { HandlerDeps } from "../types";
 
-export function createDeviceTransportHandler(getDeps: () => HandlerDeps): WalletHandlers["device.transport"] {
+export function createDeviceTransportHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["device.transport"] {
   return ({ appName, appVersionRange, devices }) =>
     new Promise((resolve, reject) => {
       const { uiDeviceTransport, device, tracking, manifest } = getDeps();
@@ -54,7 +56,9 @@ export function createDeviceTransportHandler(getDeps: () => HandlerDeps): Wallet
     });
 }
 
-export function createDeviceSelectHandler(getDeps: () => HandlerDeps): WalletHandlers["device.select"] {
+export function createDeviceSelectHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["device.select"] {
   return ({ appName, appVersionRange, devices }) =>
     new Promise((resolve, reject) => {
       const { uiDeviceSelect, device, tracking, manifest } = getDeps();
@@ -106,7 +110,7 @@ export function createDeviceSelectHandler(getDeps: () => HandlerDeps): WalletHan
 }
 
 export function createDeviceOpenHandler(getDeps: () => HandlerDeps) {
-  return (params) => {
+  return params => {
     const { device, tracking, manifest } = getDeps();
 
     if (device.ref.current) {
@@ -121,7 +125,7 @@ export function createDeviceOpenHandler(getDeps: () => HandlerDeps) {
 }
 
 export function createDeviceExchangeHandler(getDeps: () => HandlerDeps) {
-  return (params) => {
+  return params => {
     const { device, tracking, manifest } = getDeps();
 
     if (!device.ref.current) {

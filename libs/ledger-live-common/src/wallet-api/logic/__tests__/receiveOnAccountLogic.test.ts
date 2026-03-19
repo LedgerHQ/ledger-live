@@ -2,10 +2,7 @@ import { receiveOnAccountLogic } from "../receiveOnAccount";
 import * as converters from "../../converters";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import {
-  createContextContainingAccountId,
-  createWalletAPIAccount,
-} from "./testHelpers";
+import { createContextContainingAccountId, createWalletAPIAccount } from "./testHelpers";
 
 jest.mock("../../converters", () => ({
   ...jest.requireActual("../../converters"),

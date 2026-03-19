@@ -7,7 +7,9 @@ import { getAccountBridge } from "../../../bridge";
 import { getMainAccount } from "../../../account";
 import type { HandlerDeps } from "../types";
 
-export function createTransactionSignAndBroadcastHandler(getDeps: () => HandlerDeps): WalletHandlers["transaction.signAndBroadcast"] {
+export function createTransactionSignAndBroadcastHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["transaction.signAndBroadcast"] {
   return async ({ accountId, tokenCurrency, transaction, options, meta }) => {
     const { uiTxSign, uiTxBroadcast, manifest, accounts, tracking, config } = getDeps();
     if (!uiTxSign) {
@@ -58,9 +60,7 @@ export function createTransactionSignAndBroadcastHandler(getDeps: () => HandlerD
         const mainAccount = getMainAccount(account, parentAccount);
 
         const networkId =
-          account.type === "TokenAccount"
-            ? account.token.parentCurrency.id
-            : account.currency.id;
+          account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
 
         const broadcastTrackingData = {
           isEmbeddedSwap,
@@ -90,8 +90,7 @@ export function createTransactionSignAndBroadcastHandler(getDeps: () => HandlerD
           }
         }
 
-        uiTxBroadcast &&
-          uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+        uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
 
         return optimisticOperation.hash;
       },

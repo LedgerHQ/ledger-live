@@ -1,18 +1,10 @@
-import {
-  AccountLike,
-  getCurrencyForAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
 import {
   getWalletAPITransactionSignFlowInfos,
   getAccountIdFromWalletAccountId,
 } from "../converters";
 import { WalletAPITransaction } from "../types";
-import {
-  getMainAccount,
-  getParentAccount,
-  makeEmptyTokenAccount,
-} from "../../account/index";
+import { getMainAccount, getParentAccount, makeEmptyTokenAccount } from "../../account/index";
 import { Transaction } from "../../generated/types";
 import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/types";

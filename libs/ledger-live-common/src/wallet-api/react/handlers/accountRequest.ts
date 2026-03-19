@@ -3,7 +3,9 @@ import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { accountToWalletAPIAccount } from "../../converters";
 import type { HandlerDeps } from "../types";
 
-export function createAccountRequestHandler(getDeps: () => HandlerDeps): WalletHandlers["account.request"] {
+export function createAccountRequestHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["account.request"] {
   return async ({
     currencyIds,
     drawerConfiguration,

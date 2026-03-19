@@ -10,7 +10,7 @@ const LABELKEY_MAP: Partial<Record<string, string>> = {
 export const getLabelKey = (routeName: string): string =>
   routeName === NavigatorName.Earn
     ? `mainNavigation.${getEarnOrYieldSuffix()}`
-    : LABELKEY_MAP[routeName] ?? routeName;
+    : (LABELKEY_MAP[routeName] ?? routeName);
 
 export const TRACKING_MENUENTRY_EVENT = "menuentry_clicked";
 

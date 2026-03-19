@@ -1,10 +1,7 @@
 import { broadcastTransactionLogic } from "../broadcastTransaction";
 import * as converters from "../../converters";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import {
-  createContextContainingAccountId,
-  createSignedOperation,
-} from "./testHelpers";
+import { createContextContainingAccountId, createSignedOperation } from "./testHelpers";
 
 jest.mock("../../converters", () => ({
   ...jest.requireActual("../../converters"),

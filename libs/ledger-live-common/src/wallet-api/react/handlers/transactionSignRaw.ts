@@ -7,7 +7,9 @@ import { getAccountBridge } from "../../../bridge";
 import { getMainAccount } from "../../../account";
 import type { HandlerDeps } from "../types";
 
-export function createTransactionSignRawHandler(getDeps: () => HandlerDeps): WalletHandlers["transaction.signRaw"] {
+export function createTransactionSignRawHandler(
+  getDeps: () => HandlerDeps,
+): WalletHandlers["transaction.signRaw"] {
   return async ({ accountId, transaction, broadcast, options }) => {
     const { uiTxSignRaw, uiTxBroadcast, manifest, accounts, tracking, config } = getDeps();
     if (!uiTxSignRaw) {
@@ -54,9 +56,7 @@ export function createTransactionSignRawHandler(getDeps: () => HandlerDeps): Wal
           const mainAccount = getMainAccount(account, parentAccount);
 
           const networkId =
-            account.type === "TokenAccount"
-              ? account.token.parentCurrency.id
-              : account.currency.id;
+            account.type === "TokenAccount" ? account.token.parentCurrency.id : account.currency.id;
 
           const broadcastTrackingData = {
             sourceCurrency:
@@ -83,8 +83,7 @@ export function createTransactionSignRawHandler(getDeps: () => HandlerDeps): Wal
             }
           }
 
-          uiTxBroadcast &&
-            uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+          uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
 
           return optimisticOperation.hash;
         },

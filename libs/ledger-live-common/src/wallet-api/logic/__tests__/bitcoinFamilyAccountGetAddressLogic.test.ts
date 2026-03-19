@@ -1,6 +1,5 @@
 import { bitcoinFamilyAccountGetAddressLogic } from "../bitcoin";
 import * as converters from "../../converters";
-import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { createContextContainingAccountId } from "./testHelpers";
