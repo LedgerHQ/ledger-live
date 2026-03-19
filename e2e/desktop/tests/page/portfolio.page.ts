@@ -284,4 +284,14 @@ export class PortfolioPage extends AppPage {
   async clickSendButton() {
     await this.quickActionButton("send").click();
   }
+
+  @step("Click sell button")
+  async clickSellButton() {
+    await this.quickActionButton("sell").click();
+  }
+
+  @step("Click buy button")
+  async clickBuyButton() {
+    await this.quickActionButton("buy").click();
+  }
 }

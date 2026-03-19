@@ -5,6 +5,8 @@ import { AppPage } from "./abstractClasses";
 export abstract class WebViewAppPage extends AppPage {
   public _webviewPage?: Page;
   public webviewUrlHistory: string[] = [];
+
+  protected abstract readonly webviewIdentifier: string;
   protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
@@ -16,14 +18,35 @@ export abstract class WebViewAppPage extends AppPage {
       throw new Error("No ElectronApplication instance available");
     }
 
-    const all = this.electronApp.windows();
-    let webview: Page;
-    if (all.length > 1) {
-      webview = all[1];
-    } else {
-      webview = await this.electronApp.waitForEvent("window", {
-        timeout: this.defaultWebViewTimeout,
-      });
+    let webview: Page | undefined;
+
+    // Iterate over webviews making multiple attempts over a period of time.
+    // This ensures we handle cases where the right webview is not immediately available.
+    // In some cases a different webview might already be open or it might be loading into the view.
+    const timeout = 60_000;
+    const startTime = Date.now();
+
+    while (!webview && Date.now() - startTime < timeout) {
+      const allWindows = this.electronApp.windows();
+      for (const window of allWindows) {
+        try {
+          const webviewTitle = await window.title();
+          if (webviewTitle.toLowerCase().includes(this.webviewIdentifier.toLowerCase())) {
+            webview = window;
+            break;
+          }
+        } catch (error) {
+          console.log("Error while checking for WebView:", error);
+          // webview might disattach in the process, ignore and iterate again
+        }
+      }
+      await this.page.waitForTimeout(500);
+    }
+
+    if (!webview) {
+      throw new Error(
+        `WebView with identifier "${this.webviewIdentifier}" not found after ${timeout}ms`,
+      );
     }
 
     await webview.waitForLoadState("domcontentloaded", {
