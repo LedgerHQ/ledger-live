@@ -1,10 +1,10 @@
 ---
-"@ledgerhq/coin-module-boilerplate": patch
-"@ledgerhq/coin-concordium": patch
-"@ledgerhq/coin-canton": patch
-"@ledgerhq/coin-xrp": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-module-boilerplate": minor
+"@ledgerhq/coin-concordium": minor
+"@ledgerhq/coin-canton": minor
+"@ledgerhq/coin-xrp": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 ---
 
 chore(coin-xrp): remove unused `feeCustomUnit`

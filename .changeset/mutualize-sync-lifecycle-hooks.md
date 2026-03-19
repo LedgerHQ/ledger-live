@@ -1,7 +1,7 @@
 ---
 "@ledgerhq/live-common": minor
-"live-mobile": patch
-"ledger-live-desktop": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
 ---
 
 Mutualize sync hooks (useSyncLifecycle, useManualRefresh, useStablePending, useBalanceSyncState, useSyncSources) to live-common
