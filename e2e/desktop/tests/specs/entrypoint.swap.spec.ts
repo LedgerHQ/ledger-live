@@ -70,7 +70,9 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToPortfolio());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("home"),
+      );
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
       await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/, electronApp);
     },
