@@ -1,27 +1,27 @@
 import type { FearAndGreedLevel } from "../state-manager/types";
 
 export const FEAR_AND_GREED_TRANSLATION_KEYS: Record<FearAndGreedLevel, string> = {
-  extremeFear: "fearAndGreed.levels.extremeFear",
   fear: "fearAndGreed.levels.fear",
+  cautious: "fearAndGreed.levels.cautious",
   neutral: "fearAndGreed.levels.neutral",
-  greed: "fearAndGreed.levels.greed",
-  extremeGreed: "fearAndGreed.levels.extremeGreed",
+  optimistic: "fearAndGreed.levels.optimistic",
+  greedy: "fearAndGreed.levels.greedy",
 };
 
 export const FEAR_AND_GREED_COLORS: Record<FearAndGreedLevel, string> = {
-  extremeFear: "error",
-  fear: "warning",
+  fear: "error",
+  cautious: "warning",
   neutral: "muted",
-  greed: "success",
-  extremeGreed: "success",
+  optimistic: "success",
+  greedy: "success",
 };
 
 export function getFearAndGreedLevel(value: number): FearAndGreedLevel {
-  if (value <= 20) return "extremeFear";
-  if (value <= 40) return "fear";
+  if (value <= 20) return "fear";
+  if (value <= 40) return "cautious";
   if (value <= 60) return "neutral";
-  if (value <= 80) return "greed";
-  return "extremeGreed";
+  if (value <= 80) return "optimistic";
+  return "greedy";
 }
 
 export function getFearAndGreedTranslationKey(value: number): string {

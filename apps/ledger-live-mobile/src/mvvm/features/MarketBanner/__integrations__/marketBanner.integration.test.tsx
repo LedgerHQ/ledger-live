@@ -252,7 +252,7 @@ describe("MarketBanner Integration Tests", () => {
         }),
       });
 
-      expect(await screen.findByText(/Explore market/i)).toBeVisible();
+      expect(await screen.findByText(/Explore the market/i)).toBeVisible();
     });
   });
 
@@ -332,7 +332,7 @@ describe("MarketBanner Integration Tests", () => {
         }),
       });
 
-      const sectionTitle = await screen.findByText(/Explore market/i);
+      const sectionTitle = await screen.findByText(/Explore the market/i);
       await user.press(sectionTitle);
 
       await waitFor(() => {

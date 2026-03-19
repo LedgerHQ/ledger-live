@@ -2743,8 +2743,8 @@
     },
     "walletBalance": "Wallet balance",
     "balance": {
-      "noSigner": "The most secure\nwallet",
-      "noAccounts": "Secure your\ncrypto"
+      "noSigner": "Your secure\ncrypto wallet",
+      "noAccounts": "Start by funding\nyour wallet"
     },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
@@ -2775,10 +2775,10 @@
       "buyLedger": "Buy a Ledger",
       "transferDrawer": {
         "title": "Transfer",
-        "receiveCrypto": "Receive crypto",
+        "receiveCrypto": "Receive via crypto address",
         "sendCrypto": "Send crypto",
-        "bankTransfer": "Bank transfer",
-        "bankTransferDescription": "Receive stablecoin by sending cash"
+        "bankTransfer": "Receive via bank transfer",
+        "bankTransferDescription": "Receive stablecoins by simply sending cash."
       }
     },
     "recoverBanner": {
@@ -2794,8 +2794,8 @@
     },
     "refreshStatus": {
       "refreshing": "Refreshing...",
-      "upToDate": "You're up to date",
-      "syncError": "Some accounts failed to sync"
+      "upToDate": "Portfolio up to date",
+      "syncError": "Some account data couldn’t load"
     }
   },
   "addAccountsModal": {
@@ -8319,7 +8319,7 @@
     }
   },
   "marketBanner": {
-    "title": "Explore market",
+    "title": "Explore the market",
     "viewAll": "View all",
     "viewAllAccessibilityHint": "Double tap to view all market assets",
     "connectionFailed": "Connection failed",
@@ -8646,13 +8646,13 @@
   },
   "fearAndGreed": {
     "title": "Mood index",
-    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "description": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
     "levels": {
-      "extremeFear": "Fear+",
       "fear": "Fear",
+      "cautious": "Cautious",
       "neutral": "Neutral",
-      "greed": "Greed",
-      "extremeGreed": "Greed+"
+      "optimistic": "Optimistic",
+      "greedy": "Greedy"
     },
     "tileTitle": "Mood"
   },
@@ -8669,7 +8669,7 @@
   },
   "cardLanding": {
     "title": "Spend your\ncrypto",
-    "subtitle": "Pay online or in store with a crypto card",
+    "subtitle": "Pay online or in stores with a crypto card.",
     "ctas": {
       "exploreCards": "Explore cards",
       "iHaveACard": "I have a card"
@@ -8710,8 +8710,8 @@
       "default": "Synchronize"
     },
     "bottomSheet": {
-      "title": "Couldn't sync some accounts",
-      "description": "There was a temporary network issue. Your assets are safe. List of accounts impacted: {{accounts}}",
+      "title": "Some account data couldn’t load",
+      "description": "Your assets are safe. This is a temporary sync issue.\nAffected accounts: {{accounts}}",
       "close": "Close"
     }
   },

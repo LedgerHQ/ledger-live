@@ -121,7 +121,7 @@ describe("PortfolioRefreshStatus", () => {
       completeRefresh(store);
 
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
-      expect(screen.getByText("You're up to date")).toBeVisible();
+      expect(screen.getByText("Portfolio up to date")).toBeVisible();
       expect(screen.getByTestId("portfolio-refresh-status-checkmark")).toBeTruthy();
       expect(screen.queryByTestId("portfolio-refresh-status-spinner")).toBeNull();
     });
