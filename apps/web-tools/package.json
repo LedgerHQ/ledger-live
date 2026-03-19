@@ -13,7 +13,7 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
-    "typecheck": "tsc --noEmit --customConditions node"
+    "typecheck": "tsgo --noEmit --customConditions node"
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",

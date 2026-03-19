@@ -110,6 +110,7 @@ catalog:
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
   typescript: 5.9.3
+  "@typescript/native-preview": "7.0.0-dev.20260317.1"
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.2
@@ -180,6 +181,14 @@ overrides:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  - "@typescript/native-preview"
+  - "@typescript/native-preview-darwin-arm64"
+  - "@typescript/native-preview-darwin-x64"
+  - "@typescript/native-preview-linux-x64"
+  - "@typescript/native-preview-linux-arm64"
+  - "@typescript/native-preview-linux-arm"
+  - "@typescript/native-preview-win32-x64"
+  - "@typescript/native-preview-win32-arm64"
   # Renovate security update: zx@8.8.5
   - zx@8.8.5
   # Oxc toolchain (ledger-live-desktop)

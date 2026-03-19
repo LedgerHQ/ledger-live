@@ -11,8 +11,8 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "typecheck": "tsc --noEmit --customConditions node",
+    "build": "tsgo --project tsconfig.build.json && tsgo --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "typecheck": "tsgo --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
