@@ -11,6 +11,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.modules.network.OkHttpClientProvider
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
@@ -55,6 +56,9 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
   }
 
     override fun onCreate() {
+    // Set before any RN networking so fetch() uses higher max requests per host (faster boot).
+    OkHttpClientProvider.setOkHttpClientFactory(LedgerOkHttpClientFactory(this))
+
     super.onCreate()
 
     SoLoader.init(this, OpenSourceMergedSoMapping)
