@@ -1,8 +1,4 @@
-import type {
-  TransactionIntent,
-  FeeEstimation,
-  MemoNotSupported,
-} from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import type { AleoTransactionIntentData } from "../types";
 import coinConfig from "../config";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
@@ -48,7 +44,7 @@ describe("createApi", () => {
     amount: BigInt(1000),
     sender: "aleo1sender1234567890123456789012345678901234567",
     recipient: "aleo1recipient123456789012345678901234567890",
-    data: { type: "fee_public", priorityFee: 1040, executionId: "ex1test" },
+    data: { type: "fee_public", priorityFee: 1040n, executionId: "ex1test" },
   });
 
   it("should set the coin config value", () => {
@@ -93,39 +89,11 @@ describe("createApi", () => {
   });
 
   describe("craftTransaction", () => {
-    it("should reject when customFees are provided", async () => {
+    it("should throw unsupported error", async () => {
       const api = createApi(mockConfig, "aleo");
-      const txIntent = createMockTransactionIntent();
-      const customFees: FeeEstimation = { value: BigInt(1000) };
 
-      await expect(api.craftTransaction(txIntent, customFees)).rejects.toThrow(
-        "customFees are not supported",
-      );
-    });
-
-    it("should reject when useAllAmount is true", async () => {
-      const api = createApi(mockConfig, "aleo");
-      const txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData> = {
-        ...createMockTransactionIntent(),
-        useAllAmount: true,
-      };
-
-      await expect(api.craftTransaction(txIntent)).rejects.toThrow(
-        "useAllAmount is not supported yet",
-      );
-    });
-
-    it("should call craftTransaction logic when invariants pass", async () => {
-      const api = createApi(mockConfig, "aleo");
-      const txIntent = createMockTransactionIntent();
-      const result = await api.craftTransaction(txIntent);
-
-      expect(mockedCraftTransaction).toHaveBeenCalledTimes(1);
-      expect(mockedCraftTransaction).toHaveBeenCalledWith({
-        currency: expect.any(Object),
-        txIntent,
-      });
-      expect(result).toEqual({ transaction: "crafted_tx" });
+      // @ts-expect-error - it should throw no matter what the input is
+      await expect(api.craftTransaction({})).rejects.toThrow("craftTransaction is not supported");
     });
   });
 

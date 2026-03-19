@@ -1,6 +1,13 @@
 import BigNumber from "bignumber.js";
-import type { AleoAccount, AleoAccountRaw, AleoResources, AleoResourcesRaw } from "../../types";
+import type {
+  AleoAccount,
+  AleoAccountRaw,
+  AleoResources,
+  AleoResourcesRaw,
+  AleoUnspentRecord,
+} from "../../types";
 import { getMockedCurrency } from "./currency.fixture";
+import { getMockedRecord } from "./api.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
 const defaultBalance = new BigNumber(100000);
@@ -33,6 +40,30 @@ export const mockAleoResourcesRaw: AleoResourcesRaw = {
   privateBalance: mockAleoResources.privateBalance?.toString() ?? null,
   unspentPrivateRecords: JSON.stringify(mockAleoResources.unspentPrivateRecords),
   lastPrivateSyncDate: mockAleoResources.lastPrivateSyncDate?.toISOString() ?? null,
+};
+
+export const mockUnspentRecord1: AleoUnspentRecord = {
+  ...getMockedRecord(),
+  commitment: "record-1-commitment",
+  microcredits: "800000",
+  decryptedData: {
+    owner: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f.private",
+    data: { microcredits: "800000u64.private" },
+    nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
+    version: 1,
+  },
+};
+
+export const mockUnspentRecord2: AleoUnspentRecord = {
+  ...getMockedRecord(),
+  commitment: "record-2-commitment",
+  microcredits: "600000",
+  decryptedData: {
+    owner: "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f.private",
+    data: { microcredits: "600000u64.private" },
+    nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
+    version: 1,
+  },
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {

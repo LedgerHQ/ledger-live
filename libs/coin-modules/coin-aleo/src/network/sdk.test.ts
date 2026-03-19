@@ -2,6 +2,7 @@ import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
 import type {
   AleoEncryptedRegistrationResponse,
+  FeeConfiguration,
   Intent,
   PreparedRequestResponse,
 } from "../types/sdk";
@@ -239,6 +240,7 @@ describe("sdkClient", () => {
       const result = await sdkClient.createRequestFromIntent({
         currency: mockCurrency,
         intent: mockIntent,
+        feeConfiguration: null,
         viewKey: mockViewKey,
       });
 
@@ -250,6 +252,7 @@ describe("sdkClient", () => {
         url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
         data: {
           intent: mockIntent,
+          fee: null,
           view_key: mockViewKey,
         },
       });
@@ -267,6 +270,7 @@ describe("sdkClient", () => {
       await sdkClient.createRequestFromIntent({
         currency: mockCurrency,
         intent: mockIntent,
+        feeConfiguration: null,
         viewKey: mockViewKey,
       });
 
@@ -288,6 +292,7 @@ describe("sdkClient", () => {
       await sdkClient.createRequestFromIntent({
         currency: mockCurrency,
         intent: largeAmountIntent,
+        feeConfiguration: null,
         viewKey: mockViewKey,
       });
 
@@ -296,6 +301,7 @@ describe("sdkClient", () => {
         url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
         data: {
           intent: largeAmountIntent,
+          fee: null,
           view_key: mockViewKey,
         },
       });
@@ -310,6 +316,7 @@ describe("sdkClient", () => {
         sdkClient.createRequestFromIntent({
           currency: mockCurrency,
           intent: mockIntent,
+          feeConfiguration: null,
           viewKey: mockViewKey,
         }),
       ).rejects.toThrow("SDK service unavailable");
@@ -323,6 +330,7 @@ describe("sdkClient", () => {
         sdkClient.createRequestFromIntent({
           currency: mockCurrency,
           intent: mockIntent,
+          feeConfiguration: null,
           viewKey: mockViewKey,
         }),
       ).rejects.toThrow("Invalid intent format");
@@ -344,10 +352,61 @@ describe("sdkClient", () => {
       const result = await sdkClient.createRequestFromIntent({
         currency: mockCurrency,
         intent: mockIntent,
+        feeConfiguration: null,
         viewKey: mockViewKey,
       });
 
       expect(result).toEqual(responseWithMetadata);
+    });
+
+    it("should include non-null fee configuration in request payload", async () => {
+      const feeConfiguration: FeeConfiguration = {
+        function_name: "fee_private",
+        max_base_fee: "2308",
+        max_priority_fee: "5",
+      };
+
+      await sdkClient.createRequestFromIntent({
+        currency: mockCurrency,
+        intent: mockIntent,
+        feeConfiguration,
+        viewKey: mockViewKey,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        data: {
+          intent: mockIntent,
+          fee: feeConfiguration,
+          view_key: mockViewKey,
+        },
+      });
+    });
+
+    it("should omit view_key when viewKey is not provided", async () => {
+      const feeConfiguration: FeeConfiguration = {
+        function_name: "fee_public",
+        max_base_fee: "1000",
+        max_priority_fee: "0",
+      };
+
+      await sdkClient.createRequestFromIntent({
+        currency: mockCurrency,
+        intent: mockIntent,
+        feeConfiguration,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/transactions/request`,
+        data: {
+          intent: mockIntent,
+          fee: feeConfiguration,
+        },
+      });
     });
   });
 });
