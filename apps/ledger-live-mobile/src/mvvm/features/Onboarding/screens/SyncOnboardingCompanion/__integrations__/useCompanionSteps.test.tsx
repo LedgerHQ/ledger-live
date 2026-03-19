@@ -8,7 +8,7 @@ import { State } from "~/reducers/types";
 import { INITIAL_STATE } from "~/reducers/settings";
 
 describe("useCompanionSteps", () => {
-  it("when ledger sync step is not active should return correct state ", () => {
+  it("when ledger sync step is not active should return correct state", () => {
     const ref = React.createRef() as React.RefObject<SeedOriginType | undefined>;
 
     const { result } = renderHook(() =>
@@ -51,7 +51,7 @@ describe("useCompanionSteps", () => {
     ).toBe("active");
   });
 
-  it("when ledger sync step is active and has not synced before should return correct state ", () => {
+  it("when ledger sync step is active and has not synced before should return correct state", () => {
     const ref = React.createRef() as React.RefObject<SeedOriginType | undefined>;
 
     const overrideInitialStateWithFeatureFlag = (state: State): State => ({

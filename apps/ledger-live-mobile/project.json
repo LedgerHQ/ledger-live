@@ -1,9 +1,22 @@
 {
   "targets": {
     "lint": {
-      "outputs": [
-        "{projectRoot}/lint.json"
-      ],
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
+    },
+    "lint:ci": {
+      "inputs": [
+        "default",
+        {
+          "env": "CI_OS"
+        }
+      ]
+    },
+    "lint:i18n": {
       "inputs": [
         "default",
         {
