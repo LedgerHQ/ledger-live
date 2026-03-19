@@ -131,7 +131,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
     let scenarioAccount = await firstValueFrom(
       accountBridge
         .sync(account, { paginationConfig: {} })
-        .pipe(reduce((acc, f) => f(acc), account)),
+        .pipe(reduce((acc, f) => (f as (a: A) => A)(acc as A), account as A)),
     );
     console.log("Synchronization completed ✓");
 
@@ -167,7 +167,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(scenarioAccount, { paginationConfig: {} })
-            .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+            .pipe(reduce((acc, f) => (f as (a: A) => A)(acc as A), scenarioAccount as A)),
         );
       }
 
@@ -176,7 +176,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       const defaultTransaction = accountBridge.createTransaction(scenarioAccount);
       const transaction = await accountBridge.prepareTransaction(scenarioAccount, {
         ...defaultTransaction,
-        ...testTransaction,
+        ...(testTransaction as Partial<T>),
       } as T);
 
       console.log(" → ", "🧑‍🍳 ", chalk.bold("Prepared the transaction"), "✓");
@@ -190,7 +190,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
 
       console.log(" → ", "🪲 ", chalk.bold("No status errors detected"), "✓");
 
-      const { signedOperation } = await firstValueFrom(
+      const signedEvent = await firstValueFrom(
         accountBridge
           .signOperation({
             account: scenarioAccount,
@@ -198,16 +198,20 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
             deviceId: "",
           })
           .pipe(
-            map(e => {
+            map((e: SignOperationEvent) => {
               if (e.type === "device-signature-requested") {
                 onSignerConfirmation?.(e);
               }
 
               return e;
             }),
-            first((e): e is SignOperationEvent & { type: "signed" } => e.type === "signed"),
+            first(
+              (e: SignOperationEvent): e is SignOperationEvent & { type: "signed" } =>
+                e.type === "signed",
+            ),
           ),
       );
+      const { signedOperation } = signedEvent as SignOperationEvent & { type: "signed" };
 
       console.log(" → ", "🔏 ", chalk.bold("Signed the transaction"), "✓");
 
@@ -225,10 +229,10 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(
-              { ...scenarioAccount, pendingOperations: [optimisticOperation] },
+              { ...(scenarioAccount as A), pendingOperations: [optimisticOperation] },
               { paginationConfig: {} },
             )
-            .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+            .pipe(reduce((acc, f) => (f as (a: A) => A)(acc as A), scenarioAccount as A)),
         );
 
         if (!testTransaction.expect) {
@@ -288,7 +292,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
           scenarioAccount = await firstValueFrom(
             accountBridge
               .sync(scenarioAccount, { paginationConfig: {} })
-              .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+              .pipe(reduce((acc, f) => (f as (a: A) => A)(acc as A), scenarioAccount as A)),
           );
         }
 
@@ -300,8 +304,8 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
           await scenario.beforeSync?.();
           scenarioAccount = await firstValueFrom(
             accountBridge
-              .sync({ ...scenarioAccount }, { paginationConfig: {} })
-              .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
+              .sync({ ...(scenarioAccount as A) }, { paginationConfig: {} })
+              .pipe(reduce((acc, f) => (f as (a: A) => A)(acc as A), scenarioAccount as A)),
           );
 
           if (!internalTestTransaction.expect) {
@@ -347,13 +351,13 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       scenarioAccount = await firstValueFrom(
         accountBridge
           .sync(account, { paginationConfig: {} })
-          .pipe(reduce((acc, f) => f(acc), account)),
+          .pipe(reduce((acc, f) => (f as (a: A) => A)(acc as A), account as A)),
       );
     }
 
     console.log("\n");
 
-    await scenario.afterAll?.(scenarioAccount, strategy);
+    await scenario.afterAll?.(scenarioAccount as A, strategy);
     console.log("afterAll completed ✓");
     await scenario.teardown?.();
 

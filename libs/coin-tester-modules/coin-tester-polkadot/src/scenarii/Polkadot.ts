@@ -12,6 +12,7 @@ import { makeAccount } from "../fixtures";
 import { indexOperation } from "../indexer";
 import { polkadot } from "../helpers";
 import resolver from "@ledgerhq/coin-polkadot/signer/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import {
   PolkadotAccount,
   PolkadotOperationExtra,
@@ -26,7 +27,7 @@ const getTransactions = () => {
     name: "Send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "1"),
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -43,7 +44,7 @@ const getTransactions = () => {
     name: "Send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(polkadot.units[0], "100"),
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -134,7 +135,8 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     };
   },
   getTransactions,
-  mockIndexer: async (account, optimistic) => {
+  mockIndexer: async (account: Account, optimistic: Operation) => {
+    const polkadotAccount = account as PolkadotAccount;
     unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async header => {
       const blockHash = header.hash.toString();
 
@@ -150,7 +152,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
         return;
       }
 
-      const { nonce } = (await api.query.system.account(account.freshAddress)) as any;
+      const { nonce } = (await api.query.system.account(polkadotAccount.freshAddress)) as any;
 
       const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
       let amount = new BigNumber(0);
@@ -203,7 +205,7 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
           throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
       }
 
-      indexOperation(account.freshAddress, {
+      indexOperation(polkadotAccount.freshAddress, {
         blockNumber: blockInfo.number,
         timestamp: optimistic.date.getTime(),
         nonce,
@@ -222,10 +224,12 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       });
     });
   },
-  beforeAll: async account => {
-    expect(formatCurrencyUnit(polkadot.units[0], account.balance, { useGrouping: false })).toBe(
-      "100000",
-    );
+  beforeAll: async (account, _strategy?) => {
+    expect(
+      formatCurrencyUnit(polkadot.units[0], (account as PolkadotAccount).balance, {
+        useGrouping: false,
+      }),
+    ).toBe("100000");
   },
   beforeSync: async () => {
     await wsProvider.send("dev_newBlock", [{ count: 1 }]);

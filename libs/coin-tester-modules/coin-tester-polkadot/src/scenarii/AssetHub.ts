@@ -12,6 +12,7 @@ import { makeAccount } from "../fixtures";
 import { indexOperation } from "../indexer";
 import { assethub } from "../helpers";
 import resolver from "@ledgerhq/coin-polkadot/signer/index";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import {
   PolkadotAccount,
   PolkadotOperationExtra,
@@ -26,7 +27,7 @@ const getTransactions = () => {
     name: "Send 1 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(assethub.units[0], "1"),
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -43,7 +44,7 @@ const getTransactions = () => {
     name: "Send 100 DOT",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(assethub.units[0], "100"),
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("OUT");
@@ -61,7 +62,7 @@ const getTransactions = () => {
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(assethub.units[0], "500"),
     mode: "bond",
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("BOND");
@@ -83,7 +84,7 @@ const getTransactions = () => {
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(assethub.units[0], "100"),
     mode: "unbond",
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("UNBOND");
@@ -108,7 +109,7 @@ const getTransactions = () => {
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(assethub.units[0], "50"),
     mode: "rebond",
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("BOND");
@@ -136,7 +137,7 @@ const getTransactions = () => {
       "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
       "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
     ],
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("NOMINATE");
@@ -157,7 +158,7 @@ const getTransactions = () => {
     name: "Chill",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     mode: "chill",
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("CHILL");
@@ -170,7 +171,7 @@ const getTransactions = () => {
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     amount: parseCurrencyUnit(assethub.units[0], "250"),
     mode: "withdrawUnbonded",
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("WITHDRAW_UNBONDED");
@@ -189,7 +190,7 @@ const getTransactions = () => {
       "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
       "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
     ],
-    expect: (previousAccount, currentAccount) => {
+    expect: (previousAccount: PolkadotAccount, currentAccount: PolkadotAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("FEES");
@@ -288,7 +289,8 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     };
   },
   getTransactions,
-  mockIndexer: async (account, optimistic) => {
+  mockIndexer: async (account: Account, optimistic: Operation) => {
+    const polkadotAccount = account as PolkadotAccount;
     unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async header => {
       const blockHash = header.hash.toString();
 
@@ -304,7 +306,7 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
         return;
       }
 
-      const { nonce } = (await api.query.system.account(account.freshAddress)) as any;
+      const { nonce } = (await api.query.system.account(polkadotAccount.freshAddress)) as any;
 
       const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
       let amount = new BigNumber(0);
@@ -357,7 +359,7 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
           throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
       }
 
-      indexOperation(account.freshAddress, {
+      indexOperation(polkadotAccount.freshAddress, {
         blockNumber: blockInfo.number,
         timestamp: optimistic.date.getTime(),
         nonce,
@@ -376,10 +378,12 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       });
     });
   },
-  beforeAll: async account => {
-    expect(formatCurrencyUnit(assethub.units[0], account.balance, { useGrouping: false })).toBe(
-      "50000",
-    );
+  beforeAll: async (account, _strategy?) => {
+    expect(
+      formatCurrencyUnit(assethub.units[0], (account as PolkadotAccount).balance, {
+        useGrouping: false,
+      }),
+    ).toBe("50000");
   },
   beforeSync: async () => {
     await wsProvider.send("dev_newBlock", [{ count: 1 }]);
