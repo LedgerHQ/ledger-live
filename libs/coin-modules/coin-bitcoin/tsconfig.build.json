@@ -1,7 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "customConditions": []
+    "customConditions": [],
+    "types": [
+      "node",
+      "coininfo",
+      "bs58check/base"
+    ]
   },
   "exclude": [
     "**/*.test.ts",
@@ -10,6 +15,7 @@
     "**/*.spec.tsx",
     "**/__tests__/**/*",
     "**/tests/**/*",
+    "**/__mocks__/**/*",
     "**/*.test.js",
     "**/*.test.jsx",
     "**/*.spec.js",

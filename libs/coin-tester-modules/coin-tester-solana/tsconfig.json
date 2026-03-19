@@ -3,6 +3,7 @@
   "compilerOptions": {
     "lib": ["es2020", "dom"],
     "outDir": "lib",
+    "rootDir": "src",
     "composite": true,
     "declaration": true,
     "declarationMap": true,

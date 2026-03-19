@@ -7,12 +7,12 @@
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "baseUrl": ".",
     "rootDir": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "tests/*": ["tests/*"],
-      "LLD/*": ["src/mvvm/*"]
+      "*": ["./*"],
+      "~/*": ["./src/*"],
+      "tests/*": ["./tests/*"],
+      "LLD/*": ["./src/mvvm/*"]
     },
     "outDir": "dist",
     "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]

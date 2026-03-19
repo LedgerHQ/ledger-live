@@ -113,6 +113,18 @@
       "require": "./lib/test-helpers/*.js",
       "default": "./lib-es/test-helpers/*.js"
     },
+    "./modularDrawer/__mocks__/*": {
+      "@ledgerhq/source": "./src/modularDrawer/__mocks__/*.ts",
+      "types": "./lib/modularDrawer/__mocks__/*.d.ts",
+      "require": "./lib/modularDrawer/__mocks__/*.js",
+      "default": "./lib-es/modularDrawer/__mocks__/*.js"
+    },
+    "./cmc-client/__mocks__/*": {
+      "@ledgerhq/source": "./src/cmc-client/__mocks__/*.ts",
+      "types": "./lib/cmc-client/__mocks__/*.d.ts",
+      "require": "./lib/cmc-client/__mocks__/*.js",
+      "default": "./lib-es/cmc-client/__mocks__/*.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
