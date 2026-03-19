@@ -288,7 +288,9 @@ const MainSideBar = () => {
                   label={t("sidebar.accounts")}
                   icon={Icons.Wallet}
                   iconActiveColor="wallet"
-                  isActive={locationPathname.startsWith("/account")}
+                  isActive={
+                    locationPathname.startsWith("/account") || locationPathname === "/cryptos"
+                  }
                   onClick={handleClickAccounts}
                   disabled={noAccounts}
                   collapsed={secondAnim}
@@ -381,7 +383,7 @@ const MainSideBar = () => {
                     onClick={handleClickRefer}
                     isActive={Boolean(
                       referralProgramConfig?.params?.path &&
-                      locationPathname.startsWith(referralProgramConfig.params.path),
+                        locationPathname.startsWith(referralProgramConfig.params.path),
                     )}
                     collapsed={secondAnim}
                     NotifComponent={

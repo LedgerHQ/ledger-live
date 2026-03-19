@@ -7,7 +7,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { matchesSearch } from "~/renderer/screens/accounts/AccountList";
 
-export function useCryptosTableData(searchValue: string) {
+export function useCryptosAccountRows(searchValue: string) {
   const [hideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const walletState = useSelector(walletSelector);
   const nestedAccounts = useSelector(accountsSelector);

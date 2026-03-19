@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { EditNameView } from "./EditNameView";
 import { useEditNameViewModel } from "./useEditNameViewModel";
 
@@ -8,7 +8,7 @@ export const EditName = ({
   asset,
   children,
 }: {
-  account: Account;
+  account: AccountLike;
   asset: string;
   children: React.ReactNode;
 }) => {

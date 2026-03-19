@@ -8176,10 +8176,7 @@
     "title": "Crypto accounts",
     "tableActions": {
       "searchAddress": "Search address",
-      "addAddress": "Add address",
-      "highestBalance": "Highest balance",
-      "showAll": "Show all",
-      "hideEmptyAccounts": "Hide empty accounts"
+      "addAddress": "Add address"
     },
     "table": {
       "columns": {
@@ -8187,7 +8184,7 @@
         "address": "Address",
         "value": "Value"
       },
-      "openAccount": "Open account",
+      "editName": "Edit name",
       "emptyState": "No accounts match your search"
     }
   },
