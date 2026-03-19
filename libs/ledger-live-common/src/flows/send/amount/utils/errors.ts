@@ -20,5 +20,5 @@ export function pickBlockingError(
     if (err) return err;
   }
 
-  return Object.values(errors).find(Boolean);
+  return Object.values(errors).find(Boolean) as Error | undefined;
 }
