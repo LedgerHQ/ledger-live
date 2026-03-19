@@ -3422,6 +3422,14 @@
         "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
+      "totalMarketCap":{
+        "title": "Total Market Cap",
+        "desc": "Get notified when the total crypto market cap makes a significant move"
+      },
+      "topGainersLosers":{
+        "title": "Top Gainers and Losers",
+        "desc": "Get a weekly recap of the top gaining and losing tokens on the market"
+      },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"

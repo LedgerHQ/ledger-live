@@ -312,6 +312,8 @@ const extraProperties = async (store: AppStore) => {
     optInAnnouncements: notifications.announcementsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
+    optInTotalMarketCap: notifications.totalMarketCap,
+    optInTopGainersLosers: notifications.topGainersLosers,
     hasEnabledOsNotifications,
   };
   const notificationsBlacklisted = Object.entries(notifications)
