@@ -535,8 +535,7 @@ export function getRecordByCommitment({
   account: AleoAccount;
   commitment: string;
 }): AleoUnspentRecord | null {
-  const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords;
-  invariant(unspentPrivateRecords, "aleo: unspent private records are required");
+  const unspentPrivateRecords = account.aleoResources?.unspentPrivateRecords ?? [];
 
   return unspentPrivateRecords.find(record => record.commitment === commitment) ?? null;
 }
