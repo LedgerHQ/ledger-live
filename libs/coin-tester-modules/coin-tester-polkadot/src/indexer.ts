@@ -14,19 +14,14 @@ export function indexOperation(address: string, extrinsic: ExplorerExtrinsic) {
 }
 
 const handlers = [
-  http.get("*/accounts/*/operations", async ({ request, params }) => {
+  http.get("*/accounts/*/operations", async ({ params }) => {
     const address = params["1"] as string;
-    const response = await fetch(bypass(request)).then(res => res.json());
-    const opsMap = explorerAppendixByAddress.get(address);
+    const opsMap = explorerAppendixByAddress.get(address) ?? [];
 
-    if (opsMap) {
-      response.extrinsics.push(...opsMap);
-    }
-
-    return HttpResponse.json(response);
+    return HttpResponse.json({ status: 0, extrinsics: opsMap, rewards: [], slashes: [] });
   }),
   // Override the active era to be able to withdraw unbonded funds
-  http.get("*/pallets/staking/storage/activeEra", async ({ request }) => {
+  http.get("http://127.0.0.1:8080/pallets/staking/storage/activeEra", async ({ request }) => {
     const response = await fetch(bypass(request)).then(res => res.json());
     const activaEraDate = new Date();
     activaEraDate.setDate(activaEraDate.getDate()); // we update the active era to + 29 days so that we can withdraw unbonded funds
@@ -38,4 +33,10 @@ const handlers = [
 ];
 
 const server = setupServer(...handlers);
-server.listen({ onUnhandledRequest: "bypass" });
+server.listen({
+  onUnhandledRequest: request => {
+    const hostname = new URL(request.url).hostname;
+    if (["127.0.0.1", "localhost"].includes(hostname)) return;
+    throw new Error("Unhandled request");
+  },
+});
