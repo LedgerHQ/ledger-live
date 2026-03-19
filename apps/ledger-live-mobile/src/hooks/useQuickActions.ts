@@ -132,13 +132,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     if (canBeSold) {
       list.SELL = {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || isLegacyRebornFlow || !hasCurrency,
-        route: [
-          NavigatorName.Exchange,
-          {
-            screen: ScreenName.ExchangeSell,
-            params: { defaultCurrencyId: currency?.id },
-          },
-        ],
         icon: IconsLegacy.MinusMedium,
         customHandler: () => handleOpenBuySell("sell"),
       };
