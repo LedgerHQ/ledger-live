@@ -35,7 +35,7 @@ describe("Configuration", () => {
     });
 
     it("should return config for specific currency", () => {
-      const config = coinConfig.getCoinConfig(mockCurrency);
+      const config = coinConfig.getCoinConfig(mockCurrency.id);
       expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
     });
   });

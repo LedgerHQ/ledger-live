@@ -71,6 +71,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const sonic = useFeature("currencySonic");
   const sonicBlaze = useFeature("currencySonicBlaze");
   const sui = useFeature("currencySui");
+  const suiTestnet = useFeature("currencySuiTestnet");
   const mina = useFeature("currencyMina");
   const babylon = useFeature("currencyBabylon");
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
@@ -164,6 +165,7 @@ export function useCurrenciesUnderFeatureFlag() {
       sonic,
       sonic_blaze: sonicBlaze,
       sui,
+      sui_testnet: suiTestnet,
       mina,
       babylon,
       canton_network: canton,
@@ -253,6 +255,7 @@ export function useCurrenciesUnderFeatureFlag() {
       sonic,
       sonicBlaze,
       sui,
+      suiTestnet,
       mina,
       babylon,
       canton,

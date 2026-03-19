@@ -71,7 +71,13 @@ describe("List Operations", () => {
 
     expect(operations).toEqual(mockOperations.items);
     expect(next).toBe(mockOperations.next);
-    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, "asc", withApi, undefined);
+    expect(mockGetListOperations).toHaveBeenCalledWith(
+      mockAddress,
+      "asc",
+      withApi,
+      undefined,
+      undefined,
+    );
   });
 
   it("should return empty array and undefined when no operations", async () => {
@@ -95,7 +101,13 @@ describe("List Operations", () => {
     });
 
     expect(operations).toEqual(mockOperations.items);
-    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, "asc", withApi, mockCursor);
+    expect(mockGetListOperations).toHaveBeenCalledWith(
+      mockAddress,
+      "asc",
+      withApi,
+      mockCursor,
+      undefined,
+    );
   });
 
   it("should return operations sorted by date in ascending order", async () => {

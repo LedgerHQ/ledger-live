@@ -186,6 +186,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   },
   sui: {
     overridesDerivation: "44'/784'/<account>'/0'/0'",
+    tag: "sui",
   },
   canton: {
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
@@ -251,6 +252,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   solana_devnet: ["solanaMain", "solanaSub"],
   solana_testnet: ["solanaMain", "solanaSub"],
   sui: ["sui"],
+  sui_testnet: ["sui"],
   aptos: ["aptos"],
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
@@ -400,6 +402,7 @@ const disableBIP44: Record<string, boolean> = {
   filecoin: true,
   ton: true,
   sui: true,
+  sui_testnet: true,
   canton_network: true,
   canton_network_devnet: true,
   canton_network_testnet: true,
@@ -434,6 +437,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     case "ton":
     case "sui":
+    case "sui_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`;
     case "canton_network":
     case "canton_network_devnet":
