@@ -15,7 +15,7 @@ import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
 import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
 import Assets from "LLD/features/Assets";
-import { CryptoAddressesBanner } from "LLD/components/CryptoAddressesBanner";
+import { CryptoAddressesBanner } from "LLD/features/CryptoAddresses/components/Banner";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,

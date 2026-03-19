@@ -8158,6 +8158,17 @@
       "trendTooltip": "24h balance change"
     }
   },
+  "cryptoAddresses": {
+    "editName": {
+      "title": "Edit address name",
+      "input": "Address name",
+      "suggestions": {
+        "trading": "{{asset}} trading",
+        "savings": "{{asset}} savings"
+      },
+      "cta": "Confirm"
+    }
+  },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
     "entry": {
