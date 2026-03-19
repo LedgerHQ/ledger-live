@@ -48,7 +48,6 @@ const InstallSetOfApps = ({
     listedApps,
     error,
     currentAppOp,
-    itemProgress,
     progress,
     opened,
     allowManagerGranted,
@@ -115,7 +114,7 @@ const InstallSetOfApps = ({
                 appName={appName}
                 state={state}
                 productName={productName}
-                itemProgress={itemProgress}
+                progress={progress ?? 0}
               />
             );
           })}

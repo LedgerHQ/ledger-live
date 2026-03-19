@@ -88,7 +88,6 @@ const InstallSetOfApps = ({
     listedApps,
     error,
     currentAppOp,
-    itemProgress,
     progress,
     opened,
   } = status;
@@ -156,7 +155,7 @@ const InstallSetOfApps = ({
                   : ItemState.Idle;
 
           return (
-            <>
+            <React.Fragment key={appName}>
               {!shouldRestoreApps && currentAppOp?.name === appName && (
                 <TrackScreen
                   category={`Installing ${appName}`}
@@ -165,14 +164,13 @@ const InstallSetOfApps = ({
                 />
               )}
               <Item
-                key={appName}
                 i={i}
                 appName={appName}
                 state={state}
                 productName={productName}
-                itemProgress={itemProgress}
+                progress={progress ?? 0}
               />
-            </>
+            </React.Fragment>
           );
         })}
       </Flex>
