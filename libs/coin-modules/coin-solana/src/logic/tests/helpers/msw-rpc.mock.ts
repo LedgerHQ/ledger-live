@@ -5,7 +5,7 @@ import type {
   TransactionSignature,
 } from "@solana/web3.js";
 import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
+import { type SetupServer, setupServer } from "msw/node";
 import { getChainAPI, type ChainAPI } from "../../../network";
 
 export const TEST_ENDPOINT = "https://test-solana-rpc.example.com";
@@ -48,8 +48,11 @@ type RpcMethodHandlers = Partial<
   {
     [K in keyof RpcToConnection]: (params: unknown[]) => ConnectionResult<RpcToConnection[K]>;
   } & {
-    // Raw RPC encoding (string[] for base64 / parsed object) doesn't map to Connection's Buffer | ParsedAccountData
+    // Raw RPC encoding (string[] for base64 / parsed object) doesn't map
+    // cleanly to Connection's typed return values, so we use loose types.
     getAccountInfo: (params: unknown[]) => { context: { slot: number }; value: unknown };
+    getProgramAccounts: (params: unknown[]) => unknown[];
+    getEpochInfo: (params: unknown[]) => unknown;
   }
 >;
 
@@ -82,7 +85,7 @@ function invokeHandler(
 
 export function rpcHandler(methodHandlers: RpcMethodHandlers) {
   const handlers = methodHandlers as Record<string, (params: unknown[]) => unknown>;
-  return http.post(TEST_ENDPOINT, async ({ request }) => {
+  return http.post(TEST_ENDPOINT, async ({ request }: { request: Request }) => {
     const body = (await request.json()) as RpcRequest | RpcRequest[];
 
     if (Array.isArray(body)) {
@@ -97,7 +100,7 @@ export function rpcHandler(methodHandlers: RpcMethodHandlers) {
   });
 }
 
-export const server = setupServer();
+export const server = setupServer() as unknown as SetupServer;
 
 async function fetchRpc(method: string, params: unknown[]): Promise<unknown> {
   const response = await fetch(TEST_ENDPOINT, {

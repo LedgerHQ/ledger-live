@@ -3,6 +3,7 @@ import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { ParsedOnChainTokenAccount } from "../network/chain/web3";
 import type { SolanaTokenProgram } from "../types";
+import { computeUnstakeReserve, getStakeAccounts } from "./getStakes";
 
 export async function getBalance(
   api: ChainAPI,
@@ -11,24 +12,35 @@ export async function getBalance(
 ): Promise<Balance[]> {
   const token2022Enabled = options?.token2022Enabled ?? false;
 
-  const [balanceLamports, rentExemptMin, splTokenAccounts, token2022Accounts] = await Promise.all([
-    api.getBalance(address),
-    api.getMinimumBalanceForRentExemption(0),
-    api.getParsedTokenAccountsByOwner(address).then(r => r.value),
-    token2022Enabled
-      ? api.getParsedToken2022AccountsByOwner(address).then(r => r.value)
-      : Promise.resolve([]),
-  ]);
+  const [balanceLamports, rentExemptMin, splTokenAccounts, token2022Accounts, stakeAccounts] =
+    await Promise.all([
+      api.getBalance(address),
+      api.getMinimumBalanceForRentExemption(0),
+      api.getParsedTokenAccountsByOwner(address).then(r => r.value),
+      token2022Enabled
+        ? api.getParsedToken2022AccountsByOwner(address).then(r => r.value)
+        : Promise.resolve([]),
+      getStakeAccounts(api, address),
+    ]);
+
+  const stakedLamports = stakeAccounts.reduce(
+    (sum, sa) => sum + BigInt(sa.account.onChainAcc.account.lamports),
+    0n,
+  );
+
+  const unstakeReserve = await computeUnstakeReserve(api, address, stakeAccounts);
 
   const balanceLamportBigInt = BigInt(balanceLamports);
+  const totalBalance = balanceLamportBigInt + stakedLamports;
   const rentExemptMinBigInt = BigInt(rentExemptMin);
   const lockedLamports =
     balanceLamportBigInt < rentExemptMinBigInt ? balanceLamportBigInt : rentExemptMinBigInt;
 
+  const rawLocked = lockedLamports + stakedLamports + BigInt(unstakeReserve);
   const nativeBalance: Balance = {
-    value: balanceLamportBigInt,
+    value: totalBalance,
     asset: { type: "native" },
-    locked: lockedLamports,
+    locked: rawLocked > totalBalance ? totalBalance : rawLocked,
   };
 
   const splBalances = mapTokenAccountsToBalances(
