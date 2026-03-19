@@ -213,6 +213,14 @@
       "dependsOn": ["^build"],
       "cache": false
     },
+    "@ledgerhq/live-dmk-desktop#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["lib-es/**"]
+    },
+    "@ledgerhq/live-dmk-mobile#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["lib-es/**"]
+    },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
       "outputs": [
