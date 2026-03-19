@@ -11,11 +11,9 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
-import {
-  CurrentAccountHistDB,
-  safeGetRefValue,
-  useDAppManifestCurrencyIds,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
+import { useDAppManifestCurrencyIds } from "@ledgerhq/live-common/wallet-api/react/useDAppManifestCurrencyIds";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
 import { setDrawer } from "~/renderer/drawers/Provider";

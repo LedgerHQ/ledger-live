@@ -1,7 +1,7 @@
 import React, { useContext, createContext, useMemo } from "react";
 import { LiveAppProviderProps, LiveAppContextType } from "./types";
 import { LiveAppManifest } from "../../platform/types";
-import { useLocalLiveApp } from "../react";
+import { useLocalLiveApp } from "../react/useLocalLiveApp";
 
 const initialState: LiveAppManifest[] = [];
 

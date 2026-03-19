@@ -1,16 +1,12 @@
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
-import {
-  safeGetRefValue,
-  ExchangeType,
-  UiHook,
-  useConfig,
-  useWalletAPIServer,
-  CurrentAccountHistDB,
-  useCacheBustedLiveApps,
-  useDAppManifestCurrencyIds,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
+import { ExchangeType, UiHook, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
+import { useConfig } from "@ledgerhq/live-common/wallet-api/react/useConfig";
+import { useWalletAPIServer } from "@ledgerhq/live-common/wallet-api/react/useWalletAPIServer";
+import { useCacheBustedLiveApps } from "@ledgerhq/live-common/wallet-api/react/useCacheBustedLiveApps";
+import { useDAppManifestCurrencyIds } from "@ledgerhq/live-common/wallet-api/react/useDAppManifestCurrencyIds";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import type { AccountLike, Operation, Account } from "@ledgerhq/types-live";

@@ -9,7 +9,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useTheme } from "styled-components";
 import { Cta } from "./Cta";
-import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
+import { translateContent } from "@ledgerhq/live-common/wallet-api/logic/context";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function FullCard(props: PropsCard<LiveAppManifest>) {

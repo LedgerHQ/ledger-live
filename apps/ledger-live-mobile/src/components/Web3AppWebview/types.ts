@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import WebView from "react-native-webview";
 

@@ -11,7 +11,8 @@ import {
   Warning,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { AppProps } from "LLM/features/Web3Hub/types";
-import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import type { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import SelectAccountButton from "../Web3Player/SelectAccountButton";

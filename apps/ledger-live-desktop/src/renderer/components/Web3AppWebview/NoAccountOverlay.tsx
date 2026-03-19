@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelectAccount } from "./helpers";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 
 const Overlay = styled.div`
   display: flex;

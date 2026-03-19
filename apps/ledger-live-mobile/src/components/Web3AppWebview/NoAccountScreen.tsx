@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 import Button from "../Button";
 import { useSelectAccount } from "./helpers";
 type NoAccountScreenProps = {

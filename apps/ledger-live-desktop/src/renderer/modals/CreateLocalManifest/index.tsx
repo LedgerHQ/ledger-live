@@ -21,7 +21,7 @@ import updateObjectAtPath from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
 import FormLiveAppSelector from "./FormLiveAppSelector";
 import FormLiveAppArrayInput from "./FormLiveAppArrayInput";
-import { useCategories } from "@ledgerhq/live-common/wallet-api/react";
+import { useCategories } from "@ledgerhq/live-common/wallet-api/react/useCategories";
 
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import FormLiveAppArraySelect from "./FormLiveAppArraySelect";

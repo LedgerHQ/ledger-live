@@ -1,10 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import {
-  CurrentAccountHistDB,
-  useDAppManifestCurrencyIds,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
+import { useDAppManifestCurrencyIds } from "@ledgerhq/live-common/wallet-api/react/useDAppManifestCurrencyIds";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

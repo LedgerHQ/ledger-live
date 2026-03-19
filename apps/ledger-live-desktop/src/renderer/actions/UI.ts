@@ -2,7 +2,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { createAction } from "redux-actions";
 import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react/types";
 
 export const openInformationCenter = createAction(
   "INFORMATION_CENTER_OPEN",

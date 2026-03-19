@@ -10,7 +10,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { CurrentAccountHistDB, UiHook } from "./react";
+import { CurrentAccountHistDB, UiHook } from "./react/types";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";

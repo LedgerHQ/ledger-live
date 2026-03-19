@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
 
 import { Web3AppWebview } from "../Web3AppWebview";
 import Box from "../Box";

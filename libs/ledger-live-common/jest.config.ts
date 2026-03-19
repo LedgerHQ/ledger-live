@@ -10,6 +10,7 @@ const testPathIgnorePatterns = [
   ".yalc",
   "cli/",
   "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
+  "__tests__/testHelpers\\.ts$",
 ];
 
 const esmDeps = ["ky"];

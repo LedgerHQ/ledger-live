@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useCatalog, useRecentlyUsedDB } from "../hooks";
 import { LocalLiveAppSection } from "./LocalLiveAppSection";
 import { useLocation } from "react-router";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
+import { Categories } from "@ledgerhq/live-common/wallet-api/react/types";
 import PageHeader from "LLD/components/PageHeader";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 

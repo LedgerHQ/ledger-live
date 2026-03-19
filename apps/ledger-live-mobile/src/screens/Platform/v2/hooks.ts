@@ -1,12 +1,9 @@
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { TextInput } from "react-native";
-import {
-  useCategories,
-  useDisclaimerRaw,
-  useRecentlyUsed,
-  DisclaimerRaw,
-  Categories,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { useCategories } from "@ledgerhq/live-common/wallet-api/react/useCategories";
+import { useDisclaimerRaw } from "@ledgerhq/live-common/wallet-api/react/useDisclaimerRaw";
+import { useRecentlyUsed } from "@ledgerhq/live-common/wallet-api/react/useRecentlyUsed";
+import { DisclaimerRaw, Categories } from "@ledgerhq/live-common/wallet-api/react/types";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 import {

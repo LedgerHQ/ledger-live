@@ -4,7 +4,8 @@ import { Flex } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import SelectAccountButton from "./SelectAccountButton";
 

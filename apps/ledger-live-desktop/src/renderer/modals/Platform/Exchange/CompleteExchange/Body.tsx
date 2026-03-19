@@ -4,7 +4,7 @@ import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";

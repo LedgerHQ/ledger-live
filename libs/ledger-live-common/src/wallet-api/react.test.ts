@@ -13,7 +13,7 @@ const { renderHook, act, cleanup } = require("@testing-library/react");
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import type { useWalletAPIServerOptions } from "./react";
+import type { useWalletAPIServerOptions } from "./react/types";
 
 const mockSetHandler = jest.fn();
 const mockSetConfig = jest.fn();
@@ -81,7 +81,7 @@ jest.mock("../currencies", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { useWalletAPIServer } = require("./react");
+const { useWalletAPIServer } = require("./react/useWalletAPIServer");
 
 function createDefaultOptions(
   overrides?: Partial<useWalletAPIServerOptions>,
@@ -266,12 +266,12 @@ describe("useWalletAPIServer", () => {
     expect(registeredHandlers).toContain("account.request");
   });
 
-  it("should not register account.request handler when uiHook callback is missing", () => {
+  it("should still register account.request handler when uiHook callback is missing (guards at call time)", () => {
     const options = createDefaultOptions({ uiHook: {} });
     renderHook(() => useWalletAPIServer(options));
 
     const registeredHandlers = mockSetHandler.mock.calls.map(([name]) => name);
-    expect(registeredHandlers).not.toContain("account.request");
+    expect(registeredHandlers).toContain("account.request");
   });
 });
 

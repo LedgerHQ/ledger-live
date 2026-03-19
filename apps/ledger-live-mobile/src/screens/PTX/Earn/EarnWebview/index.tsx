@@ -3,7 +3,7 @@ import { View, StyleSheet, SafeAreaView, BackHandler, Platform } from "react-nat
 import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 import WebView from "react-native-webview";
 

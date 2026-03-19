@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { BackHandler, Platform } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";

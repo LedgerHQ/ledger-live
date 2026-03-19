@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
+import { Categories } from "@ledgerhq/live-common/wallet-api/react/types";
 import KeyboardView from "~/components/KeyboardView";
 
 export function CatalogSection({

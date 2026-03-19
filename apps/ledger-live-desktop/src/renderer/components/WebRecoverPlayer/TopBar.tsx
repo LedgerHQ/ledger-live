@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react/safeGetRefValue";
 
 import { rgba } from "~/renderer/styles/helpers";
 

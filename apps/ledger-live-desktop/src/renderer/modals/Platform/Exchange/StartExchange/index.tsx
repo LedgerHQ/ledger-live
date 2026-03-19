@@ -2,7 +2,7 @@ import React from "react";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react/types";
 import {
   StartExchangeErrorResult,
   StartExchangeSuccessResult,

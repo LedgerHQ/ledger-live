@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react/types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { useTheme } from "@react-navigation/native";
