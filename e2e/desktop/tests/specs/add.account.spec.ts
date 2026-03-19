@@ -68,7 +68,7 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
-        await app.portfolio.openAddAccountModal();
+        await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {
