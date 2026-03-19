@@ -15,16 +15,8 @@ import type {
   AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import invariant from "invariant";
 import coinConfig from "../config";
-import {
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  lastBlock,
-  listOperations,
-  validateAddress,
-} from "../logic";
+import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
 import type { AleoTransactionIntentData, AleoCoinConfig, AleoConfig } from "../types";
 
@@ -44,16 +36,10 @@ export function createApi(
       throw new Error("combine is not supported");
     },
     craftTransaction: async (
-      txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
-      customFees?: FeeEstimation,
+      _txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+      _customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => {
-      // Fees are permanently handled by txIntent of type fee_public(or later also fee_private) only.
-      // Custom fees are NOT planned to be supported in the Aleo implementation.
-      invariant(!customFees, "customFees are not supported");
-      // useAllAmount will be supported once private transaction logic is added.
-      invariant(!txIntent.useAllAmount, "useAllAmount is not supported yet");
-
-      return craftTransaction({ currency, txIntent });
+      throw new Error("craftTransaction is not supported");
     },
     craftRawTransaction: (
       _transaction: string,

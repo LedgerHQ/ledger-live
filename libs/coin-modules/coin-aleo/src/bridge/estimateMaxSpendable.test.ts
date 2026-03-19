@@ -1,16 +1,24 @@
 import BigNumber from "bignumber.js";
-import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
+import { getMockedAccount, mockUnspentRecord1 } from "../__tests__/fixtures/account.fixture";
 import type { Transaction } from "../types";
 import { TRANSACTION_TYPE } from "../constants";
+import { getRecordByCommitment, isPrivateTransaction } from "../logic/utils";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("./prepareTransaction");
 jest.mock("./createTransaction");
+jest.mock("../logic/utils", () => ({
+  ...jest.requireActual("../logic/utils"),
+  getRecordByCommitment: jest.fn(),
+  isPrivateTransaction: jest.fn(),
+}));
 
 const mockPrepareTransaction = jest.mocked(prepareTransaction);
 const mockCreateTransaction = jest.mocked(createTransaction);
+const mockGetRecordByCommitment = jest.mocked(getRecordByCommitment);
+const mockIsPrivateTransaction = jest.mocked(isPrivateTransaction);
 
 describe("estimateMaxSpendable", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -27,6 +35,7 @@ describe("estimateMaxSpendable", () => {
     jest.clearAllMocks();
 
     mockPrepareTransaction.mockResolvedValue(mockPreparedTransaction);
+    mockIsPrivateTransaction.mockReturnValue(false);
     mockCreateTransaction.mockReturnValue({
       family: "aleo",
       amount: new BigNumber(0),
@@ -90,5 +99,56 @@ describe("estimateMaxSpendable", () => {
 
     expect(mockCreateTransaction).toHaveBeenCalledTimes(1);
     expect(mockCreateTransaction).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("should return zero for private tx when amountRecordCommitment is missing", async () => {
+    mockIsPrivateTransaction.mockReturnValue(true);
+    mockPrepareTransaction.mockResolvedValue({
+      ...mockPreparedTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    const result = await estimateMaxSpendable({
+      account: mockAccount,
+      parentAccount: undefined,
+      transaction: undefined,
+    });
+
+    expect(result).toEqual(new BigNumber(0));
+    expect(mockGetRecordByCommitment).not.toHaveBeenCalled();
+  });
+
+  it("should return microcredits value for private tx when amountRecordCommitment exists", async () => {
+    const commitment = "record-1-commitment";
+    mockIsPrivateTransaction.mockReturnValue(true);
+    mockPrepareTransaction.mockResolvedValue({
+      ...mockPreparedTransaction,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: commitment,
+        feeRecordCommitment: null,
+      },
+    });
+    mockGetRecordByCommitment.mockReturnValue({
+      ...mockUnspentRecord1,
+      microcredits: "12345",
+    });
+
+    const result = await estimateMaxSpendable({
+      account: mockAccount,
+      parentAccount: undefined,
+      transaction: undefined,
+    });
+
+    expect(mockGetRecordByCommitment).toHaveBeenCalledTimes(1);
+    expect(mockGetRecordByCommitment).toHaveBeenCalledWith({
+      account: mockAccount,
+      commitment,
+    });
+    expect(result).toEqual(new BigNumber(12345));
   });
 });
