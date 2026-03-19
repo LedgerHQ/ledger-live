@@ -57,10 +57,10 @@ describe("Assets", () => {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
     });
 
-    expect(screen.queryByText("Cryptos")).not.toBeInTheDocument();
+    expect(screen.queryByText("Crypto")).not.toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText("Cryptos")).toBeVisible();
+      expect(screen.getByText("Crypto")).toBeVisible();
     });
     expect(screen.getByText("Stablecoins")).toBeVisible();
 
@@ -76,7 +76,7 @@ describe("Assets", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Cryptos")).toBeVisible();
+      expect(screen.getByText("Crypto")).toBeVisible();
     });
     expect(screen.getByText("Stablecoins")).toBeVisible();
   });
@@ -113,7 +113,7 @@ describe("Assets", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Cryptos")).toBeVisible();
+      expect(screen.getByText("Crypto")).toBeVisible();
     });
     expect(screen.getByText("Stablecoins")).toBeVisible();
 

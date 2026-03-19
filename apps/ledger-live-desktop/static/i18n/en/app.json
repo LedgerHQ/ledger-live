@@ -823,11 +823,11 @@
     "title": "Card",
     "imageAlt": "Card Image",
     "spendYourCrypto": "Spend your crypto",
-    "payDescription": "Pay online or in store with a crypto card",
+    "payDescription": "Pay online or in stores with a crypto card.",
     "exploreCards": "Explore Cards",
-    "iAlreadyHaveACard": "I already have a card",
-    "unlockLiquidity": "Unlock liquidity",
-    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
+    "iAlreadyHaveACard": "I have a card",
+    "unlockLiquidity": "Spend crypto in real life",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
   "lend": {
     "title": "Lend crypto",
@@ -2273,11 +2273,11 @@
     "steps": {
       "options": {
         "fromBank": {
-          "title": "Bank transfer",
-          "description": "Receive stablecoin by sending cash"
+          "title": "Via bank transfer",
+          "description": "Receive stablecoin by simply sending cash"
         },
         "fromCrypto": {
-          "title": "Receive crypto"
+          "title": "Via crypto address"
         }
       }
     }
@@ -8101,16 +8101,16 @@
     "title": "Home",
     "today": "Today",
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto",
+    "noBalanceTitle": "Start by funding your wallet",
     "perpsEntry": {
       "title": "Perpetuals",
       "description": "Trade with leverage",
       "cta": "Discover"
     },
-    "noDeviceTitle": "The most secure wallet"
+    "noDeviceTitle": "Your secure crypto wallet"
   },
   "marketBanner": {
-    "title": "Explore market",
+    "title": "Explore the market",
     "genericError": "Connection failed",
     "cta": "View all",
     "scrollLeft": "Scroll left",
@@ -8129,7 +8129,7 @@
     },
     "dialog": {
       "title": "Mood index",
-      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
       "cta": "Got it"
     }
   },
@@ -8142,7 +8142,7 @@
     "buyALedger": "Buy a Ledger"
   },
   "assets": {
-    "cryptos": "Cryptos",
+    "cryptos": "Crypto",
     "stablecoins": "Stablecoins",
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
@@ -8155,7 +8155,7 @@
       "balance": "Balance",
       "value": "Value",
       "trend": "1D Trend",
-      "trendTooltip": "24h balance change"
+      "trendTooltip": "Changes to your balance in the last 24 hours."
     }
   },
   "nftEntryPoint": {
@@ -8167,9 +8167,9 @@
   },
   "topBar": {
     "activityIndicator": {
-      "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
-      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
-      "upToDate": "You're up to date",
+      "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "Your assets are safe. This is a temporary sync issue.\n Tap to retry",
+      "upToDate": "Portfolio up to date",
       "lastSync": "Last sync: {{timeAgo}}. Tap to refresh",
       "refreshing": "Refreshing..."
     },

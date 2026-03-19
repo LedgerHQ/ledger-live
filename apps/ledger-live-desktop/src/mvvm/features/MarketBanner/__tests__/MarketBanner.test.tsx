@@ -19,7 +19,7 @@ describe("MarketBannerView", () => {
 
   it("should render correctly", () => {
     render(<MarketBannerView isLoading={false} isError={false} data={undefined} />);
-    expect(screen.getByText("Explore market")).toBeVisible();
+    expect(screen.getByText("Explore the market")).toBeVisible();
     expect(screen.queryByTestId("skeleton-list")).toBeNull();
   });
 
