@@ -397,8 +397,12 @@ export function reduceShieldedSyncResult(
   info: AccountShapeInfo<BitcoinAccount>,
   accountId: string,
 ): ShieldedScanAccumulated {
-  const processedIds = new Set(accumulated.processedOperations.map(tx => tx.id));
-  const newTransactions = result.operations.filter(tx => !processedIds.has(tx.id));
+  const processedIds = new Set(
+    accumulated.processedOperations.map((tx: ShieldedTransaction) => tx.id),
+  );
+  const newTransactions = result.operations.filter(
+    (tx: ShieldedTransaction) => !processedIds.has(tx.id),
+  );
 
   if (newTransactions.length === 0) {
     return {
