@@ -26,7 +26,7 @@ describe("useActivityIndicatorTooltip", () => {
       }),
     );
     expect(result.current).toBe(
-      "There was a temporary network issue. Your assets are safe.\n Tap to retry",
+      "Your assets are safe. This is a temporary sync issue.\n Tap to retry",
     );
   });
 
@@ -40,7 +40,7 @@ describe("useActivityIndicatorTooltip", () => {
       }),
     );
     expect(result.current).toBe(
-      "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: BTC/ETH. Tap to retry",
+      "Your assets are safe. This is a temporary sync issue.\n Affected accounts: BTC/ETH. Tap to retry",
     );
   });
 
@@ -53,7 +53,7 @@ describe("useActivityIndicatorTooltip", () => {
         lastSyncMs: 0,
       }),
     );
-    expect(result.current).toBe("You're up to date");
+    expect(result.current).toBe("Portfolio up to date");
   });
 
   it("returns upToDate when last sync is less than 1 minute ago", () => {
@@ -65,7 +65,7 @@ describe("useActivityIndicatorTooltip", () => {
         lastSyncMs: Date.now() - 30 * 1000,
       }),
     );
-    expect(result.current).toBe("You're up to date");
+    expect(result.current).toBe("Portfolio up to date");
   });
 
   describe("with formatTimeAgo (frozen time: 2024-06-15T12:00:00Z)", () => {

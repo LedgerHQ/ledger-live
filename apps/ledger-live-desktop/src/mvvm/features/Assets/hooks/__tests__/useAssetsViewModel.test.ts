@@ -316,7 +316,7 @@ describe("useAssetsViewModel", () => {
   it("should have pre-resolved titles in sections", () => {
     const { result } = renderHook(() => useAssetsViewModel());
 
-    expect(result.current.sections[0].title).toBe("Cryptos");
+    expect(result.current.sections[0].title).toBe("Crypto");
     expect(result.current.sections[1].title).toBe("Stablecoins");
   });
 

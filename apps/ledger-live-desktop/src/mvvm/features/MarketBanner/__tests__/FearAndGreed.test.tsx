@@ -97,7 +97,7 @@ describe("FearAndGreedIndicator", () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    jest.clearAllTimers();
     jest.useRealTimers();
   });
 
@@ -121,18 +121,15 @@ describe("FearAndGreedIndicator", () => {
     expect(text?.textContent).toBe("0");
   });
 
-  it("animates to the target value", async () => {
+  it("animates to the target value", () => {
     const { container } = render(<FearAndGreedIndicator value={75} />);
     const text = container.querySelector("text");
 
-    // Fast-forward through animation
     act(() => {
       jest.advanceTimersByTime(1200);
     });
 
-    await waitFor(() => {
-      expect(text?.textContent).toBe("75");
-    });
+    expect(text?.textContent).toBe("75");
   });
 
   it("positions the circle at the left for value 0", () => {
@@ -148,51 +145,41 @@ describe("FearAndGreedIndicator", () => {
     expect(cx).toBeLessThan(21.5814);
   });
 
-  it("positions the circle at the right for value 100", async () => {
+  it("positions the circle at the right for value 100", () => {
     const { container } = render(<FearAndGreedIndicator value={100} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
     });
 
-    await waitFor(() => {
-      const circle = container.querySelector("circle");
-      const cx = parseFloat(circle?.getAttribute("cx") || "0");
-
-      // At value 100, angle is 0°, so x should be near right side
-      expect(cx).toBeGreaterThan(21.5814);
-    });
+    const circle = container.querySelector("circle");
+    const cx = parseFloat(circle?.getAttribute("cx") || "0");
+    expect(cx).toBeGreaterThan(21.5814);
   });
 
-  it("positions the circle at the center for value 50", async () => {
+  it("positions the circle at the center for value 50", () => {
     const { container } = render(<FearAndGreedIndicator value={50} />);
 
     act(() => {
       jest.advanceTimersByTime(1200);
     });
 
-    await waitFor(() => {
-      const circle = container.querySelector("circle");
-      const cx = parseFloat(circle?.getAttribute("cx") || "0");
-
-      // At value 50, angle is 90°, so x should be near center
-      expect(cx).toBeCloseTo(21.5814, 1);
-    });
+    const circle = container.querySelector("circle");
+    const cx = parseFloat(circle?.getAttribute("cx") || "0");
+    expect(cx).toBeCloseTo(21.5814, 1);
   });
 
-  it("displays rounded value during animation", async () => {
+  it("displays rounded value during animation", () => {
     const { container } = render(<FearAndGreedIndicator value={50} />);
     const text = container.querySelector("text");
 
-    // Check intermediate values are integers
     act(() => {
       jest.advanceTimersByTime(600);
     });
-    await waitFor(() => {
-      const value = parseInt(text?.textContent || "0", 10);
-      expect(Number.isInteger(value)).toBe(true);
-      expect(value).toBeGreaterThan(0);
-      expect(value).toBeLessThan(50);
-    });
+
+    const value = parseInt(text?.textContent || "0", 10);
+    expect(Number.isInteger(value)).toBe(true);
+    expect(value).toBeGreaterThan(0);
+    expect(value).toBeLessThan(50);
   });
 });

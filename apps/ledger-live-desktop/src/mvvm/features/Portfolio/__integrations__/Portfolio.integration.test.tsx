@@ -391,7 +391,7 @@ describe("PortfolioView", () => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
       });
 
-      expect(screen.getByText("Explore market")).toBeVisible();
+      expect(screen.getByText("Explore the market")).toBeVisible();
     });
 
     it("should render MarketBanner skeleton while loading", () => {
@@ -423,7 +423,7 @@ describe("PortfolioView", () => {
 
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Explore market")).toBeNull();
+      expect(screen.queryByText("Explore the market")).toBeNull();
     });
   });
 
@@ -513,14 +513,14 @@ describe("PortfolioView", () => {
         expect(screen.getByText("Bitcoin")).toBeVisible();
       });
 
-      expect(screen.queryByText("Cryptos")).toBeVisible();
+      expect(screen.queryByText("Crypto")).toBeVisible();
       expect(screen.queryByText("Stablecoins")).toBeVisible();
     });
 
     it("should render AssetDistribution when shouldDisplayAssetSection is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
 
-      expect(screen.queryByText("Cryptos")).not.toBeInTheDocument();
+      expect(screen.queryByText("Crypto")).not.toBeInTheDocument();
     });
   });
 
