@@ -6,7 +6,7 @@ import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
-import { useTrackingPairs, useUserSettings } from "~/actions/general";
+import { useTrackingPairs } from "~/actions/general";
 import {
   saveAccounts,
   saveBle,
@@ -175,19 +175,13 @@ const countervaluesChangesStats = (oldState: State, newState: State) => {
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
-  const userSettings = useUserSettings();
 
   useDBSaveEffect({
     throttle: 2000,
     getChangesStats: countervaluesChangesStats,
     lense: useCallback(
-      (state: State) =>
-        exportCountervalues(
-          countervaluesStateSelector(state),
-          trackingPairs,
-          userSettings.selectedTimeRange,
-        ),
-      [trackingPairs, userSettings.selectedTimeRange],
+      (state: State) => exportCountervalues(countervaluesStateSelector(state), trackingPairs),
+      [trackingPairs],
     ),
     save: saveCountervalues,
   });
