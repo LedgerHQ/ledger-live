@@ -88,7 +88,7 @@ const mockCustomAssetsConfigs: Record<string, ReturnType<() => unknown>> = {
   },
 };
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     getCustomFeeConfig: (currency: CryptoOrTokenCurrency) =>
       mockCustomFeeConfigs[currency.id] ?? null,

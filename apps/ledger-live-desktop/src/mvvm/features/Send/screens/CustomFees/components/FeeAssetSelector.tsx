@@ -12,7 +12,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor";
+import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 
 type FeeAssetSelectorProps = Readonly<{
   options: readonly FeeAssetOption[];

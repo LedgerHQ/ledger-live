@@ -4,11 +4,11 @@ import { act } from "tests/testSetup";
 import { useConfirmationViewModel } from "../useConfirmationViewModel";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 
 jest.mock("~/renderer/drawers/Provider", () => ({ setDrawer: jest.fn() }));
 jest.mock("~/renderer/drawers/OperationDetails", () => ({ OperationDetails: {} }));
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: { isUserRefusedTransactionError: jest.fn() },
 }));
 jest.mock("../../../../../FlowWizard/FlowWizardContext", () => ({

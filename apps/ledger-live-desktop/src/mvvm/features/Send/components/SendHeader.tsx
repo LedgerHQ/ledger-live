@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SEND_FLOW_STEP,
   type SendFlowBusinessContext,

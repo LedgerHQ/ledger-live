@@ -6,8 +6,8 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import {

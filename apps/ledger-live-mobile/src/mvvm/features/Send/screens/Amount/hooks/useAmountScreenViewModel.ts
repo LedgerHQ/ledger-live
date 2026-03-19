@@ -13,7 +13,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useAmountInputController } from "./useAmountInputController";
 import { useQuickActions } from "./useQuickActions";
 import { useFeePresetOptions } from "./useFeePresetOptions";
