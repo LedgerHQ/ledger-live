@@ -216,7 +216,7 @@ export async function getBlockV2(height: number): Promise<Block> {
       )[] = [
         ...mirrorTx.transfers,
         ...mirrorTx.token_transfers,
-        ...(item.type === "erc20" ? [item.data.transfer] : []),
+        ...(item.type === "erc20" ? item.data.transfers : []),
       ];
 
       operations = allTransfers.flatMap(transfer => {

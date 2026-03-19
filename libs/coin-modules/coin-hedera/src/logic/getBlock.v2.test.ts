@@ -270,7 +270,7 @@ describe("getBlockV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([
@@ -348,7 +348,7 @@ describe("getBlockV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorContractCall,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([
@@ -397,7 +397,7 @@ describe("getBlockV2", () => {
     const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
       mirrorTransaction: mockMirrorTransaction,
       contractCallResult: mockContractCallResult,
-      transfer: mockERC20Transfer,
+      transfers: [mockERC20Transfer],
     });
 
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([
