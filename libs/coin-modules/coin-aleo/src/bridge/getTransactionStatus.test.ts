@@ -147,6 +147,7 @@ describe("getTransactionStatus", () => {
         ...mockTransaction,
         recipient: account.freshAddress,
         mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+        properties: { amountRecordCommitment: null, feeRecordCommitment: null },
       };
 
       const result = await getTransactionStatus(account, transaction);
