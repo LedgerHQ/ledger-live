@@ -1,16 +1,16 @@
 import React from "react";
-import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 
-export const AssetIcon = ({
-  item,
-  getCapitalizedTicker,
-}: {
-  item: MarketItemPerformer;
-  getCapitalizedTicker: (item: MarketItemPerformer) => string;
-}) => {
-  if (item.ledgerIds && item.ledgerIds.length > 0 && item.ticker) {
-    return <CryptoIcon ledgerId={item.ledgerIds[0]} ticker={item.ticker} size="40px" />;
+type AssetIconProps = {
+  readonly ledgerId?: string;
+  readonly ticker?: string;
+  readonly image?: string;
+  readonly capitalizedTicker: string;
+};
+
+export const AssetIcon = ({ ledgerId, ticker, image, capitalizedTicker }: AssetIconProps) => {
+  if (ledgerId && ticker) {
+    return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size="40px" />;
   }
 
   return (
@@ -18,8 +18,8 @@ export const AssetIcon = ({
       width={40}
       height={40}
       className="overflow-hidden rounded-full"
-      src={item.image}
-      alt={`${getCapitalizedTicker(item)} logo`}
+      src={image}
+      alt={`${capitalizedTicker} logo`}
     />
   );
 };
