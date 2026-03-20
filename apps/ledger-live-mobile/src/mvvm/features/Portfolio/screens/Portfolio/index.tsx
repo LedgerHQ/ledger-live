@@ -25,8 +25,8 @@ import MarketBanner from "LLM/features/MarketBanner";
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
+  PortfolioCategorizedAssetsSection,
   PortfolioCarouselSection,
-  PortfolioCryptosSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
@@ -128,11 +128,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     }
 
     if (shouldDisplayAssetSection) {
-      sections.push(
-        <Box key="cryptos" px={6}>
-          <PortfolioCryptosSection />
-        </Box>,
-      );
+      sections.push(<PortfolioCategorizedAssetsSection key="categorizedAssets" />);
     } else {
       sections.push(
         <PortfolioAssetsSection
