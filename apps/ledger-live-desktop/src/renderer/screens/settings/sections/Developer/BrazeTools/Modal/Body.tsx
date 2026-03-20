@@ -25,6 +25,8 @@ interface FormState {
   title: string;
   description: string;
   image: string;
+  image_background: string;
+  icon: string;
   mainCta: string;
   link: string;
   secondaryCta: string;
@@ -44,6 +46,8 @@ const initialState: FormState = {
   description: "Dummy Description",
   image:
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQec1piP0de4iTT4LlWAg_SSU8DRv12XEfqwQ&s",
+  image_background: "",
+  icon: "Settings",
   mainCta: "Dummy Main CTA",
   link: "https://www.ledger.com/",
   secondaryCta: "Dummy Dismiss CTA",
@@ -72,12 +76,35 @@ export const ModalBody: React.FC = () => {
     useGenerateLocalBraze();
 
   const handleAddCard = () => {
-    const { title, description, image, mainCta, link, secondaryCta, cta, tag, url, path, order } =
-      formData;
+    const {
+      title,
+      description,
+      image,
+      image_background,
+      icon,
+      mainCta,
+      link,
+      secondaryCta,
+      cta,
+      tag,
+      url,
+      path,
+      order,
+    } = formData;
     if (selectedTab === "PortfolioContentCard") {
       addLocalPortfolioCard(title, description, image, order, url, cta, tag);
     } else if (selectedTab === "ActionContentCard") {
-      addLocalActionCard(title, description, image, mainCta, link, secondaryCta, order);
+      addLocalActionCard(
+        title,
+        description,
+        image,
+        mainCta,
+        link,
+        secondaryCta,
+        order,
+        icon,
+        image_background,
+      );
     } else if (selectedTab === "NotificationContentCard") {
       addLocalNotificationCard(title, description, cta, false, url, path, order);
     }
@@ -149,6 +176,16 @@ export const ModalBody: React.FC = () => {
         field: "image",
         placeholder: "Image URL",
         label: t("settings.developer.brazeTools.modal.fields.image"),
+      },
+      {
+        field: "image_background",
+        placeholder: "Image background URL (braze placement)",
+        label: "Image background",
+      },
+      {
+        field: "icon",
+        placeholder: "Icon name (e.g. Settings, Wallet)",
+        label: "Icon",
       },
       {
         field: "mainCta",

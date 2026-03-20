@@ -68,6 +68,8 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
         description={slide.description}
         onClose={() => onDismiss(slide.id, index)}
         onClick={() => onClick(slide.id, slide.link, index)}
+        icon={slide.icon}
+        image_background={slide.image_background}
       />
     </LogContentCardWrapper>
   ));

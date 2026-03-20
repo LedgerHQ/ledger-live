@@ -46,6 +46,8 @@ const generateNewActionCard = (
   link: string,
   secondaryCta: string,
   order?: number,
+  icon?: string,
+  image_background?: string,
 ): ActionContentCard => ({
   id: String(Date.now()),
   title,
@@ -58,6 +60,8 @@ const generateNewActionCard = (
   created: new Date(),
   order,
   isMock: true,
+  ...(icon !== undefined && { icon }),
+  ...(image_background !== undefined && image_background !== "" && { image_background }),
 });
 
 const generateNewNotificationCard = (
@@ -110,6 +114,8 @@ export const useGenerateLocalBraze = () => {
     link: string,
     secondaryCta: string,
     order?: number,
+    icon?: string,
+    image_background?: string,
   ) => {
     const newCard = generateNewActionCard(
       title,
@@ -119,6 +125,8 @@ export const useGenerateLocalBraze = () => {
       link,
       secondaryCta,
       order,
+      icon,
+      image_background,
     );
     dispatch(setActionCards([...actionCards, newCard]));
   };

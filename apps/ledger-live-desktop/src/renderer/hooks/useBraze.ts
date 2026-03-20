@@ -57,6 +57,8 @@ export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => 
   description: card.extras?.description,
   id: String(card.id),
   image: card.extras?.image,
+  image_background: card.extras?.image_background,
+  icon: card.extras?.icon,
   link: card.extras?.link,
   location: LocationContentCard.Action,
   mainCta: card.extras?.mainCta,

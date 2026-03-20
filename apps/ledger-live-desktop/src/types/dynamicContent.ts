@@ -21,6 +21,8 @@ export type ContentCard = {
 
 export type ActionContentCard = ContentCard & {
   image?: string;
+  image_background?: string;
+  icon?: string;
   mainCta?: string;
   link?: string;
   secondaryCta?: string;
