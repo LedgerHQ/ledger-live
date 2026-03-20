@@ -72,7 +72,7 @@ const defaultConfig = {
         },
       },
     ],
-    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|mjs)$`]: [
+    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|jsx|mjs)$`]: [
       "@swc/jest",
       {
         jsc: {

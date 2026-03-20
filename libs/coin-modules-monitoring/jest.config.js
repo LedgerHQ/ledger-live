@@ -13,7 +13,7 @@ module.exports = {
         },
       },
     ],
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|mjs)?$`]: [
+    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx|mjs)?$`]: [
       "@swc/jest",
       {
         jsc: {
