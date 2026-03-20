@@ -6,153 +6,40 @@ import { server } from "@tests/server";
 import OnboardScreen from "../OnboardScreen";
 import {
   SESSION_TOPIC,
-  WC_RAW_URI,
   WC_FORMATTED_URI,
-  TEST_PUBLIC_KEY,
-  TEST_SIGNATURE,
-  TEST_SERIALIZED_CDT,
-  currency,
-  creatableAccount,
-  createSession,
   overrideInitialState,
   concordiumHandlers,
 } from "./testUtils";
+import {
+  mockParentNavigate,
+  setupSuccessfulPairing,
+  setupSuccessfulAccountCreation,
+} from "./testMockSetup";
 
-// ── Mock WalletConnect class (dynamic import of SignClient can't be intercepted) ──
-
-const mockInitiatePairing = jest.fn();
-const mockGetSession = jest.fn();
-const mockRequestCreateAccount = jest.fn();
-const mockDisconnectAllSessions = jest.fn();
-
-jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => {
-  let mockWalletConnect: unknown = null;
-
-  class MockConcordiumWalletConnect {
-    initiatePairing = (...args: unknown[]) => mockInitiatePairing(...args);
-    getSession = (...args: unknown[]) => mockGetSession(...args);
-    requestCreateAccount = (...args: unknown[]) => mockRequestCreateAccount(...args);
-    disconnectAllSessions = () => mockDisconnectAllSessions();
-  }
-
-  return {
-    __esModule: true,
-    ConcordiumWalletConnect: MockConcordiumWalletConnect,
-    setWalletConnect: () => {
-      mockWalletConnect = mockWalletConnect || new MockConcordiumWalletConnect();
-      return mockWalletConnect;
-    },
-    getWalletConnect: () => mockWalletConnect,
-    clearWalletConnect: () => {
-      mockWalletConnect = null;
-    },
-  };
-});
-
-// ── Mock device signer ──
-
-const mockGetPublicKey = jest.fn();
-const mockSignCredentialDeployment = jest.fn();
-
-jest.mock("@ledgerhq/coin-concordium/signer", () => ({
-  __esModule: true,
-  default: jest.fn(() => jest.fn()),
-  getPublicKey: (...args: unknown[]) => mockGetPublicKey(...args),
-  signCredentialDeployment: (...args: unknown[]) => mockSignCredentialDeployment(...args),
-}));
-
-// ── Use real bridge with mocked dependencies ──
-
-jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const { createBridges } = jest.requireActual("@ledgerhq/coin-concordium/bridge/index");
-  const coinConfig = () => ({
-    status: { type: "active" },
-    networkType: "mainnet",
-    grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
-    grpcPort: 443,
-    proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-    minReserve: 0,
-  });
-  const { currencyBridge } = createBridges(jest.fn(), coinConfig);
-  return { getCurrencyBridge: () => currencyBridge };
-});
-
-// ── Mock native QR code component ──
-
-jest.mock("react-native-qrcode-svg", () => {
-  const { View } = require("react-native");
-  return function MockQRCode({ value }: { value: string }) {
-    return <View testID={`qr-code-${value}`} />;
-  };
-});
-
-// ── Mock navigation ──
-
-const mockParentNavigate = jest.fn();
-
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({
-    goBack: jest.fn(),
-    getParent: () => ({
-      goBack: jest.fn(),
-      navigate: mockParentNavigate,
-    }),
-  }),
-  useRoute: () => ({
-    params: {
-      currency,
-      accountsToAdd: [creatableAccount],
-    },
-  }),
-}));
-
-// ── Setup helpers ──
-
-function setupSuccessfulPairing() {
-  const session = createSession();
-
-  mockInitiatePairing.mockResolvedValue({
-    uri: WC_RAW_URI,
-    approval: jest.fn(() => new Promise(resolve => setTimeout(() => resolve(session), 100))),
-  });
-  mockGetSession.mockResolvedValue(session);
-}
-
-function setupSuccessfulAccountCreation() {
-  mockGetPublicKey.mockResolvedValue(TEST_PUBLIC_KEY);
-  mockSignCredentialDeployment.mockImplementation(
-    () => new Promise(resolve => setTimeout(() => resolve(TEST_SIGNATURE), 100)),
-  );
-  // Delay so PREPARING state (with confirmation code) is visible before SIGN is emitted
-  mockRequestCreateAccount.mockImplementation(
-    () =>
-      new Promise(resolve =>
-        setTimeout(
-          () =>
-            resolve({
-              status: "success",
-              message: {
-                serializedCredentialDeploymentTransaction: TEST_SERIALIZED_CDT,
-                identityIndex: 0,
-                credNumber: 0,
-                accountAddress: "completed_address",
-              },
-            }),
-          100,
-        ),
-      ),
-  );
-}
+/* eslint-disable @typescript-eslint/no-require-imports */
+jest.mock(
+  "@ledgerhq/coin-concordium/network/walletConnect",
+  () => require("./testMockSetup").walletConnectModule,
+);
+jest.mock("@ledgerhq/coin-concordium/signer", () => require("./testMockSetup").signerModule);
+jest.mock("@ledgerhq/live-common/bridge/index", () =>
+  require("./testMockSetup").createBridgeModule(),
+);
+jest.mock("react-native-qrcode-svg", () => require("./testMockSetup").MockQRCode);
+jest.mock("@react-navigation/native", () => require("./testMockSetup").createNavigationModule());
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 // ── Test ──
 
 describe("Concordium onboarding happy path", () => {
+  let pairing: ReturnType<typeof setupSuccessfulPairing>;
+  let creation: ReturnType<typeof setupSuccessfulAccountCreation>;
+
   beforeEach(() => {
     jest.clearAllMocks();
     server.use(...concordiumHandlers);
-    setupSuccessfulPairing();
-    setupSuccessfulAccountCreation();
+    pairing = setupSuccessfulPairing();
+    creation = setupSuccessfulAccountCreation();
   });
 
   async function goThroughAcknowledgement(user: ReturnType<typeof render>["user"]) {
@@ -163,6 +50,7 @@ describe("Concordium onboarding happy path", () => {
   }
 
   async function waitForPairingSuccess() {
+    pairing.resolveApproval();
     await waitFor(() => {
       expect(screen.getByText("Successfully connected to Concordium ID App.")).toBeOnTheScreen();
     });
@@ -183,12 +71,18 @@ describe("Concordium onboarding happy path", () => {
       screen.getByText("To create an account, match the code below in the Concordium ID App"),
     ).toBeOnTheScreen();
 
+    // IDApp responds with credential data
+    creation.resolveAccountCreation();
+
     // Device signing
     await waitFor(() => {
       expect(
         screen.getByText("Approve the transaction on your Ledger device. Keep your Ledger nearby."),
       ).toBeOnTheScreen();
     });
+
+    // Device signs the transaction
+    creation.resolveSigning();
 
     // Success
     await waitFor(() => {

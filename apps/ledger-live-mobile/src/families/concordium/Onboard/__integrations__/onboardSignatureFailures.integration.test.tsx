@@ -7,154 +7,71 @@ import { TransportStatusError, DisconnectedDeviceDuringOperation } from "@ledger
 import OnboardScreen from "../OnboardScreen";
 import {
   SESSION_TOPIC,
-  WC_RAW_URI,
   TEST_PUBLIC_KEY,
   TEST_SIGNATURE,
   TEST_SERIALIZED_CDT,
-  currency,
-  creatableAccount,
-  createSession,
   overrideInitialState,
   concordiumHandlers,
 } from "./testUtils";
+import {
+  createDeferred,
+  mockGetPublicKey,
+  mockSignCredentialDeployment,
+  mockRequestCreateAccount,
+  mockParentNavigate,
+  setupSuccessfulPairing,
+} from "./testMockSetup";
 
-// ── Mock WalletConnect class ──
-
-const mockInitiatePairing = jest.fn();
-const mockGetSession = jest.fn();
-const mockRequestCreateAccount = jest.fn();
-const mockDisconnectAllSessions = jest.fn();
-
-jest.mock("@ledgerhq/coin-concordium/network/walletConnect", () => {
-  let mockWalletConnect: unknown = null;
-
-  class MockConcordiumWalletConnect {
-    initiatePairing = (...args: unknown[]) => mockInitiatePairing(...args);
-    getSession = (...args: unknown[]) => mockGetSession(...args);
-    requestCreateAccount = (...args: unknown[]) => mockRequestCreateAccount(...args);
-    disconnectAllSessions = () => mockDisconnectAllSessions();
-  }
-
-  return {
-    __esModule: true,
-    ConcordiumWalletConnect: MockConcordiumWalletConnect,
-    setWalletConnect: () => {
-      mockWalletConnect = mockWalletConnect || new MockConcordiumWalletConnect();
-      return mockWalletConnect;
-    },
-    getWalletConnect: () => mockWalletConnect,
-    clearWalletConnect: () => {
-      mockWalletConnect = null;
-    },
-  };
-});
-
-// ── Mock device signer ──
-
-const mockGetPublicKey = jest.fn();
-const mockSignCredentialDeployment = jest.fn();
-
-jest.mock("@ledgerhq/coin-concordium/signer", () => ({
-  __esModule: true,
-  default: jest.fn(() => jest.fn()),
-  getPublicKey: (...args: unknown[]) => mockGetPublicKey(...args),
-  signCredentialDeployment: (...args: unknown[]) => mockSignCredentialDeployment(...args),
-}));
-
-// ── Use real bridge with mocked dependencies ──
-
-jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const { createBridges } = jest.requireActual("@ledgerhq/coin-concordium/bridge/index");
-  const coinConfig = () => ({
-    status: { type: "active" },
-    networkType: "mainnet",
-    grpcUrl: "https://ccd-node-mainnet.coin.ledger.com",
-    grpcPort: 443,
-    proxyUrl: "https://ccd-wallet-proxy-mainnet.coin.ledger.com",
-    minReserve: 0,
-  });
-  const { currencyBridge } = createBridges(jest.fn(), coinConfig);
-  return { getCurrencyBridge: () => currencyBridge };
-});
-
-// ── Mock native QR code component ──
-
-jest.mock("react-native-qrcode-svg", () => {
-  const { View } = require("react-native");
-  return function MockQRCode({ value }: { value: string }) {
-    return <View testID={`qr-code-${value}`} />;
-  };
-});
-
-// ── Mock navigation ──
-
-const mockParentNavigate = jest.fn();
-
-jest.mock("@react-navigation/native", () => ({
-  ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({
-    goBack: jest.fn(),
-    getParent: () => ({
-      goBack: jest.fn(),
-      navigate: mockParentNavigate,
-    }),
-  }),
-  useRoute: () => ({
-    params: {
-      currency,
-      accountsToAdd: [creatableAccount],
-    },
-  }),
-}));
+/* eslint-disable @typescript-eslint/no-require-imports */
+jest.mock(
+  "@ledgerhq/coin-concordium/network/walletConnect",
+  () => require("./testMockSetup").walletConnectModule,
+);
+jest.mock("@ledgerhq/coin-concordium/signer", () => require("./testMockSetup").signerModule);
+jest.mock("@ledgerhq/live-common/bridge/index", () =>
+  require("./testMockSetup").createBridgeModule(),
+);
+jest.mock("react-native-qrcode-svg", () => require("./testMockSetup").MockQRCode);
+jest.mock("@react-navigation/native", () => require("./testMockSetup").createNavigationModule());
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 // ── Setup helpers ──
 
-function setupSuccessfulPairing() {
-  const session = createSession();
-
-  mockInitiatePairing.mockResolvedValue({
-    uri: WC_RAW_URI,
-    approval: jest.fn(() => new Promise(resolve => setTimeout(() => resolve(session), 100))),
-  });
-  mockGetSession.mockResolvedValue(session);
-}
+const ID_APP_SUCCESS_RESPONSE = {
+  status: "success" as const,
+  message: {
+    serializedCredentialDeploymentTransaction: TEST_SERIALIZED_CDT,
+    identityIndex: 0,
+    credNumber: 0,
+    accountAddress: "completed_address",
+  },
+};
 
 function setupAccountCreationBase() {
+  const accountCreation = createDeferred<typeof ID_APP_SUCCESS_RESPONSE>();
   mockGetPublicKey.mockResolvedValue(TEST_PUBLIC_KEY);
-  mockRequestCreateAccount.mockImplementation(
-    () =>
-      new Promise(resolve =>
-        setTimeout(
-          () =>
-            resolve({
-              status: "success",
-              message: {
-                serializedCredentialDeploymentTransaction: TEST_SERIALIZED_CDT,
-                identityIndex: 0,
-                credNumber: 0,
-                accountAddress: "completed_address",
-              },
-            }),
-          100,
-        ),
-      ),
-  );
+  mockRequestCreateAccount.mockImplementation(() => accountCreation.promise);
+  return { resolveAccountCreation: () => accountCreation.resolve(ID_APP_SUCCESS_RESPONSE) };
 }
 
 // ── Test ──
 
 describe("Concordium onboarding signature failures", () => {
+  let pairing: ReturnType<typeof setupSuccessfulPairing>;
+  let accountCreation: ReturnType<typeof setupAccountCreationBase>;
+
   beforeEach(() => {
     jest.clearAllMocks();
     server.use(...concordiumHandlers);
     jest.spyOn(Linking, "canOpenURL").mockResolvedValue(false);
-    setupSuccessfulPairing();
-    setupAccountCreationBase();
+    pairing = setupSuccessfulPairing();
+    accountCreation = setupAccountCreationBase();
   });
 
   async function advanceToCreateStep(user: ReturnType<typeof render>["user"]) {
     await user.press(screen.getByRole("button", { name: /agree/i }));
 
+    pairing.resolveApproval();
     await waitFor(() => {
       expect(screen.getByText("Successfully connected to Concordium ID App.")).toBeOnTheScreen();
     });
@@ -165,6 +82,9 @@ describe("Concordium onboarding signature failures", () => {
       expect(screen.getByText("Add Concordium Account")).toBeOnTheScreen();
       expect(screen.getByText(SESSION_TOPIC[0].toUpperCase())).toBeOnTheScreen();
     });
+
+    // IDApp responds — signing phase begins
+    accountCreation.resolveAccountCreation();
   }
 
   it("should show error when device returns empty signature", async () => {
@@ -214,10 +134,9 @@ describe("Concordium onboarding signature failures", () => {
       expect(screen.getByText("Failed to create account. Please try again.")).toBeOnTheScreen();
     });
 
-    // Set up success for retry
-    mockSignCredentialDeployment.mockImplementation(
-      () => new Promise(resolve => setTimeout(() => resolve(TEST_SIGNATURE), 100)),
-    );
+    // Set up success for retry — accountCreation deferred is already resolved,
+    // so the retry's requestCreateAccount call resolves immediately
+    mockSignCredentialDeployment.mockResolvedValue(TEST_SIGNATURE);
 
     await user.press(screen.getByRole("button", { name: /retry/i }));
 
