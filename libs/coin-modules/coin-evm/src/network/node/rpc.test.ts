@@ -209,7 +209,7 @@ describe("EVM Family", () => {
         const second = await withApi(currency, api => Promise.resolve(api), nodeConfig);
 
         expect(first).toBe(second);
-        expect(first instanceof JsonRpcProvider).toBe(true);
+        expect(first).toBeInstanceOf(JsonRpcProvider);
       });
 
       it("provider cache should use distinct JsonRpcProviders for the same currency id but different uri", async () => {
