@@ -31,6 +31,7 @@ export type ListOperationsOptions = {
   cursor?: string;
 };
 
+
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,

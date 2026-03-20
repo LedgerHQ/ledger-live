@@ -298,6 +298,97 @@ describe("Failed TRC20 txs", () => {
   }, 10_000);
 });
 
+describe("Transactions with internal_transactions", () => {
+  const txId = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
+  const mockServer = setupServer(defaultGetTxInfo);
+
+  const getEmptyTrc20 = http.get(
+    `${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`,
+    () =>
+      HttpResponse.json({
+        data: [],
+        success: true,
+        meta: { at: 0, page_size: 0 },
+      }),
+  );
+
+  const getNativeTx = (nativeTxs: any[]) =>
+    http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions`, () =>
+      HttpResponse.json({
+        data: nativeTxs,
+        success: true,
+        meta: { at: 1717419792000, page_size: 1 },
+      }),
+    );
+
+  const fetchTxs = (address: string) =>
+    fetchTronAccountTxs(address, () => true, {}, { ...defaultFetchParams, includeInternalTxs: true });
+
+  beforeAll(doBeforeAll(mockServer));
+  beforeEach(doBeforeEach(mockServer));
+  afterAll(doAfterAll(mockServer));
+
+  function buildTxWithInternalTransactions(txId: string, fee: number) {
+    return {
+      ret: [{ contractRet: "FAILED", fee }],
+      signature: ["sig"],
+      txID: txId,
+      net_usage: 0,
+      raw_data_hex: "",
+      net_fee: 0,
+      energy_usage: 0,
+      block_timestamp: 1717419792000,
+      blockNumber: 73343824,
+      energy_fee: 0,
+      energy_usage_total: 0,
+      raw_data: {
+        contract: [
+          {
+            parameter: {
+              value: {
+                owner_address: "41a5c7c47bc8a62a90aece66734d2bacae16e1dde5",
+                contract_address: "41cebde71077b830b958c8da17bcddeeb85d0bcf25",
+                data: "",
+              },
+              type_url: "type.googleapis.com/protocol.TriggerSmartContract",
+            },
+            type: "TriggerSmartContract",
+          },
+        ],
+        ref_block_bytes: "00",
+        ref_block_hash: "00",
+        expiration: 1717419846000,
+        timestamp: 1717419788444,
+      },
+      internal_transactions: [
+        {
+          internal_tx_id: "fbbd70a9c997cd7f60325dd5c967e94e106d6d2ee607560e5a98383e61cba48e",
+          data: { note: "63616c6c", rejected: true },
+          to_address: "41cebde71077b830b958c8da17bcddeeb85d0bcf25",
+          from_address: "41cebde71077b830b958c8da17bcddeeb85d0bcf25",
+        },
+      ],
+    };
+  }
+
+  it("includes transactions with internal_transactions to track fees", async () => {
+    const txWithInternalTxs = buildTxWithInternalTransactions(txId, 2341260);
+    mockServer.use(getNativeTx([txWithInternalTxs]), getEmptyTrc20);
+
+    const results = await fetchTxs("ADDRESS");
+
+    expect(results).toContainEqual(
+      expect.objectContaining({
+        txID: txId,
+        hasFailed: true,
+        type: "TriggerSmartContract",
+        fee: expect.any(Object),
+      }),
+    );
+    expect(results.find(tx => tx.txID === txId)?.fee?.toNumber()).toBe(2341260);
+  }, 10_000);
+});
+
 describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries it throws an exception", () => {
   const tx1Hash = "1237889e91c0ebbe389436c341865df09921f8f0c029d9286102372cbaadc585";
   const alwaysInvalidTrc20Handler = http.get(
