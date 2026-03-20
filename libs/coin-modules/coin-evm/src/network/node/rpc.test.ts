@@ -199,7 +199,7 @@ describe("EVM Family", () => {
         }
       });
 
-      it("provider cacheshould reuse the same JsonRpcProvider for the same currency id and same uri", async () => {
+      it("provider cache should reuse the same JsonRpcProvider for the same currency id and same uri", async () => {
         const currency = {
           ...fakeCurrency,
           id: "provider_cache_by_currency" as CryptoCurrencyId,
