@@ -81,7 +81,7 @@ jest.mock("@mysten/sui/jsonRpc", () => {
     ...jest.requireActual("@mysten/sui/jsonRpc"),
     SuiJsonRpcClient: jest.fn().mockImplementation(() => ({
       getAllBalances: jest.fn().mockResolvedValue([
-        { coinType: "0x2::sui::SUI", totalBalance: "1000000000" },
+        { coinType: "0x2::sui::SUI", totalBalance: "1000000000", fundsInAddressBalance: "400000000" },
         { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
       ]),
       queryTransactionBlocks: jest.fn().mockResolvedValue({
@@ -402,24 +402,34 @@ beforeEach(() => {
 
 describe("SDK Functions", () => {
   test("getAccountBalances should return array of account balances", async () => {
-    // The SuiJsonRpcClient mock already has getAllBalances mocked, so getAllBalancesCached should use it
-    // We just need to ensure the mock returns the expected structure
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
     const balances = await sdk.getAccountBalances(address);
 
     expect(Array.isArray(balances)).toBe(true);
     expect(balances.length).toBeGreaterThan(0);
 
-    // Check structure of the first balance
     const firstBalance = balances[0];
     expect(firstBalance).toHaveProperty("coinType");
     expect(firstBalance).toHaveProperty("blockHeight");
     expect(firstBalance).toHaveProperty("balance");
+    expect(firstBalance).toHaveProperty("fundsInAddressBalance");
     expect(firstBalance.balance).toBeInstanceOf(BigNumber);
 
-    // Should include SUI and token balances
     const coinTypes = balances.map(b => b.coinType);
     expect(coinTypes).toContain(sdk.DEFAULT_COIN_TYPE);
+  });
+
+  test("getAccountBalances surfaces SIP-58 fundsInAddressBalance when present", async () => {
+    const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+    const balances = await sdk.getAccountBalances(address);
+
+    const sui = balances.find(b => b.coinType === sdk.DEFAULT_COIN_TYPE)!;
+    expect(sui.balance).toEqual(BigNumber("1000000000"));
+    expect(sui.fundsInAddressBalance).toEqual(BigNumber("400000000"));
+
+    const token = balances.find(b => b.coinType === "0x123::test::TOKEN")!;
+    expect(token.balance).toEqual(BigNumber("500000"));
+    expect(token.fundsInAddressBalance).toEqual(BigNumber("0"));
   });
 
   test("getOperationType should return IN for incoming tx", () => {
