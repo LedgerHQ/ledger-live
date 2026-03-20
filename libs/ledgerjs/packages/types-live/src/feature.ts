@@ -829,6 +829,7 @@ type Feature_Wallet40_Params = {
   lazyOnboarding: boolean;
   balanceRefreshRework: boolean;
   assetSection: boolean;
+  operationsList: boolean;
 
   // Specifics
   brazePlacement?: boolean;

@@ -810,6 +810,7 @@ export const DEFAULT_FEATURES: Features = {
       assetSection: true,
       onboardingWidget: true,
       brazePlacement: true,
+      operationsList: true,
     },
   },
   lwdWallet40: {
@@ -824,6 +825,7 @@ export const DEFAULT_FEATURES: Features = {
       newReceiveDialog: true,
       balanceRefreshRework: true,
       assetSection: true,
+      operationsList: true,
     },
   },
   addressPoisoningOperationsFilter: {

@@ -12,6 +12,7 @@ export const WALLET_FEATURES_PARAMS = [
   { key: "balanceRefreshRework", label: "Balance Refresh Rework" },
   { key: "assetSection", label: "Asset Section" },
   { key: "brazePlacement", label: "Braze Placement (Lumen content banner)" },
+  { key: "operationsList", label: "TX History" },
 ] as const;
 
 export type WalletFeatureParamKey = (typeof WALLET_FEATURES_PARAMS)[number]["key"];
