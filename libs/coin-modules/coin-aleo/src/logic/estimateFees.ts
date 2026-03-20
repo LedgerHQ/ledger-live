@@ -12,6 +12,13 @@ export function estimateFees({
   transactionType: TransactionType;
 }): FeeEstimation {
   const config = resolveConfig(configOrCurrencyId);
+
+  if (config.isFeeSponsored) {
+    return {
+      value: BigInt(0),
+    };
+  }
+
   const fee = config.feeByTransactionType[transactionType];
   invariant(typeof fee === "number", `aleo: missing fee configuration for ${transactionType}`);
 

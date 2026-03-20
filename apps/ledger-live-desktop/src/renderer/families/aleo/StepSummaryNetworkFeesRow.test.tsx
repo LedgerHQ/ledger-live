@@ -107,7 +107,7 @@ describe("StepSummaryNetworkFeesRow", () => {
 
       expect(screen.getByText("Network fees")).toBeInTheDocument();
       expect(screen.getByText(balanceTypeLabel)).toBeInTheDocument();
-      expect(screen.getByText("Covered by Provable")).toBeInTheDocument();
+      expect(screen.getByText("Sponsored by Provable")).toBeInTheDocument();
     },
   );
 });

@@ -8311,7 +8311,8 @@
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
-        "lastUpdate": "Last update",
+        "lastUpdate": "Last updated: {{label}}",
+        "recently": "Recently",
         "switchBalance": "Switch balance source"
       },
       "recordPicker": {
@@ -8341,7 +8342,7 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Covered by Provable",
+        "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
       }
     }

@@ -40,20 +40,20 @@ describe("BalanceOption", () => {
     it("should render lastSyncDate and lastSyncTime in separate elements when both are provided", () => {
       render(<BalanceOption {...defaultProps} lastSyncDate="2024-01-01" lastSyncTime="12:00" />);
 
-      expect(screen.getByText(/Last update.*2024-01-01/)).toBeInTheDocument();
+      expect(screen.getByText(/Last updated.*2024-01-01/)).toBeInTheDocument();
       expect(screen.getByText("(12:00)")).toBeInTheDocument();
     });
 
     it("should not render sync info when lastSyncDate is not provided", () => {
       render(<BalanceOption {...defaultProps} />);
 
-      expect(screen.queryByText(/Last update/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Last updated/)).not.toBeInTheDocument();
     });
 
     it("should not render lastSyncTime element when lastSyncTime is not provided", () => {
       render(<BalanceOption {...defaultProps} lastSyncDate="2024-01-01" />);
 
-      expect(screen.getByText(/Last update.*2024-01-01/)).toBeInTheDocument();
+      expect(screen.getByText(/Last updated.*2024-01-01/)).toBeInTheDocument();
       expect(screen.queryByText(/\(.*\)/)).not.toBeInTheDocument();
     });
   });
@@ -69,13 +69,20 @@ describe("BalanceOption", () => {
         />,
       );
 
-      expect(screen.getByText(/Last update.*2024-01-01.*12:00/)).toBeInTheDocument();
+      expect(screen.getByText(/Last updated.*2024-01-01.*12:00/)).toBeInTheDocument();
     });
 
-    it("should not render sync info when lastSyncDate or lastSyncTime is missing", () => {
+    it("should render sync info with only lastSyncDate when lastSyncTime is not provided", () => {
       render(<BalanceOption {...defaultProps} isSelfTransfer lastSyncDate="2024-01-01" />);
 
-      expect(screen.queryByText(/Last update/)).not.toBeInTheDocument();
+      expect(screen.getByText(/Last updated.*2024-01-01/)).toBeInTheDocument();
+      expect(screen.queryByText(/\(.*\)/)).not.toBeInTheDocument();
+    });
+
+    it("should not render sync info when lastSyncDate is missing", () => {
+      render(<BalanceOption {...defaultProps} isSelfTransfer />);
+
+      expect(screen.queryByText(/Last updated/)).not.toBeInTheDocument();
     });
   });
 });

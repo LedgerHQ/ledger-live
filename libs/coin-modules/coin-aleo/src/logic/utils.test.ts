@@ -56,6 +56,8 @@ import {
   createTransactionIntent,
   createFeeTransactionIntent,
   getRecordByCommitment,
+  getFunctionNameFromTransactionType,
+  getNextSequenceNumber,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -1336,5 +1338,37 @@ describe("getRecordByCommitment", () => {
     });
 
     expect(result).toBeNull();
+  });
+});
+
+describe("getNextSequenceNumber", () => {
+  it.each([
+    [new BigNumber(0), undefined],
+    [new BigNumber(1), new BigNumber(0)],
+    [new BigNumber(6), new BigNumber(5)],
+    [new BigNumber(0), new BigNumber(NaN)],
+  ])("should return %i for transactionSequenceNumber '%s'", (expected, seq) => {
+    const op = getMockedOperation({ transactionSequenceNumber: seq });
+    const account = getMockedAccount({ pendingOperations: [op] });
+
+    expect(getNextSequenceNumber(account)).toEqual(expected);
+  });
+});
+
+describe("getFunctionNameFromTransactionType", () => {
+  it.each([
+    ["transfer_public", TRANSACTION_TYPE.TRANSFER_PUBLIC],
+    ["transfer_private", TRANSACTION_TYPE.TRANSFER_PRIVATE],
+    ["transfer_public_to_private", TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE],
+    ["transfer_private_to_public", TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC],
+  ])("should return '%s' for transaction type '%s'", (expected, transactionType) => {
+    expect(getFunctionNameFromTransactionType(transactionType)).toBe(expected);
+  });
+
+  it("should throw for an unsupported transaction type", () => {
+    // @ts-expect-error - testing unsupported transaction type
+    expect(() => getFunctionNameFromTransactionType("unknown_type")).toThrow(
+      "aleo: unsupported transaction type: unknown_type",
+    );
   });
 });
