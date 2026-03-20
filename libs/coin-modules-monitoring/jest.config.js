@@ -1,4 +1,4 @@
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "@mysten", "@scure", "@noble"];
 
 module.exports = {
   testEnvironment: "node",
@@ -13,7 +13,7 @@ module.exports = {
         },
       },
     ],
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
+    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|mjs)?$`]: [
       "@swc/jest",
       {
         jsc: {
