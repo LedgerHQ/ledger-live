@@ -69,6 +69,8 @@ const resolveMessageKeyCopy = (
         }),
         swapCode: null,
       };
+    case "SWAP_QUOTE_NOT_FOUND_ERROR":
+      return getDefaultCopy(t, null);
     default:
       return null;
   }
@@ -119,7 +121,8 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const onExport = useExportLogs();
   const headerHeight = useHeaderHeight();
 
-  const messageKey = get(error, "cause.messageKey");
+  const messageKey =
+    get(error, "cause.response.data.error.messageKey") || get(error, "cause.messageKey");
 
   const { title, description, swapCode } = useMemo(() => {
     const swapCodeValue = get(error, "cause.swapCode") ?? null;
