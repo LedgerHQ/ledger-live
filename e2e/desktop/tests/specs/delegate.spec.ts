@@ -9,6 +9,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isWallet40Enabled, LWD_WALLET_40_FF_DISABLED } from "tests/utils/featureFlagUtils";
+import { assertDmkPaths } from "tests/utils/dmkAssertions";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -135,7 +136,7 @@ for (const account of e2eDelegationAccounts) {
         ],
         annotation: { type: "TMS", description: account.xrayTicket },
       },
-      async ({ app }) => {
+      async ({ app }, testInfo) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -180,6 +181,8 @@ for (const account of e2eDelegationAccounts) {
           await app.delegateDrawer.verifyTxTypeIs(transactionType);
           await app.delegateDrawer.operationTypeIsCorrect(transactionType);
         }
+
+        await assertDmkPaths(testInfo, family);
       },
     );
   });

@@ -6,6 +6,8 @@ import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "../../utils/dmkAssertions";
 
 async function navigateToSubAccount(account: AccountType) {
   const subAccountId = app.account.subAccountId(account);
@@ -105,6 +107,9 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
         await app.account.scrollToHistoryAndClickOnLastOperation(TransactionStatus.RECEIVED);
         await checkOperationInfos(transaction, false);
       }
+
+      const family = getFamilyByCurrencyId(transaction.accountToDebit.currency.id);
+      await assertDmkPaths(family);
     });
   });
 }

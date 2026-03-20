@@ -15,6 +15,7 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
 import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { log } from "@ledgerhq/logs";
 
 let _solanaLdmkFFEnabled: boolean = false;
 
@@ -39,11 +40,13 @@ export function getSolanaSignerInstance(
   transport: Transport & Partial<{ dmk: DeviceManagementKit; sessionId: string }>,
 ): SolanaSigner {
   if (canDMKSignerBeUsed(transport)) {
+    log("dmk-path", "solana/setup getSolanaSignerInstance: using DmkSignerSol");
     if (!_dmkSignerInstance) {
       _dmkSignerInstance = new DmkSignerSol(transport.dmk, transport.sessionId);
     }
     return _dmkSignerInstance;
   } else {
+    log("dmk-path", "solana/setup getSolanaSignerInstance: using LegacySignerSolana");
     return new LegacySignerSolana(transport);
   }
 }

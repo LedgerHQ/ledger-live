@@ -12,6 +12,7 @@ import {
 } from "tests/utils/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { assertDmkPaths } from "tests/utils/dmkAssertions";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -289,7 +290,7 @@ test.describe("Send flows", () => {
           ],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
-        async ({ app }) => {
+        async ({ app }, testInfo) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
           if (transaction.bugTicket) {
             await addBugLink([transaction.bugTicket]);
@@ -312,6 +313,8 @@ test.describe("Send flows", () => {
           await app.sendDrawer.addressValueIsVisible(
             transaction.transaction.accountToCredit.address,
           );
+
+          await assertDmkPaths(testInfo, family);
         },
       );
     });

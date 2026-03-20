@@ -3,6 +3,8 @@ import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
 import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "../../utils/dmkAssertions";
 
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({
@@ -76,6 +78,9 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       await app.common.successViewDetails();
 
       await verifyStakeOperationDetailsInfo(delegation, amountWithCode, fees);
+
+      const family = getFamilyByCurrencyId(delegation.account.currency.id);
+      await assertDmkPaths(family);
     });
   });
 }

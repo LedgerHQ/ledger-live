@@ -4,6 +4,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "tests/utils/dmkAssertions";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -57,7 +58,7 @@ for (const account of accounts) {
           description: account.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app }, testInfo) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -85,6 +86,8 @@ for (const account of accounts) {
         await app.receive.expectValidReceiveAddress(displayedAddress);
         await app.speculos.expectValidAddressDevice(account.account, displayedAddress);
         await app.receive.expectApproveLabel();
+
+        await assertDmkPaths(testInfo, family);
       },
     );
   });

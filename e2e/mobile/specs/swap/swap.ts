@@ -3,6 +3,8 @@ import { setEnv } from "@ledgerhq/live-env";
 import { performSwapUntilQuoteSelectionStep } from "../../utils/swapUtils";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { beforeAllFunctionSwap } from "./swap.setup";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "../../utils/dmkAssertions";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -63,6 +65,8 @@ const beforeAllFunction = async (swap: SwapType) => {
 };
 
 export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) {
+  const family = getFamilyByCurrencyId(swap.accountToDebit.currency.id);
+
   describe("Swap - Accepted (without tx broadcast)", () => {
     beforeAll(async () => {
       await beforeAllFunction(swap);
@@ -92,6 +96,8 @@ export function runSwapTest(swap: SwapType, tmsLinks: string[], tags: string[]) 
       await app.swapLiveApp.tapExecuteSwap();
       await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
       await app.swap.waitForSuccessAndContinue();
+
+      await assertDmkPaths(family);
     });
   });
 }

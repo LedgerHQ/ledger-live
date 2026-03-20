@@ -309,6 +309,9 @@ export class InitializationManager {
     // Finalize setup only after successful global CLI run
     await loadConfig(userdataSpeculos, true);
     const defaultFlags = {
+      ldmkSolanaSigner: {
+        enabled: true,
+      },
       lwmWallet40: {
         enabled: isWallet40,
         params: {

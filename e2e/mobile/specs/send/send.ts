@@ -5,6 +5,8 @@ import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "../../utils/dmkAssertions";
 
 async function navigateToSendScreen(accountName: string) {
   await app.account.openViaDeeplink();
@@ -113,6 +115,9 @@ export function runSendTest(transaction: TransactionType, tmsLinks: string[], ta
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
       await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
       await app.operationDetails.checkTransactionType("OUT");
+
+      const family = getFamilyByCurrencyId(transaction.accountToDebit.currency.id);
+      await assertDmkPaths(family);
     });
   });
 }

@@ -7,6 +7,8 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
+import { assertDmkPaths } from "tests/utils/dmkAssertions";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -267,7 +269,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app, electronApp }, testInfo) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
@@ -279,6 +281,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+
+        const family = getFamilyByCurrencyId(fromAccount.currency.id);
+        await assertDmkPaths(testInfo, family);
       },
     );
   });

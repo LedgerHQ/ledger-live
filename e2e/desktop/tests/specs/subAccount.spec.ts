@@ -17,6 +17,7 @@ import { liveDataWithParentAddressCommand, liveDataCommand } from "tests/utils/c
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
+import { assertDmkPaths } from "tests/utils/dmkAssertions";
 
 const subAccounts = [
   {
@@ -231,7 +232,7 @@ for (const transaction of transactionE2E) {
           description: transaction.xrayTicket,
         },
       },
-      async ({ app }) => {
+      async ({ app }, testInfo) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -256,6 +257,9 @@ for (const transaction of transactionE2E) {
         } else {
           await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
         }
+
+        const family = getFamilyByCurrencyId(transaction.tx.accountToDebit.currency.id);
+        await assertDmkPaths(testInfo, family);
       },
     );
   });
