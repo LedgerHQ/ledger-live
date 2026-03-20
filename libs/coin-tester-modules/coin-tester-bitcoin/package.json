@@ -75,7 +75,8 @@
     "bip39": "^3.1.0",
     "bitcoin-core": "^5.0.0",
     "bitcoinjs-lib": "^5.2.0",
-    "docker-compose": "^1.1.0"
+    "docker-compose": "^1.1.0",
+    "msw": "catalog:"
   },
   "devDependencies": {
     "@swc/core": "catalog:",
