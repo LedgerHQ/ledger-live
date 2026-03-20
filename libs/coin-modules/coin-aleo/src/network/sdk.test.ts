@@ -19,6 +19,11 @@ describe("sdkClient", () => {
     sdkUrl: "https://sdk.aleo.network",
     networkType: "mainnet",
   };
+  const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+    nodeUrl: "https://node.testnet.aleo.network",
+    sdkUrl: "https://sdk.testnet.aleo.network",
+    networkType: "testnet",
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -80,11 +85,6 @@ describe("sdkClient", () => {
     });
 
     it("should construct the URL using sdkUrl from getNetworkConfig", async () => {
-      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
-        nodeUrl: "https://node.testnet.aleo.network",
-        sdkUrl: "https://sdk.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
       jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
@@ -260,11 +260,6 @@ describe("sdkClient", () => {
     });
 
     it("should use correct SDK URL from network config", async () => {
-      const testnetConfig: ReturnType<typeof getNetworkConfig> = {
-        nodeUrl: "https://node.testnet.aleo.network",
-        sdkUrl: "https://sdk.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
 
       await sdkClient.createRequestFromIntent({
@@ -407,6 +402,183 @@ describe("sdkClient", () => {
           fee: feeConfiguration,
         },
       });
+    });
+  });
+
+  describe("createAuthorization", () => {
+    const mockRequest: PreparedRequestResponse = {
+      is_root: true,
+      network_id: 1,
+      program_id: "credits.aleo",
+      function_name: "transfer_public",
+      inputs: ["aleo1toaddress", "1000u64"],
+      input_types: ["address", "u64"],
+    };
+    const mockSignatures = "mock_signatures_string";
+    const mockViewKey = "AViewKey1mock_view_key_data";
+    const mockAuthorizationResponse = {
+      authorization: "mock_authorization_string",
+      execution_id: "mock_execution_id",
+    };
+
+    it("should call network with correct method, url and data", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockAuthorizationResponse, status: 200 });
+
+      const result = await sdkClient.createAuthorization({
+        currency: mockCurrency,
+        request: mockRequest,
+        signatures: mockSignatures,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toEqual(mockAuthorizationResponse);
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/transactions/authorization`,
+        data: {
+          request: mockRequest,
+          signatures: mockSignatures,
+          view_key: mockViewKey,
+        },
+      });
+    });
+
+    it("should use correct SDK URL from network config", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: mockAuthorizationResponse, status: 200 });
+
+      await sdkClient.createAuthorization({
+        currency: mockCurrency,
+        request: mockRequest,
+        signatures: mockSignatures,
+        viewKey: mockViewKey,
+      });
+
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${testnetConfig.sdkUrl}/transactions/authorization`,
+        }),
+      );
+    });
+
+    it("should propagate errors thrown by network", async () => {
+      const mockError = new Error("Network error");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        sdkClient.createAuthorization({
+          currency: mockCurrency,
+          request: mockRequest,
+          signatures: mockSignatures,
+          viewKey: mockViewKey,
+        }),
+      ).rejects.toThrow("Network error");
+    });
+  });
+
+  describe("encryptProvingRequest", () => {
+    const mockJwt = "Bearer mock_jwt_token";
+    const mockPublicKey = "aleo1publickey";
+    const mockAuthorization = { program_id: "credits.aleo", function_name: "transfer_public" };
+    const mockFeeAuthorization = { program_id: "credits.aleo", function_name: "fee_public" };
+    const mockEncryptedResponse = { encrypted: "mock_encrypted_proving_request" };
+
+    it("should call network with correct method, url, headers and data (without feeAuthorization)", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockEncryptedResponse, status: 200 });
+
+      const result = await sdkClient.encryptProvingRequest({
+        currency: mockCurrency,
+        jwt: mockJwt,
+        publicKey: mockPublicKey,
+        authorization: mockAuthorization,
+        broadcast: true,
+      });
+
+      expect(result).toBe(mockEncryptedResponse.encrypted);
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/encrypt_proving_request`,
+        headers: {
+          Authorization: mockJwt,
+        },
+        data: {
+          public_key: mockPublicKey,
+          proving_request: {
+            authorization: mockAuthorization,
+            broadcast: true,
+          },
+        },
+      });
+    });
+
+    it("should include fee_authorization in proving_request when feeAuthorization is provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockEncryptedResponse, status: 200 });
+
+      await sdkClient.encryptProvingRequest({
+        currency: mockCurrency,
+        jwt: mockJwt,
+        publicKey: mockPublicKey,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: false,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.sdkUrl}/encrypt_proving_request`,
+        headers: {
+          Authorization: mockJwt,
+        },
+        data: {
+          public_key: mockPublicKey,
+          proving_request: {
+            authorization: mockAuthorization,
+            fee_authorization: mockFeeAuthorization,
+            broadcast: false,
+          },
+        },
+      });
+    });
+
+    it("should use correct SDK URL from network config", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: mockEncryptedResponse, status: 200 });
+
+      await sdkClient.encryptProvingRequest({
+        currency: mockCurrency,
+        jwt: mockJwt,
+        publicKey: mockPublicKey,
+        authorization: mockAuthorization,
+        broadcast: true,
+      });
+
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${testnetConfig.sdkUrl}/encrypt_proving_request`,
+        }),
+      );
+    });
+
+    it("should propagate errors thrown by network", async () => {
+      const mockError = new Error("Network error");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        sdkClient.encryptProvingRequest({
+          currency: mockCurrency,
+          jwt: mockJwt,
+          publicKey: mockPublicKey,
+          authorization: mockAuthorization,
+          broadcast: true,
+        }),
+      ).rejects.toThrow("Network error");
     });
   });
 });

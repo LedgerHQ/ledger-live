@@ -7,7 +7,9 @@ import type {
   AleoEncryptedRegistrationResponse,
   PreparedRequestResponse,
   Intent,
+  AuthorizationResponse,
   FeeConfiguration,
+  EncryptProvingRequestResponse,
 } from "../types/sdk";
 
 async function encryptRegistrationPayload({
@@ -123,9 +125,73 @@ async function createRequestFromIntent({
   return res.data;
 }
 
+async function createAuthorization({
+  currency,
+  request,
+  signatures,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  request: PreparedRequestResponse;
+  signatures: string;
+  viewKey: string;
+}) {
+  const { sdkUrl } = getNetworkConfig(currency);
+
+  const res = await network<AuthorizationResponse>({
+    method: "POST",
+    url: `${sdkUrl}/transactions/authorization`,
+    data: {
+      request,
+      signatures,
+      view_key: viewKey,
+    },
+  });
+
+  return res.data;
+}
+
+async function encryptProvingRequest({
+  currency,
+  jwt,
+  publicKey,
+  authorization,
+  feeAuthorization,
+  broadcast,
+}: {
+  publicKey: string;
+  currency: CryptoCurrency;
+  jwt: string;
+  authorization: Record<string, unknown>;
+  feeAuthorization?: Record<string, unknown>;
+  broadcast: boolean;
+}): Promise<string> {
+  const { sdkUrl } = getNetworkConfig(currency);
+
+  const res = await network<EncryptProvingRequestResponse>({
+    method: "POST",
+    url: `${sdkUrl}/encrypt_proving_request`,
+    headers: {
+      Authorization: jwt,
+    },
+    data: {
+      public_key: publicKey,
+      proving_request: {
+        authorization,
+        ...(feeAuthorization && { fee_authorization: feeAuthorization }),
+        broadcast,
+      },
+    },
+  });
+
+  return res.data.encrypted;
+}
+
 export const sdkClient = {
   encryptRegistrationPayload,
   decryptRecord,
   decryptCiphertext,
   createRequestFromIntent,
+  createAuthorization,
+  encryptProvingRequest,
 };

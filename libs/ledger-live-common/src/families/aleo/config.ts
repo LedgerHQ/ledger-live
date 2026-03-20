@@ -21,6 +21,13 @@ const DEFAULT_FEE_SAFETY_MULTIPLIER = 1;
  */
 const IS_FEE_SPONSORED = true;
 
+/**
+ * Controls whether encrypted proving is used for broadcasting transactions.
+ * This is the target solution that should be enabled once fix on API side is done.
+ * @see https://ledgerhq.atlassian.net/browse/LIVE-27542
+ */
+const USE_ENCRYPTED_PROVE = false;
+
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
     type: "object",
@@ -37,6 +44,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
+      useEncryptedProve: USE_ENCRYPTED_PROVE,
     },
   },
   config_currency_aleo_testnet: {
@@ -54,6 +62,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
+      useEncryptedProve: USE_ENCRYPTED_PROVE,
     },
   },
 };

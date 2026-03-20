@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { render, screen } from "tests/testSetup";
+import { mockAleoCoinConfig } from "./__mocks__/config.mock";
 import { aleoCurrency } from "./__mocks__/currency.mock";
 import { makeAleoTransaction } from "./__mocks__/transaction.mock";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
@@ -78,22 +79,7 @@ describe("StepSummaryNetworkFeesRow", () => {
   ])(
     "should render sponsored network fees row for $balanceTypeLabel transaction",
     ({ mode, balanceTypeLabel }) => {
-      mockedGetAleoCurrencyConfig.mockReturnValueOnce({
-        status: { type: "active" },
-        networkType: "mainnet",
-        apiUrls: {
-          node: "https://node.example",
-          sdk: "https://sdk.example",
-        },
-        feeByTransactionType: {
-          [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 1,
-          [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 1,
-          [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 1,
-          [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 1,
-        },
-        feeSafetyMultiplier: 1,
-        isFeeSponsored: true,
-      });
+      mockedGetAleoCurrencyConfig.mockReturnValueOnce(mockAleoCoinConfig);
 
       render(
         <StepSummaryNetworkFeesRow
