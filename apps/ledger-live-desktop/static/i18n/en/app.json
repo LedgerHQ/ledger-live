@@ -8172,7 +8172,7 @@
       "cta": "Confirm"
     }
   },
-  "cryptos": {
+  "crypto": {
     "title": "Crypto accounts",
     "tableActions": {
       "searchAddress": "Search address",
@@ -8185,7 +8185,8 @@
         "value": "Value"
       },
       "editName": "Edit name",
-      "emptyState": "No accounts match your search"
+      "emptyState": "No crypto address yet",
+      "emptySearchState": "No accounts match your search"
     }
   },
   "nftEntryPoint": {

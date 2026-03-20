@@ -1,10 +1,10 @@
 import React from "react";
-import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { WalletState } from "@ledgerhq/live-wallet/store";
 import { render, screen } from "tests/testSetup";
-import { CryptosTable } from "../CryptosTable";
+import { CryptoTable } from "../CryptoTable";
+import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 jest.mock("LLD/features/Assets/components/Cells/CounterValueCell", () => ({
   CounterValueCell: () => <span data-testid="counter-value-cell">$0.00</span>,
@@ -14,8 +14,6 @@ jest.mock("~/renderer/components/CryptoCurrencyIcon", () => ({
   __esModule: true,
   default: () => <span data-testid="crypto-currency-icon" />,
 }));
-
-const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
 function createWalletState(accountNames: Map<string, string>): { wallet: WalletState } {
   return {
@@ -29,7 +27,7 @@ function createWalletState(accountNames: Map<string, string>): { wallet: WalletS
   };
 }
 
-describe("CryptosTable", () => {
+describe("CryptoTable", () => {
   const mockOnRowClick = jest.fn();
   const mockLookupParent = jest.fn();
 
@@ -38,19 +36,14 @@ describe("CryptosTable", () => {
   });
 
   it("renders column headers", () => {
-    const account = genAccount("cryptos-table-btc", {
-      currency: getCryptoCurrencyById("bitcoin"),
-      operationsSize: 0,
-    });
-
     render(
-      <CryptosTable
-        rows={[account]}
+      <CryptoTable
+        rows={[BTC_ACCOUNT]}
         lookupParentAccount={mockLookupParent}
         onRowClick={mockOnRowClick}
       />,
       {
-        initialState: createWalletState(new Map([[account.id, "My BTC"]])),
+        initialState: createWalletState(new Map([[BTC_ACCOUNT.id, "My BTC"]])),
       },
     );
 
@@ -61,7 +54,7 @@ describe("CryptosTable", () => {
 
   it("renders no data rows when rows is empty", () => {
     render(
-      <CryptosTable rows={[]} lookupParentAccount={mockLookupParent} onRowClick={mockOnRowClick} />,
+      <CryptoTable rows={[]} lookupParentAccount={mockLookupParent} onRowClick={mockOnRowClick} />,
     );
 
     const bodyRows = screen.queryAllByRole("row", { hidden: true }).filter(row => {
@@ -72,19 +65,14 @@ describe("CryptosTable", () => {
   });
 
   it("renders account name and value cell per row", () => {
-    const account = genAccount("cryptos-table-eth", {
-      currency: ethereumCurrency,
-      operationsSize: 0,
-    });
-
     render(
-      <CryptosTable
-        rows={[account]}
+      <CryptoTable
+        rows={[ETH_ACCOUNT]}
         lookupParentAccount={mockLookupParent}
         onRowClick={mockOnRowClick}
       />,
       {
-        initialState: createWalletState(new Map([[account.id, "Ethereum main"]])),
+        initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "Ethereum main"]])),
       },
     );
 
@@ -94,41 +82,32 @@ describe("CryptosTable", () => {
   });
 
   it("calls onRowClick with account when a data row is clicked", async () => {
-    const account = genAccount("cryptos-table-row-click", {
-      currency: ethereumCurrency,
-      operationsSize: 0,
-    });
-
     const { user } = render(
-      <CryptosTable
-        rows={[account]}
+      <CryptoTable
+        rows={[ETH_ACCOUNT]}
         lookupParentAccount={mockLookupParent}
         onRowClick={mockOnRowClick}
       />,
       {
-        initialState: createWalletState(new Map([[account.id, "Row click account"]])),
+        initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "Row click account"]])),
       },
     );
 
     await user.click(screen.getByRole("button", { name: /Row click account/ }));
 
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
-    expect(mockOnRowClick).toHaveBeenCalledWith(account, undefined);
+    expect(mockOnRowClick).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
   });
 
   it("does not call onRowClick when edit name button is clicked", async () => {
-    const parentAccount = genAccount("cryptos-table-parent", {
-      currency: ethereumCurrency,
-      operationsSize: 0,
-    });
-    const tokenAccount = genTokenAccount(0, parentAccount, usdcToken);
+    const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
     mockLookupParent.mockImplementation((id: string) =>
-      id === parentAccount.id ? parentAccount : undefined,
+      id === ETH_ACCOUNT.id ? ETH_ACCOUNT : undefined,
     );
 
     const { user } = render(
-      <CryptosTable
+      <CryptoTable
         rows={[tokenAccount]}
         lookupParentAccount={mockLookupParent}
         onRowClick={mockOnRowClick}
@@ -136,7 +115,7 @@ describe("CryptosTable", () => {
       {
         initialState: createWalletState(
           new Map([
-            [parentAccount.id, "Parent"],
+            [ETH_ACCOUNT.id, "Parent"],
             [tokenAccount.id, "USDT token"],
           ]),
         ),
@@ -149,18 +128,14 @@ describe("CryptosTable", () => {
   });
 
   it("calls onRowClick with token account and parent when row is clicked", async () => {
-    const parentAccount = genAccount("cryptos-table-parent-row", {
-      currency: ethereumCurrency,
-      operationsSize: 0,
-    });
-    const tokenAccount = genTokenAccount(0, parentAccount, usdcToken);
+    const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
     mockLookupParent.mockImplementation((id: string) =>
-      id === parentAccount.id ? parentAccount : undefined,
+      id === ETH_ACCOUNT.id ? ETH_ACCOUNT : undefined,
     );
 
     const { user } = render(
-      <CryptosTable
+      <CryptoTable
         rows={[tokenAccount]}
         lookupParentAccount={mockLookupParent}
         onRowClick={mockOnRowClick}
@@ -173,6 +148,6 @@ describe("CryptosTable", () => {
     await user.click(screen.getByRole("button", { name: /USDT on Eth/ }));
 
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
-    expect(mockOnRowClick).toHaveBeenCalledWith(tokenAccount, parentAccount);
+    expect(mockOnRowClick).toHaveBeenCalledWith(tokenAccount, ETH_ACCOUNT);
   });
 });

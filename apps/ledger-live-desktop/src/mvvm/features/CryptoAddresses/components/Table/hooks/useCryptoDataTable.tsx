@@ -8,26 +8,26 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { ColumnDef, Row } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import {
   AccountAddressCell,
   AccountNameCell,
   AccountRowActionCell,
   AccountValueCell,
-} from "../components/CryptosTableCells";
+} from "../CryptoTableCells";
 const SORT_HEADER_BUTTON_CLASS = "[&_svg]:!opacity-100";
 
-type UseCryptosDataTableParams = {
+type UseCryptoDataTableParams = {
   readonly rows: AccountLike[];
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
   readonly onRowClick: (account: AccountLike, parentAccount?: Account | null) => void;
 };
 
-export function useCryptosDataTable({
+export function useCryptoDataTable({
   rows,
   lookupParentAccount,
   onRowClick,
-}: UseCryptosDataTableParams) {
+}: UseCryptoDataTableParams) {
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
@@ -49,15 +49,20 @@ export function useCryptosDataTable({
             sortDirection={column.getIsSorted() || undefined}
             onClick={column.getToggleSortingHandler()}
           >
-            {t("cryptos.table.columns.name")}
+            {t("crypto.table.columns.name")}
           </TableSortButton>
         ),
-        cell: ({ row }) => <AccountNameCell account={row.original} />,
+        cell: ({ row }) => (
+          <AccountNameCell
+            account={row.original}
+            displayName={accountNameWithDefaultSelector(walletState, row.original)}
+          />
+        ),
       },
       {
         id: "address",
         enableSorting: false,
-        header: t("cryptos.table.columns.address"),
+        header: t("crypto.table.columns.address"),
         cell: ({ row }) => (
           <AccountAddressCell account={row.original} lookupParentAccount={lookupParentAccount} />
         ),
@@ -80,7 +85,7 @@ export function useCryptosDataTable({
             sortDirection={column.getIsSorted() || undefined}
             onClick={column.getToggleSortingHandler()}
           >
-            {t("cryptos.table.columns.value")}
+            {t("crypto.table.columns.value")}
           </TableSortButton>
         ),
         cell: ({ row }) => <AccountValueCell account={row.original} />,
@@ -93,7 +98,7 @@ export function useCryptosDataTable({
         cell: ({ row }) => (
           <AccountRowActionCell
             account={row.original}
-            editNameAriaLabel={t("cryptos.table.editName")}
+            editNameAriaLabel={t("crypto.table.editName")}
           />
         ),
         meta: { align: "end" },

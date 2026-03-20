@@ -10,10 +10,11 @@ import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import PageHeader from "LLD/components/PageHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTranslation } from "react-i18next";
-import type { CryptosViewModel } from "./types";
-import { CryptosTable } from "LLD/features/Cryptos/components/CryptosTable";
+import type { CryptoViewModel } from "./types";
+import { CryptoTable } from "./components/Table/CryptoTable";
+import { CryptoTableEmptyState } from "./components/Table/CryptoTableEmptyState";
 
-export default function CryptosView({ viewModel }: { readonly viewModel: CryptosViewModel }) {
+export function CryptoAddressesView({ viewModel }: { readonly viewModel: CryptoViewModel }) {
   const {
     searchValue,
     setSearchValue,
@@ -26,15 +27,15 @@ export default function CryptosView({ viewModel }: { readonly viewModel: Cryptos
 
   return (
     <div className="flex flex-col gap-32">
-      <TrackPage category="Cryptos" />
-      <PageHeader title={t("cryptos.title")} />
-      <div data-testid="cryptos-page-content" className="flex flex-col gap-12">
+      <TrackPage category="Crypto" />
+      <PageHeader title={t("crypto.title")} />
+      <div data-testid="crypto-page-content" className="flex flex-col gap-12">
         <TableActionBar>
           <TableActionBarLeading>
             <div className="max-w-[350px] flex-auto pt-4">
               <SearchInput
                 value={searchValue}
-                placeholder={t("cryptos.tableActions.searchAddress")}
+                placeholder={t("crypto.tableActions.searchAddress")}
                 onChange={e => setSearchValue(e.target.value)}
               />
             </div>
@@ -45,18 +46,22 @@ export default function CryptosView({ viewModel }: { readonly viewModel: Cryptos
               size="sm"
               icon={Plus}
               onClick={onAddAddressClick}
-              data-testid="cryptos-add-address-button"
+              data-testid="crypto-add-address-button"
             >
-              {t("cryptos.tableActions.addAddress")}
+              {t("crypto.tableActions.addAddress")}
             </Button>
           </TableActionBarTrailing>
         </TableActionBar>
         {rows.length === 0 ? (
-          <p className="py-16 text-center text-body" data-testid="cryptos-table-empty">
-            {t("cryptos.table.emptyState")}
-          </p>
+          <CryptoTableEmptyState
+            message={
+              searchValue.trim() == ""
+                ? t("crypto.table.emptyState")
+                : t("crypto.table.emptySearchState")
+            }
+          />
         ) : (
-          <CryptosTable
+          <CryptoTable
             rows={rows}
             lookupParentAccount={lookupParentAccount}
             onRowClick={onAccountClick}

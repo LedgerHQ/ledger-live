@@ -103,7 +103,7 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
-const Cryptos = lazy(() => import("LLD/features/Cryptos"));
+const Cryptos = lazy(() => import("LLD/features/CryptoAddresses"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
 
 const LoaderWrapper = styled.div`

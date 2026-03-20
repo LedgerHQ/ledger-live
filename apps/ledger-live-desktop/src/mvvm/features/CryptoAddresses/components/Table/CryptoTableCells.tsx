@@ -2,23 +2,23 @@ import React from "react";
 import { IconButton, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { PenEdit } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useSelector } from "LLD/hooks/redux";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CounterValueCell } from "LLD/features/Assets/components/Cells/CounterValueCell";
-import { EditName } from "LLD/features/CryptoAddresses/components/EditName";
-import { walletSelector } from "~/renderer/reducers/wallet";
+import { EditName } from "../EditName";
 
-export function AccountNameCell({ account }: { readonly account: AccountLike }) {
-  const walletState = useSelector(walletSelector);
+type AccountNameCellProps = {
+  readonly account: AccountLike;
+  readonly displayName: string;
+};
+
+export function AccountNameCell({ account, displayName }: AccountNameCellProps) {
   const currency = getAccountCurrency(account);
-  const name = accountNameWithDefaultSelector(walletState, account);
   return (
     <TableCellContent
       leadingContent={<CryptoCurrencyIcon currency={currency} size={32} />}
-      title={name}
+      title={displayName}
       description={currency.ticker}
     />
   );

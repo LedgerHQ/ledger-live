@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { Account } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
@@ -7,7 +7,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { matchesSearch } from "~/renderer/screens/accounts/AccountList";
 
-export function useCryptosAccountRows(searchValue: string) {
+export function useCryptoAccountRows(searchValue: string) {
   const [hideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const walletState = useSelector(walletSelector);
   const nestedAccounts = useSelector(accountsSelector);

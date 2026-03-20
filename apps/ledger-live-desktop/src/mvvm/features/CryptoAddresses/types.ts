@@ -1,6 +1,6 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
-export type CryptosViewModel = {
+export type CryptoViewModel = {
   searchValue: string;
   setSearchValue: (value: string) => void;
   onAddAddressClick: () => void;

@@ -19,7 +19,10 @@ export const getDefaultAccountNameForCurrencyIndex = ({
   return `${currency.name} ${index + 1}`;
 };
 
-export const validateNameEdition = (account: AccountLike, name?: string | null | undefined): string =>
+export const validateNameEdition = (
+  account: AccountLike,
+  name?: string | null | undefined,
+): string =>
   normalizeName(name || getDefaultAccountName(account) || "").slice(0, MAX_ACCOUNT_NAME_LENGTH);
 
 export const getDefaultAccountName = (account: AccountLike) => {

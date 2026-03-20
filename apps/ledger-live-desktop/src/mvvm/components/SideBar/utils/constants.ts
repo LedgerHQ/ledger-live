@@ -11,7 +11,7 @@ export const SIDEBAR_VALUE_TO_PATH = {
   card: "/card-new-wallet",
 } as const;
 
-/** Sidebar "Accounts" entry navigates to Cryptos when asset section FF is on, else legacy accounts page. */
+/** Sidebar "Accounts" entry navigates to CryptoAddresses (Cryptos page) when asset section FF is on, else legacy accounts page. */
 export function getAccountsSidebarPath(shouldDisplayAssetSection: boolean): string {
   return shouldDisplayAssetSection ? SIDEBAR_VALUE_TO_PATH.cryptos : SIDEBAR_VALUE_TO_PATH.accounts;
 }
