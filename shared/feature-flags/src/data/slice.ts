@@ -129,11 +129,9 @@ const featureFlagsSlice = createSlice({
           const filtered = Object.fromEntries(
             Object.entries(payload.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
           );
-          if (Object.keys(filtered).length > 0) {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            state.overrides = filtered as FeatureFlagsState["overrides"];
-            state.resolved = resolveAll(state.overrides, state.remote, getResolutionConfig());
-          }
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          state.overrides = filtered as FeatureFlagsState["overrides"];
+          state.resolved = resolveAll(state.overrides, state.remote, getResolutionConfig());
         }
 
         const bannerValue =
