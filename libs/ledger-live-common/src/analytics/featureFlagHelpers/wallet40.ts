@@ -27,5 +27,6 @@ export const getWallet40Attributes = (
     balanceRefreshRework: wallet40FeatureFlag?.params?.balanceRefreshRework ?? false,
     assetSection: wallet40FeatureFlag?.params?.assetSection ?? false,
     brazePlacement: wallet40FeatureFlag?.params?.brazePlacement ?? false,
+    operationsList: wallet40FeatureFlag?.params?.operationsList ?? false,
   };
 };
