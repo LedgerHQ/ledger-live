@@ -4,7 +4,7 @@ import { DmkSignerAleo } from "../src/DmkSignerAleo";
 
 describe("DmkSignerAleo", () => {
   let signer: DmkSignerAleo;
-  const path = "44'/683'/<account>'/0'/0'";
+  const path = "44'/683'/<account>'/0'";
   const dmkMock = {
     executeDeviceAction: jest.fn(),
     sendApdu: jest.fn(),

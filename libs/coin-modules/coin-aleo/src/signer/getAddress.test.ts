@@ -4,7 +4,7 @@ import getAddressResolver from "./getAddress";
 describe("getAddress", () => {
   const mockCurrency = getMockedCurrency();
   const mockDeviceId = "mock-device-id";
-  const mockPath = "44'/683'/0";
+  const mockPath = "44'/683'/0'/0'";
   const mockAddress = Buffer.from("aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7p");
   const derivationMode = "aleo";
 

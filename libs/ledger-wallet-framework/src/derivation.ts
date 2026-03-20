@@ -207,7 +207,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/60'/<account>'/0'/0'",
   },
   aleo: {
-    overridesDerivation: "44'/683'/<account>",
+    overridesDerivation: "44'/683'/<account>'/0'",
   },
   concordium: {
     overridesDerivation: "44'/919'/404'/404'/<account>'",
@@ -445,7 +445,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     case "aleo":
     case "aleo_testnet":
-      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0`;
+      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'`;
     case "concordium":
     case "concordium_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;

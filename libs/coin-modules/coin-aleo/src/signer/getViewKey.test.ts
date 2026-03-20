@@ -4,7 +4,7 @@ import getViewKeyResolver from "./getViewKey";
 describe("getViewKey", () => {
   const mockCurrency = getMockedCurrency();
   const mockDeviceId = "mock-device-id";
-  const mockPath = "44'/683'/0";
+  const mockPath = "44'/683'/0'/0'";
   const mockViewKey = Buffer.from("viewkey123");
 
   const mockSigner = {
