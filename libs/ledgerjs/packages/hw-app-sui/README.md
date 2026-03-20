@@ -32,6 +32,7 @@ This package extends [@mysten/ledgerjs-hw-app-sui](https://www.npmjs.com/package
 #### Table of Contents
 
 *   [Sui](#sui)
+    *   [Parameters](#parameters)
     *   [Examples](#examples)
 
 ### Sui
@@ -39,6 +40,12 @@ This package extends [@mysten/ledgerjs-hw-app-sui](https://www.npmjs.com/package
 **Extends SuiAPI**
 
 Sui App API
+
+#### Parameters
+
+*   `transport` **Transport**&#x20;
+*   `scrambleKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+*   `verbose` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 
 #### Examples
 

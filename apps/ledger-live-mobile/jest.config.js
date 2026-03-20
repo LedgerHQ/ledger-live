@@ -47,6 +47,9 @@ const transformIncludePatterns = [
   "immer",
   "@features/.*",
   "@sbaiahmed1/react-native-blur",
+  "@mysten",
+  "@scure",
+  "@noble",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
@@ -71,6 +74,14 @@ module.exports = {
               runtime: "automatic",
             },
           },
+        },
+      },
+    ],
+    "^.+\\.mjs$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
         },
       },
     ],
