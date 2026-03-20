@@ -142,6 +142,14 @@ export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpc
   });
 }
 
+/**
+ * Cached wrapper around `suix_getAllBalances`.
+ *
+ * Post SIP-58 the response includes `fundsInAddressBalance` for each coin type,
+ * allowing callers to distinguish between coin-object balances and address-level
+ * balances. The RPC returns "fake coin" objects for backward compatibility so
+ * existing `getCoins` callers continue to work transparently.
+ */
 export const getAllBalancesCached = makeLRUCache(
   async (owner: string, currencyId?: string) =>
     withApi(
@@ -187,20 +195,34 @@ export type AccountBalance = {
   coinType: string;
   blockHeight: number;
   balance: BigNumber;
+  /**
+   * SIP-58 address balance portion (if any).
+   * When non-zero, part of `balance` is held directly at the address level
+   * rather than in coin objects. The RPC's `suix_getAllBalances` aggregates both
+   * sources into `totalBalance`; this field surfaces the split for coin selection.
+   */
+  fundsInAddressBalance: BigNumber;
 };
 
 /**
- * Get account balance (native and tokens)
+ * Get account balance (native and tokens).
+ *
+ * Post SIP-58 the JSON-RPC `suix_getAllBalances` automatically aggregates
+ * traditional coin-object balances **and** address-level balances into
+ * `totalBalance`. The optional `fundsInAddressBalance` field indicates
+ * how much of that total comes from the address balance (used by
+ * coin-selection logic in transaction building).
  */
 export const getAccountBalances = async (
   addr: string,
   currencyId?: string,
 ): Promise<AccountBalance[]> => {
   const balances = await getAllBalancesCached(addr, currencyId);
-  return balances.map(({ coinType, totalBalance }) => ({
+  return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
     balance: BigNumber(totalBalance),
+    fundsInAddressBalance: BigNumber(fundsInAddressBalance ?? "0"),
   }));
 };
 

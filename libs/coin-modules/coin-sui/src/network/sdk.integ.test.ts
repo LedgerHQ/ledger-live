@@ -136,11 +136,14 @@ describe("SUI SDK Integration tests", () => {
   });
 
   describe("getBalance", () => {
-    test("getAccountBalances should return account balance", async () => {
+    test("getAccountBalances should return account balance with SIP-58 fields", async () => {
       const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-      const balance = await getAccountBalances(address);
-      expect(balance[0]).toHaveProperty("blockHeight");
-      expect(balance[0]).toHaveProperty("balance");
+      const balances = await getAccountBalances(address);
+      expect(balances.length).toBeGreaterThan(0);
+      expect(balances[0]).toHaveProperty("blockHeight");
+      expect(balances[0]).toHaveProperty("balance");
+      expect(balances[0]).toHaveProperty("fundsInAddressBalance");
+      expect(balances[0].fundsInAddressBalance.isFinite()).toBe(true);
     });
   });
 
