@@ -225,7 +225,7 @@ describe("EVM Family", () => {
         const second = await withApi(currency, api => Promise.resolve(api), nodeConfig2);
 
         expect(first).not.toBe(second);
-        expect(first instanceof JsonRpcProvider).toBe(true);
+        expect(first).toBeInstanceOf(JsonRpcProvider);
         expect(second instanceof JsonRpcProvider).toBe(true);
       });
 
