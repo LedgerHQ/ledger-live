@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import AssetListItem from "../AssetListItem";
+import AssetListItem from "../components/AssetListItem";
 import {
   useAssetListItemViewModel,
   type AssetListItemViewModelResult,
-} from "../useAssetListItemViewModel";
+} from "../hooks/useAssetListItemViewModel";
 import { createCryptoAsset, bitcoin } from "./shared";
 
-jest.mock("../useAssetListItemViewModel", () => ({
+jest.mock("../hooks/useAssetListItemViewModel", () => ({
   useAssetListItemViewModel: jest.fn(),
 }));
 

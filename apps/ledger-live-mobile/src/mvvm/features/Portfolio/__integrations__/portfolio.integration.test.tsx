@@ -1,5 +1,6 @@
 import React from "react";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
+import { server, http, HttpResponse, delay } from "@tests/server";
 import {
   PortfolioTest,
   ReadOnlyPortfolioTest,
@@ -137,6 +138,48 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioEmptyList");
 
       expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+    });
+
+    it("should display error state when DADA API fails", async () => {
+      server.use(
+        http.get("https://dada.api.ledger-test.com/v1/assets", () =>
+          HttpResponse.json(null, { status: 500 }),
+        ),
+        http.get("https://dada.api.ledger.com/v1/assets", () =>
+          HttpResponse.json(null, { status: 500 }),
+        ),
+      );
+
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+      });
+
+      await screen.findByTestId("PortfolioEmptyList");
+
+      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(await screen.findByTestId("assets-error-state")).toBeVisible();
+    });
+
+    it("should display skeleton items while DADA API is loading", async () => {
+      server.use(
+        http.get("https://dada.api.ledger-test.com/v1/assets", async () => {
+          await delay("infinite");
+          return HttpResponse.json({});
+        }),
+        http.get("https://dada.api.ledger.com/v1/assets", async () => {
+          await delay("infinite");
+          return HttpResponse.json({});
+        }),
+      );
+
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+      });
+
+      await screen.findByTestId("PortfolioEmptyList");
+
+      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(4);
     });
   });
 
