@@ -1,8 +1,8 @@
 import storage from "LLM/storage";
 import isEmpty from "lodash/isEmpty";
 
-export function getStoreValue<T>(key: string, storeId: string): T | undefined {
-  const value = storage.get(`${storeId}-${key}`);
+export async function getStoreValue<T>(key: string, storeId: string): Promise<T | undefined> {
+  const value = await storage.get(`${storeId}-${key}`);
   return isEmpty(value) ? undefined : (value as T);
 }
 
