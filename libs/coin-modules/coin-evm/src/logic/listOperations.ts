@@ -55,6 +55,18 @@ function computeValue(op: LiveOperation): bigint {
   return BigInt(op.value.toFixed(0));
 }
 
+/**
+ * Gas is paid once per tx. Explorers sometimes put a different `fee` on token transfer operations than on the parent
+ * coin tx (probably related to L2), so it is not a second on-chain charge — we use the parent fee.
+ *
+ */
+function computeTxFee(asset: AssetConfig, op: LiveOperation): LiveOperation["fee"] {
+  if (asset.type === "token" && asset.parent) {
+    return asset.parent.fee;
+  }
+  return op.fee;
+}
+
 function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
   if (asset.type === "token" && asset.parent) {
     return asset.parent.hasFailed ?? false;
@@ -115,6 +127,8 @@ function toOperation(
         }
       : {};
 
+  const txFee = computeTxFee(asset, op);
+
   return {
     id: op.id,
     type,
@@ -129,7 +143,7 @@ function toOperation(
         hash: op.blockHash ?? "",
         time: op.date,
       },
-      fees: BigInt(op.fee.toFixed(0)),
+      fees: BigInt(txFee.toFixed(0)),
       date: op.date,
       failed,
       ...(feesPayer ? { feesPayer } : {}),

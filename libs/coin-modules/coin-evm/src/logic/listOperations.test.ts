@@ -729,6 +729,70 @@ describe("listOperations", () => {
     expect(tokenInOp!.tx.feesPayer).toBeUndefined();
   });
 
+  /**
+   * Explorers may attach an inflated or summed `fee` on token transfer rows; canonical tx gas is on the coin op.
+   * @see https://ledgerhq.atlassian.net/browse/BACK-10954
+   */
+  it("uses parent coin operation fee for token ops when explorer fee on token row differs", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+
+    const address = "0x63f5c1b5a54a2423a0284b55ad6e48485e048e6a";
+    const txHash = "0xdd046a625b9b4b1ec9c9eaabfa61869f74d9d744433dae3c7686432301713bb3";
+    const parentFee = new BigNumber("119463100000000");
+    const wrongTokenFee = new BigNumber("260429558000000");
+    const someCoinOp: Operation = {
+      id: "coin-out",
+      accountId: "",
+      type: "OUT",
+      senders: [address],
+      recipients: ["0x1111111254EEB25477B68fb85Ed929f73A960582"],
+      value: new BigNumber("1080000000000000000"),
+      hash: txHash,
+      blockHeight: 99668817,
+      blockHash: "0xee7f78727120c73888d3b41c0f5615af19838ee77f2ad974550a84fac307db09",
+      fee: parentFee,
+      date: new Date("2023-06-10T08:56:43.000Z"),
+      transactionSequenceNumber: new BigNumber(0),
+      extra: {},
+    };
+    const someTokenOp: Operation = {
+      id: "token-in",
+      accountId: "",
+      type: "IN",
+      senders: ["0x1111111254EEB25477B68fb85Ed929f73A960582"],
+      recipients: [address],
+      contract: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      value: new BigNumber("1080000000000000000"),
+      hash: txHash,
+      blockHeight: 99668817,
+      blockHash: "0xee7f78727120c73888d3b41c0f5615af19838ee77f2ad974550a84fac307db09",
+      fee: wrongTokenFee,
+      date: new Date("2023-06-10T08:56:43.000Z"),
+      transactionSequenceNumber: new BigNumber(0),
+      extra: {},
+    };
+
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [{ ...someCoinOp, fee: parentFee }],
+      lastTokenOperations: [{ ...someTokenOp, fee: wrongTokenFee }],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations({} as CryptoCurrency, address, {
+      minHeight: 0,
+      order: "asc",
+    });
+
+    const sameTxFees = items
+      .filter(op => op.tx.hash.toLowerCase() === txHash.toLowerCase())
+      .map(op => op.tx.fees);
+
+    const expectedTxFee = BigInt(parentFee.toFixed(0));
+    expect(sameTxFees).toEqual([expectedTxFee, expectedTxFee]);
+  });
+
   it("should emit both native and token operations when tx has native value > 0 and token transfers", async () => {
     setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
 

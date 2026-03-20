@@ -23,6 +23,30 @@ describe("EVM Arbitrum Network", () => {
   });
 
   describe("listOperations", () => {
+    /**
+     * All operations for a given transaction must report the same `tx.fees` (the chain’s gas paid once per tx).
+     * Regression for explorer/token-enrichment paths that duplicated or inflated fees on child ops.
+     *
+     * @see https://ledgerhq.atlassian.net/browse/BACK-10954
+     */
+    it("reports identical tx.fees for every operation of the same transaction hash", async () => {
+      const address = "0x63f5c1b5a54a2423a0284b55ad6e48485e048e6a";
+      const txHash =
+        "0xdd046a625b9b4b1ec9c9eaabfa61869f74d9d744433dae3c7686432301713bb3".toLowerCase();
+
+      const { items: operations } = await module.listOperations(address, {
+        minHeight: 99668800,
+        order: "asc",
+      });
+
+      const opsForTx = operations.filter(op => op.tx.hash.toLowerCase() === txHash);
+
+      expect(opsForTx.length).toBeGreaterThanOrEqual(2);
+
+      const uniqueFees = [...new Set(opsForTx.map(op => op.tx.fees))];
+      expect(uniqueFees).toEqual([opsForTx[0]!.tx.fees]);
+    });
+
     it("returns operations with valid tx hash for address with internal transactions", async () => {
       const { items: operations } = await module.listOperations(
         "0x63f5c1b5a54a2423a0284b55ad6e48485e048e6a",
