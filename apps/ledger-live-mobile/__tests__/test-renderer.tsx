@@ -106,8 +106,13 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
   // so tests that set state.settings.overriddenFeatureFlags still work with
   // the selector proxies that now read from state.featureFlags.overrides.
   const legacyOverrides = state.settings.overriddenFeatureFlags;
-  if (legacyOverrides && Object.keys(legacyOverrides).length > 0) {
-    state.featureFlags = { ...state.featureFlags, overrides: legacyOverrides };
+  if (legacyOverrides) {
+    const filteredOverrides = Object.fromEntries(
+      Object.entries(legacyOverrides).filter(([, value]) => value !== undefined),
+    );
+    if (Object.keys(filteredOverrides).length > 0) {
+      state.featureFlags = { ...state.featureFlags, overrides: filteredOverrides };
+    }
   }
 
   return configureStore({
