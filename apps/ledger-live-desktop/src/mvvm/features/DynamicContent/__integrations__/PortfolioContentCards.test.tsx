@@ -4,21 +4,43 @@ import { act, render, screen } from "tests/testSetup";
 import PortfolioContentCards from "../components/PortfolioContentCards";
 
 // Mocked functions
-import { logCardDismissal, logContentCardClick } from "@braze/web-sdk";
+import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
 import { track } from "~/renderer/analytics/segment";
 
-jest.mock("@braze/web-sdk", () => ({
-  getCachedContentCards: jest.fn(() => ({
-    cards: Cards.map(({ id, ...extras }) => ({ id, extras })),
-  })),
-  logCardDismissal: jest.fn(),
-  logContentCardClick: jest.fn(),
-}));
+jest.mock("@braze/web-sdk", () => {
+  class ClassicCard {
+    id: string;
+    extras: Record<string, string>;
+    url?: string;
+
+    constructor(id: string, extras: Record<string, string>) {
+      this.id = id;
+      this.extras = extras;
+    }
+  }
+
+  return {
+    ClassicCard,
+    logCardDismissal: jest.fn(),
+    logContentCardClick: jest.fn(),
+  };
+});
 
 jest.mock("~/renderer/analytics/segment", () => ({
   ...jest.requireActual("~/renderer/analytics/segment"),
   track: jest.fn(),
 }));
+
+const brazeExtrasById: Record<string, { canvas_name: string; canvas_step_name: string }> = {
+  "0": {
+    canvas_name: "Portfolio Canvas",
+    canvas_step_name: "Portfolio Step",
+  },
+  "1": {
+    canvas_name: "Portfolio Canvas 2",
+    canvas_step_name: "Portfolio Step 2",
+  },
+};
 
 const Cards = [
   {
@@ -39,11 +61,13 @@ const Cards = [
   },
 ];
 
+const desktopCards = Cards.map(asBrazeCard);
+
 describe("PortfolioContentCards", () => {
   test("render slides", async () => {
     render(<PortfolioContentCards />, {
       initialState: {
-        dynamicContent: { portfolioCards: Cards },
+        dynamicContent: { desktopCards, portfolioCards: Cards },
         settings: { shareAnalytics: true, sharePersonalizedRecommandations: true },
       },
     });
@@ -95,8 +119,10 @@ describe("PortfolioContentCards", () => {
     expect(logCardDismissal).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalledWith("contentcard_dismissed", expect.any(Object));
     act(() => screen.getAllByTestId("portfolio-card-close-button")[1].click());
-    expect(logCardDismissal).toHaveBeenCalledWith(asBrazeCard(Cards[1]));
+    expect(logCardDismissal).toHaveBeenCalledWith(desktopCards[1]);
     expect(track).toHaveBeenCalledWith("contentcard_dismissed", {
+      canvas_name: "Portfolio Canvas 2",
+      canvas_step_name: "Portfolio Step 2",
       card: "1",
       page: "Portfolio",
       type: "portfolio_carousel",
@@ -110,11 +136,16 @@ describe("PortfolioContentCards", () => {
     expect(track).not.toHaveBeenCalledWith("contentcard_clicked", expect.any(Object));
     act(() => cta0.click());
     expect(logContentCardClick).toHaveBeenCalledTimes(1);
-    expect(logContentCardClick).toHaveBeenCalledWith({
-      ...asBrazeCard(Cards[0]),
-      url: Cards[0].id,
-    });
+    expect(logContentCardClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: Cards[0].id,
+        extras: brazeExtrasById[Cards[0].id],
+        url: Cards[0].id,
+      }),
+    );
     expect(track).toHaveBeenCalledWith("contentcard_clicked", {
+      canvas_name: "Portfolio Canvas",
+      canvas_step_name: "Portfolio Step",
       contentcard: "Foo",
       link: "ledger-live://deep-link",
       campaign: "0",
@@ -125,6 +156,9 @@ describe("PortfolioContentCards", () => {
   });
 });
 
-function asBrazeCard({ id, ...extras }: (typeof Cards)[number]) {
-  return { id, extras };
+function asBrazeCard({ id }: (typeof Cards)[number]) {
+  return Object.assign(Object.create(ClassicCard.prototype), {
+    id,
+    extras: brazeExtrasById[id],
+  });
 }

@@ -16,6 +16,7 @@ export type ContentCard = {
   order?: number;
   created: Date | null;
   isMock?: boolean;
+  extras?: Record<string, string>;
 };
 
 export type ActionContentCard = ContentCard & {
