@@ -9,21 +9,21 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import AssetListItem from "./AssetListItem";
-import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionViewModel";
+import AssetListItem from "../PortfolioCryptosSection/AssetListItem";
+import usePortfolioStablecoinsSectionViewModel from "./usePortfolioStablecoinsSectionViewModel";
 
-interface PortfolioCryptosSectionProps {
+interface PortfolioStablecoinsSectionProps {
   isEmptyState?: boolean;
   isReadOnly?: boolean;
 }
 
-const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
+const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSectionProps> = ({
   isEmptyState,
   isReadOnly,
 }) => {
   const { t } = useTranslation();
   const { assetsCount, hasMore, assetsToDisplay, onPressShowAll, onItemPress } =
-    usePortfolioCryptosSectionViewModel({ isEmptyState, isReadOnly });
+    usePortfolioStablecoinsSectionViewModel({ isEmptyState, isReadOnly });
 
   if (assetsCount === 0) return null;
 
@@ -35,7 +35,7 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           accessibilityRole={hasMore ? "button" : undefined}
           lx={{ marginBottom: "s12" }}
         >
-          <SubheaderTitle>{t("wallet.tabs.crypto")}</SubheaderTitle>
+          <SubheaderTitle>{t("wallet.tabs.stablecoins")}</SubheaderTitle>
           {hasMore && (
             <>
               <SubheaderCount value={assetsCount} />
@@ -44,7 +44,7 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           )}
         </SubheaderRow>
       </Subheader>
-      <Box testID="PortfolioCryptosList">
+      <Box testID="PortfolioStablecoinsList">
         {assetsToDisplay.map(item => (
           <AssetListItem key={item.currency.id} asset={item} onPress={onItemPress} />
         ))}
@@ -53,4 +53,6 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
   );
 };
 
-export const PortfolioCryptosSection = withDiscreetMode(PortfolioCryptosSectionComponent);
+export const PortfolioStablecoinsSection = withDiscreetMode(
+  PortfolioStablecoinsSectionComponent,
+);

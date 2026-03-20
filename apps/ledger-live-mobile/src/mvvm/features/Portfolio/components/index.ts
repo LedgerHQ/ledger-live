@@ -3,6 +3,8 @@ export { PortfolioAssetsSection } from "./PortfolioAssetsSection";
 export { PortfolioBalanceSection } from "./PortfolioBalanceSection";
 export { PortfolioCarouselSection } from "./PortfolioCarouselSection";
 export { PortfolioCryptosSection } from "./PortfolioCryptosSection";
+export { SeeAllAssetsButton } from "./SeeAllAssetsButton";
+export { PortfolioStablecoinsSection } from "./PortfolioStablecoinsSection";
 export { PortfolioEmptySection } from "./PortfolioEmptySection";
 export { PortfolioHeaderSection } from "./PortfolioHeaderSection";
 export { PortfolioOperationsSection } from "./PortfolioOperationsSection";

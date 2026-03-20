@@ -10,14 +10,12 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
-import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 
-export const MAX_ASSETS_TO_DISPLAY = 6;
-export const EMPTY_STATE_MAX_ASSETS = 4;
-export const READ_ONLY_MAX_ASSETS = 5;
+export const MAX_STABLECOINS_TO_DISPLAY = 6;
+export const EMPTY_STATE_MAX_STABLECOINS = 2;
 
-export interface PortfolioCryptosSectionViewModelResult {
+export interface PortfolioStablecoinsSectionViewModelResult {
   assetsCount: number;
   hasMore: boolean;
   assetsToDisplay: Asset[];
@@ -25,7 +23,7 @@ export interface PortfolioCryptosSectionViewModelResult {
   onItemPress: (asset: Asset) => void;
 }
 
-interface UsePortfolioCryptosSectionViewModelOptions {
+interface UsePortfolioStablecoinsSectionViewModelOptions {
   isEmptyState?: boolean;
   isReadOnly?: boolean;
 }
@@ -39,10 +37,10 @@ const toAsset = (item: CategorizedAssetItem): Asset => ({
   isPlaceholder: false,
 });
 
-const usePortfolioCryptosSectionViewModel = ({
+const usePortfolioStablecoinsSectionViewModel = ({
   isEmptyState = false,
   isReadOnly = false,
-}: UsePortfolioCryptosSectionViewModelOptions = {}): PortfolioCryptosSectionViewModelResult => {
+}: UsePortfolioStablecoinsSectionViewModelOptions = {}): PortfolioStablecoinsSectionViewModelResult => {
   const isAccountListUIEnabled = useFeature("llmAccountListUI")?.enabled;
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
@@ -51,45 +49,48 @@ const usePortfolioCryptosSectionViewModel = ({
 
   const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
 
-  const filteredAssets = useMemo(
+  const filteredStablecoins = useMemo(
     () =>
-      categorizedAssets.cryptos
+      categorizedAssets.stablecoins
         .filter(
           ({ currency }) =>
             currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
         )
         .map(toAsset),
-    [categorizedAssets.cryptos, blacklistedTokenIdsSet],
+    [categorizedAssets.stablecoins, blacklistedTokenIdsSet],
   );
 
-  const { cryptos: defaultAssets } = useDefaultAssetsByCategory(
-    isEmptyState,
+  // Pad with placeholder stablecoins from the DADA API when the user owns fewer
+  // than EMPTY_STATE_MAX_STABLECOINS, matching the desktop behaviour.
+  const needsPadding =
+    isEmptyState || isReadOnly || filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS;
+  const { stablecoins: defaultStablecoins } = useDefaultAssetsByCategory(
+    needsPadding,
     stablecoinTickers,
-    EMPTY_STATE_MAX_ASSETS,
     0,
-  );
-
-  const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: READ_ONLY_MAX_ASSETS });
-  const readOnlyAssets = useMemo<Asset[]>(
-    () =>
-      sortedCryptoCurrencies
-        .filter(currency => !stablecoinTickers.has(currency.ticker.toUpperCase()))
-        .map(currency => ({ amount: 0, accounts: [], currency })),
-    [sortedCryptoCurrencies, stablecoinTickers],
+    EMPTY_STATE_MAX_STABLECOINS,
   );
 
   const assets = useMemo<Asset[]>(() => {
-    if (isEmptyState) return defaultAssets;
-    if (isReadOnly) return readOnlyAssets;
-    return filteredAssets;
-  }, [isEmptyState, isReadOnly, defaultAssets, readOnlyAssets, filteredAssets]);
+    if (isEmptyState || isReadOnly) return defaultStablecoins;
+
+    if (filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS) {
+      const ownedIds = new Set(filteredStablecoins.map(a => a.currency.id));
+      const padding = defaultStablecoins
+        .filter(p => !ownedIds.has(p.currency.id))
+        .slice(0, EMPTY_STATE_MAX_STABLECOINS - filteredStablecoins.length);
+      return [...filteredStablecoins, ...padding];
+    }
+
+    return filteredStablecoins;
+  }, [isEmptyState, isReadOnly, defaultStablecoins, filteredStablecoins]);
 
   const assetsCount = assets.length;
 
-  const assetsToDisplay = useMemo(
-    () => assets.slice(0, isEmptyState ? EMPTY_STATE_MAX_ASSETS : MAX_ASSETS_TO_DISPLAY),
-    [assets, isEmptyState],
-  );
+  const maxToDisplay =
+    isEmptyState || isReadOnly ? EMPTY_STATE_MAX_STABLECOINS : MAX_STABLECOINS_TO_DISPLAY;
+
+  const assetsToDisplay = useMemo(() => assets.slice(0, maxToDisplay), [assets, maxToDisplay]);
 
   const onPressShowAll = useCallback(() => {
     track("button_clicked", {
@@ -136,10 +137,9 @@ const usePortfolioCryptosSectionViewModel = ({
   );
 
   const hasMore = useMemo(() => {
-    if (isEmptyState) return false;
-    if (isReadOnly) return true;
-    return assetsCount > MAX_ASSETS_TO_DISPLAY;
-  }, [isEmptyState, isReadOnly, assetsCount]);
+    if (isEmptyState || isReadOnly) return false;
+    return filteredStablecoins.length > MAX_STABLECOINS_TO_DISPLAY;
+  }, [isEmptyState, isReadOnly, filteredStablecoins.length]);
 
   return {
     assetsCount,
@@ -150,4 +150,4 @@ const usePortfolioCryptosSectionViewModel = ({
   };
 };
 
-export default usePortfolioCryptosSectionViewModel;
+export default usePortfolioStablecoinsSectionViewModel;

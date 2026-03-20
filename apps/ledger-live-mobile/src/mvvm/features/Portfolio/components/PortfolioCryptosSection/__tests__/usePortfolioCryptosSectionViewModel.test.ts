@@ -1,9 +1,9 @@
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
-import { useDistribution } from "~/actions/general";
 import { Asset } from "~/types/asset";
 import { State } from "~/reducers/types";
+import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import usePortfolioCryptosSectionViewModel from "../usePortfolioCryptosSectionViewModel";
 import { bitcoin, ethereum, createCryptoAsset } from "./shared";
 
@@ -15,13 +15,14 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: () => ({ name: "Portfolio" }),
 }));
 
-jest.mock("~/actions/general", () => ({
-  ...jest.requireActual("~/actions/general"),
-  useDistribution: jest.fn(),
-}));
-
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
   useAssetsData: () => ({ data: undefined, isLoading: false }),
+}));
+
+const mockCategorizedAssets = jest.fn();
+
+jest.mock("LLM/hooks/useCategorizedAssetsFromPortfolio", () => ({
+  useCategorizedAssetsFromPortfolio: () => mockCategorizedAssets(),
 }));
 
 const mockReadOnlyCoins = jest.fn();
@@ -30,20 +31,40 @@ jest.mock("~/hooks/useReadOnlyCoins", () => ({
   useReadOnlyCoins: (opts: { maxDisplayed: number }) => mockReadOnlyCoins(opts),
 }));
 
-const mockDistribution = (list: Asset[] = [], isAvailable = true) => {
-  (useDistribution as jest.Mock).mockReturnValue({ isAvailable, list });
+const toCategorizedItem = (asset: Asset) => ({
+  currency: asset.currency,
+  balance: asset.amount,
+  value: 0,
+  distribution: 0,
+  accounts: asset.accounts,
+});
+
+const mockPortfolioWithCryptos = (
+  cryptoAssets: Asset[] = [],
+  stablecoinAssets: Asset[] = [],
+  stablecoinTickers: string[] = [],
+): void => {
+  const categorizedAssets: CategorizedAssets = {
+    cryptos: cryptoAssets.map(toCategorizedItem),
+    stablecoins: stablecoinAssets.map(toCategorizedItem),
+  };
+  mockCategorizedAssets.mockReturnValue({
+    categorizedAssets,
+    stablecoinTickers: new Set(stablecoinTickers.map(t => t.toUpperCase())),
+    isLoadingStablecoinTickers: false,
+  });
 };
 
 describe("usePortfolioCryptosSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockDistribution();
+    mockPortfolioWithCryptos();
     mockReadOnlyCoins.mockReturnValue({ sortedCryptoCurrencies: [] });
   });
 
   describe("asset filtering and display", () => {
-    it("should return empty assets when distribution is not available", () => {
-      mockDistribution([], false);
+    it("should return empty assets when there are no cryptos in distribution", () => {
+      mockPortfolioWithCryptos([]);
 
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
@@ -52,8 +73,10 @@ describe("usePortfolioCryptosSectionViewModel", () => {
     });
 
     it("should return all assets when fewer than 6 are available", () => {
-      const mockAssets = [createCryptoAsset(bitcoin, 100000), createCryptoAsset(ethereum, 2000)];
-      mockDistribution(mockAssets);
+      mockPortfolioWithCryptos([
+        createCryptoAsset(bitcoin, 100000),
+        createCryptoAsset(ethereum, 2000),
+      ]);
 
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
@@ -65,12 +88,25 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       const mockAssets = Array.from({ length: 10 }, (_, i) =>
         createCryptoAsset(bitcoin, 10000 * (10 - i)),
       );
-      mockDistribution(mockAssets);
+      mockPortfolioWithCryptos(mockAssets);
 
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
       expect(result.current.assetsCount).toBe(10);
       expect(result.current.assetsToDisplay).toHaveLength(6);
+    });
+
+    it("should exclude stablecoins — they are in the stablecoins bucket, not cryptos", () => {
+      mockPortfolioWithCryptos(
+        [createCryptoAsset(bitcoin, 100000)],
+        [createCryptoAsset(ethereum, 2000)],
+        [ethereum.ticker],
+      );
+
+      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
+
+      expect(result.current.assetsCount).toBe(1);
+      expect(result.current.assetsToDisplay[0].currency).toBe(bitcoin);
     });
   });
 
@@ -79,7 +115,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       const mockAssets = Array.from({ length: 6 }, (_, i) =>
         createCryptoAsset(bitcoin, 10000 * (6 - i)),
       );
-      mockDistribution(mockAssets);
+      mockPortfolioWithCryptos(mockAssets);
 
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
@@ -90,7 +126,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       const mockAssets = Array.from({ length: 7 }, (_, i) =>
         createCryptoAsset(bitcoin, 10000 * (7 - i)),
       );
-      mockDistribution(mockAssets);
+      mockPortfolioWithCryptos(mockAssets);
 
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
@@ -147,11 +183,11 @@ describe("usePortfolioCryptosSectionViewModel", () => {
 
   describe("onItemPress", () => {
     it("should navigate to Asset detail screen with the currency", () => {
-      const mockAsset = createCryptoAsset(ethereum, 5000);
+      mockPortfolioWithCryptos([createCryptoAsset(ethereum, 5000)]);
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
 
       act(() => {
-        result.current.onItemPress(mockAsset);
+        result.current.onItemPress(result.current.assetsToDisplay[0]);
       });
 
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {

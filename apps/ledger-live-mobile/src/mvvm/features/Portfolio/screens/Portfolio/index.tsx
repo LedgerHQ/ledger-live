@@ -27,6 +27,8 @@ import {
   PortfolioAssetsSection,
   PortfolioCarouselSection,
   PortfolioCryptosSection,
+  SeeAllAssetsButton,
+  PortfolioStablecoinsSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
@@ -131,6 +133,16 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       sections.push(
         <Box key="cryptos" px={6}>
           <PortfolioCryptosSection />
+        </Box>,
+      );
+      sections.push(
+        <Box key="stablecoins" px={6} pt={6}>
+          <PortfolioStablecoinsSection />
+        </Box>,
+      );
+      sections.push(
+        <Box key="seeAllAssets" px={6}>
+          <SeeAllAssetsButton />
         </Box>,
       );
     } else {
