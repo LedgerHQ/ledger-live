@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import AssetListItem from "../PortfolioCryptosSection/AssetListItem";
+import AssetListItem from "../CryptosSection/components/AssetListItem";
 import usePortfolioStablecoinsSectionViewModel from "./usePortfolioStablecoinsSectionViewModel";
 
 interface PortfolioStablecoinsSectionProps {

@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import usePortfolioCryptosSectionViewModel from "../PortfolioCryptosSection/usePortfolioCryptosSectionViewModel";
+import usePortfolioCryptosSectionViewModel from "../CryptosSection/hooks/usePortfolioCryptosSectionViewModel";
 
 const SeeAllAssetsButtonComponent: React.FC = () => {
   const { t } = useTranslation();
