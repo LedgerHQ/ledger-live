@@ -226,6 +226,7 @@ describe("EVM Family", () => {
 
         expect(first).not.toBe(second);
         expect(first instanceof JsonRpcProvider).toBe(true);
+        expect(second instanceof JsonRpcProvider).toBe(true);
       });
 
       it("provider cache should use distinct JsonRpcProviders for different currency ids", async () => {
@@ -247,6 +248,7 @@ describe("EVM Family", () => {
 
         expect(p1).not.toBe(p2);
         expect(p1 instanceof JsonRpcProvider).toBe(true);
+        expect(p2 instanceof JsonRpcProvider).toBe(true);
       });
     });
 
