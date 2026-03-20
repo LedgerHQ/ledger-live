@@ -10,6 +10,7 @@ export type AleoConfig = {
   feeByTransactionType: Record<TransactionType, number>;
   feeSafetyMultiplier: number;
   isFeeSponsored: boolean;
+  useEncryptedProve: boolean;
 };
 
 export type AleoCoinConfig = CurrencyConfig & AleoConfig;

@@ -29,7 +29,7 @@ jest.mock("../logic/utils", () => ({
 const mockRegisterNewAccount = jest.mocked(apiClient.registerNewAccount);
 const mockGetAccountJWT = jest.mocked(apiClient.getAccountJWT);
 const mockGetRecordScannerStatus = jest.mocked(apiClient.getRecordScannerStatus);
-const mockGetPublicKey = jest.mocked(apiClient.getPublicKey);
+const mockGetScannerPublicKey = jest.mocked(apiClient.getScannerPublicKey);
 const mockEncryptRegistrationPayload = jest.mocked(sdkClient.encryptRegistrationPayload);
 const mockGenerateUniqueUsername = jest.mocked(logicUtils.generateUniqueUsername);
 const mockRegisterForScanningAccountRecords = jest.mocked(
@@ -355,7 +355,7 @@ describe("network/utils", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       mockGenerateUniqueUsername.mockReturnValue(mockUsername);
-      mockGetPublicKey.mockResolvedValue({ public_key: mockPublicKey, key_id: mockKeyId });
+      mockGetScannerPublicKey.mockResolvedValue({ public_key: mockPublicKey, key_id: mockKeyId });
       mockEncryptRegistrationPayload.mockResolvedValue({ encrypted: mockEncryptedData });
     });
 
@@ -633,8 +633,8 @@ describe("network/utils", () => {
           provableApi: existingProvableApi,
         });
 
-        expect(mockGetPublicKey).toHaveBeenCalledTimes(1);
-        expect(mockGetPublicKey).toHaveBeenCalledWith(mockCurrency, mockJWT.token);
+        expect(mockGetScannerPublicKey).toHaveBeenCalledTimes(1);
+        expect(mockGetScannerPublicKey).toHaveBeenCalledWith(mockCurrency, mockJWT.token);
         expect(mockEncryptRegistrationPayload).toHaveBeenCalledTimes(1);
         expect(mockEncryptRegistrationPayload).toHaveBeenCalledWith({
           currency: mockCurrency,

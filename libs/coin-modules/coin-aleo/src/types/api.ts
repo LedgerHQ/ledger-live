@@ -94,7 +94,12 @@ export interface AleoRegisterForRecordsResponse {
   uuid: string;
 }
 
-export interface AleoGetPublicKeyResponse {
+export interface AleoGetScannerPublicKeyResponse {
+  key_id: string;
+  public_key: string;
+}
+
+export interface AleoGetProvePublicKeyResponse {
   key_id: string;
   public_key: string;
 }

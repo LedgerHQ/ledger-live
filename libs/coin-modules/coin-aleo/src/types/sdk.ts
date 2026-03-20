@@ -74,3 +74,12 @@ export interface FeeConfiguration {
   max_base_fee: string;
   max_priority_fee: string;
 }
+
+export interface AuthorizationResponse {
+  authorization: string;
+  execution_id: string;
+}
+
+export interface EncryptProvingRequestResponse {
+  encrypted: string;
+}
