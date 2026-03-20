@@ -31,8 +31,6 @@ export type DAError =
   | SignTransactionDAError
   | SignPersonalMessageDAError;
 
-const DEFAULT_CHAIN_ID = 1;
-
 export class DmkSignerEth implements EvmSigner {
   private readonly signer: SignerEth;
   constructor(
@@ -127,7 +125,7 @@ export class DmkSignerEth implements EvmSigner {
       const numericChainId = Number(chainId);
       parsedChainId =
         !Number.isFinite(numericChainId) || !Number.isInteger(numericChainId) || numericChainId <= 0
-          ? DEFAULT_CHAIN_ID
+          ? undefined
           : numericChainId;
     }
 
