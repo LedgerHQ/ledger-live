@@ -10,7 +10,7 @@ export abstract class WebViewAppPage extends AppPage {
   protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
-  protected async getWebView(): Promise<Page> {
+  protected async getWebView(timeout = 60_000): Promise<Page> {
     if (this._webviewPage) {
       return this._webviewPage;
     }
@@ -23,7 +23,6 @@ export abstract class WebViewAppPage extends AppPage {
     // Iterate over webviews making multiple attempts over a period of time.
     // This ensures we handle cases where the right webview is not immediately available.
     // In some cases a different webview might already be open or it might be loading into the view.
-    const timeout = 60_000;
     const startTime = Date.now();
 
     while (!webview && Date.now() - startTime < timeout) {
@@ -35,9 +34,8 @@ export abstract class WebViewAppPage extends AppPage {
             webview = window;
             break;
           }
-        } catch (error) {
-          console.log("Error while checking for WebView:", error);
-          // webview might disattach in the process, ignore and iterate again
+        } catch {
+          // webview might detach in the process, ignore and iterate again
         }
       }
       await this.page.waitForTimeout(500);
@@ -49,8 +47,10 @@ export abstract class WebViewAppPage extends AppPage {
       );
     }
 
+    const elapsed = Date.now() - startTime;
+    const remainingTimeout = Math.max(timeout - elapsed, 0);
     await webview.waitForLoadState("domcontentloaded", {
-      timeout: this.defaultWebViewTimeout,
+      timeout: remainingTimeout,
     });
     webview.setDefaultTimeout(this.defaultWebViewTimeout);
 
