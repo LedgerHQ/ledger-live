@@ -6966,6 +6966,9 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaRecipientAccountNotFunded": {
+      "title": "Amount too low. Send at least {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken": {
       "title": "This associated token account holds another token"
     },
