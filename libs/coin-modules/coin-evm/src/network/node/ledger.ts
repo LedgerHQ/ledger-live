@@ -13,7 +13,7 @@ import { LedgerExplorerOperation } from "../../types";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { getGasOptions } from "../gasTracker/ledger";
 import { withRetries } from "../withRetries";
-import { NodeApi, TransactionInfo } from "./types";
+import { BlockByHeightResult, NodeApi, TransactionInfo } from "./types";
 
 const LEDGER_TIMEOUT = 10_000; // 10s for network call timeout
 const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls
@@ -237,7 +237,7 @@ async function getBlockByHeight(
   _currency: CryptoCurrency,
   blockHeight: number | "latest" = "latest",
   _prefetchTxs = false,
-): Promise<import("./types").BlockByHeightResult> {
+): Promise<BlockByHeightResult> {
   if (blockHeight === "latest") {
     const { hash, height, time, txs, prevHash } = await fetch<{
       hash: string;
