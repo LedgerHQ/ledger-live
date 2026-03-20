@@ -3,7 +3,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled, { css } from "styled-components";
-import CounterValue, { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
+import CounterValue from "~/renderer/components/CounterValue";
 import { useNavigate } from "react-router";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -149,11 +149,7 @@ const Row = ({
         </Tooltip>
       </Asset>
       <PriceSection>
-        {distribution ? (
-          <Price from={currency} color="neutral.c80" fontSize={3} />
-        ) : (
-          <NoCountervaluePlaceholder />
-        )}
+        <Price from={currency} color="neutral.c80" fontSize={3} />
       </PriceSection>
       <Distribution $isResponsiveLayout={isResponsiveLayout}>
         {!!distribution && (
@@ -181,17 +177,13 @@ const Row = ({
       </Amount>
       <Value $isResponsiveLayout={isResponsiveLayout}>
         <Ellipsis>
-          {distribution ? (
-            <CounterValue
-              currency={currency}
-              value={amount}
-              color="neutral.c100"
-              fontSize={3}
-              showCode
-            />
-          ) : (
-            <NoCountervaluePlaceholder />
-          )}
+          <CounterValue
+            currency={currency}
+            value={amount}
+            color="neutral.c100"
+            fontSize={3}
+            showCode
+          />
         </Ellipsis>
       </Value>
     </Wrapper>
