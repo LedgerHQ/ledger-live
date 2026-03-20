@@ -441,6 +441,7 @@ jobs:
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
       - name: Install scrcpy
+        timeout-minutes: 10
         run: |
           brew install scrcpy
 
@@ -642,6 +643,7 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install scrcpy 3.x and dependencies
+        timeout-minutes: 10
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg xvfb libsdl2-2.0-0 libusb-1.0-0
