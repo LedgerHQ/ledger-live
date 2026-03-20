@@ -1,7 +1,7 @@
-import { mapTxToOps } from "./misc";
-import { fetchFullTxs } from "../../network/index";
-import type { Operation, CryptoAssetsStore } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { Operation, CryptoAssetsStore } from "@ledgerhq/types-live";
+import { fetchFullTxs } from "../../network/index";
+import { mapTxToOps } from "./misc";
 
 const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 
@@ -19,7 +19,7 @@ describe("misc integration tests", () => {
     const [rawTxs] = await fetchFullTxs(Address);
     const operations: Operation[] = rawTxs.flatMap(mapTxToOps("dummyAccountID", Address));
 
-    expect(operations).toBeDefined();
+    expect(operations).toBeInstanceOf(Array);
     expect(operations.length).toBeGreaterThan(0);
   }, 60000);
 });

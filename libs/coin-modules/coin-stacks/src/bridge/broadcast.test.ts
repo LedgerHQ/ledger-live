@@ -1,9 +1,9 @@
-import { Account, BroadcastArg } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { broadcast } from "./broadcast";
+import { Account, BroadcastArg } from "@ledgerhq/types-live";
 import { broadcastTx } from "../network/api";
-import { getTxToBroadcast } from "./utils/transactions";
 import { StacksOperation } from "../types";
+import { broadcast } from "./broadcast";
+import { getTxToBroadcast } from "./utils/transactions";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../network/api");

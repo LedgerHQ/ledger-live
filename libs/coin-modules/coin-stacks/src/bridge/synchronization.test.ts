@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
+import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import * as accountIndex from "@ledgerhq/ledger-wallet-framework/account/index";
+import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { buildTokenAccounts, createTokenAccount } from "./synchronization";
 import { TransactionResponse } from "../network";
 import { TokenPrefix } from "../types";
-import { log } from "@ledgerhq/logs";
-import * as accountIndex from "@ledgerhq/ledger-wallet-framework/account/index";
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import { buildTokenAccounts, createTokenAccount } from "./synchronization";
 
 jest.mock("@ledgerhq/cryptoassets/state");
 jest.mock("@ledgerhq/logs");

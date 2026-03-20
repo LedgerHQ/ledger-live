@@ -1,13 +1,16 @@
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { log } from "@ledgerhq/logs";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import { TransactionResponse } from "../network";
 import {
   fetchAllTokenBalances,
   fetchBalances,
@@ -22,9 +25,6 @@ import {
   sip010TxnToOperation,
   sip010OpToParentOp,
 } from "./utils/misc";
-import { log } from "@ledgerhq/logs";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { TransactionResponse } from "../network";
 
 /**
  * Calculates the spendable balance by subtracting pending transactions from the total balance

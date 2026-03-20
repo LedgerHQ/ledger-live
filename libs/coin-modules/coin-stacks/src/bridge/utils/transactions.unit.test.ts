@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { TokenAccount } from "@ledgerhq/types-live";
 import {
   StacksTransaction,
   AnchorMode,
@@ -6,8 +6,19 @@ import {
   FungibleConditionCode,
   StacksMessageType,
 } from "@stacks/transactions";
-import { TokenAccount } from "@ledgerhq/types-live";
+import {
+  makeUnsignedSTXTokenTransfer,
+  makeUnsignedContractCall,
+  createMessageSignature,
+  createStandardPrincipal,
+  createAssetInfo,
+  standardPrincipalCV,
+  uintCV,
+} from "@stacks/transactions";
+import BigNumber from "bignumber.js";
 import { StacksNetwork } from "../../network/api";
+import { FamilyType, Transaction } from "../../types";
+import { memoToBufferCV } from "./memoUtils";
 import {
   getTokenContractDetails,
   createTokenTransferFunctionArgs,
@@ -18,7 +29,6 @@ import {
   applySignatureToTransaction,
   getTxToBroadcast,
 } from "./transactions";
-import { memoToBufferCV } from "./memoUtils";
 
 // Mock dependencies
 jest.mock("@stacks/transactions", () => {
@@ -38,18 +48,6 @@ jest.mock("@stacks/transactions", () => {
 jest.mock("./memoUtils", () => ({
   memoToBufferCV: jest.fn(),
 }));
-
-// Import mocked functions after mocking
-import {
-  makeUnsignedSTXTokenTransfer,
-  makeUnsignedContractCall,
-  createMessageSignature,
-  createStandardPrincipal,
-  createAssetInfo,
-  standardPrincipalCV,
-  uintCV,
-} from "@stacks/transactions";
-import { FamilyType, Transaction } from "../../types";
 
 describe("transactions utility functions", () => {
   beforeEach(() => {

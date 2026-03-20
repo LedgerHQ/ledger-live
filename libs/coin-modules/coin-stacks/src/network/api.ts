@@ -1,7 +1,8 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
-
 import { getEnv } from "@ledgerhq/live-env";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
+import { StacksMainnet, StacksTestnet } from "@stacks/network";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -20,8 +21,6 @@ import {
   extractSendManyTransactions,
   extractContractTransactions,
 } from "./transformers";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { StacksMainnet, StacksTestnet } from "@stacks/network";
 
 export const StacksNetwork = {
   mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
@@ -218,7 +217,10 @@ export const fetchFullTxs = async (
   // 2. Extract regular token transfers
   const tokenTransfers = extractTokenTransferTransactions(allTransactions);
   // 3. Extract and group contract calls
-  const contractTransactions = await extractContractTransactions(allTransactions);
+  const contractTransactions = await extractContractTransactions(
+    allTransactions,
+    fetchFungibleTokenMetadataCached,
+  );
 
   // 4. Add send-many transactions to token transfers
   const sendManyTransactions = extractSendManyTransactions(allTransactions);

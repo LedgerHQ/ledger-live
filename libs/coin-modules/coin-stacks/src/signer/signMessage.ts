@@ -1,8 +1,7 @@
-import { getBufferFromString, getPath, throwIfError } from "../utils";
-
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { StacksSigner } from "../types";
+import { getBufferFromString, getPath, throwIfError } from "../utils";
 
 export const signMessage =
   (signerContext: SignerContext<StacksSigner>) =>

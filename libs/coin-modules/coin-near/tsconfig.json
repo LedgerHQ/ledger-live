@@ -1,6 +1,8 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
@@ -8,7 +10,10 @@
       "es2022",
       "dom"
     ],
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "jest"
+    ],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true
   },

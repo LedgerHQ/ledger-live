@@ -1,8 +1,8 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { Transaction } from "../types";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 
