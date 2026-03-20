@@ -34,7 +34,7 @@ import {
   TransactionBlockData,
   TransactionEffects,
 } from "@mysten/sui/jsonRpc";
-import { Transaction } from "@mysten/sui/transactions";
+import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
@@ -1062,6 +1062,12 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
 /**
  * Get coins for a given address and coin type, stopping when we have enough to cover the amount.
  * Returns the minimum coins needed to cover the required amount.
+ *
+ * Post SIP-58 the RPC `suix_getCoins` returns "fake coin" objects that represent
+ * the address-level balance. These synthetic coins are indistinguishable from
+ * real coin objects at the API level (`CoinStruct` shape) and can be used in
+ * `mergeCoins` / `splitCoins` just like real ones. The transaction builder
+ * transparently converts them into `FundsWithdrawal` operations.
  */
 export const getCoinsForAmount = async (
   api: SuiJsonRpcClient,
@@ -1081,7 +1087,6 @@ export const getCoinsForAmount = async (
       cursor,
     });
 
-    // Filter out zero-balance coins and sort by balance (largest first)
     const validCoins = response.data
       .filter(coin => parseInt(coin.balance) > 0)
       .sort((a, b) => parseInt(b.balance) - parseInt(a.balance));
@@ -1102,6 +1107,20 @@ export const getCoinsForAmount = async (
 
   return coins;
 };
+
+/**
+ * Check whether the sender has any real SUI coin objects to use as gas payment.
+ * When no coin objects exist (all funds are in address balance), the caller
+ * should set `tx.setGasPayment([])` so the network uses the address balance.
+ */
+async function hasGasCoinObjects(api: SuiJsonRpcClient, address: string): Promise<boolean> {
+  const response = await api.getCoins({
+    owner: address,
+    coinType: DEFAULT_COIN_TYPE,
+    limit: 1,
+  });
+  return response.data.length > 0;
+}
 
 /**
  * Creates a Sui transaction block for transferring coins.
@@ -1149,6 +1168,10 @@ const createTransactionFromMode = (
   }
 };
 
+/**
+ * SIP-58: when no coin objects exist, `setGasPayment([])` tells the network
+ * to source gas from the address balance via FundsWithdrawal.
+ */
 const createTransactionForDelegate = async (
   address: string,
   transaction: CreateExtrinsicArg,
@@ -1156,8 +1179,12 @@ const createTransactionForDelegate = async (
 ) =>
   withApi(async api => {
     const tx = new Transaction();
+    const sender = ensureAddressFormat(address);
+    tx.setSender(sender);
 
-    tx.setSender(ensureAddressFormat(address));
+    if (!(await hasGasCoinObjects(api, sender))) {
+      tx.setGasPayment([]);
+    }
 
     const { amount } = transaction;
     const coins = tx.splitCoins(tx.gas, [amount.toNumber()]);
@@ -1186,8 +1213,13 @@ const createTransactionForUndelegate = async (
 ) =>
   withApi(async api => {
     const tx = new Transaction();
+    const sender = ensureAddressFormat(address);
+    tx.setSender(sender);
 
-    tx.setSender(ensureAddressFormat(address));
+    if (!(await hasGasCoinObjects(api, sender))) {
+      tx.setGasPayment([]);
+    }
+
     const { useAllAmount, amount } = transaction;
 
     if (useAllAmount) {
@@ -1214,6 +1246,17 @@ const createTransactionForUndelegate = async (
     return { serialized, bcsObjects };
   }, currencyId);
 
+/**
+ * SIP-58 transfer builder:
+ *
+ * - **Native SUI**: uses `tx.gas` for the transfer. When the sender has no coin
+ *   objects `setGasPayment([])` lets the network source gas from address balance.
+ *
+ * - **Non-SUI tokens**: first tries `getCoinsForAmount` (which may return fake
+ *   coins).  If no coin objects are available at all, falls back to
+ *   `coinWithBalance` which resolves the funds from the address balance
+ *   automatically (including FundsWithdrawal).
+ */
 const createTransactionForOthers = async (
   address: string,
   transaction: CreateExtrinsicArg,
@@ -1221,26 +1264,35 @@ const createTransactionForOthers = async (
 ) =>
   withApi(async api => {
     const tx = new Transaction();
+    const sender = ensureAddressFormat(address);
+    tx.setSender(sender);
 
-    tx.setSender(ensureAddressFormat(address));
+    const senderHasGasCoins = await hasGasCoinObjects(api, sender);
+    if (!senderHasGasCoins) {
+      tx.setGasPayment([]);
+    }
 
     if (transaction.coinType !== DEFAULT_COIN_TYPE) {
       const requiredAmount = transaction.amount.toNumber();
-
       const coins = await getCoinsForAmount(api, address, transaction.coinType, requiredAmount);
+      const collectedBalance = coins.reduce((sum, c) => sum + parseInt(c.balance), 0);
 
-      if (coins.length === 0) {
-        throw new Error(`No coins found for type ${transaction.coinType}`);
+      if (coins.length > 0 && collectedBalance >= requiredAmount) {
+        const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
+
+        if (coinObjects.length > 1) {
+          tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
+        }
+
+        const [coin] = tx.splitCoins(coinObjects[0], [transaction.amount.toNumber()]);
+        tx.transferObjects([coin], transaction.recipient);
+      } else {
+        const coin = coinWithBalance({
+          type: transaction.coinType,
+          balance: BigInt(transaction.amount.toFixed()),
+        })(tx);
+        tx.transferObjects([coin], transaction.recipient);
       }
-
-      const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
-
-      if (coinObjects.length > 1) {
-        tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
-      }
-
-      const [coin] = tx.splitCoins(coinObjects[0], [transaction.amount.toNumber()]);
-      tx.transferObjects([coin], transaction.recipient);
     } else {
       const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
       tx.transferObjects([coin], transaction.recipient);
