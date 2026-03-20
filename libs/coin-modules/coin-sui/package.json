@@ -162,7 +162,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@mysten/signers": "0.6.2",
+    "@mysten/signers": "1.0.1",
     "@mysten/sui": "2.9.0",
     "bignumber.js": "^9.1.2",
     "lodash": "4.17.21",
