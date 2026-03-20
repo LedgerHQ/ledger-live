@@ -46,14 +46,12 @@ export async function performSwapUntilQuoteSelectionStep(
   );
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
-    electronApp,
   );
   if (!isAssetFromSelected) {
     await selectAccountFrom(app, electronApp, swap);
   }
   const isAssetToSelected = await app.swap.checkIfToAssetIsAlreadySelected(
     swap.accountToCredit.currency.ticker,
-    electronApp,
   );
   if (!isAssetToSelected) {
     await selectAccountTo(app, electronApp, swap);
