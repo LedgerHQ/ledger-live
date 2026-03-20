@@ -90,11 +90,11 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
     strategy: BridgeStrategy,
   ) => Promise<ScenarioTransaction<T, A>[]>;
   beforeSync?: () => Promise<void> | void;
-  mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
-  beforeAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
-  afterAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
-  beforeEach?: (account: Account) => Promise<void> | void;
-  afterEach?: (account: Account) => Promise<void> | void;
+  mockIndexer?: (account: A, optimistic: Operation) => Promise<void>;
+  beforeAll?: (account: A, strategy: BridgeStrategy) => Promise<void> | void;
+  afterAll?: (account: A, strategy: BridgeStrategy) => Promise<void> | void;
+  beforeEach?: (account: A) => Promise<void> | void;
+  afterEach?: (account: A) => Promise<void> | void;
   teardown?: () => Promise<void> | void;
 };
 
@@ -304,11 +304,11 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
               .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
           );
 
-          if (!(await internalTestTransaction.expect)) {
+          if (!internalTestTransaction.expect) {
             console.warn(
               chalk.yellow(
                 `No expects in the transaction ${chalk.bold(
-                  await internalTestTransaction.name,
+                  internalTestTransaction.name,
                 )}. You might want to add tests in this transaction.`,
               ),
             );
@@ -317,14 +317,14 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
           }
 
           try {
-            await internalTestTransaction.expect?.(previousAccount, scenarioAccount);
+            internalTestTransaction.expect?.(previousAccount, scenarioAccount);
           } catch (err: unknown) {
             if (isJestAssertionError(err) && err.matcherResult?.pass === false) {
               if (retry === 0) {
                 console.error(
                   chalk.red(
                     `Retried ${retry_limit} time(s) and could not assert all expects for transaction ${chalk.bold(
-                      await internalTestTransaction.name,
+                      internalTestTransaction.name,
                     )}`,
                   ),
                 );

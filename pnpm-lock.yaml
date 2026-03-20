@@ -5755,6 +5755,9 @@ importers:
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(typescript@5.9.3)
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
