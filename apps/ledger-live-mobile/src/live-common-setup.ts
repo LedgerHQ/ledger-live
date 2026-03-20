@@ -23,7 +23,7 @@ listen(log => {
 });
 
 setGlobalOnBridgeError(e => logger.critical(e));
-setDeviceMode("polling");
+setDeviceMode("event");
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
