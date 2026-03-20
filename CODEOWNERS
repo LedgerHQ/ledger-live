@@ -15,6 +15,7 @@ tools                                                   @ledgerhq/wallet-ci
 apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
 # Platform & Wallet XP teams catchall
+CODEOWNERS                                               @ledgerhq/platform
 apps/cli/src/commands/live                               @ledgerhq/platform
 apps/web-tools/                                          @ledgerhq/platform
 libs/ledger-live-common/src/                             @ledgerhq/platform
