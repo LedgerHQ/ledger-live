@@ -1,5 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import { isTestnet } from "../logic";
 import { APIGetPoolList, APIGetPoolsDetail } from "./api-types";
@@ -31,5 +32,18 @@ export async function fetchPoolDetails(
       : `${CARDANO_API_ENDPOINT}/v1/pool/detail`,
     params: { poolIds },
   });
-  return data;
+
+  const sortedPools = [...data.pools].sort((a, b) => {
+    const stakeA = new BigNumber(a.liveStake);
+    const stakeB = new BigNumber(b.liveStake);
+    if (stakeA.isLessThan(stakeB)) {
+      return -1;
+    }
+    if (stakeA.isGreaterThan(stakeB)) {
+      return 1;
+    }
+    return 0;
+  });
+
+  return { ...data, pools: sortedPools };
 }
