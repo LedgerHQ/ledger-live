@@ -67,14 +67,14 @@ test.describe("Swap - Default currency when landing on swap", () => {
       ],
       annotation: { type: "TMS", description: "B2CQA-3079" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
-      await app.swap.checkAssetFrom(electronApp, "BTC");
-      await app.swap.checkAssetTo(electronApp, "");
+      await app.swap.checkAssetFromContains("BTC");
+      await app.swap.checkAssetToContains("Choose asset");
     },
   );
 
@@ -107,8 +107,8 @@ test.describe("Swap - Default currency when landing on swap", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
-      await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+      await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
+      await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
     },
   );
 });
@@ -359,8 +359,8 @@ test.describe("Swap a coin for which you have no account yet - from present to n
         await app.addAccount.done();
         await app.swapDrawer.selectAccountByName(account2);
       }
-      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
-      await app.swap.checkAssetTo(electronApp, account2.currency.name);
+      await app.swap.checkAssetFromContains(account1.currency.name);
+      await app.swap.checkAssetToContains(account2.currency.name);
     },
   );
 });
@@ -431,8 +431,8 @@ test.describe("Swap a coin for which you have no account yet - from not present 
         await app.swap.selectAssetTo(electronApp, account2.currency.name);
         await app.swapDrawer.selectAccountByName(account2);
       }
-      await app.swap.checkAssetFrom(electronApp, account1.currency.name);
-      await app.swap.checkAssetTo(electronApp, account2.currency.name);
+      await app.swap.checkAssetFromContains(account1.currency.name);
+      await app.swap.checkAssetToContains(account2.currency.name);
     },
   );
 });
@@ -489,8 +489,8 @@ test.describe("Swap a coin for which you have no account yet - both not present"
 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
-        await app.swap.checkAssetFrom(electronApp, account1.currency.name);
-        await app.swap.checkAssetTo(electronApp, account2.currency.name);
+        await app.swap.checkAssetFromContains(account1.currency.name);
+        await app.swap.checkAssetToContains(account2.currency.name);
       }
     },
   );
@@ -541,9 +541,9 @@ test.describe("Swap - Switch You send and You receive currency", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, swap.amount ?? "0");
-      await app.swap.switchYouSendAndYouReceive(electronApp);
-      await app.swap.checkAssetFrom(electronApp, swap.accountToCredit.currency.ticker);
-      await app.swap.checkAssetTo(electronApp, swap.accountToDebit.currency.ticker);
+      await app.swap.switchYouSendAndYouReceive();
+      await app.swap.checkAssetFromContains(swap.accountToCredit.currency.ticker);
+      await app.swap.checkAssetToContains(swap.accountToDebit.currency.ticker);
     },
   );
 });
