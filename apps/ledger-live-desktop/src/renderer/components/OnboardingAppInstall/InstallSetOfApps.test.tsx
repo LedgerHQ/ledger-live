@@ -4,165 +4,154 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
+import { createConnectAppMock } from "tests/mocks/createConnectAppMock";
 import InstallSetOfApps from "./InstallSetOfApps";
-
-function expectDeterminateProgressSvg(container: HTMLElement) {
-  expect(container.querySelectorAll("svg circle")).toHaveLength(2);
-}
-
-const mockUseHook = jest.fn();
-
-jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
-  __esModule: true,
-  default: () => ({
-    useHook: (...args: unknown[]) => mockUseHook(...args),
-  }),
-}));
-
-jest.mock("./AllowManagerModal", () => ({
-  __esModule: true,
-  default: () => null,
-}));
 
 const testDevice: Device = {
   deviceId: "test-device",
   modelId: DeviceModelId.nanoX,
   wired: false,
 };
-
-type MockInstallHookStatus = {
-  skippedAppOps: { appOp: { name: string }; reason: SkipReason }[];
-  installQueue: string[];
-  listedApps: boolean;
-  error: Error | null;
-  currentAppOp: { name: string } | null;
-  progress: number | null;
-  opened: boolean;
-  allowManagerGranted: boolean;
-  isLoading: boolean;
-};
-
-function createHookStatus(over: Partial<MockInstallHookStatus> = {}): MockInstallHookStatus {
-  return {
-    skippedAppOps: [],
-    installQueue: ["Ethereum", "Bitcoin"],
-    listedApps: true,
-    error: null,
-    currentAppOp: { name: "Ethereum" },
-    progress: 0.35,
-    opened: false,
-    allowManagerGranted: true,
-    isLoading: false,
-    ...over,
-  };
-}
+const installQueue = ["Ethereum", "Bitcoin"];
+const activeEthereumInstall = { type: "install" as const, name: "Ethereum" };
 
 describe("InstallSetOfApps", () => {
-  const defaultProps = {
+  const createProps = () => ({
     device: testDevice,
-    dependencies: ["Ethereum", "Bitcoin"],
+    dependencies: installQueue,
     setHeaderLoader: jest.fn(),
     onComplete: jest.fn(),
     onCancel: jest.fn(),
     onError: jest.fn(),
+  });
+
+  const renderInstallSetOfApps = () => {
+    const props = createProps();
+    const connectAppMock = createConnectAppMock();
+
+    render(<InstallSetOfApps {...props} actionDependencyInjection={connectAppMock.action} />);
+
+    const beginInlineInstall = async () => {
+      await connectAppMock.emit(events => {
+        events.listingApps();
+        events.listedApps(installQueue);
+        events.inlineInstall({
+          progress: 0,
+          currentAppOp: activeEthereumInstall,
+          installQueue,
+        });
+      });
+    };
+
+    const updateInlineInstall = async (progress: number) => {
+      await connectAppMock.emit(events => {
+        events.inlineInstall({
+          progress,
+          currentAppOp: activeEthereumInstall,
+          installQueue,
+        });
+      });
+    };
+
+    return { props, connectAppMock, beginInlineInstall, updateInlineInstall };
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseHook.mockReturnValue(createHookStatus());
   });
 
-  it("renders progress copy and one progress loader for the active app", () => {
-    const { container } = render(<InstallSetOfApps {...defaultProps} />);
+  it("renders the active app with a determinate loader while inline install is in progress", async () => {
+    const { props, beginInlineInstall, updateInlineInstall } = renderInstallSetOfApps();
 
-    expect(
-      screen.getByTestId("installing-text"),
-    ).toHaveTextContent(
+    await beginInlineInstall();
+    await updateInlineInstall(0.35);
+
+    expect(screen.getByTestId("installing-text")).toHaveTextContent(
       "Stay in Ledger Wallet while apps are installing.",
     );
     expect(screen.getByText("Ethereum app")).toBeInTheDocument();
     expect(screen.getByText("Bitcoin app")).toBeInTheDocument();
-    expectDeterminateProgressSvg(container);
-    expect(
-      screen.queryAllByTestId("app-install-item-infinite-loader"),
-    ).toHaveLength(0);
+    await waitFor(() => {
+      expect(screen.getByTestId("app-install-item-progress-loader")).toBeInTheDocument();
+    });
+    expect(screen.queryAllByTestId("app-install-item-infinite-loader")).toHaveLength(0);
+    expect(props.onComplete).not.toHaveBeenCalled();
+    expect(props.onCancel).not.toHaveBeenCalled();
+    expect(props.onError).not.toHaveBeenCalled();
   });
 
-  it("shows infinite loader for active app when progress is 0", () => {
-    mockUseHook.mockReturnValue(
-      createHookStatus({ progress: 0, currentAppOp: { name: "Ethereum" } }),
-    );
-    render(<InstallSetOfApps {...defaultProps} />);
+  it("switches from infinite loader to determinate loader before completing", async () => {
+    const { props, connectAppMock, beginInlineInstall, updateInlineInstall } =
+      renderInstallSetOfApps();
 
-    expect(
-      screen.getByTestId("app-install-item-infinite-loader"),
-    ).toBeInTheDocument();
-  });
+    await beginInlineInstall();
 
-  it("calls onComplete when installation is opened (done)", () => {
-    mockUseHook.mockReturnValue(createHookStatus({ opened: true }));
-    render(<InstallSetOfApps {...defaultProps} />);
+    const infiniteLoader = await screen.findByTestId("app-install-item-infinite-loader");
+    expect(infiniteLoader).toBeInTheDocument();
+    expect(props.onComplete).not.toHaveBeenCalled();
 
-    expect(defaultProps.onComplete).toHaveBeenCalled();
-  });
+    await updateInlineInstall(0.35);
 
-  it("shows skipped-apps alert when a dependency is missing on provider", () => {
-    mockUseHook.mockReturnValue(
-      createHookStatus({
-        skippedAppOps: [
-          {
-            appOp: { name: "Ethereum" },
-            reason: SkipReason.NoSuchAppOnProvider,
-          },
-        ],
-      }),
-    );
-    render(<InstallSetOfApps {...defaultProps} />);
+    const determinateLoader = await screen.findByTestId("app-install-item-progress-loader");
+    expect(determinateLoader).toBeInTheDocument();
+    expect(infiniteLoader).not.toBeInTheDocument();
 
-    expect(
-      screen.getByText(/Some apps aren’t available.*Ledger Nano X/),
-    ).toBeInTheDocument();
-  });
-
-  it("calls onCancel when user refuses allow manager", async () => {
-    mockUseHook.mockReturnValue(
-      createHookStatus({
-        error: new UserRefusedAllowManager(),
-        allowManagerGranted: false,
-      }),
-    );
-    render(<InstallSetOfApps {...defaultProps} />);
+    await connectAppMock.events.opened();
 
     await waitFor(() => {
-      expect(defaultProps.onCancel).toHaveBeenCalled();
+      expect(determinateLoader).not.toBeInTheDocument();
+    });
+    expect(props.onComplete).toHaveBeenCalled();
+  });
+
+  it("shows a skipped-apps alert when a dependency is unavailable on the provider", async () => {
+    const { connectAppMock } = renderInstallSetOfApps();
+
+    await connectAppMock.emit(events => {
+      events.listingApps();
+      events.someAppsSkipped([
+        {
+          appOp: activeEthereumInstall,
+          reason: SkipReason.NoSuchAppOnProvider,
+        },
+      ]);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Some apps aren’t available.*Ledger Nano X/)).toBeInTheDocument();
     });
   });
 
-  it("calls onError for non-allow-manager errors", async () => {
+  it("forwards allow-manager refusal to onCancel without reporting a generic error", async () => {
+    const { props, connectAppMock } = renderInstallSetOfApps();
+
+    await connectAppMock.error(new UserRefusedAllowManager());
+
+    await waitFor(() => {
+      expect(props.onCancel).toHaveBeenCalled();
+    });
+    expect(props.onError).not.toHaveBeenCalled();
+  });
+
+  it("forwards non-allow-manager errors to onError without cancelling the flow", async () => {
+    const { props, connectAppMock } = renderInstallSetOfApps();
     const err = new Error("install failed");
-    mockUseHook.mockReturnValue(
-      createHookStatus({
-        error: err,
-        allowManagerGranted: false,
-      }),
-    );
-    render(<InstallSetOfApps {...defaultProps} />);
+
+    await connectAppMock.error(err);
 
     await waitFor(() => {
-      expect(defaultProps.onError).toHaveBeenCalledWith(err);
+      expect(props.onError).toHaveBeenCalledWith(err);
     });
+    expect(props.onCancel).not.toHaveBeenCalled();
   });
 
-  it("toggles header loader off while installing inline", () => {
-    mockUseHook.mockReturnValue(
-      createHookStatus({
-        progress: 0.2,
-        currentAppOp: { name: "Ethereum" },
-        opened: false,
-      }),
-    );
-    render(<InstallSetOfApps {...defaultProps} />);
+  it("hides the parent header loader during inline install", async () => {
+    const { props, updateInlineInstall } = renderInstallSetOfApps();
 
-    expect(defaultProps.setHeaderLoader).toHaveBeenCalledWith(false);
+    await updateInlineInstall(0.2);
+
+    await waitFor(() => {
+      expect(props.setHeaderLoader).toHaveBeenLastCalledWith(false);
+    });
   });
 });
