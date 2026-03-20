@@ -5,6 +5,7 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 
 type Props = {
   state?: State;
@@ -20,8 +21,13 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
     const patch: Partial<State["featureFlags"]> = {};
 
     const legacyOverrides = state.settings.overriddenFeatureFlags;
-    if (legacyOverrides && Object.keys(legacyOverrides).length > 0) {
-      patch.overrides = legacyOverrides as State["featureFlags"]["overrides"];
+    if (legacyOverrides) {
+      const filtered = Object.fromEntries(
+        Object.entries(legacyOverrides).filter(([, v]) => v !== undefined),
+      );
+      if (Object.keys(filtered).length > 0) {
+        patch.overrides = filtered as State["featureFlags"]["overrides"];
+      }
     }
 
     if (state.settings.featureFlagsButtonVisible != null) {
@@ -29,7 +35,8 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
     }
 
     if (Object.keys(patch).length > 0) {
-      state = { ...state, featureFlags: { ...state.featureFlags!, ...patch } };
+      const base = state.featureFlags ?? FEATURE_FLAGS_INITIAL_STATE;
+      state = { ...state, featureFlags: { ...base, ...patch } };
     }
   }
 
