@@ -7,7 +7,7 @@ import type {
   OperationRaw,
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/client";
+import { DelegatedStake, StakeObject, SuiValidatorSummary } from "@mysten/sui/jsonRpc";
 import type { BigNumber } from "bignumber.js";
 
 export type MappedStake = StakeObject & {

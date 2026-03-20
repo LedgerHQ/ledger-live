@@ -12,7 +12,7 @@ const testPathIgnorePatterns = [
   "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
 ];
 
-const esmDeps = ["ky"];
+const esmDeps = ["ky", "@mysten", "@scure", "@noble"];
 
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
@@ -72,7 +72,7 @@ const defaultConfig = {
         },
       },
     ],
-    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
+    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|mjs)$`]: [
       "@swc/jest",
       {
         jsc: {

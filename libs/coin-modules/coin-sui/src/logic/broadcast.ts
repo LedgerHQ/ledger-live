@@ -1,4 +1,4 @@
-import { ExecuteTransactionBlockParams } from "@mysten/sui/client";
+import { ExecuteTransactionBlockParams } from "@mysten/sui/jsonRpc";
 import suiAPI from "../network";
 
 /**
