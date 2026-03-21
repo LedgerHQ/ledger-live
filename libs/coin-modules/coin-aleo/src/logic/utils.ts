@@ -562,3 +562,9 @@ export function getFunctionNameFromTransactionType(transactionType: TransactionT
       throw new Error(`aleo: unsupported transaction type: ${transactionType}`);
   }
 }
+
+export function extractViewKey(account: AleoAccount): string {
+  const viewKey = decodeAccountId(account.id).customData;
+  invariant(viewKey, `aleo: view key is missing in ${account.freshAddress} account`);
+  return viewKey;
+}

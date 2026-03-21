@@ -220,6 +220,6 @@ describe("buildSignOperation", () => {
           deviceId: "test-device",
         }).pipe(toArray()),
       ),
-    ).rejects.toThrow("aleo: missing view key in account id");
+    ).rejects.toThrow(`aleo: view key is missing in ${accountWithoutViewKey.freshAddress} account`);
   });
 });

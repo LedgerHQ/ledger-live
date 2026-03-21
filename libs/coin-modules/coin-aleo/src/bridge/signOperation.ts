@@ -1,9 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import invariant from "invariant";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import {
   type Transaction,
   type AleoSigner,
@@ -17,6 +15,7 @@ import { craftTransaction } from "../logic";
 import {
   createFeeTransactionIntent,
   createTransactionIntent,
+  extractViewKey,
   fromHex,
   isPrivateTransaction,
   resolveConfig,
@@ -36,9 +35,7 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const viewKey = decodeAccountId(account.id).customData;
-          invariant(viewKey, "aleo: missing view key in account id");
-
+          const viewKey = extractViewKey(account);
           const config = resolveConfig(account.currency.id);
           const baseFee = transaction.fees;
           const priorityFee = new BigNumber(0);
