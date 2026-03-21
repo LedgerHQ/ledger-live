@@ -1,5 +1,27 @@
+export interface AleoAppConfig {
+  version: string;
+}
+
+export interface AleoAddress {
+  address: string;
+}
+
+export interface AleoViewKey {
+  viewKey: string;
+}
+
+export interface AleoRootIntentSignature {
+  signature: string;
+}
+
+export interface AleoFeeIntentSignature {
+  signature: string;
+}
+
 export interface AleoSigner {
-  signTransaction(path: string, transaction: Buffer): Promise<Buffer>;
-  getAddress: (path: string, display?: boolean) => Promise<Buffer>;
-  getViewKey: (path: string) => Promise<Buffer>;
+  getAppConfig: () => Promise<AleoAppConfig>;
+  getAddress: (path: string, display?: boolean) => Promise<AleoAddress>;
+  getViewKey: (path: string, display?: boolean) => Promise<AleoViewKey>;
+  signRootIntent(path: string, rootIntent: Buffer): Promise<AleoRootIntentSignature>;
+  signFeeIntent(feeIntent: Buffer): Promise<AleoFeeIntentSignature>;
 }
