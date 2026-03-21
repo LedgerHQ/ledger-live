@@ -26,6 +26,7 @@ import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { buildSignOperation } from "./signOperation";
 
 export function buildCurrencyBridge(signerContext: SignerContext<AleoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -47,6 +48,7 @@ export function buildAccountBridge(
 ): AccountBridge<AleoTransaction, AleoAccount> {
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
 
   return {
     createTransaction,
@@ -55,9 +57,7 @@ export function buildAccountBridge(
     getTransactionStatus,
     sync,
     receive,
-    signOperation: () => {
-      throw new Error("signOperation is not supported");
-    },
+    signOperation,
     signRawOperation: (): Observable<SignOperationEvent> => {
       throw new Error("signRawOperation is not supported");
     },

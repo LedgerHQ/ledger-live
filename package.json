@@ -270,7 +270,8 @@
       "use-latest-callback": "0.1.9",
       "ethers": "6.15.0",
       "bignumber.js": "9.1.2",
-      "@radix-ui/react-slot": "^1.2.3"
+      "@radix-ui/react-slot": "^1.2.3",
+      "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3"
     },
     "patchedDependencies": {
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",

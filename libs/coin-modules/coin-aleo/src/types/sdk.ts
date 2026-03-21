@@ -18,6 +18,7 @@ export interface PreparedRequestResponse {
   input_types: string[];
   nested_calls?: PreparedRequestResponse[];
   record_commitments?: string[];
+  tlv: string;
 }
 
 interface TransferPrivateIntent {

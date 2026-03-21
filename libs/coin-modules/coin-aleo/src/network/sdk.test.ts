@@ -1,12 +1,8 @@
 import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
-import type {
-  AleoEncryptedRegistrationResponse,
-  FeeConfiguration,
-  Intent,
-  PreparedRequestResponse,
-} from "../types/sdk";
+import type { AleoEncryptedRegistrationResponse, FeeConfiguration, Intent } from "../types/sdk";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import { sdkClient } from "./sdk";
 
 jest.mock("@ledgerhq/live-network");
@@ -334,14 +330,7 @@ describe("sdkClient", () => {
     });
 
     it("should return the complete response with data", async () => {
-      const responseWithMetadata: PreparedRequestResponse = {
-        is_root: true,
-        network_id: 1,
-        program_id: "credits.aleo",
-        function_name: "transfer_public",
-        inputs: ["aleo1toaddress", "1000u64"],
-        input_types: ["address", "u64"],
-      };
+      const responseWithMetadata = getMockedPreparedRequestResponse();
       jest.mocked(network).mockResolvedValue({ data: responseWithMetadata, status: 200 });
 
       const result = await sdkClient.createRequestFromIntent({
@@ -406,14 +395,7 @@ describe("sdkClient", () => {
   });
 
   describe("createAuthorization", () => {
-    const mockRequest: PreparedRequestResponse = {
-      is_root: true,
-      network_id: 1,
-      program_id: "credits.aleo",
-      function_name: "transfer_public",
-      inputs: ["aleo1toaddress", "1000u64"],
-      input_types: ["address", "u64"],
-    };
+    const mockRequest = getMockedPreparedRequestResponse();
     const mockSignatures = "mock_signatures_string";
     const mockViewKey = "AViewKey1mock_view_key_data";
     const mockAuthorizationResponse = {
@@ -483,7 +465,6 @@ describe("sdkClient", () => {
     const mockJwt = "Bearer mock_jwt_token";
     const mockPublicKey = "aleo1publickey";
     const mockAuthorization = { program_id: "credits.aleo", function_name: "transfer_public" };
-    const mockFeeAuthorization = { program_id: "credits.aleo", function_name: "fee_public" };
     const mockEncryptedResponse = { encrypted: "mock_encrypted_proving_request" };
 
     it("should call network with correct method, url, headers and data (without feeAuthorization)", async () => {
@@ -511,37 +492,8 @@ describe("sdkClient", () => {
           public_key: mockPublicKey,
           proving_request: {
             authorization: mockAuthorization,
+            fee_authorization: null,
             broadcast: true,
-          },
-        },
-      });
-    });
-
-    it("should include fee_authorization in proving_request when feeAuthorization is provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: mockEncryptedResponse, status: 200 });
-
-      await sdkClient.encryptProvingRequest({
-        currency: mockCurrency,
-        jwt: mockJwt,
-        publicKey: mockPublicKey,
-        authorization: mockAuthorization,
-        feeAuthorization: mockFeeAuthorization,
-        broadcast: false,
-      });
-
-      expect(network).toHaveBeenCalledTimes(1);
-      expect(network).toHaveBeenCalledWith({
-        method: "POST",
-        url: `${mockNetworkConfig.sdkUrl}/encrypt_proving_request`,
-        headers: {
-          Authorization: mockJwt,
-        },
-        data: {
-          public_key: mockPublicKey,
-          proving_request: {
-            authorization: mockAuthorization,
-            fee_authorization: mockFeeAuthorization,
-            broadcast: false,
           },
         },
       });

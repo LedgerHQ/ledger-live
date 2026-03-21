@@ -16,10 +16,10 @@ describe("Bridge", () => {
 
   // Mock signer context that provides an AleoSigner
   const createMockSignerContext = (): SignerContext<AleoSigner> => {
-    const signRootIntent = jest.fn().mockResolvedValue(Buffer.from("root-signature"));
-    const signFeeIntent = jest.fn().mockResolvedValue(Buffer.from("fee-signature"));
-    const getAddress = jest.fn().mockResolvedValue(Buffer.from("aleo1test"));
-    const getViewKey = jest.fn().mockResolvedValue(Buffer.from("view_key"));
+    const signRootIntent = jest.fn().mockResolvedValue({ signature: "root-signature" });
+    const signFeeIntent = jest.fn().mockResolvedValue({ signature: "fee-signature" });
+    const getAddress = jest.fn().mockResolvedValue({ address: "aleo1test" });
+    const getViewKey = jest.fn().mockResolvedValue({ viewKey: "view_key" });
     const getAppConfig = jest.fn().mockResolvedValue({});
 
     const mockSigner: AleoSigner = {

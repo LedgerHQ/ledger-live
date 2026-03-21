@@ -430,6 +430,7 @@ overrides:
   ethers: 6.15.0
   bignumber.js: 9.1.2
   '@radix-ui/react-slot': ^1.2.3
+  '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
 
 packageExtensionsChecksum: sha256-oFPDBJXygat0iMzkO4oGwhSi6BtY54eC5dgXuFjN6jk=
 
@@ -10009,8 +10010,8 @@ importers:
         specifier: 'catalog:'
         version: 1.2.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-aleo':
-        specifier: 0.0.0-develop-20260317001455
-        version: 0.0.0-develop-20260317001455(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        specifier: 0.0.0-develop-20260323001608
+        version: 0.0.0-develop-20260323001608(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -15503,11 +15504,11 @@ packages:
     peerDependencies:
       rxjs: 7.8.2
 
-  '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260317001455':
-    resolution: {integrity: sha512-YZ6tMZRQFr+gGv962InP8I0OFSspnWHwIrh2Va7Iu6kBwCTxAp7BDla2pdJJ6bkOLZDWpJsHPP3QqXMruVhFuA==}
+  '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260323001608':
+    resolution: {integrity: sha512-SqBHgjg1S2xQ1XKnXSGNz8zEBLi1NbqFKg/zdx9UpOvDukoValf9ucQ+H/DqAPanuyGev+SdT0Dt87NxHxnPCg==}
     peerDependencies:
       '@ledgerhq/context-module': 1.15.0
-      '@ledgerhq/device-management-kit': 0.0.0-develop-20260317001455
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20260323001608
 
   '@ledgerhq/device-signer-kit-ethereum@1.12.0':
     resolution: {integrity: sha512-Uj3C3UaoaX/pcqSuCHgfQZn1lwqqp60eQr8wyQOY5OCV4zttoWKmB1MRBn+t4LB08eBRAgokcFdsG2dGwFEhiA==}
@@ -15664,11 +15665,6 @@ packages:
     resolution: {integrity: sha512-ct6OSX5ExBn69pJ3cSBygBJ3SE4DJXV+TCLerqyI+iyO/0L1Mgf0LRmNeSXlFrHXQmmuPw18BISvQA+5J2Cp0w==}
     peerDependencies:
       react: 19.0.0
-
-  '@ledgerhq/signer-utils@0.0.0-develop-20260317001455':
-    resolution: {integrity: sha512-nRPphn9aK+XWF9yiwr6XSMEek2YTG+aW0d8NQK4RicZOeV65JsyRiBSaELeKEot+FU1dkiygTb/8spJvipT2gA==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-develop-20260317001455
 
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
@@ -42553,11 +42549,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260317001455(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260323001608(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 0.0.0-develop-20260317001455(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -42843,11 +42839,6 @@ snapshots:
       clsx: 2.1.1
       react: 19.0.0
       tailwind-merge: 2.6.0
-
-  '@ledgerhq/signer-utils@0.0.0-develop-20260317001455(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:

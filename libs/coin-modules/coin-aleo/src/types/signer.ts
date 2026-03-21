@@ -21,7 +21,7 @@ export interface AleoFeeIntentSignature {
 export interface AleoSigner {
   getAppConfig: () => Promise<AleoAppConfig>;
   getAddress: (path: string, display?: boolean) => Promise<AleoAddress>;
-  getViewKey: (path: string, display?: boolean) => Promise<AleoViewKey>;
+  getViewKey: (path: string) => Promise<AleoViewKey>;
   signRootIntent(path: string, rootIntent: Buffer): Promise<AleoRootIntentSignature>;
   signFeeIntent(feeIntent: Buffer): Promise<AleoFeeIntentSignature>;
 }
