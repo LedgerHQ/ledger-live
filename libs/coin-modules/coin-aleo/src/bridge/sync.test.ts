@@ -68,7 +68,7 @@ describe("sync.ts", () => {
     });
     mockAccessProvableApi.mockResolvedValue(null);
     mockGetAccountOwnedRecords.mockResolvedValue([]);
-    mockListPrivateOperations.mockResolvedValue([]);
+    mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
     mockPatchPublicOperations.mockResolvedValue([]);
   });
@@ -510,7 +510,10 @@ describe("sync.ts", () => {
       mockGetAccountOwnedRecords
         .mockResolvedValueOnce(mockPrivateRecords)
         .mockResolvedValueOnce(mockUnspentRecords);
-      mockListPrivateOperations.mockResolvedValueOnce(mockPrivateOps);
+      mockListPrivateOperations.mockResolvedValueOnce({
+        operations: mockPrivateOps,
+        consumedRecordTags: new Set(),
+      });
       mockGetPrivateBalance.mockResolvedValueOnce({
         balance: new BigNumber(50000),
         unspentRecords: mockUnspentResult,
@@ -666,10 +669,14 @@ describe("sync.ts", () => {
 
       const accountWithOps = { ...mockInitialAccount, operations: [oldPublicOp] };
       mockListOperations.mockResolvedValueOnce({
-        operations: [newPublicOp as any],
+        // @ts-expect-error - bridge operation type is expected in this test
+        operations: [newPublicOp],
         nextCursor: null,
       });
-      mockListPrivateOperations.mockResolvedValueOnce([newPrivateOp]);
+      mockListPrivateOperations.mockResolvedValueOnce({
+        operations: [newPrivateOp],
+        consumedRecordTags: new Set(),
+      });
       mockPatchPublicOperations.mockResolvedValueOnce([newPublicOp, oldPublicOp]);
 
       const result = await getAccountShape(
@@ -824,6 +831,40 @@ describe("sync.ts", () => {
       );
 
       expect(mockPatchPublicOperations).not.toHaveBeenCalled();
+    });
+
+    it("should filter unspent records whose tags appear in consumedRecordTags before passing to getPrivateBalance", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const consumedTag = "consumed-record-tag";
+      const spentRecord = getMockedRecord({ tag: consumedTag, record_ciphertext: "spent" });
+      const unspentRecord = getMockedRecord({ tag: "unspent-tag", record_ciphertext: "unspent" });
+
+      mockGetAccountOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([spentRecord, unspentRecord]); // unspent from scanner (with stale data)
+      mockListPrivateOperations.mockResolvedValueOnce({
+        operations: [],
+        consumedRecordTags: new Set([consumedTag]),
+      });
+
+      await getAccountShape(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        mockSyncConfig,
+      );
+
+      expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
+      expect(mockGetPrivateBalance).toHaveBeenCalledWith({
+        currency: mockCurrency,
+        viewKey: "AViewKey123",
+        privateRecords: [unspentRecord],
+      });
     });
   });
 });
