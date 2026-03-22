@@ -207,6 +207,7 @@ export function useSideBarViewModel(): SideBarViewModel {
   }, [location.pathname, push]);
 
   const handleOpenSendModal = useCallback(() => {
+    console.log("called open send flow from sidebar");
     maybeRedirectToAccounts();
     trackEntry("send");
     openSendFlow();

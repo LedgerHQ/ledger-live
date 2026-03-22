@@ -1,0 +1,19 @@
+import React from "react";
+import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import { SendStepRecipient } from "~/renderer/families/aleo/SendModal/SendStepRecipient";
+import { SelfTransferStepRecipient } from "~/renderer/families/aleo/SelfTransferModal/SelfTransferStepRecipient";
+import type { StepProps } from "~/renderer/modals/Send/types";
+
+const StepRecipient = (props: StepProps) => {
+  if (!props.transaction || props.transaction?.family !== "aleo") {
+    return null;
+  }
+
+  if (isSelfTransferTransaction(props.transaction)) {
+    return <SelfTransferStepRecipient {...props} />;
+  }
+
+  return <SendStepRecipient {...props} />;
+};
+
+export default StepRecipient;

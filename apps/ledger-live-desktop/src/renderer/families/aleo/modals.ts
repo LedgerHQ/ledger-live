@@ -1,13 +1,16 @@
 import type { MakeModalsType } from "~/renderer/modals/types";
-import type { Data as DefaultSendData } from "~/renderer/modals/Send/Body";
 import SelfTransferModal from "./SelfTransferModal";
+import SendModal from "./SendModal";
 import { AleoCustomModal } from "./constants";
+import { Data as SendModalData } from "./modals/send/types";
 
 export type ModalsData = {
-  [AleoCustomModal.SELF_TRANSFER]: DefaultSendData;
+  [AleoCustomModal.SEND]: SendModalData;
+  [AleoCustomModal.SELF_TRANSFER]: SendModalData;
 };
 
 const modals: MakeModalsType<ModalsData> = {
+  [AleoCustomModal.SEND]: SendModal,
   [AleoCustomModal.SELF_TRANSFER]: SelfTransferModal,
 } as const;
 

@@ -10,13 +10,14 @@ import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/w
 import { closeDialog, openDialog } from "~/renderer/reducers/modularDrawer";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 const SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION: EnhancedModularDrawerConfiguration = {
   assets: { rightElement: "balance" },
   networks: {},
 };
 
-type WorkflowParams = {
+export type WorkflowParams = {
   account?: AccountLike;
   parentAccount?: Account;
   recipient?: string;
@@ -35,7 +36,7 @@ export function useOpenSendFlow() {
     (params?: WorkflowParams) => {
       setOriginFlow(HOOKS_TRACKING_LOCATIONS.sendModal);
 
-      const openSendFlowImpl = (nextParams?: WorkflowParams) => {
+      const defaultOpenSendFlowImpl = (nextParams?: WorkflowParams) => {
         if (!nextParams?.account) {
           // When there are no accounts, the old modal requires an account and would throw.
           // Always use the new drawer for account selection (or empty state) in that case.
@@ -48,7 +49,7 @@ export function useOpenSendFlow() {
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());
-                  openSendFlowImpl({
+                  defaultOpenSendFlowImpl({
                     ...nextParams,
                     account,
                     parentAccount,
@@ -75,6 +76,14 @@ export function useOpenSendFlow() {
 
         const family = getFamilyFromAccount(nextParams.account, nextParams.parentAccount ?? null);
         const shouldUseNewFlow = isEnabledForFamily(family);
+        const specific = family ? getLLDCoinFamily(family) : null;
+
+        console.log("use open send flow", family, specific?.openSendFlow, shouldUseNewFlow);
+
+        if (specific?.openSendFlow) {
+          specific.openSendFlow(dispatch, nextParams);
+          return;
+        }
 
         if (shouldUseNewFlow) {
           let normalizedAmount: string | undefined;
@@ -109,7 +118,7 @@ export function useOpenSendFlow() {
         }
       };
 
-      openSendFlowImpl(params);
+      defaultOpenSendFlowImpl(params);
     },
     [hasNoAccounts, dispatch, isEnabledForFamily, getFamilyFromAccount],
   );

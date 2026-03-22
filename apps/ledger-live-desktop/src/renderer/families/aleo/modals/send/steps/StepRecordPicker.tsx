@@ -4,11 +4,7 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type {
-  AleoAccount,
-  AleoUnspentRecord,
-  TransactionPrivate,
-} from "@ledgerhq/live-common/families/aleo/types";
+import type { AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
 import { isPublicTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { useSelector } from "LLD/hooks/redux";
 import Label from "~/renderer/components/Label";
@@ -19,11 +15,6 @@ import Box from "~/renderer/components/Box/Box";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
-
-interface Props extends Omit<StepProps, "account" | "transaction"> {
-  account: AleoAccount;
-  transaction: TransactionPrivate;
-}
 
 interface ButtonState {
   $checked?: boolean;
@@ -93,7 +84,7 @@ const RecordsLimitDescription = styled.p`
 
 const MAX_RECORDS_DISPLAYED = 10;
 
-export const StepRecordPicker = ({ account, transaction, updateTransaction }: Props) => {
+const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
@@ -187,3 +178,5 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
     </Box>
   );
 };
+
+export default StepRecordPicker;

@@ -6,8 +6,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { getAleoCurrencyConfig, getAleoTransactionTypeLabelKey } from "./shared/utils";
-import type { AleoFamily } from "./types";
+import { getAleoCurrencyConfig, getAleoTransactionTypeLabelKey } from "../../../shared/utils";
+import type { AleoFamily } from "../../../types";
 
 const StepSummaryNetworkFeesRow: NonNullable<AleoFamily["StepSummaryNetworkFeesRow"]> = ({
   estimatedFees,

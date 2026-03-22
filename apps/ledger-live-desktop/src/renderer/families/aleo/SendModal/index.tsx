@@ -3,8 +3,8 @@ import { AleoCustomModal } from "../constants";
 import type { ModalProps } from "../modals/send/types";
 import AleoSendModal from "../modals/send";
 
-const SelfTransferModal = (props: ModalProps) => {
-  return <AleoSendModal name={AleoCustomModal.SELF_TRANSFER} {...props} />;
+const SendModal = (props: ModalProps) => {
+  return <AleoSendModal name={AleoCustomModal.SEND} {...props} />;
 };
 
-export default SelfTransferModal;
+export default SendModal;

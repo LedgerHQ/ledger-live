@@ -33,7 +33,7 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
-import { St, StepId } from "./types";
+import { St as GenericSt, StepId as GenericStepId } from "./types";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -46,12 +46,13 @@ export type Data = {
   transaction?: Transaction;
   onConfirmationHandler?: () => void;
   onFailHandler?: () => void;
-  stepId?: StepId;
+  stepId?: GenericStepId;
 };
 
-type OwnProps = {
+type OwnProps<StepId = GenericStepId, St = GenericSt> = {
   title?: string;
   modalName?: keyof ModalData;
+  customSteps?: St[];
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
@@ -65,9 +66,9 @@ type StateProps = {
   openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
-type Props = {} & OwnProps & StateProps;
-const createSteps = (disableBacks: string[] = []): St[] => {
-  const steps: Array<St | undefined> = [
+type Props<StepId = GenericStepId, St = GenericSt> = {} & OwnProps<StepId, St> & StateProps;
+const createSteps = (disableBacks: string[] = []): GenericSt[] => {
+  const steps: Array<GenericSt | undefined> = [
     {
       id: "warning",
       excludeFromBreadcrumb: true,
@@ -116,7 +117,7 @@ const createSteps = (disableBacks: string[] = []): St[] => {
     },
   ];
 
-  return steps.filter(Boolean) as St[];
+  return steps.filter(Boolean) as GenericSt[];
 };
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
@@ -127,7 +128,7 @@ const mapDispatchToProps = {
   openModal,
   updateAccountWithUpdater,
 };
-const Body = ({
+const Body = <StepId extends string = GenericStepId, St = GenericSt>({
   t,
   device,
   openModal,
@@ -140,7 +141,7 @@ const Body = ({
   params,
   accounts,
   updateAccountWithUpdater,
-}: Props) => {
+}: Props<StepId, St>) => {
   const openedFromAccount = !!params.account;
 
   const walletConnectProxy = !!params.walletConnectProxy;
@@ -279,9 +280,9 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
+    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
     modalName,
-    stepId,
+    stepId: stepId,
     steps,
     errorSteps,
     device,

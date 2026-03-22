@@ -9,11 +9,11 @@ const mockIsSelfTransferTransaction = jest.mocked(isSelfTransferTransaction);
 
 jest.mock("@ledgerhq/live-common/families/aleo/utils");
 
-jest.mock("./SendTransferModal/AleoSendStepRecipient", () => ({
-  AleoSendStepRecipient: () => <div data-testid="aleo-send-step-recipient" />,
+jest.mock("../../SendModal/SendStepRecipient", () => ({
+  SendStepRecipient: () => <div data-testid="aleo-send-step-recipient" />,
 }));
 
-jest.mock("./SelfTransferModal/SelfTransferStepRecipient", () => ({
+jest.mock("../../SelfTransferModal/SelfTransferStepRecipient", () => ({
   SelfTransferStepRecipient: () => <div data-testid="self-transfer-step-recipient" />,
 }));
 
