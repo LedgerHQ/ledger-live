@@ -1,15 +1,13 @@
 import type { Step } from "~/renderer/components/Stepper";
-import type { StepProps as GenericStepProps } from "~/renderer/modals/Send/types";
 import type { Data as GenericData } from "~/renderer/modals/Send/Body";
+import type {
+  StepProps as GenericStepProps,
+  StepId as GenericStepId,
+} from "~/renderer/modals/Send/types";
 
-export type StepId =
-  | "recipient"
-  | "private-sync"
-  | "record-picker"
-  | "amount"
-  | "summary"
-  | "device"
-  | "confirmation";
+type AleoCustomStepId = "private-sync" | "record-picker";
+
+export type StepId = Exclude<GenericStepId, "warning"> | AleoCustomStepId;
 
 export type St = Step<StepId, GenericStepProps>;
 

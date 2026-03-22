@@ -6,11 +6,6 @@ import Button from "~/renderer/components/Button";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import type { StepProps } from "~/renderer/modals/Send/types";
 
-/**
- * Recipient step footer:
- * - private transaction -> transition to "private-sync" (record-sync required before picking a record)
- * - public transaction -> transition to "amount" directly
- */
 const StepRecipientFooter = ({
   account,
   parentAccount,

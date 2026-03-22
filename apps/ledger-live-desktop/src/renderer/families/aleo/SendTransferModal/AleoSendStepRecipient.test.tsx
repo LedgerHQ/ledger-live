@@ -7,7 +7,7 @@ import i18n from "~/renderer/i18n/init";
 import { trackPage } from "~/renderer/analytics/segment";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import type { StepProps } from "~/renderer/modals/Send/types";
-import { SendStepRecipient } from "./SendStepRecipient";
+import { AleoSendStepRecipient } from "./AleoSendStepRecipient";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";
 
@@ -24,7 +24,7 @@ jest.mock("~/renderer/modals/Send/SendRecipientFields", () => ({
 
 const mockUseAccountUnit = jest.mocked(useAccountUnit);
 
-describe("SendStepRecipient", () => {
+describe("AleoSendStepRecipient", () => {
   const mockStatus: TransactionStatus = {
     errors: {},
     warnings: {},
@@ -76,7 +76,7 @@ describe("SendStepRecipient", () => {
   });
 
   it("should return null when transaction is null", () => {
-    const { container } = render(<SendStepRecipient {...defaultProps} transaction={null} />);
+    const { container } = render(<AleoSendStepRecipient {...defaultProps} transaction={null} />);
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -84,21 +84,21 @@ describe("SendStepRecipient", () => {
   it("should return null when status is null", () => {
     const { container } = render(
       // @ts-expect-error - testing missing status
-      <SendStepRecipient {...defaultProps} status={null} />,
+      <AleoSendStepRecipient {...defaultProps} status={null} />,
     );
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it("should return null when account is null", () => {
-    const { container } = render(<SendStepRecipient {...defaultProps} account={null} />);
+    const { container } = render(<AleoSendStepRecipient {...defaultProps} account={null} />);
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it("should return null when transaction family is not aleo", () => {
     const { container } = render(
-      <SendStepRecipient
+      <AleoSendStepRecipient
         {...defaultProps}
         // @ts-expect-error - testing invalid family
         transaction={{ ...aleoTransaction, family: "bitcoin" }}
@@ -109,7 +109,7 @@ describe("SendStepRecipient", () => {
   });
 
   it("should track the Aleo Send Flow Recipient Step analytics page", () => {
-    render(<SendStepRecipient {...defaultProps} />);
+    render(<AleoSendStepRecipient {...defaultProps} />);
 
     expect(trackPage).toHaveBeenCalledWith(
       "Aleo Send Flow",
@@ -121,20 +121,20 @@ describe("SendStepRecipient", () => {
   });
 
   it("should render the account selector label", () => {
-    render(<SendStepRecipient {...defaultProps} />);
+    render(<AleoSendStepRecipient {...defaultProps} />);
 
     expect(screen.getByText("Account to debit")).toBeInTheDocument();
   });
 
   it("should render the balance selector with public and private options", () => {
-    render(<SendStepRecipient {...defaultProps} />);
+    render(<AleoSendStepRecipient {...defaultProps} />);
 
     expect(screen.getByText(/Public balance/)).toBeInTheDocument();
     expect(screen.getByText(/Private balance/)).toBeInTheDocument();
   });
 
   it("should render the recipient field and extra recipient fields", () => {
-    render(<SendStepRecipient {...defaultProps} />);
+    render(<AleoSendStepRecipient {...defaultProps} />);
 
     expect(screen.getByTestId("recipient-field")).toBeInTheDocument();
     expect(screen.getByTestId("send-recipient-fields")).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe("SendStepRecipient", () => {
 
   it("should render an error banner when error is provided", () => {
     const error = new Error("Something went wrong");
-    render(<SendStepRecipient {...defaultProps} error={error} />);
+    render(<AleoSendStepRecipient {...defaultProps} error={error} />);
 
     expect(screen.getByText("Something went wrong")).toBeInTheDocument();
   });
@@ -154,7 +154,7 @@ describe("SendStepRecipient", () => {
       errors: { sender: senderError },
     };
 
-    render(<SendStepRecipient {...defaultProps} status={statusWithSenderError} />);
+    render(<AleoSendStepRecipient {...defaultProps} status={statusWithSenderError} />);
 
     expect(screen.getByTestId("sender-error-container")).toBeInTheDocument();
   });
@@ -162,7 +162,7 @@ describe("SendStepRecipient", () => {
   it("should call updateTransaction with TRANSFER_PRIVATE when switching to private balance", async () => {
     const updateTransaction = jest.fn();
     const { user } = render(
-      <SendStepRecipient {...defaultProps} updateTransaction={updateTransaction} />,
+      <AleoSendStepRecipient {...defaultProps} updateTransaction={updateTransaction} />,
     );
 
     const privateOption = screen.getByText(/Private balance/);
@@ -181,7 +181,7 @@ describe("SendStepRecipient", () => {
     });
     const updateTransaction = jest.fn();
     const { user } = render(
-      <SendStepRecipient
+      <AleoSendStepRecipient
         {...defaultProps}
         transaction={privateTransaction}
         updateTransaction={updateTransaction}

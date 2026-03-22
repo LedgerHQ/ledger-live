@@ -21,7 +21,7 @@ const StepRecordPickerFooter = ({
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
       <Button
-        id={"aleo-record-picker-continue-button"}
+        id="aleo-record-picker-continue-button"
         isLoading={bridgePending}
         primary
         disabled={!!isTerminated}

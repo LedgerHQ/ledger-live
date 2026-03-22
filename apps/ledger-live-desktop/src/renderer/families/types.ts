@@ -28,8 +28,7 @@ import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
-import type { WorkflowParams as OpenSendFlowParmas } from "~/mvvm/features/Send/hooks/useOpenSendFlow";
-import type { AppDispatch } from "~/state-manager/configureStore";
+import type { Step } from "~/renderer/components/Stepper";
 
 export type AddressCellProps<O extends Operation> = {
   operation: O;
@@ -285,9 +284,9 @@ export type LLDCoinFamily<
   };
 
   /**
-   * Allow to override the way to open send flow.
+   * Allow to override default send flow steps
    */
-  openSendFlow?: (dispatch: AppDispatch, params?: OpenSendFlowParmas) => void;
+  createSendSteps?: (disableBacks?: string[]) => Step<string, SendStepProps>[];
 
   /**
    * Allow to override the "Recipient" step in the Send modal.

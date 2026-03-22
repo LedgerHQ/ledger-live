@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -12,6 +12,7 @@ import {
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
+import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -26,6 +27,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
 import type { ModalData } from "~/renderer/modals/types";
+import { getLLDCoinFamily } from "~/renderer/families";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
@@ -33,7 +35,7 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
-import { St as GenericSt, StepId as GenericStepId } from "./types";
+import type { St, StepId } from "./types";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -46,13 +48,12 @@ export type Data = {
   transaction?: Transaction;
   onConfirmationHandler?: () => void;
   onFailHandler?: () => void;
-  stepId?: GenericStepId;
+  stepId?: StepId;
 };
 
-type OwnProps<StepId = GenericStepId, St = GenericSt> = {
+type OwnProps = {
   title?: string;
   modalName?: keyof ModalData;
-  customSteps?: St[];
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
@@ -66,9 +67,9 @@ type StateProps = {
   openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
-type Props<StepId = GenericStepId, St = GenericSt> = {} & OwnProps<StepId, St> & StateProps;
-const createSteps = (disableBacks: string[] = []): GenericSt[] => {
-  const steps: Array<GenericSt | undefined> = [
+type Props = {} & OwnProps & StateProps;
+const defaultCreateSteps = (disableBacks: string[] = []): St[] => {
+  const steps: Array<St | undefined> = [
     {
       id: "warning",
       excludeFromBreadcrumb: true,
@@ -117,7 +118,7 @@ const createSteps = (disableBacks: string[] = []): GenericSt[] => {
     },
   ];
 
-  return steps.filter(Boolean) as GenericSt[];
+  return steps.filter(Boolean) as St[];
 };
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
@@ -128,7 +129,7 @@ const mapDispatchToProps = {
   openModal,
   updateAccountWithUpdater,
 };
-const Body = <StepId extends string = GenericStepId, St = GenericSt>({
+const Body = ({
   t,
   device,
   openModal,
@@ -141,7 +142,7 @@ const Body = <StepId extends string = GenericStepId, St = GenericSt>({
   params,
   accounts,
   updateAccountWithUpdater,
-}: Props<StepId, St>) => {
+}: Props) => {
   const openedFromAccount = !!params.account;
 
   const walletConnectProxy = !!params.walletConnectProxy;
@@ -155,8 +156,6 @@ const Body = <StepId extends string = GenericStepId, St = GenericSt>({
   const onResetMaybeRecipient = useCallback(() => {
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
-
-  const [steps] = useState(() => createSteps(params.disableBacks));
 
   const {
     transaction,
@@ -227,6 +226,16 @@ const Body = <StepId extends string = GenericStepId, St = GenericSt>({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
+  const specific =
+    currency && isCryptoCurrency(currency) ? getLLDCoinFamily(currency.family) : null;
+
+  const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
+  const customSteps = useMemo(() => {
+    return specific?.createSendSteps?.(params.disableBacks) ?? null;
+  }, []);
+
+  const steps = customSteps ?? defaultSteps;
+
   const handleCloseModal = useCallback(() => {
     closeModal(modalName);
   }, [modalName, closeModal]);
@@ -280,9 +289,9 @@ const Body = <StepId extends string = GenericStepId, St = GenericSt>({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
+    title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
     modalName,
-    stepId: stepId,
+    stepId,
     steps,
     errorSteps,
     device,

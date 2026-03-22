@@ -13,7 +13,7 @@ import RecipientField from "~/renderer/modals/Send/fields/RecipientField";
 import SendRecipientFields from "~/renderer/modals/Send/SendRecipientFields";
 import BalanceSelector from "../shared/BalanceSelector";
 
-export const SendStepRecipient = ({
+export const AleoSendStepRecipient = ({
   t,
   transaction,
   account,

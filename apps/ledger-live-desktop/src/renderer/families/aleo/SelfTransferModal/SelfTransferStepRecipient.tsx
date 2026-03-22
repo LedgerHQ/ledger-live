@@ -6,12 +6,12 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
+import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useHandleChangeAccount } from "./useHandleChangeAccount";
 import BalanceSelector from "../shared/BalanceSelector";
 import { Trans } from "react-i18next";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
-import type { StepProps } from "~/renderer/modals/Send/types";
 
 export const SelfTransferStepRecipient = ({
   t,
