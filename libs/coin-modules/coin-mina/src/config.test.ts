@@ -1,28 +1,26 @@
-import { setCoinConfig, getCoinConfig } from "./config";
+import type { MinaCoinConfig } from "./config";
+import { getCoinConfig, resetCoinConfigForTesting, setCoinConfig } from "./config";
+
+const minaTestConfig = {
+  status: { type: "active" as const },
+  infra: {
+    API_VALIDATORS_BASE_URL: "https://validators.test",
+    API_MINA_ROSETTA_NODE: "https://rosetta.test",
+    API_MINA_GRAPHQL_NODE: "https://graphql.test",
+  },
+} satisfies ReturnType<MinaCoinConfig>;
 
 describe("config", () => {
   afterEach(() => {
-    // Reset to undefined by setting a config that returns undefined-like
-    // We need to use setCoinConfig to clear state between tests
+    resetCoinConfigForTesting();
   });
 
   it("should throw when config is not set", () => {
-    // Create a fresh module to test unset state
-    jest.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { getCoinConfig: freshGetCoinConfig } = require("./config");
-    expect(() => freshGetCoinConfig()).toThrow("Mina module config not set");
+    expect(() => getCoinConfig()).toThrow("Mina module config not set");
   });
 
   it("should return config after it is set", () => {
-    const mockConfig = {
-      infra: {
-        API_VALIDATORS_BASE_URL: "https://validators.test",
-        API_MINA_ROSETTA_NODE: "https://rosetta.test",
-        API_MINA_GRAPHQL_NODE: "https://graphql.test",
-      },
-    };
-    setCoinConfig(() => mockConfig as any);
+    setCoinConfig(() => minaTestConfig);
 
     const result = getCoinConfig();
 
@@ -32,7 +30,8 @@ describe("config", () => {
   });
 
   it("should throw when coinConfig returns falsy", () => {
-    setCoinConfig((() => undefined) as any);
+    // @ts-expect-error — covers runtime guard when factory returns undefined
+    setCoinConfig(() => undefined);
     expect(() => getCoinConfig()).toThrow("Mina module config not set");
   });
 });
