@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "customConditions": []
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "customConditions": [],
+    "paths": {}
   },
   "exclude": [
     "**/*.test.ts",

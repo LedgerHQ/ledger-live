@@ -1,7 +1,7 @@
-import { validateMemo as icpValidateMemo } from "@zondax/ledger-live-icp/utils";
+import { validateMemo as icpValidateMemo } from "../dfinity/validation";
 import { validateMemo } from "./validateMemo";
 
-jest.mock("@zondax/ledger-live-icp/utils");
+jest.mock("../dfinity/validation");
 
 describe("validateMemo", () => {
   const mockedIcpValidateMemo = jest.mocked(icpValidateMemo);

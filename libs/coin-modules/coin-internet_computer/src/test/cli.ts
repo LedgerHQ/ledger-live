@@ -20,10 +20,11 @@ function inferTransactions(
   return flatMap(transactions, ({ transaction }) => {
     invariant(transaction.family === "internet_computer", "internet computer family");
 
-    return {
+    const result: Transaction = {
       ...transaction,
       family: "internet_computer",
-    } as Transaction;
+    };
+    return result;
   });
 }
 

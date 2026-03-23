@@ -52,7 +52,7 @@ const moduleNameMapper = {
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
-const transformIncludePatterns = ["ky", "@ledgerhq\\+lumen-ui-react"];
+const transformIncludePatterns = ["ky", "@ledgerhq\\+lumen-ui-react", "@dfinity", "@icp-sdk"];
 
 const commonConfig = {
   testEnvironment: "jsdom",
@@ -70,7 +70,7 @@ const commonConfig = {
   setupFilesAfterEnv: ["<rootDir>/tests/jestSetup.js"],
   extensionsToTreatAsEsm: [".ts", ".tsx", ".jsx"],
   transform: {
-    "^.+\\.(t|j)sx?$": [
+    "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {

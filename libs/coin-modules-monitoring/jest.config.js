@@ -1,11 +1,11 @@
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "@dfinity", "@icp-sdk"];
 
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.ts"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
   transform: {
-    "^.+\\.(t|j)sx?$": [
+    "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {
@@ -13,7 +13,7 @@ module.exports = {
         },
       },
     ],
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
+    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.m?jsx?$`]: [
       "@swc/jest",
       {
         jsc: {

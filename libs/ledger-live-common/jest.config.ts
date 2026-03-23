@@ -64,7 +64,7 @@ const defaultConfig = {
   testRegex,
   coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
-    "^.+\\.(t|j)sx?$": [
+    "^.+\\.m?(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {
@@ -81,7 +81,7 @@ const defaultConfig = {
       },
     ],
   },
-  transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
+  transformIgnorePatterns: ["/node_modules/(?!(\\.pnpm/)?(@dfinity|@icp-sdk|ky|@babel/runtime/helpers/esm))"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
     "^@tests/(.*)$": "<rootDir>/src/__tests__/$1",

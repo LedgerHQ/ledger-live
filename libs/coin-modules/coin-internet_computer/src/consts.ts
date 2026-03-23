@@ -14,8 +14,7 @@ export const MAX_MEMO_VALUE = Number.MAX_SAFE_INTEGER;
 export const FETCH_TXNS_LIMIT = 100;
 
 export {
-  MAINNET_GOVERNANCE_CANISTER_ID,
   MAINNET_LEDGER_CANISTER_ID,
   MAINNET_INDEX_CANISTER_ID,
   ICP_NETWORK_URL,
-} from "@zondax/ledger-live-icp/neurons";
+} from "./dfinity/consts";

@@ -3,13 +3,13 @@ import {
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/ledger-wallet-framework/bot/specs";
-import { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
+import type { DeviceAction, State } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { methodToString } from "../common-logic/utils";
 import type { Transaction } from "../types";
 
 const ignoreSpaces = (s: string) => s.replace(/ /g, "");
 
-export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
     {
       title: "Transaction type",
