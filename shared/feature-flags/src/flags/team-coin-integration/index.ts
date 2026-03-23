@@ -45,6 +45,8 @@ export * from "./currencyKlaytnBaobab";
 export * from "./currencyLinea";
 export * from "./currencyLineaSepolia";
 export * from "./currencyLukso";
+export * from "./currencyMantle";
+export * from "./currencyMantleSepolia";
 export * from "./currencyMantra";
 export * from "./currencyMetis";
 export * from "./currencyMina";

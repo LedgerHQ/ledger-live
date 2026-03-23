@@ -32,6 +32,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const energyWeb = useFeature("currencyEnergyWeb");
   const astar = useFeature("currencyAstar");
   const metis = useFeature("currencyMetis");
+  const mantle = useFeature("currencyMantle");
+  const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
@@ -123,6 +125,8 @@ export function useCurrenciesUnderFeatureFlag() {
       energy_web: energyWeb,
       astar,
       metis,
+      mantle,
+      mantle_sepolia: mantleSepolia,
       boba,
       moonriver,
       velas_evm: velasEvm,
@@ -213,6 +217,8 @@ export function useCurrenciesUnderFeatureFlag() {
       energyWeb,
       astar,
       metis,
+      mantle,
+      mantleSepolia,
       boba,
       moonriver,
       velasEvm,
