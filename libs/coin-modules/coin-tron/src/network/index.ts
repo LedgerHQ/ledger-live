@@ -500,15 +500,12 @@ export type FetchParams = {
   hintGlobalLimit?: number;
   minTimestamp: number;
   order: "asc" | "desc";
-  /** Include transactions with internal_transactions (for Alpaca API use) */
-  includeInternalTxs?: boolean;
 };
 
 export const defaultFetchParams: FetchParams = {
   limitPerCall: 100,
   minTimestamp: 0,
   order: "desc",
-  includeInternalTxs: false,
 } as const;
 
 export type TxPageResult = {

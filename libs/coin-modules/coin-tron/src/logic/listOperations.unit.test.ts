@@ -329,6 +329,7 @@ describe("listOperations", () => {
     await expect(listOperations(mockAddress, defaultOptions)).rejects.toThrow("Network error!");
   });
 
+<<<<<<< HEAD
   it("should throw on invalid cursor format", async () => {
     await expect(
       listOperations(mockAddress, { ...defaultOptions, cursor: "invalid" }),

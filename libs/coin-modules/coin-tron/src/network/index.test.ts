@@ -322,7 +322,7 @@ describe("Transactions with internal_transactions", () => {
     );
 
   const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, { ...defaultFetchParams, includeInternalTxs: true });
+    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(doBeforeEach(mockServer));
