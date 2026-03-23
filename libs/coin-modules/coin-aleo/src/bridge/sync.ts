@@ -116,31 +116,39 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
       }),
     ]);
 
-    const [privateOperationsResult, patchedPublicOperationsResult, privateBalanceResult] =
-      await Promise.all([
-        listPrivateOperations({
-          currency,
-          viewKey,
-          address,
-          ledgerAccountId,
-          privateRecords: rawNewPrivateRecords,
-        }),
-        patchPublicOperations({
-          currency,
-          publicOperations,
-          privateRecords: rawNewPrivateRecords,
-          address,
-          ledgerAccountId,
-          viewKey,
-        }),
-        getPrivateBalance({
-          currency,
-          viewKey,
-          privateRecords: rawUnspentPrivateRecords,
-        }),
-      ]);
+    const [privateOperationsResult, patchedPublicOperationsResult] = await Promise.all([
+      listPrivateOperations({
+        currency,
+        viewKey,
+        address,
+        ledgerAccountId,
+        privateRecords: rawNewPrivateRecords,
+      }),
+      patchPublicOperations({
+        currency,
+        publicOperations,
+        privateRecords: rawNewPrivateRecords,
+        address,
+        ledgerAccountId,
+        viewKey,
+      }),
+    ]);
 
-    latestAccountPrivateOperations = privateOperationsResult;
+    // Record scanner API may return already-spent records even with "unspent: true" filter.
+    // This is confirmed and expected behavior for now - scanner relies on two processes that can lag behind each other.
+    // The workaround is to remove records whose tags appear as inputs in currently processed transactions.
+    // Records spent before are expected to have been cleared from the scanner by then.
+    const filteredUnspentRecords = rawUnspentPrivateRecords.filter(
+      record => !privateOperationsResult.consumedRecordTags.has(record.tag),
+    );
+
+    const privateBalanceResult = await getPrivateBalance({
+      currency,
+      viewKey,
+      privateRecords: filteredUnspentRecords,
+    });
+
+    latestAccountPrivateOperations = privateOperationsResult.operations;
     publicOperations = patchedPublicOperationsResult;
     privateBalance = privateBalanceResult.balance;
     unspentPrivateRecords = privateBalanceResult.unspentRecords;
