@@ -59,3 +59,8 @@ export type AleoTransactionIntentData =
     };
 
 export type AleoTransactionIntent = TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
+
+export interface SignedAleoTransaction {
+  authorization: string;
+  feeAuthorization: string | null;
+}

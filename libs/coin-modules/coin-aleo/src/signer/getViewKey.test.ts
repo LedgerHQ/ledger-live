@@ -5,10 +5,10 @@ describe("getViewKey", () => {
   const mockCurrency = getMockedCurrency();
   const mockDeviceId = "mock-device-id";
   const mockPath = "44'/683'/0'/0'";
-  const mockViewKey = Buffer.from("viewkey123");
+  const mockViewKey = "viewkey123";
 
   const mockSigner = {
-    getViewKey: jest.fn().mockResolvedValue(mockViewKey),
+    getViewKey: jest.fn().mockResolvedValue({ viewKey: mockViewKey }),
   };
 
   const mockSignerContext = jest

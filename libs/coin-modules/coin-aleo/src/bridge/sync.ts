@@ -1,17 +1,14 @@
 import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import {
   type GetAccountShape,
   makeSync,
   mergeOps,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import {
-  decodeAccountId,
-  encodeAccountId,
-} from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { log } from "@ledgerhq/logs";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import {
+  extractViewKey,
   isProvableApiConfigured,
   isRecordScannerReady,
   splitPrivateAndPublicOperations,
@@ -28,8 +25,7 @@ export const getAccountShape: GetAccountShape<AleoAccount> = async infos => {
   let provableApi: ProvableApi | null = null;
 
   if (initialAccount) {
-    viewKey = decodeAccountId(initialAccount.id).customData;
-    invariant(viewKey, `aleo: viewKey is missing in ${address} initialAccount`);
+    viewKey = extractViewKey(initialAccount);
 
     provableApi = await accessProvableApi({
       currency,
