@@ -14,6 +14,11 @@ export const setCoinConfig = (config: MinaCoinConfig): void => {
   coinConfig = config;
 };
 
+/** Clears in-memory config. For unit tests only; do not use in app code. */
+export const resetCoinConfigForTesting = (): void => {
+  coinConfig = undefined;
+};
+
 export const getCoinConfig = (): ReturnType<MinaCoinConfig> => {
   if (!coinConfig?.()) {
     throw new Error("Mina module config not set");
