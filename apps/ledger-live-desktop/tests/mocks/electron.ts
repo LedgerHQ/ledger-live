@@ -15,11 +15,11 @@ export const app: jest.Mocked<{ getPath: () => unknown }> = {
 export const ipcRenderer: jest.Mocked<{
   on: () => unknown;
   send: () => unknown;
-  invoke: () => unknown;
+  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>;
 }> = {
   on: jest.fn(),
   send: jest.fn(),
-  invoke: jest.fn(),
+  invoke: jest.fn().mockResolvedValue(""),
 };
 
 const electron: jest.Mocked<{

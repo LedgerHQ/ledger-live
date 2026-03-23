@@ -1,5 +1,9 @@
 declare const INDEX_URL: string;
 declare const __SENTRY_URL__: string;
+declare const __DATADOG_APPLICATION_ID__: string | null;
+declare const __DATADOG_CLIENT_TOKEN__: string | null;
+declare const __DATADOG_SITE__: string | null;
+declare const __DATADOG_ENV__: string | null;
 declare const __APP_VERSION__: string;
 declare const __GIT_REVISION__: string;
 declare const __PRERELEASE__: string;

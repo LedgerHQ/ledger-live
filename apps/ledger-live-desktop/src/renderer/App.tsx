@@ -25,6 +25,7 @@ import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppPro
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
+import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
@@ -77,6 +78,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           <FirebaseRemoteConfigProvider>
             <FirebaseFeatureFlagsProvider getFeature={getFeature}>
               <ConnectEnvsToSentry />
+              <ConnectEnvsToDatadog />
               <UpdaterProvider>
                 <AppDataStorageProvider>
                   <DeviceManagementKitProvider>
