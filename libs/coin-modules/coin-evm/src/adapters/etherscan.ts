@@ -49,7 +49,7 @@ export const etherscanOperationToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
-  const to = safeEncodeEIP55(etherscanOp.to);
+  const to = safeEncodeEIP55(etherscanOp.to) || safeEncodeEIP55(etherscanOp.contractAddress);
   const value = safeBigNumber(etherscanOp.value);
   const fee = safeBigNumber(etherscanOp.gasUsed).times(safeBigNumber(etherscanOp.gasPrice));
   const hasFailed = etherscanOp.isError === "1";
