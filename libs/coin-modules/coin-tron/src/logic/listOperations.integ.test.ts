@@ -283,7 +283,12 @@ describe("listOperations", () => {
   describe("Account TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z with failed TriggerSmartContract containing internal_transactions", () => {
     // https://tronscan.org/#/address/TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z
     const testingAccount = "TR5mooRXZweiEJwoZ2VB8mDGfLLHHSLx2z";
-    const options = { ...defaultOptions, minHeight: 63747682, order: "asc" as const, softLimit: 100 };
+    const options = {
+      ...defaultOptions,
+      minHeight: 63747682,
+      order: "asc" as const,
+      softLimit: 100,
+    };
 
     describe("listOperations", () => {
       it("should return failed transaction with internal_transactions and capture fees", async () => {

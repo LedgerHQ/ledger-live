@@ -302,14 +302,12 @@ describe("Transactions with internal_transactions", () => {
   const txId = "2824c452c141c74fdd9cb13c4d4e5369145cd1ab02baeedcb42b6b440e95e435";
   const mockServer = setupServer(defaultGetTxInfo);
 
-  const getEmptyTrc20 = http.get(
-    `${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`,
-    () =>
-      HttpResponse.json({
-        data: [],
-        success: true,
-        meta: { at: 0, page_size: 0 },
-      }),
+  const getEmptyTrc20 = http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions/trc20`, () =>
+    HttpResponse.json({
+      data: [],
+      success: true,
+      meta: { at: 0, page_size: 0 },
+    }),
   );
 
   const getNativeTx = (nativeTxs: any[]) =>
