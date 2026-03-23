@@ -1,7 +1,11 @@
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { utils } from "near-api-js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
+import { createTransaction } from "./createTransaction";
+import { getCurrentNearPreloadData } from "./preload-data";
 import {
   NearMappedStakingPosition,
   Transaction,
@@ -9,10 +13,6 @@ import {
   NearValidatorItem,
   NearAccount,
 } from "./types";
-import { createTransaction } from "./createTransaction";
-import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getCurrentNearPreloadData } from "./preload";
-import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 
 export const isValidAddress = (address: string): boolean => {
   const readableAddressRegex = /^(([a-z\d]+[-_])*[a-z\d]+\.)*([a-z\d]+[-_])*[a-z\d]+$/;

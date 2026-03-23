@@ -1,11 +1,11 @@
 import { log } from "@ledgerhq/logs";
+import type { Account } from "@ledgerhq/types-live";
 import * as nearAPI from "near-api-js";
 import { Action } from "near-api-js/lib/transaction";
 import { Transaction as NearApiTransaction } from "near-api-js/lib/transaction";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
 import { getAccessKey } from "./api";
 import { getStakingGas } from "./logic";
+import type { Transaction } from "./types";
 
 export const buildTransaction = async (
   a: Account,

@@ -1,23 +1,13 @@
+import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 import { TransactionResponse } from "../types/api";
 import {
   extractTokenTransferTransactions,
   extractSendManyTransactions,
   extractContractTransactions,
 } from "./transformers";
-import * as api from "./api";
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 
 // Mock the CryptoAssets module
 jest.mock("@ledgerhq/cryptoassets/state");
-
-// Mock the API module to prevent actual network calls
-jest.mock("./api", () => {
-  const originalModule = jest.requireActual("./api");
-  return {
-    ...originalModule,
-    fetchFungibleTokenMetadataCached: jest.fn(),
-  };
-});
 
 describe("Stacks API Transformers", () => {
   const mockTransactions: TransactionResponse[] = [
@@ -173,16 +163,12 @@ describe("Stacks API Transformers", () => {
         findTokenById: jest.fn().mockResolvedValue(null),
         findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
       });
-
-      // Mock fetchFungibleTokenMetadataCached to return empty results by default
-      // This prevents actual network calls and simulates tokens not found in metadata
-      (api.fetchFungibleTokenMetadataCached as unknown as jest.Mock).mockResolvedValue({
-        results: [],
-      });
     });
 
     it("should extract and group transfer transactions by token ID", async () => {
-      const result = await extractContractTransactions(mockTransactions);
+      const result = await extractContractTransactions(mockTransactions, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       // We expect two tokens with transfer function
       expect(Object.keys(result)).toHaveLength(2);
@@ -207,7 +193,9 @@ describe("Stacks API Transformers", () => {
     });
 
     it("should exclude non-contract calls", async () => {
-      const result = await extractContractTransactions(mockTransactions);
+      const result = await extractContractTransactions(mockTransactions, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       // Make sure token_transfer and smart_contract are excluded
       const allTxIds = Object.values(result)
@@ -218,7 +206,9 @@ describe("Stacks API Transformers", () => {
     });
 
     it("should exclude send-many transactions", async () => {
-      const result = await extractContractTransactions(mockTransactions);
+      const result = await extractContractTransactions(mockTransactions, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       const allTxIds = Object.values(result)
         .flat()
@@ -227,7 +217,9 @@ describe("Stacks API Transformers", () => {
     });
 
     it("should exclude non-transfer function calls", async () => {
-      const result = await extractContractTransactions(mockTransactions);
+      const result = await extractContractTransactions(mockTransactions, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       const allTxIds = Object.values(result)
         .flat()
@@ -236,7 +228,9 @@ describe("Stacks API Transformers", () => {
     });
 
     it("should handle missing post_conditions", async () => {
-      const result = await extractContractTransactions(mockTransactions);
+      const result = await extractContractTransactions(mockTransactions, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       const allTxIds = Object.values(result)
         .flat()
@@ -245,7 +239,9 @@ describe("Stacks API Transformers", () => {
     });
 
     it("should handle missing contract_id", async () => {
-      const result = await extractContractTransactions(mockTransactions);
+      const result = await extractContractTransactions(mockTransactions, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       const allTxIds = Object.values(result)
         .flat()
@@ -255,7 +251,9 @@ describe("Stacks API Transformers", () => {
 
     it("should return empty object when no valid contract transactions exist", async () => {
       const noContractTxs = mockTransactions.filter(tx => tx.tx?.tx_type !== "contract_call");
-      const result = await extractContractTransactions(noContractTxs);
+      const result = await extractContractTransactions(noContractTxs, () =>
+        Promise.resolve({ limit: 0, offset: 0, total: 0, results: [] }),
+      );
 
       expect(result).toEqual({});
     });

@@ -1,8 +1,8 @@
+import type { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 
 import { Transaction } from "./types";
-import type { AccountLike } from "@ledgerhq/types-live";
 
 const options = [
   {

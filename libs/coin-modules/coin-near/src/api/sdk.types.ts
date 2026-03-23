@@ -1,6 +1,5 @@
-import * as nearAPI from "near-api-js";
-
 import type { BigNumber } from "bignumber.js";
+import * as nearAPI from "near-api-js";
 
 export type NearAccountDetails = {
   amount: string;
