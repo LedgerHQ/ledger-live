@@ -3,7 +3,9 @@
   "compilerOptions": {
     "rootDir": "src",
     "customConditions": [],
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "exclude": [
     "**/*.test.ts",
