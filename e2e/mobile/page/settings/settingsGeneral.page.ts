@@ -54,6 +54,16 @@ export default class SettingsGeneralPage {
     await detoxExpect(this.localizedText(text)).toBeVisible();
   }
 
+  @Step("Expect character set")
+  async expectCharacterSet(text: string, pattern: RegExp) {
+    jestExpect(text).toMatch(pattern);
+  }
+
+  @Step("Expect translated row")
+  async expectTranslatedRow(testId: string, expectedText: string) {
+    await detoxExpect(getElementByIdWithDescendantTexts(testId, expectedText)).toBeVisible();
+  }
+
   @Step("Click on Countervalue Settings Row")
   async clickOnCountervalueSettingsRow() {
     await waitForElementById(this.countervalueSettingsRowId);

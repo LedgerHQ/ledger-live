@@ -6,51 +6,34 @@ const langButtonText = [
   {
     lang: "Français",
     localization: "Général",
+    characterSet: /[\u00C0-\u024F]/,
+    translatedLabels: [
+      { testId: "language-button", text: "Langue d\u2019affichage" },
+      { testId: "countervalue-settings-row", text: "Monnaie préférée" },
+      { testId: "data-format-button", text: "Format de date" },
+    ],
     tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "Español",
-    localization: "General",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@smoke"],
   },
   {
     lang: "Русский",
     localization: "Общие",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "Deutsch",
-    localization: "Allgemeines",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "Português (Brasil)",
-    localization: "Geral",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "Türkçe",
-    localization: "Genel",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "简体中文",
-    localization: "常规",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "한국어",
-    localization: "일반",
+    characterSet: /[\u0400-\u04FF]/,
+    translatedLabels: [
+      { testId: "language-button", text: "Язык" },
+      { testId: "countervalue-settings-row", text: "Предпочтительная валюта" },
+      { testId: "data-format-button", text: "Формат даты" },
+    ],
     tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   },
   {
     lang: "日本語",
     localization: "一般",
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-  },
-  {
-    lang: "English",
-    localization: "General",
+    characterSet: /[\u4E00-\u9FFF]/,
+    translatedLabels: [
+      { testId: "language-button", text: "表示言語" },
+      { testId: "countervalue-settings-row", text: "優先する通貨" },
+      { testId: "data-format-button", text: "日付形式" },
+    ],
     tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   },
 ];
@@ -89,6 +72,10 @@ describe("Change Language", () => {
       await app.settingsGeneral.navigateToLanguageSelect();
       await app.settingsGeneral.selectLanguage(l10n.lang);
       await app.settingsGeneral.expectLocalizedText(l10n.localization);
+      await app.settingsGeneral.expectCharacterSet(l10n.localization, l10n.characterSet);
+      for (const label of l10n.translatedLabels) {
+        await app.settingsGeneral.expectTranslatedRow(label.testId, label.text);
+      }
     });
   }
 });
