@@ -78,4 +78,6 @@ export class AppInfos {
   static readonly VELORA = new AppInfos("Velora");
 
   static readonly ONE_INCH = new AppInfos("One Inch");
+
+  static readonly MINA = new AppInfos("Mina");
 }
