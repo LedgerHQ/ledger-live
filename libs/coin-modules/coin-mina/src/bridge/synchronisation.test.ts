@@ -1,8 +1,23 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
+jest.mock("../api");
+jest.mock("../config");
+jest.mock("../logic/account/getAccount");
+jest.mock("../logic/account/getDelegateAddress");
+jest.mock("../logic/history/getBlockInfo");
+jest.mock("../logic/history/getTransactions");
+
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
-import { getAccount, getTransactions, getBlockInfo } from "../api";
+import { fetchValidators, getEpochInfo } from "../api";
+import { getAccount } from "../logic/account/getAccount";
+import { getDelegateAddress } from "../logic/account/getDelegateAddress";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
+import { getTransactions } from "../logic/history/getTransactions";
 import {
   createMockTxn,
   createMockAccountInfo,
@@ -10,11 +25,6 @@ import {
   mockAccountData,
 } from "../test/fixtures";
 import { getAccountShape, mapRosettaTxnToOperation } from "./synchronisation";
-
-jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
-jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
-jest.mock("@ledgerhq/ledger-wallet-framework/operation");
-jest.mock("../api");
 
 describe("synchronisation", () => {
   beforeEach(() => {
@@ -148,6 +158,18 @@ describe("synchronisation", () => {
       jest.spyOn({ getAccount }, "getAccount").mockResolvedValue(mockAccountData);
       jest.spyOn({ getTransactions }, "getTransactions").mockResolvedValue([]);
       jest.spyOn({ mergeOps }, "mergeOps").mockReturnValue([]);
+      jest.spyOn({ getDelegateAddress }, "getDelegateAddress").mockResolvedValue("test_address");
+      jest.spyOn({ getEpochInfo }, "getEpochInfo").mockResolvedValue({
+        data: {
+          daemonStatus: {
+            consensusTimeNow: {
+              epoch: "1",
+              slot: "100",
+            },
+          },
+        },
+      } as any);
+      jest.spyOn({ fetchValidators }, "fetchValidators").mockResolvedValue([]);
     });
 
     it("should get account shape with correct data", async () => {
@@ -169,7 +191,7 @@ describe("synchronisation", () => {
       });
 
       expect(getAccount).toHaveBeenCalledWith("test_address");
-      expect(getTransactions).toHaveBeenCalledWith("test_address", 0);
+      expect(getTransactions).toHaveBeenCalledWith("test_address");
 
       expect(result).toEqual({
         id: "account_id",
@@ -178,6 +200,15 @@ describe("synchronisation", () => {
         blockHeight: mockAccountData.blockHeight,
         operationsCount: 0,
         operations: [],
+        resources: {
+          blockProducers: [],
+          delegateInfo: undefined,
+          stakingActive: false,
+          epochInfo: {
+            epoch: "1",
+            slot: "100",
+          },
+        },
       });
     });
   });
