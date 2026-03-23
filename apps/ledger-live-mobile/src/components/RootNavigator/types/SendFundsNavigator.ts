@@ -342,6 +342,13 @@ export type SendFundsNavigatorStackParamList = {
     transaction: MinaTransaction;
     currentNavigation: ScreenName.SignTransactionSummary;
   };
+  [ScreenName.MinaEditMemo]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: MinaTransaction;
+    currentNavigation: ScreenName.SignTransactionSummary;
+  };
   [ScreenName.StacksEditMemo]: {
     accountId: string;
     parentId?: string;
