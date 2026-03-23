@@ -14,6 +14,7 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import { fetchValidators, getEpochInfo } from "../api";
+import type { FetchEpochInfoResponse } from "../api/types";
 import { getAccount } from "../logic/account/getAccount";
 import { getDelegateAddress } from "../logic/account/getDelegateAddress";
 import { getBlockInfo } from "../logic/history/getBlockInfo";
@@ -165,10 +166,13 @@ describe("synchronisation", () => {
             consensusTimeNow: {
               epoch: "1",
               slot: "100",
+              globalSlot: "0",
+              startTime: "",
+              endTime: "",
             },
           },
         },
-      } as any);
+      } satisfies FetchEpochInfoResponse);
       jest.spyOn({ fetchValidators }, "fetchValidators").mockResolvedValue([]);
     });
 
@@ -207,6 +211,9 @@ describe("synchronisation", () => {
           epochInfo: {
             epoch: "1",
             slot: "100",
+            globalSlot: "0",
+            startTime: "",
+            endTime: "",
           },
         },
       });
