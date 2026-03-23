@@ -51,10 +51,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: Install node-gyp globally
-        if: runner.os == 'Windows'
-        run: |
-          pnpm add -g node-gyp@3.8.0
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
