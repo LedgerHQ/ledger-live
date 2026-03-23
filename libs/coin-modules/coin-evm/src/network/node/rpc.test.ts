@@ -226,7 +226,7 @@ describe("EVM Family", () => {
 
         expect(first).not.toBe(second);
         expect(first).toBeInstanceOf(JsonRpcProvider);
-        expect(second instanceof JsonRpcProvider).toBe(true);
+        expect(second).toBeInstanceOf(JsonRpcProvider);
       });
 
       it("provider cache should use distinct JsonRpcProviders for different currency ids", async () => {
@@ -247,8 +247,8 @@ describe("EVM Family", () => {
         const p2 = await withApi(c2, api => Promise.resolve(api), nodeConfig);
 
         expect(p1).not.toBe(p2);
-        expect(p1 instanceof JsonRpcProvider).toBe(true);
-        expect(p2 instanceof JsonRpcProvider).toBe(true);
+        expect(p1).toBeInstanceOf(JsonRpcProvider);
+        expect(p2).toBeInstanceOf(JsonRpcProvider);
       });
     });
 
