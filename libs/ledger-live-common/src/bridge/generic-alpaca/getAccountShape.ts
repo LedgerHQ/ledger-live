@@ -55,6 +55,11 @@ function hasStakeDelegate<T extends Balance & { stake: Stake }>(
   return typeof balance.stake.delegate === "string" && balance.stake.delegate.length > 0;
 }
 
+function delegatedAmountForStakingResources(b: Balance): bigint {
+  if (!b.stake) return 0n;
+  return typeof b.stake.amount === "bigint" ? b.stake.amount : 0n;
+}
+
 /** True when the op is a main-account (native) op, not a token/sub-account op */
 function isNativeLiveOp(operation: OperationCommon): boolean {
   const assetReference = operation.extra?.assetReference;
@@ -345,8 +350,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const activeStakes = balanceRes.filter(hasActiveStake);
     const deactivatingStakes = balanceRes.filter(hasDeactivatingStake);
 
-    const delegatedBalance = activeStakes.reduce((acc, b) => acc + b.value, 0n);
-    const unbondingBalance = deactivatingStakes.reduce((acc, b) => acc + b.value, 0n);
+    const delegatedBalance = activeStakes.reduce(
+      (acc, b) => acc + delegatedAmountForStakingResources(b),
+      0n,
+    );
+    const unbondingBalance = deactivatingStakes.reduce(
+      (acc, b) => acc + delegatedAmountForStakingResources(b),
+      0n,
+    );
     const pendingRewardsBalance = activeStakes.reduce(
       (acc, b) => acc + (b.stake.amountRewarded ?? 0n),
       0n,
@@ -359,21 +370,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // Staked/unbonding amounts are tracked separately in stakingResources.
     const spendableBalance = nativeBalance - nativeLocked;
 
-    const delegations: StakingDelegation[] = activeStakes
-      .filter(hasStakeDelegate)
-      .map(({ stake, value }) => ({
-        validatorAddress: stake.delegate,
-        amount: new BigNumber(value.toString()),
-        pendingRewards: new BigNumber((stake.amountRewarded ?? 0n).toString()),
-        status: "bonded" as const,
-      }));
-    const unbondings: StakingUnbonding[] = deactivatingStakes
-      .filter(hasStakeDelegate)
-      .map(({ stake, value }) => ({
-        validatorAddress: stake.delegate,
-        amount: new BigNumber(value.toString()),
-        completionDate: stake.stateUpdatedAt ?? new Date(),
-      }));
+    const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => ({
+      validatorAddress: b.stake.delegate,
+      amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
+      pendingRewards: new BigNumber((b.stake.amountRewarded ?? 0n).toString()),
+      status: "bonded" as const,
+    }));
+    const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => ({
+      validatorAddress: b.stake.delegate,
+      amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
+      completionDate: b.stake.stateUpdatedAt ?? new Date(),
+    }));
     const stakingResources: StakingResources = {
       delegations,
       redelegations: [],
