@@ -1,11 +1,11 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getNonce } from "../api";
+import { getNonce } from "../logic/transaction/getNonce";
 import { Transaction } from "../types";
 import estimateFees from "./getEstimatedFees";
 import { prepareTransaction } from "./prepareTransaction";
 
-jest.mock("../api");
+jest.mock("../logic/transaction/getNonce");
 jest.mock("./getEstimatedFees");
 
 describe("prepareTransaction", () => {

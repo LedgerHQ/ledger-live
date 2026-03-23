@@ -1,13 +1,17 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { getCoinConfig } from "../config";
-import { getAccount, getBlockInfo, getTransactions } from ".";
+import { getCoinConfig } from "../../config";
+import { getBlockInfo } from "../history/getBlockInfo";
+import { getTransactions } from "../history/getTransactions";
+import { getAccount } from "./getAccount";
 
-jest.mock("../config");
+jest.mock("../../config");
 describe("backend api tests", () => {
   jest.mocked(getCoinConfig).mockReturnValue({
     ...({} as unknown as CurrencyConfig),
     infra: {
       API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
+      API_MINA_GRAPHQL_NODE: "https://mina.coin.ledger.com/node/graphql",
+      API_VALIDATORS_BASE_URL: "https://mina.coin.ledger.com/node/validators",
     },
   });
   const validAddress = ["B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD"];
