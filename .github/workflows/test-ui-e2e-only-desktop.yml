@@ -338,6 +338,29 @@ jobs:
           name: xray-reports
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
+  post-to-qaa-dashboard:
+    name: "Send results to QAA KPI Dashboard"
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Download Allure results
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Zip and send to QAA dashboard
+        run: |
+          zip -r allure-results.zip allure-results/
+          curl -f -X POST "${{ vars.QAA_DASHBOARD_URL }}/api/analyze-allure" \
+            -H "Authorization: Bearer ${{ secrets.DASHBOARD_API_TOKEN }}" \
+            -F "file=@allure-results.zip" \
+            -F "platform=desktop" \
+            -F "run_id=${{ github.run_id }}" \
+            && echo "Dashboard updated successfully" \
+            || echo "Dashboard update failed (non-blocking)"
+
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
     runs-on: [ledger-live-medium]
