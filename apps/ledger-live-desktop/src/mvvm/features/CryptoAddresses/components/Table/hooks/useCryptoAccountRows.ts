@@ -5,31 +5,42 @@ import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { matchesSearch } from "~/renderer/screens/accounts/AccountList";
+import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";
 
 export function useCryptoAccountRows(searchValue: string) {
   const [hideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const walletState = useSelector(walletSelector);
   const nestedAccounts = useSelector(accountsSelector);
 
-  const flattenedAccounts = useFlattenSortAccounts({
-    enforceHideEmptySubAccounts: hideEmptyTokenAccounts,
-  });
+  const flattenOptions = useMemo(
+    () => ({
+      enforceHideEmptySubAccounts: hideEmptyTokenAccounts,
+    }),
+    [hideEmptyTokenAccounts],
+  );
+  const flattenedAccounts = useFlattenSortAccounts(flattenOptions);
 
   const rows = useMemo(() => {
-    return flattenedAccounts.filter(account => matchesSearch(walletState, searchValue, account));
+    return flattenedAccounts.filter(account =>
+      accountMatchesSearch(walletState, searchValue, account),
+    );
   }, [flattenedAccounts, searchValue, walletState]);
+
+  const accountById = useMemo(() => {
+    const map = new Map<string, Account>();
+    for (const a of nestedAccounts) {
+      if (a.type === "Account") {
+        map.set(a.id, a);
+      }
+    }
+    return map;
+  }, [nestedAccounts]);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => {
-      for (const a of nestedAccounts) {
-        if (a.type === "Account" && a.id === id) {
-          return a;
-        }
-      }
-      return null;
+      return accountById.get(id) ?? null;
     },
-    [nestedAccounts],
+    [accountById],
   );
 
   return { rows, lookupParentAccount };

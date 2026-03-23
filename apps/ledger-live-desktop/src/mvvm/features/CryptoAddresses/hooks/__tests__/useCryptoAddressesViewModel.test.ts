@@ -10,7 +10,7 @@ import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
-import useCryptoViewModel from "../useCryptoViewModel";
+import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
 import { useCryptoAccountRows } from "../../components/Table/hooks/useCryptoAccountRows";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../constants";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
@@ -68,7 +68,7 @@ const mockUseAddAccountAnalytics = jest.mocked(useAddAccountAnalytics);
 const mockUseCryptoAccountRows = jest.mocked(useCryptoAccountRows);
 const mockSetTrackingSource = jest.mocked(setTrackingSource);
 
-describe("useCryptoViewModel", () => {
+describe("useCryptoAddressesViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseWalletFeaturesConfig.mockReturnValue(defaultWalletFeaturesConfig);
@@ -86,7 +86,7 @@ describe("useCryptoViewModel", () => {
   });
 
   it("should call trackAddAccountEvent and openAssetFlow on onAddAddressClick", () => {
-    const { result } = renderHook(() => useCryptoViewModel());
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
       result.current.onAddAddressClick();
@@ -108,7 +108,7 @@ describe("useCryptoViewModel", () => {
   });
 
   it("should navigate to account URL when a main account row is clicked", () => {
-    const { result } = renderHook(() => useCryptoViewModel());
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
     act(() => {
       result.current.onAccountClick(ETH_ACCOUNT);
     });
@@ -121,7 +121,7 @@ describe("useCryptoViewModel", () => {
   it("should navigate to token account URL when a token row is clicked with parent", () => {
     const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
-    const { result } = renderHook(() => useCryptoViewModel());
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
       result.current.onAccountClick(tokenAccount, ETH_ACCOUNT);
@@ -138,7 +138,7 @@ describe("useCryptoViewModel", () => {
     });
     const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
-    const { result } = renderHook(() => useCryptoViewModel());
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
       result.current.onAccountClick(tokenAccount, undefined);
@@ -154,7 +154,7 @@ describe("useCryptoViewModel", () => {
     });
     const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
-    const { result } = renderHook(() => useCryptoViewModel());
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
       result.current.onAccountClick(tokenAccount, undefined);
@@ -164,7 +164,7 @@ describe("useCryptoViewModel", () => {
   });
 
   it("should update searchValue when setSearchValue is called", () => {
-    const { result } = renderHook(() => useCryptoViewModel());
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
       result.current.setSearchValue("eth");
@@ -172,5 +172,31 @@ describe("useCryptoViewModel", () => {
 
     expect(result.current.searchValue).toBe("eth");
     expect(mockUseCryptoAccountRows).toHaveBeenLastCalledWith("eth");
+  });
+
+  it("should expose empty table message for no search query", () => {
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
+
+    expect(result.current.emptyTableMessage).toBe("No crypto address yet");
+  });
+
+  it("should expose empty search table message when search is non-empty", () => {
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
+
+    act(() => {
+      result.current.setSearchValue("btc");
+    });
+
+    expect(result.current.emptyTableMessage).toBe("No accounts match your search");
+  });
+
+  it("should treat whitespace-only search as empty for empty table message", () => {
+    const { result } = renderHook(() => useCryptoAddressesViewModel());
+
+    act(() => {
+      result.current.setSearchValue("   ");
+    });
+
+    expect(result.current.emptyTableMessage).toBe("No crypto address yet");
   });
 });
