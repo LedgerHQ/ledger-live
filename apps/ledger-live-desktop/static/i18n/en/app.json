@@ -8184,6 +8184,10 @@
     }
   },
   "topBar": {
+    "history": {
+      "cta": "History",
+      "tooltip": "History"
+    },
     "activityIndicator": {
       "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
       "emptyErrorToolTip": "Your assets are safe. This is a temporary sync issue.\n Tap to retry",
