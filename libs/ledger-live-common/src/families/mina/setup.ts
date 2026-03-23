@@ -2,7 +2,14 @@
 
 import { createBridges, makeCliTools } from "@ledgerhq/coin-mina/bridge";
 import minaResolver from "@ledgerhq/coin-mina/signer";
-import { Transaction, MinaSigner } from "@ledgerhq/coin-mina/types";
+import {
+  Transaction,
+  MinaSigner,
+  MinaAccount,
+  MinaAccountRaw,
+  MinaOperation,
+  TransactionStatus,
+} from "@ledgerhq/coin-mina/types";
 import { MinaApp } from "@zondax/ledger-mina-js";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
@@ -19,7 +26,8 @@ const createSigner: CreateSigner<MinaSigner> = (transport: Transport) => {
 const getCoinConfig: MinaCoinConfig = () =>
   getCurrencyConfiguration<ReturnType<MinaCoinConfig>>(getCryptoCurrencyById("mina"));
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner), getCoinConfig);
+const bridge: Bridge<Transaction, MinaAccount, TransactionStatus, MinaOperation, MinaAccountRaw> =
+  createBridges(executeWithSigner(createSigner), getCoinConfig);
 
 const resolver: Resolver = createResolver(createSigner, minaResolver);
 
