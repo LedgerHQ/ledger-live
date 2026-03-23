@@ -40,7 +40,7 @@ export function CryptoTable({ rows, lookupParentAccount, onRowClick }: CryptoTab
   const { table, handleRowClick } = useCryptoDataTable({ rows, lookupParentAccount, onRowClick });
 
   return (
-    <TableRoot>
+    <TableRoot appearance="plain">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (

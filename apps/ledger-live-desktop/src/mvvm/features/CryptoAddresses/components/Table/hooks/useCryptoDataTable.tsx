@@ -14,7 +14,7 @@ import {
   AccountNameCell,
   AccountRowActionCell,
   AccountValueCell,
-} from "../CryptoTableCells";
+} from "../Cell";
 const SORT_HEADER_BUTTON_CLASS = "[&_svg]:!opacity-100";
 
 type UseCryptoDataTableParams = {
@@ -31,6 +31,16 @@ export function useCryptoDataTable({
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
+
+  /** One countervalue per row; avoids recalculations in sorting. */
+  const balanceSortFiatByAccountId = useMemo(() => {
+    const map = new Map<string, BigNumber>();
+    for (const account of rows) {
+      const currency = getAccountCurrency(account);
+      map.set(account.id, calculateCountervalue(currency, account.balance) ?? new BigNumber(0));
+    }
+    return map;
+  }, [rows, calculateCountervalue]);
 
   const columns = useMemo<ColumnDef<AccountLike>[]>(
     () => [
@@ -72,10 +82,8 @@ export function useCryptoDataTable({
         id: "balance",
         accessorKey: "balance",
         sortingFn: (rowA, rowB) => {
-          const currencyA = getAccountCurrency(rowA.original);
-          const currencyB = getAccountCurrency(rowB.original);
-          const fiatA = calculateCountervalue(currencyA, rowA.original.balance) ?? new BigNumber(0);
-          const fiatB = calculateCountervalue(currencyB, rowB.original.balance) ?? new BigNumber(0);
+          const fiatA = balanceSortFiatByAccountId.get(rowA.original.id) ?? new BigNumber(0);
+          const fiatB = balanceSortFiatByAccountId.get(rowB.original.id) ?? new BigNumber(0);
           return fiatA.comparedTo(fiatB);
         },
         header: ({ column }) => (
@@ -104,7 +112,7 @@ export function useCryptoDataTable({
         meta: { align: "end" },
       },
     ],
-    [t, walletState, lookupParentAccount, calculateCountervalue],
+    [t, walletState, lookupParentAccount, balanceSortFiatByAccountId],
   );
 
   const table = useLumenDataTable({

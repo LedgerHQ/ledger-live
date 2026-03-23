@@ -134,10 +134,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
 
-  const accountsSidebarPath = useMemo(
-    () => getAccountsSidebarPath(shouldDisplayAssetSection),
-    [shouldDisplayAssetSection],
-  );
+  const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const wasNarrowRef = useRef<boolean | null>(null);
 

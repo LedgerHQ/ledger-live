@@ -10,14 +10,15 @@ import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import PageHeader from "LLD/components/PageHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTranslation } from "react-i18next";
-import type { CryptoViewModel } from "./types";
+import type { CryptoAddressesViewModel } from "./types";
 import { CryptoTable } from "./components/Table/CryptoTable";
 import { CryptoTableEmptyState } from "./components/Table/CryptoTableEmptyState";
 
-export function CryptoAddressesView({ viewModel }: { readonly viewModel: CryptoViewModel }) {
+export function CryptoAddressesView({ viewModel }: { readonly viewModel: CryptoAddressesViewModel }) {
   const {
     searchValue,
     setSearchValue,
+    emptyTableMessage,
     onAddAddressClick,
     onAccountClick,
     rows,
@@ -53,13 +54,7 @@ export function CryptoAddressesView({ viewModel }: { readonly viewModel: CryptoV
           </TableActionBarTrailing>
         </TableActionBar>
         {rows.length === 0 ? (
-          <CryptoTableEmptyState
-            message={
-              searchValue.trim() == ""
-                ? t("crypto.table.emptyState")
-                : t("crypto.table.emptySearchState")
-            }
-          />
+          <CryptoTableEmptyState message={emptyTableMessage} />
         ) : (
           <CryptoTable
             rows={rows}

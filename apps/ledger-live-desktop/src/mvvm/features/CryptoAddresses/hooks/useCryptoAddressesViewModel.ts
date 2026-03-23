@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -10,15 +11,22 @@ import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDr
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
-import type { CryptoViewModel } from "../types";
+import type { CryptoAddressesViewModel } from "../types";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../constants";
 import { useCryptoAccountRows } from "../components/Table/hooks/useCryptoAccountRows";
 
-export default function useCryptoViewModel(): CryptoViewModel {
+export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const [searchValue, setSearchValue] = useState("");
   const { rows, lookupParentAccount } = useCryptoAccountRows(searchValue);
+
+  const emptyTableMessage = useMemo(
+    () =>
+      searchValue.trim() === "" ? t("crypto.table.emptyState") : t("crypto.table.emptySearchState"),
+    [searchValue, t],
+  );
 
   const { openAssetFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -51,6 +59,7 @@ export default function useCryptoViewModel(): CryptoViewModel {
   return {
     searchValue,
     setSearchValue,
+    emptyTableMessage,
     onAddAddressClick,
     onAccountClick,
     rows,

@@ -1,28 +1,17 @@
 import { renderHook } from "tests/testSetup";
-import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import type { WalletState } from "@ledgerhq/live-wallet/store";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import {
+  BTC_ACCOUNT,
+  ETH_ACCOUNT,
+  ETH_ACCOUNT_WITH_USDC,
+} from "LLD/features/__mocks__/accounts.mock";
+import { createWalletState } from "../../../../testUtils/createWalletState";
 import { useCryptoAccountRows } from "../useCryptoAccountRows";
-
-const ethereumCurrency = getCryptoCurrencyById("ethereum");
-
-function createWalletState(accountNames: Map<string, string>): { wallet: WalletState } {
-  return {
-    wallet: {
-      accountNames,
-      starredAccountIds: new Set(),
-      nonImportedAccountInfos: [],
-      walletSyncState: { data: null, version: 0 },
-      recentAddresses: {},
-    },
-  };
-}
 
 describe("useCryptoAccountRows", () => {
   it("should return lookupParentAccount that resolves a main account by id", () => {
     const parent = genAccount("rows-parent-lookup", {
-      currency: ethereumCurrency,
+      currency: ETH_ACCOUNT.currency,
       operationsSize: 0,
     });
 
@@ -39,7 +28,7 @@ describe("useCryptoAccountRows", () => {
 
   it("should include flattened accounts when search is empty", () => {
     const account = genAccount("rows-flat-1", {
-      currency: ethereumCurrency,
+      currency: ETH_ACCOUNT.currency,
       operationsSize: 0,
     });
 
@@ -55,7 +44,7 @@ describe("useCryptoAccountRows", () => {
 
   it("should filter rows by search against account name and ticker", () => {
     const account = genAccount("rows-search-btc", {
-      currency: getCryptoCurrencyById("bitcoin"),
+      currency: BTC_ACCOUNT.currency,
       operationsSize: 0,
     });
 
@@ -80,12 +69,8 @@ describe("useCryptoAccountRows", () => {
   });
 
   it("should include token sub-accounts in rows when they match search", () => {
-    const parent = genAccount("rows-token-parent", {
-      currency: ethereumCurrency,
-      operationsSize: 0,
-    });
-    const token = genTokenAccount(0, parent, usdcToken);
-    parent.subAccounts = [token];
+    const parent = ETH_ACCOUNT_WITH_USDC;
+    const token = parent.subAccounts![0];
 
     const { result } = renderHook(() => useCryptoAccountRows("usdc"), {
       initialState: {
