@@ -237,7 +237,7 @@
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "@typescript/native-preview-darwin-arm64": "7.0.0-dev.20260317.1",
+    "@typescript/native-preview-darwin-arm64": "7.0.0-dev.20260323.1",
     "@vitest/mocker": "4.0.17",
     "chalk": "4.1.2",
     "eslint": "8.57.0",
