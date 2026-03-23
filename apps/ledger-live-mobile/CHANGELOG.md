@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.111.0-next.5
+
+### Minor Changes
+
+- [#15665](https://github.com/LedgerHQ/ledger-live/pull/15665) [`ab07fef`](https://github.com/LedgerHQ/ledger-live/commit/ab07fef021a9bb5c8caa1d88b48a0bda12c11a0a) Thanks [@cfloume](https://github.com/cfloume)! - fix(mobile): do not set read only mode in post welcome selection
+
 ## 3.111.0-next.4
 
 ### Minor Changes
