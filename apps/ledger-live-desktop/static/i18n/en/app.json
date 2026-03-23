@@ -8394,5 +8394,8 @@
       "continue": "Continue",
       "explore": "Explore my new portfolio"
     }
+  },
+  "history": {
+    "title": "Transaction"
   }
 }
