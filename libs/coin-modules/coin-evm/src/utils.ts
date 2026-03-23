@@ -125,10 +125,7 @@ export function buildSmartContractDetails(
   const contractPayload = /^0x/i.test(trimmedInput)
     ? `0x${trimmedInput.slice(2)}`
     : `0x${trimmedInput}`;
-  const encodedDeployed =
-    deployedContractAddress
-      ? safeEncodeEIP55(deployedContractAddress)
-      : "";
+  const encodedDeployed = deployedContractAddress ? safeEncodeEIP55(deployedContractAddress) : "";
   const contractAddress = encodedDeployed || encodedTo;
   return {
     contractInteraction,
@@ -219,19 +216,92 @@ export const isSeiDelegationArray = (candidate: unknown): candidate is SeiDelega
 };
 
 /**
- * Extracts delegation from decoded result with proper type safety
+ * Normalizes a decoded delegation into a plain SeiDelegation.
+ * Handles both plain objects (from mocks/tests) and ethers.Result (array-like tuples
+ * where named properties are NOT reachable via the `in` operator).
  */
 export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefined => {
-  if (isSeiDelegationArray(decoded)) {
-    return decoded[0];
-  }
-  if (isSeiDelegation(decoded)) {
-    return decoded;
-  }
-  return undefined;
+  if (!Array.isArray(decoded) || decoded.length === 0) return undefined;
+
+  const outer = decoded[0] as unknown;
+
+  // Plain object with full delegation metadata
+  if (isSeiDelegation(outer)) return outer;
+
+  // ABI-decoded tuple / ethers.Result — normalize into a plain SeiDelegation shape
+  return normalizeSeiDelegation(outer);
 };
 
-// usei has 6 decimals, sei_evm native token has 18 → scale factor 10^12
+function normalizeSeiDelegation(outer: unknown): SeiDelegation | undefined {
+  if (typeof outer !== "object" || outer === null) return undefined;
+
+  const rec = outer as Record<string, unknown>;
+  const balanceTuple = rec.balance ?? (Array.isArray(outer) ? (outer as unknown[])[0] : undefined);
+  if (typeof balanceTuple !== "object" || balanceTuple === null) return undefined;
+
+  const balRec = balanceTuple as Record<string, unknown>;
+  let amount: unknown;
+  let denom: unknown;
+
+  if ("amount" in balRec && "denom" in balRec) {
+    amount = balRec.amount;
+    denom = balRec.denom;
+  } else if (Array.isArray(balanceTuple) && balanceTuple.length >= 2) {
+    amount = balanceTuple[0];
+    denom = balanceTuple[1];
+  } else {
+    return undefined;
+  }
+
+  if (typeof denom !== "string") return undefined;
+  if (typeof amount !== "string" && typeof amount !== "number" && typeof amount !== "bigint") {
+    return undefined;
+  }
+
+  return {
+    balance: { amount, denom },
+    delegation: { delegator_address: "", shares: 0, decimals: 0, validator_address: "" },
+  };
+}
+
+/**
+ * SEI staking precompile returns `balance.amount` in usei (6 decimals).
+ * Native `sei_evm` currency uses magnitude 18 (wei-like); convert so balances match `getCoinBalance` / account totals.
+ * @see https://docs.sei.io/evm/precompiles/staking (delegation query)
+ */
+const SEI_USEI_TO_NATIVE_MIN_UNIT = 10n ** 12n; // 10^(18-6)
+
+function seiBalanceAmountToNativeMinUnit(amount: unknown, denom: string): bigint {
+  const n = toBigIntLoose(amount);
+  if (n === null) {
+    return 0n;
+  }
+  const d = denom.toLowerCase();
+  if (d === "usei" || d === "") {
+    return n * SEI_USEI_TO_NATIVE_MIN_UNIT;
+  }
+  return n;
+}
+
+function toBigIntLoose(value: unknown): bigint | null {
+  if (typeof value === "bigint") {
+    return value;
+  }
+  if (typeof value === "string" || typeof value === "number") {
+    return safeBigInt(value);
+  }
+  if (
+    value !== null &&
+    typeof value === "object" &&
+    "toString" in value &&
+    typeof value.toString === "function"
+  ) {
+    // value.toString() may produce non-numeric strings (e.g. "[object Object]"),
+    // in which case safeBigInt returns 0n as a safe fallback.
+    return safeBigInt(String(value));
+  }
+  return null;
+}
 
 /**
  * Gets amount from SEI delegation with safe conversion.
@@ -242,15 +312,8 @@ export const getSeiDelegationAmount = (delegation: SeiDelegation | undefined): b
     return 0n;
   }
 
-  const { amount, denom } = delegation.balance;
-  if (typeof amount === "string" || typeof amount === "number" || typeof amount === "bigint") {
-    const base = safeBigInt(amount);
-    const USEI_TO_EVM_SCALE = 10n ** 12n;
-
-    return denom === "usei" ? base * USEI_TO_EVM_SCALE : base;
-  }
-
-  return 0n;
+  const denom = typeof delegation.balance.denom === "string" ? delegation.balance.denom : "";
+  return seiBalanceAmountToNativeMinUnit(delegation.balance.amount, denom);
 };
 
 /**
