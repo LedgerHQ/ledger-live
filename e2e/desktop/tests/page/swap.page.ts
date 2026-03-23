@@ -41,9 +41,6 @@ export class SwapPage extends WebViewAppPage {
   private insufficientFundsWarning = "insufficient-funds-warning";
   private executeButtonDisabled = "execute-button-disabled";
 
-  // Exchange Drawer Components
-  readonly swapId = this.page.getByTestId("swap-id");
-
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
@@ -333,17 +330,16 @@ export class SwapPage extends WebViewAppPage {
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
   }
 
-  @step("Check currency to swap from is $0")
-  async switchYouSendAndYouReceive(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  @step("Click switch button")
+  async switchYouSendAndYouReceive() {
+    const webview = await this.getWebView();
     await webview.getByTestId(this.switchButton).click();
   }
 
-  @step("Check currency to swap from is $1")
-  async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
-    const fromAccount = webview.getByTestId(this.fromAccountCoinSelector);
-    await expect(fromAccount).toContainText(currency);
+  @step("Check currency to swap from contains $0")
+  async checkAssetFromContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
   }
 
   @step("Expect asset or account selected $0 to be displayed")
@@ -424,15 +420,10 @@ export class SwapPage extends WebViewAppPage {
     await webview.getByTestId(this.fromAccountCoinSelector).click();
   }
 
-  @step("Check currency to swap to is $1")
-  async checkAssetTo(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
-    const assetTo = webview.getByTestId(this.toAccountCoinSelector);
-    if (currency === "") {
-      await expect(assetTo).toContainText("Choose asset");
-    } else {
-      await expect(assetTo).toContainText(currency);
-    }
+  @step("Check currency to swap to contains $0")
+  async checkAssetToContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
   }
 
   @step("Verify swap amount error message match: $1")
