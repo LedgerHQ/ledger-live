@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
@@ -18,21 +18,12 @@ import {
 import { getProgressViewOffset } from "../../utils/getProgressViewOffset";
 import usePortfolioViewModel from "./usePortfolioViewModel";
 import { useScrollToTop } from "./useScrollToTop";
-
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
-import MarketBanner from "LLM/features/MarketBanner";
+import { PortfolioHeaderSection } from "../../components";
+import { PortfolioMainView } from "./views/PortfolioMainView";
+import { PortfolioNoAccountsView } from "./views/PortfolioNoAccountsView";
+import { PortfolioNoSignerView } from "./views/PortfolioNoSignerView";
 
-import {
-  PortfolioAllocationsSection,
-  PortfolioAssetsSection,
-  PortfolioCategorizedAssetsSection,
-  PortfolioCarouselSection,
-  PortfolioEmptySection,
-  PortfolioHeaderSection,
-  PortfolioOperationsSection,
-  PortfolioBannersSection,
-} from "../../components";
-import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -58,6 +49,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
+    activeView,
     openAddModal,
     closeAddModal,
     handleHeightChange,
@@ -73,107 +65,53 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
 
-  const data = useMemo(() => {
-    const sections: React.JSX.Element[] = [];
+  const heroCtasNode =
+    showAssets && shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
+      <>
+        <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
+        <TransferDrawer />
+      </>
+    ) : undefined;
 
-    const heroCtasNode =
-      showAssets && shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
-        <>
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </>
-      ) : undefined;
-
-    sections.push(
-      <PortfolioHeaderSection
-        key="header"
-        showAssets={showAssets}
-        hideGraph={shouldDisplayGraphRework}
-        onBackFromUpdate={onBackFromUpdate}
-        ctas={heroCtasNode}
-      />,
-    );
-
-    if (!showAssets) {
-      sections.push(
-        <PortfolioEmptySection key="empty" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
-      );
-      return sections;
-    }
-
-    if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
-      sections.push(
-        <Box px={6} pt={6} key="quickActions">
-          <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
-          <TransferDrawer />
-        </Box>,
-      );
-    }
-
-    sections.push(
-      <PortfolioBannersSection
-        key="banners"
-        isFirst={true}
+  const content =
+    activeView === "main" ? (
+      <PortfolioMainView
+        shouldDisplayQuickActionCtas={shouldDisplayQuickActionCtas}
+        shouldDisplayGraphRework={shouldDisplayGraphRework}
+        shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+        shouldDisplayAssetSection={shouldDisplayAssetSection}
+        isAccountListUIEnabled={isAccountListUIEnabled}
+        hideEmptyTokenAccount={hideEmptyTokenAccount}
+        isAWalletCardDisplayed={isAWalletCardDisplayed}
+        backgroundColor={backgroundColor}
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        showAssets={showAssets}
-      />,
+        openAddModal={openAddModal}
+        handleHeightChange={handleHeightChange}
+        goToAnalyticsAllocations={goToAnalyticsAllocations}
+      />
+    ) : activeView === "noAccounts" ? (
+      <PortfolioNoAccountsView
+        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        shouldDisplayAssetSection={shouldDisplayAssetSection}
+        openAddModal={openAddModal}
+      />
+    ) : (
+      <PortfolioNoSignerView
+        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        shouldDisplayAssetSection={shouldDisplayAssetSection}
+      />
     );
 
-    if (shouldDisplayMarketBanner) {
-      sections.push(
-        <Box key="marketBanner" px={6} pt={6}>
-          <MarketBanner />
-        </Box>,
-      );
-    }
-
-    if (shouldDisplayAssetSection) {
-      sections.push(<PortfolioCategorizedAssetsSection key="categorizedAssets" />);
-    } else {
-      sections.push(
-        <PortfolioAssetsSection
-          key="assets"
-          isAccountListUIEnabled={isAccountListUIEnabled}
-          hideEmptyTokenAccount={hideEmptyTokenAccount}
-          openAddModal={openAddModal}
-          onHeightChange={handleHeightChange}
-        />,
-      );
-    }
-
-    if (isAWalletCardDisplayed) {
-      sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
-    }
-
-    if (!shouldDisplayGraphRework) {
-      sections.push(
-        <PortfolioAllocationsSection
-          key="allocations"
-          isFirst={!isAWalletCardDisplayed}
-          onPress={goToAnalyticsAllocations}
-        />,
-      );
-    }
-
-    sections.push(<PortfolioOperationsSection key="operations" />);
-
-    return sections;
-  }, [
-    showAssets,
-    shouldDisplayGraphRework,
-    shouldDisplayAssetSection,
-    shouldDisplayMarketBanner,
-    onBackFromUpdate,
-    isLNSUpsellBannerShown,
-    shouldDisplayQuickActionCtas,
-    isAccountListUIEnabled,
-    hideEmptyTokenAccount,
-    openAddModal,
-    handleHeightChange,
-    isAWalletCardDisplayed,
-    backgroundColor,
-    goToAnalyticsAllocations,
-  ]);
+  const data = [
+    <PortfolioHeaderSection
+      key="header"
+      showAssets={showAssets}
+      hideGraph={shouldDisplayGraphRework}
+      onBackFromUpdate={onBackFromUpdate}
+      ctas={heroCtasNode}
+    />,
+    content,
+  ];
 
   return (
     <>
@@ -186,7 +124,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
-          testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
+          testID={activeView === "main" ? "PortfolioAccountsList" : "PortfolioEmptyList"}
           useSafeArea={!shouldDisplayWallet40MainNav}
           overrideRefreshControlProps={{ progressViewOffset }}
           isError={isSyncError}
@@ -194,7 +132,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         <AddAccountDrawer
           isOpened={isAddModalOpened}
           onClose={closeAddModal}
-          doesNotHaveAccount={!showAssets}
+          doesNotHaveAccount={activeView !== "main"}
         />
       </Animated.View>
       <WalletV4TourDrawer

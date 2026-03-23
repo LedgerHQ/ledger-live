@@ -6,7 +6,6 @@ export { PortfolioCategorizedAssetsSection } from "LLM/features/WalletAssets/vie
 export { PortfolioCryptosSection } from "LLM/features/WalletAssets/components/CryptosSection";
 export { SeeAllAssetsButton } from "LLM/features/WalletAssets/components/SeeAllAssetsButton";
 export { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/components/StablecoinsSection";
-export { PortfolioEmptySection } from "./PortfolioEmptySection";
 export { PortfolioHeaderSection } from "./PortfolioHeaderSection";
 export { PortfolioOperationsSection } from "./PortfolioOperationsSection";
 export { PortfolioBannersSection } from "./PortfolioBannersSection";

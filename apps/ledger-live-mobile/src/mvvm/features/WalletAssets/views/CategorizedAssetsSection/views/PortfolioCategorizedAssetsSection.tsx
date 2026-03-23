@@ -1,8 +1,8 @@
 import React from "react";
 import { Box } from "@ledgerhq/native-ui";
-import { PortfolioCryptosSection } from "../../CryptosSection";
-import { PortfolioStablecoinsSection } from "../../StablecoinsSection";
-import { SeeAllAssetsButton } from "../../SeeAllAssetsButton";
+import { PortfolioCryptosSection } from "LLM/features/WalletAssets/components/CryptosSection";
+import { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/components/StablecoinsSection";
+import { SeeAllAssetsButton } from "LLM/features/WalletAssets/components/SeeAllAssetsButton";
 
 export const PortfolioCategorizedAssetsSection: React.FC = () => (
   <>

@@ -17,6 +17,8 @@ import {
   hasTokenAccountsNotBlacklistedSelector,
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "~/reducers/accounts";
+
+export type PortfolioActiveView = "main" | "noAccounts" | "readOnly";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
@@ -42,6 +44,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayGraphRework: boolean;
   backgroundColor: string;
   isSyncError: boolean;
+  activeView: PortfolioActiveView;
   openAddModal: () => void;
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
@@ -125,6 +128,13 @@ const usePortfolioViewModel = (navigation: {
     hasTokenAccountsWithPositiveBalance ||
     (!hideEmptyTokenAccount && hasTokenAccounts);
 
+  const hasAccounts = useSelector(state => flattenAccountsSelector(state).length > 0);
+  const activeView: PortfolioActiveView = showAssets
+    ? "main"
+    : !hasAccounts
+      ? "noAccounts"
+      : "readOnly";
+
   const animatedHeight = useSharedValue(0);
 
   const handleHeightChange = useCallback(
@@ -158,6 +168,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayGraphRework,
     backgroundColor,
     isSyncError,
+    activeView,
     openAddModal,
     closeAddModal,
     handleHeightChange,

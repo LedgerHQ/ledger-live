@@ -3,28 +3,23 @@ import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
-import { PortfolioBannersSection } from "../PortfolioBannersSection";
-import { PortfolioCryptosSection } from "LLM/features/WalletAssets/components/CryptosSection";
-import { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/components/StablecoinsSection";
-import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
+import { PortfolioBannersSection } from "../../../components";
+import { PortfolioCryptosSection } from "LLM/features/WalletAssets/components/CryptosSection";
+import { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/components/StablecoinsSection";
 
-type PortfolioNoAccountsContentProps = {
-  readonly isLNSUpsellBannerShown: boolean;
-  readonly shouldDisplayAssetSection?: boolean;
-  readonly openAddModal: () => void;
-  readonly closeAddModal: () => void;
-  readonly isAddModalOpened: boolean;
-};
+interface PortfolioNoAccountsViewProps {
+  isLNSUpsellBannerShown: boolean;
+  shouldDisplayAssetSection: boolean;
+  openAddModal: () => void;
+}
 
-const PortfolioNoAccountsContent = ({
+export const PortfolioNoAccountsView = ({
   isLNSUpsellBannerShown,
-  shouldDisplayAssetSection = false,
+  shouldDisplayAssetSection,
   openAddModal,
-  closeAddModal,
-  isAddModalOpened,
-}: PortfolioNoAccountsContentProps) => {
+}: PortfolioNoAccountsViewProps) => {
   const { t } = useTranslation();
 
   return (
@@ -32,7 +27,7 @@ const PortfolioNoAccountsContent = ({
       <TrackScreen name="Wallet" accountsLength={0} />
       <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
       <TransferDrawer />
-      <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
+      <PortfolioBannersSection isFirst isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
       {shouldDisplayAssetSection && (
         <>
@@ -55,9 +50,6 @@ const PortfolioNoAccountsContent = ({
       >
         {t("account.emptyState.addCryptoAccount")}
       </Button>
-      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} doesNotHaveAccount />
     </Box>
   );
 };
-
-export default PortfolioNoAccountsContent;
