@@ -294,6 +294,7 @@ describe("genericGetAccountShape", () => {
         stake: {
           state: "active",
           delegate: "validator-1",
+          amount: 1000n,
           amountRewarded: 25n,
         },
       };
@@ -893,6 +894,101 @@ describe("genericGetAccountShape", () => {
         ];
       });
     }
+
+    test("balance reflects only available native; delegated tracked in stakingResources", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      // extractBalance returns the primary native row (available only)
+      extractBalanceMock.mockReturnValue({ value: 100n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 100n },
+        {
+          // value (75n) intentionally differs from stake.amount (50n) to verify
+          // that delegatedAmountForStakingResources uses stake.amount, not b.value
+          asset: { type: "native" },
+          value: 75n,
+          stake: {
+            uid: "s1",
+            address: "0xabc",
+            delegate: "0xvalidator",
+            state: "active",
+            asset: { type: "native" },
+            amount: 50n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "celo");
+      const result = await getShape(
+        {
+          address: "0xtest",
+          initialAccount: undefined,
+          currency: { id: "celo", name: "Celo", family: "evm" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // balance = available native only (not 100 + 75); staked lives in stakingResources
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.spendableBalance).toEqual(new BigNumber(100));
+      // delegatedBalance and delegation.amount must use stake.amount (50), not b.value (75)
+      expect((result as any).stakingResources?.delegatedBalance).toEqual(new BigNumber(50));
+      expect((result as any).stakingResources?.delegations[0]?.amount).toEqual(new BigNumber(50));
+    });
+
+    test("does not double count when stake metadata is on primary native row", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      // extractBalance returns the single native row (value: 100n)
+      extractBalanceMock.mockReturnValue({ value: 100n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        {
+          // stake.amount (80n) differs from value (100n) — delegatedAmountForStakingResources
+          // must use stake.amount, and the account balance must NOT double-count
+          asset: { type: "native" },
+          value: 100n,
+          stake: {
+            uid: "s1",
+            address: "tz1abc",
+            delegate: "tz1validator",
+            state: "active",
+            asset: { type: "native" },
+            amount: 80n,
+          },
+        },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      const getShape = genericGetAccountShape("mainnet", "tezos");
+      const result = await getShape(
+        {
+          address: "tz1test",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos", family: "tezos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // balance = available native only; stake.amount does not inflate it
+      expect(result.balance).toEqual(new BigNumber(100));
+      expect(result.spendableBalance).toEqual(new BigNumber(100));
+      // delegatedBalance and delegation.amount use stake.amount (80), not b.value (100)
+      expect((result as any).stakingResources?.delegatedBalance).toEqual(new BigNumber(80));
+      expect((result as any).stakingResources?.delegations[0]?.amount).toEqual(new BigNumber(80));
+    });
 
     test("Case 1: simple native transfer between EOAs", async () => {
       setupSpecTest();
