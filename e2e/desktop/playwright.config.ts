@@ -13,7 +13,9 @@ const config: PlaywrightTestConfig = {
   globalTeardown: require.resolve("./tests/utils/global.teardown"),
   use: {
     ignoreHTTPSErrors: true,
-    screenshot: process.env.CI ? "only-on-failure" : "off",
+    // Playwright will capture screenshots for the main view and any open webviews
+    // Handle screenshots ourselves to avoid multiple results
+    screenshot: "off",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",

@@ -16,14 +16,18 @@ describe("Bridge", () => {
 
   // Mock signer context that provides an AleoSigner
   const createMockSignerContext = (): SignerContext<AleoSigner> => {
-    const signTransaction = jest.fn().mockResolvedValue(Buffer.from("signature"));
-    const getAddress = jest.fn().mockResolvedValue(Buffer.from("aleo1test"));
-    const getViewKey = jest.fn().mockResolvedValue(Buffer.from("view_key"));
+    const signRootIntent = jest.fn().mockResolvedValue({ signature: "root-signature" });
+    const signFeeIntent = jest.fn().mockResolvedValue({ signature: "fee-signature" });
+    const getAddress = jest.fn().mockResolvedValue({ address: "aleo1test" });
+    const getViewKey = jest.fn().mockResolvedValue({ viewKey: "view_key" });
+    const getAppConfig = jest.fn().mockResolvedValue({});
 
     const mockSigner: AleoSigner = {
-      signTransaction,
+      signRootIntent,
+      signFeeIntent,
       getAddress,
       getViewKey,
+      getAppConfig,
     };
 
     return <T>(_deviceId: string, fn: (signer: AleoSigner) => Promise<T>): Promise<T> =>
@@ -86,18 +90,8 @@ describe("Bridge", () => {
       const signerContext = createMockSignerContext();
       const accountBridge = buildAccountBridge(signerContext);
 
-      expect(() => accountBridge.signRawOperation({} as any)).toThrow(
-        "signRawOperation is not supported",
-      );
-    });
-
-    it("signOperation should throw unsupported error", () => {
-      const signerContext = createMockSignerContext();
-      const accountBridge = buildAccountBridge(signerContext);
-
-      expect(() => accountBridge.signOperation({} as any)).toThrow(
-        "signOperation is not supported",
-      );
+      // @ts-expect-error - only checking if it throws
+      expect(() => accountBridge.signRawOperation()).toThrow("signRawOperation is not supported");
     });
 
     it("createTransaction should return a transaction", () => {

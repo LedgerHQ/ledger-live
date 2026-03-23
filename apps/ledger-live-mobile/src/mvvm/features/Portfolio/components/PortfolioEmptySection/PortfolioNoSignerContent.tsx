@@ -3,6 +3,7 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
+import { PortfolioStablecoinsSection } from "../PortfolioStablecoinsSection";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import MarketBanner from "LLM/features/MarketBanner";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -26,7 +27,12 @@ export const PortfolioNoSignerContent = ({
     <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
     <MarketBanner />
     {shouldDisplayAssetSection ? (
-      <PortfolioCryptosSection isEmptyState={isEmptyState} />
+      <>
+        <PortfolioCryptosSection isEmptyState={isEmptyState} />
+        <Box lx={{ marginTop: "s24" }}>
+          <PortfolioStablecoinsSection isEmptyState={isEmptyState} />
+        </Box>
+      </>
     ) : (
       <PortfolioCryptosSection isReadOnly />
     )}

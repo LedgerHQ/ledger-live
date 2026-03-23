@@ -35,6 +35,7 @@ const DEFAULT_TIMEOUT = 60000;
 export type WaitForElementOptions = {
   errorCheckTimeout?: number;
   errorElementId?: string;
+  checkVisibility?: boolean;
 };
 
 export const NativeElementHelpers = {
@@ -44,7 +45,7 @@ export const NativeElementHelpers = {
   },
 
   /**
-   * Waits for a native element to become visible, with optional error checking.
+   * Waits for a native element to become visible (or to exist), with optional error checking.
    * When errorElementId is provided, polls for both the expected element and error elements,
    * providing fail-fast behavior if errors are detected.
    *
@@ -53,10 +54,13 @@ export const NativeElementHelpers = {
    * @param options - Optional configuration
    * @param options.errorCheckTimeout - Polling frequency for error checks (default: 500ms)
    * @param options.errorElementId - Test ID of error element to check for fail-fast behavior
+   * @param options.checkVisibility - If true (default), waits for toBeVisible; if false, waits for toExist.
+   *   Use false when the element may be present but Detox synchronization or main-thread contention
+   *   prevents the visibility check from completing (e.g. WebView screens under heavy load).
    * @throws {Error} If error element detected or timeout reached
    *
    * @example
-   * // Basic usage
+   * // Basic usage — waits for visibility
    * await waitForElement(myElement);
    *
    * @example
@@ -71,9 +75,10 @@ export const NativeElementHelpers = {
     options?: WaitForElementOptions,
   ) {
     const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
-
+    const checkVisibility = options?.checkVisibility ?? true;
+    const waitCondition = checkVisibility ? waitFor(nativeElement).toBeVisible() : waitFor(nativeElement).toExist();
     if (!options?.errorElementId) {
-      return waitFor(nativeElement).toBeVisible().withTimeout(timeout);
+      return waitCondition.withTimeout(timeout);
     }
 
     const startTime = Date.now();
@@ -81,7 +86,7 @@ export const NativeElementHelpers = {
 
     while (Date.now() - startTime < timeout) {
       try {
-        await waitFor(nativeElement).toBeVisible().withTimeout(errorCheckTimeout);
+        await waitCondition.withTimeout(errorCheckTimeout);
         return;
       } catch (error) {
         lastWaitError = error instanceof Error ? error : new Error(String(error));

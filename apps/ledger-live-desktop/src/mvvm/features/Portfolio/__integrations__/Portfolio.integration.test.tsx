@@ -24,6 +24,13 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
+// Prevent loading ESM-only @braze/web-sdk (pulled in by BottomCarouselContentCards via usePortfolioCarouselCards)
+jest.mock("@braze/web-sdk", () => ({
+  getCachedContentCards: jest.fn(() => ({ cards: [] })),
+  logCardDismissal: jest.fn(),
+  logContentCardClick: jest.fn(),
+}));
+
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
@@ -125,6 +132,7 @@ describe("PortfolioView", () => {
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
     shouldDisplayOperationsList: true,
+    shouldDisplayBrazePlacement: false,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],

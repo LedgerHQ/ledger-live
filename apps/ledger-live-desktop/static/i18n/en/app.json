@@ -4638,7 +4638,8 @@
           "fields": {
             "notification": "Notification Content Card",
             "action": "Action Content Card",
-            "portfolio": "Portfolio Content Card",
+            "portfolio": "Portfolio",
+            "bottomPortfolio": "Bottom Portfolio",
             "title": "Title",
             "description": "Description",
             "order": "Order",
@@ -8103,6 +8104,9 @@
   "portfolio": {
     "title": "Home",
     "today": "Today",
+    "carousel": {
+      "title": "For you"
+    },
     "addAccountCta": "Add crypto account",
     "noBalanceTitle": "Start by funding your wallet",
     "perpsEntry": {
@@ -8180,6 +8184,10 @@
     }
   },
   "topBar": {
+    "history": {
+      "cta": "History",
+      "tooltip": "History"
+    },
     "activityIndicator": {
       "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
       "emptyErrorToolTip": "Your assets are safe. This is a temporary sync issue.\n Tap to retry",
@@ -8386,5 +8394,8 @@
       "continue": "Continue",
       "explore": "Explore my new portfolio"
     }
+  },
+  "history": {
+    "title": "Transaction"
   }
 }

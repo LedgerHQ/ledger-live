@@ -101,7 +101,7 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="-mt-12 mb-12 px-24"
+          className="mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus

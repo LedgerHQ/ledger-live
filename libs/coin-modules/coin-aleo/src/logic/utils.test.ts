@@ -58,6 +58,7 @@ import {
   getRecordByCommitment,
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
+  extractViewKey,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -1369,6 +1370,22 @@ describe("getFunctionNameFromTransactionType", () => {
     // @ts-expect-error - testing unsupported transaction type
     expect(() => getFunctionNameFromTransactionType("unknown_type")).toThrow(
       "aleo: unsupported transaction type: unknown_type",
+    );
+  });
+});
+
+describe("extractViewKey", () => {
+  it("should return the view key extracted from the account id", () => {
+    const account = getMockedAccount({ id: "js:2:aleo:aleo1xyz::AViewKey123" });
+
+    expect(extractViewKey(account)).toBe("AViewKey123");
+  });
+
+  it("should throw when the account id has no view key", () => {
+    const account = getMockedAccount({ id: "js:2:aleo:aleo1test:" });
+
+    expect(() => extractViewKey(account)).toThrow(
+      `aleo: view key is missing in ${account.freshAddress} account`,
     );
   });
 });

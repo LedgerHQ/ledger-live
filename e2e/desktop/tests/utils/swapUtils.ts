@@ -64,7 +64,7 @@ async function selectAccountFrom(app: Application, electronApp: ElectronApplicat
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToDebit);
-    await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);
+    await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
   }
 }
 
@@ -73,7 +73,7 @@ async function selectAccountTo(app: Application, electronApp: ElectronApplicatio
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToCredit);
-    await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
+    await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
   }
 }
 

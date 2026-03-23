@@ -178,7 +178,7 @@ async function encryptProvingRequest({
       public_key: publicKey,
       proving_request: {
         authorization,
-        ...(feeAuthorization && { fee_authorization: feeAuthorization }),
+        fee_authorization: feeAuthorization ?? null,
         broadcast,
       },
     },

@@ -16,6 +16,7 @@ import BannerSection from "~/renderer/screens/dashboard/components/Banners/Banne
 import { PortfolioBannerContent } from "~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent";
 import Assets from "LLD/features/Assets";
 import { CryptoAddressesBanner } from "LLD/features/CryptoAddresses/components/Banner";
+import { BottomCarouselContentCards } from "LLD/features/DynamicContent/components/BottomCarouselContentCards";
 
 export const PortfolioView = memo(function PortfolioView({
   totalAccounts,
@@ -27,6 +28,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayQuickActionCtas,
   shouldDisplayAssetSection,
   shouldDisplayOperationsList,
+  shouldDisplayBrazePlacement,
   isWallet40Enabled,
   accounts,
   filterOperations,
@@ -68,7 +70,7 @@ export const PortfolioView = memo(function PortfolioView({
           {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
-
+          {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}
           {shouldRenderLegacyOperationsList && (
             <OperationsList
               accounts={accounts}
