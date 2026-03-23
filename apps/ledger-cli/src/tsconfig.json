@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "nodenext",
+    "downlevelIteration": true,
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "outDir": "../lib/",
+    "types": ["node"],
+    "lib": ["es2020"]
+  },
+  "references": [{ "path": "../" }]
+}

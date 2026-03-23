@@ -1,0 +1,65 @@
+{
+  "name": "@ledgerhq/ledger-cli",
+  "version": "0.1.0",
+  "description": "Ledger CLI — modern power-user interface for Ledger hardware wallets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "bin": {
+    "ledger-cli": "./bin/index.js"
+  },
+  "type": "commonjs",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "scripts": {
+    "build": "zx ./scripts/build.mjs",
+    "watch": "rslib build --watch",
+    "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
+    "lint": "eslint src --cache",
+    "lint:fix": "pnpm lint --fix"
+  },
+  "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-transport-kit-node-hid": "catalog:",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport-node-hid": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "bigint-buffer": "*",
+    "bignumber.js": "9.1.2",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "node-hid": "2.1.2",
+    "ora": "^8.0.0",
+    "rxjs": "catalog:",
+    "readable-stream": "^4.7.0",
+    "winston": "3.13.0"
+  },
+  "devDependencies": {
+    "@rslib/core": "catalog:",
+    "@types/node": "catalog:",
+    "yaml": "2.8.1",
+    "zx": "8.8.5"
+  },
+  "publishConfig": {
+    "directory": "dist"
+  }
+}
