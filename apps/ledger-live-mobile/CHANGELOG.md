@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.111.0-next.3
+
+### Minor Changes
+
+- [#15544](https://github.com/LedgerHQ/ledger-live/pull/15544) [`7d7f51a`](https://github.com/LedgerHQ/ledger-live/commit/7d7f51a104bc69deef36fa2b07985518c5e555ca) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Export full countervalues history on mobile to avoid repull on boot
+
 ## 3.111.0-next.2
 
 ### Minor Changes
