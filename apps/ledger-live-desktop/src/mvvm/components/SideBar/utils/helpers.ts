@@ -14,9 +14,11 @@ export const isSideBarNavValue = (value: string): value is SideBarNavValue =>
 export function pathnameToActive(
   pathname: string,
   referPath: string | undefined,
+  shouldDisplayAssetSection = false,
 ): SideBarActiveValue {
   if (referPath && pathname.startsWith(referPath)) return SIDEBAR_SPECIAL_VALUES.refer;
   if (pathname === "/") return "home";
+  if (shouldDisplayAssetSection && pathname === "/cryptos") return "accounts";
   if (pathname.startsWith("/account")) return "accounts";
   if (pathname.startsWith("/swap")) return "swap";
   if (pathname === "/earn") return "earn";

@@ -23,6 +23,7 @@ import {
   SIDEBAR_VALUE_TO_TRACK_ENTRY,
   SIDEBAR_SPECIAL_VALUES,
   isSideBarNavValue,
+  getAccountsSidebarPath,
 } from "./utils";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
 import type { SideBarViewModel } from "./types";
@@ -54,6 +55,7 @@ const checkLiveAppTabSelection = (pathname: string, liveAppPaths: ReadonlyArray<
 function createNavHandlers(
   push: (path: string) => void,
   trackEntry: (entry: string, flagged?: boolean) => void,
+  accountsSidebarPath: string,
 ): Record<NavHandlerKey, () => void> {
   const registry = SIDEBAR_NAV_REGISTRY;
   return {
@@ -70,7 +72,7 @@ function createNavHandlers(
       trackEntry(registry.handleClickManager.trackEntry);
     },
     handleClickAccounts: () => {
-      push(registry.handleClickAccounts.path);
+      push(accountsSidebarPath);
       trackEntry(registry.handleClickAccounts.trackEntry);
     },
     handleClickCatalog: () => {
@@ -128,8 +130,14 @@ export function useSideBarViewModel(): SideBarViewModel {
     shouldDisplayMarketBanner: isMarketBannerEnabled,
     shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
     shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
+    shouldDisplayAssetSection,
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
+
+  const accountsSidebarPath = useMemo(
+    () => getAccountsSidebarPath(shouldDisplayAssetSection),
+    [shouldDisplayAssetSection],
+  );
 
   const wasNarrowRef = useRef<boolean | null>(null);
 
@@ -185,7 +193,10 @@ export function useSideBarViewModel(): SideBarViewModel {
     [location.pathname],
   );
 
-  const navHandlers = useMemo(() => createNavHandlers(push, trackEntry), [push, trackEntry]);
+  const navHandlers = useMemo(
+    () => createNavHandlers(push, trackEntry, accountsSidebarPath),
+    [push, trackEntry, accountsSidebarPath],
+  );
   const handleClickManager = useNavigateToMyLedger(push, trackEntry);
 
   const openSendFlow = useOpenSendFlow();
@@ -203,8 +214,8 @@ export function useSideBarViewModel(): SideBarViewModel {
   }, [push, referralProgramConfig, trackEntry]);
 
   const maybeRedirectToAccounts = useCallback(() => {
-    return location.pathname === "/manager" && push("/accounts");
-  }, [location.pathname, push]);
+    return location.pathname === "/manager" && push(accountsSidebarPath);
+  }, [location.pathname, push, accountsSidebarPath]);
 
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
@@ -258,8 +269,13 @@ export function useSideBarViewModel(): SideBarViewModel {
   }, [totalStarredAccounts]);
 
   const active = useMemo(
-    () => pathnameToActive(location.pathname, referralProgramConfig?.params?.path),
-    [location.pathname, referralProgramConfig?.params?.path],
+    () =>
+      pathnameToActive(
+        location.pathname,
+        referralProgramConfig?.params?.path,
+        shouldDisplayAssetSection,
+      ),
+    [location.pathname, referralProgramConfig?.params?.path, shouldDisplayAssetSection],
   );
 
   const handleActiveChange = useCallback(
@@ -280,7 +296,8 @@ export function useSideBarViewModel(): SideBarViewModel {
         ) {
           handleScrollToTop();
         }
-        push(SIDEBAR_VALUE_TO_PATH[value]);
+        const path = value === "accounts" ? accountsSidebarPath : SIDEBAR_VALUE_TO_PATH[value];
+        push(path);
         trackEntry(SIDEBAR_VALUE_TO_TRACK_ENTRY[value]);
       }
     },
@@ -292,6 +309,7 @@ export function useSideBarViewModel(): SideBarViewModel {
       trackEntry,
       location.pathname,
       isWallet40MainNavEnabled,
+      accountsSidebarPath,
     ],
   );
 
