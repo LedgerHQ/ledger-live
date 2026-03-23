@@ -72,4 +72,6 @@ export class AppInfos {
   static readonly ZCASH = new AppInfos("Zcash");
 
   static readonly ALEO = new AppInfos("Aleo");
+
+  static readonly MINA = new AppInfos("Mina");
 }
