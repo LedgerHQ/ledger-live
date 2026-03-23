@@ -44,6 +44,22 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Install mise and tools
+      if: inputs.use-mise == 'true'
+      uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      with:
+        install: true
+        cache: true
+        reshim: true
+        experimental: true
+        github_token: ${{ inputs['gh-token'] }}
+
+    - name: Force reshim
+      if: inputs.use-mise == 'true'
+      shell: bash
+      run: |
+        mise reshim
+
     - name: Setup proto
       if: inputs.install-proto == 'true'
       uses: moonrepo/setup-toolchain@v0
