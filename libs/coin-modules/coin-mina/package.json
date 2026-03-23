@@ -69,9 +69,9 @@
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./logic": {
-      "@ledgerhq/source": "./src/common-logic/index.ts",
-      "require": "./lib/common-logic/index.js",
-      "default": "./lib-es/common-logic/index.js"
+      "@ledgerhq/source": "./src/logic/index.ts",
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
     },
     "./signer": {
       "@ledgerhq/source": "./src/signer/index.ts",
@@ -120,6 +120,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",
     "expect": "catalog:",
@@ -128,16 +129,16 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/bs58check": "catalog:",
-    "@types/node": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/lodash": "^4.14.191",
     "expect": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "@ledgerhq/disable-network-setup": "workspace:^"
+    "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
