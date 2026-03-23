@@ -17,8 +17,10 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: () => ({ name: "Portfolio" }),
 }));
 
+const mockAssetsData = jest.fn();
+
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
-  useAssetsData: () => ({ data: undefined, isLoading: false }),
+  useAssetsData: () => mockAssetsData(),
 }));
 
 const mockCategorizedAssets = jest.fn();
@@ -53,6 +55,7 @@ const mockPortfolioWithStablecoins = (
 describe("usePortfolioStablecoinsSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAssetsData.mockReturnValue({ data: undefined, isLoading: false, isError: false });
     mockPortfolioWithStablecoins();
   });
 
@@ -151,6 +154,37 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       act(() => result.current.onItemPress(placeholder));
 
       expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, { currencyId: "bitcoin" });
+    });
+  });
+
+  describe("isLoading / isError", () => {
+    it("should expose isLoading true when the DADA API is loading", () => {
+      mockAssetsData.mockReturnValue({ data: undefined, isLoading: true, isError: false });
+
+      const { result } = renderHook(() =>
+        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+      );
+
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.isError).toBe(false);
+    });
+
+    it("should expose isError true when the DADA API fails", () => {
+      mockAssetsData.mockReturnValue({ data: undefined, isLoading: false, isError: true });
+
+      const { result } = renderHook(() =>
+        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+      );
+
+      expect(result.current.isError).toBe(true);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    it("should expose isLoading false and isError false in the nominal case", () => {
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.isError).toBe(false);
     });
   });
 
