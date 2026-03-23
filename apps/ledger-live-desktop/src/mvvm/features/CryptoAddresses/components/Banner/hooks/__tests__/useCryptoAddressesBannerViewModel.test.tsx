@@ -1,4 +1,6 @@
 import { renderHook, act } from "tests/testSetup";
+import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useCryptoAddressesBannerViewModel } from "../useCryptoAddressesBannerViewModel";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
@@ -11,6 +13,27 @@ import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 const mockOpenAssetFlow = jest.fn();
 const mockNavigate = jest.fn();
 
+const defaultWalletFeaturesConfig: WalletFeaturesConfig = {
+  isEnabled: false,
+  shouldDisplayMarketBanner: false,
+  shouldDisplayGraphRework: false,
+  shouldDisplayQuickActionCtas: false,
+  shouldDisplayNewReceiveDialog: false,
+  shouldDisplayWallet40MainNav: false,
+  shouldUseLazyOnboarding: false,
+  shouldDisplayBalanceRefreshRework: false,
+  shouldDisplayTour: false,
+  shouldDisplayAssetSection: false,
+  shouldDisplayOnboardingWidget: false,
+  shouldDisplayBrazePlacement: false,
+  shouldDisplayOperationsList: false,
+};
+
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
+  useWalletFeaturesConfig: jest.fn(),
+}));
+
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
   useOpenAssetFlow: jest.fn(),
 }));
@@ -21,11 +44,13 @@ jest.mock("react-router", () => ({
 }));
 
 const mockUseOpenAssetFlow = jest.mocked(useOpenAssetFlow);
+const mockUseWalletFeaturesConfig = jest.mocked(useWalletFeaturesConfig);
 const mockTrack = jest.mocked(track);
 
 describe("useCryptoAddressesBannerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseWalletFeaturesConfig.mockReturnValue(defaultWalletFeaturesConfig);
     mockUseOpenAssetFlow.mockReturnValue({
       openAssetFlow: mockOpenAssetFlow,
       openAddAccountFlow: jest.fn(),
@@ -54,7 +79,7 @@ describe("useCryptoAddressesBannerViewModel", () => {
     expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
   });
 
-  it("should track button_clicked and navigate to /accounts when onGoToAccounts is invoked", () => {
+  it("should track button_clicked and navigate to /accounts when onGoToAccounts is invoked and asset section is off", () => {
     const { result } = renderHook(() => useCryptoAddressesBannerViewModel());
 
     act(() => {
@@ -68,6 +93,22 @@ describe("useCryptoAddressesBannerViewModel", () => {
     });
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith("/accounts");
+  });
+
+  it("should navigate to /cryptos when onGoToAccounts is invoked and asset section is on", () => {
+    mockUseWalletFeaturesConfig.mockReturnValue({
+      ...defaultWalletFeaturesConfig,
+      shouldDisplayAssetSection: true,
+    });
+
+    const { result } = renderHook(() => useCryptoAddressesBannerViewModel());
+
+    act(() => {
+      result.current.onGoToAccounts();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
   it("should call useOpenAssetFlow with ADD_ACCOUNT location and correct source", () => {

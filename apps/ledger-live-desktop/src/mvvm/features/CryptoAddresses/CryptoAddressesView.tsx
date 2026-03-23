@@ -1,0 +1,73 @@
+import React from "react";
+import {
+  Button,
+  SearchInput,
+  TableActionBar,
+  TableActionBarLeading,
+  TableActionBarTrailing,
+} from "@ledgerhq/lumen-ui-react";
+import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
+import PageHeader from "LLD/components/PageHeader";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { useTranslation } from "react-i18next";
+import type { CryptoViewModel } from "./types";
+import { CryptoTable } from "./components/Table/CryptoTable";
+import { CryptoTableEmptyState } from "./components/Table/CryptoTableEmptyState";
+
+export function CryptoAddressesView({ viewModel }: { readonly viewModel: CryptoViewModel }) {
+  const {
+    searchValue,
+    setSearchValue,
+    onAddAddressClick,
+    onAccountClick,
+    rows,
+    lookupParentAccount,
+  } = viewModel;
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col gap-32">
+      <TrackPage category="Crypto" />
+      <PageHeader title={t("crypto.title")} />
+      <div data-testid="crypto-page-content" className="flex flex-col gap-12">
+        <TableActionBar>
+          <TableActionBarLeading>
+            <div className="max-w-[350px] flex-auto pt-4">
+              <SearchInput
+                value={searchValue}
+                placeholder={t("crypto.tableActions.searchAddress")}
+                onChange={e => setSearchValue(e.target.value)}
+              />
+            </div>
+          </TableActionBarLeading>
+          <TableActionBarTrailing>
+            <Button
+              appearance="base"
+              size="sm"
+              icon={Plus}
+              onClick={onAddAddressClick}
+              data-testid="crypto-add-address-button"
+            >
+              {t("crypto.tableActions.addAddress")}
+            </Button>
+          </TableActionBarTrailing>
+        </TableActionBar>
+        {rows.length === 0 ? (
+          <CryptoTableEmptyState
+            message={
+              searchValue.trim() == ""
+                ? t("crypto.table.emptyState")
+                : t("crypto.table.emptySearchState")
+            }
+          />
+        ) : (
+          <CryptoTable
+            rows={rows}
+            lookupParentAccount={lookupParentAccount}
+            onRowClick={onAccountClick}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
