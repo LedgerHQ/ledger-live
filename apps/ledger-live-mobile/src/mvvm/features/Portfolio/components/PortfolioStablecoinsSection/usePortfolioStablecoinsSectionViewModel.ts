@@ -4,7 +4,7 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import { toAsset, usePortfolioSectionActions } from "../shared/usePortfolioSectionActions";
+import { toAsset, usePortfolioSectionActions } from "../../hooks/usePortfolioSectionActions";
 
 export const MAX_STABLECOINS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_STABLECOINS = 2;
@@ -13,6 +13,8 @@ export interface PortfolioStablecoinsSectionViewModelResult {
   assetsCount: number;
   hasMore: boolean;
   assetsToDisplay: Asset[];
+  isLoading: boolean;
+  isError: boolean;
   onPressShowAll: () => void;
   onItemPress: (asset: Asset) => void;
 }
@@ -58,12 +60,11 @@ const usePortfolioStablecoinsSectionViewModel = ({
   // than EMPTY_STATE_MAX_STABLECOINS, matching the desktop behaviour.
   const needsPadding =
     isEmptyState || isReadOnly || filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS;
-  const { stablecoins: defaultStablecoins } = useDefaultAssetsByCategory(
-    needsPadding,
-    stablecoinTickers,
-    0,
-    EMPTY_STATE_MAX_STABLECOINS,
-  );
+  const {
+    stablecoins: defaultStablecoins,
+    isLoading,
+    isError,
+  } = useDefaultAssetsByCategory(needsPadding, stablecoinTickers, 0, EMPTY_STATE_MAX_STABLECOINS);
 
   const assets = useMemo<Asset[]>(() => {
     if (isEmptyState || isReadOnly) return defaultStablecoins;
@@ -86,6 +87,8 @@ const usePortfolioStablecoinsSectionViewModel = ({
     assetsCount,
     hasMore,
     assetsToDisplay,
+    isLoading,
+    isError,
     onPressShowAll,
     onItemPress,
   };
