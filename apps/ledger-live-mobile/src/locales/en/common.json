@@ -7808,6 +7808,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
+      "stablecoins": "Stablecoin",
       "market": "Market"
     },
     "referralProgram": "$20"

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  Button,
   Subheader,
   SubheaderCount,
   SubheaderRow,
@@ -53,17 +52,6 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           onItemPress={onItemPress}
         />
       </Box>
-      {hasMore && (
-        <Button
-          appearance="gray"
-          size="lg"
-          isFull
-          onPress={onPressShowAll}
-          lx={{ marginTop: "s24", marginBottom: "s24" }}
-        >
-          {t("portfolio.seeAllAssets")}
-        </Button>
-      )}
     </Box>
   );
 };

@@ -1,0 +1,181 @@
+import { act } from "@testing-library/react-native";
+import { renderHook } from "@tests/test-renderer";
+import { NavigatorName, ScreenName } from "~/const";
+import { Asset } from "~/types/asset";
+import { State } from "~/reducers/types";
+import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
+import usePortfolioStablecoinsSectionViewModel, {
+  padStablecoins,
+} from "../usePortfolioStablecoinsSectionViewModel";
+import { bitcoin, ethereum, createAsset } from "./shared";
+
+const mockNavigate = jest.fn();
+
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useNavigation: () => ({ navigate: mockNavigate }),
+  useRoute: () => ({ name: "Portfolio" }),
+}));
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
+  useAssetsData: () => ({ data: undefined, isLoading: false }),
+}));
+
+const mockCategorizedAssets = jest.fn();
+
+jest.mock("LLM/hooks/useCategorizedAssetsFromPortfolio", () => ({
+  useCategorizedAssetsFromPortfolio: () => mockCategorizedAssets(),
+}));
+
+const toCategorizedItem = (asset: Asset) => ({
+  currency: asset.currency,
+  balance: asset.amount,
+  value: 0,
+  distribution: 0,
+  accounts: asset.accounts,
+});
+
+const mockPortfolioWithStablecoins = (
+  stablecoinAssets: Asset[] = [],
+  cryptoAssets: Asset[] = [],
+): void => {
+  const categorizedAssets: CategorizedAssets = {
+    cryptos: cryptoAssets.map(toCategorizedItem),
+    stablecoins: stablecoinAssets.map(toCategorizedItem),
+  };
+  mockCategorizedAssets.mockReturnValue({
+    categorizedAssets,
+    stablecoinTickers: new Set<string>(),
+    isLoadingStablecoinTickers: false,
+  });
+};
+
+describe("usePortfolioStablecoinsSectionViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPortfolioWithStablecoins();
+  });
+
+  describe("asset display and hasMore", () => {
+    it("should return empty assets when there are no stablecoins", () => {
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      expect(result.current.assetsCount).toBe(0);
+      expect(result.current.assetsToDisplay).toHaveLength(0);
+      expect(result.current.hasMore).toBe(false);
+    });
+
+    it("should filter to stablecoins only, excluding cryptos", () => {
+      mockPortfolioWithStablecoins([createAsset(ethereum, 2000)], [createAsset(bitcoin, 100000)]);
+
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      expect(result.current.assetsCount).toBe(1);
+      expect(result.current.assetsToDisplay[0].currency).toBe(ethereum);
+    });
+
+    it("should cap display at 6, report total count, and set hasMore when list exceeds limit", () => {
+      const ten = Array.from({ length: 10 }, (_, i) => createAsset(bitcoin, 10000 * (10 - i)));
+      mockPortfolioWithStablecoins(ten);
+
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      expect(result.current.assetsCount).toBe(10);
+      expect(result.current.assetsToDisplay).toHaveLength(6);
+      expect(result.current.hasMore).toBe(true);
+    });
+
+    it("should not set hasMore when there are 6 stablecoins or fewer", () => {
+      const six = Array.from({ length: 6 }, (_, i) => createAsset(bitcoin, 10000 * (6 - i)));
+      mockPortfolioWithStablecoins(six);
+
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      expect(result.current.hasMore).toBe(false);
+    });
+
+    it("should always report hasMore false in isEmptyState or isReadOnly mode", () => {
+      const seven = Array.from({ length: 7 }, (_, i) => createAsset(bitcoin, 10000 * (7 - i)));
+      mockPortfolioWithStablecoins(seven);
+
+      const { result: emptyResult } = renderHook(() =>
+        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+      );
+      const { result: readOnlyResult } = renderHook(() =>
+        usePortfolioStablecoinsSectionViewModel({ isReadOnly: true }),
+      );
+
+      expect(emptyResult.current.hasMore).toBe(false);
+      expect(readOnlyResult.current.hasMore).toBe(false);
+    });
+
+    it("should navigate to AssetsList on onPressShowAll when llmAccountListUI is enabled", () => {
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: { llmAccountListUI: { enabled: true } },
+          },
+        }),
+      });
+
+      act(() => result.current.onPressShowAll());
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Assets, {
+        screen: ScreenName.AssetsList,
+        params: { sourceScreenName: ScreenName.Portfolio, showHeader: true, isSyncEnabled: true },
+      });
+    });
+
+    it("should navigate to Asset detail on onItemPress", () => {
+      mockPortfolioWithStablecoins([createAsset(ethereum, 5000)]);
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      act(() => result.current.onItemPress(result.current.assetsToDisplay[0]));
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Asset,
+        params: { currency: ethereum },
+      });
+    });
+
+    it("should navigate to MarketDetail on onItemPress for placeholder assets", () => {
+      const placeholder: Asset = {
+        ...createAsset(bitcoin, 0),
+        isPlaceholder: true,
+        marketId: "bitcoin",
+      };
+      const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel());
+
+      act(() => result.current.onItemPress(placeholder));
+
+      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, { currencyId: "bitcoin" });
+    });
+  });
+
+  describe("padStablecoins", () => {
+    const usdc = createAsset(ethereum, 0);
+    const dai = createAsset(bitcoin, 0);
+    const tether = { ...createAsset(bitcoin, 0), currency: { ...bitcoin, id: "tether" } } as Asset;
+
+    it("should return owned assets unchanged when already at max", () => {
+      const owned = [usdc, dai];
+      expect(padStablecoins(owned, [tether], 2)).toEqual(owned);
+    });
+
+    it("should pad up to max with defaults when fewer than max are owned", () => {
+      const result = padStablecoins([usdc], [dai, tether], 3);
+
+      expect(result).toHaveLength(3);
+      expect(result[0]).toBe(usdc);
+    });
+
+    it("should not pad with assets already owned (deduplication by currency id)", () => {
+      const result = padStablecoins([usdc], [usdc, dai], 2);
+
+      expect(result).toHaveLength(2);
+      expect(result[1].currency.id).toBe(dai.currency.id);
+    });
+  });
+});

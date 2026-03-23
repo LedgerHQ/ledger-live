@@ -5,6 +5,7 @@ import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
+import { PortfolioStablecoinsSection } from "../PortfolioStablecoinsSection";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -33,7 +34,14 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
-      {shouldDisplayAssetSection && <PortfolioCryptosSection isEmptyState />}
+      {shouldDisplayAssetSection && (
+        <>
+          <PortfolioCryptosSection isEmptyState />
+          <Box lx={{ marginTop: "s24" }}>
+            <PortfolioStablecoinsSection isEmptyState />
+          </Box>
+        </>
+      )}
       <Button
         appearance="gray"
         size="lg"
