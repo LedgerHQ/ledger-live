@@ -188,6 +188,9 @@ export class Account {
 
   static readonly LTC_1 = new Account(Currency.LTC, "Litecoin 1", 0, "84'/2'/0'/0/0");
 
+  static readonly MINA_1 = new Account(Currency.MINA, "Mina 1", 0, "44'/12586'/0'/0/0");
+  static readonly MINA_2 = new Account(Currency.MINA, "Mina 2", 1, "44'/12586'/1'/0/0");
+
   static readonly MULTIVERS_X_1 = new Account(
     Currency.MULTIVERS_X,
     "MultiversX 1",
