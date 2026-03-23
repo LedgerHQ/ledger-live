@@ -1,43 +1,36 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
-import CollapsibleStep from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/components/CollapsibleStep";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useTranslation } from "~/context/Locale";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
-import { NavigatorName, ScreenName } from "~/const";
-import { useSelector, useDispatch } from "~/context/hooks";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
-import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
-import { setIsReborn, setLastConnectedDevice, setOnboardingHasDevice } from "~/actions/settings";
-import { addKnownDevice } from "~/actions/ble";
-import { screen, TrackScreen } from "~/analytics";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { LayoutChangeEvent } from "react-native";
 import {
-  OnboardingStep as DeviceOnboardingStep,
-  fromSeedPhraseTypeToNbOfSeedWords,
-} from "@ledgerhq/live-common/hw/extractOnboardingState";
-import useFirstStepCompanionState from "./useFirstStepCompanionState";
-import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import DeviceSeededSuccessPanel from "./DeviceSeededSuccessPanel";
-import BackgroundGreen from "../assets/BackgroundGreen";
-import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { LayoutChangeEvent, ScrollView } from "react-native";
-import { SEED_STATE, SeedPathStatus, FirstStepCompanionStepKey } from "./types";
 import { useIsFocused } from "@react-navigation/core";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  OnboardingStep,
+  fromSeedPhraseTypeToNbOfSeedWords,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
+import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
+import { SeedPhraseType } from "@ledgerhq/types-live";
+import { addKnownDevice } from "~/actions/ble";
+import { setIsReborn, setLastConnectedDevice, setOnboardingHasDevice } from "~/actions/settings";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { useTranslation } from "~/context/Locale";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import {
+  FirstStepCompanionStepKey,
+  SEED_STATE,
+} from "~/screens/SyncOnboarding/TwoStepStepper/types";
+import useFirstStepCompanionState from "~/screens/SyncOnboarding/TwoStepStepper/useFirstStepCompanionState";
 import useCompanionSteps from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/hooks/useCompanionSteps";
-
-/*
- * Constants
- */
+import { screen } from "~/analytics";
+import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { SeedPathStatus, UseFirstStepSyncOnboardingViewModelProps } from "./types";
 
 const POLLING_PERIOD_MS = 1000;
 const OPACITY_DURATION = 400;
@@ -48,41 +41,12 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
   [SeedPhraseType.Twelve, "Twelve"],
 ]);
 
-/*
- * Types
- */
-
-interface FirstStepSyncOnboardingProps {
-  device: Device;
-  productName: string;
-  navigation: SyncOnboardingScreenProps["navigation"];
-  handleSeedGenerationDelay: () => void;
-  /**
-   * Called when the polling from the companion component has definitely lost/is desync with the device
-   */
-  onLostDevice: () => void;
-  /**
-   * Called by the companion component to force a reset of the entire sync onboarding because the device is not in a correct state anymore
-   */
-  notifyEarlySecurityCheckShouldReset: () => void;
-  /*
-   * set or clean timeout of desync based on device connection errors
-   */
-  handlePollingError: (error: Error | null) => void;
-  // Polling state
-  isPollingOn: boolean;
-  setIsPollingOn: (isPolling: boolean) => void;
-  handleFinishStep: (nextStep: SEED_STATE) => void;
-  parentRef: null | React.RefObject<ScrollView | null>;
-  analyticsSeedConfiguration: React.RefObject<SeedOriginType | undefined>;
-}
-
-const FirstStepSyncOnboarding = ({
+export const useFirstStepSyncOnboardingViewModel = ({
   device,
   productName,
   navigation,
-  onLostDevice,
   handleSeedGenerationDelay,
+  onLostDevice,
   notifyEarlySecurityCheckShouldReset,
   handlePollingError,
   isPollingOn,
@@ -90,27 +54,16 @@ const FirstStepSyncOnboarding = ({
   handleFinishStep,
   parentRef,
   analyticsSeedConfiguration,
-}: FirstStepSyncOnboardingProps) => {
+}: UseFirstStepSyncOnboardingViewModelProps) => {
   const { t } = useTranslation();
-  const safeAreaInsets = useSafeAreaInsets();
   const isFocused = useIsFocused();
-
-  /*
-   * Local State
-   */
 
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
   const [hasFinishedExitAnimation, setHasFinishedExitAnimation] = useState<boolean>(false);
   const [isFinishedStep, setIsFinishedStep] = useState<boolean>(false);
 
-  /*
-   * Feature Flags
-   */
   const servicesConfig = useFeature("protectServicesMobile");
 
-  /*
-   * Refs
-   */
   const lastCompanionStepKey = useRef<FirstStepCompanionStepKey | undefined>(undefined);
   const analyticsSeedingTracked = useRef(false);
   const addedToKnownDevices = useRef(false);
@@ -170,7 +123,13 @@ const FirstStepSyncOnboarding = ({
     allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
-  const companionSteps = useCompanionSteps({
+  const {
+    activeStep,
+    setStep: setCompanionStep,
+    hasSyncStep,
+    isLedgerSyncActive,
+    steps,
+  } = useCompanionSteps({
     device,
     productName,
     seedPathStatus,
@@ -178,18 +137,15 @@ const FirstStepSyncOnboarding = ({
     analyticsSeedConfiguration,
   });
 
-  // Destructure for useEffect dependency
-  const { setStep } = companionSteps;
-
   // Sets the state which is active based on device response
   useFirstStepCompanionState({
     deviceOnboardingState,
-    setCompanionStep: setStep,
+    setCompanionStep,
     notifyEarlySecurityCheckShouldReset,
     setSeedPathStatus,
     analyticsSeedConfiguration,
-    activeStep: companionSteps.activeStep,
-    hasSyncStep: companionSteps.hasSyncStep,
+    activeStep,
+    hasSyncStep,
   });
 
   useTrackOnboardingFlow({
@@ -239,22 +195,17 @@ const FirstStepSyncOnboarding = ({
     );
     setIsFinishedStep(true);
     setTimeout(() => {
-      setStep(FirstStepCompanionStepKey.Exit);
+      setCompanionStep(FirstStepCompanionStepKey.Exit);
       setIsFinishedStep(false);
       setHasFinishedExitAnimation(true);
     }, 400);
   }, [
     handleFinishStep,
-    setStep,
+    setCompanionStep,
     sharedHeight,
     analyticsSeedConfiguration,
     setHasFinishedExitAnimation,
   ]);
-
-  /*
-   * useEffects
-   * Divided into three lifecycle events as logic is complex
-   */
 
   /*
    * Initial effects
@@ -270,7 +221,7 @@ const FirstStepSyncOnboarding = ({
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
       lastCompanionStepKey.current <= FirstStepCompanionStepKey.Seed &&
-      companionSteps.activeStep === FirstStepCompanionStepKey.Seed &&
+      activeStep === FirstStepCompanionStepKey.Seed &&
       !analyticsSeedingTracked.current &&
       (seedPathStatus === "backup_charon" ||
         (seedPathStatus === "restore_charon" && deviceOnboardingState?.isOnboarded))
@@ -300,9 +251,9 @@ const FirstStepSyncOnboarding = ({
 
       analyticsSeedingTracked.current = true;
     }
-    lastCompanionStepKey.current = companionSteps.activeStep;
+    lastCompanionStepKey.current = activeStep;
   }, [
-    companionSteps.activeStep,
+    activeStep,
     deviceOnboardingState?.isOnboarded,
     productName,
     seedPathStatus,
@@ -363,7 +314,7 @@ const FirstStepSyncOnboarding = ({
   ]);
 
   useEffect(() => {
-    if (companionSteps.activeStep > FirstStepCompanionStepKey.Ready) {
+    if (activeStep > FirstStepCompanionStepKey.Ready) {
       // Stops the polling once the device is seeded
       setIsPollingOn(false);
       // At this step, device has been successfully setup so it can be saved in
@@ -377,13 +328,7 @@ const FirstStepSyncOnboarding = ({
         addToKnownDevices();
       }
     }
-  }, [
-    companionSteps.activeStep,
-    addToKnownDevices,
-    dispatchRedux,
-    hasCompletedOnboarding,
-    setIsPollingOn,
-  ]);
+  }, [activeStep, addToKnownDevices, dispatchRedux, hasCompletedOnboarding, setIsPollingOn]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -391,7 +336,7 @@ const FirstStepSyncOnboarding = ({
   useEffect(() => {
     if (
       deviceOnboardingState?.seedPhraseType &&
-      [DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
+      [OnboardingStep.NewDeviceConfirming, OnboardingStep.RestoreSeed].includes(
         deviceOnboardingState?.currentOnboardingStep,
       )
     ) {
@@ -408,12 +353,12 @@ const FirstStepSyncOnboarding = ({
   // Handle delay for animation to success step
 
   useEffect(() => {
-    if (parentRef?.current && companionSteps.activeStep === FirstStepCompanionStepKey.Seed) {
+    if (parentRef?.current && activeStep === FirstStepCompanionStepKey.Seed) {
       // Without timeout the component has not expanded yet on scroll
       const timer = setTimeout(() => parentRef.current?.scrollToEnd({ animated: true }), 300);
       return () => clearTimeout(timer);
     }
-  }, [companionSteps.activeStep, parentRef]);
+  }, [activeStep, parentRef]);
 
   /*
    * Exit effects
@@ -428,7 +373,7 @@ const FirstStepSyncOnboarding = ({
     };
   }, [setIsPollingOn]);
 
-  const showSuccess = companionSteps.activeStep === FirstStepCompanionStepKey.Ready;
+  const showSuccess = activeStep === FirstStepCompanionStepKey.Ready;
 
   useEffect(() => {
     if (showSuccess) {
@@ -437,11 +382,7 @@ const FirstStepSyncOnboarding = ({
   }, [showSuccess, sharedOpacity]);
 
   useEffect(() => {
-    if (
-      isFocused &&
-      companionSteps.activeStep === FirstStepCompanionStepKey.Sync &&
-      companionSteps.isLedgerSyncActive
-    ) {
+    if (isFocused && activeStep === FirstStepCompanionStepKey.Sync && isLedgerSyncActive) {
       screen(
         "Set up device: Step 4 Ledger Sync Success",
         undefined,
@@ -452,67 +393,21 @@ const FirstStepSyncOnboarding = ({
         true,
         true,
       );
-      const timer = setTimeout(() => setStep(FirstStepCompanionStepKey.Ready), 1000);
+      const timer = setTimeout(() => setCompanionStep(FirstStepCompanionStepKey.Ready), 1000);
       return () => clearTimeout(timer);
     }
-  }, [
-    isFocused,
-    companionSteps.activeStep,
-    companionSteps.isLedgerSyncActive,
-    setStep,
-    analyticsSeedConfiguration,
-  ]);
+  }, [isFocused, activeStep, isLedgerSyncActive, setCompanionStep, analyticsSeedConfiguration]);
 
-  return (
-    <CollapsibleStep
-      isFirst
-      isCollapsed={hasFinishedExitAnimation}
-      title={
-        companionSteps.activeStep <= FirstStepCompanionStepKey.Seed
-          ? t("syncOnboarding.title", { productName })
-          : t("syncOnboarding.firstStepReadyTitle", { productName })
-      }
-      status={
-        companionSteps.activeStep >= FirstStepCompanionStepKey.Ready ? "complete" : "unfinished"
-      }
-      hideTitle={!isFinishedStep && companionSteps.activeStep === FirstStepCompanionStepKey.Ready}
-      background={
-        showSuccess && !isFinishedStep ? (
-          <Animated.View
-            style={[{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }, animatedStyle]}
-          >
-            <BackgroundGreen />
-          </Animated.View>
-        ) : null
-      }
-    >
-      {!showSuccess && (
-        <Flex mt={3}>
-          <VerticalTimeline
-            steps={companionSteps.steps}
-            formatEstimatedTime={formatEstimatedTime}
-            contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
-            parentScrollRef={parentRef}
-          />
-        </Flex>
-      )}
-      <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
-        <Animated.View onLayout={handleLayout}>
-          {showSuccess ? (
-            <>
-              <TrackScreen
-                category="Set up device: Final Step Your device is ready"
-                flow="onboarding"
-                seedConfiguration={analyticsSeedConfiguration.current}
-              />
-
-              <DeviceSeededSuccessPanel handleNextStep={handleNextStep} productName={productName} />
-            </>
-          ) : null}
-        </Animated.View>
-      </Animated.ScrollView>
-    </CollapsibleStep>
-  );
+  return {
+    animatedStyle,
+    handleLayout,
+    formatEstimatedTime,
+    handleNextStep,
+    seedPathStatus,
+    setSeedPathStatus,
+    hasFinishedExitAnimation,
+    isFinishedStep,
+    activeStep,
+    steps,
+  };
 };
-
-export default FirstStepSyncOnboarding;

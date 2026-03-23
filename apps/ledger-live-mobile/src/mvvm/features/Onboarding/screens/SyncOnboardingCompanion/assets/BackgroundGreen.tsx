@@ -49,7 +49,7 @@ const BackgroundGreen = () => {
         </Mask>
       </Defs>
 
-      {/* 4a. purple base */}
+      {/* 4a. green base */}
       <Rect width="100%" height="100%" fill="#6EC85C" mask="url(#fadeMask1)" opacity={0.3} />
 
       <Rect width="100%" height="100%" fill="#6EC85C" mask="url(#fadeMask2)" opacity={0.2} />
