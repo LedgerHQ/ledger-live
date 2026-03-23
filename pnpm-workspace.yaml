@@ -156,6 +156,8 @@ catalog:
   "@types/react-dom": 19.0.0
   reselect: 5.1.1
   rxjs: 7.8.2
+  xstate: 5.19.2
+  "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
   tailwind-merge: 3.4.0
   ws: 8.18.3
