@@ -253,6 +253,17 @@ export function useCustomExchangeHandlers({
 
           return { success: true };
         }
+        if (action === "simulate-investment") {
+          const { currencyId } = request.params || {};
+          navigation.navigate(NavigatorName.EarnSimulator, {
+            screen: ScreenName.EarnSimulator,
+            params: {
+              currencyId,
+            },
+          });
+          return { success: true };
+        }
+
         throw new Error("Unknown navigation action");
       },
       "custom.getAccountIdFormats": async (request: { params?: { liveAppIds?: string[] } }) => {

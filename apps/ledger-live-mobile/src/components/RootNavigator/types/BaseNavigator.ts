@@ -59,6 +59,7 @@ import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import type { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
+import type { EarnSimulatorNavigatorParamsList } from "LLM/features/Earn/types";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { FeesNavigatorParamsList } from "./FeesNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
@@ -222,6 +223,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
   [NavigatorName.Perps]?: NavigatorScreenParams<PerpsNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
+  [NavigatorName.EarnSimulator]?: NavigatorScreenParams<EarnSimulatorNavigatorParamsList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
