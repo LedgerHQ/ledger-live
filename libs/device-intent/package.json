@@ -39,11 +39,15 @@
     "@ledgerhq/types-devices": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "@types/uuid": "^9.0.0",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
+    "react-dom": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:",
     "xstate": "catalog:"
@@ -66,7 +70,10 @@
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
     "./*": {
-      "@ledgerhq/source": "./src/*.ts",
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "import": "./lib-es/*.js",
       "require": "./lib/*.js",
       "default": "./lib/*.js"

@@ -3,54 +3,21 @@ import {
   DefaultDeviceIntentExecutorStateMachine,
   type StateMachineListeners,
 } from "./DeviceIntentExecutorStateMachine";
-import type {
-  DeviceConnectionResult,
-  DeviceExtractedContext,
-  Intent,
-  RequiredDeviceContext,
-} from "./core";
+import type { Intent } from "./core";
 import type { ExecutorState } from "./executor";
+import {
+  defaultRequiredContext,
+  makeExtractedContext,
+  makeIntent as makeBaseIntent,
+  makeConnectionResult,
+  flushMicrotasks,
+} from "./__tests__/test-utils";
 
 // ---- Test helpers ----
 
 type TestJobState = { step: "running" } | { step: "done" };
 
-const makeIntent = (
-  job: (params: {
-    deviceConnectionResult: DeviceConnectionResult;
-    deviceExtractedContext: DeviceExtractedContext;
-    input: unknown;
-  }) => Observable<unknown> = () => NEVER,
-): Intent<unknown, unknown, unknown> => ({
-  uuid: "test-uuid",
-  label: "test-intent",
-  requiresConnectedDevice: true,
-  delegateDeviceLockStateHandlingToExecutor: false,
-  job,
-  component: () => null,
-  input: undefined,
-});
-
-const makeConnectionResult = (sessionId = "session-1"): DeviceConnectionResult =>
-  ({
-    dmk: {} as DeviceConnectionResult["dmk"],
-    sessionId,
-    compatDeviceId: "compat-1" as unknown as DeviceConnectionResult["compatDeviceId"],
-  }) satisfies DeviceConnectionResult;
-
-const makeExtractedContext = (): DeviceExtractedContext => ({
-  currentOsVersion: "2.0.0",
-  osUpdateAvailable: false,
-  currentAppName: "Ethereum",
-  currentAppVersion: "1.10.0",
-});
-
-const defaultContext: RequiredDeviceContext = {
-  appName: "Ethereum",
-  dependencies: [],
-  requireLatestFirmware: false,
-  allowPartialDependencies: false,
-};
+const makeIntent = (job: () => Observable<unknown> = () => NEVER) => makeBaseIntent({ job });
 
 function makeListeners(): StateMachineListeners<unknown, unknown, unknown> & {
   executorStates: ExecutorState[];
@@ -95,7 +62,7 @@ function createSM(
   const intent = overrides.intent ?? makeIntent(overrides.job);
   const sm = new DefaultDeviceIntentExecutorStateMachine({
     deviceConnectionParams: { acceptedDeviceModelIds: [] },
-    requiredDeviceContext: defaultContext,
+    requiredDeviceContext: defaultRequiredContext,
     intent,
     listeners,
   });
@@ -113,10 +80,6 @@ function driveToExecution(
 
 function lastExecutorState(listeners: ReturnType<typeof makeListeners>): ExecutorState | undefined {
   return listeners.executorStates[listeners.executorStates.length - 1];
-}
-
-function flushMicrotasks(): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, 0));
 }
 
 // ---- Tests ----
@@ -327,7 +290,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       const originalIntent = makeIntent(() => NEVER);
       const { sm, listeners } = createSM({ intent: originalIntent });
       driveToExecution(sm);
-      sm.setRequiredContext({ ...defaultContext, appName: "Bitcoin" });
+      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
       expect(lastExecutorState(listeners)).toEqual({
         type: "executingIntentError",
         error: expect.objectContaining({ message: "Required context changed during execution" }),
@@ -425,7 +388,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       expect(subscribed).toBe(true);
       expect(unsubscribed).toBe(false);
 
-      sm.setRequiredContext({ ...defaultContext, appName: "Bitcoin" });
+      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
       await flushMicrotasks();
       expect(unsubscribed).toBe(true);
       sm.stop();
@@ -482,7 +445,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       driveToExecution(sm);
       expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
 
-      sm.setRequiredContext({ ...defaultContext, appName: "Bitcoin" });
+      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
       expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
       sm.stop();
     });
@@ -584,7 +547,7 @@ describe("DeviceIntentExecutorStateMachine", () => {
       expect(lastExecutorState(listeners)).toEqual({ type: "idle" });
       expect(listeners.onIntentJobComplete).toHaveBeenCalledWith(intentA);
 
-      sm.setRequiredContext({ ...defaultContext, appName: "Bitcoin" });
+      sm.setRequiredContext({ ...defaultRequiredContext, appName: "Bitcoin" });
       expect(lastExecutorState(listeners)).toEqual({ type: "initializingDeviceContext" });
 
       sm.setIntent(intentB);

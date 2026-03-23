@@ -1,2 +1,3 @@
-export * from "./core.js";
-export * from "./executor.js";
+export * from "./core";
+export * from "./executor";
+export { DeviceIntentExecutor } from "./DeviceIntentExecutor";

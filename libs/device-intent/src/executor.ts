@@ -2,9 +2,10 @@ import type React from "react";
 import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
+  DeviceExtractedContext,
   Intent,
   RequiredDeviceContext,
-} from "./core.js";
+} from "./core";
 
 // ---- Platform-injected components ----
 
@@ -29,6 +30,19 @@ export type DeviceConnectionComponent = React.ComponentType<{
 export type DeviceContextInitializerComponent = React.ComponentType<{
   connectionResult: DeviceConnectionResult;
   requiredDeviceContext: RequiredDeviceContext;
+  onContextInitialized: (context: DeviceExtractedContext) => void;
+  onError: (error: unknown) => void;
+}>;
+
+/**
+ * React component rendered when an error occurs during one of the executor
+ * phases (connection, initialisation, or intent execution).
+ *
+ * Injected into the executor via {@link ExecutorPlatformConfiguration}.
+ */
+export type ErrorComponent = React.ComponentType<{
+  error: unknown;
+  onRetry: () => void;
 }>;
 
 /**
@@ -40,6 +54,9 @@ export type DeviceContextInitializerComponent = React.ComponentType<{
 export interface ExecutorPlatformConfiguration {
   DeviceConnectionComponent: DeviceConnectionComponent;
   DeviceContextInitializerComponent: DeviceContextInitializerComponent;
+  ConnectionErrorComponent: ErrorComponent;
+  InitializationErrorComponent: ErrorComponent;
+  IntentErrorComponent: ErrorComponent;
 }
 
 // ---- Executor state ----
@@ -82,6 +99,10 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps> {
   intentComponentExtraProps: ExtraProps;
   /** Called whenever the running job emits a new state. */
   onIntentJobStateChanged: (jobState: JobState) => void;
+  /** On intent job complete */
+  onIntentJobComplete: () => void;
+  /** On intent job error */
+  onIntentJobError: (error: unknown) => void;
   /** When `false` the executor is hidden and inactive; setting to `false` terminates any running job. */
   enabled: boolean;
   /** Whether the UI allows the user to cancel the current execution (e.g. close a bottom sheet). */

@@ -2,4 +2,4 @@
 "@ledgerhq/device-intent": minor
 ---
 
-Add DeviceIntentExecutorStateMachine: xstate state machine for executor lifecycle
+Add Device Intent Executor: xstate state machine, React hook, and component for platform-agnostic device intent execution
