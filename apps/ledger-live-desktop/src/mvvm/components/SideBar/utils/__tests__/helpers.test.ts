@@ -19,6 +19,14 @@ describe("pathnameToActive", () => {
     expect(pathnameToActive(pathname, undefined)).toBe(expected);
   });
 
+  it('should return "accounts" for /cryptos when asset section is enabled', () => {
+    expect(pathnameToActive("/cryptos", undefined, true)).toBe("accounts");
+  });
+
+  it("should return empty string for /cryptos when asset section is disabled", () => {
+    expect(pathnameToActive("/cryptos", undefined, false)).toBe("");
+  });
+
   it.each([
     { pathname: "/refer-a-friend", referPath: "/refer-a-friend" },
     { pathname: "/refer-a-friend/details", referPath: "/refer-a-friend" },
