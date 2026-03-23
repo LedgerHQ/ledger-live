@@ -198,15 +198,16 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@types/node": "catalog:",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   },
   "scripts": {
@@ -216,11 +217,12 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "lint:ci": "oxlint src --quiet"
   }
 }

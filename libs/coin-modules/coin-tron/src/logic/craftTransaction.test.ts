@@ -112,7 +112,7 @@ describe("craftTransaction", () => {
     );
   });
 
-  it("should not use any fees when user does not provide it for crafting a TRC20 transaction ", async () => {
+  it("should not use any fees when user does not provide it for crafting a TRC20 transaction", async () => {
     const amount = 1000;
     const transactionIntent = {
       intentType: "transaction",

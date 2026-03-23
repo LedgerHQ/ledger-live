@@ -52,13 +52,14 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "test:debug": "node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "lint:ci": "oxlint src --quiet"
   },
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
@@ -87,21 +88,21 @@
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "@types/node": "catalog:",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/imurmurhash": "^0.1.4",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
+    "@types/node": "catalog:",
     "dotenv": "^16.4.5",
-    "eslint-plugin-import": "^2.32.0",
     "fast-check": "^3.12.0",
     "jest": "catalog:",
     "jest-expect-message": "^1.1.3",
     "msw": "catalog:",
-    "prando": "^6.0.1",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "oxlint": "catalog:",
+    "prando": "^6.0.1"
   }
 }
