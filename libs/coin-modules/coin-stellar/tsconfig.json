@@ -11,7 +11,9 @@
       "dom"
     ],
     "outDir": "lib",
-    "exactOptionalPropertyTypes": true
+    "rootDir": "src",
+    "exactOptionalPropertyTypes": true,
+    "types": ["node", "jest"]
   },
   "include": [
     "src/**/*"

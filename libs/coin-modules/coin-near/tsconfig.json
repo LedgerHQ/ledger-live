@@ -15,6 +15,7 @@
       "jest"
     ],
     "outDir": "lib",
+    "rootDir": "src",
     "exactOptionalPropertyTypes": true
   },
   "include": [

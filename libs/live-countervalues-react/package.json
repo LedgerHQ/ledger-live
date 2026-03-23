@@ -33,6 +33,7 @@
     "bignumber.js": "9"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",

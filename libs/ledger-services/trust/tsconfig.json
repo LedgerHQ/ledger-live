@@ -5,7 +5,9 @@
     "declarationMap": true,
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"],
 }

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "lib",
+    "rootDir": "src",
     "lib": ["DOM", "ES2017"]
   },
   "include": ["src/**/*"]

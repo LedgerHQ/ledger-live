@@ -13,8 +13,8 @@
     ],
     "composite": true, // required on the dependency project for references to work
     "isolatedModules": false,
-    "baseUrl": ".",
     "paths": {
+      "*": ["./*"],
       "react": ["../../node_modules/@types/react"],
       "@types/react": ["../../node_modules/@types/react"],
       "@tests/*": ["src/__tests__/*"]

@@ -11,12 +11,15 @@
       "dom"
     ],
     "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node"],
     "typeRoots": [
       "./node_modules/@types",
       "./types/@taquito"
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "types/**/*.d.ts"
   ]
 }

@@ -106,8 +106,15 @@ export const deserializeError = (object: any): Error | undefined => {
       }
     }
 
-    if (error && !error.stack && Error.captureStackTrace) {
-      Error.captureStackTrace(error, deserializeError);
+    // captureStackTrace is V8/Node-specific and not in @types/node
+    const Err = Error as ErrorConstructor & {
+      captureStackTrace?(
+        targetObject: object,
+        constructorOpt?: (...args: unknown[]) => unknown,
+      ): void;
+    };
+    if (error && !error.stack && Err.captureStackTrace) {
+      Err.captureStackTrace(error, deserializeError);
     }
     return error;
   }

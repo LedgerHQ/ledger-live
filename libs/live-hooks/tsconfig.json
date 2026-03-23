@@ -9,11 +9,13 @@
     "jsx": "react",
     "lib": ["es2020", "dom"],
     "outDir": "lib",
-    "baseUrl": ".",
+    "rootDir": "src",
     "paths": {
+      "*": ["./*"],
       "react": ["../../node_modules/@types/react"],
       "@types/react": ["../../node_modules/@types/react"]
-    }
+    },
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

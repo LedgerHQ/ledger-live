@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

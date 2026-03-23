@@ -16,6 +16,7 @@
       "jest"
     ],
     "outDir": "lib",
+    "rootDir": "src",
     "typeRoots": [
       "./types",
       "./node_modules/@types"
