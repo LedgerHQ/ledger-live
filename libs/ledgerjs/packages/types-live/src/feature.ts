@@ -88,6 +88,8 @@ export type CurrencyFeatures = {
   currencyEnergyWeb: DefaultFeature;
   currencyAstar: DefaultFeature;
   currencyMetis: DefaultFeature;
+  currencyMantle: DefaultFeature;
+  currencyMantleSepolia: DefaultFeature;
   currencyBoba: DefaultFeature;
   currencyMoonriver: DefaultFeature;
   currencyVelasEvm: DefaultFeature;

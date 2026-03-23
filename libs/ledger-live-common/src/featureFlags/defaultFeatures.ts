@@ -60,6 +60,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyKlaytnBaobab: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
+  currencyMantle: DEFAULT_FEATURE,
+  currencyMantleSepolia: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
