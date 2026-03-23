@@ -9,4 +9,4 @@
 "@ledgerhq/live-cli": minor
 ---
 
-feat: add `mantle` and `mantle_sepolia` EVM networks`
+feat: add `mantle` and `mantle_sepolia` EVM networks
