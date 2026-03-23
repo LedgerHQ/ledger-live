@@ -772,6 +772,52 @@ describe("EVM Family", () => {
         transactionHashes: ["0xtx1"],
       });
     });
+
+    it("should fallback to raw RPC block when prefetched tx parsing fails", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockImplementationOnce(async () => {
+        throw new TypeError(
+          'missing r (argument="signature", value={...}, code=INVALID_ARGUMENT, version=6.15.0)',
+        );
+      });
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method !== "eth_getBlockByNumber") {
+          throw new Error(`Method not mocked: ${method}`);
+        }
+        return {
+          hash: "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
+          parentHash: "0x5ea95af9f47a6f2f13f52a229e8c8dc4e2ea4626a9458f4ea7a5cc5dfdf5f0c9",
+          number: "0x41f8328",
+          timestamp: "0x67dd4cbe",
+          transactions: [
+            {
+              hash: "0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e",
+              value: "0x0",
+              from: "0x993aad80e425c646dab305381ff105169feedf67",
+              to: "0x0000000000000000000000000000000000010003",
+              type: "0xff",
+            },
+          ],
+        };
+      });
+
+      expect(
+        await nodeApi.getBlockByHeight(fakeCurrency as CryptoCurrency, 69174056, true),
+      ).toEqual({
+        hash: "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
+        timestamp: 1742556350000,
+        height: 69174056,
+        parentHash: "0x5ea95af9f47a6f2f13f52a229e8c8dc4e2ea4626a9458f4ea7a5cc5dfdf5f0c9",
+        transactionHashes: ["0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e"],
+        transactions: [
+          {
+            hash: "0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e",
+            value: "0",
+            from: "0x993aad80e425c646dab305381ff105169feedf67",
+            to: "0x0000000000000000000000000000000000010003",
+          },
+        ],
+      });
+    });
   });
 
   describe("getBlockReceipts", () => {
