@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.111.0-next.4
+
+### Minor Changes
+
+- [#15630](https://github.com/LedgerHQ/ledger-live/pull/15630) [`90b41dd`](https://github.com/LedgerHQ/ledger-live/commit/90b41dd73bd3acc7ec777649baf013de58974e55) Thanks [@cfloume](https://github.com/cfloume)! - Fix recover banner not showing due to async storage
+
 ## 3.111.0-next.3
 
 ### Minor Changes
