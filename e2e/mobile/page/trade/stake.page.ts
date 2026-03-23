@@ -9,6 +9,9 @@ export default class StakePage {
   celoVoteSummaryContinueId = "celo-vote-summary-continue";
   searchPoolInput = "delegation-search-pool-input";
   selectAssetTitle = "select-asset-drawer-title";
+  earnButtonId = "account-quick-action-button-earn";
+  changeDelegationButtonId = "account-quick-action-button-changeDelegation";
+  accountScreenScrollView = "account-screen-scrollView";
 
   madSearchBarId = "modular-drawer-search-input";
 
@@ -66,6 +69,27 @@ export default class StakePage {
   @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string) {
     jestExpect(await this.delegationSummaryValidator(currencyId)).toContain(provider);
+  }
+
+  @Step("Tap on earn or change delegation button")
+  async tapEarnOrChangeDelegation() {
+    const isEarnVisible = await IsIdVisible(this.earnButtonId);
+    if (isEarnVisible) {
+      await scrollToId(this.earnButtonId, this.accountScreenScrollView);
+      await tapById(this.earnButtonId);
+    } else {
+      await scrollToId(this.changeDelegationButtonId, this.accountScreenScrollView);
+      await tapById(this.changeDelegationButtonId);
+    }
+  }
+
+  @Step("Search and select validator on validator selection screen")
+  async searchAndSelectValidator(provider: string) {
+    await waitForElementById(this.searchPoolInput);
+    await typeTextById(this.searchPoolInput, provider);
+    const id = this.providerRow(provider);
+    await waitForElementById(id);
+    await tapById(id);
   }
 
   @Step("Select new provider")
