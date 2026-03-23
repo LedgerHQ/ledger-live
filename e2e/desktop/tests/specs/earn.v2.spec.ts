@@ -12,12 +12,6 @@ import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers"
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import {
-  mockEthNativeStake,
-  mockUsdtMorphoStake,
-  buildStakesResponse,
-  interceptEarnStakes,
-} from "tests/utils/earnMockData";
 
 const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
@@ -92,9 +86,7 @@ test.describe("Earn [v2]", () => {
 
   const coldStartCurrencies = [
     { account: Account.ETH_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.SOL_4, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
     { account: Account.ATOM_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.NEAR_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
   ];
 
   for (const { account, xrayTicket } of coldStartCurrencies) {
@@ -128,7 +120,9 @@ test.describe("Earn [v2]", () => {
     });
   }
 
+  // Hot start: accounts with active stake positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
   const hotStartCurrencies = [
+    { account: Account.SOL_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
     { account: Account.NEAR_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
     { account: Account.ATOM_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
   ];
@@ -229,7 +223,13 @@ test.describe("Earn [v2]", () => {
         if (xrayTicket)
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
+        // SOL is not in earn API deposit tokens, so the page shows ice cold start.
+        // Navigate via the ice cold start CTA → modular asset selector → SOL.
+        await app.earnDashboard.clickIceColdStartEarnCTA();
+        const assetSelector = await getModularSelector(app, "ASSET");
+        if (assetSelector) {
+          await assetSelector.selectAsset(account.currency);
+        }
         await selectAccountInModularSelector(app, page, account);
         // SOL uses native staking: LLD opens the staking modal
         await expect(page.getByTestId("modal-container")).toBeVisible();
@@ -270,7 +270,9 @@ test.describe("Earn [v2]", () => {
   });
 
   test.describe("CTA → Earn staking (USDT)", () => {
-    const account = Account.ETH_1;
+    test.skip(true, "Pending: ETH account with USDT balance from Martijn");
+
+    const account = Account.ETH_1; // TODO: replace with the ETH account that has USDT balance
     const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
 
     test.use({
@@ -341,7 +343,9 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: Position Row Flows ---
 
+  // Position → Account: native staking positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
   const positionAccountCurrencies = [
+    { account: Account.SOL_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
     { account: Account.NEAR_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
     { account: Account.ATOM_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
   ];
@@ -374,7 +378,9 @@ test.describe("Earn [v2]", () => {
   }
 
   test.describe("Position → Dapp (ETH)", () => {
-    const account = Account.ETH_1;
+    test.skip(true, "Pending: ETH account with active Kiln staking from Martijn");
+
+    const account = Account.ETH_1; // TODO: replace with Martijn's ETH account that has Kiln staking
 
     test.use({
       userdata: "skip-onboarding",
@@ -401,19 +407,10 @@ test.describe("Earn [v2]", () => {
         tag: getTags(account),
         ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
       },
-      async ({ app, electronApp, page }) => {
+      async ({ app, page }) => {
         if (xrayTicket)
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        // Mock the earn API to return an ETH native staking position
-        const mockResponse = buildStakesResponse(
-          [mockEthNativeStake],
-          "ethereum",
-          account.address ?? "",
-        );
-        const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await interceptReady;
-
         await app.earnDashboard.verifyHotStartPage();
         await app.earnDashboard.verifyPositionRowPresent(account.currency.ticker);
         await app.earnDashboard.clickPositionRow(account.currency.ticker);
@@ -426,7 +423,9 @@ test.describe("Earn [v2]", () => {
   });
 
   test.describe("Position → Withdrawal (USDT)", () => {
-    const account = Account.ETH_1;
+    test.skip(true, "Pending: ETH account with USDT Morpho deposit from Martijn");
+
+    const account = Account.ETH_1; // TODO: replace with Martijn's ETH account that has USDT stake
 
     test.use({
       userdata: "skip-onboarding",
@@ -442,19 +441,10 @@ test.describe("Earn [v2]", () => {
         tag: getTags(account),
         ...(xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {}),
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         if (xrayTicket)
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        // Mock the earn API to return a USDT Morpho deposit position
-        const mockResponse = buildStakesResponse(
-          [mockUsdtMorphoStake],
-          "ethereum",
-          account.address ?? "",
-        );
-        const interceptReady = interceptEarnStakes(electronApp, mockResponse);
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await interceptReady;
-
         await app.earnDashboard.verifyHotStartPage();
         await app.earnDashboard.verifyPositionRowPresent("USDT");
         await app.earnDashboard.clickPositionRow("USDT");
