@@ -570,7 +570,9 @@ describe("graphql API functions", () => {
   });
 
   describe("getDelegateAccount", () => {
-    it("should fetch delegate account for given address", async () => {
+    const validPublicKey = "B62qiVhtBtqakq8sNTHdCTXn6tETSK6gtsmNHRn1WdLqjGLpsHbw1xc";
+
+    it("should fetch delegate account for given address using GraphQL variables", async () => {
       const mockResponse = {
         data: {
           account: {
@@ -580,15 +582,24 @@ describe("graphql API functions", () => {
       };
       mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
 
-      const result = await getDelegateAccount("B62qtest");
+      const result = await getDelegateAccount(validPublicKey);
 
       expect(result).toEqual(mockResponse);
       expect(mockNetwork).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "POST",
           url: "https://graphql.example.com",
+          data: expect.objectContaining({
+            query: expect.stringContaining("GetDelegateAccount"),
+            variables: { publicKey: validPublicKey },
+          }),
         }),
       );
+    });
+
+    it("should reject invalid public keys before calling the network", async () => {
+      await expect(getDelegateAccount("not-a-mina-key")).rejects.toThrow("Invalid Mina public key");
+      expect(mockNetwork).not.toHaveBeenCalled();
     });
   });
 });

@@ -11,6 +11,7 @@ import {
   MINA_SYMBOL,
   MINA_TOKEN_ID,
 } from "../consts";
+import { isValidAddress } from "../logic/utils";
 import {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
@@ -415,6 +416,16 @@ export const rosettaSubmitTransaction = async (blob: string) => {
 
 // ── GraphQL API functions ──
 
+const GET_DELEGATE_ACCOUNT_QUERY = `
+  query GetDelegateAccount($publicKey: String!) {
+    account(publicKey: $publicKey) {
+      delegateAccount {
+        publicKey
+      }
+    }
+  }
+`;
+
 export const getEpochInfo = async (): Promise<FetchEpochInfoResponse> => {
   return await makeNetworkRequest<FetchEpochInfoResponse>({
     method: "POST",
@@ -440,19 +451,16 @@ export const getEpochInfo = async (): Promise<FetchEpochInfoResponse> => {
 export const getDelegateAccount = async (
   address: string,
 ): Promise<FetchDelegateAccountResponse> => {
+  if (!isValidAddress(address)) {
+    throw new Error("Invalid Mina public key");
+  }
+
   return await makeNetworkRequest<FetchDelegateAccountResponse>({
     method: "POST",
     url: getGraphqlUrl(),
     data: {
-      query: `
-        query {
-          account(publicKey: "${address}"){
-            delegateAccount{
-              publicKey
-            }
-          }
-        }
-      `,
+      query: GET_DELEGATE_ACCOUNT_QUERY,
+      variables: { publicKey: address },
     },
   });
 };
