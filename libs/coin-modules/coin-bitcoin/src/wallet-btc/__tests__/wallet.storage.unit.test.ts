@@ -1,4 +1,5 @@
 import BitcoinLikeStorage from "../storage";
+import type { Input } from "../storage/types";
 
 describe("Unit tests for bitcoin storage", () => {
   let storage: BitcoinLikeStorage;
@@ -553,6 +554,50 @@ describe("Unit tests for bitcoin storage", () => {
     const utxos = storage.getAddressUnspentUtxos({ address: "race-address", account: 0, index: 0 });
     expect(utxos).toHaveLength(1);
     expect(utxos[0].output_hash).toEqual("tx-race");
+  });
+
+  it("[utxos] should not create a bogus spent bucket for coinbase inputs missing output_hash", () => {
+    const minerAddress = "miner-address";
+    // Coinbase-like input from explorer: no address / output_hash; value/output_index may still be present for typing.
+    const coinbaseLikeInput: Input = {
+      value: "0",
+      output_index: 0,
+      sequence: 0,
+    };
+    storage.appendTxs([
+      {
+        id: "coinbase-tx",
+        inputs: [coinbaseLikeInput],
+        outputs: [
+          {
+            output_index: 0,
+            value: "0",
+            address: " ",
+            output_hash: "coinbase-tx",
+            block_height: 300,
+            rbf: false,
+          },
+          {
+            output_index: 1,
+            value: "27100000000",
+            address: minerAddress,
+            output_hash: "coinbase-tx",
+            block_height: 300,
+            rbf: false,
+          },
+        ],
+        block: { hash: "block-300", height: 300, time: new Date().toISOString() },
+        account: 0,
+        index: 0,
+        address: minerAddress,
+        received_at: new Date().toISOString(),
+      },
+    ]);
+
+    // The reward UTXO must be unspent
+    const utxos = storage.getAddressUnspentUtxos({ address: minerAddress, account: 0, index: 0 });
+    expect(utxos).toHaveLength(1);
+    expect(utxos[0].value).toBe("27100000000");
   });
 
   it("[utxos] should mark UTXOs as spent when spending from multiple addresses", () => {
