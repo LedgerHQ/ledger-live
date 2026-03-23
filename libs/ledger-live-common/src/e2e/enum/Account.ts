@@ -264,18 +264,8 @@ export class Account {
   static readonly ZEC_1 = new Account(Currency.ZEC, "Zcash 1", 0, "44'/133'/0'/0/0");
   static readonly ZEC_2 = new Account(Currency.ZEC, "Zcash 2", 0, "44'/133'/1'/0/0");
 
-  static readonly ICP_1 = new Account(
-    Currency.ICP,
-    "Internet Computer 1",
-    0,
-    "44'/223'/0'/0/0",
-  );
-  static readonly ICP_2 = new Account(
-    Currency.ICP,
-    "Internet Computer 2",
-    1,
-    "44'/223'/1'/0/0",
-  );
+  static readonly ICP_1 = new Account(Currency.ICP, "Internet Computer 1", 0, "44'/223'/0'/0/0");
+  static readonly ICP_2 = new Account(Currency.ICP, "Internet Computer 2", 1, "44'/223'/1'/0/0");
 
   static readonly EMPTY = new Account(Currency.BTC, "Empty", 0, "");
 }

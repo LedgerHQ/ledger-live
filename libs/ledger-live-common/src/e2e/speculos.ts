@@ -53,6 +53,7 @@ import { sanitizeError } from ".";
 import { sendVechain } from "./families/vechain";
 import { getDeviceCoordinates } from "./deviceCoordinates";
 import { sendInternetComputer } from "./families/internet_computer";
+import { delegateMina } from "./families/mina";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -396,6 +397,14 @@ export const specs: Specs = {
       appName: "1inch",
     },
     dependencies: [AppInfos.ETHEREUM],
+  },
+  Mina: {
+    currency: getCryptoCurrencyById("mina"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Mina",
+    },
+    dependencies: [],
   },
 };
 
@@ -986,6 +995,9 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.APTOS_1.currency.name:
       await delegateAptos(delegatingAccount);
+      break;
+    case Account.MINA_1.currency.name:
+      await delegateMina(delegatingAccount);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);
