@@ -1,8 +1,7 @@
-import { DeviceModelId } from "@ledgerhq/devices";
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useWelcomeViewModel } from "../useWelcomeViewModel";
-import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { AFTER_ONBOARDING_STATE, INITIAL_STATE } from "~/renderer/reducers/settings";
 
 const mockNavigate = jest.fn();
 
@@ -75,11 +74,7 @@ describe("useWelcomeViewModel", () => {
                 params: { lazyOnboarding: true },
               },
             },
-            lastSeenDevice: {
-              modelId: DeviceModelId.nanoS,
-              deviceInfo: {} as never,
-              apps: [],
-            },
+            lastSeenDevice: AFTER_ONBOARDING_STATE.lastSeenDevice,
           },
         },
       });
