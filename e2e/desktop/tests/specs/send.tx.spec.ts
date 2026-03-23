@@ -15,7 +15,11 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
-const transactionsAmountInvalid = [
+const transactionsAmountInvalid: {
+  transaction: Transaction;
+  expectedErrorMessage: string | null;
+  xrayTicket: string;
+}[] = [
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
     expectedErrorMessage: null,
@@ -48,7 +52,12 @@ const transactionsAmountInvalid = [
   },
 ];
 
-const transactionsAddressInvalid = [
+const transactionsAddressInvalid: {
+  transaction: Transaction;
+  address?: string;
+  expectedErrorMessage: string | null;
+  xrayTicket: string;
+}[] = [
   {
     transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
     address: Addresses.BTC_NATIVE_SEGWIT_1,
@@ -86,7 +95,11 @@ const transactionsAddressInvalid = [
   },
 ];
 
-const transactionAddressValid = [
+const transactionAddressValid: {
+  transaction: Transaction;
+  expectedWarningMessage: string | null;
+  xrayTicket: string;
+}[] = [
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.MEDIUM),
     expectedWarningMessage: null,
@@ -159,7 +172,7 @@ const transactionAddressValid = [
   },
 ];
 
-const transactionE2E = [
+const transactionE2E: { transaction: Transaction; xrayTicket: string; bugTicket?: string }[] = [
   {
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
@@ -249,6 +262,10 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-4284",
+  },
+  {
+    transaction: new Transaction(Account.MINA_1, Account.MINA_2, "0.00001"),
+    xrayTicket: "B2CQA-4684",
   },
 ];
 
