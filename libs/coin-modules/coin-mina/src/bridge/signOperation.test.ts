@@ -1,6 +1,8 @@
+import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { BigNumber } from "bignumber.js";
 import { firstValueFrom } from "rxjs";
+import { MINA_CANCEL_RETURN_CODE } from "../consts";
 import { reEncodeRawSignature } from "../logic/utils";
 import {
   createMockAccount,
@@ -71,6 +73,15 @@ describe("signOperation", () => {
       // Value should be amount + fee - accountCreationFee = 1000 + 10 - 5 = 1005
       expect(result.value).toEqual(new BigNumber(1005));
       expect(result.extra.accountCreationFee).toBe("5");
+    });
+
+    it("should build DELEGATE operation when txType is stake", () => {
+      const stakeTx = createMockTransaction({ txType: "stake" });
+
+      const result = buildOptimisticOperation(mockAccount, stakeTx, new BigNumber(10));
+
+      expect(result.type).toBe("DELEGATE");
+      expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "DELEGATE");
     });
   });
 
@@ -153,6 +164,69 @@ describe("signOperation", () => {
       await firstValueFrom(observable.pipe());
 
       expect(mockSignerContextSpy).toHaveBeenCalledWith(mockDeviceId, expect.any(Function));
+    });
+
+    it("should throw FeeNotLoaded when fees are missing", done => {
+      const txWithoutFees = createMockTransaction();
+      // @ts-expect-error — testing runtime guard when fees are undefined
+      txWithoutFees.fees = undefined;
+
+      const signOperation = buildSignOperation(mockSignerContext);
+
+      signOperation({
+        account: mockAccount,
+        transaction: txWithoutFees,
+        deviceId: mockDeviceId,
+      }).subscribe({
+        error: error => {
+          expect(error).toBeInstanceOf(FeeNotLoaded);
+          done();
+        },
+        complete: () => done(new Error("Expected error")),
+      });
+    });
+
+    it("should throw UserRefusedOnDevice when user cancels on device", done => {
+      const cancelContext = createMockSignerContext({
+        returnCode: MINA_CANCEL_RETURN_CODE,
+        signature: "",
+      });
+
+      const signOperation = buildSignOperation(cancelContext);
+
+      signOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: mockDeviceId,
+      }).subscribe({
+        error: error => {
+          expect(error).toBeInstanceOf(UserRefusedOnDevice);
+          done();
+        },
+        complete: () => done(new Error("Expected error")),
+      });
+    });
+
+    it("should throw when signature is missing and return code is unexpected", done => {
+      const errorContext = createMockSignerContext({
+        returnCode: "0xFFFF",
+        signature: "",
+      });
+
+      const signOperation = buildSignOperation(errorContext);
+
+      signOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: mockDeviceId,
+      }).subscribe({
+        error: error => {
+          expect(error).not.toBeUndefined();
+          expect(String(error)).toContain("0xFFFF");
+          done();
+        },
+        complete: () => done(new Error("Expected error")),
+      });
     });
   });
 });
