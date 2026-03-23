@@ -110,7 +110,7 @@ export type TransactionInfo = {
   nonce: number;
   gasUsed: string;
   gasPrice: string;
-  value: string;
+  value: string | bigint; // can be returned as bigint by ethers prefetched txs, or string in raw payloads
   status: number | null;
   from: string;
   to: string | undefined;

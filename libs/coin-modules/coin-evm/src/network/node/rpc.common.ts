@@ -424,20 +424,42 @@ async function getBlockByHeightFromRawRpc(
 
   const transactionHashes = rawTransactions?.map((tx, index) => {
     if (typeof tx === "string") return tx;
-    if (isPrefetchedBlockTransaction(tx)) return tx.hash;
+    if (typeof tx === "object" && tx !== null && "hash" in tx && typeof tx.hash === "string")
+      return tx.hash;
     throw new Error(
       `Malformed block transaction at index ${index} in eth_getBlockByNumber response`,
     );
   });
 
   const transactions =
-    prefetchTxs && rawTransactions?.every(isPrefetchedBlockTransaction)
-      ? rawTransactions.map(tx => ({
-          hash: tx.hash,
-          value: BigInt(tx.value ?? "0x0").toString(),
-          from: tx.from,
-          to: tx.to ?? undefined,
-        }))
+    prefetchTxs && rawTransactions
+      ? rawTransactions.map(tx => {
+          if (typeof tx === "string")
+            throw new Error("Expected prefetched transaction object, got hash string");
+          if (typeof tx !== "object" || tx === null)
+            throw new Error("Malformed prefetched transaction in eth_getBlockByNumber response");
+          if (!("hash" in tx) || typeof tx.hash !== "string")
+            throw new Error(
+              "Malformed prefetched transaction hash in eth_getBlockByNumber response",
+            );
+          if (!("from" in tx) || typeof tx.from !== "string")
+            throw new Error(
+              "Malformed prefetched transaction from in eth_getBlockByNumber response",
+            );
+          if ("to" in tx && tx.to !== null && tx.to !== undefined && typeof tx.to !== "string")
+            throw new Error("Malformed prefetched transaction to in eth_getBlockByNumber response");
+          if ("value" in tx && tx.value !== undefined && typeof tx.value !== "string")
+            throw new Error(
+              "Malformed prefetched transaction value in eth_getBlockByNumber response",
+            );
+
+          return {
+            hash: tx.hash,
+            value: BigInt(tx.value ?? "0x0").toString(),
+            from: tx.from,
+            to: tx.to ?? undefined,
+          };
+        })
       : undefined;
 
   return {
@@ -547,7 +569,7 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
       ? typeof value.to === "string" || value.to === null || value.to === undefined
       : true) &&
     typeof value.hash === "string" &&
-    (typeof value.value === "bigint" || typeof value.value === "string") &&
+    (typeof value.value === "string" || typeof value.value === "bigint") &&
     typeof value.from === "string"
   );
 }
