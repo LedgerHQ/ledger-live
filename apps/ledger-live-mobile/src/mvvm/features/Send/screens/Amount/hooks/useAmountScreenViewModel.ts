@@ -148,11 +148,11 @@ export function useAmountScreenViewModel({
     if (amountError && !isAmountRequiredError && hasRawAmount) {
       return { type: "error", error: amountError };
     }
-    if (amountWarningRaw && hasRawAmount) {
-      return { type: isFeeTooHigh ? "info" : "warning", error: amountWarningRaw };
-    }
     if (otherBlockingErrorRaw && hasRawAmount) {
       return { type: "error", error: otherBlockingErrorRaw };
+    }
+    if (amountWarningRaw && hasRawAmount) {
+      return { type: isFeeTooHigh ? "info" : "warning", error: amountWarningRaw };
     }
     return null;
   })();
