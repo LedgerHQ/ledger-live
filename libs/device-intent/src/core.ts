@@ -119,7 +119,7 @@ export interface IntentPlatformDefinition<JobState, Input = void, ExtraProps = v
   extends IntentDefinition<JobState, Input> {
   /** React component that renders the current {@link JobState}. */
   component: React.ComponentType<{
-    jobState: JobState;
+    jobState: JobState | undefined;
     extraProps: ExtraProps;
   }>;
 }
