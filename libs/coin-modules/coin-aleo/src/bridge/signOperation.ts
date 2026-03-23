@@ -36,11 +36,15 @@ interface SigningParams {
 async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
   const { account, transaction, request, config, baseFee, priorityFee, viewKey } = params;
 
+  console.log("executeSigningFlow", params);
+
   // sign root request
   const rootIntentSignature = await signer.signRootIntent(
     account.freshAddressPath,
     Buffer.from(request.tlv, "hex"),
   );
+
+  console.log("executeSigningFlow - rootIntentSignature", rootIntentSignature);
 
   // create authorization
   const authorization = await sdkClient.createAuthorization({
@@ -49,6 +53,8 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
     signatures: rootIntentSignature.signature,
     viewKey,
   });
+
+  console.log("executeSigningFlow - authorization", authorization);
 
   // craft fee request even if it's zero, because device needs the second APDU in signing flow to move forward
   const craftedFeeRequest = await craftTransaction({
@@ -66,8 +72,12 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
 
   const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
 
+  console.log("executeSigningFlow - feeRequest", feeRequest);
+
   // sign fee request
   const feeIntentSignature = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
+
+  console.log("executeSigningFlow - feeIntentSignature", feeIntentSignature);
 
   // create fee authorization, but only if fee is not zero
   let feeAuthorization: string | null = null;
@@ -81,6 +91,7 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
     });
 
     feeAuthorization = result.authorization;
+    console.log("executeSigningFlow - feeAuthorization", result);
   }
 
   const signedTransaction = {
