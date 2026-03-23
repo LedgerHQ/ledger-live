@@ -16,7 +16,8 @@
   ],
   "ignoreUnimported": [
     "src/test/fixtures.ts",
-    "src/supportedFeatures.ts"
+    "src/supportedFeatures.ts",
+    "src/logic/index.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
