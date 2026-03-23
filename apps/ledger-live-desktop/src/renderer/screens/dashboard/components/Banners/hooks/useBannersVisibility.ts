@@ -15,7 +15,7 @@ interface BannerVisibilityState {
   isActionCardsVisible: boolean;
   /** True if the LNS upsell banner is visible */
   isLNSUpsellBannerVisible: boolean;
-  /** True if portfolio content cards are visible */
+  /** True if portfolio (top) content cards are visible */
   isPortfolioContentCardsVisible: boolean;
   /** True if at least one banner or content card is visible */
   hasAnyContentBannerVisible: boolean;
@@ -43,7 +43,7 @@ export function useBannersVisibility(): BannerVisibilityState {
   // LNS upsell banner
   const isLNSUpsellBannerVisible = useLNSUpsellBannerState("portfolio").isShown;
 
-  // Portfolio content cards (fallback carousel)
+  // Portfolio (top) content cards carousel
   const portfolioCards = useSelector(portfolioContentCardSelector);
   const isPortfolioContentCardsVisible = portfolioCards.length > 0;
 

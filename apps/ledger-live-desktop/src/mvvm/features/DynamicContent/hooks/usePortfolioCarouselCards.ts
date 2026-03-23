@@ -4,23 +4,41 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { track } from "~/renderer/analytics/segment";
-import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
+import { setPortfolioCards, setBottomPortfolioCards } from "~/renderer/actions/dynamicContent";
 import { setDismissedContentCards } from "~/renderer/actions/settings";
 import {
   desktopContentCardSelector,
   portfolioContentCardSelector,
+  bottomPortfolioContentCardSelector,
 } from "~/renderer/reducers/dynamicContent";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 import type { CarouselActions } from "../types";
 
-type UsePortfolioCards = { portfolioCards: PortfolioContentCard[] } & CarouselActions;
+export type PortfolioCarouselVariant = "top" | "bottom";
 
-export function usePortfolioCards(): UsePortfolioCards {
+const SELECTORS = {
+  top: portfolioContentCardSelector,
+  bottom: bottomPortfolioContentCardSelector,
+} as const;
+
+const SETTERS = {
+  top: setPortfolioCards,
+  bottom: setBottomPortfolioCards,
+} as const;
+
+export type UsePortfolioCarouselCardsResult = {
+  portfolioCards: PortfolioContentCard[];
+} & CarouselActions;
+
+export function usePortfolioCarouselCards(
+  variant: PortfolioCarouselVariant,
+): UsePortfolioCarouselCardsResult {
   const desktopCards = useSelector(desktopContentCardSelector);
-  const portfolioCards = useSelector(portfolioContentCardSelector);
+  const portfolioCards = useSelector(SELECTORS[variant]);
   const isTrackedUser = useSelector(trackingEnabledSelector);
   const dispatch = useDispatch();
+  const setCards = SETTERS[variant];
 
   const getBrazeCard = useCallback(
     (cardId: string) => desktopCards.find(card => card.id === cardId),
@@ -47,9 +65,9 @@ export function usePortfolioCards(): UsePortfolioCards {
           dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
         }
       }
-      dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
+      dispatch(setCards(portfolioCards.filter(n => n.id !== slide.id)));
     },
-    [portfolioCards, getBrazeCard, isTrackedUser, dispatch],
+    [portfolioCards, getBrazeCard, isTrackedUser, dispatch, setCards],
   );
 
   const logSlideClick = useCallback<CarouselActions["logSlideClick"]>(

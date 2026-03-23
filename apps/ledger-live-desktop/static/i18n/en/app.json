@@ -4638,7 +4638,8 @@
           "fields": {
             "notification": "Notification Content Card",
             "action": "Action Content Card",
-            "portfolio": "Portfolio Content Card",
+            "portfolio": "Portfolio",
+            "bottomPortfolio": "Bottom Portfolio",
             "title": "Title",
             "description": "Description",
             "order": "Order",
@@ -8103,6 +8104,9 @@
   "portfolio": {
     "title": "Home",
     "today": "Today",
+    "carousel": {
+      "title": "For you"
+    },
     "addAccountCta": "Add crypto account",
     "noBalanceTitle": "Start by funding your wallet",
     "perpsEntry": {

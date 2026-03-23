@@ -11,7 +11,10 @@ import { State } from ".";
 
 export type DynamicContentState = {
   desktopCards: BrazeCard[];
+  /** Cards for placement "portfolio" (top carousel) */
   portfolioCards: PortfolioContentCard[];
+  /** Cards for placement "bottom_portfolio" (bottom carousel) */
+  bottomPortfolioCards: PortfolioContentCard[];
   actionCards: ActionContentCard[];
   notificationsCards: NotificationContentCard[];
 };
@@ -19,6 +22,7 @@ export type DynamicContentState = {
 const state: DynamicContentState = {
   desktopCards: [],
   portfolioCards: [],
+  bottomPortfolioCards: [],
   actionCards: [],
   notificationsCards: [],
 };
@@ -26,6 +30,7 @@ const state: DynamicContentState = {
 type HandlersPayloads = {
   DYNAMIC_CONTENT_SET_DESKTOP_CARDS: BrazeCard[];
   DYNAMIC_CONTENT_SET_PORTFOLIO_CARDS: PortfolioContentCard[];
+  DYNAMIC_CONTENT_SET_BOTTOM_PORTFOLIO_CARDS: PortfolioContentCard[];
   DYNAMIC_CONTENT_SET_ACTION_CARDS: ActionContentCard[];
   DYNAMIC_CONTENT_SET_NOTIFICATIONS_CARDS: NotificationContentCard[];
 };
@@ -50,6 +55,13 @@ const handlers: DynamicContentHandlers = {
     ...state,
     portfolioCards: payload,
   }),
+  DYNAMIC_CONTENT_SET_BOTTOM_PORTFOLIO_CARDS: (
+    state: DynamicContentState,
+    { payload }: { payload: PortfolioContentCard[] },
+  ) => ({
+    ...state,
+    bottomPortfolioCards: payload,
+  }),
   DYNAMIC_CONTENT_SET_ACTION_CARDS: (
     state: DynamicContentState,
     { payload }: { payload: ActionContentCard[] },
@@ -73,6 +85,10 @@ export const desktopContentCardSelector = (state: { dynamicContent: DynamicConte
 
 export const portfolioContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.portfolioCards;
+
+export const bottomPortfolioContentCardSelector = (state: {
+  dynamicContent: DynamicContentState;
+}) => state.dynamicContent.bottomPortfolioCards;
 
 export const actionContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.actionCards;
