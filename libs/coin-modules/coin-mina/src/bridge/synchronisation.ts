@@ -156,9 +156,13 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   );
 
   const operations = mergeOps(oldOperations, newOperations.flat());
-  const delegateAddress = (await getDelegateAddress(address)) || address;
-  const epochInfo = await getEpochInfo();
-  const validators = await fetchValidators();
+
+  const [delegateKey, epochInfo, validators] = await Promise.all([
+    getDelegateAddress(address),
+    getEpochInfo(),
+    fetchValidators(),
+  ]);
+  const delegateAddress = delegateKey || address;
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
