@@ -2,4 +2,4 @@
 "@ledgerhq/coin-tron": patch
 ---
 
-Fix tron missing internal_txs from alpaca listOperation
+Fix Tron: include internal transactions in listOperations responses
