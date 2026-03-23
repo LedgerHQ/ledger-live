@@ -2,4 +2,4 @@
 "ledger-live-desktop": major
 ---
 
-Bump lwd version to 4.0
+Bump ledger-live-desktop to the next major version
