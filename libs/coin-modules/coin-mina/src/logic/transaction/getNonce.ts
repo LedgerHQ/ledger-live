@@ -18,5 +18,5 @@ export const getNonce = async (txn: Transaction, address: string): Promise<numbe
     txn.amount.toNumber(),
   );
 
-  return parseInt(data.metadata.nonce);
+  return parseInt(data.metadata.nonce, 10);
 };
