@@ -73,6 +73,12 @@ const fields: Field[] = [
     },
   },
 ];
+const hasValidParentAccounts = (op: MappedSwapOperation): boolean => {
+  if (op.fromAccount.type === "TokenAccount" && !op.fromParentAccount) return false;
+  if (op.toAccount.type === "TokenAccount" && !op.toParentAccount) return false;
+  return true;
+};
+
 export const mappedSwapOperationsToCSV = (swapHistorySections: SwapHistorySection[]): string => {
   const mappedSwapOperations: MappedSwapOperation[] = [];
 
@@ -80,10 +86,12 @@ export const mappedSwapOperationsToCSV = (swapHistorySections: SwapHistorySectio
     mappedSwapOperations.push(...section.data);
   }
 
+  const validOperations = mappedSwapOperations.filter(hasValidParentAccounts);
+
   return (
     fields.map(field => field.title).join(",") +
     newLine +
-    mappedSwapOperations
+    validOperations
       .map(op => fields.map(field => field.cell(op).replace(/[,\n\r]/g, "")).join(","))
       .join(newLine)
   );
