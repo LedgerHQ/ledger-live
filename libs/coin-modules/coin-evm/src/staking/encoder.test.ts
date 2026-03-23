@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { StakingOperation } from "../types/staking";
 import { STAKING_CONTRACTS } from "./contracts";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
+import { extractSeiDelegation, getSeiDelegationAmount } from "../utils";
 
 describe("encodeStakingData", () => {
   describe("SEI Network", () => {
@@ -187,6 +188,76 @@ describe("decodeStakingResult", () => {
 
       expect(decoded).toBeInstanceOf(Array);
       expect(decoded.length).toBeGreaterThan(0);
+    });
+
+    it("should produce an ethers.Result compatible with extractSeiDelegation", () => {
+      const useiAmount = 5000000n; // 5 SEI in usei (6 decimals)
+      const iface = new ethers.Interface([
+        {
+          inputs: [
+            { internalType: "address", name: "delegator", type: "address" },
+            { internalType: "string", name: "valAddress", type: "string" },
+          ],
+          name: "delegation",
+          outputs: [
+            {
+              components: [
+                {
+                  components: [
+                    { internalType: "uint256", name: "amount", type: "uint256" },
+                    { internalType: "string", name: "denom", type: "string" },
+                  ],
+                  internalType: "struct Balance",
+                  name: "balance",
+                  type: "tuple",
+                },
+                {
+                  components: [
+                    { internalType: "string", name: "delegator_address", type: "string" },
+                    { internalType: "uint256", name: "shares", type: "uint256" },
+                    { internalType: "uint256", name: "decimals", type: "uint256" },
+                    { internalType: "string", name: "validator_address", type: "string" },
+                  ],
+                  internalType: "struct DelegationDetails",
+                  name: "delegation",
+                  type: "tuple",
+                },
+              ],
+              internalType: "struct Delegation",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ]);
+
+      const encodedResult = iface.encodeFunctionResult("delegation", [
+        [
+          { amount: useiAmount, denom: "usei" },
+          {
+            delegator_address: "sei1abc",
+            shares: useiAmount,
+            decimals: 6n,
+            validator_address: "seivaloper1xyz",
+          },
+        ],
+      ]);
+
+      const decoded = decodeStakingResult(
+        "sei_evm",
+        "getStakedBalance" as StakingOperation,
+        STAKING_CONTRACTS["sei_evm"],
+        encodedResult,
+      );
+
+      const delegation = extractSeiDelegation(decoded);
+      expect(delegation).not.toBeUndefined();
+      expect(delegation!.balance.denom).toBe("usei");
+
+      const amount = getSeiDelegationAmount(delegation);
+      expect(amount).toBe(useiAmount * 10n ** 12n);
     });
   });
 
