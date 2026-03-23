@@ -31,6 +31,11 @@ apps/ledger-live-desktop/src/renderer/logger/            @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/analytics/         @ledgerhq/platform
 apps/ledger-live-desktop/tools/                          @ledgerhq/platform
 apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
+# Platform — domain
+domain/entity/crypto-asset                               @ledgerhq/platform
+domain/api/crypto-assets                                 @ledgerhq/platform
+# Platform — shared 
+shared/feature-flags                                     @ledgerhq/platform
 # Platform — mobile
 apps/ledger-live-mobile/src/analytics/                   @ledgerhq/platform
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
