@@ -154,7 +154,7 @@ test.describe("Inline Add Account", () => {
 
 const earnDashboardCurrencies = [
   {
-    account: Account.ETH_1,
+    account: Account.ETH_3,
     xrayTicket: "B2CQA-3679",
     staking: false,
   },
