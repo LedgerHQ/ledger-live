@@ -32,6 +32,7 @@ import type { CeloUnlockFlowParamList } from "~/families/celo/UnlockFlow/types";
 import type { CeloLockFlowParamList } from "~/families/celo/LockFlow/types";
 import type { CeloRegistrationFlowParamList } from "~/families/celo/RegistrationFlow/types";
 import type { CosmosDelegationFlowParamList } from "~/families/cosmos/DelegationFlow/types";
+import type { MinaStakingFlowParamList } from "~/families/mina/StakingFlow/types";
 import type { CosmosRedelegationFlowParamList } from "~/families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "~/families/cosmos/UndelegationFlow/types";
 import type { CosmosClaimRewardsFlowParamList } from "~/families/cosmos/ClaimRewardsFlow/types";
@@ -91,6 +92,7 @@ type Props =
   | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationConnectDevice>
   | StackNavigatorProps<CosmosRedelegationFlowParamList, ScreenName.CosmosRedelegationConnectDevice>
   | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationConnectDevice>
+  | StackNavigatorProps<MinaStakingFlowParamList, ScreenName.MinaStakingConnectDevice>
   | StackNavigatorProps<CosmosClaimRewardsFlowParamList, ScreenName.CosmosClaimRewardsConnectDevice>
   | StackNavigatorProps<
       MultiversXDelegationFlowParamList,

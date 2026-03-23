@@ -5,9 +5,12 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { getAccount, getBlockInfo, getTransactions } from "../api";
-import { RosettaTransaction } from "../api/rosetta/types";
-import { MinaAccount, MinaOperation } from "../types/common";
+import { fetchValidators, getEpochInfo, RosettaTransaction } from "../api";
+import { getAccount } from "../logic/account/getAccount";
+import { getDelegateAddress } from "../logic/account/getDelegateAddress";
+import { getBlockInfo } from "../logic/history/getBlockInfo";
+import { getTransactions } from "../logic/history/getTransactions";
+import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,
@@ -147,12 +150,15 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
 
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
-  const rosettaTxns = await getTransactions(address, initialAccount?.operations.length);
+  const rosettaTxns = await getTransactions(address);
   const newOperations = await Promise.all(
     rosettaTxns.flatMap(t => mapRosettaTxnToOperation(accountId, address, t)),
   );
 
   const operations = mergeOps(oldOperations, newOperations.flat());
+  const delegateAddress = (await getDelegateAddress(address)) || address;
+  const epochInfo = await getEpochInfo();
+  const validators = await fetchValidators();
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
@@ -160,9 +166,28 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
+    resources: {
+      blockProducers: validators,
+      delegateInfo: validators.find(v => v.address === delegateAddress) ?? undefined,
+      stakingActive: address !== delegateAddress,
+      epochInfo: epochInfo.data.daemonStatus.consensusTimeNow,
+    },
   };
 
   return { ...shape, operations };
 };
+
+export function assignToAccountRaw(account: MinaAccount, accountRaw: MinaAccountRaw): void {
+  if (account.resources) {
+    accountRaw.resources = account.resources;
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: MinaAccountRaw, account: MinaAccount): void {
+  const resourcesRaw = accountRaw.resources;
+  if (resourcesRaw) {
+    account.resources = resourcesRaw;
+  }
+}
 
 export const sync = makeSync({ getAccountShape });

@@ -1,7 +1,7 @@
-import { isValidAddress } from "../common-logic";
+import { isValidAddress } from "./utils";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("../common-logic");
+jest.mock("./utils");
 
 describe("validateAddress", () => {
   const mockedIsValidAddress = jest.mocked(isValidAddress);
