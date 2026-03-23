@@ -64,7 +64,7 @@ describe("EVM Family", () => {
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
             blockHeight: 14923692,
-            recipients: [""],
+            recipients: ["0x4969D9fD2542e71e6b3EA87bE54EA9a736bcC4E9"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
             value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
