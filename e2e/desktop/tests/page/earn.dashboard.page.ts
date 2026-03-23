@@ -179,7 +179,7 @@ export class EarnPage extends WebViewAppPage {
   @step("Click ice cold start earn CTA")
   async clickIceColdStartEarnCTA() {
     const webview = await this.getWebView();
-    await webview.getByRole("button", { name: /earn/i }).first().click();
+    await webview.getByTestId("ice-cold-start-earn-cta").click();
   }
 
   // V2 Cold Start
@@ -198,8 +198,7 @@ export class EarnPage extends WebViewAppPage {
   @step("Click asset earn CTA for $0")
   async clickAssetEarnCta(ticker: string) {
     const webview = await this.getWebView();
-    const assetRow = webview.getByTestId(this.assetItemTicker(ticker));
-    await assetRow.getByRole("button", { name: /earn/i }).first().click();
+    await webview.getByTestId(`asset-earn-cta-${ticker.toLowerCase()}`).click();
   }
 
   // V2 Hot Start
