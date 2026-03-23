@@ -124,6 +124,7 @@ describe("PortfolioView", () => {
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
+    shouldDisplayOperationsList: true,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],

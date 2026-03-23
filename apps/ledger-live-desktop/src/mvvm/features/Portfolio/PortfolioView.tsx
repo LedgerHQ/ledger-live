@@ -26,6 +26,7 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayGraphRework,
   shouldDisplayQuickActionCtas,
   shouldDisplayAssetSection,
+  shouldDisplayOperationsList,
   isWallet40Enabled,
   accounts,
   filterOperations,
@@ -33,6 +34,7 @@ export const PortfolioView = memo(function PortfolioView({
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
   const shouldDisplayAddAccountCta = totalAccounts === 0 && isWallet40Enabled;
+  const shouldRenderLegacyOperationsList = !shouldDisplayOperationsList && totalOperations > 0;
 
   return (
     <>
@@ -48,7 +50,7 @@ export const PortfolioView = memo(function PortfolioView({
       />
       <div id="portfolio-container" data-testid="portfolio-container" className="flex flex-col">
         {/* Main content area */}
-        <div className="flex flex-1 flex-col gap-32">
+        <div className="flex flex-1 flex-col gap-32 pb-32">
           <div className="flex flex-col gap-24">
             <PageHeader title={t("portfolio.title")} />
             {shouldDisplayGraphRework && <Balance />}
@@ -67,7 +69,7 @@ export const PortfolioView = memo(function PortfolioView({
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
 
-          {totalOperations > 0 && (
+          {shouldRenderLegacyOperationsList && (
             <OperationsList
               accounts={accounts}
               title={t("dashboard.recentActivity")}
