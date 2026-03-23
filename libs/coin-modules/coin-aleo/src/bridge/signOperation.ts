@@ -23,6 +23,74 @@ import {
 } from "../logic/utils";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
+interface SigningParams {
+  account: AleoAccount;
+  transaction: Transaction;
+  request: PreparedRequestResponse;
+  config: ReturnType<typeof resolveConfig>;
+  baseFee: BigNumber;
+  priorityFee: BigNumber;
+  viewKey: string;
+}
+
+async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
+  const { account, transaction, request, config, baseFee, priorityFee, viewKey } = params;
+
+  // sign root request
+  const rootIntentSignature = await signer.signRootIntent(
+    account.freshAddressPath,
+    Buffer.from(request.tlv, "hex"),
+  );
+
+  // create authorization
+  const authorization = await sdkClient.createAuthorization({
+    currency: account.currency,
+    request,
+    signatures: rootIntentSignature.signature,
+    viewKey,
+  });
+
+  // craft fee request even if it's zero, because device needs the second APDU in signing flow to move forward
+  const craftedFeeRequest = await craftTransaction({
+    currency: account.currency,
+    viewKey,
+    feeConfiguration: null,
+    txIntent: createFeeTransactionIntent({
+      account,
+      transaction,
+      executionId: authorization.execution_id,
+      baseFee,
+      priorityFee,
+    }),
+  });
+
+  const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
+
+  // sign fee request
+  const feeIntentSignature = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
+
+  // create fee authorization, but only if fee is not zero
+  let feeAuthorization: string | null = null;
+
+  if (!config.isFeeSponsored) {
+    const result = await sdkClient.createAuthorization({
+      currency: account.currency,
+      request: feeRequest,
+      signatures: feeIntentSignature.signature,
+      viewKey,
+    });
+
+    feeAuthorization = result.authorization;
+  }
+
+  const signedTransaction = {
+    authorization: authorization.authorization,
+    feeAuthorization,
+  } satisfies SignedAleoTransaction;
+
+  return toHex(signedTransaction);
+}
+
 export const buildSignOperation =
   (
     signerContext: SignerContext<AleoSigner>,
@@ -55,63 +123,17 @@ export const buildSignOperation =
 
           const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
 
-          const signedTx = await signerContext(deviceId, async signer => {
-            // sign root request
-            const rootIntentSignature = await signer.signRootIntent(
-              account.freshAddressPath,
-              Buffer.from(request.tlv, "hex"),
-            );
-
-            // create authorization
-            const authorization = await sdkClient.createAuthorization({
-              currency: account.currency,
+          const signedTx = await signerContext(deviceId, signer =>
+            executeSigningFlow(signer, {
+              account,
+              transaction,
               request,
-              signatures: rootIntentSignature.signature,
+              config,
+              baseFee,
+              priorityFee,
               viewKey,
-            });
-
-            // craft fee request even if it's zero, because device needs the second APDU in signing flow to move forward
-            const craftedFeeRequest = await craftTransaction({
-              currency: account.currency,
-              viewKey,
-              feeConfiguration: null,
-              txIntent: createFeeTransactionIntent({
-                account,
-                transaction,
-                executionId: authorization.execution_id,
-                baseFee,
-                priorityFee,
-              }),
-            });
-
-            const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
-
-            // sign fee request
-            const feeIntentSignature = await signer.signFeeIntent(
-              Buffer.from(feeRequest.tlv, "hex"),
-            );
-
-            // create fee authorization, but only if fee is not zero
-            let feeAuthorization: string | null = null;
-
-            if (!config.isFeeSponsored) {
-              const result = await sdkClient.createAuthorization({
-                currency: account.currency,
-                request: feeRequest,
-                signatures: feeIntentSignature.signature,
-                viewKey,
-              });
-
-              feeAuthorization = result.authorization;
-            }
-
-            const signedTransaction = {
-              authorization: authorization.authorization,
-              feeAuthorization,
-            } satisfies SignedAleoTransaction;
-
-            return toHex(signedTransaction);
-          });
+            }),
+          );
 
           o.next({
             type: "device-signature-granted",
