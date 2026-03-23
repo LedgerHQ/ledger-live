@@ -775,9 +775,12 @@ describe("EVM Family", () => {
 
     it("should fallback to raw RPC block when prefetched tx parsing fails", async () => {
       jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockImplementationOnce(async () => {
-        throw new TypeError(
-          'missing r (argument="signature", value={...}, code=INVALID_ARGUMENT, version=6.15.0)',
-        );
+        const error = new TypeError("missing r");
+        Object.assign(error, {
+          code: "INVALID_ARGUMENT",
+          argument: "signature",
+        });
+        throw error;
       });
       jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
         if (method !== "eth_getBlockByNumber") {

@@ -318,7 +318,7 @@ async function getBlockByHeight(
   } catch (error) {
     // Some chains (e.g. zkSync) can return tx objects missing signature fields, ethers then fails while formatting
     // prefetched transactions => we fallback to a custom getBlock implementation
-    if (prefetchTxs && isMissingSignatureError(error)) {
+    if (prefetchTxs && isSignatureError(error)) {
       log("warn", "EVM getBlock fallback: using raw eth_getBlockByNumber response", {
         blockHeight,
         error: String(error),
@@ -375,12 +375,13 @@ async function getBlockByHeight(
 }
 
 /** Specific error thrown by ethers when handling zksync blocks with missing signature fields in prefetched transactions */
-function isMissingSignatureError(error: unknown): boolean {
-  return (
-    error instanceof TypeError &&
-    typeof error.message === "string" &&
-    error.message.includes('missing r (argument="signature"')
-  );
+function isSignatureError(error: unknown): boolean {
+  if (!hasErrorCode(error, "INVALID_ARGUMENT")) return false;
+  if (typeof error !== "object" || error === null) return false;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const ethersError = error as { argument?: unknown };
+  return ethersError.argument === "signature";
 }
 
 /**
