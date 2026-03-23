@@ -211,12 +211,12 @@ describe("getSeedIdentifierDerivation", () => {
     {
       currencyId: "aleo",
       mode: asDerivationMode("aleo"),
-      expectedSeedPath: `44'/683'/0`,
+      expectedSeedPath: `44'/683'/0'/0'`,
     },
     {
       currencyId: "aleo_testnet",
       mode: asDerivationMode("aleo"),
-      expectedSeedPath: `44'/683'/0`,
+      expectedSeedPath: `44'/683'/0'/0'`,
     },
   ])("$currencyId", ({ currencyId, mode, expectedSeedPath }) => {
     const fun = getSeedIdentifierDerivation(getCryptoCurrencyById(currencyId), mode);
