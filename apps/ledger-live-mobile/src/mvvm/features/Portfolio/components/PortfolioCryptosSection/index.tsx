@@ -9,7 +9,8 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import { CryptoListContent } from "./components/CryptoListContent";
+import { AssetSectionListContent } from "../AssetSectionListContent";
+import { EMPTY_STATE_MAX_ASSETS } from "./hooks/usePortfolioCryptosSectionViewModel";
 import usePortfolioCryptosSectionViewModel from "./hooks/usePortfolioCryptosSectionViewModel";
 
 interface PortfolioCryptosSectionProps {
@@ -45,11 +46,13 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
         </SubheaderRow>
       </Subheader>
       <Box testID="PortfolioCryptosList">
-        <CryptoListContent
+        <AssetSectionListContent
           isLoading={isLoading}
           isError={isError}
           assetsToDisplay={assetsToDisplay}
           onItemPress={onItemPress}
+          skeletonCount={EMPTY_STATE_MAX_ASSETS}
+          errorMessage={t("portfolio.assetSection.connectionFailed")}
         />
       </Box>
     </Box>

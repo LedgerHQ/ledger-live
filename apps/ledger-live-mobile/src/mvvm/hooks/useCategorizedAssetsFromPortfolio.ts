@@ -17,6 +17,5 @@ export function useCategorizedAssetsFromPortfolio() {
     categorizedAssets,
     isLoadingStablecoinTickers,
     stablecoinTickers,
-    distribution,
   };
 }

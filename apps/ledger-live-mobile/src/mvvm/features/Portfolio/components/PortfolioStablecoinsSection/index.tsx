@@ -9,8 +9,10 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import AssetListItem from "../PortfolioCryptosSection/components/AssetListItem";
-import usePortfolioStablecoinsSectionViewModel from "./usePortfolioStablecoinsSectionViewModel";
+import { AssetSectionListContent } from "../AssetSectionListContent";
+import usePortfolioStablecoinsSectionViewModel, {
+  EMPTY_STATE_MAX_STABLECOINS,
+} from "./usePortfolioStablecoinsSectionViewModel";
 
 interface PortfolioStablecoinsSectionProps {
   isEmptyState?: boolean;
@@ -22,10 +24,10 @@ const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSection
   isReadOnly,
 }) => {
   const { t } = useTranslation();
-  const { assetsCount, hasMore, assetsToDisplay, onPressShowAll, onItemPress } =
+  const { assetsCount, hasMore, assetsToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
     usePortfolioStablecoinsSectionViewModel({ isEmptyState, isReadOnly });
 
-  if (assetsCount === 0) return null;
+  if (!isLoading && !isError && assetsCount === 0) return null;
 
   return (
     <Box>
@@ -45,14 +47,17 @@ const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSection
         </SubheaderRow>
       </Subheader>
       <Box testID="PortfolioStablecoinsList">
-        {assetsToDisplay.map(item => (
-          <AssetListItem key={item.currency.id} asset={item} onPress={onItemPress} />
-        ))}
+        <AssetSectionListContent
+          isLoading={isLoading}
+          isError={isError}
+          assetsToDisplay={assetsToDisplay}
+          onItemPress={onItemPress}
+          skeletonCount={EMPTY_STATE_MAX_STABLECOINS}
+          errorMessage={t("portfolio.assetSection.connectionFailed")}
+        />
       </Box>
     </Box>
   );
 };
 
-export const PortfolioStablecoinsSection = withDiscreetMode(
-  PortfolioStablecoinsSectionComponent,
-);
+export const PortfolioStablecoinsSection = withDiscreetMode(PortfolioStablecoinsSectionComponent);
