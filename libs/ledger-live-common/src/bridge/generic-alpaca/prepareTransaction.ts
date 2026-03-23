@@ -128,8 +128,12 @@ export function genericPrepareTransaction(
         propagateField(estimation, field, next);
       }
 
-      // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
-      if (transaction.useAllAmount || ["stake", "unstake"].includes(transaction.mode ?? "")) {
+      if (
+        transaction.useAllAmount ||
+        ["stake", "unstake", "delegate", "undelegate", "redelegate"].includes(
+          transaction.mode ?? "",
+        )
+      ) {
         // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
         const { amount } = await validateIntent(
           transactionToIntent(

@@ -58,6 +58,7 @@ export type GenericTransaction = TransactionCommon & {
     | "send-legacy"
     | "send-eip1559"
     | "delegate"
+    | "redelegate"
     | "stake"
     | "undelegate"
     | "unstake";
@@ -74,6 +75,8 @@ export type GenericTransaction = TransactionCommon & {
   additionalFees?: BigNumber | null;
   gasOptions?: GasOptions;
   sponsored?: boolean;
+  valAddress?: string;
+  dstValAddress?: string;
 };
 
 export type GenericTransactionRaw = TransactionCommonRaw & {
@@ -94,6 +97,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
     | "send-legacy"
     | "send-eip1559"
     | "delegate"
+    | "redelegate"
     | "stake"
     | "undelegate"
     | "unstake";
@@ -110,6 +114,8 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   additionalFees?: string | null;
   gasOptions?: GasOptionsRaw;
   sponsored?: boolean;
+  valAddress?: string;
+  dstValAddress?: string;
 };
 
 export interface OperationCommon extends Operation {

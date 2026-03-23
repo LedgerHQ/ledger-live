@@ -16,4 +16,8 @@ export type BridgeApi = {
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
   validateTransaction?: (signature: string) => Promise<{ error: Error | undefined }>;
+  /**
+   * Whether the chain surfaces staking data through `getBalance`
+   */
+  stakingSupported?: boolean;
 };

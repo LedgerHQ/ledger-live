@@ -7,6 +7,7 @@ import type {
   Balance,
   Operation as CoreOperation,
   MapMemo,
+  StakingOperation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -91,6 +92,34 @@ export function extractBalances(
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every(item => typeof item === "string");
+}
+
+function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOperation {
+  return mode === "delegate" || mode === "undelegate" || mode === "redelegate";
+}
+
+type GenericAlpacaMemo = { type: string; value?: string };
+type GenericAlpacaTxData = { type: string; value?: unknown };
+type GenericAlpacaTransactionIntent = TransactionIntent & {
+  memo?: GenericAlpacaMemo;
+  data?: GenericAlpacaTxData;
+  mode?: StakingOperation;
+  valAddress?: string;
+  dstValAddress?: string;
+};
+
+function getDelegationIntentFields(
+  delegationMode: StakingOperation | undefined,
+  transaction: GenericTransaction,
+): Partial<Pick<GenericAlpacaTransactionIntent, "mode" | "valAddress" | "dstValAddress">> {
+  return {
+    ...(delegationMode !== undefined && transaction.valAddress
+      ? { mode: delegationMode, valAddress: transaction.valAddress }
+      : {}),
+    ...(delegationMode !== undefined && transaction.dstValAddress
+      ? { dstValAddress: transaction.dstValAddress }
+      : {}),
+  };
 }
 
 export function cleanedOperation(operation: OperationCommon): OperationCommon {
@@ -254,17 +283,15 @@ export function transactionToIntent(
   account: Account,
   transaction: GenericTransaction,
   computeIntentType?: (transaction: GenericTransaction) => string,
-): TransactionIntent & { memo?: { type: string; value?: string } } & {
-  data?: { type: string; value?: unknown };
-} {
+): GenericAlpacaTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
   const isStaking = ["stake", "unstake"].includes(intentType);
+  const delegationMode = isDelegationMode(transaction.mode) ? transaction.mode : undefined;
+  const isDelegation = delegationMode !== undefined;
   const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
   const useAllAmount = isStaking || !!transaction.useAllAmount;
-  const res: TransactionIntent & { memo?: { type: string; value?: string } } & {
-    data?: { type: string; value?: unknown };
-  } = {
-    intentType: isStaking ? "staking" : "transaction",
+  const res: GenericAlpacaTransactionIntent = {
+    intentType: isStaking || isDelegation ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
@@ -280,6 +307,7 @@ export function transactionToIntent(
         ? BigInt(transaction.nonce.toString())
         : undefined,
     sponsored: transaction.sponsored,
+    ...getDelegationIntentFields(delegationMode, transaction),
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
@@ -408,6 +436,13 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     raw.recipientDomain = transaction.recipientDomain;
   }
 
+  if (transaction.valAddress) {
+    raw.valAddress = transaction.valAddress;
+  }
+  if (transaction.dstValAddress) {
+    raw.dstValAddress = transaction.dstValAddress;
+  }
+
   return raw;
 }
 
@@ -422,6 +457,7 @@ export const buildOptimisticOperation = (
       type = "OPT_IN";
       break;
     case "delegate":
+    case "redelegate":
     case "stake":
       type = "DELEGATE";
       break;
