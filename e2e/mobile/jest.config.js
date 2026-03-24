@@ -42,6 +42,7 @@ const jestAllure2ReporterOptions = {
   environment: async ({ $ }) => ({
     SPECULOS_DEVICE: process.env.SPECULOS_DEVICE,
     SPECULOS_FIRMWARE_VERSION: await getDeviceFirmwareVersion(getSpeculosModel()),
+    MOBILE_DEVICE: process.env.DEVICE_INFO || "Unknown device",
     path: process.cwd(),
     "version.node": process.version,
     "version.jest": await $.manifest("jest", ["version"]),
