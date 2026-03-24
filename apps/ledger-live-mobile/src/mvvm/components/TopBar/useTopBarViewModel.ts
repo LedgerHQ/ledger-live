@@ -81,15 +81,21 @@ export function useTopBarViewModel(
   }, [navigation, page]);
 
   const onSettingsPress = useCallback(() => {
-    track("menuentry_clicked", { button: "Settings" });
+    track("menuentry_clicked", { button: "Settings", page });
     navigation.navigate(NavigatorName.Settings);
-  }, [navigation]);
+  }, [navigation, page]);
+
+  const onTransactionHistoryPress = useCallback(() => {
+    track("menuentry_clicked", { button: "operation_list", page });
+    navigation.navigate(ScreenName.PortfolioOperationHistory);
+  }, [navigation, page]);
 
   return {
     onMyLedgerPress,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
+    onTransactionHistoryPress,
     hasUnreadNotifications,
     hasAccounts,
     isSyncError: isError,

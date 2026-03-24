@@ -117,6 +117,16 @@ describe("useTopBarViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.settings.name);
   });
 
+  it("should call navigate with expected params when onTransactionHistoryPress is invoked", () => {
+    const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+
+    act(() => {
+      result.current.onTransactionHistoryPress();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+  });
+
   describe("sync drawer", () => {
     it("should open the drawer and track SyncErrorList with error currency ids on openSyncDrawer", () => {
       mockedUseSyncIndicator.mockReturnValue({

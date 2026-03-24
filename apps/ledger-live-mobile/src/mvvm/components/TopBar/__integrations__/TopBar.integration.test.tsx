@@ -94,6 +94,28 @@ describe("TopBar navigation", () => {
 
     expect(track).toHaveBeenCalledWith("menuentry_clicked", {
       button: "Settings",
+      page: ScreenName.Portfolio,
+    });
+  });
+
+  it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
+      overrideInitialState: state => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          overriddenFeatureFlags: { lwmWallet40: { enabled: true, params: { operationsList: true } } },
+        },
+      }),
+    });
+
+    await user.press(getByTestId("topbar-transaction-history"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.PortfolioOperationHistory);
+
+    expect(track).toHaveBeenCalledWith("menuentry_clicked", {
+      button: "operation_list",
+      page: ScreenName.Portfolio,
     });
   });
 });
