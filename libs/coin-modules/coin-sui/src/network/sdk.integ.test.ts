@@ -1,18 +1,24 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation } from "@ledgerhq/types-live";
+import type { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import {
   createTransaction,
   DEFAULT_COIN_TYPE,
   getAccountBalances,
+  getListOperations,
   getOperations,
   getCheckpoint,
+  isSettlementTransaction,
   paymentInfo,
   getBlock,
   getBlockInfo,
   getStakes,
+  withApi,
 } from "./sdk";
+
+const ACCOUNT_WITH_STAKES = "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
 
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
@@ -135,6 +141,78 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
+  describe("Settlement transaction filtering (SIP-58)", () => {
+    const testingAccount = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+
+    it("getOperations returns no settlement transactions", async () => {
+      const ops = await getOperations("test-account", testingAccount);
+      expect(ops.length).toBeGreaterThan(0);
+
+      for (const op of ops) {
+        const raw = await withApi(async (api: SuiJsonRpcClient) =>
+          api.getTransactionBlock({ digest: op.hash, options: { showInput: true } }),
+        );
+        expect(isSettlementTransaction(raw)).toBe(false);
+      }
+    });
+
+    it("getListOperations returns no settlement transactions", async () => {
+      const page = await getListOperations(testingAccount, "desc");
+      expect(page.items.length).toBeGreaterThan(0);
+
+      for (const op of page.items) {
+        const raw = await withApi(async (api: SuiJsonRpcClient) =>
+          api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
+        );
+        expect(isSettlementTransaction(raw)).toBe(false);
+      }
+    });
+
+    it("isSettlementTransaction detects 0xacc as mutable shared object input", () => {
+      const fakeTx = {
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [
+                {
+                  type: "object",
+                  objectType: "sharedObject",
+                  objectId: "0xacc",
+                  initialSharedVersion: "1",
+                  mutable: true,
+                },
+              ],
+              transactions: [],
+            },
+          },
+        },
+      } as unknown as SuiTransactionBlockResponse;
+
+      expect(isSettlementTransaction(fakeTx)).toBe(true);
+    });
+
+    it("isSettlementTransaction does not flag a normal transaction", () => {
+      const normalTx = {
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [{ type: "pure", valueType: "u64", value: "1000" }],
+              transactions: [],
+            },
+          },
+        },
+      } as unknown as SuiTransactionBlockResponse;
+
+      expect(isSettlementTransaction(normalTx)).toBe(false);
+    });
+
+    it("isSettlementTransaction returns false when transaction data is missing", () => {
+      expect(isSettlementTransaction({} as SuiTransactionBlockResponse)).toBe(false);
+    });
+  });
+
   describe("getBalance", () => {
     test("getAccountBalances should return account balance with SIP-58 fields", async () => {
       const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
@@ -144,6 +222,18 @@ describe("SUI SDK Integration tests", () => {
       expect(balances[0]).toHaveProperty("balance");
       expect(balances[0]).toHaveProperty("fundsInAddressBalance");
       expect(balances[0].fundsInAddressBalance.isFinite()).toBe(true);
+    });
+
+    test("fundsInAddressBalance is valid for all coin types", async () => {
+      const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+      const balances = await getAccountBalances(address);
+
+      for (const b of balances) {
+        expect(b.balance.isFinite()).toBe(true);
+        expect(b.fundsInAddressBalance.isFinite()).toBe(true);
+        expect(b.fundsInAddressBalance.isGreaterThanOrEqualTo(0)).toBe(true);
+        expect(b.fundsInAddressBalance.isLessThanOrEqualTo(b.balance)).toBe(true);
+      }
     });
   });
 
@@ -160,6 +250,58 @@ describe("SUI SDK Integration tests", () => {
       };
       const { unsigned: tx } = await createTransaction(address, transaction);
       expect(tx).toBeInstanceOf(Uint8Array);
+    });
+
+    test("createTransaction returns BCS objects when withObjects=true", async () => {
+      const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+      const result = await createTransaction(
+        address,
+        {
+          mode: "send",
+          coinType: DEFAULT_COIN_TYPE,
+          amount: new BigNumber(100),
+          recipient: address,
+        },
+        true,
+      );
+
+      expect(result.unsigned).toBeInstanceOf(Uint8Array);
+      expect(result.objects).toBeDefined();
+      expect(result.objects!.length).toBeGreaterThan(0);
+      for (const obj of result.objects!) {
+        expect(obj).toBeInstanceOf(Uint8Array);
+      }
+    });
+
+    test("createTransaction omits objects when withObjects=false", async () => {
+      const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+      const result = await createTransaction(address, {
+        mode: "send",
+        coinType: DEFAULT_COIN_TYPE,
+        amount: new BigNumber(100),
+        recipient: address,
+      });
+
+      expect(result.unsigned).toBeInstanceOf(Uint8Array);
+      expect(result.objects).toBeUndefined();
+    });
+
+    test("createTransaction builds a delegate transaction", async () => {
+      const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
+
+      const result = await createTransaction(
+        ACCOUNT_WITH_STAKES,
+        {
+          mode: "delegate",
+          coinType: DEFAULT_COIN_TYPE,
+          amount: new BigNumber(1_000_000_000),
+          recipient: validatorAddress,
+        },
+        true,
+      );
+
+      expect(result.unsigned).toBeInstanceOf(Uint8Array);
+      expect(result.unsigned.length).toBeGreaterThan(0);
     });
   });
 
@@ -178,6 +320,25 @@ describe("SUI SDK Integration tests", () => {
       expect(info).toHaveProperty("gasBudget");
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
+      expect(BigInt(info.gasBudget)).toBeGreaterThan(0n);
+      expect(info.totalGasUsed).toBeGreaterThan(0n);
+      expect(info.fees).toBeGreaterThan(0n);
+    });
+
+    test("paymentInfo returns valid gas budget for delegate", async () => {
+      const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
+
+      const info = await paymentInfo(ACCOUNT_WITH_STAKES, {
+        mode: "delegate" as const,
+        family: "sui" as const,
+        coinType: DEFAULT_COIN_TYPE,
+        amount: new BigNumber(1_000_000_000),
+        recipient: validatorAddress,
+        errors: {},
+      });
+
+      expect(BigInt(info.gasBudget)).toBeGreaterThan(0n);
+      expect(info.fees).toBeGreaterThan(0n);
     });
   });
 
