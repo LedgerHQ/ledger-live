@@ -16,9 +16,10 @@ type Props = {
   size: number;
   disabled?: boolean;
   hideNetwork?: boolean;
+  square?: boolean;
 };
 
-const CurrencyIcon = ({ size, currency, disabled, hideNetwork }: Props) => {
+const CurrencyIcon = ({ size, currency, disabled, hideNetwork, square }: Props) => {
   const { colors } = useTheme();
   const validIconSize = getValidCryptoIconSizeNative(size);
 
@@ -28,6 +29,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork }: Props) => {
 
   const ledgerId = currency.id;
   const ticker = currency.ticker;
+  const overridesRadius = square ? Math.round(validIconSize * 0.25) : undefined;
 
   const cryptoIconElement =
     !hideNetwork && currency.type === "TokenCurrency" ? (
@@ -37,6 +39,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork }: Props) => {
         size={validIconSize}
         backgroundColor={colors.background.main}
         network={currency.parentCurrency.id}
+        overridesRadius={overridesRadius}
       />
     ) : (
       <CryptoIcon
@@ -44,6 +47,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork }: Props) => {
         ticker={ticker}
         size={validIconSize}
         backgroundColor={colors.background.main}
+        overridesRadius={overridesRadius}
       />
     );
 

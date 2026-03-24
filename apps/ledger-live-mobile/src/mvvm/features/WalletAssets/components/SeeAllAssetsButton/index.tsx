@@ -7,7 +7,7 @@ interface SeeAllAssetsButtonProps {
   onPress: () => void;
 }
 
-const SeeAllAssetsButton: React.FC<SeeAllAssetsButtonProps> = ({ hasMore, onPress }) => {
+export const SeeAllAssetsButton: React.FC<SeeAllAssetsButtonProps> = ({ hasMore, onPress }) => {
   const { t } = useTranslation();
 
   if (!hasMore) return null;
@@ -24,5 +24,3 @@ const SeeAllAssetsButton: React.FC<SeeAllAssetsButtonProps> = ({ hasMore, onPres
     </Button>
   );
 };
-
-export { SeeAllAssetsButton };
