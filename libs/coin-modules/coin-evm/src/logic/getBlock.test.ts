@@ -471,7 +471,7 @@ describe("getBlock", () => {
     );
   });
 
-  it("when traceBlock throws UnsupportedRpcMethodError, returns block with no internal transactions", async () => {
+  it("when traceBlock throws UnsupportedRpcMethodError, the exception is propagated so that the caller can retry to fetch the whole block", async () => {
     setCoinConfig(
       () =>
         ({
@@ -482,12 +482,14 @@ describe("getBlock", () => {
         }) as unknown as EvmCoinConfig,
     );
 
-    const mockTraceBlock = jest.fn().mockRejectedValue(
-      new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
+    const error = new UnsupportedRpcMethodError(
+      "trace_block is not supported by this RPC provider",
+      {
         method: "trace_block",
         rawError: { code: -32601 },
-      }),
+      },
     );
+    const mockTraceBlock = jest.fn().mockRejectedValue(error);
     const mockGetNodeApi = jest.mocked(getNodeApi);
     mockGetNodeApi.mockReturnValue({
       getBlockByHeight: jest.fn().mockResolvedValue(
@@ -502,12 +504,10 @@ describe("getBlock", () => {
     } as any);
     const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
 
-    const result = await getBlock({} as CryptoCurrency, 12345);
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow(error);
 
     expect(mockGetInternalTransactionsByBlock).not.toHaveBeenCalled();
-
-    expect(result.transactions).toHaveLength(1);
-    expect(result.transactions[0].operations).toHaveLength(0);
+    expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
   });
 
   it("when explorer.getInternalTransactionsByBlock fails and node.traceBlock is undefined, returns block with no internal transactions", async () => {
@@ -617,5 +617,47 @@ describe("getBlock", () => {
         }),
       ]),
     });
+  });
+
+  it("when explorer.getInternalTransactionsByBlock fails and traceBlock rejects UnsupportedRpcMethodError, propagates the error", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            node: { type: "external" as const, retries: 0 },
+            explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
+
+    const error = new UnsupportedRpcMethodError(
+      "trace_block is not supported by this RPC provider",
+      {
+        method: "trace_block",
+        rawError: { code: -32601 },
+      },
+    );
+    const mockTraceBlock = jest.fn().mockRejectedValue(error);
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValue(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", value: "0" })],
+        }),
+      ),
+      getBlockReceipts: jest
+        .fn()
+        .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx1", erc20Transfers: [] })]),
+      getTransaction: jest.fn(),
+      traceBlock: mockTraceBlock,
+    } as any);
+
+    const mockGetInternalTransactionsByBlock = jest.mocked(getInternalTransactionsByBlock);
+    mockGetInternalTransactionsByBlock.mockRejectedValueOnce(new Error("explorer error"));
+
+    await expect(getBlock({} as CryptoCurrency, 12345)).rejects.toThrow(error);
+
+    expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(expect.anything(), 12345);
+    expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
   });
 });
