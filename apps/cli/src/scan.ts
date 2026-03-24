@@ -211,6 +211,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
   }
 
   if (typeof appjsonFile === "string") {
+    const { currency } = arg;
     const appjsondata = appjsonFile
       ? JSON.parse(fs.readFileSync(appjsonFile, "utf-8"))
       : {
@@ -223,7 +224,14 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       return throwError(() => new Error("encrypted ledger live data is not supported"));
     }
 
-    return from(appjsondata.data.accounts.map((a: any) => fromAccountRaw(a.data))).pipe(
+    return from(appjsondata.data.accounts).pipe(
+      mergeMap((a: any) => from(fromAccountRaw(a.data))),
+      filter((account: Account) => {
+        if (!currency) return true;
+        const matchCurrency = findCryptoCurrencyByKeyword(currency);
+        if (!matchCurrency) return true;
+        return account.currency.id === matchCurrency.id;
+      }),
       skip(index || 0) as any,
       take(length === undefined ? (index !== undefined ? 1 : Infinity) : length),
     );

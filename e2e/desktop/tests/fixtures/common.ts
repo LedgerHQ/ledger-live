@@ -15,12 +15,12 @@ import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { lastValueFrom, Observable } from "rxjs";
-import { CLI } from "tests/utils/cliUtils";
-import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
-import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
+import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
+import { getSpeculosAddress, SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -51,7 +51,6 @@ type TestFixtures = {
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-const getSpeculosAddress = () => process.env.SPECULOS_ADDRESS || "http://localhost";
 
 if (IS_NOT_MOCK) setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-test.com/v5");
@@ -168,16 +167,16 @@ export const test = base.extend<TestFixtures>({
         if (cliCommandsOnApp?.length) {
           for (const { app, cmd } of cliCommandsOnApp) {
             speculos = await launchSpeculos(app.name);
-            CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
+            unregisterAllTransportModules();
             await executeCliCommand(cmd, userdataDestinationPath);
-            await killSpeculos(speculos.id);
+            await cleanSpeculos(speculos);
           }
         }
 
         speculos = await launchSpeculos(speculosApp.name, testInfo.title);
 
         if (cliCommands?.length) {
-          CLI.registerSpeculosTransport(speculos.port.toString(), getSpeculosAddress());
+          unregisterAllTransportModules();
           for (const cmd of cliCommands) {
             await executeCliCommand(cmd, userdataDestinationPath);
           }
@@ -228,7 +227,7 @@ export const test = base.extend<TestFixtures>({
       }
     } finally {
       if (speculos) {
-        await killSpeculos(speculos.id);
+        await cleanSpeculos(speculos);
       }
     }
   },

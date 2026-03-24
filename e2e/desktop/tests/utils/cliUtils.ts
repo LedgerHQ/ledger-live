@@ -10,10 +10,7 @@ import {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { retry } from "@ledgerhq/live-common/promise";
-import {
-  registerTransportModule,
-  unregisterAllTransportModules,
-} from "@ledgerhq/live-common/hw/index";
+import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 
 type LiveDataOpts = {
   currency?: string;
@@ -61,6 +58,25 @@ type LedgerSyncOpts = {
   version?: number;
   cloudSyncApiBaseUrl?: string;
   deleteData?: boolean;
+};
+
+type TokenApprovalOpts = {
+  currency: string;
+  index: number;
+  spender: string;
+  approveAmount?: string;
+  token: string;
+  waitConfirmation?: boolean;
+  mode: "revokeApproval" | "approve";
+};
+
+type GetTokenAllowanceOpts = {
+  currency: string;
+  spenderAddress: string;
+  token: string;
+  index: number | string;
+  format?: "json";
+  ownerAddress: string;
 };
 
 export const CLI = {
@@ -215,14 +231,13 @@ export const CLI = {
     return runCliCommandWithRetry(cliOpts.join("+"));
   },
   registerSpeculosTransport: function (apiPort: string, speculosAddress = "http://localhost") {
-    unregisterAllTransportModules();
     const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,
       baseURL: speculosAddress,
     };
 
     registerTransportModule({
-      id: "speculos-http",
+      id: "speculos-http-" + apiPort,
       open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
@@ -272,5 +287,34 @@ export const CLI = {
     } catch {
       throw new Error("Failed to parse CLI getAddress output");
     }
+  },
+  tokenApproval: function (opts: TokenApprovalOpts) {
+    const cliOpts = ["send"];
+    cliOpts.push(`--currency+${opts.currency}`);
+    cliOpts.push(`--mode+${opts.mode}`);
+    cliOpts.push(`--token+${opts.token}`);
+    cliOpts.push(`--spender+${opts.spender}`);
+    cliOpts.push(`--index+${opts.index}`);
+    if (opts.approveAmount) {
+      cliOpts.push(`--approveAmount+${opts.approveAmount}`);
+    }
+    if (opts.waitConfirmation) {
+      cliOpts.push("--waitConfirmation");
+    }
+    return runCliCommandWithRetry(cliOpts.join("+"));
+  },
+  getTokenAllowance: function (opts: GetTokenAllowanceOpts) {
+    const cliOpts = ["tokenAllowance"];
+    cliOpts.push(`--currency+${opts.currency}`);
+    cliOpts.push(`--spender+${opts.spenderAddress}`);
+    cliOpts.push(`--token+${opts.token}`);
+    cliOpts.push(`--index+${opts.index}`);
+    if (opts.format === "json") {
+      cliOpts.push("--format+json");
+    }
+    if (opts.ownerAddress) {
+      cliOpts.push(`--ownerAddress+${opts.ownerAddress}`);
+    }
+    return runCliCommandWithRetry(cliOpts.join("+"));
   },
 };

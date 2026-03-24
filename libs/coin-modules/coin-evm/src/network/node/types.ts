@@ -162,6 +162,12 @@ export type NodeApi = {
     address: string,
     contractAddress: string,
   ) => Promise<BigNumber>;
+  getTokenAllowance: (
+    currency: CryptoCurrency,
+    ownerAddress: string,
+    contractAddress: string,
+    spenderAddress: string,
+  ) => Promise<BigNumber>;
   getTransactionCount: (currency: CryptoCurrency, address: string) => Promise<number>;
   getGasEstimation: (
     account: Pick<Account, "currency" | "freshAddress">,

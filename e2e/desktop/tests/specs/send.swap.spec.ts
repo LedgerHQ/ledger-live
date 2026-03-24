@@ -276,7 +276,8 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        await app.swap.selectExchangeWithoutKyc(electronApp, swap);
+        const provider = await app.swap.selectExchangeWithoutKyc(electronApp, swap);
+        await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
 
         await app.swap.clickExchangeButton(electronApp);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);

@@ -1036,7 +1036,15 @@ function verifySwapData(swap: Swap, events: string[], amount: string) {
   const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
 
   if (getSpeculosModel() !== DeviceModelId.nanoS) {
-    expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+    if (swap.provider && swap.provider.app && swap.provider.app !== AppInfos.EXCHANGE) {
+      expectDeviceScreenContains(
+        swap.provider.uiName,
+        events,
+        "Provider not found on the device screen",
+      );
+    } else {
+      expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+    }
   }
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }

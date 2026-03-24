@@ -117,3 +117,26 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
   await pressAndRelease("<", backX, backY);
   return events;
 }
+
+export async function approveTokenTouchDevices() {
+  await waitFor(DeviceLabels.YES_ENABLE);
+  await pressAndRelease(DeviceLabels.YES_ENABLE);
+  await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+}
+
+export const approveTokenButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO);
+      await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+      await getButtonsController().both();
+    },
+);
+
+export async function approveToken() {
+  if (isTouchDevice()) {
+    return approveTokenTouchDevices();
+  }
+  return approveTokenButtonDevice();
+}

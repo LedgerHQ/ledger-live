@@ -6,6 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosRequestConfig } from "axios";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { LedgerNodeConfig } from "../../config";
 import { GasEstimationError } from "../../errors";
@@ -304,6 +305,30 @@ async function getOptimismAdditionalFees(
   return new BigNumber(result.response);
 }
 
+function makeGetTokenAllowance(
+  config: LedgerNodeConfig,
+  fetch: LedgerFetch,
+): NodeApi["getTokenAllowance"] {
+  const iface = new ethers.Interface(ERC20Abi as ethers.InterfaceAbi);
+  return async (_currency, ownerAddress, contractAddress, spenderAddress) => {
+    const data = iface.encodeFunctionData("allowance", [
+      ethers.getAddress(ownerAddress),
+      ethers.getAddress(spenderAddress),
+    ]);
+    const [result] = await fetch<
+      Array<{
+        info: { contract: string; data: string; blockNumber: number | null };
+        response: string;
+      }>
+    >({
+      method: "POST",
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+      data: [{ contract: contractAddress, data }],
+    });
+    return new BigNumber(result.response);
+  };
+}
+
 async function getScrollAdditionalFees(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
@@ -346,6 +371,7 @@ export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
     getBlockByHeight: make(getBlockByHeight, config, fetch),
     getCoinBalance: make(getCoinBalance, config, fetch),
     getTokenBalance: makeGetTokenBalance(config, fetch, tokenBalancesBatchersMap),
+    getTokenAllowance: makeGetTokenAllowance(config, fetch),
     getTransactionCount: make(getTransactionCount, config, fetch),
     getTransaction: make(getTransaction, config, fetch),
     getGasEstimation: makeGetGasEstimation(config, fetch),

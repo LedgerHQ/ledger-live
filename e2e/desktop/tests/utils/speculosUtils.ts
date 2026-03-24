@@ -4,10 +4,13 @@ import {
   specs,
   stopSpeculos,
   type SpeculosDevice,
+  getSpeculosAddress,
 } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import * as allure from "allure-js-commons";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
+import { CLI } from "./cliUtils";
+import { unregisterTransportModule } from "@ledgerhq/live-common/hw/index";
 
 export async function launchSpeculos(appName: string, testTitle?: string): Promise<SpeculosDevice> {
   if (testTitle) {
@@ -30,6 +33,7 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
 
   setEnv("SPECULOS_API_PORT", device.port);
   process.env.SPECULOS_API_PORT = device.port.toString();
+  CLI.registerSpeculosTransport(device.port.toString(), getSpeculosAddress());
 
   let info = `App: ${device.appName || ""} (${device.appVersion || ""})`;
   if (device.dependencies?.length) {
@@ -43,6 +47,11 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
   return device;
 }
 
-export async function killSpeculos(deviceId: string) {
-  await stopSpeculos(deviceId);
+export async function cleanSpeculos(speculos: SpeculosDevice, previousPort?: number) {
+  await stopSpeculos(speculos.id);
+  unregisterTransportModule("speculos-http-" + String(previousPort));
+  if (previousPort) {
+    setEnv("SPECULOS_API_PORT", previousPort);
+    process.env.SPECULOS_API_PORT = String(previousPort);
+  }
 }
