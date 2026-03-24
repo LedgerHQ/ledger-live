@@ -1,33 +1,33 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import AssetListItem from "../components/AssetListItem";
+import ListItem from "../index";
 import {
-  useAssetListItemViewModel,
-  type AssetListItemViewModelResult,
-} from "../hooks/useAssetListItemViewModel";
+  useListItemViewModel,
+  type ListItemViewModelResult,
+} from "../useListItemViewModel";
 import { createCryptoAsset, bitcoin } from "./shared";
 
-jest.mock("../hooks/useAssetListItemViewModel", () => ({
-  useAssetListItemViewModel: jest.fn(),
+jest.mock("../useListItemViewModel", () => ({
+  useListItemViewModel: jest.fn(),
 }));
 
-const mockedViewModel = jest.mocked(useAssetListItemViewModel);
+const mockedViewModel = jest.mocked(useListItemViewModel);
 
 const mockAsset = createCryptoAsset(bitcoin, 100000);
 
-const baseViewModelResult: AssetListItemViewModelResult = {
+const baseViewModelResult: ListItemViewModelResult = {
   formattedBalance: "0.001 BTC",
   formattedCounterValue: "$45.00",
   deltaText: "+3.50%",
   deltaColor: "success",
 };
 
-const renderView = (vmOverrides: Partial<AssetListItemViewModelResult> = {}) => {
+const renderView = (vmOverrides: Partial<ListItemViewModelResult> = {}) => {
   mockedViewModel.mockReturnValue({ ...baseViewModelResult, ...vmOverrides });
-  return render(<AssetListItem asset={mockAsset} onPress={jest.fn()} />);
+  return render(<ListItem asset={mockAsset} onPress={jest.fn()} />);
 };
 
-describe("AssetListItem", () => {
+describe("ListItem", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

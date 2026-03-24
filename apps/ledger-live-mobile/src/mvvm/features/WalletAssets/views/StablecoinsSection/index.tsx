@@ -9,23 +9,23 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import { AssetSectionListContent } from "../AssetSectionListContent";
-import usePortfolioCryptosSectionViewModel, {
-  EMPTY_STATE_MAX_ASSETS,
-} from "./hooks/usePortfolioCryptosSectionViewModel";
+import { SectionListContent } from "../../components/SectionListContent";
+import usePortfolioStablecoinsSectionViewModel, {
+  EMPTY_STATE_MAX_STABLECOINS,
+} from "./usePortfolioStablecoinsSectionViewModel";
 
-interface PortfolioCryptosSectionProps {
+interface PortfolioStablecoinsSectionProps {
   isEmptyState?: boolean;
   isReadOnly?: boolean;
 }
 
-const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
+const PortfolioStablecoinsSectionComponent: React.FC<PortfolioStablecoinsSectionProps> = ({
   isEmptyState,
   isReadOnly,
 }) => {
   const { t } = useTranslation();
   const { assetsCount, hasMore, assetsToDisplay, isLoading, isError, onPressShowAll, onItemPress } =
-    usePortfolioCryptosSectionViewModel({ isEmptyState, isReadOnly });
+    usePortfolioStablecoinsSectionViewModel({ isEmptyState, isReadOnly });
 
   if (!isLoading && !isError && assetsCount === 0) return null;
 
@@ -37,7 +37,7 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           accessibilityRole={hasMore ? "button" : undefined}
           lx={{ marginBottom: "s12" }}
         >
-          <SubheaderTitle>{t("wallet.tabs.crypto")}</SubheaderTitle>
+          <SubheaderTitle>{t("wallet.tabs.stablecoins")}</SubheaderTitle>
           {hasMore && (
             <>
               <SubheaderCount value={assetsCount} />
@@ -46,13 +46,13 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           )}
         </SubheaderRow>
       </Subheader>
-      <Box testID="PortfolioCryptosList">
-        <AssetSectionListContent
+      <Box testID="PortfolioStablecoinsList">
+        <SectionListContent
           isLoading={isLoading}
           isError={isError}
           assetsToDisplay={assetsToDisplay}
           onItemPress={onItemPress}
-          skeletonCount={EMPTY_STATE_MAX_ASSETS}
+          skeletonCount={EMPTY_STATE_MAX_STABLECOINS}
           errorMessage={t("portfolio.assetSection.connectionFailed")}
         />
       </Box>
@@ -60,4 +60,4 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
   );
 };
 
-export const PortfolioCryptosSection = withDiscreetMode(PortfolioCryptosSectionComponent);
+export const PortfolioStablecoinsSection = withDiscreetMode(PortfolioStablecoinsSectionComponent);

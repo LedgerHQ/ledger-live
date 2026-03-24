@@ -3,7 +3,7 @@ import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { State } from "~/reducers/types";
-import usePortfolioCryptosSectionViewModel from "../hooks/usePortfolioCryptosSectionViewModel";
+import usePortfolioCryptosSectionViewModel from "../usePortfolioCryptosSectionViewModel";
 import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { bitcoin, ethereum, createCryptoAsset } from "./shared";
 

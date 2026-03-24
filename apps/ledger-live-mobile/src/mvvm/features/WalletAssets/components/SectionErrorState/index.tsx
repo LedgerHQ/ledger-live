@@ -2,15 +2,15 @@ import React from "react";
 import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 
-type AssetSectionErrorStateProps = {
+type SectionErrorStateProps = {
   message: string;
   testID?: string;
 };
 
-export const AssetSectionErrorState = ({
+export const SectionErrorState = ({
   message,
   testID = "assets-error-state",
-}: AssetSectionErrorStateProps) => (
+}: SectionErrorStateProps) => (
   <Box
     lx={{ alignItems: "center", justifyContent: "center", paddingVertical: "s16" }}
     testID={testID}

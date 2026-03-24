@@ -1,6 +1,6 @@
 import React from "react";
 import { Skeleton } from "@ledgerhq/lumen-ui-rnative";
 
-export const AssetListItemSkeleton = () => (
+export const ListItemSkeleton = () => (
   <Skeleton component="list-item" testID="asset-list-item-skeleton" />
 );

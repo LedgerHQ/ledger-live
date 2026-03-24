@@ -5,7 +5,10 @@ import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import { toAsset, usePortfolioSectionActions } from "../../../hooks/usePortfolioSectionActions";
+import {
+  toAsset,
+  usePortfolioSectionActions,
+} from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 
 export const MAX_ASSETS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_ASSETS = 4;

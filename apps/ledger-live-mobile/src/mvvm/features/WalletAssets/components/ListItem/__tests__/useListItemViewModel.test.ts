@@ -1,6 +1,6 @@
 import { renderHook } from "@tests/test-renderer";
 import { usePortfolioForAccounts } from "~/hooks/portfolio";
-import { useAssetListItemViewModel } from "../hooks/useAssetListItemViewModel";
+import { useListItemViewModel } from "../useListItemViewModel";
 import { bitcoin, createCryptoAsset } from "./shared";
 
 jest.mock("~/hooks/portfolio", () => ({
@@ -21,7 +21,7 @@ const mockPortfolio = (percentage: number | null) => {
 
 const mockAsset = createCryptoAsset(bitcoin, 100_000);
 
-describe("useAssetListItemViewModel", () => {
+describe("useListItemViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPortfolio(null);
@@ -37,7 +37,7 @@ describe("useAssetListItemViewModel", () => {
       "should return $expectedText / $expectedColor for percentage=$percentage",
       ({ percentage, expectedText, expectedColor }) => {
         mockPortfolio(percentage);
-        const { result } = renderHook(() => useAssetListItemViewModel(mockAsset));
+        const { result } = renderHook(() => useListItemViewModel(mockAsset));
 
         expect(result.current.deltaText).toBe(expectedText);
         expect(result.current.deltaColor).toBe(expectedColor);

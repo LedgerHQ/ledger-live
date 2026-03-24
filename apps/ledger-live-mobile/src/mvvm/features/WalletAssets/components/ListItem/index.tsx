@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import {
   Box,
-  ListItem,
+  ListItem as LumenListItem,
   ListItemContent,
   ListItemDescription,
   ListItemLeading,
@@ -11,22 +11,19 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { Asset } from "~/types/asset";
-import {
-  useAssetListItemViewModel,
-  type AssetListItemViewModelResult,
-} from "../hooks/useAssetListItemViewModel";
+import { useListItemViewModel, type ListItemViewModelResult } from "./useListItemViewModel";
 
-interface AssetListItemProps {
+interface ListItemProps {
   asset: Asset;
   onPress: (asset: Asset) => void;
 }
 
-interface AssetListItemViewProps extends AssetListItemViewModelResult {
+interface ListItemViewProps extends ListItemViewModelResult {
   asset: Asset;
   onPress: () => void;
 }
 
-const AssetListItemView: React.FC<AssetListItemViewProps> = ({
+const ListItemView: React.FC<ListItemViewProps> = ({
   asset,
   onPress,
   formattedBalance,
@@ -34,7 +31,7 @@ const AssetListItemView: React.FC<AssetListItemViewProps> = ({
   deltaText,
   deltaColor,
 }) => (
-  <ListItem
+  <LumenListItem
     onPress={onPress}
     testID={`assetItem-${asset.currency.name}`}
     style={{ marginHorizontal: -8 }} // offsets ListItem's internal paddingHorizontal: s8
@@ -58,14 +55,14 @@ const AssetListItemView: React.FC<AssetListItemViewProps> = ({
         </Text>
       </Box>
     </ListItemTrailing>
-  </ListItem>
+  </LumenListItem>
 );
 
-const AssetListItem: React.FC<AssetListItemProps> = ({ asset, onPress }) => {
-  const vmResult = useAssetListItemViewModel(asset);
+const ListItem: React.FC<ListItemProps> = ({ asset, onPress }) => {
+  const vmResult = useListItemViewModel(asset);
   const handlePress = useCallback(() => onPress(asset), [asset, onPress]);
 
-  return <AssetListItemView asset={asset} onPress={handlePress} {...vmResult} />;
+  return <ListItemView asset={asset} onPress={handlePress} {...vmResult} />;
 };
 
-export default AssetListItem;
+export default ListItem;
