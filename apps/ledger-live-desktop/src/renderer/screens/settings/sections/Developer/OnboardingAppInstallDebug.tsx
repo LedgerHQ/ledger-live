@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { flushSync } from "react-dom";
 import { Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { useSelector } from "LLD/hooks/redux";
@@ -121,11 +120,7 @@ const OnboardingAppInstallDebugScreen = () => {
             isMulti={false}
             value={selectedDeviceToRestoreOption}
             options={deviceToRestoreOptions}
-            onChange={value => {
-              flushSync(() => {
-                setSelectedDeviceToRestoreOption(value);
-              });
-            }}
+            onChange={setSelectedDeviceToRestoreOption}
           />
         </Flex>
       </Flex>

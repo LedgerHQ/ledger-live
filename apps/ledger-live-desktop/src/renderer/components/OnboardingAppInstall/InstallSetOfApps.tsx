@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { Alert, Flex, Text } from "@ledgerhq/react-ui";
 import type { AppRequest, AppResult, AppState } from "@ledgerhq/live-common/hw/actions/app";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Action } from "@ledgerhq/live-common/hw/actions/types";
+import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "react-i18next";

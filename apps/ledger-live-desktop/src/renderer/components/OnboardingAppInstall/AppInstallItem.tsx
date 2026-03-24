@@ -38,14 +38,18 @@ const AppInstallItem = ({ appName, state, progress, productName, i }: Props) => 
               data-testid="app-install-item-infinite-loader"
             />
           ) : (
-            <span data-testid="app-install-item-progress-loader">
+            <Flex
+              data-testid="app-install-item-progress-loader"
+              position="relative"
+              size={20}
+            >
               <ProgressLoader
                 progress={progress * 100}
                 showPercentage={false}
                 radius={10}
                 stroke={2}
               />
-            </span>
+            </Flex>
           )
         ) : state === ItemState.Installed ? (
           <IconsLegacy.CheckAloneMedium size={20} color={"success.c50"} />

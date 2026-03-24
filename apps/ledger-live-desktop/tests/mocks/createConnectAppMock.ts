@@ -1,12 +1,13 @@
-import {
-  createAction,
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import type {
   AppRequest,
   AppResult,
   AppState,
-  type Event as AppActionEvent,
+  Event as AppActionEvent,
 } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
-import { ReplaySubject } from "rxjs";
+import type { ConnectAppEvent, Input as ConnectAppInput } from "@ledgerhq/live-common/hw/connectApp";
+import { ReplaySubject, type Observable } from "rxjs";
 import { act } from "tests/testSetup";
 
 type ListingAppsEvent = Extract<AppActionEvent, { type: "listing-apps" }>;
@@ -109,7 +110,7 @@ export function createConnectAppMock(): ConnectAppMock {
       progress,
       currentAppOp,
       installQueue,
-      itemProgress = progress,
+      itemProgress = 0,
     }: InlineInstallParams) =>
       pushEvent({
         type: "inline-install",
@@ -135,7 +136,9 @@ export function createConnectAppMock(): ConnectAppMock {
   };
 
   return {
-    action: createAction(() => subject as never),
+    action: createAction(
+      (_input: ConnectAppInput) => subject as unknown as Observable<ConnectAppEvent>,
+    ),
     push,
     error,
     complete,
