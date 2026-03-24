@@ -182,7 +182,7 @@ const FeatureFlagsSettings = () => {
       title={t("settings.developer.featureFlagsTitle")}
       descContainerStyle={{ maxWidth: undefined }}
       contentContainerStyle={{ marginRight: 0 }}
-      childrenContainerStyle={{ alignSelf: contentExpanded ? "flex-start" : "center" }}
+      childrenContainerStyle={{ alignSelf: "flex-start", flexShrink: 0 }}
       desc={<FeatureFlagContent expanded={contentExpanded} />}
     >
       <Button size="sm" appearance="accent" onClick={toggleContentVisibility}>

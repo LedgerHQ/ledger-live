@@ -57,6 +57,9 @@ const Tag = styled(Link)`
     background-color: ${p => darken(p.theme.colors.opacityDefault.c10, 0.05)};
     border-color: ${p => p.theme.colors.wallet};
   }
+  & > * {
+    flex-shrink: 0;
+  }
 `;
 
 const CustomTag = styled(TagComponent)`
@@ -141,7 +144,7 @@ const SideBar = styled(Box).attrs(() => ({
     ${p => p.theme.colors.background.default};
   transition: flex ${sideBarTransitionSpeed}ms;
   will-change: flex;
-  transform: translate3d(0, 0, 10);
+  z-index: 10;
 
   & > ${Collapser} {
     opacity: 0;
@@ -381,7 +384,7 @@ const MainSideBar = () => {
                     onClick={handleClickRefer}
                     isActive={Boolean(
                       referralProgramConfig?.params?.path &&
-                      locationPathname.startsWith(referralProgramConfig.params.path),
+                        locationPathname.startsWith(referralProgramConfig.params.path),
                     )}
                     collapsed={secondAnim}
                     NotifComponent={
