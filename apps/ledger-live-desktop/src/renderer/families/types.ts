@@ -23,7 +23,7 @@ import {
   AccountLike,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
-import { StepProps as SendStepProps } from "../modals/Send/types";
+import { StepId as SendStepId, StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 import { ModularDrawerAddAccountFlowManagerProps } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
@@ -286,7 +286,7 @@ export type LLDCoinFamily<
   /**
    * Allow to override default send flow steps
    */
-  createSendSteps?: (disableBacks?: string[]) => Step<string, SendStepProps>[];
+  createSendSteps?: (disableBacks?: string[]) => Step<SendStepId, SendStepProps>[];
 
   /**
    * Allow to override the "Recipient" step in the Send modal.

@@ -232,7 +232,7 @@ const Body = ({
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {
     return specific?.createSendSteps?.(params.disableBacks) ?? null;
-  }, []);
+  }, [specific, params.disableBacks]);
 
   const steps = customSteps ?? defaultSteps;
 
@@ -289,7 +289,7 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
+    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
     modalName,
     stepId,
     steps,
