@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
@@ -22,6 +23,7 @@ export default class BuySellPage {
 
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   buyQuickAmountButtonId = (amount: "400" | "800" | "1600") => `buy-amount-button-${amount}`;
+  sellPercentageButtonId = (pct: "25%" | "50%" | "75%" | "max") => pct;
   amountInputSectionId = () => `${this.amountInputSectionBaseId}-input`;
   countryListSelector = (locale: string) => `country-option-${locale.split("-")[1].toLowerCase()}`;
   currencyListSelector = (curr: string) => `fiat-option-${curr}`;
@@ -33,17 +35,26 @@ export default class BuySellPage {
     await waitForElementById(app.common.walletApiWebview, 60000, { checkVisibility: false });
   }
 
-  @Step("Expect Buy / Sell screen to be visible")
-  async expectBuySellScreenToBeVisible(page: "Buy" | "Sell") {
-    await waitWebElementByTestId(this.cryptoCurrencySelector, 90000);
-    await detoxExpect(
-      getWebElementsByIdAndText("", page === "Buy" ? "You will pay" : "You will sell"),
-    ).toExist();
+  @Step("Expect Buy screen to be visible")
+  async expectBuyScreenToBeVisible() {
+    await waitWebElementByTestId(this.cryptoCurrencySelector);
+    await detoxExpect(getWebElementsByIdAndText("", "You will pay")).toExist();
     await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
     await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("400"))).toExist();
     await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("800"))).toExist();
     await detoxExpect(getWebElementByTestId(this.buyQuickAmountButtonId("1600"))).toExist();
     await detoxExpect(getWebElementByTestId(this.fiatAmountOptionButtonId)).toExist();
+  }
+
+  @Step("Expect Sell screen to be visible")
+  async expectSellScreenToBeVisible() {
+    await waitWebElementByTestId(this.cryptoCurrencySelector);
+    await detoxExpect(getWebElementsByIdAndText("", "You will sell")).toExist();
+    await detoxExpect(getWebElementByTestId(this.amountInputSectionId())).toExist();
+    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("25%"))).toExist();
+    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("50%"))).toExist();
+    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("75%"))).toExist();
+    await detoxExpect(getWebElementByTestId(this.sellPercentageButtonId("max"))).toExist();
   }
 
   @Step("Select currency")
@@ -98,6 +109,11 @@ export default class BuySellPage {
     }
   }
 
+  @Step("Tap sell percentage button")
+  async tapSellPercentageButton(percentage: "25%" | "50%" | "75%" | "max") {
+    await tapWebElementByTestId(this.sellPercentageButtonId(percentage));
+  }
+
   @Step("Set amount to pay")
   async setAmountToPay(amount: string) {
     await typeTextByWebTestId(this.amountInputSectionId(), amount);
@@ -126,6 +142,37 @@ export default class BuySellPage {
     await tapWebElementByTestId(paymentMethod);
     const currentPaymentMethod = await getWebElementText(this.paymentSelector);
     jestExpect(normalizeText(currentPaymentMethod).toLowerCase()).toContain(paymentMethod);
+  }
+
+  @Step("Get available providers")
+  async getAvailableProviders(): Promise<string[]> {
+    await waitWebElementByTestId(this.providersList);
+    const expandButton = await waitWebElementByTestId(this.expandButtonId, 2000, false);
+    if (expandButton) {
+      await tapWebElementByTestId(this.expandButtonId);
+    }
+    const providerNames = await getWebElementsText(
+      '[data-testid^="provider_title_"][data-testid$="_title_container"]',
+    );
+    return providerNames;
+  }
+
+  @Step("Select random provider")
+  async selectRandomProvider(): Promise<string> {
+    const providers = await this.getAvailableProviders();
+    if (providers.length === 0) {
+      throw new Error("No providers available");
+    }
+    const randomIndex = Math.floor(Math.random() * providers.length);
+    const selected = providers[randomIndex];
+    const testIdName = Provider.getNameByUiName(selected);
+    if (!testIdName) {
+      throw new Error(`Unknown provider UI name: "${selected}"`);
+    }
+
+    await scrollToWebElement(getWebElementByTestId(this.provider(testIdName)));
+    await tapWebElementByTestId(this.provider(testIdName));
+    return selected;
   }
 
   @Step("Select provider")
