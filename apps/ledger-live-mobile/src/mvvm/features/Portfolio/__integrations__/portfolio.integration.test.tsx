@@ -110,7 +110,7 @@ describe("Portfolio Screen", () => {
   });
 
   describe("Asset Section Feature", () => {
-    it("should display the cryptos list when assetSection is enabled and user has accounts", async () => {
+    it("should display the cryptos list and crypto accounts button when assetSection is enabled and user has accounts", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithAssetSection(true),
       });
@@ -118,9 +118,10 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(await screen.findByTestId("crypto-addresses-button")).toBeVisible();
     });
 
-    it("should not display the cryptos list when assetSection is disabled", async () => {
+    it("should not display the cryptos list nor the crypto accounts button when assetSection is disabled", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithAssetSection(false),
       });
@@ -128,6 +129,7 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
     });
 
     it("should not display the cryptos list when user has no accounts and assetSection is disabled", async () => {
