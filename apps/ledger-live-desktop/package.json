@@ -63,6 +63,7 @@
     "@ledgerhq/client-ids": "workspace:*",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
+    "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-casper": "workspace:^",
     "@ledgerhq/coin-concordium": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
