@@ -43,6 +43,7 @@ export const INITIAL_STATE: ModularDrawerState = {
 
 // Selectors
 export const modularDrawerStateSelector = (state: State) => state.modularDrawer;
+export const modularDrawerIsOpenSelector = (state: State): boolean => state.modularDrawer.isOpen;
 
 export const modularDrawerSearchValueSelector = (state: State) => state.modularDrawer.searchValue;
 export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;

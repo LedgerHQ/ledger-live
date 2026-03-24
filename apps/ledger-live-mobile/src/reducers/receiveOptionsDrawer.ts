@@ -18,6 +18,8 @@ export const INITIAL_STATE: ReceiveOptionsDrawerState = {
 
 // Selectors
 export const receiveOptionsDrawerStateSelector = (state: State) => state.receiveOptionsDrawer;
+export const receiveOptionsDrawerIsOpenSelector = (state: State): boolean =>
+  state.receiveOptionsDrawer.isOpen;
 
 const receiveOptionsDrawerSlice = createSlice({
   name: "receiveOptionsDrawerKey",

@@ -11,6 +11,8 @@ export const INITIAL_STATE: RebornBuyDeviceDrawerState = {
 
 // Selectors
 export const rebornBuyDeviceDrawerStateSelector = (state: State) => state.rebornBuyDeviceDrawer;
+export const rebornBuyDeviceDrawerIsOpenSelector = (state: State): boolean =>
+  state.rebornBuyDeviceDrawer.isOpen;
 
 const rebornBuyDeviceDrawerSlice = createSlice({
   name: "rebornBuyDeviceDrawerKey",

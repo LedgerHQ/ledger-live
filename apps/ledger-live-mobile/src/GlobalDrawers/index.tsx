@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
+import { useSelector } from "~/context/hooks";
 import { DRAWER_ENTRIES } from "./registry";
+import type { DrawerRegistryEntry } from "./registry";
 
 type GlobalDrawersProps = Readonly<{
   children: React.JSX.Element;
@@ -35,12 +37,32 @@ type GlobalDrawersProps = Readonly<{
  * management, and improves maintainability.
  */
 
+type LazyDrawerMountProps = Readonly<{
+  entry: DrawerRegistryEntry & { key: string };
+}>;
+
+/**
+ * Mounts a drawer wrapper only after it has been opened for the first time.
+ * Once mounted, the component stays in the tree so close animations and
+ * internal cleanup work correctly.
+ */
+function LazyDrawerMount({ entry }: LazyDrawerMountProps) {
+  const isOpen = useSelector(entry.selector);
+  const hasMountedOnce = useRef(isOpen);
+  if (isOpen) hasMountedOnce.current = true;
+
+  if (!hasMountedOnce.current) return null;
+
+  const DrawerWrapper = entry.component;
+  return <DrawerWrapper />;
+}
+
 function GlobalDrawers({ children }: GlobalDrawersProps) {
   return (
     <>
       {children}
-      {DRAWER_ENTRIES.map(({ key, component: DrawerWrapper }) => (
-        <DrawerWrapper key={key} />
+      {DRAWER_ENTRIES.map(entry => (
+        <LazyDrawerMount key={entry.key} entry={entry} />
       ))}
     </>
   );
