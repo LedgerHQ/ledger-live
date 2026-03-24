@@ -5,7 +5,6 @@ import {
   isValidRestoreModalState,
   INSTRUCTION_TYPE_MAP,
 } from "../utils/transferProposals";
-import type { RawTransferProposal } from "../types";
 import { ACCOUNT_XPUB, createRawProposal, createProcessedProposal } from "./test-utils";
 
 const OTHER_XPUB = "other-xpub";
@@ -95,10 +94,7 @@ describe("processTransferProposals", () => {
       memo: undefined,
     });
 
-    const { incoming } = processTransferProposals(
-      [raw as unknown as RawTransferProposal],
-      ACCOUNT_XPUB,
-    );
+    const { incoming } = processTransferProposals([raw], ACCOUNT_XPUB);
 
     expect(incoming[0].memo).toBe("");
   });
