@@ -2,10 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "customConditions": [],
-    "types": [
-      "node",
-      "jest"
-    ]
+    "types": ["node"]
   },
   "exclude": [
     "src/api/subscan.ts",

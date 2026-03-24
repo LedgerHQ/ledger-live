@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "customConditions": []
+    "customConditions": [],
+    "types": [
+      "node",
+      "w3c-web-hid"
+    ]
   },
   "exclude": [
     "**/*.test.ts",

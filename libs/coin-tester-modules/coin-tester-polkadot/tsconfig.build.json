@@ -3,6 +3,7 @@
   "compilerOptions": {
     "customConditions": [],
     "types": [
+      "node",
       "jest"
     ]
   },
