@@ -312,7 +312,21 @@ async function getBlockByHeight(
   blockHeight: number | "latest",
   prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
-  const block = await api.getBlock(blockHeight, prefetchTxs);
+  let block: ethers.Block | null;
+  try {
+    block = await api.getBlock(blockHeight, prefetchTxs);
+  } catch (error) {
+    // Some chains (e.g. zkSync) can return tx objects missing signature fields, ethers then fails while formatting
+    // prefetched transactions => we fallback to a custom getBlock implementation
+    if (prefetchTxs && isSignatureError(error)) {
+      log("warn", "EVM getBlock fallback: using raw eth_getBlockByNumber response", {
+        blockHeight,
+        error: String(error),
+      });
+      return getBlockByHeightFromRawRpc(api, blockHeight, true);
+    }
+    throw error;
+  }
 
   if (!block) {
     throw new Error(`Block ${blockHeight} not found`);
@@ -354,6 +368,105 @@ async function getBlockByHeight(
     height: block.number ?? 0,
     // timestamp is returned in seconds by getBlock, we need milliseconds
     timestamp: block.timestamp * 1000,
+    parentHash: block.parentHash,
+    ...(transactions !== undefined && { transactions }),
+    ...(transactionHashes !== undefined && { transactionHashes }),
+  };
+}
+
+/** Specific error thrown by ethers when handling zksync blocks with missing signature fields in prefetched transactions */
+function isSignatureError(error: unknown): boolean {
+  if (!hasErrorCode(error, "INVALID_ARGUMENT")) return false;
+  if (typeof error !== "object" || error === null) return false;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const ethersError = error as { argument?: unknown };
+  return ethersError.argument === "signature";
+}
+
+/**
+ * Parse a quantity (eg: amount or block height) return from an RPC.
+ *
+ * @param value raw RPC value
+ * @param fieldName dereferenced field, for error display only
+ */
+function parseRpcHexQuantity(value: unknown, fieldName: string): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(BigInt(value));
+  throw new Error(`Malformed ${fieldName} in eth_getBlockByNumber response`);
+}
+
+/**
+ * Fallback implementation of {@link getBlockByHeight} using raw RPC call to eth_getBlockByNumber, to handle cases where
+ * ethers fails to parse the block due to malformed prefetched transactions (e.g. missing signature fields in zkSync
+ * blocks).
+ */
+async function getBlockByHeightFromRawRpc(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+  prefetchTxs: boolean,
+): Promise<BlockByHeightResult> {
+  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  const rawBlock = await api.send("eth_getBlockByNumber", [blockTag, prefetchTxs]);
+  if (typeof rawBlock !== "object" || rawBlock === null)
+    throw new Error("Invalid eth_getBlockByNumber response");
+
+  const block = rawBlock as Record<string, unknown>;
+  if (typeof block.hash !== "string")
+    throw new Error("Malformed block hash in eth_getBlockByNumber");
+  if (typeof block.parentHash !== "string")
+    throw new Error("Malformed block parentHash in eth_getBlockByNumber");
+
+  const height = parseRpcHexQuantity(block.number, "block.number");
+  const timestampInSeconds = parseRpcHexQuantity(block.timestamp, "block.timestamp");
+  const rawTransactions = block.transactions;
+  if (rawTransactions !== undefined && !Array.isArray(rawTransactions))
+    throw new Error("Malformed block.transactions in eth_getBlockByNumber response");
+
+  const transactionHashes = rawTransactions?.map((tx, index) => {
+    if (typeof tx === "string") return tx;
+    if (typeof tx === "object" && tx !== null && "hash" in tx && typeof tx.hash === "string")
+      return tx.hash;
+    throw new Error(
+      `Malformed block transaction at index ${index} in eth_getBlockByNumber response`,
+    );
+  });
+
+  const transactions =
+    prefetchTxs && rawTransactions
+      ? rawTransactions.map(tx => {
+          if (typeof tx === "string")
+            throw new Error("Expected prefetched transaction object, got hash string");
+          if (typeof tx !== "object" || tx === null)
+            throw new Error("Malformed prefetched transaction in eth_getBlockByNumber response");
+          if (!("hash" in tx) || typeof tx.hash !== "string")
+            throw new Error(
+              "Malformed prefetched transaction hash in eth_getBlockByNumber response",
+            );
+          if (!("from" in tx) || typeof tx.from !== "string")
+            throw new Error(
+              "Malformed prefetched transaction from in eth_getBlockByNumber response",
+            );
+          if ("to" in tx && tx.to !== null && tx.to !== undefined && typeof tx.to !== "string")
+            throw new Error("Malformed prefetched transaction to in eth_getBlockByNumber response");
+          if ("value" in tx && tx.value !== undefined && typeof tx.value !== "string")
+            throw new Error(
+              "Malformed prefetched transaction value in eth_getBlockByNumber response",
+            );
+
+          return {
+            hash: tx.hash,
+            value: BigInt(tx.value ?? "0x0").toString(),
+            from: tx.from,
+            to: tx.to ?? undefined,
+          };
+        })
+      : undefined;
+
+  return {
+    hash: block.hash,
+    height,
+    timestamp: timestampInSeconds * 1000,
     parentHash: block.parentHash,
     ...(transactions !== undefined && { transactions }),
     ...(transactionHashes !== undefined && { transactionHashes }),
@@ -457,7 +570,7 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
       ? typeof value.to === "string" || value.to === null || value.to === undefined
       : true) &&
     typeof value.hash === "string" &&
-    typeof value.value === "bigint" &&
+    (typeof value.value === "string" || typeof value.value === "bigint") &&
     typeof value.from === "string"
   );
 }
