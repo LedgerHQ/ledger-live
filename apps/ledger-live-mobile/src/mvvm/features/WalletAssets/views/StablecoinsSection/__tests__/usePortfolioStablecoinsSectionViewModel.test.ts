@@ -112,13 +112,15 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(readOnlyResult.current.hasMore).toBe(false);
     });
 
-    it("should navigate to AssetsList on onPressShowAll when llmAccountListUI is enabled", () => {
+    it("should navigate to AssetsList on onPressShowAll when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
           settings: {
             ...state.settings,
-            overriddenFeatureFlags: { llmAccountListUI: { enabled: true } },
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { assetSection: true } },
+            },
           },
         }),
       });

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
@@ -23,7 +23,7 @@ interface PortfolioSectionActions {
 }
 
 export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectionActions {
-  const isAccountListUIEnabled = useFeature("llmAccountListUI")?.enabled;
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const onPressShowAll = useCallback(() => {
@@ -32,7 +32,7 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
       type: "view",
       page: "Wallet",
     });
-    if (!isReadOnly && isAccountListUIEnabled) {
+    if (!isReadOnly && shouldDisplayAssetSection) {
       navigation.navigate(NavigatorName.Assets, {
         screen: ScreenName.AssetsList,
         params: {
@@ -46,7 +46,7 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
         screen: ScreenName.Assets,
       });
     }
-  }, [navigation, isAccountListUIEnabled, isReadOnly]);
+  }, [navigation, shouldDisplayAssetSection, isReadOnly]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {

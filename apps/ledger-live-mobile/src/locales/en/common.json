@@ -2750,6 +2750,11 @@
       "noAccounts": "Start by funding\nyour wallet"
     },
     "seeAllAssets": "See all assets",
+    "cryptoAddresses": {
+      "title": "Crypto accounts",
+      "count_one": "{{count}} account",
+      "count_other": "{{count}} accounts"
+    },
     "seeAllAccounts": "See all accounts",
     "assetSection": {
       "connectionFailed": "Connection failed"
