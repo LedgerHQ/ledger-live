@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect } from "react";
+import React, { forwardRef, useState } from "react";
 import VersionNumber from "react-native-version-number";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
@@ -40,6 +40,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
+      isLoadingAccounts,
     } = useWebView(
       {
         manifest,
@@ -52,18 +53,6 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
     );
     const [error, setError] = useState(false);
-    const [waitingForAccounts, setWaitingForAccounts] = useState(true);
-
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setWaitingForAccounts(false);
-      }, 1000);
-
-      return () => {
-        clearTimeout(timeout);
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     const reloadWebView = () => {
       setError(false);
@@ -75,11 +64,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const javaScriptCanOpenWindowsAutomatically =
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
-    if (waitingForAccounts && noAccounts) {
-      return <DefaultLoader />;
-    }
-
-    if (!!manifest.dapp && noAccounts) {
+    if (manifest.dapp && noAccounts) {
+      if (isLoadingAccounts) {
+        return <Loader />;
+      }
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
 

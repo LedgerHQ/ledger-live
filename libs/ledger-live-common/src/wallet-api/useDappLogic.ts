@@ -107,6 +107,8 @@ export function useDappCurrentAccount(
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
+const emptyArray: string[] = [];
+
 function useDappAccountLogic({
   manifest,
   accounts,
@@ -119,6 +121,9 @@ function useDappAccountLogic({
   initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
+  // If the manifest has a wildcard currencyId, we use an empty array to avoid any issues
+  // For dApps, currencies need to be specified explicitly
+  const currencyIds = manifest.currencies === "*" ? emptyArray : manifest.currencies;
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } = useDappCurrentAccount(
     manifest.id,
     currentAccountHistDb,
@@ -129,6 +134,16 @@ function useDappAccountLogic({
       return getParentAccount(currentAccount, accounts);
     }
   }, [currentAccount, accounts]);
+
+  const storedCurrentAccountIsPermitted = useCallback(() => {
+    if (!currentAccount) return false;
+    return accounts.some(
+      account =>
+        account.type === "Account" &&
+        currencyIds.includes(account.currency.id) &&
+        account.id === currentAccount.id,
+    );
+  }, [currentAccount, accounts, currencyIds]);
 
   const currentAccountIdFromHist = useMemo(() => {
     if (manifest && currentAccountHistDb) {
@@ -162,10 +177,27 @@ function useDappAccountLogic({
       setCurrentAccount(currentAccountFromHist);
       return;
     }
-  }, [currentAccountFromHist, setCurrentAccount]);
+
+    if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
+      setCurrentAccount(null);
+    }
+  }, [
+    initialAccountSelected,
+    initialAccount,
+    currentAccountFromHist,
+    storedCurrentAccountIsPermitted,
+    manifest.id,
+    setCurrentAccount,
+    setCurrentAccountHist,
+    setInitialAccountSelected,
+  ]);
+
+  const currentAccountHistDbLoaded = currentAccountHistDb?.[2] ?? true;
 
   return {
     currentAccount,
+    currentAccountFromHist,
+    currentAccountHistDbLoaded,
     setCurrentAccount,
     currentParentAccount,
     setCurrentAccountHist,
@@ -206,13 +238,19 @@ export function useDappLogic({
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
   const ws = useRef<SmartWebsocket | undefined>(undefined);
-  const { currentAccount, currentParentAccount, setCurrentAccount, setCurrentAccountHist } =
-    useDappAccountLogic({
-      manifest,
-      accounts,
-      currentAccountHistDb,
-      initialAccountId,
-    });
+  const {
+    currentAccount,
+    currentAccountFromHist,
+    currentAccountHistDbLoaded,
+    currentParentAccount,
+    setCurrentAccount,
+    setCurrentAccountHist,
+  } = useDappAccountLogic({
+    manifest,
+    accounts,
+    currentAccountHistDb,
+    initialAccountId,
+  });
 
   /** Current network is needed for recognising the current chain id.
    * If a token account is selected, this depends on the parent currency. */
@@ -681,5 +719,8 @@ export function useDappLogic({
     ],
   );
 
-  return { onDappMessage, noAccounts: !currentAccount };
+  const isLoadingAccounts =
+    !currentAccountHistDbLoaded || (!currentAccount && !!currentAccountFromHist);
+
+  return { onDappMessage, noAccounts: !currentAccount, isLoadingAccounts };
 }
