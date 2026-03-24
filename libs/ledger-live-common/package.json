@@ -289,7 +289,7 @@
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",
-    "@xstate/react": "^5.0.2",
+    "@xstate/react": "catalog:",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
     "@zondax/ledger-filecoin": "^3.0.6",
@@ -329,7 +329,7 @@
     "usehooks-ts": "^2.13.0",
     "utility-types": "^3.10.0",
     "winston": "^3.4.0",
-    "xstate": "^5.19.2",
+    "xstate": "catalog:",
     "yargs": "^17.0.0",
     "zod": "catalog:"
   },

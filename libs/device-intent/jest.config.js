@@ -1,6 +1,9 @@
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  moduleNameMapper: {
+    "^(\\.\\.?/.*)\\.js$": "$1",
+  },
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

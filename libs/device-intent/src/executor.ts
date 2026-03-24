@@ -55,7 +55,6 @@ export type ExecutorState =
   | { type: "initializingDeviceContextError"; error: unknown }
   | { type: "executingIntent" }
   | { type: "executingIntentError"; error: unknown }
-  | { type: "cancellingIntent" }
   | { type: "idle" };
 
 // ---- Executor props ----

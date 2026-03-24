@@ -7,7 +7,7 @@ type TestInput = { value: number };
 type TestExtraProps = { title: string };
 
 const DummyComponent: React.FC<{
-  jobState: TestJobState;
+  jobState: TestJobState | undefined;
   extraProps: TestExtraProps;
 }> = () => null;
 

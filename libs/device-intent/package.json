@@ -45,14 +45,16 @@
     "jest": "catalog:",
     "react": "catalog:",
     "rxjs": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "xstate": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/client-ids": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "react": "catalog:",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "xstate": "catalog:"
   },
   "exports": {
     ".": {
