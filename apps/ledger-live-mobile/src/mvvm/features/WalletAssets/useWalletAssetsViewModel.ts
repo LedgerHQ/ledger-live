@@ -3,7 +3,7 @@ import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
-import { MAX_ASSETS_TO_DISPLAY } from "src/mvvm/features/WalletAssets/views/CryptosSection/usePortfolioCryptosSectionViewModel";
+import { MAX_ASSETS_TO_DISPLAY } from "LLM/features/WalletAssets/views/CryptosSection/usePortfolioCryptosSectionViewModel";
 import { MAX_STABLECOINS_TO_DISPLAY } from "LLM/features/WalletAssets/views/StablecoinsSection/usePortfolioStablecoinsSectionViewModel";
 
 interface WalletAssetsViewModelResult {

@@ -76,8 +76,6 @@ export const useListItemViewModel = (asset: Asset): ListItemViewModelResult => {
         deltaColor = "success";
       } else if (percentage < 0) {
         deltaColor = "error";
-      } else {
-        deltaColor = "muted";
       }
     }
   }
