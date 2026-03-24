@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from "react";
-import Svg, { Rect, Text as SvgText } from "react-native-svg";
+import Svg, { Rect, Path, Text as SvgText } from "react-native-svg";
 import * as d3scale from "d3-scale";
 import type { YearProjection } from "../../../utils/compoundInterest";
 
@@ -55,33 +55,34 @@ function SimulatorBarChart({ data, width, height, maxYValue, depositColor, rewar
     [data, width],
   );
 
-  const maxTotal = useMemo(() => Math.max(...data.map(d => d.deposits + d.rewards)), [data]);
-
   const yScale = useMemo(
     () =>
       d3scale
-        .scaleLinear()
-        .domain([0, maxTotal * 1.1])
+        .scaleSqrt()
+        .domain([0, maxYValue * 1.1])
         .range([chartHeight, 0]),
-    [maxTotal, chartHeight],
+    [maxYValue, chartHeight],
   );
 
   const bandwidth = xScale.bandwidth();
 
+  const currentMax = useMemo(() => Math.max(...data.map(d => d.deposits + d.rewards)), [data]);
+
   return (
     <Svg width={width} height={height}>
       {/* Y-axis max label */}
-      <SvgText
-        x={width - 4}
-        y={yScale(maxTotal) - 4}
-        fontSize={LABEL_FONT_SIZE}
-        fill={LABEL_COLOR}
-        textAnchor="end"
-        fontFamily="Inter"
-      >
-        {formatCompactValue(maxTotal)}
-      </SvgText>
-
+      {
+        <SvgText
+          x={width - 4}
+          y={yScale(currentMax) - 4}
+          fontSize={LABEL_FONT_SIZE}
+          fill={LABEL_COLOR}
+          textAnchor="end"
+          fontFamily="Inter"
+        >
+          {formatCompactValue(currentMax)}
+        </SvgText>
+      }
       {data.map(d => {
         const x = xScale(d.year) ?? 0;
         const total = d.deposits + d.rewards;
