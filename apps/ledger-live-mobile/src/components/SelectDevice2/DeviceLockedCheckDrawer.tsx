@@ -1,5 +1,5 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { InfiniteLoader } from "@ledgerhq/native-ui";
+import { Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import React, { useEffect } from "react";
 import { TrackScreen } from "~/analytics";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
@@ -11,6 +11,7 @@ import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types
 import { PeerRemovedPairing } from "@ledgerhq/errors";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { AlreadySendingApduError } from "@ledgerhq/device-management-kit";
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +28,9 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isUnlocked = isLockedResult.type === IsDeviceLockedResultType.unlocked;
   const isError = isLockedResult.type === IsDeviceLockedResultType.error;
   const isPeerRemovedPairingError = isError && isLockedResult.error instanceof PeerRemovedPairing;
-  const isOtherError = isError && !isPeerRemovedPairingError;
+  const isAlreadySendingApduError =
+    isError && isLockedResult.error instanceof AlreadySendingApduError;
+  const isOtherError = isError && !isPeerRemovedPairingError && !isAlreadySendingApduError;
   const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;
 
@@ -58,6 +61,14 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
         <BleForgetDeviceIllustration
           productName={getDeviceModel(device.modelId).productName}
           onRetry={retry}
+        />
+      )}
+      {isAlreadySendingApduError && (
+        <GenericErrorView
+          error={isLockedResult.error}
+          Icon={Icons.InformationFill}
+          iconColor="primary.c80"
+          hasExportLogButton={false}
         />
       )}
       {isOtherError && <GenericErrorView error={isLockedResult.error} hasExportLogButton />}
