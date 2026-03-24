@@ -19,7 +19,7 @@ type UseRecipientScreenViewProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account | null;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, domainName?: string) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -83,7 +83,7 @@ export function useRecipientScreenView({
           currency,
           lastUsedAt: new Date(lastUsedTimestamp),
           name: entry.address,
-          ensName: entry.ensName,
+          domainName: entry.domainName,
           isLedgerAccount: !!matchedAccount,
           accountId: matchedAccount?.id,
         };
@@ -103,7 +103,7 @@ export function useRecipientScreenView({
 
   const handleRecentAddressSelect = useCallback(
     (address: RecentAddress) => {
-      onAddressSelected(address.address, address.ensName);
+      onAddressSelected(address.address, address.domainName);
     },
     [onAddressSelected],
   );
@@ -116,8 +116,8 @@ export function useRecipientScreenView({
   );
 
   const handleAddressSelect = useCallback(
-    (address: string, ensName?: string) => {
-      onAddressSelected(address, ensName);
+    (address: string, domainName?: string) => {
+      onAddressSelected(address, domainName);
     },
     [onAddressSelected],
   );

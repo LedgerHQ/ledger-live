@@ -11,7 +11,7 @@ const createDefaultResult = (overrides?: Partial<AddressSearchResult>): AddressS
     status: "idle",
     error: null,
     resolvedAddress: undefined,
-    ensName: undefined,
+    domainName: undefined,
     isLedgerAccount: false,
     accountName: undefined,
     accountBalance: undefined,
@@ -82,12 +82,12 @@ describe("useRecipientSearchState", () => {
     expect(result.current.isAddressComplete).toBe(true);
   });
 
-  it("should set isAddressComplete for ens_resolved status", () => {
+  it("should set isAddressComplete for domain_resolved status", () => {
     const { result } = renderHook(() =>
       useRecipientSearchState({
         ...defaultProps,
         searchValue: "vitalik.eth",
-        result: createDefaultResult({ status: "ens_resolved" }),
+        result: createDefaultResult({ status: "domain_resolved" }),
         recipientSupportsDomain: true,
       }),
     );
@@ -267,7 +267,7 @@ describe("useRecipientSearchState", () => {
           status: "idle",
           matchedAccounts: [],
           matchedRecentAddress: undefined,
-          ensName: undefined,
+          domainName: undefined,
           isLedgerAccount: false,
         }),
       }),
@@ -321,7 +321,7 @@ describe("useRecipientSearchState", () => {
           status: "valid",
           matchedAccounts: [],
           matchedRecentAddress: undefined,
-          ensName: undefined,
+          domainName: undefined,
           isLedgerAccount: false,
           bridgeErrors: { recipient: recipientError },
         }),

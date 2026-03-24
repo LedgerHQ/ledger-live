@@ -17,6 +17,11 @@ import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSe
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import type { SendStepConfig } from "../types";
 
+const CURRENCY_DOMAIN_SERVICE: Record<string, string> = {
+  ethereum: "ENS",
+  solana: "SNS",
+};
+
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
   const { state, uiConfig, recipientSearch } = useSendFlowData();
@@ -110,7 +115,10 @@ export function SendHeader() {
           onClear={recipientSearch.clear}
           placeholder={
             uiConfig.recipientSupportsDomain
-              ? t("newSendFlow.placeholder")
+              ? t("newSendFlow.placeholder", {
+                  domainServiceName:
+                    CURRENCY_DOMAIN_SERVICE[currencyId ?? ""] ?? "domain name",
+                })
               : t("newSendFlow.placeholderNoENS")
           }
         />

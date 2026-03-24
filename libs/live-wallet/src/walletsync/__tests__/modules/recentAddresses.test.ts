@@ -618,14 +618,14 @@ describe("recentAddress", () => {
       }
     });
 
-    it("should handle corrupted nested address with ensName", () => {
+    it("should handle corrupted nested address with domainName", () => {
       const corruptedData = {
         ethereum: [
           {
             address: {
               address: "0x123",
               lastUsed: 1234567890,
-              ensName: "vitalik.eth",
+              domainName: "vitalik.eth",
             },
             index: 0,
             lastUsed: 1234567891,

@@ -18,7 +18,7 @@ type RecipientScreenViewProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account | null;
   currency: CryptoOrTokenCurrency;
-  onAddressSelected: (address: string, ensName?: string) => void;
+  onAddressSelected: (address: string, domainName?: string) => void;
   recipientSupportsDomain: boolean;
 }>;
 

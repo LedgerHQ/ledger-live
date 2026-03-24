@@ -189,7 +189,7 @@ describe("RecentAddressesStore", () => {
     const legacyCache: any = {
       ethereum: [
         legacyAddress1,
-        { address: modernAddress, lastUsed: modernTimestamp, ensName: modernEnsName },
+        { address: modernAddress, lastUsed: modernTimestamp, domainName: modernEnsName },
         legacyAddress2,
       ],
     };
@@ -202,41 +202,41 @@ describe("RecentAddressesStore", () => {
     expect(addresses).toHaveLength(3);
     expect(addresses[0]).toMatchObject({
       address: legacyAddress1,
-      ensName: undefined,
+      domainName: undefined,
     });
     expect(addresses[0].lastUsed).toBeDefined();
 
     expect(addresses[1]).toMatchObject({
       address: modernAddress,
       lastUsed: modernTimestamp,
-      ensName: modernEnsName,
+      domainName: modernEnsName,
     });
 
     expect(addresses[2]).toMatchObject({
       address: legacyAddress2,
-      ensName: undefined,
+      domainName: undefined,
     });
     expect(addresses[2].lastUsed).toBeDefined();
   });
 
-  it("should save and retrieve ensName when provided", async () => {
+  it("should save and retrieve domainName when provided", async () => {
     const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
-    const ensName = "vitalik.eth";
-    await store.addAddress("ethereum", address, ensName);
+    const domainName = "vitalik.eth";
+    await store.addAddress("ethereum", address, domainName);
     const addresses = store.getAddresses("ethereum");
     expect(addresses).toHaveLength(1);
     expect(addresses[0]).toEqual(
       expect.objectContaining({
         address,
-        ensName,
+        domainName,
       }),
     );
     expect(onAddAddressCompleteMock).toHaveBeenCalledWith({
-      ethereum: [expect.objectContaining({ address, ensName })],
+      ethereum: [expect.objectContaining({ address, domainName })],
     });
   });
 
-  it("should save address without ensName when not provided", async () => {
+  it("should save address without domainName when not provided", async () => {
     const address = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
     await store.addAddress("ethereum", address);
     const addresses = store.getAddresses("ethereum");
@@ -244,7 +244,7 @@ describe("RecentAddressesStore", () => {
     expect(addresses[0]).toEqual(
       expect.objectContaining({
         address,
-        ensName: undefined,
+        domainName: undefined,
       }),
     );
   });
@@ -274,7 +274,7 @@ describe("RecentAddressesStore", () => {
     expect(addresses[0]).toMatchObject({
       address: address1,
       lastUsed: timestamp1,
-      ensName: undefined,
+      domainName: undefined,
     });
   });
 
@@ -300,15 +300,15 @@ describe("RecentAddressesStore", () => {
     expect(addresses).toHaveLength(1);
     expect(addresses[0]).toMatchObject({
       address: address1,
-      ensName: undefined,
+      domainName: undefined,
     });
     expect(addresses[0].lastUsed).toBeDefined();
   });
 
-  it("should handle corrupted nested address structure with ensName", async () => {
+  it("should handle corrupted nested address structure with domainName", async () => {
     const address1 = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
     const timestamp1 = 1768235334651;
-    const ensName = "example.eth";
+    const domainName = "example.eth";
 
     const corruptedCache: any = {
       ethereum: [
@@ -316,7 +316,7 @@ describe("RecentAddressesStore", () => {
           address: {
             address: address1,
             lastUsed: timestamp1,
-            ensName,
+            domainName,
           },
         },
       ],
@@ -331,7 +331,7 @@ describe("RecentAddressesStore", () => {
     expect(addresses[0]).toMatchObject({
       address: address1,
       lastUsed: timestamp1,
-      ensName,
+      domainName,
     });
   });
 
@@ -344,7 +344,7 @@ describe("RecentAddressesStore", () => {
     const mixedCache: any = {
       ethereum: [
         legacyString,
-        { address: validAddress, lastUsed: 1000000, ensName: "valid.eth" },
+        { address: validAddress, lastUsed: 1000000, domainName: "valid.eth" },
         {
           address: {
             address: corruptedAddress1,
@@ -355,7 +355,7 @@ describe("RecentAddressesStore", () => {
         {
           address: {
             address: corruptedAddress2,
-            ensName: "corrupted.eth",
+            domainName: "corrupted.eth",
           },
         },
       ],
@@ -367,20 +367,20 @@ describe("RecentAddressesStore", () => {
     const addresses = store.getAddresses("ethereum");
 
     expect(addresses).toHaveLength(4);
-    expect(addresses[0]).toMatchObject({ address: legacyString, ensName: undefined });
+    expect(addresses[0]).toMatchObject({ address: legacyString, domainName: undefined });
     expect(addresses[1]).toMatchObject({
       address: validAddress,
       lastUsed: 1000000,
-      ensName: "valid.eth",
+      domainName: "valid.eth",
     });
     expect(addresses[2]).toMatchObject({
       address: corruptedAddress1,
       lastUsed: 2000000,
-      ensName: undefined,
+      domainName: undefined,
     });
     expect(addresses[3]).toMatchObject({
       address: corruptedAddress2,
-      ensName: "corrupted.eth",
+      domainName: "corrupted.eth",
     });
     expect(addresses[3].lastUsed).toBeDefined();
   });
@@ -480,12 +480,12 @@ describe("RecentAddressesStore", () => {
             lastUsed: 2000,
           },
         },
-        { address: addr3, lastUsed: 3000, ensName: "three.eth" },
+        { address: addr3, lastUsed: 3000, domainName: "three.eth" },
         {
           address: {
             address: addr4,
             lastUsed: 4000,
-            ensName: "four.eth",
+            domainName: "four.eth",
           },
           index: 3,
         },
@@ -499,9 +499,9 @@ describe("RecentAddressesStore", () => {
 
     expect(addresses).toHaveLength(4);
     expect(addresses.map(a => a.address)).toEqual([addr1, addr2, addr3, addr4]);
-    expect(addresses[0]).toMatchObject({ address: addr1, ensName: undefined });
-    expect(addresses[1]).toMatchObject({ address: addr2, lastUsed: 2000, ensName: undefined });
-    expect(addresses[2]).toMatchObject({ address: addr3, lastUsed: 3000, ensName: "three.eth" });
-    expect(addresses[3]).toMatchObject({ address: addr4, lastUsed: 4000, ensName: "four.eth" });
+    expect(addresses[0]).toMatchObject({ address: addr1, domainName: undefined });
+    expect(addresses[1]).toMatchObject({ address: addr2, lastUsed: 2000, domainName: undefined });
+    expect(addresses[2]).toMatchObject({ address: addr3, lastUsed: 3000, domainName: "three.eth" });
+    expect(addresses[3]).toMatchObject({ address: addr4, lastUsed: 4000, domainName: "four.eth" });
   });
 });

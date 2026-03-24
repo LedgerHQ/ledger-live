@@ -3602,7 +3602,7 @@
   "transfer": {
     "recipient": {
       "input": "Enter address",
-      "inputEns": "Enter address or ENS"
+      "inputEns": "Enter address or {{domainServiceName}}"
     },
     "memoTag": {
       "input": "Enter Tag / Memo",
@@ -4223,7 +4223,7 @@
     "newSendFlow": {
       "title": "Send {{currency}}",
       "available": "Available {{amount}}",
-      "placeholder": "Enter address or ENS",
+      "placeholder": "Enter address or {{domainServiceName}}",
       "placeholderNoENS": "Enter address",
       "editRecipientAccessibilityLabel": "Edit recipient",
       "recent": "Recent",
@@ -4361,11 +4361,11 @@
       "verifyAddress": "Please verify the address matches the one shared by the recipient.",
       "domainService": {
         "reverse": "This address is linked to {{domain}}",
-        "forward": "This is a valid ENS address",
-        "supportLink": "What's an Ethereum Name Service ?",
+        "forward": "This domain name resolves to a valid address",
+        "supportLink": "What is a domain name service?",
         "invalidDomain": {
           "title": "Domain not supported",
-          "description": "Only ENS with less than 30 alphanumerical characters are currently supported."
+          "description": "Only domain names with less than 30 alphanumerical characters are currently supported."
         },
         "noResolution": {
           "title": "No address found for this domain"

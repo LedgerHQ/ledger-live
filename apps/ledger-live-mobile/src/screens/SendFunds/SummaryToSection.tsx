@@ -42,7 +42,7 @@ DefaultRecipientTemplate.displayName = "DefaultRecipientTemplate";
 const RecipientWithResolutionTemplate = memo(({ transaction }: Pick<Props, "transaction">) => {
   const { recipient } = transaction;
 
-  const domainResolution = useDomain(recipient, "ens");
+  const domainResolution = useDomain(recipient);
   const recipientDomain = useMemo(
     () => (isLoaded(domainResolution) ? domainResolution.resolutions[0] : undefined),
     [domainResolution],

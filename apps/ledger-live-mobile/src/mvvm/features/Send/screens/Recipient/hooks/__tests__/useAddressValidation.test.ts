@@ -81,6 +81,7 @@ describe("useAddressValidation", () => {
     mockedUseMaybeAccountName.mockReturnValue("My Account");
     mockedUseBatchMaybeAccountName.mockReturnValue([]);
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
+    mockedSendFeatures.supportsDomain.mockReturnValue(false);
   });
 
   it("returns idle status for empty search", () => {
@@ -128,6 +129,7 @@ describe("useAddressValidation", () => {
   });
 
   it("resolves ENS names for Ethereum", async () => {
+    mockedSendFeatures.supportsDomain.mockReturnValue(true);
     const ensResolution = {
       domain: "vitalik.eth",
       address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -150,8 +152,8 @@ describe("useAddressValidation", () => {
     );
 
     await waitFor(() => {
-      expect(result.current.result.status).toBe("ens_resolved");
-      expect(result.current.result.ensName).toBe("vitalik.eth");
+      expect(result.current.result.status).toBe("domain_resolved");
+      expect(result.current.result.domainName).toBe("vitalik.eth");
       expect(result.current.result.resolvedAddress).toBe(
         "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
       );
@@ -159,6 +161,7 @@ describe("useAddressValidation", () => {
   });
 
   it("shows loading state during ENS resolution", () => {
+    mockedSendFeatures.supportsDomain.mockReturnValue(true);
     mockedUseDomain.mockReturnValue({
       status: "loading",
     });
@@ -457,6 +460,7 @@ describe("useAddressValidation", () => {
   });
 
   it("uses ENS resolved address for bridge validation", () => {
+    mockedSendFeatures.supportsDomain.mockReturnValue(true);
     const ensResolution = {
       domain: "test.eth",
       address: "0xResolved",
@@ -483,6 +487,61 @@ describe("useAddressValidation", () => {
         recipient: "0xResolved",
       }),
     );
+  });
+
+  it("resolves SNS names for Solana", async () => {
+    mockedSendFeatures.supportsDomain.mockReturnValue(true);
+    const snsResolution = {
+      domain: "chris.sol",
+      address: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+      type: "forward" as const,
+      registry: "sns" as const,
+    };
+
+    mockedUseDomain.mockReturnValue({
+      status: "loaded",
+      resolutions: [snsResolution],
+      updatedAt: Date.now(),
+    });
+
+    const solanaAccount = createMockAccount({
+      id: "sol_account_1",
+      currency: createMockCurrency({ id: "solana", name: "Solana", ticker: "SOL" }),
+      freshAddress: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+    });
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "chris.sol",
+        currency: createMockCurrency({ id: "solana", name: "Solana", ticker: "SOL" }),
+        account: solanaAccount,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("domain_resolved");
+      expect(result.current.result.domainName).toBe("chris.sol");
+      expect(result.current.result.resolvedAddress).toBe(
+        "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+      );
+    });
+  });
+
+  it("does not resolve domains when currency does not support domains", async () => {
+    mockedSendFeatures.supportsDomain.mockReturnValue(false);
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "test.eth",
+        currency: mockAccount.currency,
+        account: mockAccount,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("valid");
+      expect(result.current.result.domainName).toBeUndefined();
+    });
   });
 
   it("filters currency-specific accounts", () => {

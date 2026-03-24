@@ -19,7 +19,7 @@ describe("getRecipientDisplayValue", () => {
     expect(getRecipientDisplayValue(null)).toBe("");
   });
 
-  it("returns formatted address when no ensName", () => {
+  it("returns formatted address when no domainName", () => {
     mockedFormatAddress.mockReturnValue("0x1234...5678");
     const recipient = { address: "0x1234567890123456789012345678901234567890" };
 
@@ -30,11 +30,11 @@ describe("getRecipientDisplayValue", () => {
     });
   });
 
-  it("returns ensName with formatted address when ensName exists", () => {
+  it("returns domainName with formatted address when domainName exists", () => {
     mockedFormatAddress.mockReturnValue("0x1234...5678");
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
-      ensName: "vitalik.eth",
+      domainName: "vitalik.eth",
     };
 
     expect(getRecipientDisplayValue(recipient)).toBe("vitalik.eth (0x1234...5678)");
@@ -53,11 +53,11 @@ describe("getRecipientDisplayValue", () => {
     expect(getRecipientDisplayValue(recipient)).toBe("bc1q...xyz");
   });
 
-  it("handles empty ensName string", () => {
+  it("handles empty domainName string", () => {
     mockedFormatAddress.mockReturnValue("0x1234...5678");
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
-      ensName: "",
+      domainName: "",
     };
 
     expect(getRecipientDisplayValue(recipient)).toBe("0x1234...5678");
@@ -69,35 +69,35 @@ describe("getRecipientSearchPrefillValue", () => {
     expect(getRecipientSearchPrefillValue(null)).toBe("");
   });
 
-  it("returns address when no ensName", () => {
+  it("returns address when no domainName", () => {
     const recipient = { address: "0x1234567890123456789012345678901234567890" };
 
     expect(getRecipientSearchPrefillValue(recipient)).toBe(recipient.address);
   });
 
-  it("returns ensName when ensName exists", () => {
+  it("returns domainName when domainName exists", () => {
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
-      ensName: "vitalik.eth",
+      domainName: "vitalik.eth",
     };
 
     expect(getRecipientSearchPrefillValue(recipient)).toBe("vitalik.eth");
   });
 
-  it("prefers ensName over address", () => {
+  it("prefers domainName over address", () => {
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
-      ensName: "alice.eth",
+      domainName: "alice.eth",
     };
 
     expect(getRecipientSearchPrefillValue(recipient)).toBe("alice.eth");
     expect(getRecipientSearchPrefillValue(recipient)).not.toBe(recipient.address);
   });
 
-  it("handles empty ensName string", () => {
+  it("handles empty domainName string", () => {
     const recipient = {
       address: "0x1234567890123456789012345678901234567890",
-      ensName: "",
+      domainName: "",
     };
 
     expect(getRecipientSearchPrefillValue(recipient)).toBe(recipient.address);

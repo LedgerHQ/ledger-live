@@ -7,6 +7,6 @@ export const domainInputResolution = flagWith(
   },
   {
     enabled: false,
-    params: { supportedCurrencyIds: ["ethereum"] },
+    params: { supportedCurrencyIds: ["ethereum", "solana"] },
   },
 );

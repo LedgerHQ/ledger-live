@@ -6,7 +6,7 @@ export type RecentAddress = Readonly<{
   currency: CryptoOrTokenCurrency;
   lastUsedAt: Date;
   name?: string;
-  ensName?: string;
+  domainName?: string;
   isLedgerAccount?: boolean;
   accountId?: string;
 }>;
@@ -17,7 +17,7 @@ export type AddressValidationStatus =
   | "valid"
   | "invalid"
   | "sanctioned"
-  | "ens_resolved";
+  | "domain_resolved";
 
 export type AddressValidationError =
   | "incorrect_format"
@@ -45,7 +45,7 @@ export type AddressSearchResult = Readonly<{
   status: AddressValidationStatus;
   error: AddressValidationError;
   resolvedAddress: string | undefined;
-  ensName: string | undefined;
+  domainName: string | undefined;
   isLedgerAccount: boolean;
   accountName: string | undefined;
   accountBalance: string | undefined;

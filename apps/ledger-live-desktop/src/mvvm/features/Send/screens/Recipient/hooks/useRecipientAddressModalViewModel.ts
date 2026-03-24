@@ -11,7 +11,7 @@ type UseRecipientAddressModalViewModelProps = Readonly<{
   account: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency | TokenCurrency;
-  onAddressSelected: (address: string, ensName?: string, goToNextStep?: boolean) => void;
+  onAddressSelected: (address: string, domainName?: string, goToNextStep?: boolean) => void;
   recipientSupportsDomain: boolean;
 }>;
 
@@ -57,8 +57,8 @@ export function useRecipientAddressModalViewModel({
   }, [hasMemo, state.recipient?.memo]);
 
   const handleAddressSelect = useCallback(
-    (address: string, ensName?: string) => {
-      onAddressSelected(address, ensName, true);
+    (address: string, domainName?: string) => {
+      onAddressSelected(address, domainName, true);
     },
     [onAddressSelected],
   );

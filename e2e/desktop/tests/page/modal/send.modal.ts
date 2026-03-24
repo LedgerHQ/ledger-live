@@ -48,8 +48,8 @@ export class SendModal extends Modal {
 
   @step("Enter recipient and tag")
   async fillRecipientInfo(transaction: Transaction) {
-    if (transaction.accountToCredit.ensName) {
-      await this.fillRecipient(transaction.accountToCredit.ensName);
+    if (transaction.accountToCredit.domainName) {
+      await this.fillRecipient(transaction.accountToCredit.domainName);
       const displayedAddress = await this.ENSAddressLabel.innerText();
       expect(displayedAddress).toEqual(transaction.accountToCredit.address);
     } else {
@@ -88,8 +88,8 @@ export class SendModal extends Modal {
     await expect(this.amountDisplayedValue).toContainText(tx.amount);
     await expect(this.amountDisplayedValue).toContainText(tx.accountToDebit.currency.ticker);
 
-    if (tx.accountToCredit.ensName) {
-      await expect(this.recipientEnsDisplayed).toHaveText(tx.accountToCredit.ensName);
+    if (tx.accountToCredit.domainName) {
+      await expect(this.recipientEnsDisplayed).toHaveText(tx.accountToCredit.domainName);
     }
   }
 

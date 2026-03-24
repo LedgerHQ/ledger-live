@@ -9,7 +9,7 @@ export const LegacyStringAddressSchema = z.string().transform(
   (address): RecentAddress => ({
     address,
     lastUsed: Date.now(),
-    ensName: undefined,
+    domainName: undefined,
   }),
 );
 
@@ -19,8 +19,12 @@ export const LegacyStringAddressSchema = z.string().transform(
 export const CorrectAddressSchema = z.object({
   address: z.string(),
   lastUsed: z.number(),
+  domainName: z.string().optional(),
   ensName: z.string().optional(),
-});
+}).transform(({ ensName, domainName, ...rest }): RecentAddress => ({
+  ...rest,
+  domainName: domainName ?? ensName,
+}));
 
 /**
  * Zod schema for corrupted nested address format
@@ -33,6 +37,7 @@ export const CorruptedNestedAddressSchema = z
       address: z.string(),
       lastUsed: z.number().optional(),
       ensName: z.string().optional(),
+      domainName: z.string().optional(),
     }),
     index: z.number().optional(),
   })
@@ -40,7 +45,7 @@ export const CorruptedNestedAddressSchema = z
     (entry): RecentAddress => ({
       address: entry.address.address,
       lastUsed: entry.address.lastUsed ?? Date.now(),
-      ensName: entry.address.ensName,
+      domainName: entry.address.domainName ?? entry.address.ensName,
     }),
   );
 

@@ -47,6 +47,52 @@ describe("Domain Service", () => {
       });
     });
 
+    describe("resolveDomain (SNS)", () => {
+      beforeEach(() => {
+        jest.restoreAllMocks();
+        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }: { url: string }) => {
+          if (url?.endsWith("chris.sol")) {
+            return { data: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE" } as any;
+          }
+          return Promise.reject({ response: { status: 404 } }) as any;
+        });
+      });
+
+      it("should resolve a SNS domain by inferring the registries", async () => {
+        const resolutions = await resolveDomain("chris.sol");
+        expect(resolutions).toEqual([
+          {
+            registry: "sns",
+            address: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+            domain: "chris.sol",
+            type: "forward",
+          },
+        ]);
+      });
+
+      it("should resolve a SNS domain by specifying the registry", async () => {
+        const resolutions = await resolveDomain("chris.sol", "sns");
+        expect(resolutions).toEqual([
+          {
+            registry: "sns",
+            address: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+            domain: "chris.sol",
+            type: "forward",
+          },
+        ]);
+      });
+
+      it("should return base58 address without eip55 corruption", async () => {
+        const resolutions = await resolveDomain("chris.sol");
+        expect(resolutions[0].address).toBe("66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE");
+      });
+
+      it("should fail at resolving a non existing SNS domain", async () => {
+        const resolutions = await resolveDomain("nonexistent.sol");
+        expect(resolutions).toEqual([]);
+      });
+    });
+
     describe("resolveAddress", () => {
       beforeEach(() => {
         jest.restoreAllMocks();
@@ -88,6 +134,45 @@ describe("Domain Service", () => {
       it("should fail at resolving an address without reverse record ENS", async () => {
         const resolutions = await resolveAddress("0x123");
         expect(resolutions).toEqual([]);
+      });
+    });
+
+    describe("resolveAddress (SNS)", () => {
+      beforeEach(() => {
+        jest.restoreAllMocks();
+        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }: { url: string }) => {
+          if (url?.endsWith("66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE")) {
+            return { data: "chris.sol" } as any;
+          }
+          return Promise.reject({ response: { status: 404 } }) as any;
+        });
+      });
+
+      it("should resolve a Solana address with a reverse record SNS by inferring registries", async () => {
+        const resolutions = await resolveAddress("66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE");
+        expect(resolutions).toEqual([
+          {
+            registry: "sns",
+            domain: "chris.sol",
+            address: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+            type: "reverse",
+          },
+        ]);
+      });
+
+      it("should resolve a Solana address with a reverse record SNS by specifying registry", async () => {
+        const resolutions = await resolveAddress(
+          "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+          "sns",
+        );
+        expect(resolutions).toEqual([
+          {
+            registry: "sns",
+            domain: "chris.sol",
+            address: "66JX9aK3DSe7cKhnEhsxfudnwhCsFGQ7Eseg7NRoUpEE",
+            type: "reverse",
+          },
+        ]);
       });
     });
   });

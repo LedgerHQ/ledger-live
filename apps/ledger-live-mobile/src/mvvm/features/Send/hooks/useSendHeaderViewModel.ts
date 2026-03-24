@@ -12,6 +12,11 @@ import {
   getRecipientSearchPrefillValue,
 } from "@ledgerhq/live-common/flows/send/utils";
 
+const CURRENCY_DOMAIN_SERVICE: Record<string, string> = {
+  ethereum: "ENS",
+  solana: "SNS",
+};
+
 export type SendHeaderViewModel = {
   title: string;
   descriptionText: string;
@@ -128,7 +133,10 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   }, []);
 
   const recipientPlaceholder = uiConfig.recipientSupportsDomain
-    ? t("send.newSendFlow.placeholder")
+    ? t("send.newSendFlow.placeholder", {
+        domainServiceName:
+          CURRENCY_DOMAIN_SERVICE[state.account.currency?.id ?? ""] ?? "domain name",
+      })
     : t("send.newSendFlow.placeholderNoENS");
 
   return {

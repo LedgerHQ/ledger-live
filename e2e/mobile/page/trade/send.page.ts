@@ -197,9 +197,9 @@ export default class SendPage {
   }
 
   @Step("Expect recipient ENS in summary")
-  async expectSummaryRecipientEns(ensName: string) {
+  async expectSummaryRecipientEns(domainName: string) {
     const ens = this.summaryRecipientEns();
-    await detoxExpect(ens).toHaveText(ensName);
+    await detoxExpect(ens).toHaveText(domainName);
   }
 
   @Step("Expect memo tag in summary")
@@ -221,9 +221,9 @@ export default class SendPage {
   }
 
   @Step("Expect ENS name in device validation screen")
-  async expectValidationEnsName(ensName: string) {
+  async expectValidationEnsName(domainName: string) {
     const elem = getElementById(this.validationEnsId);
-    await detoxExpect(elem).toHaveText(ensName);
+    await detoxExpect(elem).toHaveText(domainName);
   }
 
   @Step("Choose fee strategy")

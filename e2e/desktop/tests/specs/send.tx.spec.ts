@@ -560,7 +560,7 @@ test.describe("Send flows", () => {
     const family = getFamilyByCurrencyId(transactionEnsAddress.accountToDebit.currency.id);
 
     test(
-      `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
+      `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.domainName}`,
       {
         tag: [
           "@NanoSP",

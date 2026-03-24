@@ -21,10 +21,10 @@ export function RecipientScreen() {
   }, [state.account.currency, account]);
 
   const handleAddressSelected = useCallback(
-    (address: string, ensName?: string) => {
+    (address: string, domainName?: string) => {
       transaction.setRecipient({
         address,
-        ensName,
+        domainName,
       });
 
       recipientSearch.clear();

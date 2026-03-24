@@ -1,4 +1,4 @@
-export type SupportedRegistries = "ens";
+export type SupportedRegistries = "ens" | "sns";
 
 export type DomainServiceResolution = {
   registry: SupportedRegistries;

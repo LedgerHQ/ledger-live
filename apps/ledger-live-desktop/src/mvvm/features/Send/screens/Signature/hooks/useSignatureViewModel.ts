@@ -96,8 +96,8 @@ export function useSignatureViewModel() {
       if (account && transaction?.recipient) {
         const mainAccount = getMainAccount(account, parentAccount);
         const store = getRecentAddressesStore();
-        const ensName = transaction.recipientDomain?.domain;
-        store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
+        const domainName = transaction.recipientDomain?.domain;
+        store.addAddress(mainAccount.currency.id, transaction.recipient, domainName);
       }
 
       operation.onOperationBroadcasted(op);

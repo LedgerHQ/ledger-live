@@ -40,7 +40,7 @@ export type Memo = { value: string; type?: string };
 
 export type RecipientData = Readonly<{
   address?: string;
-  ensName?: string;
+  domainName?: string;
   memo?: Memo;
   destinationTag?: string;
 }>;

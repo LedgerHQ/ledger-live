@@ -10,7 +10,7 @@ import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
 type AddressMatchedSectionProps = Readonly<{
   searchResult: AddressSearchResult;
   searchValue: string;
-  onSelect: (address: string, ensName?: string) => void;
+  onSelect: (address: string, domainName?: string) => void;
   isSanctioned?: boolean;
   isAddressComplete?: boolean;
   hasBridgeError?: boolean;
@@ -27,10 +27,10 @@ export function AddressMatchedSection({
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
 
-  const { matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } = searchResult;
+  const { matchedAccounts, domainName, matchedRecentAddress, status, resolvedAddress } = searchResult;
 
   const hasMatchedAccounts = matchedAccounts && matchedAccounts.length > 0;
-  const hasENS = !!ensName;
+  const hasENS = !!domainName;
   const hasRecentMatch = !!matchedRecentAddress;
   const hasMatch = hasMatchedAccounts || hasENS || hasRecentMatch;
 
@@ -49,7 +49,7 @@ export function AddressMatchedSection({
   });
 
   const getENSDisplayTitle = (): string => {
-    return `${ensName} (${formattedAddress})`;
+    return `${domainName} (${formattedAddress})`;
   };
 
   const getRecentDescription = (): string => {
@@ -87,7 +87,7 @@ export function AddressMatchedSection({
             address={resolvedAddress ?? searchValue}
             name={getENSDisplayTitle()}
             description={formattedAddress}
-            onSelect={() => onSelect(resolvedAddress ?? searchValue, ensName)}
+            onSelect={() => onSelect(resolvedAddress ?? searchValue, domainName)}
             showSendTo
             disabled={isSanctioned || hasBridgeError}
           />
@@ -103,7 +103,7 @@ export function AddressMatchedSection({
             })}
             description={getRecentDescription()}
             onSelect={() =>
-              onSelect(matchedRecentAddress?.address ?? searchValue, matchedRecentAddress?.ensName)
+              onSelect(matchedRecentAddress?.address ?? searchValue, matchedRecentAddress?.domainName)
             }
             showSendTo
             disabled={isSanctioned || hasBridgeError}

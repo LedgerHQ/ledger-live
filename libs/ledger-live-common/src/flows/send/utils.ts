@@ -15,8 +15,8 @@ export function getRecipientDisplayValue(
     suffixLength: options?.suffixLength ?? 5,
   });
 
-  if (recipient.ensName?.trim()) {
-    return `${recipient.ensName} (${formattedAddress})`;
+  if (recipient.domainName?.trim()) {
+    return `${recipient.domainName} (${formattedAddress})`;
   }
 
   return formattedAddress;
@@ -29,5 +29,5 @@ export function getRecipientSearchPrefillValue(
   recipient: RecipientData | null,
 ): string | undefined {
   if (!recipient) return "";
-  return recipient.ensName?.trim() ? recipient.ensName : recipient.address;
+  return recipient.domainName?.trim() ? recipient.domainName : recipient.address;
 }

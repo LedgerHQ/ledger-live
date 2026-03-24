@@ -8,6 +8,7 @@ import { Platform, StyleSheet, View } from "react-native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Trans } from "~/context/Locale";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "~/components/RecipientInput";
@@ -17,6 +18,11 @@ import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
+
+const CURRENCY_DOMAIN_SERVICE: Record<string, string> = {
+  ethereum: "ENS",
+  solana: "SNS",
+};
 
 type Props = {
   onChangeText: (value: string) => void;
@@ -42,8 +48,10 @@ const DomainServiceRecipientInput = ({
   error,
 }: Props) => {
   const bridge = getAccountBridge(account, parentAccount);
+  const currencyId = getAccountCurrency(account).id;
+  const domainServiceName = CURRENCY_DOMAIN_SERVICE[currencyId] ?? "domain name";
 
-  const domainServiceResponse = useDomain(value, "ens");
+  const domainServiceResponse = useDomain(value);
   const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
 
   const ensResolution = useMemo(
@@ -60,6 +68,9 @@ const DomainServiceRecipientInput = ({
       (domainError?.error as Error) instanceof NoResolution,
     [domainError],
   );
+
+  const isDomainResolving =
+    domainServiceResponse.status === "queued" || domainServiceResponse.status === "loading";
 
   const [isForwardResolution, setIsForwardResolution] = useState(false);
   useEffect(() => {
@@ -117,10 +128,11 @@ const DomainServiceRecipientInput = ({
           onChangeText={onChangeText}
           value={value}
           placeholderTranslationKey="transfer.recipient.inputEns"
+          placeholderTranslationOptions={{ domainServiceName }}
         />
       </View>
       <BasicErrorsView
-        error={error}
+        error={isForwardResolution && (isDomainResolving || !!ensResolution) ? null : error}
         warning={warning}
         domainError={domainError}
         domainErrorHandled={domainErrorHandled}

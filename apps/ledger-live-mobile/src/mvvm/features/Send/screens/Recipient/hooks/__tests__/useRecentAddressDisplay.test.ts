@@ -54,9 +54,9 @@ describe("useRecentAddressDisplay", () => {
     expect(result.current.icon).toBe(Wallet);
   });
 
-  it("uses ensName as displayName when present", () => {
+  it("uses domainName as displayName when present", () => {
     const recentAddress = createMockRecentAddress({
-      ensName: "vitalik.eth",
+      domainName: "vitalik.eth",
       name: "Custom Name",
     });
 
@@ -65,7 +65,7 @@ describe("useRecentAddressDisplay", () => {
     expect(result.current.displayName).toBe("vitalik.eth");
   });
 
-  it("uses account name as displayName for Ledger account when no ensName", () => {
+  it("uses account name as displayName for Ledger account when no domainName", () => {
     const recentAddress = createMockRecentAddress({
       isLedgerAccount: true,
       accountId: mockAccount.id,
@@ -77,7 +77,7 @@ describe("useRecentAddressDisplay", () => {
     expect(result.current.displayName).toBe("My Bitcoin Account");
   });
 
-  it("uses recentAddress.name as displayName when not Ledger account and no ensName", () => {
+  it("uses recentAddress.name as displayName when not Ledger account and no domainName", () => {
     const recentAddress = createMockRecentAddress({
       name: "Saved Contact",
       isLedgerAccount: false,
@@ -88,7 +88,7 @@ describe("useRecentAddressDisplay", () => {
     expect(result.current.displayName).toBe("Saved Contact");
   });
 
-  it("uses formatted address as displayName when no ensName, account name, or name", () => {
+  it("uses formatted address as displayName when no domainName, account name, or name", () => {
     const recentAddress = createMockRecentAddress({
       isLedgerAccount: false,
       address: "0x1234567890abcdef1234567890abcdef12345678",

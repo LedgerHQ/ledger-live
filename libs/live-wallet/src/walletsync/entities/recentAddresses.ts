@@ -13,7 +13,7 @@ export const CorrectDistantAddressSchema = z.object({
 /**
  * Zod schema for corrupted nested address format in WalletSync
  * Handles data corruption where address is an object instead of a string
- * Expected format: { address: { address: string, lastUsed?: number, ensName?: string }, index: number, lastUsed?: number }
+ * Expected format: { address: { address: string, lastUsed?: number, domainName?: string }, index: number, lastUsed?: number }
  */
 export const CorruptedNestedDistantAddressSchema = z
   .object({

@@ -276,18 +276,18 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[],
       await beforeAllFunction(transaction);
     });
 
-    it(`User sends funds to ENS address - ${transaction.accountToCredit.ensName}`, async () => {
-      const ensName = transaction.accountToCredit.ensName;
-      invariant(ensName, "ENS name is not provided");
+    it(`User sends funds to ENS address - ${transaction.accountToCredit.domainName}`, async () => {
+      const domainName = transaction.accountToCredit.domainName;
+      invariant(domainName, "ENS name is not provided");
 
       await navigateToSendScreen(transaction.accountToDebit.accountName);
-      await app.send.setRecipientAndContinue(ensName, transaction.memoTag);
+      await app.send.setRecipientAndContinue(domainName, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
       await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
-      await app.send.expectSummaryRecipientEns(ensName);
+      await app.send.expectSummaryRecipientEns(domainName);
       await app.send.expectSummaryMemoTag(transaction.memoTag);
       await app.send.summaryContinue();
       await app.send.dismissHighFeeModal();

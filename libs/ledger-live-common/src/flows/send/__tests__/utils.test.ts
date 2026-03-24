@@ -20,7 +20,7 @@ describe("getRecipientDisplayValue", () => {
 
   it("should return ENS name with formatted address when ENS exists", () => {
     expect(
-      getRecipientDisplayValue({ address: "0x1234567890abcdef", ensName: "vitalik.eth" }),
+      getRecipientDisplayValue({ address: "0x1234567890abcdef", domainName: "vitalik.eth" }),
     ).toBe("vitalik.eth (0x123...bcdef)");
   });
 
@@ -47,7 +47,7 @@ describe("getRecipientSearchPrefillValue", () => {
 
   it("should return ENS name when present", () => {
     expect(
-      getRecipientSearchPrefillValue({ address: "0x1234567890abcdef", ensName: "vitalik.eth" }),
+      getRecipientSearchPrefillValue({ address: "0x1234567890abcdef", domainName: "vitalik.eth" }),
     ).toBe("vitalik.eth");
   });
 });

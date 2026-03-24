@@ -24,11 +24,11 @@ function validateTransactionData(tx: Transaction, events: string[]) {
     );
   }
 
-  if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
-    const isENSNameCorrect = containsSubstringInEvent(tx.accountToCredit.ensName, events);
+  if (tx.accountToCredit.domainName && process.env.SPECULOS_DEVICE !== Device.LNS.name) {
+    const isENSNameCorrect = containsSubstringInEvent(tx.accountToCredit.domainName, events);
     if (!isENSNameCorrect) {
       throw new Error(
-        `Expected ENS name "${tx.accountToCredit.ensName}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
+        `Expected ENS name "${tx.accountToCredit.domainName}" to be displayed on Speculos device, but it was not found.\nEvents:\n${formattedEvents}`,
       );
     }
   } else {

@@ -7,11 +7,13 @@ import TextInput, { Props as TextInputProps } from "./TextInput";
 type Props = TextInputProps & {
   onPaste?: () => void;
   placeholderTranslationKey?: string;
+  placeholderTranslationOptions?: Record<string, string>;
 };
 
 const RecipientInput = ({
   onPaste,
   placeholderTranslationKey = "transfer.recipient.input",
+  placeholderTranslationOptions,
   ...props
 }: Props) => {
   const { t } = useTranslation();
@@ -19,7 +21,7 @@ const RecipientInput = ({
   return (
     <TextInput
       testID="recipient-input"
-      placeholder={t(placeholderTranslationKey)}
+      placeholder={t(placeholderTranslationKey, placeholderTranslationOptions)}
       renderRight={
         <Button onPress={onPaste} Icon={<Paste size="S" />} isNewIcon style={{ width: "auto" }} />
       }

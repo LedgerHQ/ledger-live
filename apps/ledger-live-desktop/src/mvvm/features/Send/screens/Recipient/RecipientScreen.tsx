@@ -19,11 +19,11 @@ export function RecipientScreen() {
   }, [state.account.currency, account]);
 
   const handleAddressSelected = useCallback(
-    (address: string, ensName?: string, goToNextStep?: boolean) => {
+    (address: string, domainName?: string, goToNextStep?: boolean) => {
       transaction.setRecipient({
         ...state.recipient,
         address,
-        ensName,
+        domainName,
       });
 
       if (goToNextStep) {

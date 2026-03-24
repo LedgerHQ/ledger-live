@@ -261,8 +261,8 @@ const Body = ({
       // Add address to recent addresses store after successful broadcast
       if (transaction && mainAccount) {
         const store = getRecentAddressesStore();
-        const ensName = transaction.recipientDomain?.domain;
-        store.addAddress(mainAccount.currency.id, transaction.recipient, ensName);
+        const domainName = transaction.recipientDomain?.domain;
+        store.addAddress(mainAccount.currency.id, transaction.recipient, domainName);
       }
     },
     [account, parentAccount, updateAccountWithUpdater, transaction],

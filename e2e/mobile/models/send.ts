@@ -22,7 +22,7 @@ export async function verifyAppValidationSendInfo(transaction: TransactionType, 
   const currency = transaction.accountToCredit.currency;
   const addressRecipient = transaction.accountToCredit.address;
   const addressSender = transaction.accountToDebit.address;
-  const ensName = transaction.accountToCredit.ensName;
+  const domainName = transaction.accountToCredit.domainName;
 
   await app.deviceValidation.expectDeviceValidationScreen();
 
@@ -44,7 +44,7 @@ export async function verifyAppValidationSendInfo(transaction: TransactionType, 
     await app.deviceValidation.expectAddress(addressSender);
   }
 
-  if (ensName) {
-    await app.send.expectValidationEnsName(ensName);
+  if (domainName) {
+    await app.send.expectValidationEnsName(domainName);
   }
 }

@@ -6,7 +6,7 @@ export const RECENT_ADDRESSES_COUNT_LIMIT = 12;
 export type RecentAddressesCache = RecentAddressesState;
 
 export interface RecentAddressesStore {
-  addAddress(currency: string, address: string, ensName?: string): void;
+  addAddress(currency: string, address: string, domainName?: string): void;
   removeAddress(currency: string, address: string): void;
   syncAddresses(cache: RecentAddressesCache): void;
   getAddresses(currency: string): RecentAddress[];
@@ -52,8 +52,8 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     return sanitized;
   }
 
-  addAddress(currency: string, address: string, ensName?: string): void {
-    this.addAddressToCache(currency, address, Date.now(), true, ensName);
+  addAddress(currency: string, address: string, domainName?: string): void {
+    this.addAddressToCache(currency, address, Date.now(), true, domainName);
   }
 
   removeAddress(currency: string, address: string): void {
@@ -73,7 +73,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     for (const currency in previousAddresses) {
       const entries = previousAddresses[currency];
       for (const entry of entries) {
-        this.addAddressToCache(currency, entry.address, entry.lastUsed, false, entry.ensName);
+        this.addAddressToCache(currency, entry.address, entry.lastUsed, false, entry.domainName);
       }
     }
 
@@ -94,7 +94,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
     address: string,
     timestamp: number,
     shouldTriggerCallback: boolean,
-    ensName?: string,
+    domainName?: string,
   ): void {
     if (!this.addressesByCurrency[currency]) {
       this.addressesByCurrency[currency] = [];
@@ -109,7 +109,7 @@ class RecentAddressesStoreImpl implements RecentAddressesStore {
       addresses.pop();
     }
 
-    addresses.unshift({ address, lastUsed: timestamp, ensName });
+    addresses.unshift({ address, lastUsed: timestamp, domainName });
     this.addressesByCurrency[currency] = [...addresses];
 
     if (shouldTriggerCallback) {

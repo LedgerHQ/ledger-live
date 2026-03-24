@@ -18,7 +18,7 @@ export function useRecentAddressDisplay(recentAddress: RecentAddress) {
   const icon = recentAddress.isLedgerAccount ? LedgerLogo : Wallet;
 
   const displayName =
-    recentAddress.ensName ??
+    recentAddress.domainName ??
     (recentAddress.isLedgerAccount && accountName
       ? accountName
       : (recentAddress.name ??

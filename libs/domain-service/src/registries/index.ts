@@ -19,6 +19,23 @@ const REGISTRIES: Registry[] = [
     },
     coinTypes: [60],
   },
+  {
+    name: "sns",
+    resolvers: {
+      forward: "https://explorers.api.live.ledger.com/blockchain/v4/sol/sns/resolve/{name}",
+      reverse:
+        "https://explorers.api.live.ledger.com/blockchain/v4/sol/sns/reverse-resolve/{address}",
+    },
+    signatures: {
+      forward: "",
+      reverse: "",
+    },
+    patterns: {
+      forward: new RegExp("\\.sol$"),
+      reverse: new RegExp("^[1-9A-HJ-NP-Za-km-z]{32,44}$"),
+    },
+    coinTypes: [501],
+  },
 ];
 
 /**

@@ -22,7 +22,7 @@ export function useRecipientSearchState({
   const isAddressComplete = useMemo(() => {
     return (
       result.status === "valid" ||
-      result.status === "ens_resolved" ||
+      result.status === "domain_resolved" ||
       result.status === "sanctioned"
     );
   }, [result.status]);
@@ -30,7 +30,7 @@ export function useRecipientSearchState({
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
     !!result.matchedRecentAddress ||
-    !!result.ensName ||
+    !!result.domainName ||
     result.isLedgerAccount ||
     isSanctioned;
 
@@ -55,7 +55,7 @@ export function useRecipientSearchState({
       (result.status === "valid" && !result.error && !isBridgeInvalidAddress) ||
       (isAddressComplete && (hasBridgeRecipientError || hasBridgeRecipientWarning))) &&
     (result.status === "valid" ||
-      (recipientSupportsDomain && result.status === "ens_resolved") ||
+      (recipientSupportsDomain && result.status === "domain_resolved") ||
       result.isLedgerAccount ||
       !!result.matchedRecentAddress ||
       isSanctioned ||

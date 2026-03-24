@@ -2290,12 +2290,12 @@
         "title": "Recipient",
         "verifyAddress": "Please verify the address matches the one shared by the recipient.",
         "domainService": {
-          "resolve": "This is a valid ENS linked to the following address :",
-          "supportLink": "What's an Ethereum Name Service ?",
+          "resolve": "This domain name resolves to the following address:",
+          "supportLink": "What is a domain name service?",
           "reverse": "This address is linked to {{domain}}",
           "invalidDomain": {
             "title": "Domain not supported",
-            "description": "Only ENS with less than 30 alphanumerical characters are currently supported."
+            "description": "Only domain names with less than 30 alphanumerical characters are currently supported."
           },
           "noResolution": {
             "title": "No address found for this domain"
@@ -2399,7 +2399,7 @@
   "newSendFlow": {
     "title": "Send {{currency}}",
     "available": "Available {{amount}}",
-    "placeholder": "Enter address or ENS",
+    "placeholder": "Enter address or {{domainServiceName}}",
     "placeholderNoENS": "Enter address",
     "recent": "Recent",
     "myAccounts": "My accounts",
@@ -5906,7 +5906,7 @@
   },
   "RecipientField": {
     "placeholder": "Enter {{currencyName}} address",
-    "placeholderEns": "Enter {{currencyName}} address or ENS"
+    "placeholderEns": "Enter {{currencyName}} address or {{domainServiceName}}"
   },
   "Terms": {
     "title": "Terms of use",

@@ -99,22 +99,22 @@ export function useAddressValidation({
 
   const allAccounts = useSelector(accountsSelector);
 
-  const isEthereum = currency.id === "ethereum";
-  const domainServiceResponse = useDomain(isEthereum ? searchValue : "", "ens");
-  const domainIsLoading = isEthereum && isDomainLoading(domainServiceResponse);
+  const supportsDomain = sendFeatures.supportsDomain(currency);
+  const domainServiceResponse = useDomain(supportsDomain ? searchValue : "");
+  const domainIsLoading = supportsDomain && isDomainLoading(domainServiceResponse);
 
-  const ensResolution = useMemo(() => {
-    if (!isEthereum) return null;
+  const domainResolution = useMemo(() => {
+    if (!supportsDomain) return null;
     if (isLoaded(domainServiceResponse) && domainServiceResponse.resolutions.length > 0) {
       return domainServiceResponse.resolutions[0];
     }
     return null;
-  }, [domainServiceResponse, isEthereum]);
+  }, [domainServiceResponse, supportsDomain]);
 
-  // Use resolved address for bridge validation (ENS resolved address or original searchValue)
+  // Use resolved address for bridge validation (domain resolved address or original searchValue)
   const addressForBridgeValidation = useMemo(() => {
-    return ensResolution?.address ?? searchValue;
-  }, [ensResolution?.address, searchValue]);
+    return domainResolution?.address ?? searchValue;
+  }, [domainResolution?.address, searchValue]);
 
   const mainAccount = useMemo(
     () => (account ? getMainAccount(account, parentAccount) : null),
@@ -127,12 +127,12 @@ export function useAddressValidation({
     account: account ?? null,
     parentAccount: parentAccount ?? null,
     enabled: Boolean(
-      addressForBridgeValidation && account && (!isEthereum || ensResolution || !domainIsLoading),
+      addressForBridgeValidation && account && (!supportsDomain || domainResolution || !domainIsLoading),
     ),
   });
 
   const hasInvalidBridgeRecipient =
-    bridgeValidation.errors.recipient instanceof InvalidAddress && !ensResolution;
+    bridgeValidation.errors.recipient instanceof InvalidAddress && !domainResolution;
   const canMatchValidatedRecipient = Boolean(searchValue) && !hasInvalidBridgeRecipient;
 
   const userAccountsForCurrency = useMemo(() => {
@@ -224,7 +224,7 @@ export function useAddressValidation({
     setValidationState({ status: "loading", error: null, isSanctioned: false });
 
     try {
-      const addressToCheck = ensResolution?.address ?? searchValue;
+      const addressToCheck = domainResolution?.address ?? searchValue;
 
       const isCryptoCurrency = "id" in currency && !("tokenType" in currency);
       if (isCryptoCurrency) {
@@ -239,9 +239,9 @@ export function useAddressValidation({
         }
       }
 
-      if (ensResolution) {
+      if (domainResolution) {
         setValidationState({
-          status: "ens_resolved",
+          status: "domain_resolved",
           error: null,
           isSanctioned: false,
         });
@@ -260,7 +260,7 @@ export function useAddressValidation({
         isSanctioned: false,
       });
     }
-  }, [searchValue, ensResolution, currency]);
+  }, [searchValue, domainResolution, currency]);
 
   // Auto-validate when searchValue changes
   if (searchValue !== lastSearchValueRef.current) {
@@ -272,7 +272,17 @@ export function useAddressValidation({
     }
   }
 
-  // Trigger validation once when searchValue changes
+  // Re-trigger validation when domain resolution completes
+  if (
+    searchValue &&
+    domainResolution &&
+    validationState.status !== "domain_resolved" &&
+    validationState.status !== "loading"
+  ) {
+    validationTriggeredRef.current = false;
+  }
+
+  // Trigger validation once when searchValue changes or domain resolves
   if (searchValue && !validationTriggeredRef.current && validationState.status !== "loading") {
     validationTriggeredRef.current = true;
     // Use queueMicrotask to trigger validation after render
@@ -299,7 +309,7 @@ export function useAddressValidation({
     }));
 
     const filteredBridgeErrors: BridgeValidationErrors = { ...bridgeValidation.errors };
-    if (ensResolution && filteredBridgeErrors.recipient instanceof InvalidAddress) {
+    if (domainResolution && filteredBridgeErrors.recipient instanceof InvalidAddress) {
       delete filteredBridgeErrors.recipient;
     }
 
@@ -315,8 +325,8 @@ export function useAddressValidation({
     return {
       status: validationState.status,
       error: validationState.error,
-      resolvedAddress: matchedLedgerAccount?.freshAddress ?? ensResolution?.address,
-      ensName: ensResolution?.domain,
+      resolvedAddress: matchedLedgerAccount?.freshAddress ?? domainResolution?.address,
+      domainName: domainResolution?.domain,
       isLedgerAccount: allMatchedAccounts.length > 0,
       accountName,
       accountBalance: formattedBalance,
@@ -329,7 +339,7 @@ export function useAddressValidation({
     };
   }, [
     validationState,
-    ensResolution,
+    domainResolution,
     matchedLedgerAccount,
     matchedLedgerAccounts,
     currentAccountMatch,

@@ -45,7 +45,7 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
 }: Props<T, TS>) => {
   const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
 
-  const domainServiceResponse = useDomain(value, "ens");
+  const domainServiceResponse = useDomain(value);
   const ensResolution = useMemo(
     () => (isLoaded(domainServiceResponse) ? domainServiceResponse.resolutions[0] : null),
     [domainServiceResponse],
@@ -56,6 +56,9 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
   );
 
   const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
+
+  const isDomainResolving =
+    domainServiceResponse.status === "queued" || domainServiceResponse.status === "loading";
 
   const [isForwardResolution, setIsForwardResolution] = useState(false);
   useEffect(() => {
@@ -132,7 +135,7 @@ const RecipientFieldDomainService = <T extends Transaction, TS extends Transacti
         value={value}
         onChange={onChange}
         placeholderTranslationKey="RecipientField.placeholderEns"
-        hideError={domainErrorHandled}
+        hideError={domainErrorHandled || (isForwardResolution && (isDomainResolving || !!ensResolution))}
       />
       {transaction.recipientDomain ? (
         <Alert mt={5}>

@@ -3,7 +3,7 @@ import { memo } from "./memo";
 
 export const descriptor: CoinDescriptor = {
   send: {
-    inputs: { memo },
+    inputs: { memo, recipientSupportsDomain: true },
     fees: {
       hasPresets: false,
       hasCustom: false,

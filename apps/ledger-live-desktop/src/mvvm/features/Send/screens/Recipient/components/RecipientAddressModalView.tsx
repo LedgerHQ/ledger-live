@@ -29,7 +29,7 @@ type RecipientAddressModalViewProps = Readonly<{
   bridgeRecipientError: Error | undefined;
   bridgeRecipientWarning: Error | undefined;
   bridgeSenderError: Error | undefined;
-  onAddressSelect: (address: string, ensName?: string) => void;
+  onAddressSelect: (address: string, domainName?: string) => void;
   hasMemo: boolean;
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
@@ -75,7 +75,10 @@ export function RecipientAddressModalView({
 
       {showInitialState && <RecipientIntroCard />}
 
-      {showMatchedAddress && (!hasMemo || (hasFilledMemo && !hasMemoValidationError)) && (
+      {showMatchedAddress &&
+        (!hasMemo ||
+          result.status === "domain_resolved" ||
+          (hasFilledMemo && !hasMemoValidationError)) && (
         <AddressMatchedSection
           searchResult={result}
           searchValue={searchValue}

@@ -8,6 +8,11 @@ import Label from "~/renderer/components/Label";
 import RecipientAddress, { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 import { getLLDCoinFamily } from "~/renderer/families";
 
+const CURRENCY_DOMAIN_SERVICE: Record<string, string> = {
+  ethereum: "ENS",
+  solana: "SNS",
+};
+
 type Props = {
   account: Account;
   autoFocus?: boolean;
@@ -45,7 +50,10 @@ const RecipientFieldBase = ({
         <span>{label || t("send.steps.details.recipientAddress")}</span>
       </Label>
       <RecipientAddress
-        placeholder={t(placeholderTranslationKey, { currencyName: account.currency.name })}
+        placeholder={t(placeholderTranslationKey, {
+          currencyName: account.currency.name,
+          domainServiceName: CURRENCY_DOMAIN_SERVICE[account.currency.id] ?? "domain name",
+        })}
         autoFocus={autoFocus}
         withQrCode={!status.recipientIsReadOnly}
         readOnly={status.recipientIsReadOnly}
