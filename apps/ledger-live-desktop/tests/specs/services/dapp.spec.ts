@@ -29,6 +29,11 @@ test.describe("Metamask Test Dapp", () => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
 
+    await drawer.waitForDrawerToBeVisible();
+    await drawer.selectCurrency("ethereum");
+    await drawer.selectAccount("Ethereum", 0);
+    await drawer.waitForDrawerToDisappear();
+
     // Wait for webview window - React 19's concurrent rendering may delay its creation
     const windows = electronApp.windows();
     const webview =

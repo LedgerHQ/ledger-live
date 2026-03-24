@@ -858,6 +858,7 @@ export const DeeplinksProvider = ({
     shouldDisplayWallet40MainNav,
     liveAppProviderInitialized,
     manifests,
+    web3hubFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
