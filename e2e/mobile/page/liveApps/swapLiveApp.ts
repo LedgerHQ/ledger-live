@@ -261,10 +261,12 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Verify swap CTA banner displayed")
-  async checkCtaBanner() {
-    await waitWebElementByTestId(this.showDetailslink);
-    const showDetailsLink = getWebElementByTestId(this.showDetailslink);
-    await showDetailsLink.runScript(el => el.click());
+  async checkCtaBanner(quotesVisible: boolean) {
+    const showDetailsLink = quotesVisible
+      ? getWebElementByCssSelector(`.fixed [data-testid="${this.showDetailslink}"]`)
+      : getWebElementByTestId(this.showDetailslink);
+    await waitWebElement(showDetailsLink);
+    await tapWebElementByElement(showDetailsLink);
     await waitWebElementByTestId(this.quotesContainerErrorIcon);
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }

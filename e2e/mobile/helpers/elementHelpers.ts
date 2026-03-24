@@ -76,7 +76,9 @@ export const NativeElementHelpers = {
   ) {
     const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
     const checkVisibility = options?.checkVisibility ?? true;
-    const waitCondition = checkVisibility ? waitFor(nativeElement).toBeVisible() : waitFor(nativeElement).toExist();
+    const waitCondition = checkVisibility
+      ? waitFor(nativeElement).toBeVisible()
+      : waitFor(nativeElement).toExist();
     if (!options?.errorElementId) {
       return waitCondition.withTimeout(timeout);
     }
@@ -374,27 +376,36 @@ export const WebElementHelpers = {
     return texts.filter(Boolean);
   },
 
+  async waitWebElement(
+    webElement: WebElement,
+    timeout = DEFAULT_TIMEOUT,
+    throwOnTimeout = true,
+  ): Promise<WebElement | undefined> {
+    try {
+      await retryUntilTimeout(() => webElement.runScript(el => el.innerText), timeout);
+      return webElement;
+    } catch (e) {
+      if (throwOnTimeout) {
+        throw e;
+      }
+      log.warn(`Web element not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  },
+
   async waitWebElementByTestId(
     id: string,
     timeout = DEFAULT_TIMEOUT,
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
-    const start = Date.now();
-    let lastErr: Error | undefined;
-    while (Date.now() - start < timeout) {
-      try {
-        const elem = WebElementHelpers.getWebElementByTestId(id);
-        await retryUntilTimeout(() => elem.runScript(el => el.innerText), timeout);
-        return elem;
-      } catch (e) {
-        lastErr = e instanceof Error ? e : new Error(String(e));
-        await delay(200);
+    const webElement = WebElementHelpers.getWebElementByTestId(id);
+    try {
+      return await WebElementHelpers.waitWebElement(webElement, timeout, true);
+    } catch (e) {
+      const message = `Web element '${id}' not found after ${timeout}ms: ${e instanceof Error ? e.message : String(e)}`;
+      if (throwOnTimeout) {
+        throw new Error(message);
       }
-    }
-    if (throwOnTimeout) {
-      throw new Error(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
-    } else {
-      log.warn(`Web element '${id}' not found after ${timeout}ms: ${lastErr?.message}`);
+      log.warn(message);
     }
   },
 
