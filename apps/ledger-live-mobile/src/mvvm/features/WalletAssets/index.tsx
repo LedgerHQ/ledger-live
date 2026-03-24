@@ -1,24 +1,22 @@
 import React from "react";
-import { Box } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { PortfolioCryptosSection } from "LLM/features/WalletAssets/views/CryptosSection";
 import { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/views/StablecoinsSection";
-import { SeeAllAssetsButton } from "LLM/features/WalletAssets/components/SeeAllAssetsButton";
+import { PortfolioButtonSection } from "LLM/features/WalletAssets/views/ButtonSection";
 import { useWalletAssetsViewModel } from "./useWalletAssetsViewModel";
 
 export const WalletAssetsView: React.FC = () => {
   const { hasMore, onPressShowAll } = useWalletAssetsViewModel();
 
   return (
-    <>
-      <Box px={6}>
-        <PortfolioCryptosSection />
-      </Box>
-      <Box px={6} pt={6}>
+    <Box lx={{ paddingHorizontal: "s16" }}>
+      <PortfolioCryptosSection />
+      <Box lx={{ paddingTop: "s24" }}>
         <PortfolioStablecoinsSection />
       </Box>
-      <Box px={6}>
-        <SeeAllAssetsButton hasMore={hasMore} onPress={onPressShowAll} />
+      <Box lx={{ paddingTop: "s24" }}>
+        <PortfolioButtonSection hasMore={hasMore} onPressShowAll={onPressShowAll} />
       </Box>
-    </>
+    </Box>
   );
 };
