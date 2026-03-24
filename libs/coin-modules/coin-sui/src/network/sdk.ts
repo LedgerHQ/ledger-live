@@ -1172,6 +1172,7 @@ export const createTransaction = async (
   const { serialized, bcsObjects } = await createTransactionFromMode(
     address,
     transaction,
+    withObjects,
     currencyId,
   );
 
@@ -1185,16 +1186,17 @@ export const createTransaction = async (
 const createTransactionFromMode = (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) => {
   const { mode } = transaction;
   switch (mode) {
     case "delegate":
-      return createTransactionForDelegate(address, transaction, currencyId);
+      return createTransactionForDelegate(address, transaction, withObjects, currencyId);
     case "undelegate":
-      return createTransactionForUndelegate(address, transaction, currencyId);
+      return createTransactionForUndelegate(address, transaction, withObjects, currencyId);
     default:
-      return createTransactionForOthers(address, transaction, currencyId);
+      return createTransactionForOthers(address, transaction, withObjects, currencyId);
   }
 };
 
@@ -1205,6 +1207,7 @@ const createTransactionFromMode = (
 const createTransactionForDelegate = async (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) =>
   withApi(async api => {
@@ -1231,7 +1234,9 @@ const createTransactionForDelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    const bcsObjects = withObjects
+      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
+      : [];
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1239,6 +1244,7 @@ const createTransactionForDelegate = async (
 const createTransactionForUndelegate = async (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) =>
   withApi(async api => {
@@ -1271,7 +1277,9 @@ const createTransactionForUndelegate = async (
     tx.setGasBudgetIfNotSet(ONE_SUI / 10);
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    const bcsObjects = withObjects
+      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
+      : [];
 
     return { serialized, bcsObjects };
   }, currencyId);
@@ -1290,6 +1298,7 @@ const createTransactionForUndelegate = async (
 const createTransactionForOthers = async (
   address: string,
   transaction: CreateExtrinsicArg,
+  withObjects: boolean,
   currencyId?: string,
 ) =>
   withApi(async api => {
@@ -1329,13 +1338,21 @@ const createTransactionForOthers = async (
     }
 
     const serialized = await tx.build({ client: api });
-    const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
+    const bcsObjects = withObjects
+      ? (await getInputObjects(tx, withBatchedMultiGetObjects(api))).bcsObjects
+      : [];
 
     return { serialized, bcsObjects };
   }, currencyId);
 
 /**
- * Performs a dry run of a transaction to estimate gas costs and fees
+ * Performs a dry run of a transaction to estimate gas costs and fees.
+ *
+ * Post SIP-58: when the sender has no SUI coin objects (only address-level
+ * balance), `createTransaction` sets `gasPayment` to `[]`, signalling the
+ * network to source gas via `FundsWithdrawal`.  The dry-run endpoint handles
+ * this transparently, so fee estimation works for both coin-object and
+ * address-balance funding models.
  */
 export const paymentInfo = async (
   sender: string,

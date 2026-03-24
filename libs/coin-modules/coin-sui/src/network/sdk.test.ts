@@ -1073,6 +1073,43 @@ describe("Staking Operations", () => {
       expect(info).toHaveProperty("totalGasUsed");
       expect(info).toHaveProperty("fees");
     });
+
+    test("paymentInfo works when sender has no coin objects (SIP-58 address balance only)", async () => {
+      mockApi.getCoins.mockReset();
+      mockApi.getCoins.mockResolvedValue({ data: [], hasNextPage: false });
+
+      const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const fakeTransaction = {
+        mode: "send" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        family: "sui" as const,
+        amount: new BigNumber(1000000000),
+        recipient: "0xrecipient_address",
+        errors: {},
+      };
+      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      expect(info).toHaveProperty("gasBudget");
+      expect(info).toHaveProperty("totalGasUsed");
+      expect(info).toHaveProperty("fees");
+    });
+
+    test("paymentInfo does not call getInputObjects (dry run optimisation)", async () => {
+      const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const fakeTransaction = {
+        mode: "send" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        family: "sui" as const,
+        amount: new BigNumber(1000000000),
+        recipient: "0xrecipient_address",
+        errors: {},
+      };
+
+      mockApi.multiGetObjects.mockClear();
+      (mockApi.core.getObjects as jest.Mock).mockClear();
+      await sdk.paymentInfo(sender, fakeTransaction);
+
+      expect(mockApi.core.getObjects).not.toHaveBeenCalled();
+    });
   });
 
   describe("Transaction to Operation Mapping", () => {
