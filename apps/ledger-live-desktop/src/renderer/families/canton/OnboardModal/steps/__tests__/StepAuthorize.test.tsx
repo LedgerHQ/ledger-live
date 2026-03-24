@@ -53,7 +53,7 @@ describe("StepAuthorize", () => {
   it.each([
     {
       status: AuthorizeStatus.INIT,
-      expectedAlert: "Automaticaly accept incoming funds to this account.",
+      expectedAlert: "Automatically accept incoming funds to this account.",
     },
     { status: AuthorizeStatus.ERROR, expectedAlert: "Authorization failed. Please try again." },
   ])("should show correct alert when authorizeStatus is $status", ({ status, expectedAlert }) => {

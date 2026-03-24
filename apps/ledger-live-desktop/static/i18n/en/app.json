@@ -5994,7 +5994,7 @@
         "auth": {
           "title": "Authorization",
           "validator": "Authorize",
-          "hint": "Automaticaly accept incoming funds to this account.",
+          "hint": "Automatically accept incoming funds to this account.",
           "reonboard": {
             "hint": "A topology change has been detected. Please re-authorize the Ledger validator to continue receiving funds automatically."
           },

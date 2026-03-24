@@ -1,6 +1,6 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 
 export type AddAccountsConfig = {
   selectedAccounts: Account[];

@@ -1,6 +1,6 @@
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
 import { useCallback } from "react";
 import { closeModal, openModal } from "~/renderer/actions/modals";
