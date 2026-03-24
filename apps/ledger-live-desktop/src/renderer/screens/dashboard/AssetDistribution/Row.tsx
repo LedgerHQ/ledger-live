@@ -152,17 +152,13 @@ const Row = ({
         <Price from={currency} color="neutral.c80" fontSize={3} />
       </PriceSection>
       <Distribution $isResponsiveLayout={isResponsiveLayout}>
-        {!!distribution && (
-          <>
-            <Text ff="Inter" color="neutral.c100" fontSize={3}>
-              {`${percentageWording}%`}
-            </Text>
-            <Bar
-              progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
-              progressColor={color}
-            />
-          </>
-        )}
+        <Text ff="Inter" color="neutral.c100" fontSize={3}>
+          {`${percentageWording}%`}
+        </Text>
+        <Bar
+          progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
+          progressColor={color}
+        />
       </Distribution>
       <Amount $isResponsiveLayout={isResponsiveLayout}>
         <Ellipsis>
