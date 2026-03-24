@@ -1,6 +1,7 @@
 import assert, { fail } from "assert";
 import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import type {
+  BalanceChange,
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
@@ -3608,6 +3609,186 @@ describe("isSettlementTransaction", () => {
       { type: "pure" as const, valueType: "address", value: "0xacc" },
     ];
     expect(sdk.isSettlementTransaction(tx)).toBe(false);
+  });
+});
+
+describe("getUnifiedBalanceChanges", () => {
+  const addr = "0xaaa";
+  const coinType = "0x2::sui::SUI";
+
+  const baseTx = {
+    digest: "test-digest",
+    effects: {
+      messageVersion: "v1" as const,
+      status: { status: "success" as const },
+      executedEpoch: "1",
+      gasUsed: {
+        computationCost: "0",
+        storageCost: "0",
+        storageRebate: "0",
+        nonRefundableStorageFee: "0",
+      },
+      transactionDigest: "test-digest",
+      dependencies: [],
+    },
+  };
+
+  it("returns balanceChanges as-is when no accumulator events", () => {
+    const changes: BalanceChange[] = [
+      { coinType, owner: { AddressOwner: addr }, amount: "-500" },
+    ];
+    const tx = { ...baseTx, balanceChanges: changes } as unknown as SuiTransactionBlockResponse;
+
+    expect(sdk.getUnifiedBalanceChanges(tx)).toEqual(changes);
+  });
+
+  it("returns empty array when neither balanceChanges nor accumulatorEvents exist", () => {
+    const tx = { ...baseTx, balanceChanges: null } as unknown as SuiTransactionBlockResponse;
+    expect(sdk.getUnifiedBalanceChanges(tx)).toEqual([]);
+  });
+
+  it("merges accumulator merge event as positive balance change", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [
+        { coinType, owner: { AddressOwner: "0xsender" }, amount: "-1000" },
+      ],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "1000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(2);
+    expect(result[1]).toEqual({
+      coinType,
+      owner: { AddressOwner: addr },
+      amount: "1000",
+    });
+  });
+
+  it("merges accumulator split event as negative balance change", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "split",
+            ty: coinType,
+            value: { integer: "500" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual({
+      coinType,
+      owner: { AddressOwner: addr },
+      amount: "-500",
+    });
+  });
+
+  it("skips accumulator event when balanceChanges already covers the address+coinType", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [
+        { coinType, owner: { AddressOwner: addr }, amount: "1000" },
+      ],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "1000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(1);
+    expect(result[0].amount).toBe("1000");
+  });
+
+  it("skips non-integer accumulator values", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: addr,
+            operation: "merge",
+            ty: coinType,
+            value: { eventDigest: [["a", "b"]] },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(0);
+  });
+
+  it("merges multiple accumulator events for different addresses", () => {
+    const tx = {
+      ...baseTx,
+      balanceChanges: [
+        { coinType, owner: { AddressOwner: "0xsender" }, amount: "-2000" },
+      ],
+      effects: {
+        ...baseTx.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: "0xrecip1",
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "800" },
+          },
+          {
+            accumulatorObj: "0xacc",
+            address: "0xrecip2",
+            operation: "merge",
+            ty: coinType,
+            value: { integer: "1200" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    const result = sdk.getUnifiedBalanceChanges(tx);
+    expect(result).toHaveLength(3);
+    expect(result[1]).toEqual({
+      coinType,
+      owner: { AddressOwner: "0xrecip1" },
+      amount: "800",
+    });
+    expect(result[2]).toEqual({
+      coinType,
+      owner: { AddressOwner: "0xrecip2" },
+      amount: "1200",
+    });
   });
 });
 
