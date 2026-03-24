@@ -236,7 +236,7 @@ function Delegations({ account }: Props) {
   }, [t, onRedelegate, onUndelegate, colors.alert, colors.fog]);
 
   return (
-    <View style={styles.root}>
+    <View style={styles.root} testID="cardano-delegation-list">
       <DelegationDrawer
         isOpen={data && data.length > 0}
         onClose={onCloseDrawer}

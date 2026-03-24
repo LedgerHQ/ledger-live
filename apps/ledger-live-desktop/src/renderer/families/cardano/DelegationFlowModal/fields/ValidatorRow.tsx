@@ -45,6 +45,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
       unit={unit}
       sideInfo={
         <Box
+          data-testid={`validator-row-${pool.poolId}`}
           style={{
             flexDirection: "row",
           }}

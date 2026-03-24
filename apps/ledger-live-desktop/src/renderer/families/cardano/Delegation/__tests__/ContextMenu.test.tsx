@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import ContextMenu from "./ContextMenu";
+import ContextMenu from "../ContextMenu";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import BigNumber from "bignumber.js";
 import { openModal } from "~/renderer/actions/modals";
