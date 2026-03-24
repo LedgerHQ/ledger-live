@@ -71,4 +71,5 @@ export const MODULAR_DRAWER_PAGE_NAME = {
 
 export const MAD_SOURCE_PAGES = {
   ACCOUNTS_PAGE: "Accounts",
+  CRYPTOS_PAGE: "Cryptos",
 };

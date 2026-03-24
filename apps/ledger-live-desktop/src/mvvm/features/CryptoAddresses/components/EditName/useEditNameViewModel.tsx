@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";
 import { setAccountName as actionSetAccountName } from "@ledgerhq/live-wallet/store";
 import { useDispatch } from "LLD/hooks/redux";
@@ -16,7 +16,7 @@ export const useEditNameViewModel = ({
   account,
   asset,
 }: {
-  account: Account;
+  account: AccountLike;
   asset: string;
 }): EditNameViewProps => {
   const { t } = useTranslation();
@@ -32,7 +32,9 @@ export const useEditNameViewModel = ({
 
   const onConfirm = (value: string) => {
     const name = validateNameEdition(account, value);
-    dispatch(updateAccount(account));
+    if (account.type === "Account") {
+      dispatch(updateAccount(account));
+    }
     dispatch(actionSetAccountName(account.id, name));
   };
 

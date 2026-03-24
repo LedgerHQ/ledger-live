@@ -3,8 +3,13 @@ import { useCryptoAddressesBannerViewModel } from "../useCryptoAddressesBannerVi
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import {
+  ARB_ACCOUNT,
+  BTC_ACCOUNT,
+  EMPTY_BTC_ACCOUNT,
+  ETH_ACCOUNT,
+  SOL_ACCOUNT,
+} from "LLD/features/__mocks__/accounts.mock";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 
@@ -54,7 +59,7 @@ describe("useCryptoAddressesBannerViewModel", () => {
     expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
   });
 
-  it("should track button_clicked and navigate to /accounts when onGoToAccounts is invoked", () => {
+  it("should track button_clicked and navigate to /accounts when onGoToAccounts is invoked and asset section is off", () => {
     const { result } = renderHook(() => useCryptoAddressesBannerViewModel());
 
     act(() => {
@@ -68,6 +73,25 @@ describe("useCryptoAddressesBannerViewModel", () => {
     });
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith("/accounts");
+  });
+
+  it("should navigate to /cryptos when onGoToAccounts is invoked and asset section is on", () => {
+    const { result } = renderHook(() => useCryptoAddressesBannerViewModel(), {
+      initialState: {
+        settings: {
+          overriddenFeatureFlags: {
+            lwdWallet40: { enabled: true, params: { assetSection: true } },
+          },
+        },
+      },
+    });
+
+    act(() => {
+      result.current.onGoToAccounts();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
   it("should call useOpenAssetFlow with ADD_ACCOUNT location and correct source", () => {
@@ -87,13 +111,8 @@ describe("useCryptoAddressesBannerViewModel", () => {
     });
 
     it("should return unique currencies only (deduplicate by currency id)", () => {
-      const bitcoin = getCryptoCurrencyById("bitcoin");
       const initialState = {
-        accounts: [
-          genAccount("btc-1", { currency: bitcoin }),
-          genAccount("btc-2", { currency: bitcoin }),
-          genAccount("btc-3", { currency: bitcoin }),
-        ],
+        accounts: [BTC_ACCOUNT, EMPTY_BTC_ACCOUNT],
       };
       const { result } = renderHook(() => useCryptoAddressesBannerViewModel(), {
         initialState,
@@ -104,15 +123,8 @@ describe("useCryptoAddressesBannerViewModel", () => {
     });
 
     it("should return up to 3 unique currencies in order of first appearance", () => {
-      const bitcoin = getCryptoCurrencyById("bitcoin");
-      const ethereum = getCryptoCurrencyById("ethereum");
-      const solana = getCryptoCurrencyById("solana");
       const initialState = {
-        accounts: [
-          genAccount("btc-1", { currency: bitcoin }),
-          genAccount("eth-1", { currency: ethereum }),
-          genAccount("sol-1", { currency: solana }),
-        ],
+        accounts: [BTC_ACCOUNT, ETH_ACCOUNT, SOL_ACCOUNT],
       };
       const { result } = renderHook(() => useCryptoAddressesBannerViewModel(), {
         initialState,
@@ -127,17 +139,8 @@ describe("useCryptoAddressesBannerViewModel", () => {
     });
 
     it("should cap at 3 unique currencies when there are more", () => {
-      const bitcoin = getCryptoCurrencyById("bitcoin");
-      const ethereum = getCryptoCurrencyById("ethereum");
-      const solana = getCryptoCurrencyById("solana");
-      const polkadot = getCryptoCurrencyById("polkadot");
       const initialState = {
-        accounts: [
-          genAccount("btc-1", { currency: bitcoin }),
-          genAccount("eth-1", { currency: ethereum }),
-          genAccount("sol-1", { currency: solana }),
-          genAccount("dot-1", { currency: polkadot }),
-        ],
+        accounts: [BTC_ACCOUNT, ETH_ACCOUNT, SOL_ACCOUNT, ARB_ACCOUNT],
       };
       const { result } = renderHook(() => useCryptoAddressesBannerViewModel(), {
         initialState,
