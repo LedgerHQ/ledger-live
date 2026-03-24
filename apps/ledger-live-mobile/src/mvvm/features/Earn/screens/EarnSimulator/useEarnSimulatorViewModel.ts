@@ -27,7 +27,6 @@ export type EarnSimulatorViewModel = {
   monthlyDeposit: number;
   chartData: YearProjection[];
   totalRewards: number;
-  maxYValue: number;
   initialDepositConfig: SliderConfig;
   monthlyDepositConfig: SliderConfig;
   onInitialDepositChange: (value: number) => void;
@@ -59,12 +58,10 @@ export default function useEarnSimulatorViewModel(params?: {
     [initialDeposit, monthlyDeposit, apy],
   );
 
-  const totalRewards = useMemo(() => chartData.reduce((sum, d) => sum + d.rewards, 0), [chartData]);
-
-  const maxYValue = useMemo(() => {
-    const maxDeposits = INITIAL_DEPOSIT_MAX + MONTHLY_DEPOSIT_MAX * 12 * PROJECTION_YEARS;
-    return maxDeposits + Math.round((apy / 100) * maxDeposits);
-  }, [apy]);
+  const totalRewards = useMemo(() => {
+    const last = chartData[chartData.length - 1];
+    return last?.rewards ?? 0;
+  }, [chartData]);
 
   const onSelectCurrency = useCallback(() => {
     // Placeholder — will open modular asset drawer in a future task.
@@ -89,7 +86,6 @@ export default function useEarnSimulatorViewModel(params?: {
     monthlyDeposit,
     chartData,
     totalRewards,
-    maxYValue,
     initialDepositConfig: {
       min: INITIAL_DEPOSIT_MIN,
       max: INITIAL_DEPOSIT_MAX,

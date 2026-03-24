@@ -5,11 +5,10 @@ export type YearProjection = {
 };
 
 /**
- * Computes yearly projections of cumulative deposits vs simple interest rewards.
+ * Computes yearly projections of cumulative deposits vs compound rewards.
  *
- * For each year Y:
- *   deposits = initialDeposit + monthlyDeposit * 12 * Y
- *   rewards  = round(APY% * deposits)
+ * Each year the APY is applied to the full balance (deposits + previously
+ * accumulated rewards), so rewards compound over time.
  *
  * @param initialDeposit - Lump sum deposited at year 0
  * @param monthlyDeposit - Amount deposited each month
@@ -24,11 +23,13 @@ export function computeProjections(
 ): YearProjection[] {
   const rate = apy / 100;
   const projections: YearProjection[] = [];
+  let cumulativeRewards = 0;
 
   for (let y = 1; y <= years; y++) {
     const deposits = initialDeposit + monthlyDeposit * 12 * y;
-    const rewards = Math.round(rate * deposits);
-    projections.push({ year: y, deposits, rewards });
+    const balance = deposits + cumulativeRewards;
+    cumulativeRewards += rate * balance;
+    projections.push({ year: y, deposits, rewards: Math.round(cumulativeRewards) });
   }
 
   return projections;

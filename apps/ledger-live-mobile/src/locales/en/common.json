@@ -1317,6 +1317,15 @@
     "noInfos": "Ledger does not access your location information."
   },
   "earn": {
+    "simulator": {
+      "title": "Earn simulator",
+      "totalRewards": "Total rewards",
+      "rewards": "Rewards",
+      "deposits": "Deposits",
+      "initialDeposit": "Initial deposit",
+      "monthlyDeposit": "Monthly deposit",
+      "earnCurrency": "Earn {{currency}}"
+    },
     "deposit": {
       "protocolInfoModal": {
         "title": "To choose a protocol, here’s a few things to bear in mind:",
