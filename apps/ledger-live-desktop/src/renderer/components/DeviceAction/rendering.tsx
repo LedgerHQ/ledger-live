@@ -707,6 +707,34 @@ export const renderLockedDeviceError = ({
   );
 };
 
+export const renderAlreadySendingApduError = ({
+  t,
+  onRetry,
+  inlineRetry,
+}: {
+  t: TFunction;
+  onRetry?: (() => void) | null | undefined;
+  inlineRetry?: boolean;
+}) => {
+  return (
+    <Wrapper id="error-already-sending-apdu">
+      <ErrorBody
+        Icon={IconsLegacy.InfoAltFillMedium}
+        iconColor="primary.c80"
+        title={t("errors.AlreadySendingApduError.title")}
+        description={t("errors.AlreadySendingApduError.description")}
+        buttons={
+          onRetry && inlineRetry ? (
+            <ButtonV3 size="large" variant="main" onClick={onRetry}>
+              {t("common.retry")}
+            </ButtonV3>
+          ) : null
+        }
+      />
+    </Wrapper>
+  );
+};
+
 export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   ({ t, device }: { t: TFunction; device?: Device | null }) => {
     const productName = device ? getDeviceModel(device.modelId).productName : null;
@@ -838,7 +866,12 @@ export const renderError = ({
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
-  if (tmpError instanceof LockedDeviceError) {
+  if (
+    (isDmkError(error) && error._tag === "AlreadySendingApduError") ||
+    ("name" in error && error.name === "AlreadySendingApduError")
+  ) {
+    return renderAlreadySendingApduError({ t, onRetry, inlineRetry });
+  } else if (tmpError instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (tmpError instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
