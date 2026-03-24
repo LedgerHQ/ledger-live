@@ -30,3 +30,16 @@ export const LWD_WALLET_40_FF_ENABLED: OptionalFeatureMap = {
 export const LWD_WALLET_40_FF_DISABLED: OptionalFeatureMap = {
   lwdWallet40: { enabled: false },
 };
+
+export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
+
+export const EARN_V2_DESKTOP_FLAGS: OptionalFeatureMap = {
+  ...(useLocalEarnManifest && {
+    ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-local-manifest" } },
+  }),
+  ptxEarnUi: { enabled: true, params: { value: "v2" } },
+  lwdWallet40: {
+    enabled: true,
+    params: { marketBanner: true, graphRework: true, quickActionCtas: true },
+  },
+};
