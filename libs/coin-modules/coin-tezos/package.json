@@ -101,6 +101,7 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
@@ -113,14 +114,16 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
-    "lint:fix": "oxlint src --fix --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet"
+    "lint:ci": "oxlint src --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "overrides": {
     "@taquito/ledger-signer": {

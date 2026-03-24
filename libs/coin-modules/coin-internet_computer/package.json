@@ -116,6 +116,7 @@
     "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
   "scripts": {
@@ -127,9 +128,11 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m ES6 --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
-    "lint:fix": "oxlint src --fix --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet"
+    "lint:ci": "oxlint src --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   }
 }

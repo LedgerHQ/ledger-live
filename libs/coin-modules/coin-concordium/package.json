@@ -207,6 +207,7 @@
     "dotenv": "^16.4.5",
     "expect": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
@@ -218,11 +219,13 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
-    "lint:fix": "oxlint src --fix --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet"
+    "lint:ci": "oxlint src --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   }
 }

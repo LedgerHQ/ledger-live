@@ -133,6 +133,12 @@
     "lint:fix": {
       "outputs": []
     },
+    "format": {
+      "outputs": []
+    },
+    "format:check": {
+      "outputs": []
+    },
     "typecheck": {
       "outputs": [],
       "dependsOn": ["^build"],

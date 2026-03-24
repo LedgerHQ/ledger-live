@@ -26,14 +26,16 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "oxlint src",
-    "lint:fix": "oxlint src --fix --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet"
+    "lint:ci": "oxlint src --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   },
   "publishConfig": {
     "access": "public"
@@ -119,6 +121,7 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "nock": "14.0.2",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:"
   }
 }
