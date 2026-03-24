@@ -3,6 +3,7 @@ import { TableRoot, Table } from "@ledgerhq/lumen-ui-react";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { HistoryTableHeader } from "../components/HistoryTableHeader";
 import { HistoryTableBody } from "../components/HistoryTableBody";
+import { EmptyState } from "../components/EmptyState";
 import type { VirtualItem, HistoryTable, OperationRow } from "../types";
 
 type HistoryListProps = {
@@ -20,6 +21,10 @@ function HistoryList({
   flatItems,
   onRowClick,
 }: HistoryListProps) {
+  if (flatItems.length === 0) {
+    return <EmptyState />;
+  }
+
   return (
     <TableRoot ref={parentRef} appearance="plain" className="min-h-0 flex-1 overflow-auto mb-32">
       <Table>

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor, within } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
+import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
 import History from "../index";
@@ -113,5 +113,20 @@ describe("History integration", () => {
     await waitFor(() => {
       expect(screen.getByText(/pending transaction/i)).toBeVisible();
     });
+  });
+
+  it("should render empty state when there are no operations", async () => {
+    render(<History />, {
+      initialState: {
+        accounts: [EMPTY_BTC_ACCOUNT],
+        settings: AFTER_ONBOARDING_STATE,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("No transactions yet")).toBeVisible();
+    });
+
+    expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
 });

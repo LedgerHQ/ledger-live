@@ -20,9 +20,6 @@ export function HistoryTableBody({
   onRowClick,
 }: HistoryTableBodyProps) {
   const virtualItems = rowVirtualizer.getVirtualItems();
-
-  // TODO: add empty state (next iteration)
-
   const totalSize = rowVirtualizer.getTotalSize();
   const paddingTop = virtualItems[0]?.start ?? 0;
   const paddingBottom = totalSize - (virtualItems[virtualItems.length - 1]?.end ?? 0);
