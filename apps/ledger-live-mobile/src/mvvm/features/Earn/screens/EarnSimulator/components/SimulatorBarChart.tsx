@@ -27,6 +27,7 @@ const BAR_RADIUS = 4;
 const LABEL_FONT_SIZE = 12;
 const LABEL_COLOR = "rgba(255, 255, 255, 0.5)";
 const AXIS_LABEL_OFFSET = 20;
+const HIT_SLOP_TOP = 20;
 const TOOLTIP_WIDTH = 72;
 const TOOLTIP_HEIGHT = 28;
 const TOOLTIP_TAIL_SIZE = 6;
@@ -160,11 +161,21 @@ function SimulatorBarChart({ data, width, height, depositColor, rewardsColor }: 
                 />
               )}
               {rewardsBarHeight > 0 && (
-                <Path
-                  d={roundedTopRect(x, rewardsBarY, bandwidth, rewardsBarHeight, BAR_RADIUS)}
-                  fill={rewardsColor}
-                  onPress={() => handleBarPress(d.year, "rewards", d.rewards, x, rewardsBarY)}
-                />
+                <>
+                  <Rect
+                    x={x}
+                    y={Math.max(0, rewardsBarY - HIT_SLOP_TOP)}
+                    width={bandwidth}
+                    height={Math.min(HIT_SLOP_TOP, rewardsBarY)}
+                    fill="transparent"
+                    onPress={() => handleBarPress(d.year, "rewards", d.rewards, x, rewardsBarY)}
+                  />
+                  <Path
+                    d={roundedTopRect(x, rewardsBarY, bandwidth, rewardsBarHeight, BAR_RADIUS)}
+                    fill={rewardsColor}
+                    onPress={() => handleBarPress(d.year, "rewards", d.rewards, x, rewardsBarY)}
+                  />
+                </>
               )}
             </React.Fragment>
           );
