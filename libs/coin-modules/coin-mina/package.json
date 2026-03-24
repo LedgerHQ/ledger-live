@@ -138,6 +138,7 @@
     "@types/node": "catalog:",
     "expect": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
