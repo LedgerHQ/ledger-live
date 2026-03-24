@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, within } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
@@ -67,8 +67,9 @@ describe("History integration", () => {
     renderHistory();
 
     await waitFor(() => {
-      const rows = screen.getAllByRole("button");
-      expect(rows.length).toBeGreaterThan(1);
+      const table = screen.getByRole("table");
+      const operationRows = within(table).getAllByRole("button");
+      expect(operationRows.length).toBeGreaterThan(0);
     });
   });
 
@@ -76,13 +77,13 @@ describe("History integration", () => {
     const { user } = renderHistory();
 
     await waitFor(() => {
-      expect(screen.getAllByRole("button").length).toBeGreaterThan(1);
+      const table = screen.getByRole("table");
+      expect(within(table).getAllByRole("button").length).toBeGreaterThan(0);
     });
 
-    // Click the first clickable operation row
-    const rows = screen.getAllByRole("button");
-    const operationRow = rows[1];
-    await user.click(operationRow);
+    const table = screen.getByRole("table");
+    const operationRows = within(table).getAllByRole("button");
+    await user.click(operationRows[0]);
 
     expect(setDrawer).toHaveBeenCalled();
   });

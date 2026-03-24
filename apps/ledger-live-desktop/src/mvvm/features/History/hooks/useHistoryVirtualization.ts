@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 import { useVirtualizer, Virtualizer } from "@tanstack/react-virtual";
 import type { VirtualItem, HistoryTable } from "../types";
 
@@ -34,9 +34,7 @@ function buildFlatItems(table: HistoryTable): VirtualItem[] {
 export function useHistoryVirtualization(table: HistoryTable) {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const rowModel = table.getRowModel();
-  const columns = table.getVisibleFlatColumns();
-  const flatItems = useMemo(() => buildFlatItems(table), [rowModel.rows, columns]);
+  const flatItems = buildFlatItems(table);
 
   const rowVirtualizer = useVirtualizer({
     count: flatItems.length,
