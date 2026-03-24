@@ -215,6 +215,12 @@ export default withRozeniteUrlFix(
         plugins: [
           new Repack.RepackPlugin({
             logger: false,
+            extraChunks: [
+              {
+                include: /.*/,
+                type: "local",
+              },
+            ],
           }),
           new ReanimatedPlugin({
             unstable_disableTransform: true,

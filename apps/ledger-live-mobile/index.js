@@ -15,6 +15,21 @@ import "react-native-url-polyfill/auto";
 // cosmjs use TextEncoder that's not available in React Native but on Node
 import "text-encoding-polyfill";
 
+import { ScriptManager, Script } from "@callstack/repack/client";
+
+ScriptManager.shared.addResolver(async (scriptId) => {
+  if (__DEV__) {
+    return {
+      url: Script.getDevServerURL(scriptId),
+      cache: false,
+    };
+  }
+
+  return {
+    url: Script.getFileSystemURL(scriptId),
+  };
+});
+
 // Initialize MSW for mocking API calls (only in development when MSW_ENABLED=true)
 if (process.env.MSW_ENABLED === "true") {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
