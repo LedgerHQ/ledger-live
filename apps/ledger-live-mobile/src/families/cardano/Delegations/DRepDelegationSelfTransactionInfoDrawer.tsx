@@ -46,7 +46,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
-      <Flex alignItems="center">
+      <Flex alignItems="center" testID="cardano-undelegate-info-drawer">
         <Illustration lightSource={EarnLight} darkSource={EarnDark} size={100} />
 
         <Text style={dRepDelegationSelfTransactionInfoDrawerStyles.title}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, screen, render } from "@tests/test-renderer";
-import CardanoDelegations from "./index";
+import CardanoDelegations from "../index";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
@@ -53,7 +53,7 @@ jest.mock("~/components/DelegationDrawer", () => {
     ) : null;
 });
 
-jest.mock("./Row", () => {
+jest.mock("../Row", () => {
   const { TouchableOpacity, Text } = jest.requireActual("react-native");
   return ({ onPress }: { onPress: () => void }) => (
     <TouchableOpacity onPress={onPress} testID="delegation-row">
@@ -62,7 +62,7 @@ jest.mock("./Row", () => {
   );
 });
 
-jest.mock("./DRepDelegationSelfTransactionInfoDrawer", () => {
+jest.mock("../DRepDelegationSelfTransactionInfoDrawer", () => {
   const { View } = jest.requireActual("react-native");
   return ({ isOpen }: { isOpen: boolean }) =>
     isOpen ? <View testID="drep-self-tx-drawer" /> : null;
