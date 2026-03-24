@@ -3,13 +3,10 @@ import { Box } from "@ledgerhq/native-ui";
 import { PortfolioCryptosSection } from "../../PortfolioCryptosSection";
 import { PortfolioStablecoinsSection } from "../../PortfolioStablecoinsSection";
 import { SeeAllAssetsButton } from "../../SeeAllAssetsButton";
-import usePortfolioCryptosSectionViewModel from "../../PortfolioCryptosSection/hooks/usePortfolioCryptosSectionViewModel";
-import usePortfolioStablecoinsSectionViewModel from "../../PortfolioStablecoinsSection/usePortfolioStablecoinsSectionViewModel";
+import { usePortfolioCategorizedAssetsSectionViewModel } from "../usePortfolioCategorizedAssetsSectionViewModel";
 
 export const PortfolioCategorizedAssetsSection: React.FC = () => {
-  const { hasMore: cryptosHasMore, onPressShowAll } = usePortfolioCryptosSectionViewModel();
-  const { hasMore: stablecoinsHasMore } = usePortfolioStablecoinsSectionViewModel();
-  const hasMore = cryptosHasMore || stablecoinsHasMore;
+  const { hasMore, onPressShowAll } = usePortfolioCategorizedAssetsSectionViewModel();
 
   return (
     <>

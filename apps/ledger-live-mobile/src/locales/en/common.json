@@ -2751,7 +2751,7 @@
     },
     "seeAllAssets": "See all assets",
     "seeAllAccounts": "See all accounts",
-    "cryptoSection": {
+    "assetSection": {
       "connectionFailed": "Connection failed"
     },
     "marketPriceSection": {
