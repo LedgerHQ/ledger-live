@@ -3500,3 +3500,167 @@ describe("withBatchedMultiGetObjects", () => {
     expect(result).toHaveLength(51);
   });
 });
+
+describe("isSettlementTransaction", () => {
+  const makeSettlementTx = (
+    overrides: Partial<SuiTransactionBlockResponse> = {},
+  ): SuiTransactionBlockResponse =>
+    ({
+      digest: "settlement-digest",
+      timestampMs: "1000",
+      checkpoint: "100",
+      transaction: {
+        data: {
+          messageVersion: "v1" as const,
+          transaction: {
+            kind: "ProgrammableTransaction" as const,
+            inputs: [
+              {
+                type: "object" as const,
+                objectType: "sharedObject" as const,
+                objectId: "0xacc",
+                initialSharedVersion: "1",
+                mutable: true,
+              },
+            ],
+            transactions: [],
+          },
+          sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
+          gasData: { payment: [], owner: "0x0", price: "0", budget: "0" },
+        },
+      },
+      effects: {
+        messageVersion: "v1" as const,
+        status: { status: "success" as const },
+        executedEpoch: "1",
+        gasUsed: {
+          computationCost: "0",
+          storageCost: "0",
+          storageRebate: "0",
+          nonRefundableStorageFee: "0",
+        },
+        transactionDigest: "settlement-digest",
+        dependencies: [],
+      },
+      balanceChanges: [],
+      ...overrides,
+    }) as SuiTransactionBlockResponse;
+
+  it("returns true for a transaction with 0xacc object input", () => {
+    expect(sdk.isSettlementTransaction(makeSettlementTx())).toBe(true);
+  });
+
+  it("returns false for a normal user transaction", () => {
+    expect(sdk.isSettlementTransaction(mockTransaction as SuiTransactionBlockResponse)).toBe(false);
+  });
+
+  it("returns false when transaction data is missing", () => {
+    expect(sdk.isSettlementTransaction({ digest: "no-data" } as SuiTransactionBlockResponse)).toBe(
+      false,
+    );
+  });
+
+  it("returns false for non-ProgrammableTransaction kinds", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).kind = "ChangeEpoch";
+    expect(sdk.isSettlementTransaction(tx)).toBe(false);
+  });
+
+  it("returns false when 0xacc appears as a pure input, not object", () => {
+    const tx = makeSettlementTx();
+    (tx.transaction!.data.transaction as any).inputs = [
+      { type: "pure" as const, valueType: "address", value: "0xacc" },
+    ];
+    expect(sdk.isSettlementTransaction(tx)).toBe(false);
+  });
+});
+
+describe("settlement transaction filtering in operations", () => {
+  const userAddr = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+  const normalTx: SuiTransactionBlockResponse = {
+    ...mockTransaction,
+    digest: "normal-tx",
+    timestampMs: "2000",
+  } as SuiTransactionBlockResponse;
+
+  const settlementTx = {
+    digest: "settlement-tx",
+    timestampMs: "1000",
+    checkpoint: "50",
+    transaction: {
+      data: {
+        messageVersion: "v1" as const,
+        transaction: {
+          kind: "ProgrammableTransaction" as const,
+          inputs: [
+            {
+              type: "object" as const,
+              objectType: "sharedObject" as const,
+              objectId: "0xacc",
+              initialSharedVersion: "1",
+              mutable: true,
+            },
+          ],
+          transactions: [],
+        },
+        sender: "0x0000000000000000000000000000000000000000000000000000000000000000",
+        gasData: { payment: [], owner: "0x0", price: "0", budget: "0" },
+      },
+    },
+    effects: {
+      messageVersion: "v1" as const,
+      status: { status: "success" as const },
+      executedEpoch: "1",
+      gasUsed: {
+        computationCost: "0",
+        storageCost: "0",
+        storageRebate: "0",
+        nonRefundableStorageFee: "0",
+      },
+      transactionDigest: "settlement-tx",
+      dependencies: [],
+    },
+    balanceChanges: [
+      {
+        owner: { AddressOwner: userAddr },
+        coinType: "0x2::sui::SUI",
+        amount: "500000000",
+      },
+    ],
+  } as unknown as SuiTransactionBlockResponse;
+
+  it("getOperations excludes settlement transactions", async () => {
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.queryTransactionBlocks.mockImplementation(async (params: any) => {
+      const isOut = params.filter && "FromAddress" in params.filter;
+      return {
+        data: isOut ? [normalTx, settlementTx] : [],
+        hasNextPage: false,
+        nextCursor: null,
+      };
+    });
+
+    const ops = await sdkOriginal.getOperations("account-1", userAddr);
+
+    expect(ops.map(o => o.hash)).toEqual(["normal-tx"]);
+  });
+
+  it("getListOperations excludes settlement transactions", async () => {
+    mockApi.queryTransactionBlocks.mockReset();
+    mockApi.queryTransactionBlocks.mockResolvedValue({
+      data: [normalTx, settlementTx],
+      hasNextPage: false,
+      nextCursor: null,
+    });
+    (mockApi as any).getCheckpoint = jest.fn().mockResolvedValue({ digest: "cp-hash" });
+
+    const apiCall = async <T>(execute: (api: SuiJsonRpcClient) => Promise<T>) => execute(mockApi);
+
+    const page = await sdk.getListOperations(userAddr, "desc", apiCall);
+
+    const hashes = page.items.map(op => op.tx.hash);
+    expect(hashes).not.toContain("settlement-tx");
+    expect(hashes).toContain("normal-tx");
+  });
+});

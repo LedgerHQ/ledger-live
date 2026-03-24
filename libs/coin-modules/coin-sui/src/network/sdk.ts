@@ -191,6 +191,28 @@ function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTran
   return hasMoveCallWithFunction("request_withdraw_stake", block);
 }
 
+/**
+ * SIP-58 settlement transactions are system-generated transactions that update
+ * accumulator state at checkpoint boundaries.  They can be identified by a
+ * mutable reference to the root accumulator object `0xacc` in their inputs.
+ *
+ * These are internal bookkeeping transactions and should be excluded from the
+ * user-facing operations history.
+ */
+const ACCUMULATOR_ROOT_OBJECT_ID = "0xacc";
+
+export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolean {
+  const block = tx.transaction?.data?.transaction;
+  if (block?.kind !== "ProgrammableTransaction") return false;
+
+  return block.inputs.some(
+    input =>
+      input.type === "object" &&
+      "objectId" in input &&
+      input.objectId === ACCUMULATOR_ROOT_OBJECT_ID,
+  );
+}
+
 export type AccountBalance = {
   coinType: string;
   blockHeight: number;
@@ -746,9 +768,9 @@ export const getOperations = async (
     // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
     const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
-    return rawTransactions.operations.map(transaction =>
-      transactionToOperation(accountId, addr, transaction),
-    );
+    return rawTransactions.operations
+      .filter(tx => !isSettlementTransaction(tx))
+      .map(transaction => transactionToOperation(accountId, addr, transaction));
   }, currencyId);
 
 export const filterOperations = (
@@ -958,7 +980,10 @@ export const getListOperations = async (
 
     // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
     // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
-    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest);
+    // SIP-58 settlement transactions (bookkeeping for accumulator state) are excluded.
+    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest).filter(
+      tx => !isSettlementTransaction(tx),
+    );
 
     // restore order
     const sortedOps = [...mergedOps].sort(compareOperations(order));
@@ -1045,7 +1070,7 @@ export const getBlock = async (id: string, currencyId?: string): Promise<Block> 
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
     return {
       info: toBlockInfo(checkpoint),
-      transactions: rawTxs.map(toBlockTransaction),
+      transactions: rawTxs.filter(tx => !isSettlementTransaction(tx)).map(toBlockTransaction),
     };
   }, currencyId);
 
