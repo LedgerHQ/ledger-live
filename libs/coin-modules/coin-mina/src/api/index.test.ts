@@ -3,6 +3,7 @@ jest.mock("@ledgerhq/live-network");
 jest.mock("@ledgerhq/logs");
 jest.mock("../config");
 
+import { LedgerAPI5xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { getCoinConfig } from "../config";
 import {
@@ -36,8 +37,18 @@ const mockGetCoinConfig = getCoinConfig as jest.MockedFunction<typeof getCoinCon
 // ── makeNetworkRequest tests ──
 
 describe("makeNetworkRequest", () => {
+  let setTimeoutSpy: jest.SpyInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    setTimeoutSpy = jest.spyOn(global, "setTimeout").mockImplementation((fn: TimerHandler) => {
+      if (typeof fn === "function") fn();
+      return 0 as unknown as NodeJS.Timeout;
+    });
+  });
+
+  afterEach(() => {
+    setTimeoutSpy.mockRestore();
   });
 
   it("should return data on successful 200 response", async () => {
@@ -58,8 +69,13 @@ describe("makeNetworkRequest", () => {
     });
   });
 
-  it("should retry on 504 status up to MINA_API_RETRY_COUNT times", async () => {
-    mockNetwork.mockResolvedValue({ status: 504, data: "Gateway Timeout" } as any);
+  it("should retry on LedgerAPI5xx 502 up to MINA_API_RETRY_COUNT times", async () => {
+    const error502 = new LedgerAPI5xx("API HTTP 502", {
+      status: 502,
+      url: "/test",
+      method: "POST",
+    });
+    mockNetwork.mockRejectedValue(error502);
 
     await expect(
       makeNetworkRequest({
@@ -67,15 +83,19 @@ describe("makeNetworkRequest", () => {
         url: "https://example.com/api",
         data: {},
       }),
-    ).rejects.toThrow("Gateway Timeout");
+    ).rejects.toThrow("API HTTP 502");
 
-    // Initial call + MINA_API_RETRY_COUNT retries
     expect(mockNetwork).toHaveBeenCalledTimes(MINA_API_RETRY_COUNT + 1);
   });
 
-  it("should succeed after 504 retries if a subsequent call succeeds", async () => {
+  it("should succeed after 502 retries if a subsequent call succeeds", async () => {
+    const error502 = new LedgerAPI5xx("API HTTP 502", {
+      status: 502,
+      url: "/test",
+      method: "POST",
+    });
     mockNetwork
-      .mockResolvedValueOnce({ status: 504, data: "timeout" } as any)
+      .mockRejectedValueOnce(error502)
       .mockResolvedValueOnce({ status: 200, data: { success: true } } as any);
 
     const result = await makeNetworkRequest({
@@ -88,7 +108,27 @@ describe("makeNetworkRequest", () => {
     expect(mockNetwork).toHaveBeenCalledTimes(2);
   });
 
-  it("should throw on non-200 non-504 status with object error data", async () => {
+  it("should retry on LedgerAPI5xx 503", async () => {
+    const error503 = new LedgerAPI5xx("API HTTP 503", {
+      status: 503,
+      url: "/test",
+      method: "POST",
+    });
+    mockNetwork
+      .mockRejectedValueOnce(error503)
+      .mockResolvedValueOnce({ status: 200, data: { ok: true } } as any);
+
+    const result = await makeNetworkRequest({
+      method: "POST",
+      url: "https://example.com/api",
+      data: {},
+    });
+
+    expect(result).toEqual({ ok: true });
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("should throw on non-200 status with object error data", async () => {
     mockNetwork.mockResolvedValue({
       status: 400,
       data: { error: "bad request" },
@@ -103,7 +143,7 @@ describe("makeNetworkRequest", () => {
     ).rejects.toThrow('{"error":"bad request"}');
   });
 
-  it("should throw on non-200 non-504 status with string error data", async () => {
+  it("should throw on non-200 status with string error data", async () => {
     mockNetwork.mockResolvedValue({
       status: 500,
       data: "Internal Server Error",
@@ -119,7 +159,7 @@ describe("makeNetworkRequest", () => {
   });
 
   it("should retry on ECONNABORTED up to MINA_API_RETRY_COUNT times", async () => {
-    const timeoutError = Object.assign(new Error("timeout of 30000ms exceeded"), {
+    const timeoutError = Object.assign(new Error("request timeout"), {
       code: "ECONNABORTED" as const,
     });
 
@@ -131,7 +171,7 @@ describe("makeNetworkRequest", () => {
         url: "https://example.com/api",
         data: {},
       }),
-    ).rejects.toThrow("timeout of 30000ms exceeded");
+    ).rejects.toThrow("request timeout");
 
     expect(mockNetwork).toHaveBeenCalledTimes(MINA_API_RETRY_COUNT + 1);
   });
@@ -151,6 +191,41 @@ describe("makeNetworkRequest", () => {
 
     expect(result).toEqual({ recovered: true });
     expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not retry on non-retryable errors", async () => {
+    mockNetwork.mockRejectedValue(new Error("unexpected error"));
+
+    await expect(
+      makeNetworkRequest({
+        method: "POST",
+        url: "https://example.com/api",
+        data: {},
+      }),
+    ).rejects.toThrow("unexpected error");
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should apply exponential backoff delay between retries", async () => {
+    const error502 = new LedgerAPI5xx("API HTTP 502", {
+      status: 502,
+      url: "/test",
+      method: "POST",
+    });
+    mockNetwork
+      .mockRejectedValueOnce(error502)
+      .mockRejectedValueOnce(error502)
+      .mockResolvedValueOnce({ status: 200, data: { ok: true } } as any);
+
+    await makeNetworkRequest({
+      method: "POST",
+      url: "https://example.com/api",
+      data: {},
+    });
+
+    expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
+    expect(setTimeoutSpy).toHaveBeenNthCalledWith(1, expect.any(Function), 1000);
+    expect(setTimeoutSpy).toHaveBeenNthCalledWith(2, expect.any(Function), 2000);
   });
 
   it("should rethrow generic Error instances", async () => {
