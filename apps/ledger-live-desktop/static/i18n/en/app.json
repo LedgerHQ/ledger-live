@@ -8396,6 +8396,16 @@
     }
   },
   "history": {
-    "title": "Transaction"
+    "title": "Transaction",
+    "columns": {
+      "type": "Type",
+      "address": "Address",
+      "amount": "Amount",
+      "value": "Value"
+    },
+    "address": {
+      "from": "From",
+      "to": "To"
+    }
   }
 }
