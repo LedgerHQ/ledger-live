@@ -26,7 +26,7 @@
     "eslint/no-constant-binary-expression": "warn",
     "eslint/no-unused-expressions": "warn",
     "eslint/no-unsafe-optional-chaining": "warn",
-    "eslint/no-unassigned-vars": "warn",
+    "no-unassigned-vars": "warn",
     "eslint/preserve-caught-error": "off",
     "eslint/no-useless-constructor": "off",
     "unicorn/no-useless-fallback-in-spread": "off",

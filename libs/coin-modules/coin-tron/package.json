@@ -145,7 +145,6 @@
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "test-integ:debug": "DOTENV_CONFIG_PATH=.env.integ.test node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

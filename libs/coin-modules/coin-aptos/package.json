@@ -143,7 +143,6 @@
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

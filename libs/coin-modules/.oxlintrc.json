@@ -27,7 +27,7 @@
     "eslint/no-constant-binary-expression": "warn",
     "eslint/no-unused-expressions": "warn",
     "eslint/no-unsafe-optional-chaining": "warn",
-    "eslint/no-unassigned-vars": "warn",
+    "no-unassigned-vars": "warn",
     "eslint/preserve-caught-error": "off",
     "eslint/no-useless-constructor": "off",
     "import/no-cycle": "error",
@@ -89,16 +89,6 @@
       "files": ["zcash-shielded/**/*.ts"],
       "rules": {
         "import/no-cycle": "warn"
-      }
-    },
-    {
-      "files": ["coin-stacks/src/network/api.integ.test.ts"],
-      "env": {
-        "jest": true
-      },
-      "plugins": ["jest"],
-      "rules": {
-        "jest/no-focused-tests": "off"
       }
     },
     {

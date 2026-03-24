@@ -107,7 +107,6 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

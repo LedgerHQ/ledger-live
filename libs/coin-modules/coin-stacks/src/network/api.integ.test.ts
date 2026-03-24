@@ -38,7 +38,7 @@ describe("Stacks network API integration", () => {
     });
   });
 
-  describe.only("fetchFungibleTokenMetadata", () => {
+  describe("fetchFungibleTokenMetadata", () => {
     it("should fetch fungible token metadata", async () => {
       const result = await fetchFungibleTokenMetadata(
         "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",

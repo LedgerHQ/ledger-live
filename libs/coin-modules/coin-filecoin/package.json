@@ -148,7 +148,6 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   }

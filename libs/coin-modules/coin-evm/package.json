@@ -59,7 +59,6 @@
     "test:debug": "node --inspect-wait ./node_modules/jest/bin/jest.js --runInBand",
     "test-integ": "jest --config=jest.integ.config.js",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   },

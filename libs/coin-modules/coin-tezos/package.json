@@ -121,7 +121,6 @@
     "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "test-integ:debug": "node --inspect-brk --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "unimported": "unimported",
-    "lint:ci": "oxlint src --quiet",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check"
   },
