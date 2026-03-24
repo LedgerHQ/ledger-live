@@ -55,12 +55,7 @@ function StepSummary(props: StepProps) {
         <Separator />
 
         <Box horizontal justifyContent="space-between" mt={1}>
-          <Text
-            ff="Inter|Medium"
-            color="neutral.c60"
-            fontSize={4}
-            data-testid="undelegate-refund-label"
-          >
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
             <Trans i18nKey="cardano.unDelegation.refund" />
           </Text>
           <Box>

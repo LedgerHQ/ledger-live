@@ -41,7 +41,7 @@ export default function CardanoUndelegateSelfTxInfoModal({
           title={<Trans i18nKey="cardano.unDelegation.selfTransactionFlow.title" />}
           onClose={onClose}
           render={() => (
-            <Box mx={4}>
+            <Box mx={4} data-testid="modal-cardano-undelegate-self-tx-info">
               <Box flow={1} alignItems="center">
                 <Box mb={4}>
                   <Text

@@ -105,7 +105,10 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const hasNotEnoughtBalanceError = bridgeError instanceof CardanoNotEnoughFunds;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      testID="Cardano-Undelegation-Summary"
+    >
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>
@@ -148,6 +151,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || Object.keys(status.errors).length > 0}
           pending={bridgePending}
+          testID="delegation-undelegate-continue"
         />
       </View>
       {!hasNotEnoughtBalanceError && bridgeErr && (
@@ -273,7 +277,7 @@ function SummaryWords({
   return (
     <>
       <View style={styles.summarySection}>
-        <LText style={styles.labelText} color="smoke">
+        <LText style={styles.labelText} color="smoke" testID="undelegation-message">
           {t("cardano.undelegation.undelegationMessage")}
         </LText>
         <View
