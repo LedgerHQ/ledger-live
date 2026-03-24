@@ -331,6 +331,7 @@ const Body = ({
   }
 
   return (
+    // @ts-expect-error - there is no easy way to add custom steps yet
     <Stepper {...stepperProps}>
       {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event="CloseModalSend" />
