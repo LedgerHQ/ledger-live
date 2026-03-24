@@ -5,10 +5,8 @@ import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import {
-  toAsset,
-  usePortfolioSectionActions,
-} from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
 
 export const MAX_ASSETS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_ASSETS = 4;
@@ -51,11 +49,12 @@ const usePortfolioCryptosSectionViewModel = ({
     [categorizedAssets.cryptos, blacklistedTokenIdsSet],
   );
 
+  const needsDefaultAssets = isEmptyState || filteredAssets.length < EMPTY_STATE_MAX_ASSETS;
   const {
     cryptos: defaultAssets,
     isLoading,
     isError,
-  } = useDefaultAssetsByCategory(isEmptyState, stablecoinTickers, EMPTY_STATE_MAX_ASSETS, 0);
+  } = useDefaultAssetsByCategory(needsDefaultAssets, stablecoinTickers, EMPTY_STATE_MAX_ASSETS, 0);
 
   const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: READ_ONLY_MAX_ASSETS });
   const readOnlyAssets = useMemo<Asset[]>(
@@ -69,7 +68,7 @@ const usePortfolioCryptosSectionViewModel = ({
   const assets = useMemo<Asset[]>(() => {
     if (isEmptyState) return defaultAssets;
     if (isReadOnly) return readOnlyAssets;
-    return filteredAssets;
+    return padAssetsWithDefaults(filteredAssets, defaultAssets, EMPTY_STATE_MAX_ASSETS);
   }, [isEmptyState, isReadOnly, defaultAssets, readOnlyAssets, filteredAssets]);
 
   const assetsCount = assets.length;

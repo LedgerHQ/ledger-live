@@ -4,9 +4,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { State } from "~/reducers/types";
 import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
-import usePortfolioStablecoinsSectionViewModel, {
-  padStablecoins,
-} from "../usePortfolioStablecoinsSectionViewModel";
+import usePortfolioStablecoinsSectionViewModel from "../usePortfolioStablecoinsSectionViewModel";
 import { bitcoin, ethereum, createAsset } from "./shared";
 
 const mockNavigate = jest.fn();
@@ -188,28 +186,4 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
     });
   });
 
-  describe("padStablecoins", () => {
-    const usdc = createAsset(ethereum, 0);
-    const dai = createAsset(bitcoin, 0);
-    const tether = { ...createAsset(bitcoin, 0), currency: { ...bitcoin, id: "tether" } } as Asset;
-
-    it("should return owned assets unchanged when already at max", () => {
-      const owned = [usdc, dai];
-      expect(padStablecoins(owned, [tether], 2)).toEqual(owned);
-    });
-
-    it("should pad up to max with defaults when fewer than max are owned", () => {
-      const result = padStablecoins([usdc], [dai, tether], 3);
-
-      expect(result).toHaveLength(3);
-      expect(result[0]).toBe(usdc);
-    });
-
-    it("should not pad with assets already owned (deduplication by currency id)", () => {
-      const result = padStablecoins([usdc], [usdc, dai], 2);
-
-      expect(result).toHaveLength(2);
-      expect(result[1].currency.id).toBe(dai.currency.id);
-    });
-  });
 });

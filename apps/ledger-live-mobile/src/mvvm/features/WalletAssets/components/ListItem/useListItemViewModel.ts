@@ -41,12 +41,12 @@ export const useListItemViewModel = (asset: Asset): ListItemViewModelResult => {
   });
 
   const formattedCounterValue = useMemo(() => {
-    if (asset.isPlaceholder && asset.placeholderPrice != null) {
-      const unit = counterValueCurrency.units[0];
-      const value = new BigNumber(asset.placeholderPrice).times(
-        new BigNumber(10).pow(unit.magnitude),
-      );
-      return formatCurrencyUnit(unit, value, { locale, showCode: true, discreet });
+    if (asset.isPlaceholder) {
+      return formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(0), {
+        locale,
+        showCode: true,
+        discreet,
+      });
     }
     return typeof countervalueRaw === "number"
       ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(countervalueRaw), {
@@ -55,14 +55,7 @@ export const useListItemViewModel = (asset: Asset): ListItemViewModelResult => {
           discreet,
         })
       : null;
-  }, [
-    asset.isPlaceholder,
-    asset.placeholderPrice,
-    countervalueRaw,
-    counterValueCurrency,
-    locale,
-    discreet,
-  ]);
+  }, [asset.isPlaceholder, countervalueRaw, counterValueCurrency, locale, discreet]);
 
   let deltaText = "–";
   let deltaColor: ListItemViewModelResult["deltaColor"] = "muted";

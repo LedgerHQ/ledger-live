@@ -2,20 +2,10 @@ import { useCallback } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
-
-export const toAsset = (item: CategorizedAssetItem): Asset => ({
-  currency: item.currency,
-  accounts: item.accounts,
-  amount: item.balance,
-  countervalue: item.value,
-  distribution: item.distribution,
-  isPlaceholder: false,
-});
 
 interface PortfolioSectionActions {
   onPressShowAll: () => void;
