@@ -147,10 +147,12 @@ export function useWebView(
     uiHook,
     customHandlers,
   });
-  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState] = useCacheBustedLiveAppsDB();
+  const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
+    useCacheBustedLiveAppsDB();
   const { edit, getLatest } = useCacheBustedLiveApps([
     cacheBustedLiveAppsDb,
     setCacheBustedLiveAppsDbState,
+    cacheBustedLoaded,
   ]);
 
   useEffect(() => {
@@ -159,7 +161,7 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage, noAccounts } = useDappLogic({
+  const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     currentAccountHistDb,
     accounts,
@@ -241,6 +243,7 @@ export function useWebView(
     webviewProps,
     webviewRef,
     noAccounts,
+    isLoadingAccounts,
   };
 }
 
@@ -450,7 +453,7 @@ function useUiHook({ manifest }: Props): UiHook {
   const source =
     currentRouteNameRef.current === "Platform Catalog"
       ? "Discover"
-      : (currentRouteNameRef.current ?? "Unknown");
+      : currentRouteNameRef.current ?? "Unknown";
 
   const flow = manifest.name;
 
@@ -695,7 +698,7 @@ export function useSelectAccount({
     [manifest.id, setCurrentAccountHist, setCurrentAccount],
   );
 
-  const handleAddAccountPress = () => {
+  const handleAddAccountPress = useCallback(() => {
     openDrawer({
       currencies: currencyIds,
       areCurrenciesFiltered: true,
@@ -705,9 +708,9 @@ export function useSelectAccount({
       source:
         currentRouteNameRef.current === "Platform Catalog"
           ? "Discover"
-          : (currentRouteNameRef.current ?? "Unknown"),
+          : currentRouteNameRef.current ?? "Unknown",
     });
-  };
+  }, [openDrawer, currencyIds, onSelectAccountSuccess, manifest.name]);
 
   return { handleAddAccountPress, currentAccount, currencyIds, onSelectAccountSuccess };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -46,6 +46,11 @@ export const NoAccountOverlay = ({
 }) => {
   const { t } = useTranslation();
   const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+
+  useEffect(() => {
+    onSelectAccount();
+  }, [onSelectAccount]);
+
   return (
     <Overlay>
       <Flex flexDirection="column" alignItems="center">
