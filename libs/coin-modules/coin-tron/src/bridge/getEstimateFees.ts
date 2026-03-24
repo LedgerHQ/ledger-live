@@ -39,7 +39,7 @@ const getFeesFromAccountActivation = async (
 
   const hasTRC20 = Boolean(
     tokenAccount &&
-      recipientAccount?.trc20?.some(trc20 => tokenAccount.token.contractAddress in trc20),
+    recipientAccount?.trc20?.some(trc20 => tokenAccount.token.contractAddress in trc20),
   );
 
   if (!recipientAccount && !hasTRC20 && available.lt(estimatedBandwidthCost)) {

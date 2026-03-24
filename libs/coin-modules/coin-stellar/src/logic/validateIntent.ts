@@ -171,7 +171,7 @@ export const validateIntent = async (
     } else {
       // Native payment
       maxAmount = nativeAmountAvailable;
-      amount = useAllAmount ? maxAmount : transactionIntent.amount ?? 0n;
+      amount = useAllAmount ? maxAmount : (transactionIntent.amount ?? 0n);
 
       if (amount > maxAmount) {
         errors.amount = new NotEnoughBalance();

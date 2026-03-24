@@ -21,7 +21,7 @@ describe("listOperations", () => {
     (utils.extractFeesPayer as jest.Mock).mockImplementation(input =>
       typeof input === "string"
         ? input.split("-")[0]
-        : input.transaction_id?.split("-")[0] ?? "0.0.0",
+        : (input.transaction_id?.split("-")[0] ?? "0.0.0"),
     );
     (utils.getMemoFromBase64 as jest.Mock).mockImplementation(memo =>
       memo ? `decoded-${memo}` : null,

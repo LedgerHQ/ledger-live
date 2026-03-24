@@ -59,8 +59,8 @@ const getAccountShapeV2 = async ({
   const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
 
-  const pendingOperations = shouldSyncFromScratch ? [] : initialAccount?.pendingOperations ?? [];
-  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const pendingOperations = shouldSyncFromScratch ? [] : (initialAccount?.pendingOperations ?? []);
+  const oldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
   const latestOperation = oldOperations[0];
 
   // grab latest operation timestamps for incremental sync
@@ -179,8 +179,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
 
-  const pendingOperations = shouldSyncFromScratch ? [] : initialAccount?.pendingOperations ?? [];
-  const oldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
+  const pendingOperations = shouldSyncFromScratch ? [] : (initialAccount?.pendingOperations ?? []);
+  const oldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
   const oldERC20Operations = oldOperations.filter(item => item.standard === "erc20");
   const latestOperation = oldOperations[0];
   const erc20LatestOperation = oldERC20Operations[0];

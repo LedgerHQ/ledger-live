@@ -217,7 +217,7 @@ export function makeGetAccountShape(
       const balanceKey = isNative
         ? nativeInstrumentId
         : getKey(balance.instrumentId, balance.adminId);
-      const token: TokenCurrency | null = isNative ? null : tokensByKey.get(balanceKey) ?? null;
+      const token: TokenCurrency | null = isNative ? null : (tokensByKey.get(balanceKey) ?? null);
 
       const existing = aggregatedBalances.get(balanceKey);
       if (existing) {
