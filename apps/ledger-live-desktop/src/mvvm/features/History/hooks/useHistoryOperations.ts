@@ -13,11 +13,72 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { isIncomingType } from "../utils/isIncomingType";
 import type { OperationTableItem } from "../types";
 
+type AccountInfo = { account: AccountLike; parentAccount?: Account };
+type FilterFn = (operation: Operation, account: AccountLike) => boolean;
+
 function getOperationAddress(operation: Operation): string {
   if (isIncomingType(operation.type)) {
     return operation.senders[0] ?? "";
   }
   return operation.recipients[0] ?? "";
+}
+
+function buildAccountsMap(accounts: Account[]): Map<string, AccountInfo> {
+  const allAccounts = flattenAccounts(accounts);
+  const mainAccountsById = new Map(
+    accounts.filter((a): a is Account => a.type === "Account").map(a => [a.id, a]),
+  );
+  const accountsById = new Map<string, AccountInfo>();
+
+  for (const acc of allAccounts) {
+    const parentAccount = acc.type !== "Account" ? mainAccountsById.get(acc.parentId) : undefined;
+    accountsById.set(acc.id, { account: acc, parentAccount });
+  }
+
+  return accountsById;
+}
+
+function deduplicateOperations(acc: AccountLike): Operation[] {
+  const existingHashes = new Set(acc.operations.map(op => op.hash));
+  return [
+    ...acc.pendingOperations.filter(pendingOp => !existingHashes.has(pendingOp.hash)),
+    ...acc.operations,
+  ];
+}
+
+function toTableItem(operation: Operation, info: AccountInfo): OperationTableItem {
+  const { account, parentAccount } = info;
+  return {
+    id: `${account.id}_${operation.id}`,
+    operation,
+    account,
+    parentAccount,
+    date: operation.date,
+    type: operation.type,
+    address: getOperationAddress(operation),
+    amount: getOperationAmountNumber(operation),
+    currency: getAccountCurrency(account),
+  };
+}
+
+function collectAccountOperations(
+  info: AccountInfo,
+  filterOperation: FilterFn,
+): OperationTableItem[] {
+  const allOps = deduplicateOperations(info.account);
+  return allOps.flatMap(rawOp => {
+    if (!filterOperation(rawOp, info.account)) return [];
+    return flattenOperationWithInternalsAndNfts(rawOp)
+      .filter(op => filterOperation(op, info.account))
+      .map(op => toTableItem(op, info));
+  });
+}
+
+function buildOperationItems(
+  accountsMap: Map<string, AccountInfo>,
+  filterOperation: FilterFn,
+): OperationTableItem[] {
+  return [...accountsMap.values()].flatMap(info => collectAccountOperations(info, filterOperation));
 }
 
 export function useHistoryOperations(): OperationTableItem[] {
@@ -41,62 +102,8 @@ export function useHistoryOperations(): OperationTableItem[] {
   );
 
   return useMemo(() => {
-    const allAccounts = flattenAccounts(accounts);
-    const accountsById = new Map<string, { account: AccountLike; parentAccount?: Account }>();
-
-    for (const acc of allAccounts) {
-      let parentAccount: Account | undefined;
-      if (acc.type !== "Account") {
-        const parent = accounts.find(a => a.id === acc.parentId);
-        if (parent && parent.type === "Account") {
-          parentAccount = parent;
-        }
-      }
-      accountsById.set(acc.id, { account: acc, parentAccount });
-    }
-
-    const items: OperationTableItem[] = [];
-
-    for (const acc of allAccounts) {
-      const info = accountsById.get(acc.id);
-      if (!info) continue;
-      const { account, parentAccount } = info;
-
-      const allOps = [
-        ...acc.pendingOperations.filter(
-          pendingOp => !acc.operations.some(op => op.hash === pendingOp.hash),
-        ),
-        ...acc.operations,
-      ];
-
-      for (const rawOp of allOps) {
-        if (!filterOperation(rawOp, account)) continue;
-
-        const flatOps = flattenOperationWithInternalsAndNfts(rawOp);
-        for (const operation of flatOps) {
-          if (!filterOperation(operation, account)) continue;
-
-          const currency = getAccountCurrency(account);
-          const amount = getOperationAmountNumber(operation);
-          const address = getOperationAddress(operation);
-
-          items.push({
-            id: `${account.id}_${operation.id}`,
-            operation,
-            account,
-            parentAccount,
-            date: operation.date,
-            type: operation.type,
-            address,
-            amount,
-            currency,
-          });
-        }
-      }
-    }
-
-    items.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-    return items;
+    const accountsMap = buildAccountsMap(accounts);
+    const items = buildOperationItems(accountsMap, filterOperation);
+    return items.sort((a, b) => b.date.getTime() - a.date.getTime());
   }, [accounts, filterOperation]);
 }

@@ -1,8 +1,8 @@
-import React, { useCallback, memo, MouseEvent } from "react";
+import React, { useCallback, memo } from "react";
 import { TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { SquaredCryptoIcon } from "~/mvvm/components/SquaredCryptoIcon";
+import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { isIncomingType } from "../utils/isIncomingType";
@@ -13,8 +13,6 @@ type OperationRowProps = {
   readonly row: OperationRowType;
   readonly onRowClick: (row: OperationRowType) => void;
 };
-
-const preventFocus = (e: MouseEvent) => e.preventDefault();
 
 function OperationRow({ row, onRowClick }: OperationRowProps) {
   const { t } = useTranslation();
@@ -30,7 +28,7 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
   const unit = currency.units[0];
 
   return (
-    <TableRow clickable onClick={handleClick} onMouseDown={preventFocus}>
+    <TableRow clickable onClick={handleClick}>
       <TableCell>
         <TableCellContent
           leadingContent={<CryptoCurrencyIcon currency={currency} size={32} />}

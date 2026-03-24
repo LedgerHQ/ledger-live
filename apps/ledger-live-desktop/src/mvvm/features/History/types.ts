@@ -1,9 +1,9 @@
-export type { Row, Table, ColumnDef } from "@tanstack/react-table";
-
-import type { Row, Table } from "@tanstack/react-table";
+import type { Row, Table, ColumnDef } from "@tanstack/react-table";
 import type { AccountLike, Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
+
+export type { Row, Table, ColumnDef };
 
 export type OperationTableItem = {
   id: string;

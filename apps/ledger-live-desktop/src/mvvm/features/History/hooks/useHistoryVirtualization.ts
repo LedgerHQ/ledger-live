@@ -34,9 +34,9 @@ function buildFlatItems(table: HistoryTable): VirtualItem[] {
 export function useHistoryVirtualization(table: HistoryTable) {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const rowModel = table.getRowModel();
-  const columns = table.getVisibleFlatColumns();
-  const flatItems = useMemo(() => buildFlatItems(table), [rowModel.rows, columns]);
+  const rows = table.getRowModel().rows;
+  const columnCount = table.getVisibleFlatColumns().length;
+  const flatItems = useMemo(() => buildFlatItems(table), [rows, columnCount]);
 
   const rowVirtualizer = useVirtualizer({
     count: flatItems.length,

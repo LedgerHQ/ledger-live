@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Create skeleton page for History
+Implement transaction history table with operation row component
