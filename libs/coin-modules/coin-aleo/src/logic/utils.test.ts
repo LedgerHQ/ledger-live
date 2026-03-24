@@ -1244,7 +1244,7 @@ describe("createFeeTransactionIntent", () => {
     });
   });
 
-  it("should create a fee_public intent for a sponsored private transaction without a feeRecordCommitment", () => {
+  it("should throw when feeRecord is missing for a sponsored private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
@@ -1253,33 +1253,18 @@ describe("createFeeTransactionIntent", () => {
       },
     });
 
-    const result = createFeeTransactionIntent({
-      account: mockPrivateAccount,
-      transaction,
-      executionId,
-      baseFee,
-      priorityFee,
-      isFeeSponsored: true,
-    });
-
-    expect(result).toEqual({
-      intentType: "transaction",
-      asset: {
-        type: "native",
-      },
-      type: "fee_public",
-      amount: BigInt(1000),
-      recipient: transaction.recipient,
-      sender: mockPrivateAccount.freshAddress,
-      data: {
-        type: "fee_public",
-        priorityFee: BigInt(0),
+    expect(() =>
+      createFeeTransactionIntent({
+        account: mockPrivateAccount,
+        transaction,
         executionId,
-      },
-    });
+        baseFee,
+        priorityFee,
+      }),
+    ).toThrow("aleo: missing fee record commitment");
   });
 
-  it("should throw when feeRecord is missing for a non-sponsored private transaction", () => {
+  it("should throw when feeRecord is missing for a private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {

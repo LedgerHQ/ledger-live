@@ -173,12 +173,12 @@ describe("buildSignOperation", () => {
     );
   });
 
-  it("should use fee_public function name for sponsored private transactions", async () => {
+  it("should keep fee_private function name for sponsored private transactions", async () => {
     const privateSponsoredTransaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
         amountRecordCommitment: mockUnspentRecord1.commitment,
-        feeRecordCommitment: null,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });
 
@@ -195,7 +195,7 @@ describe("buildSignOperation", () => {
     expect(mockedCreateAuthorization).toHaveBeenCalledTimes(1);
     expect(mockedCraftTransaction).toHaveBeenCalledWith(
       expect.objectContaining({
-        feeConfiguration: expect.objectContaining({ function_name: "fee_public" }),
+        feeConfiguration: expect.objectContaining({ function_name: "fee_private" }),
       }),
     );
   });

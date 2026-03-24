@@ -61,7 +61,6 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
       executionId: authorization.execution_id,
       baseFee,
       priorityFee,
-      isFeeSponsored: config.isFeeSponsored,
     }),
   });
 
@@ -108,13 +107,9 @@ export const buildSignOperation =
           const config = resolveConfig(account.currency.id);
           const baseFee = transaction.fees;
           const priorityFee = new BigNumber(0);
-          const shouldUsePublicFeeFlow = config.isFeeSponsored && isPrivateTransaction(transaction);
 
           const feeConfiguration: FeeConfiguration = {
-            function_name:
-              shouldUsePublicFeeFlow || !isPrivateTransaction(transaction)
-                ? "fee_public"
-                : "fee_private",
+            function_name: isPrivateTransaction(transaction) ? "fee_private" : "fee_public",
             max_base_fee: baseFee.toString(),
             max_priority_fee: priorityFee.toString(),
           };

@@ -512,14 +512,12 @@ export function createFeeTransactionIntent({
   executionId,
   baseFee,
   priorityFee,
-  isFeeSponsored = false,
 }: {
   account: AleoAccount;
   transaction: Transaction;
   executionId: string;
   baseFee: BigNumber;
   priorityFee: BigNumber;
-  isFeeSponsored?: boolean;
 }): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
   const isPrivateTx = isPrivateTransaction(transaction);
   const commonFields = {
@@ -530,7 +528,7 @@ export function createFeeTransactionIntent({
     sender: account.freshAddress,
   } as const;
 
-  if (isPrivateTx && !isFeeSponsored) {
+  if (isPrivateTx) {
     const commitment = transaction.properties.feeRecordCommitment;
     invariant(commitment, "aleo: missing fee record commitment");
     const feeRecord = getRecordByCommitment({ account, commitment });
