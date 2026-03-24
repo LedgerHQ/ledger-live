@@ -68,6 +68,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
       - name: Build desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         id: build-desktop
@@ -75,7 +76,7 @@ jobs:
           os: ${{ steps.os.outputs.result }}
       - name: Build the app
         id: build-app
-        run: pnpm turbo build --filter=ledger-live-desktop
+        run: pnpm exec nx run ledger-live-desktop:build
       - name: Save result
         id: save-result
         shell: bash

@@ -83,7 +83,7 @@ permissions:
 
 env:
   SHOULD_UPLOAD: ${{ (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
-  cache-bucket: ll-gha-s3-cache
+  cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
@@ -107,12 +107,14 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
           skip-pnpm-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: setup JDK 17
         uses: actions/setup-java@v3
@@ -135,30 +137,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="live-mobile^..."
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="@ledgerhq/dummy-*-app"
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="live-cli*..." --unsafe-perm
 
       - name: Build Android app for Detox test run
-        run: |
-          pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         env:
           PRODUCTION: ${{ inputs.production_firebase }}
           SKIP_JS_BUNDLING: true
+        with:
+          command: pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload Detox Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -201,12 +189,14 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
           skip-pnpm-cache: "false"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - uses: nick-fields/retry@v3
         name: install dependencies
@@ -214,22 +204,20 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="live-mobile^..."
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          command: pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
       - name: Build JS Bundle app for Detox test run
-        run: pnpm mobile e2e:ci -p android --bundle
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build minified JS Bundle for size analysis
-        run: pnpm mobile e2e:ci -p android --bundle-size
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle-size
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size

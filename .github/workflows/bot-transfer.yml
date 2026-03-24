@@ -45,6 +45,9 @@ jobs:
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -54,7 +57,7 @@ jobs:
       - name: install and build
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live"
-          pnpm turbo build --filter=@ledgerhq/live-cli
+          pnpm exec nx run @ledgerhq/live-cli:build
           cd apps/cli
           npm link
       - name: bot transfer

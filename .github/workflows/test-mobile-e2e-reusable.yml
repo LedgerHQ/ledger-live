@@ -132,7 +132,7 @@ permissions:
   contents: read
 
 env:
-  cache-bucket: ll-gha-s3-cache
+  cache-bucket: ll-nx-cache
   ANDROID_APK_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-x86_64-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}.apk
   ANDROID_JSBUNDLE_PATH: apps/ledger-live-mobile/main.jsbundle
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
@@ -196,7 +196,27 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+            .pnpmfile.cjs
+            tools
           token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          skip-pnpm-cache: "true"
+          skip-pod-cache: "true"
+          skip-turbo-cache: "true"
+          skip-nx-cache: "true"
+
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Write summary
         run: |
@@ -226,13 +246,6 @@ jobs:
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
           echo "- **Wallet 4.0:** ${{ env.E2E_ENABLE_WALLET40 == '1' && 'enabled' || 'disabled' }}"
           } >> $GITHUB_STEP_SUMMARY
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Determine cache keys
         id: cache-keys
@@ -445,12 +458,22 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pod-cache: "true"
+          skip-turbo-cache: "true"
+          skip-pnpm-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
 
       - name: Set shard test files from pre-computed matrix
         run: |
@@ -487,28 +510,14 @@ jobs:
           echo "ℹ️ Simulator boot started in background."
         shell: bash
 
-      - name: setup caches
-        id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pod-cache: "true"
-          skip-turbo-cache: "false"
-          skip-pnpm-cache: "true"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
       - uses: nick-fields/retry@v3
         name: install dependencies
         id: install-dependencies
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -541,20 +550,10 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="live-mobile^..."
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
-
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm turbo build --filter=@ledgerhq/live-cli
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
 
       - name: Setup Speculos image and Coin Apps
@@ -580,12 +579,6 @@ jobs:
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
-        run: |
-          pnpm mobile e2e:ci -p ios -t \
-            --e2e \
-            $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
-            $SHARD_TEST_FILES \
-            --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
@@ -596,6 +589,8 @@ jobs:
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
+          NX_SKIP_NX_CACHE: true
+        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -663,12 +658,20 @@ jobs:
           repository: LedgerHQ/ledger-live
           persist-credentials: false
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-pnpm-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
 
       - name: Install scrcpy 3.x and dependencies
         timeout-minutes: 10
@@ -727,34 +730,13 @@ jobs:
           /usr/local/lib/android/sdk/build-tools/34.0.0/zipalign -p 4 /tmp/apk/tmp.apk ${{ env.ANDROID_APK_PATH }}
           /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks ${{ secrets.ANDROID_KEYSTORE_PATH }} --ks-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} --ks-key-alias staging --key-pass ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} ${{ env.ANDROID_APK_PATH }}
 
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: setup-caches
-        with:
-          use-mise: true
-          gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests" --filter="live-cli*..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
         working-directory: apps/ledger-live-mobile
-
-      - name: Build dependencies
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
-        with:
-          command: pnpm turbo build --filter="live-mobile^..."
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
-          disable_cache: false
 
       - name: Download android emulator
         timeout-minutes: 10
@@ -817,11 +799,9 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Build CLI
-        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm turbo build --filter=@ledgerhq/live-cli
-          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          command: pnpm exec nx run @ledgerhq/live-cli:build
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
@@ -838,13 +818,6 @@ jobs:
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
-        run: |
-          pnpm mobile e2e:ci -p android -t \
-            --e2e \
-            $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
-            $SHARD_TEST_FILES \
-            --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
-
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -855,6 +828,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
+        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

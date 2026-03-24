@@ -65,29 +65,28 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Build and Deploy
         id: build-deploy
         uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
         with:
-          turbo-port: ${{ steps.setup-caches.outputs.port }}
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
-          turbo-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           working-directory: apps/web-tools
 
       - name: Typecheck web-tools
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo run typecheck --filter="@ledgerhq/web-tools"
+        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
+        with:
+          command: pnpm exec nx run @ledgerhq/web-tools:typecheck
+          disable_cache: false
 
 
   build-native-storybook:
@@ -106,21 +105,21 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Build and Deploy
         id: build-deploy
         uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
         with:
-          turbo-port: ${{ steps.setup-caches.outputs.port }}
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_NATIVE_STORYBOOK }}
-          turbo-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           working-directory: libs/ui/packages/native
 
   build-react-storybook:
@@ -138,21 +137,21 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Build and Deploy
         id: build-deploy
         uses: LedgerHQ/ledger-live/tools/actions/composites/vercel-deploy@develop
         with:
-          turbo-port: ${{ steps.setup-caches.outputs.port }}
           vercel-token: ${{ secrets.VERCEL_LEDGER_WALLET_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_REACT_STORYBOOK }}
-          turbo-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           working-directory: libs/ui/packages/react
 
   post-build-summary:

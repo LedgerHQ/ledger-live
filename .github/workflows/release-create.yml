@@ -32,6 +32,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
       - name: Push branch
         run: git push -u origin $RELEASE_BRANCH
       - name: Move patch updates to minor

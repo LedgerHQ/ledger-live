@@ -1,9 +1,6 @@
 name: "Build and Deploy Web Tools"
 description: "Builds and deploys web-tools to Vercel, outputs the deployment URL"
 inputs:
-  turbo-port:
-    description: "Port of the Turbo cache server (from setup-caches)"
-    required: true
   vercel-token:
     description: "Vercel API token"
     required: true
@@ -12,9 +9,6 @@ inputs:
     required: true
   vercel-project-id:
     description: "Vercel project ID"
-    required: true
-  turbo-token:
-    description: "Turborepo server token"
     required: true
   working-directory:
     description: "Working directory"
@@ -34,14 +28,10 @@ runs:
         npx vercel pull --yes --token=$VERCEL_TOKEN
         npx vercel build --token=$VERCEL_TOKEN
       env:
-        TURBO_TEAM: "foo"
-        TURBO_TOKEN: ${{ inputs.turbo-token }}
-        TURBO_API: http://127.0.0.1:${{ inputs.turbo-port }}
         VERCEL_TOKEN: ${{ inputs.vercel-token }}
         VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
         VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
         VERCEL_TELEMETRY_DISABLED: 1
-        TURBO_TELEMETRY_DISABLED: 1
       working-directory: ${{ inputs.working-directory }}
 
     - name: Deploy
@@ -60,5 +50,4 @@ runs:
         VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
         VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
         VERCEL_TELEMETRY_DISABLED: 1
-        TURBO_TELEMETRY_DISABLED: 1
       working-directory: ${{ inputs.working-directory }}

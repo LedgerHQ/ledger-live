@@ -6,5 +6,5 @@ runs:
     - run: pnpm i --filter="!./apps/**"
       shell: bash
 
-    - run: pnpm turbo build --filter="@ledgerhq/coin-tester-*"
+    - run: pnpm exec nx run-many -t build --projects=tag:type:coin-tester
       shell: bash

@@ -14,3 +14,8 @@ run = "nx run-many -t build -p '@ledgerhq/{{ usage.subproject }}'"
 description = "Build the libs project according to the dependency graph"
 alias = "bl"
 run = ["mise run nx:build 'libs/*'"]
+
+
+["nx:write-cache-config"]
+description = "Generate nx.cache-config.json for Nx remote caching"
+run = "pnpm nx:write-cache-config"

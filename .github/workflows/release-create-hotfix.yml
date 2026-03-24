@@ -28,12 +28,6 @@ jobs:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Checkout composite actions
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: develop
-          sparse-checkout: tools/actions/composites
-
       - name: Generate ref/tag version to use during main checkout
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-tag@develop
         id: format-app-tag
@@ -43,14 +37,15 @@ jobs:
 
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: ${{ steps.format-app-tag.outputs.main_ref }}
           token: ${{ steps.generate-token.outputs.token }}
+          ref: ${{ steps.format-app-tag.outputs.main_ref }}
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
+          git checkout origin/main -- .github/workflows
           git push -u origin hotfix
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -58,6 +53,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
       - name: install dependencies
         run: pnpm i -F "ledger-live"
       - name: Move minor updates to patch for hotfix branch
