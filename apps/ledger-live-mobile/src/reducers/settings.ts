@@ -863,10 +863,8 @@ export const notificationsSelector = (state: State) => state.settings.notificati
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
-export const overriddenFeatureFlagsSelector = (state: State) =>
-  state.settings.overriddenFeatureFlags;
-export const featureFlagsBannerVisibleSelector = (state: State) =>
-  state.settings.featureFlagsBannerVisible;
+export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
+export const featureFlagsBannerVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
 /* NB: Protect is the former codename for Ledger Recover */
