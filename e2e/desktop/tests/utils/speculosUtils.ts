@@ -12,14 +12,22 @@ import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { CLI } from "./cliUtils";
 import { unregisterTransportModule } from "@ledgerhq/live-common/hw/index";
 
-export async function launchSpeculos(appName: string, testTitle?: string): Promise<SpeculosDevice> {
+export async function launchSpeculos(
+  appName: string,
+  testTitle?: string,
+  previousDevice?: SpeculosDevice,
+): Promise<SpeculosDevice> {
   if (testTitle) {
     testTitle = testTitle.replace(/ /g, "_");
   }
 
+  if (previousDevice) {
+    await cleanSpeculos(previousDevice);
+  }
   const device = await startSpeculos(
     testTitle ?? "cli_speculos",
     specs[appName.replace(/ /g, "_")],
+    previousDevice?.port,
   );
 
   invariant(device, "[E2E Setup] Speculos not started");

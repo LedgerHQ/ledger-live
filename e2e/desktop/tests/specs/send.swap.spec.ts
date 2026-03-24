@@ -269,7 +269,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app, electronApp, speculos }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
@@ -277,11 +277,22 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const provider = await app.swap.selectExchangeWithoutKyc(electronApp, swap);
+        swap.setProvider(provider);
         await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
 
         await app.swap.clickExchangeButton(electronApp);
-        await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
-        await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+        if (provider.app && speculos) {
+          await speculos.relaunch(provider.app.name);
+
+          await app.swap.clickExecuteSwapButton(electronApp);
+          await app.swap.clickContinueButton();
+          await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
+        } else {
+          await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
+          await app.swapDrawer.verifyExchangeCompletedTextContent(
+            swap.accountToCredit.currency.name,
+          );
+        }
       },
     );
   });

@@ -155,7 +155,7 @@ async function getRandomAvailablePort(exclude: number[] = []): Promise<number> {
   throw new Error(`Failed to find an available port after ${MAX_PORT_RETRIES} attempts`);
 }
 
-const getPorts = async (isSpeculosWebsocket?: boolean) => {
+const getPorts = async (isSpeculosWebsocket?: boolean, wantedApiPort?: number) => {
   const usedPorts: number[] = [];
   const getPort = async () => {
     const port = await getRandomAvailablePort(usedPorts);
@@ -171,7 +171,7 @@ const getPorts = async (isSpeculosWebsocket?: boolean) => {
 
     return { apduPort, vncPort, buttonPort, automationPort };
   } else {
-    const apiPort = await getPort();
+    const apiPort = wantedApiPort ?? (await getPort());
     const vncPort = await getPort();
 
     return { apiPort, vncPort };
@@ -213,6 +213,7 @@ export type DeviceParams = {
 export async function createSpeculosDevice(
   arg: DeviceParams,
   maxRetry = 3,
+  wantedApiPort?: number,
 ): Promise<SpeculosDevice> {
   const {
     overridesAppPath,
@@ -226,7 +227,7 @@ export async function createSpeculosDevice(
     dependencies,
   } = arg;
   const speculosID = `speculosID-${randomUUID()}`;
-  const ports = await getPorts(isSpeculosWebsocket);
+  const ports = await getPorts(isSpeculosWebsocket, wantedApiPort);
 
   const sdk = inferSDK(firmware, model);
 

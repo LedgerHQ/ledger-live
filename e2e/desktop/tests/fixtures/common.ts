@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@ledgerhq/live-env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
@@ -23,6 +23,12 @@ import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
+
+/** Mutable Speculos handle: {@link current} is always the latest device for teardown and env. */
+export type SpeculosFixtureHandle = {
+  get current(): SpeculosDevice;
+  relaunch: (appName: string) => Promise<SpeculosDevice>;
+};
 
 type TestFixtures = {
   lang: string;
@@ -47,6 +53,7 @@ type TestFixtures = {
   }[];
   localManifestOverride?: LiveAppManifest[];
   teamOwner?: Team;
+  speculos?: SpeculosFixtureHandle;
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -103,36 +110,8 @@ export const test = base.extend<TestFixtures>({
     await use(app);
   },
 
-  userdataDestinationPath: async ({}, use) => {
-    await use(path.join(__dirname, "../artifacts/userdata", randomUUID()));
-  },
-  userdataOriginalFile: async ({ userdata }, use) => {
-    await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
-  },
-  userdataFile: async ({ userdataDestinationPath }, use) => {
-    const fullFilePath = path.join(userdataDestinationPath, "app.json");
-    await use(fullFilePath);
-  },
-
-  electronApp: async (
-    {
-      lang,
-      theme,
-      userdataDestinationPath,
-      userdataOriginalFile,
-      settings,
-      env,
-      featureFlags,
-      simulateCamera,
-      speculosApp,
-      cliCommands,
-      cliCommandsOnApp,
-      extraUserdataFiles,
-      localManifestOverride,
-    },
-    use,
-    testInfo,
-  ) => {
+  userdataDestinationPath: async ({ userdataOriginalFile, settings, extraUserdataFiles }, use) => {
+    const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
     // create userdata path
     await mkdir(userdataDestinationPath, { recursive: true });
 
@@ -154,84 +133,124 @@ export const test = base.extend<TestFixtures>({
         ),
       );
     }
+    await use(userdataDestinationPath);
+  },
+  userdataOriginalFile: async ({ userdata }, use) => {
+    await use(userdata && path.join(__dirname, "../userdata/", `${userdata}.json`));
+  },
+  userdataFile: async ({ userdataDestinationPath }, use) => {
+    const fullFilePath = path.join(userdataDestinationPath, "app.json");
+    await use(fullFilePath);
+  },
 
-    let speculos: SpeculosDevice | undefined;
+  speculos: async (
+    { speculosApp, cliCommands, userdataDestinationPath, cliCommandsOnApp },
+    use,
+    testInfo,
+  ) => {
+    let currentDevice: SpeculosDevice | undefined;
+
+    const handle: SpeculosFixtureHandle = {
+      get current(): SpeculosDevice {
+        if (!currentDevice) {
+          throw new Error("[E2E] speculos fixture: no device (missing speculosApp or mock mode?)");
+        }
+        return currentDevice;
+      },
+      relaunch: async (appName: string) => {
+        currentDevice = await launchSpeculos(appName, testInfo.title, currentDevice);
+        return currentDevice;
+      },
+    };
 
     try {
       setEnv("PLAYWRIGHT_RUN", true);
       setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
-      if (IS_NOT_MOCK && speculosApp) {
-        setEnv("MOCK", "");
-        process.env.MOCK = "";
 
-        if (cliCommandsOnApp?.length) {
-          for (const { app, cmd } of cliCommandsOnApp) {
-            speculos = await launchSpeculos(app.name);
-            unregisterAllTransportModules();
-            await executeCliCommand(cmd, userdataDestinationPath);
-            await cleanSpeculos(speculos);
-          }
-        }
+      if (!IS_NOT_MOCK || !speculosApp) {
+        await use(undefined);
+        return;
+      }
 
-        speculos = await launchSpeculos(speculosApp.name, testInfo.title);
+      setEnv("MOCK", "");
+      process.env.MOCK = "";
 
-        if (cliCommands?.length) {
+      if (cliCommandsOnApp?.length) {
+        for (const { app, cmd } of cliCommandsOnApp) {
+          currentDevice = await launchSpeculos(app.name);
           unregisterAllTransportModules();
-          for (const cmd of cliCommands) {
-            await executeCliCommand(cmd, userdataDestinationPath);
-          }
+          await executeCliCommand(cmd, userdataDestinationPath);
+          await cleanSpeculos(currentDevice);
+          currentDevice = undefined;
         }
       }
 
-      const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, featureFlags);
+      currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
 
-      // default environment variables
-      env = Object.assign(
-        {
-          ...process.env,
-          VERBOSE: true,
-          MOCK: IS_NOT_MOCK ? undefined : true,
-          MOCK_COUNTERVALUES: IS_NOT_MOCK ? undefined : true,
-          HIDE_DEBUG_MOCK: true,
-          CI: process.env.CI || undefined,
-          PLAYWRIGHT_RUN: true,
-          CRASH_ON_INTERNAL_CRASH: true,
-          LEDGER_MIN_HEIGHT: 768,
-          FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
-          MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
-          SPECULOS_API_PORT: IS_NOT_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
-          SPECULOS_ADDRESS: IS_NOT_MOCK ? getSpeculosAddress() : undefined,
-        },
-        env,
-      );
-
-      // launch app
-      const windowSize = { width: 1024, height: 768 };
-
-      const electronApp: ElectronApplication = await launchApp({
-        env,
-        lang,
-        theme,
-        userdataDestinationPath,
-        simulateCamera,
-        windowSize,
-        recordVideo: isLastRetry(testInfo),
-      });
-
-      await use(electronApp);
-
-      try {
-        await electronApp.close();
-      } catch {
-        // App may already be closed when capturing failure video
+      if (cliCommands?.length) {
+        unregisterAllTransportModules();
+        for (const cmd of cliCommands) {
+          await executeCliCommand(cmd, userdataDestinationPath);
+        }
       }
+
+      await use(handle);
     } finally {
-      if (speculos) {
-        await cleanSpeculos(speculos);
+      if (currentDevice) {
+        await cleanSpeculos(currentDevice);
       }
     }
   },
-  page: async ({ electronApp, teamOwner }, use, testInfo) => {
+
+  electronApp: async (
+    { lang, theme, userdataDestinationPath, env, featureFlags, simulateCamera, speculos },
+    use,
+    testInfo,
+  ) => {
+    const mergedFeatureFlags = merge({}, DEFAULT_FEATURE_FLAGS, featureFlags);
+
+    // default environment variables
+    env = Object.assign(
+      {
+        ...process.env,
+        VERBOSE: true,
+        MOCK: IS_NOT_MOCK ? undefined : true,
+        MOCK_COUNTERVALUES: IS_NOT_MOCK ? undefined : true,
+        HIDE_DEBUG_MOCK: true,
+        CI: process.env.CI || undefined,
+        PLAYWRIGHT_RUN: true,
+        CRASH_ON_INTERNAL_CRASH: true,
+        LEDGER_MIN_HEIGHT: 768,
+        FEATURE_FLAGS: JSON.stringify(mergedFeatureFlags),
+        MANAGER_DEV_MODE: IS_NOT_MOCK ? true : undefined,
+        SPECULOS_API_PORT: IS_NOT_MOCK && speculos ? String(speculos.current.port) : undefined,
+        SPECULOS_ADDRESS: IS_NOT_MOCK ? getSpeculosAddress() : undefined,
+      },
+      env,
+    );
+
+    // launch app
+    const windowSize = { width: 1024, height: 768 };
+
+    const electronApp: ElectronApplication = await launchApp({
+      env,
+      lang,
+      theme,
+      userdataDestinationPath,
+      simulateCamera,
+      windowSize,
+      recordVideo: isLastRetry(testInfo),
+    });
+
+    await use(electronApp);
+
+    try {
+      await electronApp.close();
+    } catch {
+      // App may already be closed when capturing failure video
+    }
+  },
+  page: async ({ electronApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
 

@@ -388,6 +388,7 @@ export const specs: Specs = {
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
+  wantedApiPort?: number,
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
@@ -451,7 +452,7 @@ export async function startSpeculos(
   try {
     return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
-      : await createSpeculosDevice(deviceParams).then(device => {
+      : await createSpeculosDevice(deviceParams, undefined, wantedApiPort).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return {
             id: device.id,
