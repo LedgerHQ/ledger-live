@@ -135,13 +135,15 @@ describe("usePortfolioCryptosSectionViewModel", () => {
   });
 
   describe("onPressShowAll", () => {
-    it("should navigate to AssetsList when llmAccountListUI is enabled", () => {
+    it("should navigate to AssetsList when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
           settings: {
             ...state.settings,
-            overriddenFeatureFlags: { llmAccountListUI: { enabled: true } },
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { assetSection: true } },
+            },
           },
         }),
       });
@@ -160,13 +162,15 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
     });
 
-    it("should navigate to legacy Assets screen when llmAccountListUI is disabled", () => {
+    it("should navigate to legacy Assets screen when assetSection is disabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
           settings: {
             ...state.settings,
-            overriddenFeatureFlags: { llmAccountListUI: { enabled: false } },
+            overriddenFeatureFlags: {
+              lwmWallet40: { enabled: true, params: { assetSection: false } },
+            },
           },
         }),
       });
