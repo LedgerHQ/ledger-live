@@ -2,8 +2,8 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { render, screen } from "tests/testSetup";
-import { aleoCurrency } from "./__mocks__/currency.mock";
-import { makeAleoTransaction } from "./__mocks__/transaction.mock";
+import { aleoCurrency } from "../../../__mocks__/currency.mock";
+import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
 import StepSummaryAmountRow from "./StepSummaryAmountRow";
 
 describe("StepSummaryAmountRow", () => {
