@@ -215,6 +215,47 @@ export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolea
   );
 }
 
+/**
+ * SIP-58: Merge accumulator events from `effects.accumulatorEvents` into the
+ * standard `balanceChanges` array so that deposits to address balances (which
+ * may not appear in coin-object-level balance changes) are visible in the
+ * operations history.
+ *
+ * For each accumulator event we check whether `balanceChanges` already has an
+ * entry for the same (address, coinType) pair.  If it does, the RPC already
+ * accounted for the accumulator; otherwise we synthesise a new BalanceChange.
+ */
+export function getUnifiedBalanceChanges(tx: SuiTransactionBlockResponse): BalanceChange[] {
+  const base = tx.balanceChanges ?? [];
+  const accEvents = tx.effects?.accumulatorEvents;
+  if (!accEvents || accEvents.length === 0) return base;
+
+  const extra: BalanceChange[] = [];
+
+  for (const evt of accEvents) {
+    if (!("integer" in evt.value)) continue;
+
+    const amount = evt.operation === "merge" ? evt.value.integer : `-${evt.value.integer}`;
+    const alreadyCovered = base.some(
+      bc =>
+        bc.coinType === evt.ty &&
+        typeof bc.owner !== "string" &&
+        "AddressOwner" in bc.owner &&
+        bc.owner.AddressOwner === evt.address,
+    );
+
+    if (!alreadyCovered) {
+      extra.push({
+        coinType: evt.ty,
+        owner: { AddressOwner: evt.address },
+        amount,
+      });
+    }
+  }
+
+  return extra.length > 0 ? [...base, ...extra] : base;
+}
+
 export type AccountBalance = {
   coinType: string;
   blockHeight: number;
@@ -322,17 +363,18 @@ export const getOperationAmount = (
   transaction: SuiTransactionBlockResponse,
   coinType: string,
 ): BigNumber => {
+  const changes = getUnifiedBalanceChanges(transaction);
   let amount = new BigNumber(0);
-  if (!transaction?.balanceChanges) return amount;
+  if (changes.length === 0) return amount;
   if (
     isStaking(transaction.transaction?.data.transaction) ||
     isUnstaking(transaction.transaction?.data.transaction)
   ) {
-    const balanceChange = transaction.balanceChanges[0];
+    const balanceChange = changes[0];
     return amount.minus(balanceChange?.amount || 0);
   }
 
-  for (const balanceChange of transaction.balanceChanges) {
+  for (const balanceChange of changes) {
     if (
       typeof balanceChange.owner !== "string" &&
       "AddressOwner" in balanceChange.owner &&
@@ -420,12 +462,11 @@ export const getStakesRaw = (owner: string, currencyId?: string) =>
  * Extract operation coin type from transaction
  */
 export const getOperationCoinType = (transaction: SuiTransactionBlockResponse): string => {
-  if (!transaction.balanceChanges) {
+  const changes = getUnifiedBalanceChanges(transaction);
+  if (changes.length === 0) {
     return DEFAULT_COIN_TYPE;
   }
-  const tokenBalanceChanges = transaction.balanceChanges.filter(
-    ({ coinType }) => coinType !== DEFAULT_COIN_TYPE,
-  );
+  const tokenBalanceChanges = changes.filter(({ coinType }) => coinType !== DEFAULT_COIN_TYPE);
   if (tokenBalanceChanges.length > 0) {
     return tokenBalanceChanges[0].coinType;
   }
@@ -476,27 +517,26 @@ export const alpacaGetOperationAmount = (
   const zero = BigNumber(0);
 
   const tx = transaction.transaction?.data.transaction;
-  const change = transaction.balanceChanges;
+  const changes = getUnifiedBalanceChanges(transaction);
   if (isStaking(tx) || isUnstaking(tx)) {
-    if (change) return removeFeesFromAmountForNative(change[0], getOperationFee(transaction)).abs();
+    if (changes.length > 0)
+      return removeFeesFromAmountForNative(changes[0], getOperationFee(transaction)).abs();
     return BigNumber(0);
   } else {
-    return (
-      change
-        ?.filter(
-          balanceChange =>
-            typeof balanceChange.owner !== "string" &&
-            "AddressOwner" in balanceChange.owner &&
-            balanceChange.owner.AddressOwner === address &&
-            balanceChange.coinType === coinType,
-        )
-        .map(change => {
-          if (isSender(address, transaction.transaction?.data))
-            return removeFeesFromAmountForNative(change, getOperationFee(transaction)).abs();
-          else return BigNumber(change.amount).abs();
-        })
-        .reduce((acc, curr) => acc.plus(curr), zero) || zero
-    );
+    return changes
+      .filter(
+        balanceChange =>
+          typeof balanceChange.owner !== "string" &&
+          "AddressOwner" in balanceChange.owner &&
+          balanceChange.owner.AddressOwner === address &&
+          balanceChange.coinType === coinType,
+      )
+      .map(change => {
+        if (isSender(address, transaction.transaction?.data))
+          return removeFeesFromAmountForNative(change, getOperationFee(transaction)).abs();
+        else return BigNumber(change.amount).abs();
+      })
+      .reduce((acc, curr) => acc.plus(curr), zero);
   }
 };
 
@@ -632,13 +672,11 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   const operationFee = getOperationFee(transaction);
   const feesPayer = getFeesPayer(transaction);
+  const changes = getUnifiedBalanceChanges(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
-    operations:
-      transaction.balanceChanges?.flatMap(change =>
-        toBlockOperation(transaction, change, operationFee),
-      ) || [],
+    operations: changes.flatMap(change => toBlockOperation(transaction, change, operationFee)),
     fees: BigInt(operationFee.toString()),
     ...(feesPayer ? { feesPayer } : {}),
   };

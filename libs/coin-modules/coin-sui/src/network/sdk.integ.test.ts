@@ -407,4 +407,75 @@ describe("SUI SDK Integration tests", () => {
       });
     });
   });
+
+  describe("getListOperations (SIP-58 / alpaca path)", () => {
+    const account = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+
+    it("returns operations in desc order", async () => {
+      const page = await getListOperations(account, "desc");
+      expect(page.items.length).toBeGreaterThan(0);
+
+      for (let i = 1; i < page.items.length; i++) {
+        expect(page.items[i - 1].tx.date.getTime()).toBeGreaterThanOrEqual(
+          page.items[i].tx.date.getTime(),
+        );
+      }
+    });
+
+    it("returns operations in asc order", async () => {
+      const page = await getListOperations(account, "asc");
+      expect(page.items.length).toBeGreaterThan(0);
+
+      for (let i = 1; i < page.items.length; i++) {
+        expect(page.items[i - 1].tx.date.getTime()).toBeLessThanOrEqual(
+          page.items[i].tx.date.getTime(),
+        );
+      }
+    });
+
+    it("contains no settlement transactions", async () => {
+      const page = await getListOperations(account, "desc");
+      expect(page.items.length).toBeGreaterThan(0);
+
+      for (const op of page.items) {
+        const raw = await withApi(async (api: SuiJsonRpcClient) =>
+          api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
+        );
+        expect(isSettlementTransaction(raw)).toBe(false);
+      }
+    });
+
+    it("each operation has valid fields", async () => {
+      const page = await getListOperations(account, "desc");
+
+      for (const op of page.items) {
+        expect(op.id).toBeTruthy();
+        expect(op.tx.hash).toBeTruthy();
+        expect(op.tx.date).toBeInstanceOf(Date);
+        expect(op.tx.block.height).toBeGreaterThan(0);
+        expect(op.senders.length).toBeGreaterThan(0);
+        expect(typeof op.type).toBe("string");
+        expect(op.value).toBeGreaterThanOrEqual(0n);
+      }
+    });
+
+    it("includes both IN and OUT operations", async () => {
+      const page = await getListOperations(account, "desc");
+      const types = new Set(page.items.map(op => op.type));
+      expect(types.has("IN")).toBe(true);
+      expect(types.has("OUT")).toBe(true);
+    });
+
+    it("operations have correct senders/recipients relative to account", async () => {
+      const page = await getListOperations(account, "desc");
+
+      for (const op of page.items) {
+        if (op.type === "IN") {
+          expect(op.recipients).toContain(account);
+        } else if (op.type === "OUT") {
+          expect(op.senders).toContain(account);
+        }
+      }
+    });
+  });
 });
