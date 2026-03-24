@@ -69,16 +69,19 @@ export default class Trx {
    * get Tron address for a given BIP 32 path.
    * @param path a path in BIP 32 format
    * @option boolDisplay optionally enable or not the display
-   * @return an object with a publicKey and address
+   * @option boolChaincode optionally enable or not the chaincode request (see app-tron `P2_CHAINCODE` / `helper_send_response_pubkey`)
+   * @return an object with a publicKey, address and (optionally) chainCode
    * @example
    * const address = await tron.getAddress("44'/195'/0'/0/0").then(o => o.address)
    */
   getAddress(
     path: string,
     boolDisplay?: boolean,
+    boolChaincode?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
+    chainCode?: string;
   }> {
     const paths = splitPath(path);
     const buffer = Buffer.alloc(PATHS_LENGTH_SIZE + paths.length * PATH_SIZE);
@@ -87,7 +90,7 @@ export default class Trx {
       buffer.writeUInt32BE(element, 1 + 4 * index);
     });
     return this.transport
-      .send(CLA, ADDRESS, boolDisplay ? 0x01 : 0x00, 0x00, buffer)
+      .send(CLA, ADDRESS, boolDisplay ? 0x01 : 0x00, boolChaincode ? 0x01 : 0x00, buffer)
       .then(response => {
         const publicKeyLength = response[0];
         const addressLength = response[1 + publicKeyLength];
@@ -97,6 +100,14 @@ export default class Trx {
           address: response
             .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
             .toString("ascii"),
+          chainCode: boolChaincode
+            ? response
+                .slice(
+                  1 + publicKeyLength + 1 + addressLength,
+                  1 + publicKeyLength + 1 + addressLength + 32,
+                )
+                .toString("hex")
+            : undefined,
         };
       });
   }
