@@ -304,6 +304,35 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
   );
 }
 
+export function findBestRecordForFee({
+  unspentRecords,
+  targetFee,
+  selectedAmountRecordCommitment,
+}: {
+  unspentRecords: AleoUnspentRecord[];
+  targetFee: BigNumber;
+  selectedAmountRecordCommitment: string | null;
+}): AleoUnspentRecord | null {
+  const recordsSufficientForFee = unspentRecords.filter(
+    r =>
+      r.commitment !== selectedAmountRecordCommitment &&
+      new BigNumber(r.microcredits).gte(targetFee),
+  );
+
+  if (recordsSufficientForFee.length === 0) {
+    return null;
+  }
+
+  // find the smallest record that can cover the fee
+  const bestFeeRecord = recordsSufficientForFee.reduce(
+    (min, current) =>
+      new BigNumber(current.microcredits).lt(new BigNumber(min.microcredits)) ? current : min,
+    recordsSufficientForFee[0],
+  );
+
+  return bestFeeRecord;
+}
+
 function isPrivateOperation(operation: Operation): boolean {
   const { extra } = operation;
   return (
@@ -483,12 +512,14 @@ export function createFeeTransactionIntent({
   executionId,
   baseFee,
   priorityFee,
+  isFeeSponsored = false,
 }: {
   account: AleoAccount;
   transaction: Transaction;
   executionId: string;
   baseFee: BigNumber;
   priorityFee: BigNumber;
+  isFeeSponsored?: boolean;
 }): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
   const isPrivateTx = isPrivateTransaction(transaction);
   const commonFields = {
@@ -499,7 +530,7 @@ export function createFeeTransactionIntent({
     sender: account.freshAddress,
   } as const;
 
-  if (isPrivateTx) {
+  if (isPrivateTx && !isFeeSponsored) {
     const commitment = transaction.properties.feeRecordCommitment;
     invariant(commitment, "aleo: missing fee record commitment");
     const feeRecord = getRecordByCommitment({ account, commitment });
