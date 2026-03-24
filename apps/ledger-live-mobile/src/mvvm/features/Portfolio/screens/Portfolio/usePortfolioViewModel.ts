@@ -36,6 +36,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayMarketBanner: boolean;
+  shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -63,6 +64,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayMarketBanner,
+    shouldDisplayOperationsList,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
@@ -152,6 +154,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
     shouldDisplayMarketBanner,
+    shouldDisplayOperationsList,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
