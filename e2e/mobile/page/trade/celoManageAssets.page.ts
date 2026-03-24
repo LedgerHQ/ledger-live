@@ -21,6 +21,16 @@ export default class CeloManageAssetsPage {
     await tapById(this.celoLockButton);
   }
 
+  @Step("Click on Vote for CELO")
+  async clickVote() {
+    await tapById(this.celoVoteButton);
+  }
+
+  @Step("Click start on the CELO vote started screen")
+  async clickVoteStart() {
+    await tapById("celo-vote-start-button");
+  }
+
   @Step("Check manage assets page - CELO")
   async checkManagePage() {
     await this.waitForManageAssets();

@@ -105,6 +105,28 @@ export default class StakePage {
     await typeTextById(this.celoLockAmountInput, amount);
   }
 
+  @Step("Open CELO vote amount screen")
+  async openCeloVoteAmount() {
+    await tapById("celo-vote-amount");
+  }
+
+  @Step("Set CELO vote amount")
+  async setCeloVoteAmount(amount: string) {
+    await waitForElementById("celo-vote-amount-input");
+    await typeTextById("celo-vote-amount-input", amount);
+  }
+
+  @Step("Validate CELO vote amount")
+  async validateCeloVoteAmount() {
+    await tapById("celo-vote-amount-continue");
+  }
+
+  @Step("Continue from CELO vote summary")
+  async celoVoteSummaryContinue() {
+    await waitForElementById("celo-vote-summary-continue");
+    await tapById("celo-vote-summary-continue");
+  }
+
   @Step("Verify choose asset page is visible")
   async verifyChooseAssetPage() {
     const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");

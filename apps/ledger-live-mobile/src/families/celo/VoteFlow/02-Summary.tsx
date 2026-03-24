@@ -211,6 +211,7 @@ export default function VoteSummary({ navigation, route }: Props) {
       )}
       <View style={styles.footer}>
         <Button
+          testID="celo-vote-summary-continue"
           event="SummaryContinue"
           type="primary"
           title={<Trans i18nKey="common.continue" />}
@@ -306,14 +307,14 @@ function SummaryWords({
           <Trans i18nKey={`celo.vote.iVote`} />
         </Words>
         <Touchable onPress={onChangeAmount}>
-          <Selectable name={formattedAmount} />
+          <Selectable name={formattedAmount} testID="celo-vote-amount" />
         </Touchable>
       </Line>
       <Line>
         <Words>
           <Trans i18nKey="delegation.to" />
         </Words>
-        <Touchable onPress={onChangeValidator}>
+        <Touchable onPress={onChangeValidator} touchableTestID="celo-vote-validator">
           <Selectable name={validator?.name ?? validator?.address ?? "-"} />
         </Touchable>
       </Line>
