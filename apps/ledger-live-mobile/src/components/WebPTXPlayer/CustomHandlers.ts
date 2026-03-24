@@ -39,6 +39,15 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
+import { makeSetEarnInfoBottomSheetAction } from "~/actions/earn";
+import {
+  MAX_LABEL_LENGTH,
+  MAX_MESSAGE_LENGTH,
+  MAX_TITLE_LENGTH,
+  sanitizeString,
+  validateUrl,
+} from "~/navigation/deeplinks/validation";
+import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -287,6 +296,7 @@ export function useCustomExchangeHandlers({
 
         return results;
       },
+      "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
     };
 
     return {
@@ -500,4 +510,70 @@ export function useCustomExchangeHandlers({
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   return useCustomExchangeHandlers({ manifest, accounts, sendAppReady: sendEarnLiveAppReady });
+}
+
+export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
+  return async (request: {
+    params?: {
+      title: unknown;
+      message: unknown;
+      linkText?: unknown;
+      linkHref?: unknown;
+    };
+  }) => {
+    const { params } = request;
+    if (!params) {
+      throw new Error("Missing params for custom.bottomSheet.info");
+    }
+
+    const { title, message, linkText, linkHref } = params;
+
+    if (typeof title !== "string" || typeof message !== "string") {
+      throw new TypeError(
+        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    const sanitizedTitle = sanitizeString(title, MAX_TITLE_LENGTH);
+    const sanitizedMessage = sanitizeString(message, MAX_MESSAGE_LENGTH);
+    if (!sanitizedTitle || !sanitizedMessage) {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    if (linkText != null && typeof linkText !== "string") {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: 'linkText' must be a string when provided.",
+      );
+    }
+    if (linkHref != null && typeof linkHref !== "string") {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: 'linkHref' must be a string when provided.",
+      );
+    }
+
+    const sanitizedLinkText = linkText
+      ? sanitizeString(linkText, MAX_LABEL_LENGTH) || undefined
+      : undefined;
+
+    let validatedLinkHref: string | undefined;
+    if (linkHref != null) {
+      validatedLinkHref = validateUrl(linkHref);
+      if (validatedLinkHref === "") {
+        throw new Error(
+          "Invalid params for custom.bottomSheet.info: 'linkHref' is not an allowed URL.",
+        );
+      }
+    }
+
+    dispatch(
+      makeSetEarnInfoBottomSheetAction({
+        title: sanitizedTitle,
+        message: sanitizedMessage,
+        linkText: sanitizedLinkText,
+        linkHref: validatedLinkHref,
+      }),
+    );
+  };
 }

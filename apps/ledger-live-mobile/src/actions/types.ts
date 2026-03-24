@@ -482,11 +482,14 @@ export enum SwapActionTypes {
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
+  EARN_INFO_BOTTOM_SHEET = "EARN_INFO_BOTTOM_SHEET",
   EARN_MENU_MODAL = "EARN_MENU_MODAL",
   EARN_PROTOCOL_INFO_MODAL = "EARN_PROTOCOL_INFO_MODAL",
 }
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
+
+export type EarnSetInfoBottomSheetPayload = EarnState["infoBottomSheet"];
 
 export type EarnSetMenuModalPayload = EarnState["menuModal"] | undefined;
 
@@ -494,6 +497,7 @@ export type EarnSetProtocolInfoModalPayload = EarnState["protocolInfoModal"] | u
 
 export type EarnPayload =
   | EarnSetInfoModalPayload
+  | EarnSetInfoBottomSheetPayload
   | EarnSetMenuModalPayload
   | EarnSetProtocolInfoModalPayload;
 

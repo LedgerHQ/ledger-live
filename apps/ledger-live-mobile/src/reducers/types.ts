@@ -318,6 +318,12 @@ export type EarnState = {
     messageTitle?: string;
     learnMoreLink?: string;
   };
+  infoBottomSheet?: {
+    message: string;
+    title: string;
+    linkText?: string;
+    linkHref?: string;
+  };
   menuModal?: {
     title?: string;
     options: { label: string; metadata: OptionMetadata }[];
