@@ -167,6 +167,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
+    bugTicket: "LIVE-28070",
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
@@ -237,6 +238,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
     xrayTicket: "B2CQA-4225",
+    bugTicket: "LIVE-28070",
   },
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
