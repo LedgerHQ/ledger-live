@@ -50,7 +50,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
       annotation: {
         type: "TMS",
         description:
-          "B2CQA-4343, B2CQA-4350, B2CQA-4351, B2CQA-4347, B2CQA-4339, B2CQA-4340, B2CQA-4345",
+          "B2CQA-4343, B2CQA-4350, B2CQA-4351, B2CQA-4347, B2CQA-4339, B2CQA-4340, B2CQA-4342",
       },
     },
     async ({ app }) => {
@@ -127,6 +127,10 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
     "Portfolio no seen device: verify reborn quick actions are displayed",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-4348",
+      },
     },
     async ({ app }) => {
       await app.portfolio.checkNoDeviceTitleVisibility();
