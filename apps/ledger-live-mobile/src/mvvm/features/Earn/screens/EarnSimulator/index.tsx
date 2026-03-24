@@ -77,6 +77,7 @@ export default function EarnSimulator({ route }: Props) {
             data={vm.chartData}
             width={CHART_WIDTH}
             height={CHART_HEIGHT}
+            maxYValue={vm.maxYValue}
             depositColor={depositColor}
             rewardsColor={rewardsColor}
           />

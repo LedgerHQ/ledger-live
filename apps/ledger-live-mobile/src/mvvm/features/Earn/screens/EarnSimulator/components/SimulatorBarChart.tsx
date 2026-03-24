@@ -7,6 +7,7 @@ type Props = {
   data: YearProjection[];
   width: number;
   height: number;
+  maxYValue: number;
   depositColor: string;
   rewardsColor: string;
 };
@@ -26,7 +27,21 @@ function formatCompactValue(value: number): string {
   return `$${value}`;
 }
 
-function SimulatorBarChart({ data, width, height, depositColor, rewardsColor }: Props) {
+function roundedTopRect(x: number, y: number, w: number, h: number, r: number): string {
+  if (h <= 0 || w <= 0) return "";
+  const cr = Math.min(r, w / 2, h);
+  return [
+    `M${x},${y + h}`,
+    `V${y + cr}`,
+    `Q${x},${y} ${x + cr},${y}`,
+    `H${x + w - cr}`,
+    `Q${x + w},${y} ${x + w},${y + cr}`,
+    `V${y + h}`,
+    `Z`,
+  ].join(" ");
+}
+
+function SimulatorBarChart({ data, width, height, maxYValue, depositColor, rewardsColor }: Props) {
   const chartHeight = height - AXIS_LABEL_OFFSET;
 
   const xScale = useMemo(
@@ -86,19 +101,13 @@ function SimulatorBarChart({ data, width, height, depositColor, rewardsColor }: 
               width={bandwidth}
               height={Math.max(0, depositBarHeight)}
               fill={depositColor}
-              rx={0}
-              ry={0}
             />
-            {/* Rewards segment (top, with rounded top corners) */}
-            <Rect
-              x={x}
-              y={rewardsBarY}
-              width={bandwidth}
-              height={Math.max(0, rewardsBarHeight)}
-              fill={rewardsColor}
-              rx={BAR_RADIUS}
-              ry={BAR_RADIUS}
-            />
+            {rewardsBarHeight > 0 && (
+              <Path
+                d={roundedTopRect(x, rewardsBarY, bandwidth, rewardsBarHeight, BAR_RADIUS)}
+                fill={rewardsColor}
+              />
+            )}
           </React.Fragment>
         );
       })}
