@@ -4,7 +4,12 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type {
+  AleoAccount,
+  AleoUnspentRecord,
+  Transaction as AleoTransaction,
+} from "@ledgerhq/live-common/families/aleo/types";
 import { isPublicTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { useSelector } from "LLD/hooks/redux";
 import Label from "~/renderer/components/Label";
@@ -15,6 +20,12 @@ import Box from "~/renderer/components/Box/Box";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
+
+interface Props {
+  account: AleoAccount;
+  transaction: AleoTransaction;
+  updateTransaction: StepProps["updateTransaction"];
+}
 
 interface ButtonState {
   $checked?: boolean;
@@ -84,7 +95,7 @@ const RecordsLimitDescription = styled.p`
 
 const MAX_RECORDS_DISPLAYED = 10;
 
-const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
+const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
@@ -176,6 +187,21 @@ const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps
         )}
       </Flex>
     </Box>
+  );
+};
+
+const isAleoAccount = (acc: AccountLike): acc is AleoAccount => "aleoResources" in acc;
+
+const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
+  if (!account || !transaction || transaction.family !== "aleo" || !isAleoAccount(account))
+    return null;
+
+  return (
+    <AleoStepRecordPicker
+      account={account}
+      transaction={transaction}
+      updateTransaction={updateTransaction}
+    />
   );
 };
 
