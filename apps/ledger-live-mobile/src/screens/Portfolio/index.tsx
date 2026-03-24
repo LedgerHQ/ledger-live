@@ -50,6 +50,7 @@ import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { ddAddViewLoadingTime } from "LLM/utils/ddAddViewLoadingTime";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
@@ -119,7 +120,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       { topChains, featureFlags: buildFeatureFlagTags() },
       Date.now(),
     );
-    DdRum.addViewLoadingTime(true);
+    ddAddViewLoadingTime();
   }, [allAccounts, llmDatadog?.enabled]);
 
   const hasTokenAccounts = useSelector(hasTokenAccountsNotBlacklistedSelector);

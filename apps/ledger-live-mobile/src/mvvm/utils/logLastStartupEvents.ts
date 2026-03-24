@@ -7,10 +7,9 @@ import { resolveStartupEvents, STARTUP_EVENTS } from "./resolveStartupEvents";
 import mmkvStorageWrapper, { type MMKVMonitoredRead } from "../storage/mmkvStorageWrapper";
 
 type LastStartupEvent = (typeof STARTUP_EVENTS)["APP_STARTED" | "NAV_READY"];
-export const LAST_STARTUP_EVENT_VALUES = new Set<string>([
-  STARTUP_EVENTS.APP_STARTED,
-  STARTUP_EVENTS.NAV_READY,
-]);
+export const LAST_STARTUP_EVENT_VALUES = [STARTUP_EVENTS.APP_STARTED, STARTUP_EVENTS.NAV_READY];
+
+export const LAST_EVENTS_BUFFER = 10_000; // We want to make sure we capture any event that might happen right after the last startup event
 
 /**
  * Logs a startup event and conditionally sends the "app_startup_events" segment event once the startup is complete.
@@ -26,25 +25,26 @@ export const LAST_STARTUP_EVENT_VALUES = new Set<string>([
  * @returns The {@link StartupEvent} instance recorded for this call.
  */
 export async function logLastStartupEvents(eventName: LastStartupEvent): Promise<StartupEvent> {
+  const alreadyLogged = new Set(startupEvents.map(e => e.event));
   const event = logStartupEvent(eventName);
-  const lastEventCalls = startupEvents.flatMap(e =>
-    LAST_STARTUP_EVENT_VALUES.has(e.event) ? e.event : [],
-  );
-  const isStartupDone = new Set(lastEventCalls).size === LAST_STARTUP_EVENT_VALUES.size;
-  const isStartupLastCall = lastEventCalls.filter(e => e === eventName).length === 1;
-  if (isStartupDone && isStartupLastCall) {
+
+  const otherStartupEvents = LAST_STARTUP_EVENT_VALUES.filter(e => e !== eventName);
+  if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {
     try {
       DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
-      const [events, storageState] = await Promise.all([
-        resolveStartupEvents(),
+      const [storageState] = await Promise.all([
         summarizeStorageData(),
+        new Promise(resolve => setTimeout(resolve, LAST_EVENTS_BUFFER)), // Wait for potential events right after the last startup event to be logged
       ]);
+
+      const events = await resolveStartupEvents();
       const appStartupTime = events.find(e => e.event === eventName)?.time ?? 0;
       await track("app_startup_events", { appStartupTime, ...storageState, events });
     } catch (error) {
       console.error("Error during app startup tracking:", error);
     }
   }
+
   return event;
 }
 
