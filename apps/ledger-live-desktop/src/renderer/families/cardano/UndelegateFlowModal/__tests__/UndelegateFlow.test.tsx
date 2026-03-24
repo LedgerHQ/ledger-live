@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import UndelegationModal from "./index";
+import UndelegationModal from "../index";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
 // Mock Body component
-jest.mock("./Body", () => {
+jest.mock("../Body", () => {
   const MockBody = ({
     stepId,
     onChangeStepId,

@@ -38,13 +38,15 @@ class UndelegationModal extends PureComponent<UnDelegationModalProps, State> {
         preventBackdropClick={isModalLocked}
         width={550}
         render={({ onClose, data }) => (
-          <Body
-            stepId={stepId}
-            name="MODAL_CARDANO_UNDELEGATE"
-            onClose={onClose}
-            onChangeStepId={this.handleStepChange}
-            params={data || {}}
-          />
+          <div data-testid="modal-cardano-undelegate">
+            <Body
+              stepId={stepId}
+              name="MODAL_CARDANO_UNDELEGATE"
+              onClose={onClose}
+              onChangeStepId={this.handleStepChange}
+              params={data || {}}
+            />
+          </div>
         )}
       />
     );
