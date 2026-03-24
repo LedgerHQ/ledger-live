@@ -2,6 +2,7 @@ import React from "react";
 import { TableBody } from "@ledgerhq/lumen-ui-react";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { DayHeader } from "./DayHeader";
+import { OperationRow } from "./OperationRow";
 import type { OperationRow as OperationRowType, VirtualItem } from "../types";
 
 type HistoryTableBodyProps = {
@@ -46,11 +47,7 @@ export function HistoryTableBody({
           );
         }
 
-        return (
-          <tr key={item.row.id}>
-            <td colSpan={columnCount}>{/* TODO: Replace with OperationRow component */}</td>
-          </tr>
-        );
+        return <OperationRow key={item.row.id} row={item.row} onRowClick={onRowClick} />;
       })}
       {paddingBottom > 0 && (
         <tr>
