@@ -2,16 +2,16 @@ import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import { usePortfolioSectionActions } from "../../hooks/usePortfolioSectionActions";
-import { MAX_ASSETS_TO_DISPLAY } from "../PortfolioCryptosSection/hooks/usePortfolioCryptosSectionViewModel";
-import { MAX_STABLECOINS_TO_DISPLAY } from "../PortfolioStablecoinsSection/usePortfolioStablecoinsSectionViewModel";
+import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { MAX_ASSETS_TO_DISPLAY } from "src/mvvm/features/WalletAssets/views/CryptosSection/usePortfolioCryptosSectionViewModel";
+import { MAX_STABLECOINS_TO_DISPLAY } from "LLM/features/WalletAssets/views/StablecoinsSection/usePortfolioStablecoinsSectionViewModel";
 
-interface PortfolioCategorizedAssetsSectionViewModelResult {
+interface WalletAssetsViewModelResult {
   hasMore: boolean;
   onPressShowAll: () => void;
 }
 
-export function usePortfolioCategorizedAssetsSectionViewModel(): PortfolioCategorizedAssetsSectionViewModelResult {
+export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false);
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
 

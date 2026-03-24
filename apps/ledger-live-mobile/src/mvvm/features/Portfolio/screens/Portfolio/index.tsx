@@ -25,7 +25,7 @@ import MarketBanner from "LLM/features/MarketBanner";
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
-  PortfolioCategorizedAssetsSection,
+  WalletAssetsView,
   PortfolioCarouselSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
@@ -128,7 +128,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     }
 
     if (shouldDisplayAssetSection) {
-      sections.push(<PortfolioCategorizedAssetsSection key="categorizedAssets" />);
+      sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
       sections.push(
         <PortfolioAssetsSection
