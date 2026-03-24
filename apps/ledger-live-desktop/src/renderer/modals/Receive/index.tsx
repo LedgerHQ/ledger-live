@@ -13,7 +13,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { closeModal } from "~/renderer/actions/modals";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ReceiveOptionsDialog } from "LLD/features/Receive";
 import { GlobalModalData } from "../types";

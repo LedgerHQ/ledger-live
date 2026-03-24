@@ -12,8 +12,8 @@ import {
   modularDialogCurrenciesSelector,
   modularDialogOnAccountSelectedSelector,
   modularDialogOnAssetSelectedSelector,
-  modularDrawerSearchedSelector,
-} from "~/renderer/reducers/modularDrawer";
+  modularDialogSearchedSelector,
+} from "~/renderer/reducers/modularDialog";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
@@ -32,7 +32,7 @@ export function useModularDialogFlowState({
 }: Props) {
   const isAcceptedCurrency = useAcceptedCurrency();
   const { trackModularDialogEvent } = useModularDialogAnalytics();
-  const searchedValue = useSelector(modularDrawerSearchedSelector);
+  const searchedValue = useSelector(modularDialogSearchedSelector);
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
   const onAssetSelected = useSelector(modularDialogOnAssetSelectedSelector);
   const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);

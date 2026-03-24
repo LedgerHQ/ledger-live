@@ -386,7 +386,7 @@ const MainSideBar = () => {
                     onClick={handleClickRefer}
                     isActive={Boolean(
                       referralProgramConfig?.params?.path &&
-                        locationPathname.startsWith(referralProgramConfig.params.path),
+                      locationPathname.startsWith(referralProgramConfig.params.path),
                     )}
                     collapsed={secondAnim}
                     NotifComponent={

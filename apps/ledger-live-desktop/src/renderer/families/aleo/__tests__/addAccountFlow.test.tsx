@@ -154,10 +154,10 @@ const setup = (state?: Partial<State>) => {
   const initialState = {
     settings: AFTER_ONBOARDING_STATE,
     ...state,
-    modularDrawer: {
+    modularDialog: {
       source: "MADSource",
       flow: "Add account",
-      ...state?.modularDrawer,
+      ...state?.modularDialog,
     },
   };
 

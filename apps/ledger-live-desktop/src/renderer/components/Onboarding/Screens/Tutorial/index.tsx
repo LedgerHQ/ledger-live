@@ -65,7 +65,7 @@ import {
   setOnboardingSyncFlow,
 } from "~/renderer/reducers/onboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/EnableSync";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";

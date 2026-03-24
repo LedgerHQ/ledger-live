@@ -6,8 +6,8 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";

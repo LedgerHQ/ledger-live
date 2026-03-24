@@ -11,23 +11,23 @@ import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
-import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
-import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
-import { useOpenAssetFlow } from "../../ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useModularDialogAnalytics } from "LLD/features/ModularDialog/analytics/useModularDialogAnalytics";
+import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void,
 ) => {
-  const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { trackModularDialogEvent } = useModularDialogAnalytics();
   const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
 
   const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -69,12 +69,12 @@ export const useDetailedAccounts = (
   }, [accounts, isATokenCurrency, overridedAccountName, createBaseDetailedAccounts, asset]);
 
   const onAddAccountClick = useCallback(() => {
-    trackModularDrawerEvent("button_clicked", {
+    trackModularDialogEvent("button_clicked", {
       button: "Add a new account",
-      page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
+      page: MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
     });
     openAddAccountFlow(asset, false, onAccountSelected);
-  }, [trackModularDrawerEvent, openAddAccountFlow, asset, onAccountSelected]);
+  }, [trackModularDialogEvent, openAddAccountFlow, asset, onAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

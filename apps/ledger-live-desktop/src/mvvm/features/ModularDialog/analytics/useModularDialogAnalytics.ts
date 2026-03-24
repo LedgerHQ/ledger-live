@@ -5,9 +5,9 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "LLD/hooks/redux";
 import {
-  modularDrawerFlowSelector,
-  modularDrawerSourceSelector,
-} from "~/renderer/reducers/modularDrawer";
+  modularDialogFlowSelector,
+  modularDialogSourceSelector,
+} from "~/renderer/reducers/modularDialog";
 
 type DialogConfig = {
   formatNetworkConfig?: boolean;
@@ -23,8 +23,8 @@ type TrackModularDialogEvent = <T extends ModularDialogEventName>(
 ) => void;
 
 export const useModularDialogAnalytics = () => {
-  const flow = useSelector(modularDrawerFlowSelector);
-  const source = useSelector(modularDrawerSourceSelector);
+  const flow = useSelector(modularDialogFlowSelector);
+  const source = useSelector(modularDialogSourceSelector);
 
   const trackModularDialogEvent = useCallback<TrackModularDialogEvent>(
     (eventName, params, dialogConfig) => {

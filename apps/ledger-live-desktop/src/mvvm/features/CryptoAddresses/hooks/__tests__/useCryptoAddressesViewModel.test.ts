@@ -6,8 +6,8 @@ import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useA
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { MAD_SOURCE_PAGES } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
 import { useCryptoAccountRows } from "../../components/Table/hooks/useCryptoAccountRows";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../constants";

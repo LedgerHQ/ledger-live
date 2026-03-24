@@ -99,7 +99,7 @@ const createMockState = () => ({
     ],
   },
   application: { debug: {} },
-  modularDrawer: {
+  modularDialog: {
     searchedValue: "",
   },
 });
@@ -115,7 +115,7 @@ const createStore = (options?: { discreet?: boolean }) =>
       locale: (state = initialMockState.locale) => state,
       currency: (state = initialMockState.currency) => state,
       application: (state = initialMockState.application) => state,
-      modularDrawer: (state = initialMockState.modularDrawer) => state,
+      modularDialog: (state = initialMockState.modularDialog) => state,
       assetsDataApi: (state = {}) => state,
     },
     preloadedState: { assetsDataApi: preloadedAssetsDataApiState },

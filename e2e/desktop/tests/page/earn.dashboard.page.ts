@@ -3,7 +3,6 @@ import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
 
 export class EarnPage extends WebViewAppPage {
@@ -23,7 +22,6 @@ export class EarnPage extends WebViewAppPage {
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private modularDrawer = new ModularDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
 
   @step("Go and wait for Earn app to be ready")
@@ -114,12 +112,8 @@ export class EarnPage extends WebViewAppPage {
     }
   }
 
-  /**
-   * Returns the visible modular selector (Dialog or Drawer), or null if legacy UI.
-   */
   private async getModularSelector() {
     if (await this.modularDialog.isVisible()) return this.modularDialog;
-    if (await this.modularDrawer.isVisible()) return this.modularDrawer;
     return null;
   }
 

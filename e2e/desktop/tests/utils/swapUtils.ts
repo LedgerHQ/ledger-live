@@ -6,7 +6,8 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getModularSelector, ModularSelector } from "./modularSelectorUtils";
+import { ModularDialog } from "tests/page/dialog/modular.dialog";
+import { getModularSelector } from "./modularSelectorUtils";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   let originalBroadcastValue: string | undefined;
@@ -77,7 +78,7 @@ async function selectAccountTo(app: Application, electronApp: ElectronApplicatio
   }
 }
 
-export async function selectAccountMAD(selector: ModularSelector, account: Account) {
+export async function selectAccountMAD(selector: ModularDialog, account: Account) {
   await selector.selectAsset(account.currency);
   await selector.selectNetwork(account.currency);
   await selector.selectAccountByName(account);

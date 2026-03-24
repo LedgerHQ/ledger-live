@@ -15,7 +15,7 @@ import {
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 interface Props {
   account: Account;
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const EditAccountName = ({ account, navigateBack }: Props) => {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
