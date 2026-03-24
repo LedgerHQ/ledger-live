@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import featureFlags, { type FeatureFlagsState } from "@shared/feature-flags";
 import accounts, { AccountsState } from "./accounts";
 import application, { ApplicationState } from "./application";
 import devices, { DevicesState } from "./devices";
@@ -31,6 +32,7 @@ export type State = LLDRTKApiState & {
   countervalues: CountervaluesState;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
+  featureFlags: FeatureFlagsState;
   identities: IdentitiesState;
   market: MarketState;
   modals: ModalsState;
@@ -53,6 +55,7 @@ const appReducer = combineReducers({
   countervalues,
   devices,
   dynamicContent,
+  featureFlags,
   identities: identitiesSlice.reducer,
   modals,
   modularDrawer,
