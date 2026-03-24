@@ -287,6 +287,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           await app.swap.clickExecuteSwapButton(electronApp);
           await app.swap.clickContinueButton();
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
+          await app.swap.expectTransactionSentToasterToBeVisible();
         } else {
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swapDrawer.verifyExchangeCompletedTextContent(

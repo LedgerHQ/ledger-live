@@ -50,14 +50,14 @@ export async function launchSpeculos(
   await allure.description("SPECULOS\n" + info);
 
   console.warn(
-    `Speculos ${device.id} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,
+    `Speculos ${device.id} ${appName} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,
   );
   return device;
 }
 
 export async function cleanSpeculos(speculos: SpeculosDevice, previousPort?: number) {
   await stopSpeculos(speculos.id);
-  unregisterTransportModule("speculos-http-" + String(previousPort));
+  unregisterTransportModule("speculos-http-" + String(speculos.port));
   if (previousPort) {
     setEnv("SPECULOS_API_PORT", previousPort);
     process.env.SPECULOS_API_PORT = String(previousPort);

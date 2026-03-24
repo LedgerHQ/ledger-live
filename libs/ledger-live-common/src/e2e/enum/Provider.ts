@@ -51,7 +51,7 @@ export class Provider {
     false,
     true,
     "0x111111125421cA6dc452d289314280a0f8842A65",
-    AppInfos.ETHEREUM,
+    AppInfos.ONE_INCH,
   );
   static readonly VELORA = new Provider(
     "velora",
@@ -60,7 +60,7 @@ export class Provider {
     false,
     true,
     "0x6A000F20005980200259B80c5102003040001068",
-    AppInfos.ETHEREUM,
+    AppInfos.VELORA,
   );
   static readonly OKX = new Provider(
     "okx",

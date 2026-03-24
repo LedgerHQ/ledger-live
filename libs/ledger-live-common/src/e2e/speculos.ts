@@ -383,6 +383,20 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Velora: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Velora",
+    },
+    dependencies: [AppInfos.ETHEREUM],
+  },
+  One_Inch: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "1inch",
+    },
+    dependencies: [AppInfos.ETHEREUM],
+  },
 };
 
 export async function startSpeculos(

@@ -175,20 +175,19 @@ export const test = base.extend<TestFixtures>({
       setEnv("MOCK", "");
       process.env.MOCK = "";
 
+      unregisterAllTransportModules();
+
       if (cliCommandsOnApp?.length) {
         for (const { app, cmd } of cliCommandsOnApp) {
-          currentDevice = await launchSpeculos(app.name);
-          unregisterAllTransportModules();
+          currentDevice = await launchSpeculos(app.name, testInfo.title);
           await executeCliCommand(cmd, userdataDestinationPath);
           await cleanSpeculos(currentDevice);
-          currentDevice = undefined;
         }
       }
 
       currentDevice = await launchSpeculos(speculosApp.name, testInfo.title);
 
       if (cliCommands?.length) {
-        unregisterAllTransportModules();
         for (const cmd of cliCommands) {
           await executeCliCommand(cmd, userdataDestinationPath);
         }
