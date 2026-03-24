@@ -1,6 +1,6 @@
 import { useRef, useMemo } from "react";
 import { useVirtualizer, Virtualizer } from "@tanstack/react-virtual";
-import type { VirtualItem, HistoryTable } from "../types";
+import type { VirtualItem, HistoryTable, OperationRow } from "../types";
 
 const OPERATION_ROW_HEIGHT = 64;
 const DAY_HEADER_HEIGHT = 40;
@@ -12,13 +12,11 @@ function startOfDay(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-function buildFlatItems(table: HistoryTable): VirtualItem[] {
-  const rowModel = table.getRowModel();
+function buildFlatItems(rows: OperationRow[], columnCount: number): VirtualItem[] {
   const items: VirtualItem[] = [];
   let currentDayKey: string | null = null;
-  const columnCount = table.getVisibleFlatColumns().length;
 
-  for (const row of rowModel.rows) {
+  for (const row of rows) {
     const day = startOfDay(row.original.date);
     const dayKey = day.toISOString();
     if (dayKey !== currentDayKey) {
@@ -34,9 +32,9 @@ function buildFlatItems(table: HistoryTable): VirtualItem[] {
 export function useHistoryVirtualization(table: HistoryTable) {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const rowModel = table.getRowModel();
-  const columns = table.getVisibleFlatColumns();
-  const flatItems = useMemo(() => buildFlatItems(table), [rowModel.rows, columns]);
+  const rows = table.getRowModel().rows;
+  const columnCount = table.getVisibleFlatColumns().length;
+  const flatItems = useMemo(() => buildFlatItems(rows, columnCount), [rows, columnCount]);
 
   const rowVirtualizer = useVirtualizer({
     count: flatItems.length,

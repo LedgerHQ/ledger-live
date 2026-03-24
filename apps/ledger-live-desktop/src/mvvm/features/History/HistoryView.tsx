@@ -11,7 +11,7 @@ export function HistoryView({
   rowVirtualizer,
   flatItems,
   onRowClick,
-}: HistoryViewModel) {
+}: Readonly<HistoryViewModel>) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24">
       <TrackPage category="History" />
