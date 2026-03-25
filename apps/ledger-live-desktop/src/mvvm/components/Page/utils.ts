@@ -9,6 +9,7 @@ const WALLET_40_PAGES = new Set([
   "/market",
   "/analytics",
   "/cryptos",
+  "/assets",
   "/earn",
   "/perps",
   "/history",

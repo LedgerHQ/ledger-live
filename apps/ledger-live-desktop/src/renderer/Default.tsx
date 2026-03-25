@@ -103,7 +103,8 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
-const Cryptos = lazy(() => import("LLD/features/CryptoAddresses"));
+const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
+const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
 const History = lazy(() => import("LLD/features/History"));
 
@@ -245,7 +246,17 @@ const MainAppContent = ({
           path="/cryptos"
           element={
             shouldDisplayAssetSection ? (
-              withSuspense(Cryptos)({})
+              withSuspense(CryptoAddresses)({})
+            ) : (
+              <Navigate to="/accounts" replace />
+            )
+          }
+        />
+        <Route
+          path="/assets"
+          element={
+            shouldDisplayAssetSection ? (
+              withSuspense(CryptoAssets)({})
             ) : (
               <Navigate to="/accounts" replace />
             )

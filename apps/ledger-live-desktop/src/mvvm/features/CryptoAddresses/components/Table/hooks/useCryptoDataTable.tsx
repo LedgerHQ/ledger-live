@@ -59,7 +59,7 @@ export function useCryptoDataTable({
             sortDirection={column.getIsSorted() || undefined}
             onClick={column.getToggleSortingHandler()}
           >
-            {t("crypto.table.columns.name")}
+            {t("cryptoAddresses.table.columns.name")}
           </TableSortButton>
         ),
         cell: ({ row }) => (
@@ -72,7 +72,7 @@ export function useCryptoDataTable({
       {
         id: "address",
         enableSorting: false,
-        header: t("crypto.table.columns.address"),
+        header: t("cryptoAddresses.table.columns.address"),
         cell: ({ row }) => (
           <AccountAddressCell account={row.original} lookupParentAccount={lookupParentAccount} />
         ),
@@ -93,7 +93,7 @@ export function useCryptoDataTable({
             sortDirection={column.getIsSorted() || undefined}
             onClick={column.getToggleSortingHandler()}
           >
-            {t("crypto.table.columns.value")}
+            {t("cryptoAddresses.table.columns.value")}
           </TableSortButton>
         ),
         cell: ({ row }) => <AccountValueCell account={row.original} />,
@@ -106,7 +106,7 @@ export function useCryptoDataTable({
         cell: ({ row }) => (
           <AccountRowActionCell
             account={row.original}
-            editNameAriaLabel={t("crypto.table.editName")}
+            editNameAriaLabel={t("cryptoAddresses.table.editName")}
           />
         ),
         meta: { align: "end" },

@@ -107,6 +107,19 @@ describe("Assets", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
+  it("should not navigate when stablecoins section header is clicked with few items", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
+      initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Stablecoins")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("stablecoins-section-header-button"));
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it("should show placeholder assets when user has no accounts", async () => {
     renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: initialState,
