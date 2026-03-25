@@ -86,6 +86,7 @@
     "continue": "Continue",
     "previous": "Previous",
     "learnMore": "Learn more",
+    "learnMoreWithEllipsis": "Learn more...",
     "help": "Help",
     "needHelp": "Need help?",
     "areYouSure": "Are you sure?",
@@ -106,6 +107,7 @@
     "reset": "Reset",
     "retry": "Retry",
     "range": "Range",
+    "start": "Start",
     "stop": "Stop",
     "updateNow": "Update now",
     "close": "Close",
@@ -122,9 +124,15 @@
     "featureFlags": "Feature flag",
     "ldmkEnabled": "LDMK transport",
     "information": "Information",
+    "increase": "Increase",
+    "max": "Max",
+    "min": "Min",
+    "set": "Set",
+    "follow": "Follow",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
     "manage": "Manage",
+    "none": "None",
     "tryAgain": "Try again",
     "lockScreen": {
       "title": "Welcome back",
@@ -152,8 +160,7 @@
     "quote": "Quote",
     "memoTag": {
       "learnMore": "Learn more about Tag/Memo"
-    },
-    "memo": "Memo"
+    }
   },
   "devices": {
     "nanoS": "Nano S",
@@ -210,10 +217,8 @@
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account",
-      "SHIELDED_TX_SAPLING_IN": "Received",
-      "SHIELDED_TX_SAPLING_OUT": "Sent",
-      "SHIELDED_TX_ORCHARD_IN": "Received",
-      "SHIELDED_TX_ORCHARD_OUT": "Sent"
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Topped up"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -237,7 +242,7 @@
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address. Cancellation is not guaranteed. If the network processes your original transaction before this cancellation request, the funds will still be sent to the recipient."
+        "description": "Sending 0 {{ticker}} to your own address."
       },
       "steps": {
         "method": {
@@ -272,8 +277,6 @@
     "minute": "Minute",
     "minute_other": "Minutes",
     "minute_short": "min",
-    "second": "Second",
-    "second_other": "Seconds",
     "second_short": "sec",
     "hour": "Hour",
     "hour_other": "Hours",
@@ -306,9 +309,8 @@
     "manager": "My Ledger",
     "earn": "Earn",
     "exchange": "Buy / Sell",
+    "perps": "Perps",
     "swap": "Swap",
-    "perps": "Perpetuals",
-    "home": "Home",
     "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
@@ -787,7 +789,6 @@
     }
   },
   "exchange": {
-    "pageHeader": "Buy or sell",
     "chooseProvider": "Choose from {{providerCount}} provider",
     "chooseProviders": "Choose from {{providerCount}} providers",
     "title": "Buy and sell crypto",
@@ -820,15 +821,7 @@
     }
   },
   "card": {
-    "backToCard": "all cards",
-    "title": "Card",
-    "imageAlt": "Card Image",
-    "spendYourCrypto": "Spend your crypto",
-    "payDescription": "Pay online or in stores with a crypto card.",
-    "exploreCards": "Explore Cards",
-    "iAlreadyHaveACard": "I have a card",
-    "unlockLiquidity": "Spend crypto in real life",
-    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
+    "backToCard": "all cards"
   },
   "lend": {
     "title": "Lend crypto",
@@ -1500,25 +1493,6 @@
       }
     }
   },
-  "deviceDeprecation": {
-    "warning": {
-      "title": "{{device}}™ can not Clear Sign this transaction",
-      "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
-      "continue": "Proceed at your own risk"
-    },
-    "info": {
-      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
-      "reminder": "Do not remind me again"
-    },
-    "error": {
-      "title": "{{device}}™ does not support this feature",
-      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
-    },
-    "update": "Discover your Upgrade Program",
-    "learnMore": "Learn more",
-    "continue": "Continue"
-  },
   "currentAddress": {
     "title": "Current address",
     "for": "Address for <1><0>{{name}}</0></1>",
@@ -1772,8 +1746,7 @@
       "previousStakingNodeId": "Previous node ID",
       "gasConsumed": "Gas consumed",
       "gasUsed": "Gas used",
-      "gasLimit": "Gas limit",
-      "functionId": "Function ID"
+      "gasLimit": "Gas limit"
     }
   },
   "operationList": {
@@ -1822,7 +1795,6 @@
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "nearIntentsAcceptTerms": "By validating this transaction,\n I accept the <0>Terms of use of SwapKit</0>, the technology powering NEAR Intents",
-      "acceptTermsSponsored": "To benefit from free network fees, you also agree to share your transaction details (including your wallet address) with Blinklabs.",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
       "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
@@ -1961,13 +1933,6 @@
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
-        "wallet40": {
-          "warning": {
-            "default": "OS update available",
-            "manager": "Ledger OS update available"
-          },
-          "cta": "Update"
-        },
         "warning": "OS update available",
         "version": "Version {{latestFirmware}}",
         "cta": "Go to My Ledger",
@@ -2274,11 +2239,11 @@
     "steps": {
       "options": {
         "fromBank": {
-          "title": "Via bank transfer",
-          "description": "Receive stablecoin by simply sending cash"
+          "title": "Bank transfer",
+          "description": "Receive stablecoin by sending cash"
         },
         "fromCrypto": {
-          "title": "Via crypto address"
+          "title": "Receive crypto"
         }
       }
     }
@@ -2409,33 +2374,6 @@
     "addressNotFound": "Address not found",
     "alreadyUsed": "Already used · {{date}}",
     "recentSendWillAppear": "Your recent send will appear here",
-    "securityInfo": {
-      "title": "How to send securely?",
-      "items": {
-        "compatibility": "Ensure the recipient address is compatible with the selected network",
-        "review": "Review your transaction details on your Ledger secure screen",
-        "smallAmount": "If in doubt, try sending a small amount first"
-      }
-    },
-    "recentHistory": {
-      "banner": {
-        "description": "This address isn’t in your recent history. In case of doubt try a small amount first."
-      },
-      "dialog": {
-        "title": "Recent send history",
-        "description": "Your recent history allows you to instantly see if you’ve already sent to a specific address or not. This could prevent potential copy/paste errors or hacks. Your history contains the last 12 addresses you sent crypto to using Ledger Wallet.",
-        "cta": "Got it"
-      }
-    },
-    "relativeDate": {
-      "justNow": "Just now",
-      "minutesAgo_one": "1 min ago",
-      "minutesAgo_other": "{{count}} min ago",
-      "hoursAgo_one": "1 hour ago",
-      "hoursAgo_other": "{{count}} hours ago",
-      "daysAgo_one": "1 day ago",
-      "daysAgo_other": "{{count}} days ago"
-    },
     "remove": "Remove",
     "enterTag": "Enter {{tag}}",
     "firstInteraction": {
@@ -2453,15 +2391,12 @@
       "walletNotExist": "Wallet doesn’t exist"
     },
     "skipMemo": {
-      "title": "Skip adding {{memoLabel}}?",
-      "description": "Your asset may be lost if a {{memoLabel}} is required by your recipient",
-      "notRequired": "{{memoLabel}} not required by recipient?",
-      "confirm": "Yes skip",
-      "neverAskAgain": "Don't show this warning again"
+      "title": "Skip adding {{tag}}?",
+      "warning": "Your asset may be lost if a {{tag}} is required by your recipient"
     },
     "tagHelp": {
-      "inputLabel": "Enter {{memoLabel}}",
-      "description": "A {{memoLabel}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{memoLabel}} memo may result in a loss of funds."
+      "title": "What’s a {{tag}}?",
+      "description": "A {{tag}} is required when sending {{currency}} to a crypto exchange. It’s a feature used to identify the recipient of the transaction. Not including the {{tag}} memo may result in a loss of funds."
     },
     "networkFeesInFiat": "Network fees in {{currency}}",
     "feesAmount": "Fees amount ({{unit}})",
@@ -2520,9 +2455,8 @@
     }
   },
   "releaseNotes": {
-    "title": "Release note",
-    "version": "Ledger Wallet {{versionNb}}",
-    "gotIt": "Got it"
+    "title": "Release notes",
+    "version": "Ledger Wallet {{versionNb}}"
   },
   "troubleshootNetwork": {
     "title": "Troubleshoot networking",
@@ -4766,9 +4700,6 @@
         "enableAll": "Enable All",
         "disableAll": "Disable All",
         "featureParameters": "Feature Parameters",
-        "tourState": "Tour State",
-        "drawerPreview": "Drawer Preview",
-        "openDrawer": "Open Drawer",
         "showJson": "Show JSON",
         "hideJson": "Hide JSON"
       },
@@ -5055,10 +4986,6 @@
       "filterTokenOperationsZeroAmount": {
         "title": "Hide token transactions when value is 0",
         "desc": "Hiding token transactions without value can prevent some potential address poisoning attacks on Eth, Polygon, BSC, Tron..."
-      },
-      "doNotAskAgainSkipMemo": {
-        "title": "Do not ask again skip memo on send",
-        "desc": "Disable the warning about skipping the memo when sending funds"
       }
     }
   },
@@ -5145,7 +5072,7 @@
     }
   },
   "theme": {
-    "system": "System",
+    "system": "Select the system theme",
     "light": "Light",
     "dusk": "Dusk",
     "dark": "Dark"
@@ -5977,13 +5904,11 @@
     "casper": {
       "transferIdPlaceholder": "Optional",
       "transferId": "Transfer ID (Memo)",
-      "transferIdWarningText": "When using a memo, carefully check the information with the recipient",
-      "memo": "Transfer ID (Memo)"
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
     },
     "ton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment",
-      "memo": "Comment"
+      "comment": "Comment"
     },
     "canton": {
       "commentPlaceholder": "Optional",
@@ -6110,68 +6035,6 @@
         }
       }
     },
-    "concordium": {
-      "addAccount": {
-        "title": "Add Concordium Account",
-        "acknowledge": {
-          "title": "Acknowledgement",
-          "description": "Concordium requires external identity verification. Please read these important security warnings:",
-          "list": {
-            "1": "<0>No address verification</0> – Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds.",
-            "2": "<0>Concordium ID App uses a separate seed</0> – You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed.",
-            "3": "<0>You'll be redirected outside Ledger Live</0> – Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol.",
-            "4": "<0>Transaction signing stays secure</0> – Only your Ledger device can sign transactions and create accounts."
-          },
-          "allow": "Agree"
-        },
-        "identity": {
-          "title": "Connect",
-          "account": "Account",
-          "newAccount": "New Account",
-          "init": "Pressing Allow means you’re ready to continue to the KYC identity check needed to verify your account.",
-          "scanQRCode": "Scan the QR code with your mobile device to connect your Concordium ID App. <0>Learn more</0>",
-          "ledgerSeedWarning": "<0>DO NOT</0> use your Ledger Seed for Concordium ID App.",
-          "downloadApp": "Download Concordium ID App",
-          "connecting": "Connecting to Concordium ID App...",
-          "onboarded": "Onboarded accounts",
-          "success": "Successfully connected to Concordium ID App.",
-          "error": "Failed to onboard new account. Please try again.",
-          "status": {
-            "prepare": "Preparing account onboarding...",
-            "submit": "Onboarding account...",
-            "default": "Processing..."
-          }
-        },
-        "create": {
-          "title": "Create Account",
-          "init": {
-            "title": "Successfully connected to Concordium ID App"
-          },
-          "prepare": {
-            "title": "To create an account, match the code below in the Concordium ID App",
-            "resendButton": "Resend confirmation",
-            "resendDescription": "Confirmation can be resent in <0>{{count}}</0> {{unit}}"
-          },
-          "success": "Your Concordium account has been created successfully.",
-          "error": "Failed to create account. Please try again.",
-          "error429": "Too many requests. Please wait and try again later.",
-          "button": "Create",
-          "processing": "Processing...",
-          "status": {
-            "prepare": "Preparing account creation...",
-            "submit": "Creating account...",
-            "default": "Processing..."
-          }
-        },
-        "finish": {
-          "title": "Confirmation"
-        }
-      },
-      "receive": {
-        "messageIfSkipped": "It is not possible to verify your Concordium Address at the moment. Please make sure to double-check by pasting your address in the Concordium explorer.",
-        "verifyLink": "Verify"
-      }
-    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -6203,9 +6066,6 @@
     },
     "mina": {
       "memoPlaceholder": "Optional Memo"
-    },
-    "xrp": {
-      "memo": "Tag"
     }
   },
   "errors": {
@@ -6762,10 +6622,6 @@
       "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
     },
-    "InvalidTransactionError": {
-      "title": "Invalid transaction",
-      "description": "The transaction doesn't match the blockchain state anymore. Please start the flow again."
-    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -7007,9 +6863,6 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
-    "SolanaRecipientAccountNotFunded": {
-      "title": "Amount too low. Send at least {{minimumAmount}}."
-    },
     "SolanaTokenAccountHoldsAnotherToken": {
       "title": "This associated token account holds another token"
     },
@@ -7080,21 +6933,6 @@
     "CardanoMemoExceededSizeError": {
       "title": "Invalid memo size, maximum allowed is 64 characters",
       "description": "Cardano memo have a maximum limited size. Please reduce the size of the memo"
-    },
-    "ConcordiumMemoTooLong": {
-      "title": "Memo exceeds maximum length",
-      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
-    },
-    "ConcordiumInsufficientFunds": {
-      "title": "Sorry, insufficient funds"
-    },
-    "ConcordiumPairingExpiredError": {
-      "title": "Pairing expired",
-      "description": "The connection to Concordium ID App has timed out. Please try again."
-    },
-    "ConcordiumSessionExpiredError": {
-      "title": "Session expired",
-      "description": "The Concordium ID App session is no longer active. Please pair again."
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
@@ -7472,6 +7310,36 @@
     },
     "UtxoLimitReachedError": {
       "title": "Amount too large for UTXO constraints."
+    },
+    "NotEnoughTransferAmount": {
+      "title": "The minimum amount for {{purpose}} is {{amount}}."
+    },
+    "ICPDissolveDelayLTMin": {
+      "title": "The dissolve delay must be at least {{min}}."
+    },
+    "ICPDissolveDelayGTMax": {
+      "title": "The dissolve delay must be less than {{max}}."
+    },
+    "ICPDissolveDelayLTCurrent": {
+      "title": "The new dissolve delay must be greater than the current dissolve delay."
+    },
+    "ICPNeuronNotFound": {
+      "title": "The neuron was not found."
+    },
+    "ICPInvalidHotKey": {
+      "title": "The principal ID is invalid"
+    },
+    "ICPHotKeyAlreadyExists": {
+      "title": "The hot key already exists"
+    },
+    "ICPSplitNotAllowed": {
+      "title": "The split amount is more than the maximum allowed"
+    },
+    "ICPIncreaseStakeWarning": {
+      "title": "This operation will transfer the amount to increase the stake of an existing neuron"
+    },
+    "ICPCreateNeuronWarning": {
+      "title": "This operation will transfer the amount to a new neuron. Upon successful confirmation, the neuron will be available for further operations."
     }
   },
   "cryptoOrg": {
@@ -7700,8 +7568,7 @@
     },
     "selectAccount": {
       "title": "choose account",
-      "addAccount": "Add new or existing account",
-      "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain."
+      "addAccount": "Add new or existing account"
     }
   },
   "customImage": {
@@ -7756,7 +7623,7 @@
       "skipCTA": "I'll do this later"
     },
     "default": {
-      "title": "{{ productName }} has its own apps. You need them to transact.",
+      "title": "{{ productName }} has it own apps. You need them to transact.",
       "subtitle": "As an example, the Bitcoin app for {{productName}} is required to sign Bitcoin transactions.\n\nInstall default apps to get your {{productName}} transaction-ready.",
       "installCTA": "Install now",
       "skipCTA": "I'll do this later"
@@ -7899,16 +7766,7 @@
     }
   },
   "analytics": {
-    "title": "Analytics",
-    "allocation": {
-      "title": "Asset allocation",
-      "columns": {
-        "name": "Name",
-        "balance": "Balance",
-        "value": "Value",
-        "allocation": "Allocation"
-      }
-    }
+    "title": "Analytics"
   },
   "walletSync": {
     "title": "Ledger Sync",
@@ -8153,11 +8011,6 @@
           "description": "In the {{currency}} ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your {{currency}} account on Ledger Wallet once it's created.",
           "cta": "How to create a {{currency}} account?",
           "close": "Close"
-        },
-        "noAccountsAddedWarning": {
-          "title": "No {{currency}} accounts were added",
-          "description": "You haven't completed the required setup for one or more selected accounts.",
-          "close": "Close"
         }
       },
       "status": {
@@ -8171,7 +8024,7 @@
     "connectYourDevice": {
       "title": "Connect and unlock your device"
     },
-    "searchPlaceholder": "Search by name or address",
+    "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
@@ -8211,35 +8064,27 @@
       "title": "For you"
     },
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Start by funding your wallet",
-    "perpsEntry": {
-      "title": "Perpetuals",
-      "description": "Trade with leverage",
-      "cta": "Discover"
-    },
-    "noDeviceTitle": "Your secure crypto wallet"
+    "noBalanceTitle": "Secure your crypto"
   },
   "marketBanner": {
-    "title": "Explore the market",
+    "title": "Explore market",
     "genericError": "Connection failed",
     "cta": "View all",
-    "scrollLeft": "Scroll left",
-    "scrollRight": "Scroll right",
     "fearAndGreed": {
       "title": "Mood"
     }
   },
   "fearAndGreed": {
     "levels": {
+      "extremeFear": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "extremeGreed": "Greed+"
     },
     "dialog": {
       "title": "Mood index",
-      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
+      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
       "cta": "Got it"
     }
   },
@@ -8404,43 +8249,6 @@
       "transparentTx": "Transparent",
       "shieldedSaplingTx": "🛡 Private (Sapling)",
       "shieldedOrchardTx": "🛡 Private (Orchard)"
-    }
-  },
-  "aleo": {
-    "addAccount": {
-      "stepViewKeyWarning": {
-        "title": "Set up Aleo private balance",
-        "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
-        "bullets": [
-          "Read-only access to decrypt your private balance",
-          "Ledger cannot send or spend your funds",
-          "Only you can sign and spend your funds",
-          "Proof generation is handled by third-party prover services to ensure fast processing",
-          "Provers cannot access or spend your funds"
-        ],
-        "cta": {
-          "allow": "Allow",
-          "cancel": "Cancel"
-        }
-      },
-      "stepViewKeyApprove": {
-        "title": "Approve on your Ledger",
-        "description": "Confirm sharing the view key on your device",
-        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
-        "cancelAllBtn_one": "Cancel",
-        "cancelAllBtn_other": "Cancel all"
-      },
-      "stepScanAccounts": {
-        "cta": {
-          "shareKey_one": "Share view key",
-          "shareKey_other": "Share view keys"
-        }
-      },
-      "warnings": {
-        "noAccountsAddedWarning": {
-          "description": "You haven't shared view keys for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
-        }
-      }
     },
     "selfTransfer": {
       "headerAction": "Self transfer",
@@ -8500,6 +8308,304 @@
         "title": "Syncing your private balance ({{percentage}}%)",
         "desc": "Please wait",
         "error": "Private sync failed. Please try again later."
+      }
+    }
+  },
+  "internetComputer": {
+    "memoField": {
+      "increaseStake": "This transaction will increase the stake of an existing neuron, input the desired amount to be staked in the amount field above.",
+      "createNeuron": "This transaction will create a neuron with staked ICP, input the desired amount to be staked in the amount field above.",
+      "tooltip": "Internet Computer uses this to identify the transaction to stake the ICP into the neuron."
+    },
+    "stakeBanner": {
+      "confirmFollowing": {
+        "title": "Confirm Your Following",
+        "description": "Your neuron's following needs to be confirmed in {{days}} days and {{hours}} hours",
+        "altDescription": "You are losing rewards, confirm neuron following to continue earning",
+        "cta": "Confirm Following"
+      },
+      "syncNeurons": {
+        "title": "Sync Your Staked ICP",
+        "description": "Your staked ICP has last been synced {{days}} days and {{hours}} hours ago. If you want to see the latest details, we recommend you sync often.",
+        "altDescription": "We recommend syncing your neurons to see the latest details",
+        "cta": "Sync Neurons"
+      },
+      "lockNeurons": {
+        "title": "Lock Neurons",
+        "description": "One or more of your neurons are not locked. If you don't lock them you can't get rewards. This is because neurons earn rewards by participating in the governance of ICP, and only neurons locked more than six months are eligible to vote.",
+        "cta": "Manage Neurons"
+      },
+      "addFollowees": {
+        "title": "Add Followees",
+        "description": "One or more of your neurons have no followees. Without followees you might not get rewards. To get rewards, neurons must vote directly (for example, with NNS Dapp) or follow neurons that do.",
+        "cta": "Manage Neurons"
+      },
+      "stakeICP": {
+        "title": "Earn ICP",
+        "description": "Stake ICP and gain rewards by participating in its governance.",
+        "cta": "Earn",
+        "modalTitle": "Create Neuron"
+      }
+    },
+    "headerManageActions": {
+      "stakeICP": {
+        "title": "Earn",
+        "tooltip": "Create neurons to stake ICP"
+      },
+      "manageNeurons": {
+        "title": "Manage Neurons",
+        "tooltip": "Manage active neurons"
+      }
+    },
+    "summaryFooter": {
+      "stakedBalanceTooltip": "The total amount of ICP tokens currently staked in neurons. Staked ICP earns voting rewards and can be used for governance.",
+      "totalMaturityTooltip": "The total accumulated rewards from staking, including both staked and liquid maturity. These rewards can be either staked again or claimed as liquid ICP.",
+      "totalMaturity": "Total Maturity",
+      "stakedBalance": "Staked Balance",
+      "stakedMaturity": "Staked Maturity",
+      "stakedMaturityTooltip": "The portion of maturity rewards that has been automatically re-staked into neurons, continuing to earn additional rewards.",
+      "liquidMaturity": "Liquid Maturity",
+      "liquidMaturityTooltip": "The portion of maturity rewards that is available to be claimed as liquid ICP tokens or can be staked into neurons."
+    },
+    "confirmation": {
+      "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+      "success": "{{action}} was successful",
+      "syncAccounts": "Please synchronize your accounts to see the updated changes"
+    },
+    "sync": "Sync",
+    "lastSynced": "Last Synced",
+    "listNeurons": {
+      "timeUntilRewardLoss": "Time Until Reward Loss",
+      "warnbox": "No neurons found, try syncing existing neurons created through NNS dapp or stake to create new neurons."
+    },
+    "common": {
+      "confirmation": "Confirmation",
+      "connectDevice": {
+        "title": "Device"
+      },
+      "neuronId": "Neuron ID",
+      "neuronIds": "Neuron Ids",
+      "state": "State",
+      "action": "Action",
+      "balance": "Balance",
+      "maturity": "Maturity",
+      "currentBalance": "Current Balance",
+      "amount": "Amount",
+      "stake": "Stake",
+      "followees": "Followees",
+      "votingPower": "Voting Power",
+      "hotkey": "Hotkey",
+      "neuron": "Neuron",
+      "neurons": "Neurons",
+      "disburse": "Disburse",
+      "startDissolving": "Start Dissolving",
+      "stopDissolving": "Stop Dissolving",
+      "dissolveDelay": "Dissolve Delay",
+      "dissolveState": "Dissolve State",
+      "dissolveStateUnlocked": "Unlocked",
+      "dissolveStateLocked": "Locked",
+      "dissolveStateDissolving": "Dissolving",
+      "dissolveStateDissolved": "Dissolved",
+      "inactiveNeuron": "Inactive Neuron",
+      "activeNeuron": "Active Neuron",
+      "confirmFollowing": "Confirm Following"
+    },
+    "refreshVotingPowerFlow": {
+      "title": "Refresh Voting Power"
+    },
+    "manageNeuronFlow": {
+      "title": "Manage Neurons",
+      "manageAction": {
+        "title": "Manage Neuron Action"
+      },
+      "stakeMaturity": {
+        "title": "Stake Maturity",
+        "description": "Choose how much of the maturity available to stake into this neuron.",
+        "confirmStake": "Confirm Stake",
+        "maturityAvailable": "Maturity Available"
+      },
+      "splitNeuron": {
+        "title": "Split Neuron",
+        "transactionFee": "Transaction Fee",
+        "confirmSplit": "Confirm Split"
+      },
+      "setDissolveDelay": {
+        "title": "Set Dissolve Delay",
+        "balance": "Balance",
+        "dissolveDelay": "Dissolve Delay",
+        "dissolveDelayTooltip": "Dissolve delay is the minimum amount of time you have to wait for the neuron to unlock, and ICP to be available again. Note, that dissolve delay only decreases when the neuron is in a dissolving state.",
+        "votingPowerDescription": "Voting power is given to neurons with a dissolve delay of at least 6 months.",
+        "dissolveDelayInput": "Dissolve Delay (in days)",
+        "inputPlaceholder": "Enter dissolve delay",
+        "updateDelay": "Update Delay"
+      },
+      "selectFollowees": {
+        "title": "Followee's Neuron ID",
+        "altTitle": "Select Followees",
+        "placeholder": "Enter neuron ID",
+        "options": "Options For Following"
+      },
+      "selectTopics": {
+        "title": "Select Topics",
+        "warnbox": "Follow neurons to automate your voting, and receive the maximum voting rewards. You can follow neurons on specific topics or all topics.",
+        "listOfTopics": "List of available topics to follow",
+        "addAction": "Add Followee"
+      },
+      "addHotKey": {
+        "title": "Add HotKey"
+      },
+      "manage": {
+        "title": "Manage Neuron",
+        "header": {
+          "hotkeyControlDescription": "This neuron is controlled by a hotkey and has limited control from the Ledger Live interface.",
+          "hotkeyControl": "HotKey Control",
+          "votingPower": "Voting Power",
+          "noVotingPower": "No Voting Power"
+        },
+        "votingPower": {
+          "title": "Voting Power",
+          "titleTooltip": "The dissolve delay must be at least 6 months for the neuron to have voting power.",
+          "value": "Value",
+          "staked": "ICP Staked",
+          "increaseStake": "Increase Stake",
+          "ageBonus": "Age Bonus",
+          "ageBonusTooltip": "Your neuron can be locked, unlocked or dissolving. In a locked state, it is accruing age bonus, while its dissolve delay stays constant. If the neuron is in a dissolving state, its age bonus is set to 0, while dissolve delay decreases with time. After dissolve delay reaches 0, the neuron is unlocked, and ICP held in it can be sent to any ICP account.",
+          "dissolveDelayBonus": "Dissolve Delay Bonus",
+          "dissolveDelayBonusTooltip": "The dissolve delay bonus is a bonus that is added to the neuron's voting power based on the dissolve delay. The longer the dissolve delay, the higher the bonus.",
+          "confirmFollowing": "Confirm Following",
+          "confirmFollowingTooltip": "ICP neurons that are inactive for 6 months start missing voting rewards. To avoid missing rewards, vote manually, edit, or confirm your following."
+        },
+        "maturity": {
+          "title": "Maturity",
+          "description": "Earn rewards by voting on proposals and/or following active neurons.",
+          "staked": "Staked",
+          "stakedTooltip": "Staked maturity contributes to the neuron's voting power, but cannot be spawned into a new neuron.",
+          "available": "Available",
+          "availableTooltip": "Available maturity can be staked, or burned to spawn a neuron containing an amount of ICP that is subject to a non-deterministic process, called maturity modulation.",
+          "stakeAction": "Stake",
+          "spawnNeuronAction": "Spawn Neuron"
+        },
+        "hotKeys": {
+          "title": "HotKeys",
+          "description": "HotKeys are a way to control your neuron from the Ledger Live interface.",
+          "addHotKey": "Add HotKey",
+          "removeAction": "Remove",
+          "noHotKeys": "No HotKeys Found"
+        },
+        "advancedDetails": {
+          "title": "Advanced Details & Settings",
+          "dateCreated": "Date Created",
+          "dissolveDate": "Dissolve Date",
+          "neuronAccount": "Neuron Account",
+          "splitNeuronAction": "Split Neuron",
+          "autoStakeMaturityAction": "Automatic Stake Maturity"
+        },
+        "following": {
+          "title": "Following",
+          "description": "Following allows you to delegate your votes to another neuron holder. You still earn rewards if you delegate your voting rights. You can change your following at any time.",
+          "warnbox": "Without followees you might not get rewards. To get rewards, neurons must vote directly (for example, with NNS Dapp) or follow neurons that do.",
+          "followNeuronsAction": "Follow Neurons"
+        }
+      },
+      "listNeuron": {
+        "title": "Select Neuron",
+        "warnbox": "Select a neuron from the list below to manage its stake, maturity, and dissolve delay settings."
+      }
+    },
+    "manageNeuron": {
+      "actions": {
+        "increase_stake": "Increasing Stake",
+        "create_neuron": "Creating Neuron",
+        "start_dissolving": "Starting Dissolve",
+        "stop_dissolving": "Stopping Dissolve",
+        "list_neurons": "Listing Neurons",
+        "disburse": "Disbursing Neuron",
+        "spawn_neuron": "Spawning Neuron",
+        "add_hot_key": "Adding Hot Key",
+        "stake_maturity": "Staking Maturity",
+        "refresh_voting_power": "Refreshing Voting Power",
+        "increase_dissolve_delay": "Increasing Dissolve Delay",
+        "auto_stake_maturity": "Auto Staking Maturity",
+        "spawn_neuron_from_maturity": "Spawning Neuron from Maturity",
+        "set_auto_stake_maturity": "Setting Auto Stake Maturity",
+        "set_dissolve_delay": "Setting Dissolve Delay",
+        "remove_hot_key": "Removing Hot Key",
+        "follow": "Following Neurons",
+        "split_neuron": "Splitting Neuron"
+      },
+      "followTopic": {
+        "0": {
+          "title": "All Except Governance, and SNS & Neurons' Fund",
+          "description": "Follow neurons on all proposal topics except the governance topic, and SNS & Neurons' Fund."
+        },
+        "1": {
+          "title": "Neuron Management",
+          "description": ""
+        },
+        "2": {
+          "title": "Exchange Rate",
+          "description": "All proposals that provide “real time” information about the value of ICP, as measured by an IMF SDR, which allows the NNS to convert ICP to cycles (which power computation) at a rate which keeps their real world cost constant."
+        },
+        "3": {
+          "title": "Network Economics",
+          "description": "Proposals that administer network economics, for example, determining what rewards should be paid to node operators."
+        },
+        "4": {
+          "title": "Governance",
+          "description": "All proposals that administer governance, for example to freeze malicious canisters that are harming the network."
+        },
+        "5": {
+          "title": "Node Admin",
+          "description": "All proposals that administer node machines somehow, including, but not limited to, upgrading or configuring the OS, upgrading or configuring the virtual machine framework and upgrading or configuring the node replica software."
+        },
+        "6": {
+          "title": "Participant Management",
+          "description": "All proposals that administer network participants, for example, granting and revoking DCIDs (data center identities) or NOIDs (node operator identities)."
+        },
+        "7": {
+          "title": "Subnet Management",
+          "description": "All proposals that administer network subnets, for example creating new subnets, adding and removing subnet nodes, and splitting subnets."
+        },
+        "8": {
+          "title": "Protocol Canister Management",
+          "description": "All proposals to manage protocol canisters, which are considered part of the ICP protocol and are essential for its proper functioning."
+        },
+        "9": {
+          "title": "KYC",
+          "description": "Proposals that update KYC information for regulatory purposes, for example during the initial Genesis distribution of ICP in the form of neurons."
+        },
+        "10": {
+          "title": "Node Provider Rewards",
+          "description": "Proposals that reward node providers"
+        },
+        "12": {
+          "title": "IC OS Version Deployment",
+          "description": "Proposals handling updates of a subnet's replica version"
+        },
+        "13": {
+          "title": "IC OS Version Election",
+          "description": "Proposals dealing with blessing and retirement of replica versions"
+        },
+        "14": {
+          "title": "SNS & Neurons' Fund",
+          "description": "Proposals related to SNS and Neurons' Fund"
+        },
+        "15": {
+          "title": "API Boundary Node Management",
+          "description": "Proposals related to the management of API boundary nodes"
+        },
+        "16": {
+          "title": "Subnet Rental",
+          "description": "All proposals related to renting a subnet, for example a subnet rental request."
+        },
+        "17": {
+          "title": "Protocol Canister Management",
+          "description": "All proposals to manage protocol canisters, which are considered part of the ICP protocol and are essential for its proper functioning."
+        },
+        "18": {
+          "title": "Service Nervous System Management",
+          "description": "All proposals to manage the canisters of service nervous systems (SNS), including upgrading relevant canisters and managing SNS framework canister WASMs through SNS-W."
+        }
       }
     }
   },

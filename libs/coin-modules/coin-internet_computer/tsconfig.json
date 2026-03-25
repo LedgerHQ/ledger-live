@@ -10,13 +10,10 @@
       "dom"
     ],
     "types": ["node", "jest"],
-    "rootDir": "./src",
-    "outDir": "lib",
-    "exactOptionalPropertyTypes": true
+    "rootDir": "src",
+    "outDir": "lib"
   },
   "include": [
-    "src/**/*",
-    "deviceTransactionConfig.ts",
-    "transaction.ts"
+    "src/**/*"
   ]
 }

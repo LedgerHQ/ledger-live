@@ -70,8 +70,10 @@ export type OperationType =
   | "SHIELDED_TX_SAPLING_OUT"
   | "SHIELDED_TX_ORCHARD_IN"
   | "SHIELDED_TX_ORCHARD_OUT"
-  | "SHIELDED_TX_INTERNAL";
-
+  | "SHIELDED_TX_INTERNAL"
+  // INTERNET COMPUTER
+  | "STAKE_NEURON"
+  | "TOP_UP_NEURON";
 export type OperationExtra = unknown;
 /**
  * An Operation is the Ledger Live abstraction of a transaction for any blockchain

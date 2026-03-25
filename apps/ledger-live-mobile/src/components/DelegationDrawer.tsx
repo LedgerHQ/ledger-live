@@ -91,11 +91,15 @@ export default function DelegationDrawer({
           ))}
         </ScrollView>
 
-        <View style={[styles.row, styles.actionsRow]}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.actionsRow}
+        >
           {actions.map((props, i) => (
             <ActionButton key={`actions-${i}`} {...props} />
           ))}
-        </View>
+        </ScrollView>
       </View>
     </QueuedDrawer>
   );
@@ -213,8 +217,9 @@ export const styles = StyleSheet.create({
   actionsRow: {
     paddingTop: 16,
     paddingHorizontal: 16,
+    paddingBottom: 8,
     alignItems: "flex-start",
-    justifyContent: "space-between",
+    gap: 8,
   },
   actionWrapper: {
     width: 80,

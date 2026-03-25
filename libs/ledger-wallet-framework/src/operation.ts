@@ -183,6 +183,8 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "UPDATE_ACCOUNT",
   "SHIELDED_TX_SAPLING_OUT",
   "SHIELDED_TX_ORCHARD_OUT",
+  "TOP_UP_NEURON",
+  "STAKE_NEURON",
 ];
 export const OPERATION_TYPE_STAKE_FAMILY = [
   "FREEZE",
@@ -251,22 +253,16 @@ type AddressPoisoningFilterOptions = {
 export const isAddressPoisoningOperation = (
   operation: Operation,
   account: AccountLike,
-  options?: AddressPoisoningFilterOptions,
+  _options?: AddressPoisoningFilterOptions,
 ): boolean => {
-  if (!operation.value.isZero() || account.type !== "TokenAccount") return false;
+  const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES").split(",");
+  const isTokenAccount = account.type === "TokenAccount";
 
-  const family = account.token.parentCurrency.family;
-
-  if (options?.families) {
-    return options.families.includes(family);
-  }
-
-  // Fallback to environment variable if no families are provided to be retro-compatible
-  const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES")
-    .split(",")
-    .map(s => s.trim());
-
-  return impactedFamilies.includes(family);
+  return (
+    isTokenAccount &&
+    impactedFamilies.includes(account.token.parentCurrency.family) &&
+    operation.value.isZero()
+  );
 };
 
 /**
@@ -281,7 +277,7 @@ export const isOldestPendingOperation = (account: Account, nonce: BigNumber): bo
    */
   return !account.pendingOperations.some(pendingOp => {
     /**
-     * the pending operation must have a transactionSequenceNumber at this stage
+     * the pending operation must have a transactionSequenceNumberat this stage
      * since it should have previously been broadcasted
      */
     invariant(
@@ -299,10 +295,6 @@ export const isOldestPendingOperation = (account: Account, nonce: BigNumber): bo
  * @returns true if the date corresponds to the oldest pending operation
  */
 export const isOldestBitcoinPendingOperation = (account: Account, date: Date): boolean => {
-  /**
-   * The selected pending operation is the oldest if there is no pending
-   * operation with a lower date
-   */
   if (account.pendingOperations.length === 0) {
     return !account.operations.some(operation => {
       if (!operation.blockHeight) {
@@ -312,10 +304,6 @@ export const isOldestBitcoinPendingOperation = (account: Account, date: Date): b
     });
   }
   return !account.pendingOperations.some(pendingOp => {
-    /**
-     * the pending operation must have a date at this stage
-     * since it should have previously been broadcasted
-     */
     invariant(pendingOp.date !== undefined, "date required");
     return pendingOp.date.getTime() < date.getTime();
   });
