@@ -8429,6 +8429,9 @@
     "emptyState": {
       "title": "No transactions yet",
       "description": "Come back later to see your transactions."
+    },
+    "actionsBar": {
+      "csv": "CSV"
     }
   }
 }
