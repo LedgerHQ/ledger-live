@@ -2,6 +2,7 @@ import React from "react";
 import { TableBody } from "@ledgerhq/lumen-ui-react";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { DayHeader } from "./DayHeader";
+import { SectionHeader } from "./SectionHeader";
 import { OperationRow } from "./OperationRow";
 import type { OperationRow as OperationRowType, VirtualItem } from "../types";
 
@@ -36,6 +37,17 @@ export function HistoryTableBody({
       {virtualItems.map(virtualRow => {
         const item = flatItems[virtualRow.index];
         if (!item) return null;
+
+        if (item.type === "section-header") {
+          return (
+            <SectionHeader
+              key={`section-${item.labelKey}`}
+              labelKey={item.labelKey}
+              count={item.count}
+              columnCount={item.columnCount}
+            />
+          );
+        }
 
         if (item.type === "day-header") {
           return (

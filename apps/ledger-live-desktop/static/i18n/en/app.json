@@ -8413,7 +8413,9 @@
     }
   },
   "history": {
-    "title": "Transaction",
+    "title": "Transactions",
+    "pending": "Pending transaction",
+    "pending_other": "Pending transactions",
     "columns": {
       "type": "Type",
       "address": "Address",

@@ -15,6 +15,7 @@ export type OperationTableItem = {
   address: string;
   amount: BigNumber;
   currency: Currency;
+  isPending: boolean;
 };
 
 export type HistoryTable = Table<OperationTableItem>;
@@ -22,4 +23,5 @@ export type OperationRow = Row<OperationTableItem>;
 
 export type VirtualItem =
   | { type: "day-header"; day: Date; columnCount: number }
+  | { type: "section-header"; labelKey: string; count: number; columnCount: number }
   | { type: "operation"; row: OperationRow };

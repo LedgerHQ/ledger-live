@@ -14,9 +14,24 @@ function startOfDay(date: Date): Date {
 
 function buildFlatItems(rows: OperationRow[], columnCount: number): VirtualItem[] {
   const items: VirtualItem[] = [];
-  let currentDayKey: string | null = null;
 
-  for (const row of rows) {
+  const pendingRows = rows.filter(row => row.original.isPending);
+  const confirmedRows = rows.filter(row => !row.original.isPending);
+
+  if (pendingRows.length > 0) {
+    items.push({
+      type: "section-header",
+      labelKey: "history.pending",
+      count: pendingRows.length,
+      columnCount,
+    });
+    for (const row of pendingRows) {
+      items.push({ type: "operation", row });
+    }
+  }
+
+  let currentDayKey: string | null = null;
+  for (const row of confirmedRows) {
     const day = startOfDay(row.original.date);
     const dayKey = day.toISOString();
     if (dayKey !== currentDayKey) {
@@ -41,7 +56,7 @@ export function useHistoryVirtualization(table: HistoryTable) {
     getScrollElement: () => parentRef.current,
     estimateSize: index => {
       const item = flatItems[index];
-      return item?.type === "day-header" ? DAY_HEADER_HEIGHT : OPERATION_ROW_HEIGHT;
+      return item?.type === "operation" ? OPERATION_ROW_HEIGHT : DAY_HEADER_HEIGHT;
     },
     overscan: OVERSCAN,
     paddingEnd: 32,
