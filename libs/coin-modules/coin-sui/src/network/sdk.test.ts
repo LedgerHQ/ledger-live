@@ -1105,10 +1105,9 @@ describe("Staking Operations", () => {
       };
 
       mockApi.multiGetObjects.mockClear();
-      (mockApi.core.getObjects as jest.Mock).mockClear();
       await sdk.paymentInfo(sender, fakeTransaction);
 
-      expect(mockApi.core.getObjects).not.toHaveBeenCalled();
+      expect(mockApi.multiGetObjects).not.toHaveBeenCalled();
     });
   });
 
