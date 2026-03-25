@@ -52,6 +52,7 @@ import { withDeviceController } from "./deviceInteraction/DeviceController";
 import { sanitizeError } from ".";
 import { sendVechain } from "./families/vechain";
 import { getDeviceCoordinates } from "./deviceCoordinates";
+import { sendInternetComputer } from "./families/internet_computer";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -371,6 +372,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Aleo",
+    },
+    dependencies: [],
+  },
+  Internet_Computer: {
+    currency: getCryptoCurrencyById("internet_computer"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "InternetComputer",
     },
     dependencies: [],
   },
@@ -874,6 +883,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.VET.id:
       await sendVechain(tx);
+      break;
+    case Currency.ICP.id:
+      await sendInternetComputer(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
