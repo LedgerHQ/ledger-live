@@ -34,13 +34,15 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
-      {shouldDisplayAssetSection && (
+      {shouldDisplayAssetSection ? (
         <>
           <PortfolioCryptosSection isEmptyState />
           <Box lx={{ marginTop: "s24" }}>
             <PortfolioStablecoinsSection isEmptyState />
           </Box>
         </>
+      ) : (
+        <PortfolioCryptosSection isReadOnly />
       )}
       <Button
         appearance="gray"

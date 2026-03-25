@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
@@ -9,11 +10,13 @@ import { MAX_STABLECOINS_TO_DISPLAY } from "LLM/features/WalletAssets/views/Stab
 interface WalletAssetsViewModelResult {
   hasMore: boolean;
   onPressShowAll: () => void;
+  shouldAddBottomPadding: boolean;
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false);
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
+  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -28,5 +31,7 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     return cryptosCount > MAX_ASSETS_TO_DISPLAY || stablecoinsCount > MAX_STABLECOINS_TO_DISPLAY;
   }, [categorizedAssets, blacklistedTokenIdsSet]);
 
-  return { hasMore, onPressShowAll };
+  // When the operations list section is hidden, WalletAssetsView is the last section and
+  // the tab bar (rendered without safe area) would overlap the bottom content.
+  return { hasMore, onPressShowAll, shouldAddBottomPadding: shouldDisplayOperationsList };
 }
