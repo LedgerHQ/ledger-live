@@ -87,7 +87,9 @@ export function useTopBarViewModel(
 
   const onTransactionHistoryPress = useCallback(() => {
     track("menuentry_clicked", { button: "operation_list", page });
-    navigation.navigate(ScreenName.PortfolioOperationHistory);
+    navigation.navigate(NavigatorName.OperationsHistory, {
+      screen: ScreenName.OperationsList,
+    });
   }, [navigation, page]);
 
   return {
