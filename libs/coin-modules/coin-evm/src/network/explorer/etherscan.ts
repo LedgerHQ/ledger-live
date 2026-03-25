@@ -113,6 +113,12 @@ export async function fetchWithRetries<T>(
   }
 }
 
+/** Some etherscan like APIs return an array, some return an error message on last empty page. */
+function normalizeExplorerArrayResult<T>(result: unknown): T[] {
+  if (Array.isArray(result)) return result as T[];
+  return [];
+}
+
 function isPageFull(limitParameter: number | undefined, operationCount: number): boolean {
   return limitParameter === undefined || limitParameter === 0 || operationCount >= limitParameter;
 }
@@ -261,11 +267,12 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
       ? `${explorer.uri}/accounts/list_of_txs_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=txlist&address=${params.address}`;
 
-  const ops = await fetchWithRetries<EtherscanOperation[]>({
+  const rawOps = await fetchWithRetries<unknown>({
     method: "GET",
     url,
     params: paginationParams(params),
   });
+  const ops = normalizeExplorerArrayResult<EtherscanOperation>(rawOps);
 
   const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
   const maxBlock = boundBlockFromOperations(operations);
@@ -295,11 +302,12 @@ export const getTokenOperations = async (
       ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=tokentx&address=${params.address}`;
 
-  const ops = await fetchWithRetries<EtherscanERC20Event[]>({
+  const rawOps = await fetchWithRetries<unknown>({
     method: "GET",
     url,
     params: paginationParams(params),
   });
+  const ops = normalizeExplorerArrayResult<EtherscanERC20Event>(rawOps);
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -344,11 +352,12 @@ export const getERC721Operations = async (
       ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=tokennfttx&address=${params.address}`;
 
-  const ops = await fetchWithRetries<EtherscanERC721Event[]>({
+  const rawOps = await fetchWithRetries<unknown>({
     method: "GET",
     url,
     params: paginationParams(params),
   });
+  const ops = normalizeExplorerArrayResult<EtherscanERC721Event>(rawOps);
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -393,11 +402,12 @@ export const getERC1155Operations = async (
     return EMPTY_RESULT;
   }
 
-  const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
+  const rawOps = await fetchWithRetries<unknown>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=token1155tx&address=${params.address}`,
     params: paginationParams(params),
   });
+  const ops = normalizeExplorerArrayResult<EtherscanERC1155Event>(rawOps);
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -476,11 +486,12 @@ export const getInternalOperations = async (
     return EMPTY_RESULT;
   }
 
-  const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
+  const rawOps = await fetchWithRetries<unknown>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
     params: paginationParams(params),
-  }).then(ops => ops.map(fixTxHash));
+  });
+  const ops = normalizeExplorerArrayResult<EtherscanInternalTransaction>(rawOps).map(fixTxHash);
 
   // Why this thing ?
   // Multiple internal transactions can be executed from

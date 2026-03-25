@@ -242,6 +242,29 @@ describe("EVM Family", () => {
       });
     });
 
+    it("should return an empty list when explorer result is not an array", async () => {
+      jest.spyOn(axios, "request").mockImplementation(async () => ({
+        data: {
+          result: "No transactions found",
+        },
+      }));
+
+      const response = await ETHERSCAN_API.getCoinOperations({
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        sort: "desc",
+      });
+
+      expect(response).toEqual({
+        operations: [],
+        isDone: true,
+        boundBlock: 0,
+        isPageFull: true,
+      });
+    });
+
     it("should return a flat list of coin transactions from block 50", async () => {
       const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
         data: {

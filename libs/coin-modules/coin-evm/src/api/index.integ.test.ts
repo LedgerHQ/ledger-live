@@ -910,3 +910,38 @@ describe("EVM Api (SEI Network)", () => {
     });
   });
 });
+
+describe("EVM Api (Zero Gravity)", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    const config = {
+      node: {
+        type: "external",
+        uri: "https://evmrpc.0g.ai",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://chainscan.0g.ai/open/api",
+      },
+    };
+    module = createApi(config as EvmConfig, "zero_gravity");
+  });
+
+  describe("listOperations", () => {
+    it("supports limit=100 without throwing", async () => {
+      await expect(
+        module.listOperations("0x70793181A947C4034B0F9E547e5a8D1a21B9bD60", {
+          minHeight: 0,
+          order: "desc",
+          limit: 100,
+        }),
+      ).resolves.toEqual(
+        expect.objectContaining({
+          items: expect.any(Array),
+        }),
+      );
+    });
+  });
+});
