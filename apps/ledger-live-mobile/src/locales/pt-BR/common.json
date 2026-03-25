@@ -176,6 +176,21 @@
       "title" : "As recompensas são menores do que as taxas estimadas para resgatá-las.",
       "description" : ""
     },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Fundos Insuficientes"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "O memo excede o comprimento máximo",
+      "description" : "Seu memo tem {{memoLength}} bytes, mas o máximo permitido é de {{maxLength}} bytes. Reduza o tamanho do memo."
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "Emparelhamento expirado",
+      "description" : "A conexão com o aplicativo Concordium ID expirou. Tente novamente."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "Sessão expirada",
+      "description" : "A sessão do aplicativo Concordium ID não está mais ativa. Por favor, emparelhe novamente."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Algo deu errado (Erro nº 1)",
       "description" : "Salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -2728,8 +2743,8 @@
     },
     "walletBalance" : "Saldo da carteira",
     "balance" : {
-      "noSigner" : "A carteira mais segura",
-      "noAccounts" : "Proteja sua cripto"
+      "noSigner" : "Sua carteira de criptomoedas segura",
+      "noAccounts" : "Comece depositando fundos\nna sua carteira"
     },
     "seeAllAssets" : "Ver todos os ativos",
     "seeAllAccounts" : "Ver todas as contas",
@@ -2760,10 +2775,10 @@
       "buyLedger" : "Comprar uma Ledger",
       "transferDrawer" : {
         "title" : "Transferir",
-        "receiveCrypto" : "Receber cripto",
+        "receiveCrypto" : "Receber via endereço cripto",
         "sendCrypto" : "Enviar cripto",
-        "bankTransfer" : "Transferência bancária",
-        "bankTransferDescription" : "Receber stablecoin enviando dinheiro"
+        "bankTransfer" : "Receber via transferência bancária",
+        "bankTransferDescription" : "Receba stablecoins simplesmente enviando dinheiro."
       }
     },
     "recoverBanner" : {
@@ -2779,8 +2794,8 @@
     },
     "refreshStatus" : {
       "refreshing" : "Atualizando…",
-      "upToDate" : "Você está em dia",
-      "syncError" : "Algumas contas falharam ao sincronizar"
+      "upToDate" : "Portfolio atualizado",
+      "syncError" : "Não foi possível carregar alguns dados da conta"
     }
   },
   "addAccountsModal" : {
@@ -8579,11 +8594,24 @@
         "title" : "Reconhecimento",
         "description" : "O Concordium exige uma verificação externa de identidade. Leia estas importantes advertências de segurança:",
         "list" : {
-          "1" : "Sem verificação de endereço – a sua Ledger não consegue verificar os endereços de recebimento Concordium. Verifique manualmente os endereços antes de receber fundos.",
-          "2" : "O aplicativo Concordium ID usa uma seed separada – Você criará NOVAS 24 palavras no aplicativo Concordium. NUNCA use sua seed da Ledger.",
-          "3" : "Você será redirecionado para fora da Ledger Wallet – A verificação de identidade é feita no aplicativo externo Concordium Wallet. Isso é exigido pelo protocolo blockchain da Concordium.",
-          "4" : "A assinatura da transação permanece segura – somente o seu dispositivo Ledger pode assinar transações e criar contas."
+          "1" : {
+            "title" : "Sem verificação de endereço",
+            "description" : "A sua Ledger não consegue verificar os endereços de recebimento Concordium. Verifique manualmente os endereços antes de receber fundos."
+          },
+          "2" : {
+            "title" : "O aplicativo Concordium ID usa uma semente separada",
+            "description" : "Você criará NOVAS 24 palavras no aplicativo Concordium. NUNCA use sua seed da Ledger."
+          },
+          "3" : {
+            "title" : "Você será redirecionado para fora da Ledger Wallet",
+            "description" : "A verificação de identidade é feita no aplicativo externo Concordium Wallet. Isso é exigido pelo protocolo blockchain da Concordium."
+          },
+          "4" : {
+            "title" : "Assinar a transação ainda é seguro",
+            "description" : "Somente o seu dispositivo Ledger pode assinar transações e criar contas."
+          }
         },
+        "guide" : "Leia o guia antes de prosseguir:",
         "allow" : "Concordo"
       },
       "pair" : {
@@ -8592,25 +8620,32 @@
         "scanQRCodeOrDownload" : "Escaneie o QR code com outro dispositivo ou baixe o aplicativo Concordium ID para continuar.",
         "openIdApp" : "Abra o aplicativo Concordium ID",
         "success" : "Conectado com sucesso ao aplicativo Concordium ID.",
-        "error" : "Falha ao emparelhar com o aplicativo Concordium ID."
+        "continue" : "Continuar",
+        "error" : "Falha ao conectar ao aplicativo Concordium ID. Tente novamente."
       },
       "create" : {
-        "title" : "Criar conta",
+        "title" : "Adicionar conta Concordium",
         "prepare" : {
-          "title" : "Para criar uma conta, insira o código abaixo no aplicativo Concordium ID"
-        }
+          "title" : "Para criar uma conta, insira o código abaixo no aplicativo Concordium ID",
+          "resendButton" : "Reenviar confirmação",
+          "resendDescription" : "Você pode reenviar em {{count}}s"
+        },
+        "submitting" : "Criando sua conta…",
+        "keepDeviceNearby" : "Aprove a transação em seu dispositivo Ledger. Mantenha sua Ledger por perto.",
+        "success" : "Sua conta Concordium foi criada com sucesso.",
+        "error" : "Falha ao criar conta. Tente novamente."
       }
     }
   },
   "fearAndGreed" : {
     "title" : "Índice de Sentimento",
-    "description" : "O índice de sentimento mostra o estado emocional do mercado. O índice vai de 0 a 100: números baixos sinalizam medo intenso, enquanto números altos refletem ganância extrema.",
+    "description" : "Mostra o sentimento geral do mercado de 0 a 100, com base em tendências e atividades. Use-a para entender como o mercado está se comportando: valores mais baixos indicam medo, valores mais altos indicam ganância.",
     "levels" : {
-      "extremeFear" : "Medo+",
       "fear" : "Medo",
+      "cautious" : "Cauteloso",
       "neutral" : "Neutro",
-      "greed" : "Ganância",
-      "extremeGreed" : "Ganância+"
+      "optimistic" : "Otimista",
+      "greedy" : "Ganancioso"
     },
     "tileTitle" : "Sentimento"
   },
@@ -8658,6 +8693,7 @@
     "home" : "Início",
     "swap" : "Trocar",
     "earn" : "Ganhar",
+    "yield" : "Rendimento",
     "card" : "Cartão"
   },
   "syncIndicator" : {
@@ -8667,8 +8703,8 @@
       "default" : "Sincronizar"
     },
     "bottomSheet" : {
-      "title" : "Não foi possível sincronizar algumas contas",
-      "description" : "Houve um problema temporário na rede. Seus ativos estão seguros. Lista de contas afetadas: {{accounts}}.",
+      "title" : "Não foi possível carregar alguns dados da conta",
+      "description" : "Seus ativos estão seguros. Este é um problema temporário de sincronização.\nContas afetadas: {{accounts}}",
       "close" : "Fechar"
     }
   },
