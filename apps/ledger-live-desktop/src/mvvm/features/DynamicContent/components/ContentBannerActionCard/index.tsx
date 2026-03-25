@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   ContentBanner,
   ContentBannerContent,
@@ -6,63 +6,40 @@ import {
   ContentBannerTitle,
   InteractiveIcon,
   Spot,
+  MediaBanner,
+  MediaBannerTitle,
+  MediaBannerDescription,
 } from "@ledgerhq/lumen-ui-react";
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
-import { Close, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 
-export type ContentBannerActionCardProps = {
-  title: string;
-  description?: string;
-  onClose: () => void;
-  onClick: () => void;
-  icon?: string;
-  image_background?: string;
-};
+import type { ContentBannerActionCardProps } from "./types";
+import { useContentBannerActionCardViewModel } from "./useContentBannerActionCardViewModel";
 
-export const ContentBannerActionCard = ({
-  title,
-  description,
-  onClose,
-  onClick,
-  icon: iconName,
-  image_background,
-}: ContentBannerActionCardProps) => {
-  const handleClose = useCallback(
-    (e?: React.MouseEvent) => {
-      e?.preventDefault();
-      e?.stopPropagation();
-      onClose();
-    },
-    [onClose],
-  );
+export type { ContentBannerActionCardProps } from "./types";
+export { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "./types";
 
-  const icon = iconName && iconName in Icons ? Icons[iconName as keyof typeof Icons] : Settings;
+export const ContentBannerActionCard = (props: ContentBannerActionCardProps) => {
+  const { title, description, onClick } = props;
+  const {
+    closeAriaLabel,
+    handleClose,
+    handleMediaBannerClick,
+    hasImageBackground,
+    icon,
+    imageUrl,
+  } = useContentBannerActionCardViewModel(props);
 
-  if (image_background && image_background.length > 0) {
+  if (hasImageBackground) {
     return (
-      <div className="relative">
-        <button
-          type="button"
-          onClick={onClick}
-          className="w-full cursor-pointer border-none bg-transparent p-0 text-left"
-        >
-          <ContentBanner className="pr-48">
-            <ContentBannerContent>
-              {title && <ContentBannerTitle>{title}</ContentBannerTitle>}
-              {description && <ContentBannerDescription>{description}</ContentBannerDescription>}
-            </ContentBannerContent>
-          </ContentBanner>
-        </button>
-        <InteractiveIcon
-          type="button"
-          iconType="stroked"
-          aria-label="Close content banner"
-          onClick={handleClose}
-          className="absolute top-8 right-8"
-        >
-          <Close size={16} />
-        </InteractiveIcon>
-      </div>
+      <MediaBanner
+        imageUrl={imageUrl}
+        onClose={handleClose}
+        onClick={handleMediaBannerClick}
+        closeAriaLabel={closeAriaLabel}
+      >
+        {title && <MediaBannerTitle>{title}</MediaBannerTitle>}
+        {description && <MediaBannerDescription>{description}</MediaBannerDescription>}
+      </MediaBanner>
     );
   }
 
@@ -84,11 +61,11 @@ export const ContentBannerActionCard = ({
       <InteractiveIcon
         type="button"
         iconType="stroked"
-        aria-label="Close content banner"
+        aria-label={closeAriaLabel}
         onClick={handleClose}
         className="absolute top-8 right-8"
       >
-        <Close size={16} />
+        <Icons.Close size={16} />
       </InteractiveIcon>
     </div>
   );
