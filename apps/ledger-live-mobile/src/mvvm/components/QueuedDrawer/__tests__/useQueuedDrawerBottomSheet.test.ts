@@ -83,7 +83,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     expect(mockDismiss).toHaveBeenCalled();
   });
 
-  it("does not remove from queue on close signal, only when handleDismiss fires after animation", () => {
+  it("removes from queue immediately on close signal, before handleDismiss fires", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
@@ -94,7 +94,7 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     signal(true);
     signal(false);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
 
     act(() => {
       result.current.handleDismiss();
@@ -165,7 +165,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     expect(mockDismiss).not.toHaveBeenCalled();
   });
 
-  it("does not call removeDrawerFromQueue on close signal until handleDismiss fires", () => {
+  it("calls removeDrawerFromQueue only once when handleClose is invoked multiple times before handleDismiss", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
@@ -179,7 +179,10 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     signal(false);
     expect(mockDismiss).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+
+    signal(false);
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
 
     act(() => {
       result.current.handleDismiss();
@@ -187,32 +190,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
   });
 
-  it("does not call removeDrawerFromQueue when handleClose is invoked multiple times before handleDismiss", () => {
-    const { signal } = setupDrawerStateCapture();
-
-    const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
-        isRequestingToBeOpened: true,
-      }),
-    );
-
-    signal(true);
-    expect(mockPresent).toHaveBeenCalledTimes(1);
-
-    signal(false);
-    expect(mockDismiss).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
-
-    signal(false);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
-
-    act(() => {
-      result.current.handleDismiss();
-    });
-    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
-  });
-
-  it("does not call removeDrawerFromQueue when effect cleanup fires during dismiss animation", () => {
+  it("calls removeDrawerFromQueue on close signal even when effect cleanup fires during dismiss", () => {
     const { signal } = setupDrawerStateCapture();
     let isRequestingToBeOpened = true;
 
@@ -225,11 +203,11 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     signal(false);
     expect(mockDismiss).toHaveBeenCalledTimes(1);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
 
     isRequestingToBeOpened = false;
     rerender(undefined);
-    expect(mockRemoveDrawerFromQueue).not.toHaveBeenCalled();
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
 
     act(() => {
       result.current.handleDismiss();
@@ -374,5 +352,76 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     expect(firstOnModalHide).not.toHaveBeenCalled();
     expect(secondOnModalHide).toHaveBeenCalledTimes(1);
+  });
+
+  it("allows opening a new drawer while a previous dismiss animation is in progress", () => {
+    const { signal } = setupDrawerStateCapture();
+
+    renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+      }),
+    );
+
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(1);
+
+    signal(false);
+    expect(mockDismiss).toHaveBeenCalledTimes(1);
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(2);
+  });
+
+  it("ignores stale handleDismiss from first drawer when second drawer is already open", () => {
+    const firstOnClose = jest.fn();
+    const firstOnModalHide = jest.fn();
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+        onClose: firstOnClose,
+        onModalHide: firstOnModalHide,
+      }),
+    );
+
+    signal(true);
+    signal(false);
+    expect(firstOnClose).toHaveBeenCalledTimes(1);
+
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(2);
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(firstOnClose).toHaveBeenCalledTimes(1);
+    expect(firstOnModalHide).not.toHaveBeenCalled();
+    expect(mockRemoveDrawerFromQueue).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not reset state to idle when stale dismiss fires after reopen", () => {
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+      }),
+    );
+
+    signal(true);
+    signal(false);
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(2);
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    signal(true);
+    expect(mockPresent).toHaveBeenCalledTimes(2);
   });
 });
