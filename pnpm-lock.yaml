@@ -9065,12 +9065,27 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-bolos':
+        specifier: workspace:^
+        version: link:../hw-bolos
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
-      '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.7.1
-        version: 0.7.1
+      '@ledgerhq/ledger-cal-service':
+        specifier: workspace:^
+        version: link:../../../ledger-services/cal
+      fast-sha256:
+        specifier: ^1.3.0
+        version: 1.3.0
+      semver:
+        specifier: '>=7.5.2'
+        version: 7.7.3
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -9087,6 +9102,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -21027,7 +21045,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -27067,6 +27085,9 @@ packages:
 
   fast-safe-stringify@2.1.1:
     resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
+
+  fast-sha256@1.3.0:
+    resolution: {integrity: sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==}
 
   fast-stable-stringify@1.0.0:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
@@ -59200,6 +59221,8 @@ snapshots:
   fast-redact@3.5.0: {}
 
   fast-safe-stringify@2.1.1: {}
+
+  fast-sha256@1.3.0: {}
 
   fast-stable-stringify@1.0.0: {}
 
