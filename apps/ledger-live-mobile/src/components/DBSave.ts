@@ -4,6 +4,7 @@ import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { createSelector } from "~/context/selectors";
 import { useStore, useSelector } from "~/context/hooks";
 import { useTrackingPairs } from "~/actions/general";
 import {
@@ -144,19 +145,33 @@ const getAccountsChanged = (
     }
   | null
   | undefined => {
+  const walletChanged = oldState.wallet !== newState.wallet;
   if (oldState.accounts !== newState.accounts) {
     const oldById = new Map(oldState.accounts.active.map(a => [a.id, a] as const));
-    return {
-      changed: newState.accounts.active
-        .filter(a => {
-          const old = oldById.get(a.id);
-          return !old || accountPersistedStateChanged(old, a);
-        })
-        .map(a => a.id),
-    };
+    const changed = newState.accounts.active
+      .filter(a => {
+        const old = oldById.get(a.id);
+        return !old || accountPersistedStateChanged(old, a);
+      })
+      .map(a => a.id);
+    // exportSelector merges wallet user data into encoded accounts; persist all when wallet moves
+    if (walletChanged) {
+      return { changed: newState.accounts.active.map(a => a.id) };
+    }
+    return { changed };
+  }
+  if (walletChanged) {
+    return { changed: newState.accounts.active.map(a => a.id) };
   }
   return null;
 };
+
+/** Memoized so useSelector does not see a new object on every action (accounts + wallet drive account export). */
+const accountsDbSaveSliceSelector = createSelector(
+  (state: State) => state.accounts,
+  (state: State) => state.wallet,
+  (accounts, wallet) => ({ accounts, wallet }),
+);
 const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
 
 const getPostOnboardingStateChanged = (a: State, b: State) =>
@@ -211,7 +226,7 @@ export const ConfigureDBSaveEffects = () => {
     lense: settingsStoreSelector,
   });
   useDBSaveEffect({
-    stateSelector: (state: State) => state.accounts,
+    stateSelector: accountsDbSaveSliceSelector,
     save: saveAccounts,
     throttle: 500,
     getChangesStats: getAccountsChanged,
