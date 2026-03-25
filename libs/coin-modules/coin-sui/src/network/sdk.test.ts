@@ -6,6 +6,7 @@ import type {
   SuiTransactionBlockKind,
   SuiObjectResponse,
 } from "@mysten/sui/jsonRpc";
+import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import * as sdkOriginal from "./sdk";
@@ -748,6 +749,9 @@ describe("SDK Functions", () => {
     expect(mockApi.getCoins).toHaveBeenCalledWith(
       expect.objectContaining({ coinType: sdk.DEFAULT_COIN_TYPE, limit: 1 }),
     );
+    const MockTransaction = Transaction as unknown as jest.Mock;
+    const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+    expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
   });
 
   test("createTransaction uses coinWithBalance fallback for token with no coin objects", async () => {
@@ -993,6 +997,9 @@ describe("Staking Operations", () => {
       expect(mockApi.getCoins).toHaveBeenCalledWith(
         expect.objectContaining({ coinType: sdk.DEFAULT_COIN_TYPE, limit: 1 }),
       );
+      const MockTransaction = Transaction as unknown as jest.Mock;
+      const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+      expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
     });
 
     test("createTransaction sets empty gas payment for undelegate when no coin objects", async () => {
@@ -1011,6 +1018,9 @@ describe("Staking Operations", () => {
 
       const tx = await sdk.createTransaction(address, transaction);
       expect(tx).toEqual({ unsigned: { transactionBlock: expect.any(Uint8Array) } });
+      const MockTransaction = Transaction as unknown as jest.Mock;
+      const mockTxInstance = MockTransaction.mock.results.at(-1)!.value;
+      expect(mockTxInstance.setGasPayment).toHaveBeenCalledWith([]);
     });
 
     test("createTransaction should build undelegate transaction with all amount", async () => {
@@ -3166,14 +3176,14 @@ describe("getCoinsForAmount", () => {
       const sufficientCoins = createMockCoins(["1000"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: sufficientCoins, hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("1000");
 
       const insufficientCoins = createMockCoins(["500"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: insufficientCoins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("500");
     });
@@ -3182,7 +3192,7 @@ describe("getCoinsForAmount", () => {
       const exactMatchCoins = createMockCoins(["600", "400", "300"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: exactMatchCoins, hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("600");
       expect(result[1].balance).toBe("400");
@@ -3190,7 +3200,7 @@ describe("getCoinsForAmount", () => {
       const exceedCoins = createMockCoins(["800", "400", "200"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: exceedCoins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("400");
@@ -3199,13 +3209,13 @@ describe("getCoinsForAmount", () => {
     test("handles edge cases", async () => {
       mockApi.getCoins.mockResolvedValueOnce({ data: [], hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(0);
 
       const coins = createMockCoins(["1000"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: coins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 0);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 0n);
       expect(result).toHaveLength(0);
     });
   });
@@ -3218,7 +3228,7 @@ describe("getCoinsForAmount", () => {
 
       mockApi.getCoins.mockResolvedValueOnce({ data: mockCoins, hasNextPage: false });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(1);
       expect(result[0].balance).toBe("1000");
@@ -3229,7 +3239,7 @@ describe("getCoinsForAmount", () => {
       const unsortedCoins = createMockCoins(["100", "800", "300", "500"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: unsortedCoins, hasNextPage: false });
 
-      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      let result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("500");
@@ -3240,7 +3250,7 @@ describe("getCoinsForAmount", () => {
 
       mockApi.getCoins.mockResolvedValueOnce({ data: mixedCoins, hasNextPage: false });
 
-      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
       expect(result[1].balance).toBe("400");
@@ -3251,7 +3261,7 @@ describe("getCoinsForAmount", () => {
       const mockCoins = createMockCoins(["0", "0", "0"]);
       mockApi.getCoins.mockResolvedValueOnce({ data: mockCoins, hasNextPage: false });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(0);
       expect(result).toEqual([]);
@@ -3267,7 +3277,7 @@ describe("getCoinsForAmount", () => {
         nextCursor: "cursor1",
       });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(2);
       expect(result[0].balance).toBe("800");
@@ -3290,7 +3300,7 @@ describe("getCoinsForAmount", () => {
           hasNextPage: false,
         });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(3);
       expect(result[0].balance).toBe("300");
@@ -3314,7 +3324,7 @@ describe("getCoinsForAmount", () => {
           hasNextPage: false,
         });
 
-      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000);
+      const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 1000n);
 
       expect(result).toHaveLength(4);
       expect(result[0].balance).toBe("300");
@@ -3345,7 +3355,7 @@ describe("getCoinsForAmount – SIP-58 fake coins", () => {
     };
     mockApi.getCoins.mockResolvedValueOnce({ data: [fakeCoin], hasNextPage: false });
 
-    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 3000);
+    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 3000n);
 
     expect(result).toHaveLength(1);
     expect(result[0].coinObjectId).toBe("0xfake_address_balance_coin");
@@ -3374,7 +3384,7 @@ describe("getCoinsForAmount – SIP-58 fake coins", () => {
       hasNextPage: false,
     });
 
-    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 4000);
+    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 4000n);
 
     expect(result).toHaveLength(2);
     expect(parseInt(result[0].balance) + parseInt(result[1].balance)).toBeGreaterThanOrEqual(4000);
@@ -3391,7 +3401,7 @@ describe("getCoinsForAmount – SIP-58 fake coins", () => {
     };
     mockApi.getCoins.mockResolvedValueOnce({ data: [fakeCoin], hasNextPage: false });
 
-    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 8000);
+    const result = await sdk.getCoinsForAmount(mockApi, mockAddress, mockCoinType, 8000n);
 
     expect(result).toHaveLength(1);
     expect(result[0].balance).toBe("10000");
