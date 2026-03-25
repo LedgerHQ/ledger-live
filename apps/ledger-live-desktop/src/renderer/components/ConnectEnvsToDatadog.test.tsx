@@ -8,18 +8,6 @@ jest.mock("~/datadog/renderer", () => ({
   isDatadogAvailable: jest.fn().mockReturnValue(true),
 }));
 
-const mockGetFeature = jest.fn();
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  DEFAULT_FEATURES: {},
-  useFeatureFlags: jest.fn(() => ({
-    getFeature: mockGetFeature,
-  })),
-}));
-
-jest.mock("~/renderer/components/FirebaseFeatureFlags", () => ({
-  FirebaseFeatureFlagsProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
 const initDatadog = jest.mocked(jest.requireMock("~/datadog/renderer").initDatadog);
 const isDatadogAvailable = jest.mocked(jest.requireMock("~/datadog/renderer").isDatadogAvailable);
 
@@ -37,18 +25,26 @@ describe("ConnectEnvsToDatadog", () => {
   });
 
   it("should not call initDatadog when sentryLogs is false", async () => {
-    mockGetFeature.mockReturnValue({ enabled: true, params: {} });
     render(<ConnectEnvsToDatadog />, {
-      initialState: { settings: { sentryLogs: false } },
+      initialState: {
+        settings: {
+          sentryLogs: false,
+          overriddenFeatureFlags: { lldDatadog: { enabled: true, params: {} } },
+        },
+      },
     });
     await new Promise(r => setImmediate(r));
     expect(initDatadog).not.toHaveBeenCalled();
   });
 
   it("should call initDatadog when lldDatadog.enabled, sentryLogs and isDatadogAvailable are true", async () => {
-    mockGetFeature.mockReturnValue({ enabled: true, params: {} });
     render(<ConnectEnvsToDatadog />, {
-      initialState: { settings: { sentryLogs: true } },
+      initialState: {
+        settings: {
+          sentryLogs: true,
+          overriddenFeatureFlags: { lldDatadog: { enabled: true, params: {} } },
+        },
+      },
     });
     await new Promise(r => setImmediate(r));
     expect(initDatadog).toHaveBeenCalledWith(
@@ -59,9 +55,13 @@ describe("ConnectEnvsToDatadog", () => {
   });
 
   it("should pass shouldSend that reads current store so opt-out is respected after init", async () => {
-    mockGetFeature.mockReturnValue({ enabled: true, params: {} });
     const { store } = render(<ConnectEnvsToDatadog />, {
-      initialState: { settings: { sentryLogs: true } },
+      initialState: {
+        settings: {
+          sentryLogs: true,
+          overriddenFeatureFlags: { lldDatadog: { enabled: true, params: {} } },
+        },
+      },
     });
     await new Promise(r => setImmediate(r));
     expect(initDatadog).toHaveBeenCalled();
