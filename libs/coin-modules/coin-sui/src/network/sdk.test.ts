@@ -3634,9 +3634,7 @@ describe("getUnifiedBalanceChanges", () => {
   };
 
   it("returns balanceChanges as-is when no accumulator events", () => {
-    const changes: BalanceChange[] = [
-      { coinType, owner: { AddressOwner: addr }, amount: "-500" },
-    ];
+    const changes: BalanceChange[] = [{ coinType, owner: { AddressOwner: addr }, amount: "-500" }];
     const tx = { ...baseTx, balanceChanges: changes } as unknown as SuiTransactionBlockResponse;
 
     expect(sdk.getUnifiedBalanceChanges(tx)).toEqual(changes);
@@ -3650,9 +3648,7 @@ describe("getUnifiedBalanceChanges", () => {
   it("merges accumulator merge event as positive balance change", () => {
     const tx = {
       ...baseTx,
-      balanceChanges: [
-        { coinType, owner: { AddressOwner: "0xsender" }, amount: "-1000" },
-      ],
+      balanceChanges: [{ coinType, owner: { AddressOwner: "0xsender" }, amount: "-1000" }],
       effects: {
         ...baseTx.effects,
         accumulatorEvents: [
@@ -3706,9 +3702,7 @@ describe("getUnifiedBalanceChanges", () => {
   it("skips accumulator event when balanceChanges already covers the address+coinType", () => {
     const tx = {
       ...baseTx,
-      balanceChanges: [
-        { coinType, owner: { AddressOwner: addr }, amount: "1000" },
-      ],
+      balanceChanges: [{ coinType, owner: { AddressOwner: addr }, amount: "1000" }],
       effects: {
         ...baseTx.effects,
         accumulatorEvents: [
@@ -3753,9 +3747,7 @@ describe("getUnifiedBalanceChanges", () => {
   it("merges multiple accumulator events for different addresses", () => {
     const tx = {
       ...baseTx,
-      balanceChanges: [
-        { coinType, owner: { AddressOwner: "0xsender" }, amount: "-2000" },
-      ],
+      balanceChanges: [{ coinType, owner: { AddressOwner: "0xsender" }, amount: "-2000" }],
       effects: {
         ...baseTx.effects,
         accumulatorEvents: [
