@@ -24,7 +24,9 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
 
   const emptyTableMessage = useMemo(
     () =>
-      searchValue.trim() === "" ? t("crypto.table.emptyState") : t("crypto.table.emptySearchState"),
+      searchValue.trim() === ""
+        ? t("cryptoAddresses.table.emptyState")
+        : t("cryptoAddresses.table.emptySearchState"),
     [searchValue, t],
   );
 
