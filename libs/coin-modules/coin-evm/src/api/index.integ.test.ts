@@ -930,18 +930,45 @@ describe("EVM Api (Zero Gravity)", () => {
   });
 
   describe("listOperations", () => {
-    it("supports limit=100 without throwing", async () => {
-      await expect(
-        module.listOperations("0x70793181A947C4034B0F9E547e5a8D1a21B9bD60", {
-          minHeight: 0,
-          order: "desc",
-          limit: 100,
-        }),
-      ).resolves.toEqual(
-        expect.objectContaining({
-          items: expect.any(Array),
-        }),
-      );
+    it("returns consistent results for limits below/at/above 100", async () => {
+      const address = "0x70793181A947C4034B0F9E547e5a8D1a21B9bD60";
+      const commonParams = {
+        minHeight: 0,
+        order: "desc" as const,
+      };
+
+      const [limit99, limit100, limit101] = await Promise.all([
+        module.listOperations(address, { ...commonParams, limit: 99 }),
+        module.listOperations(address, { ...commonParams, limit: 100 }),
+        module.listOperations(address, { ...commonParams, limit: 101 }),
+      ]);
+
+      const allResults = [limit99, limit100, limit101];
+
+      allResults.forEach(result => {
+        expect(result).toEqual(
+          expect.objectContaining({
+            items: expect.any(Array),
+            next: expect.any(String),
+          }),
+        );
+
+        // Ensure basic operation structure remains valid across limits.
+        result.items.forEach(op => {
+          expect(op.tx.date).toBeInstanceOf(Date);
+        });
+      });
+
+      // Larger limits should not return fewer operations.
+      expect(limit99.items.length).toBeLessThanOrEqual(limit100.items.length);
+      expect(limit100.items.length).toBeLessThanOrEqual(limit101.items.length);
+
+      // Results should be consistent when increasing limits.
+      const atCapIds = new Set(limit100.items.map(op => op.id));
+      expect(limit99.items.every(op => atCapIds.has(op.id))).toBe(true);
+
+      const aboveCapIds = new Set(limit101.items.map(op => op.id));
+      expect(limit100.items.every(op => aboveCapIds.has(op.id))).toBe(true);
     }, 60000);
   });
 });
