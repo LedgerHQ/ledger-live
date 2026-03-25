@@ -193,8 +193,7 @@ const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props
 const isAleoAccount = (acc: AccountLike): acc is AleoAccount => "aleoResources" in acc;
 
 const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
-  if (!account || !transaction || transaction.family !== "aleo" || !isAleoAccount(account))
-    return null;
+  if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
 
   return (
     <AleoStepRecordPicker

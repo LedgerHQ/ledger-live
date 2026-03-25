@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
-import { makeAleoTransaction } from "./__mocks__/transaction.mock";
-import SendStepRecipient from "./SendStepRecipient";
+import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
+import SendStepRecipient from "./StepRecipient";
 
 const mockIsSelfTransferTransaction = jest.mocked(isSelfTransferTransaction);
 

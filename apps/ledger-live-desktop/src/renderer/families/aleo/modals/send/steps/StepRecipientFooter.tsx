@@ -14,7 +14,7 @@ const StepRecipientFooter = ({
   transitionTo,
   transaction,
 }: StepProps) => {
-  if (!account || !transaction || transaction.family !== "aleo") return null;
+  if (!account || transaction?.family !== "aleo") return null;
 
   const { errors } = status;
   const mainAccount = getMainAccount(account, parentAccount ?? undefined);
