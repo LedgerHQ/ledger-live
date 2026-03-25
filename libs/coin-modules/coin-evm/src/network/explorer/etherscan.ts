@@ -481,8 +481,7 @@ export const getInternalOperations = async (
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
     params: paginationParams(params),
-  });
-  const fixedOps = ops.map(fixTxHash);
+  }).then(ops => ops.map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
@@ -490,7 +489,7 @@ export const getInternalOperations = async (
   // Grouping them here helps differenciate the
   // `Operation` ids which would be identical
   // otherwise without a notion of index.
-  const opsByHash = groupByHash(fixedOps);
+  const opsByHash = groupByHash(ops);
 
   const operations = Object.values(opsByHash).flatMap(internalTxs =>
     internalTxs.flatMap((internalTx, index) =>
@@ -501,9 +500,9 @@ export const getInternalOperations = async (
 
   return {
     operations,
-    isDone: isDone(params.limit, fixedOps.length),
+    isDone: isDone(params.limit, ops.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(params.limit, fixedOps.length),
+    isPageFull: isPageFull(params.limit, ops.length),
   };
 };
 
