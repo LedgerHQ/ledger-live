@@ -31,6 +31,7 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
+export const MAX_ETHERSCAN_OFFSET = 100;
 
 /**
  * Common parameters for fetching operations from an endpoint
@@ -111,19 +112,6 @@ export async function fetchWithRetries<T>(
     }
     throw e;
   }
-}
-
-/** Some etherscan like APIs return an array, some return an error message on last empty page. */
-function normalizeExplorerArrayResult<T>(result: unknown): T[] {
-  if (Array.isArray(result)) return result as T[];
-
-  // Some explorers return a string for an empty page; only normalize string responses.
-  if (typeof result === "string") return [];
-
-  throw new InvalidExplorerResponse("Unexpected non-array result from explorer", {
-    resultType: typeof result,
-    resultValue: result,
-  });
 }
 
 function isPageFull(limitParameter: number | undefined, operationCount: number): boolean {
@@ -274,12 +262,11 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
       ? `${explorer.uri}/accounts/list_of_txs_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=txlist&address=${params.address}`;
 
-  const rawOps = await fetchWithRetries<unknown>({
+  const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
     url,
     params: paginationParams(params),
   });
-  const ops = normalizeExplorerArrayResult<EtherscanOperation>(rawOps);
 
   const operations = ops.flatMap(tx => etherscanOperationToOperations(params.accountId, tx));
   const maxBlock = boundBlockFromOperations(operations);
@@ -309,12 +296,11 @@ export const getTokenOperations = async (
       ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=tokentx&address=${params.address}`;
 
-  const rawOps = await fetchWithRetries<unknown>({
+  const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
     url,
     params: paginationParams(params),
   });
-  const ops = normalizeExplorerArrayResult<EtherscanERC20Event>(rawOps);
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -359,12 +345,11 @@ export const getERC721Operations = async (
       ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${params.address}`
       : `${explorer.uri}?module=account&action=tokennfttx&address=${params.address}`;
 
-  const rawOps = await fetchWithRetries<unknown>({
+  const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
     url,
     params: paginationParams(params),
   });
-  const ops = normalizeExplorerArrayResult<EtherscanERC721Event>(rawOps);
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -409,12 +394,11 @@ export const getERC1155Operations = async (
     return EMPTY_RESULT;
   }
 
-  const rawOps = await fetchWithRetries<unknown>({
+  const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=token1155tx&address=${params.address}`,
     params: paginationParams(params),
   });
-  const ops = normalizeExplorerArrayResult<EtherscanERC1155Event>(rawOps);
 
   // Why this thing ?
   // Multiple events can be fired by the same transactions and
@@ -493,12 +477,12 @@ export const getInternalOperations = async (
     return EMPTY_RESULT;
   }
 
-  const rawOps = await fetchWithRetries<unknown>({
+  const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
     params: paginationParams(params),
   });
-  const ops = normalizeExplorerArrayResult<EtherscanInternalTransaction>(rawOps).map(fixTxHash);
+  const fixedOps = ops.map(fixTxHash);
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
@@ -506,7 +490,7 @@ export const getInternalOperations = async (
   // Grouping them here helps differenciate the
   // `Operation` ids which would be identical
   // otherwise without a notion of index.
-  const opsByHash = groupByHash(ops);
+  const opsByHash = groupByHash(fixedOps);
 
   const operations = Object.values(opsByHash).flatMap(internalTxs =>
     internalTxs.flatMap((internalTx, index) =>
@@ -517,9 +501,9 @@ export const getInternalOperations = async (
 
   return {
     operations,
-    isDone: isDone(params.limit, ops.length),
+    isDone: isDone(params.limit, fixedOps.length),
     boundBlock: maxBlock,
-    isPageFull: isPageFull(params.limit, ops.length),
+    isPageFull: isPageFull(params.limit, fixedOps.length),
   };
 };
 
@@ -603,6 +587,7 @@ export async function exhaustEndpoint(
   params: FetchOperationsParams,
 ): Promise<EndpointResult> {
   const { limit } = params;
+  const probeLimit = limit === undefined ? undefined : Math.min(limit + 1, MAX_ETHERSCAN_OFFSET);
   const fetchPage = (
     page: number,
     limitOverride: number | undefined = limit,
@@ -619,8 +604,10 @@ export async function exhaustEndpoint(
   }
 
   let currentPageNumber = 1;
-  // call first page with a limit + 1 to check if we need to fetch a 2nd page
-  const firstPage = await fetchPage(currentPageNumber, limit + 1);
+  // call first page with a probing limit. We usually use limit + 1 to detect if data
+  // spills over to the next page, but some explorers reject offset > 100.
+  const firstPage = await fetchPage(currentPageNumber, probeLimit);
+
   // if the page is not full there is nothing to exhaust and the limit input is honored
   if (!firstPage.isPageFull) {
     // this is a bit hacky but we need to recompute isPageFull
@@ -650,7 +637,7 @@ export async function exhaustEndpoint(
   do {
     currentPageNumber++;
     // here we call with limit + 1 so that endpoint pagination doesn't break
-    nextPage = await fetchPage(currentPageNumber, limit + 1);
+    nextPage = await fetchPage(currentPageNumber, probeLimit);
 
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
     allOperations.push(...boundaryOps);

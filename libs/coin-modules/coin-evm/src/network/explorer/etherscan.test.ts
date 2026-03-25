@@ -242,29 +242,6 @@ describe("EVM Family", () => {
       });
     });
 
-    it("should return an empty list when explorer result is not an array", async () => {
-      jest.spyOn(axios, "request").mockImplementation(async () => ({
-        data: {
-          result: "No transactions found",
-        },
-      }));
-
-      const response = await ETHERSCAN_API.getCoinOperations({
-        currency,
-        address: account.freshAddress,
-        accountId: account.id,
-        fromBlock: 0,
-        sort: "desc",
-      });
-
-      expect(response).toEqual({
-        operations: [],
-        isDone: true,
-        boundBlock: 0,
-        isPageFull: true,
-      });
-    });
-
     it("should return a flat list of coin transactions from block 50", async () => {
       const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
         data: {
@@ -2520,6 +2497,37 @@ describe("EVM Family", () => {
         },
       );
     };
+
+    it("recomputes isPageFull with user limit when probe is capped at 100", async () => {
+      const firstPageOps = createOps(Array.from({ length: 100 }, (_, i) => i + 1));
+      const mockFetch = jest
+        .fn<Promise<ETHERSCAN_API.EndpointResult>, [ETHERSCAN_API.FetchOperationsParams]>()
+        .mockResolvedValue({
+          operations: firstPageOps,
+          isDone: false,
+          boundBlock: 100,
+          isPageFull: false,
+        });
+
+      const result = await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        limit: 200,
+        sort: "desc",
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          page: 1,
+          limit: 100,
+        }),
+      );
+      expect(result.operations).toHaveLength(100);
+      expect(result.isPageFull).toBe(false);
+    });
 
     it.each([
       {

@@ -942,6 +942,6 @@ describe("EVM Api (Zero Gravity)", () => {
           items: expect.any(Array),
         }),
       );
-    });
+    }, 60000);
   });
 });
