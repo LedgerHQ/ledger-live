@@ -118,7 +118,11 @@ const detoxAliases = isDetoxBuild
     }
   : {};
 
-const hermesNonCompatibleDependencies = ["@polkadot/types-codec"];
+const hermesNonCompatibleDependencies = [
+  "@polkadot/types-codec",
+  "@mysten/ledgerjs-hw-app-sui",
+  "@mysten/sui",
+];
 
 /**
  * Checks if the specified resource file is compatible with hermes-parser following
@@ -175,6 +179,7 @@ export default withRozeniteUrlFix(
           },
         },
         module: {
+          noParse: /[\\/]@mysten[\\/]ledgerjs-hw-app-sui[\\/]/,
           rules: [
             // Use standard babel-loader for packages that can't be parsed by hermes-parser before transform
             // like @polkadot/types-codec packages that contains unimplemented syntax - static blocks
