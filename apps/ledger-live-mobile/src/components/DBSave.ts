@@ -36,10 +36,9 @@ import {
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
-import {
-  exportCountervalues,
-  hasNewCountervaluesToExport,
-} from "@ledgerhq/live-countervalues/logic";
+import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
+import type { CounterValuesStateRaw, TrackingPair } from "@ledgerhq/live-countervalues/types";
+import { shouldPersistCountervaluesExport } from "./countervaluesDbSaveStats";
 
 type MaybeState = Maybe<State>;
 
@@ -197,26 +196,44 @@ const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identitie
 const extractIdentitiesForPersistence = (state: State) =>
   exportIdentitiesForPersistence(state.identities);
 
-const countervaluesChangesStats = (oldState: State, newState: State) => {
-  return hasNewCountervaluesToExport(
-    countervaluesStateSelector(oldState),
-    countervaluesStateSelector(newState),
-  );
-};
-
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
+  const lastPersistedTrackingPairsRef = useRef<TrackingPair[] | undefined>(undefined);
+
+  const getCountervaluesChangesStats = useCallback(
+    (oldState: State, newState: State) => {
+      const shouldSave = shouldPersistCountervaluesExport({
+        oldCvState: countervaluesStateSelector(oldState),
+        newCvState: countervaluesStateSelector(newState),
+        currentTrackingPairs: trackingPairs,
+        lastPersistedTrackingPairs: lastPersistedTrackingPairsRef.current,
+      });
+      if (!shouldSave && lastPersistedTrackingPairsRef.current === undefined) {
+        lastPersistedTrackingPairsRef.current = trackingPairs;
+      }
+      return shouldSave;
+    },
+    [trackingPairs],
+  );
+
+  const saveCountervaluesAndBaselinePairs = useCallback(
+    async (data: CounterValuesStateRaw, _changedStats: boolean) => {
+      await saveCountervalues(data);
+      lastPersistedTrackingPairsRef.current = trackingPairs;
+    },
+    [trackingPairs],
+  );
 
   useDBSaveEffect({
     stateSelector: countervaluesStateSelector,
     throttle: 2000,
-    getChangesStats: countervaluesChangesStats,
+    getChangesStats: getCountervaluesChangesStats,
     lense: useCallback(
       (state: State) => exportCountervalues(countervaluesStateSelector(state), trackingPairs),
       [trackingPairs],
     ),
-    save: saveCountervalues,
+    save: saveCountervaluesAndBaselinePairs,
   });
   useDBSaveEffect({
     stateSelector: (state: State) => state.settings,
