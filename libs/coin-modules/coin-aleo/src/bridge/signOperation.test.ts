@@ -173,6 +173,33 @@ describe("buildSignOperation", () => {
     );
   });
 
+  it("should keep fee_private function name for sponsored private transactions", async () => {
+    const privateSponsoredTransaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+
+    mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: privateSponsoredTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockedCreateAuthorization).toHaveBeenCalledTimes(1);
+    expect(mockedCraftTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        feeConfiguration: expect.objectContaining({ function_name: "fee_private" }),
+      }),
+    );
+  });
+
   it("should skip fee authorization and set feeAuthorization to null when isFeeSponsored is true", async () => {
     mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
 
