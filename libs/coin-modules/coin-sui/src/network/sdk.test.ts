@@ -81,7 +81,11 @@ jest.mock("@mysten/sui/jsonRpc", () => {
     ...jest.requireActual("@mysten/sui/jsonRpc"),
     SuiJsonRpcClient: jest.fn().mockImplementation(() => ({
       getAllBalances: jest.fn().mockResolvedValue([
-        { coinType: "0x2::sui::SUI", totalBalance: "1000000000", fundsInAddressBalance: "400000000" },
+        {
+          coinType: "0x2::sui::SUI",
+          totalBalance: "1000000000",
+          fundsInAddressBalance: "400000000",
+        },
         { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
       ]),
       queryTransactionBlocks: jest.fn().mockResolvedValue({
