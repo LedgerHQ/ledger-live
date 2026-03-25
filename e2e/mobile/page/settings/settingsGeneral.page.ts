@@ -55,8 +55,9 @@ export default class SettingsGeneralPage {
   }
 
   @Step("Expect character set")
-  async expectCharacterSet(text: string, pattern: RegExp) {
-    jestExpect(text).toMatch(pattern);
+  async expectCharacterSet(testId: string, pattern: RegExp) {
+    const uiText = await getTextOfElement(testId);
+    jestExpect(uiText).toMatch(pattern);
   }
 
   @Step("Expect translated row")

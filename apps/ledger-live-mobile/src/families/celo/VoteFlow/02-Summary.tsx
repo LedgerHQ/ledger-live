@@ -306,8 +306,8 @@ function SummaryWords({
         <Words>
           <Trans i18nKey={`celo.vote.iVote`} />
         </Words>
-        <Touchable onPress={onChangeAmount}>
-          <Selectable name={formattedAmount} testID="celo-vote-amount" />
+        <Touchable onPress={onChangeAmount} touchableTestID="celo-vote-amount">
+          <Selectable name={formattedAmount} />
         </Touchable>
       </Line>
       <Line>

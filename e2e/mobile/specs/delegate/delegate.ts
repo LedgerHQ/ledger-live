@@ -45,7 +45,7 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
 
     it(`Delegate on ${delegation.account.currency.name}`, async () => {
       let fees;
-      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId =
         getCurrencyManagerApp(delegation.account.currency.id) ?? delegation.account.currency.id;
 
@@ -151,10 +151,7 @@ export async function runVoteCelo(
 
       await app.common.successViewDetails();
 
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(delegation.account.accountName);
-      await app.operationDetails.checkTransactionType("VOTE");
-      await app.operationDetails.checkCeloValidatorGroup(delegation.provider);
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, undefined, "VOTE");
     });
   });
 }

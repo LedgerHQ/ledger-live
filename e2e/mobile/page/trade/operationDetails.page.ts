@@ -21,6 +21,7 @@ export default class OperationDetailsPage {
   operationDetailsIdentifier = "operationDetails-identifier";
   operationDetailsDate = "operationDetails-date";
   operationDetailsScrollViewId = "operation-details-scroll-view";
+  celoValidatorGroupId = "celo-operationDetails-validatorGroup";
 
   title = () => getElementById(this.titleId);
   account = () => getElementById(this.operationDetailsAccount);
@@ -89,10 +90,8 @@ export default class OperationDetailsPage {
 
   @Step("Check CELO validator group in operation details")
   async checkCeloValidatorGroup(validatorGroup: string) {
-    await scrollToId("celo-operationDetails-validatorGroup", this.operationDetailsScrollViewId);
-    await detoxExpect(getElementById("celo-operationDetails-validatorGroup")).toHaveText(
-      validatorGroup,
-    );
+    await scrollToId(this.celoValidatorGroupId, this.operationDetailsScrollViewId);
+    await detoxExpect(getElementById(this.celoValidatorGroupId)).toHaveText(validatorGroup);
   }
 
   @Step("Check that transaction details are displayed")

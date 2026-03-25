@@ -12,7 +12,7 @@ const langButtonText = [
       { testId: "countervalue-settings-row", text: "Monnaie préférée" },
       { testId: "data-format-button", text: "Format de date" },
     ],
-    tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+    tags: ["@smoke", "@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
   },
   {
     lang: "Русский",
@@ -72,7 +72,10 @@ describe("Change Language", () => {
       await app.settingsGeneral.navigateToLanguageSelect();
       await app.settingsGeneral.selectLanguage(l10n.lang);
       await app.settingsGeneral.expectLocalizedText(l10n.localization);
-      await app.settingsGeneral.expectCharacterSet(l10n.localization, l10n.characterSet);
+      await app.settingsGeneral.expectCharacterSet(
+        l10n.translatedLabels[1].testId,
+        l10n.characterSet,
+      );
       for (const label of l10n.translatedLabels) {
         await app.settingsGeneral.expectTranslatedRow(label.testId, label.text);
       }

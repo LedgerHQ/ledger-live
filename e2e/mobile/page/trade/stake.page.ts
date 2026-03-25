@@ -3,6 +3,10 @@ import invariant from "invariant";
 
 export default class StakePage {
   celoLockAmountInput = "celo-lock-amount-input";
+  celoVoteAmountId = "celo-vote-amount";
+  celoVoteAmountInputId = "celo-vote-amount-input";
+  celoVoteAmountContinueId = "celo-vote-amount-continue";
+  celoVoteSummaryContinueId = "celo-vote-summary-continue";
   searchPoolInput = "delegation-search-pool-input";
   selectAssetTitle = "select-asset-drawer-title";
 
@@ -107,24 +111,24 @@ export default class StakePage {
 
   @Step("Open CELO vote amount screen")
   async openCeloVoteAmount() {
-    await tapById("celo-vote-amount");
+    await tapById(this.celoVoteAmountId);
   }
 
   @Step("Set CELO vote amount")
   async setCeloVoteAmount(amount: string) {
-    await waitForElementById("celo-vote-amount-input");
-    await typeTextById("celo-vote-amount-input", amount);
+    await waitForElementById(this.celoVoteAmountInputId);
+    await typeTextById(this.celoVoteAmountInputId, amount);
   }
 
   @Step("Validate CELO vote amount")
   async validateCeloVoteAmount() {
-    await tapById("celo-vote-amount-continue");
+    await tapById(this.celoVoteAmountContinueId);
   }
 
   @Step("Continue from CELO vote summary")
   async celoVoteSummaryContinue() {
-    await waitForElementById("celo-vote-summary-continue");
-    await tapById("celo-vote-summary-continue");
+    await waitForElementById(this.celoVoteSummaryContinueId);
+    await tapById(this.celoVoteSummaryContinueId);
   }
 
   @Step("Verify choose asset page is visible")

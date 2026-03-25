@@ -8,6 +8,7 @@ export default class CeloManageAssetsPage {
   celoVoteButton = "celo-vote-button";
   celoActivateVoteButton = "celo-activate-vote-button";
   celoRevokeButton = "celo-revoke-button";
+  celoVoteStartButton = "celo-vote-start-button";
 
   title = () => getElementById(this.titleId);
 
@@ -28,7 +29,7 @@ export default class CeloManageAssetsPage {
 
   @Step("Click start on the CELO vote started screen")
   async clickVoteStart() {
-    await tapById("celo-vote-start-button");
+    await tapById(this.celoVoteStartButton);
   }
 
   @Step("Check manage assets page - CELO")
