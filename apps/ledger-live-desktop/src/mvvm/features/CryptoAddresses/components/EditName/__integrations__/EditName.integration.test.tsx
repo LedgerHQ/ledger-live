@@ -6,11 +6,16 @@ import { EditName } from "LLD/features/CryptoAddresses/components/EditName";
 
 const ASSET_NAME = "Ethereum";
 
-const renderEditName = () => {
+const renderEditName = ({ onBackgroundClick }: { onBackgroundClick?: () => void } = {}) => {
   return render(
-    <EditName account={ETH_ACCOUNT} asset={ASSET_NAME}>
-      <Button data-testid="edit-name-trigger">Edit</Button>
-    </EditName>,
+    <>
+      <EditName account={ETH_ACCOUNT} asset={ASSET_NAME}>
+        <Button data-testid="edit-name-trigger">Edit</Button>
+      </EditName>
+      <button type="button" data-testid="background-action" onClick={onBackgroundClick}>
+        Background action
+      </button>
+    </>,
     { initialState: { accounts: [ETH_ACCOUNT] } },
   );
 };
@@ -76,5 +81,29 @@ describe("EditName", () => {
         screen.queryByTestId("edit-crypto-address-name-dialog-content"),
       ).not.toBeInTheDocument();
     });
+  });
+
+  it("should close on backdrop click without triggering the element behind", async () => {
+    const onBackgroundClick = jest.fn();
+    const { user } = renderEditName({ onBackgroundClick });
+
+    await user.click(screen.getByTestId("edit-name-trigger"));
+    await waitFor(() => {
+      expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
+    });
+
+    const overlay = document.querySelector<HTMLElement>("[data-slot='dialog-overlay']");
+    expect(overlay).toBeInTheDocument();
+    if (!overlay) return;
+
+    await user.click(overlay);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId("edit-crypto-address-name-dialog-content"),
+      ).not.toBeInTheDocument();
+    });
+
+    expect(onBackgroundClick).not.toHaveBeenCalled();
   });
 });

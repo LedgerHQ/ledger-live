@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -29,31 +29,59 @@ export const EditCryptoAddressNameDialog = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
+  const clickGuardRef = useRef<AbortController | null>(null);
 
   const normalizedValue = normalizeName(value);
   const isConfirmDisabled = normalizedValue.length === 0 || normalizedValue === initialValue.trim();
 
+  const close = () => {
+    clickGuardRef.current?.abort();
+    setOpen(false);
+  };
+
   const handleConfirm = () => {
     onConfirm(normalizedValue);
-    setOpen(false);
+    close();
   };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
       setValue(initialValue);
+      setOpen(true);
+    } else {
+      close();
     }
-    setOpen(newOpen);
+  };
+
+  /** Prevents Radix "ghost click": swallow the resulting click before closing. */
+  const handlePointerDownOutside = (e: CustomEvent) => {
+    e.preventDefault();
+    clickGuardRef.current?.abort();
+    const ac = new AbortController();
+    clickGuardRef.current = ac;
+    globalThis.addEventListener(
+      "click",
+      ev => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        handleOpenChange(false);
+      },
+      { capture: true, once: true, signal: ac.signal },
+    );
   };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent data-testid="edit-crypto-address-name-dialog-content">
+      <DialogContent
+        data-testid="edit-crypto-address-name-dialog-content"
+        onPointerDownOutside={handlePointerDownOutside}
+      >
         <DialogHeader
           appearance="expanded"
           title={t("cryptoAddresses.editName.title")}
-          onClose={() => setOpen(false)}
+          onClose={close}
         />
         <DialogBody className="flex flex-col gap-16">
           <TextInput
