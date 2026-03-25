@@ -1,0 +1,48 @@
+name: "[CI] - Request wallet-xp review on Lumen package bump"
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+    paths:
+      - "pnpm-workspace.yaml"
+
+permissions:
+  pull-requests: write
+
+jobs:
+  request-review:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Fetch base ref for diff
+        run: git fetch origin ${{ github.base_ref }}
+
+      - name: Check if Lumen packages were bumped
+        id: check
+        run: |
+          PACKAGES=(
+            "@ledgerhq/lumen-design-core"
+            "@ledgerhq/lumen-ui-react"
+            "@ledgerhq/lumen-ui-rnative"
+          )
+
+          BUMPED=false
+          for pkg in "${PACKAGES[@]}"; do
+            if git diff origin/${{ github.base_ref }}...HEAD -- pnpm-workspace.yaml \
+              | grep '^+' | grep -q "$pkg"; then
+              echo "Detected bump for $pkg"
+              BUMPED=true
+            fi
+          done
+
+          echo "bumped=$BUMPED" >> $GITHUB_OUTPUT
+
+      - name: Request wallet-xp review
+        if: steps.check.outputs.bumped == 'true'
+        run: gh pr edit ${{ github.event.pull_request.number }} --add-reviewer LedgerHQ/wallet-xp
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
