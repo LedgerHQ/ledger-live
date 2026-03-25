@@ -605,7 +605,7 @@ export async function exhaustEndpoint(
   const effectiveLimit = Math.min(limit, MAX_ETHERSCAN_OFFSET - 1);
 
   let currentPageNumber = 1;
-  // call first page with a probe limit to detect if a second page is needed.
+  // call first page with a limit + 1 to check if we need to fetch a 2nd page
   const firstPage = await fetchPage(currentPageNumber, effectiveLimit + 1);
   // if the page is not full there is nothing to exhaust and the limit input is honored
   if (!firstPage.isPageFull) {
