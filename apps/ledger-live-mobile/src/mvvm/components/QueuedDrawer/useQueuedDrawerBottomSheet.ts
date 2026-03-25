@@ -87,13 +87,13 @@ const useQueuedDrawerBottomSheet = ({
   const handleDismiss = useCallback(() => {
     logDrawer("BottomSheet dismissed (onDismiss)");
 
-    if (Keyboard.isVisible()) {
-      Keyboard.dismiss();
-    }
-
     if (reopenedDuringDismissRef.current) {
       reopenedDuringDismissRef.current = false;
       return;
+    }
+
+    if (Keyboard.isVisible()) {
+      Keyboard.dismiss();
     }
 
     if (stateRef.current === "open") {

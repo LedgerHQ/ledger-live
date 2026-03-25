@@ -1,3 +1,4 @@
+import { Keyboard } from "react-native";
 import { renderHook, act } from "@tests/test-renderer";
 import useQueuedDrawerBottomSheet from "../useQueuedDrawerBottomSheet";
 
@@ -423,5 +424,29 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     signal(true);
     expect(mockPresent).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not dismiss keyboard when stale onDismiss fires after reopen", () => {
+    const keyboardDismiss = jest.spyOn(Keyboard, "dismiss");
+    jest.spyOn(Keyboard, "isVisible").mockReturnValue(true);
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+      }),
+    );
+
+    signal(true);
+    signal(false);
+    signal(true);
+
+    act(() => {
+      result.current.handleDismiss();
+    });
+
+    expect(keyboardDismiss).not.toHaveBeenCalled();
+
+    jest.restoreAllMocks();
   });
 });
