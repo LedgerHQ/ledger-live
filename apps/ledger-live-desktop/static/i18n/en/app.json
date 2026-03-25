@@ -8166,17 +8166,6 @@
     }
   },
   "cryptoAddresses": {
-    "editName": {
-      "title": "Edit address name",
-      "input": "Address name",
-      "suggestions": {
-        "trading": "{{asset}} trading",
-        "savings": "{{asset}} savings"
-      },
-      "cta": "Confirm"
-    }
-  },
-  "crypto": {
     "title": "Crypto accounts",
     "tableActions": {
       "searchAddress": "Search address",
@@ -8191,7 +8180,19 @@
       "editName": "Edit name",
       "emptyState": "No crypto address yet",
       "emptySearchState": "No accounts match your search"
+    },
+    "editName": {
+      "title": "Edit address name",
+      "input": "Address name",
+      "suggestions": {
+        "trading": "{{asset}} trading",
+        "savings": "{{asset}} savings"
+      },
+      "cta": "Confirm"
     }
+  },
+  "cryptoAssets": {
+    "title": "Crypto assets"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
