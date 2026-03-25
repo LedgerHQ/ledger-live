@@ -92,6 +92,7 @@ function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoRaw {
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     syncState: info.syncState,
+    birthday: info.birthday,
     lastBlockProcessed: info.lastBlockProcessed,
     transactions: info.transactions.map(tx => ({
       ...tx,
@@ -119,6 +120,7 @@ function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     syncState: info.syncState as ZcashSyncState,
+    birthday: info.birthday,
     lastBlockProcessed: info.lastBlockProcessed,
     transactions: info.transactions.map(tx => ({
       ...tx,

@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -8,10 +7,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { Container } from "../shared/Container";
-import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
-import type { ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
 import type { StepProps } from "../types";
-import { syncStateUpdater } from "../sync";
 
 function StepConfirmation({ t }: Readonly<StepProps>) {
   return (
@@ -64,28 +60,17 @@ function StepConfirmation({ t }: Readonly<StepProps>) {
   );
 }
 
-export function StepConfirmationFooter({ account, closeModal }: Readonly<StepProps>) {
-  const dispatch = useDispatch();
-
-  const saveSyncState = (info: Partial<ZcashPrivateInfo>) => {
-    dispatch(
-      syncStateUpdater(account as ZcashAccount, {
-        ...info,
-      }),
-    );
-  };
-
+export function StepConfirmationFooter({
+  closeModal,
+  handleEnableShieldedBalance,
+}: Readonly<StepProps>) {
   const handleCloseModal = () => {
-    saveSyncState({
-      syncState: "ready",
-    });
+    handleEnableShieldedBalance("ready");
     closeModal();
   };
 
   const handleStartSync = () => {
-    saveSyncState({
-      syncState: "running",
-    });
+    handleEnableShieldedBalance("running");
     closeModal();
   };
 

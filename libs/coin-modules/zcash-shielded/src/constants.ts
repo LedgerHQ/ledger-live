@@ -14,6 +14,7 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   saplingBalance: new BigNumber(0),
   ufvk: null,
   syncState: "disabled",
+  birthday: ZCASH_ACTIVATION_DATE_STRING,
   lastSyncTimestamp: null,
   lastBlockProcessed: null,
   transactions: [],
