@@ -81,19 +81,6 @@ describe("Assets", () => {
     expect(screen.getByText("Stablecoins")).toBeVisible();
   });
 
-  it("should not navigate when section header is clicked with few items", async () => {
-    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
-      initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText("Bitcoin")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("cryptos-section-header-button"));
-    expect(mockNavigate).not.toHaveBeenCalled();
-  });
-
   it("should navigate to /cryptos when section header is clicked with many items", async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...onboardedState, accounts: MANY_CRYPTO_ACCOUNTS },
@@ -105,6 +92,19 @@ describe("Assets", () => {
 
     await user.click(screen.getByTestId("cryptos-section-header-button"));
     expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+  });
+
+  it("should navigate to /assets when stablecoins section header is clicked", async () => {
+    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
+      initialState: { ...initialState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Stablecoins")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("stablecoins-section-header-button"));
+    expect(mockNavigate).toHaveBeenCalledWith("/assets");
   });
 
   it("should show placeholder assets when user has no accounts", async () => {

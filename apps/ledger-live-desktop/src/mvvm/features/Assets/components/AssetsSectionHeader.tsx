@@ -25,13 +25,10 @@ export const AssetsSectionHeader = ({
 
   return (
     <Subheader>
-      <SubheaderRow
-        onClick={shouldShowMore ? onNavigate : undefined}
-        data-testid={`${sectionId}-section-header-button`}
-      >
+      <SubheaderRow onClick={onNavigate} data-testid={`${sectionId}-section-header-button`}>
         <SubheaderTitle>{title}</SubheaderTitle>
         {shouldShowMore && <SubheaderCount value={numberOfItems} />}
-        {shouldShowMore && <SubheaderShowMore />}
+        <SubheaderShowMore />
       </SubheaderRow>
     </Subheader>
   );
