@@ -8425,6 +8425,10 @@
     "address": {
       "from": "From",
       "to": "To"
+    },
+    "emptyState": {
+      "title": "No transactions yet",
+      "description": "Come back later to see your transactions."
     }
   }
 }
