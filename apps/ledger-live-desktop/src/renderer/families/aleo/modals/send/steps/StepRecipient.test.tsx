@@ -3,17 +3,17 @@ import { render, screen } from "tests/testSetup";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
-import SendStepRecipient from "./StepRecipient";
+import StepRecipient from "./StepRecipient";
 
 const mockIsSelfTransferTransaction = jest.mocked(isSelfTransferTransaction);
 
 jest.mock("@ledgerhq/live-common/families/aleo/utils");
 
-jest.mock("../../SendModal/SendStepRecipient", () => ({
-  SendStepRecipient: () => <div data-testid="aleo-send-step-recipient" />,
+jest.mock("../../../SendTransferModal/AleoSendStepRecipient", () => ({
+  AleoSendStepRecipient: () => <div data-testid="aleo-send-step-recipient" />,
 }));
 
-jest.mock("../../SelfTransferModal/SelfTransferStepRecipient", () => ({
+jest.mock("../../../SelfTransferModal/SelfTransferStepRecipient", () => ({
   SelfTransferStepRecipient: () => <div data-testid="self-transfer-step-recipient" />,
 }));
 
@@ -28,7 +28,7 @@ describe("SendStepRecipient", () => {
   it("renders SelfTransferStepRecipient when isSelfTransferTransaction returns true", () => {
     mockIsSelfTransferTransaction.mockReturnValue(true);
 
-    render(<SendStepRecipient {...baseProps} />);
+    render(<StepRecipient {...baseProps} />);
 
     expect(screen.queryByTestId("self-transfer-step-recipient")).toBeInTheDocument();
     expect(screen.queryByTestId("aleo-send-step-recipient")).not.toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("SendStepRecipient", () => {
   it("renders AleoSendStepRecipient when isSelfTransferTransaction returns false", () => {
     mockIsSelfTransferTransaction.mockReturnValue(false);
 
-    render(<SendStepRecipient {...baseProps} />);
+    render(<StepRecipient {...baseProps} />);
 
     expect(screen.queryByTestId("aleo-send-step-recipient")).toBeInTheDocument();
     expect(screen.queryByTestId("self-transfer-step-recipient")).not.toBeInTheDocument();
@@ -45,7 +45,7 @@ describe("SendStepRecipient", () => {
 
   it("should render nothing when transaction family is not aleo", () => {
     const { container } = render(
-      <SendStepRecipient
+      <StepRecipient
         {...baseProps}
         // @ts-expect-error - testing invalid family
         transaction={{ ...mockTransaction, family: "bitcoin" }}
@@ -56,7 +56,7 @@ describe("SendStepRecipient", () => {
   });
 
   it("should render nothing when transaction is null", () => {
-    const { container } = render(<SendStepRecipient {...baseProps} transaction={null} />);
+    const { container } = render(<StepRecipient {...baseProps} transaction={null} />);
 
     expect(container).toBeEmptyDOMElement();
   });
