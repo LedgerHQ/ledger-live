@@ -58,18 +58,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   })),
 }));
 
-beforeAll(() => {
-  server.listen();
-});
-
-afterEach(() => {
-  server.resetHandlers();
-});
-
-afterAll(() => {
-  server.close();
-});
-
 const mockAccount: CardanoAccount = getCardanoAccountFixture({
   delegation: {
     rewards: new BigNumber("0"),
@@ -165,6 +153,10 @@ describe("DelegationFlow Integration", () => {
 
   beforeEach(() => {
     server.use(...handlers);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("should navigate through the delegation flow", async () => {
