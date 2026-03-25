@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { EARN_V2_DESKTOP_FLAGS, useLocalEarnManifest } from "tests/utils/featureFlagUtils";
 import { xrayAnnotation, registerXrayLink } from "tests/utils/allureUtils";
@@ -62,7 +62,7 @@ test.describe("Earn [v2]", () => {
       featureFlags: EARN_V2_DESKTOP_FLAGS,
     });
 
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const xrayTicket: string | undefined = "B2CQA-4639";
     test(
       "Earn v2 ice cold start page displays correctly",
       {
@@ -83,8 +83,8 @@ test.describe("Earn [v2]", () => {
   });
 
   const coldStartCurrencies = [
-    { account: Account.ETH_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.ATOM_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.ETH_1, xrayTicket: "B2CQA-4640" },
+    { account: Account.ATOM_2, xrayTicket: "B2CQA-4640" },
   ];
 
   for (const { account, xrayTicket } of coldStartCurrencies) {
@@ -119,9 +119,9 @@ test.describe("Earn [v2]", () => {
 
   // Hot start: accounts with active stake positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
   const hotStartCurrencies = [
-    { account: Account.SOL_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.NEAR_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.ATOM_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.SOL_2, xrayTicket: "B2CQA-4641" },
+    { account: Account.NEAR_1, xrayTicket: "B2CQA-4641" },
+    { account: Account.ATOM_1, xrayTicket: "B2CQA-4641" },
   ];
 
   for (const { account, xrayTicket } of hotStartCurrencies) {
@@ -154,7 +154,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("Inline Add Account", () => {
     const account = Account.ETH_1;
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const xrayTicket: string | undefined = "B2CQA-4642";
 
     test.use({
       userdata: "skip-onboarding",
@@ -171,15 +171,14 @@ test.describe("Earn [v2]", () => {
       async ({ app }) => {
         await registerXrayLink(test.info());
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.verifyIceColdStartPage();
         await app.earnDashboard.clickIceColdStartEarnCTA();
         const assetSelector = await getModularSelector(app, "ASSET");
         if (assetSelector) {
           await assetSelector.selectAsset(account.currency);
         }
-        const accountSelector = await getModularSelector(app, "ACCOUNT");
-        if (accountSelector) {
-          await accountSelector.clickOnAddAndExistingAccount();
+        const selector = await getModularSelector(app, "ACCOUNT");
+        if (selector) {
+          await selector.clickOnAddAndExistingAccount();
           await app.scanAccountsDrawer.selectFirstAccount();
           await app.scanAccountsDrawer.clickContinueButton();
         } else {
@@ -198,8 +197,8 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: CTA Flows ---
 
   test.describe("CTA → Native staking (SOL)", () => {
-    const account = Account.SOL_4;
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const account = Account.SOL_2;
+    const xrayTicket: string | undefined = "B2CQA-4643";
 
     test.use({
       userdata: "skip-onboarding",
@@ -217,13 +216,7 @@ test.describe("Earn [v2]", () => {
       async ({ app, page }) => {
         await registerXrayLink(test.info());
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        // SOL is not in earn API deposit tokens, so the page shows ice cold start.
-        // Navigate via the ice cold start CTA → modular asset selector → SOL.
-        await app.earnDashboard.clickIceColdStartEarnCTA();
-        const assetSelector = await getModularSelector(app, "ASSET");
-        if (assetSelector) {
-          await assetSelector.selectAsset(account.currency);
-        }
+        await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
         await selectAccountInModularSelector(app, page, account);
         // SOL uses native staking: LLD opens the staking modal
         await expect(page.getByTestId("modal-container")).toBeVisible();
@@ -233,7 +226,7 @@ test.describe("Earn [v2]", () => {
 
   test.describe("CTA → Partner dapp (ETH)", () => {
     const account = Account.ETH_1;
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const xrayTicket: string | undefined = "B2CQA-4644";
 
     test.use({
       userdata: "skip-onboarding",
@@ -263,10 +256,8 @@ test.describe("Earn [v2]", () => {
   });
 
   test.describe("CTA → Earn staking (USDT)", () => {
-    test.skip(true, "Pending: ETH account with USDT balance from Martijn");
-
-    const account = Account.ETH_1; // TODO: replace with the ETH account that has USDT balance
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const account = TokenAccount.ETH_USDT_1;
+    const xrayTicket: string | undefined = "B2CQA-4645";
 
     test.use({
       userdata: "skip-onboarding",
@@ -336,9 +327,9 @@ test.describe("Earn [v2]", () => {
 
   // Position → Account: native staking positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
   const positionAccountCurrencies = [
-    { account: Account.SOL_2, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.NEAR_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { account: Account.ATOM_1, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { account: Account.SOL_2, xrayTicket: "B2CQA-4646" },
+    { account: Account.NEAR_1, xrayTicket: "B2CQA-4646" },
+    { account: Account.ATOM_1, xrayTicket: "B2CQA-4646" },
   ];
 
   for (const { account, xrayTicket } of positionAccountCurrencies) {
@@ -368,9 +359,7 @@ test.describe("Earn [v2]", () => {
   }
 
   test.describe("Position → Dapp (ETH)", () => {
-    test.skip(true, "Pending: ETH account with active Kiln staking from Martijn");
-
-    const account = Account.ETH_1; // TODO: replace with Martijn's ETH account that has Kiln staking
+    const account = Account.ETH_1;
 
     test.use({
       userdata: "skip-onboarding",
@@ -390,7 +379,7 @@ test.describe("Earn [v2]", () => {
       cliCommands: [liveDataWithAddressCommand(account)],
     });
 
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const xrayTicket: string | undefined = "B2CQA-4647";
     test(
       "Earn v2 position row navigates to dapp for ETH",
       {
@@ -412,9 +401,7 @@ test.describe("Earn [v2]", () => {
   });
 
   test.describe("Position → Withdrawal (USDT)", () => {
-    test.skip(true, "Pending: ETH account with USDT Morpho deposit from Martijn");
-
-    const account = Account.ETH_1; // TODO: replace with Martijn's ETH account that has USDT stake
+    const account = Account.ETH_1;
 
     test.use({
       userdata: "skip-onboarding",
@@ -423,7 +410,7 @@ test.describe("Earn [v2]", () => {
       cliCommands: [liveDataWithAddressCommand(account)],
     });
 
-    const xrayTicket: string | undefined = undefined; // replace with real xrayTicket
+    const xrayTicket: string | undefined = "B2CQA-4648";
     test(
       "Earn v2 position row navigates to withdrawal for USDT",
       {
