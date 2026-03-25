@@ -202,7 +202,7 @@ export const transactions = [
 export const decryptedOrchardData = {
   orchard_outputs: [
     {
-      amount: new BigNumber(0.3),
+      amount: new BigNumber(30000000), // zatoshis
       memo: "Thanks for using testnet.ZecFaucet.com",
       transfer_type: "incoming",
     },
@@ -213,12 +213,12 @@ export const decryptedOrchardData = {
 export const decryptedSaplingData = {
   orchard_outputs: [
     {
-      amount: new BigNumber(0.1449),
+      amount: new BigNumber(14490000), // zatoshis
       memo: "",
       transfer_type: "internal",
     },
     {
-      amount: new BigNumber(0.1449),
+      amount: new BigNumber(14490000), // zatoshis
       memo: "",
       transfer_type: "internal",
     },

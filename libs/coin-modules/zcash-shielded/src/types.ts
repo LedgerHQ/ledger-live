@@ -9,13 +9,13 @@ export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "com
 export type DecryptedOutputRaw = {
   memo: string;
   transfer_type: string;
-  amount: string;
+  amount: string; // zatoshis
 };
 
 export type DecryptedOutput = {
   memo: string;
   transfer_type: string;
-  amount: BigNumber;
+  amount: BigNumber; // zatoshis
 };
 
 export type DecryptedTransaction = {

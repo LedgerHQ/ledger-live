@@ -58,16 +58,16 @@
   },
   "devDependencies": {
     "@swc/core": "catalog:",
-    "@types/node": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:"
   },
   "dependencies": {
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/zcash-decrypt": "0.1.0",
+    "@ledgerhq/zcash-decrypt": "0.2.0",
     "bignumber.js": "^9.1.2",
     "rxjs": "catalog:"
   }
