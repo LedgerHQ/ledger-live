@@ -5,6 +5,17 @@ on:
     types: [opened, reopened, synchronize]
     paths:
       - "pnpm-workspace.yaml"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to add wallet-xp review to"
+        required: true
+        type: string
+      base_ref:
+        description: "Base branch to diff against (e.g. develop)"
+        required: true
+        default: "develop"
+        type: string
 
 permissions:
   pull-requests: write
@@ -18,8 +29,14 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
+      - name: Resolve inputs
+        id: inputs
+        run: |
+          echo "pr_number=${{ github.event.pull_request.number || inputs.pr_number }}" >> $GITHUB_OUTPUT
+          echo "base_ref=${{ github.base_ref || inputs.base_ref }}" >> $GITHUB_OUTPUT
+
       - name: Fetch base ref for diff
-        run: git fetch origin ${{ github.base_ref }}
+        run: git fetch origin ${{ steps.inputs.outputs.base_ref }}
 
       - name: Check if Lumen packages were bumped
         id: check
@@ -32,7 +49,7 @@ jobs:
 
           BUMPED=false
           for pkg in "${PACKAGES[@]}"; do
-            if git diff origin/${{ github.base_ref }}...HEAD -- pnpm-workspace.yaml \
+            if git diff origin/${{ steps.inputs.outputs.base_ref }}...HEAD -- pnpm-workspace.yaml \
               | grep '^+' | grep -q "$pkg"; then
               echo "Detected bump for $pkg"
               BUMPED=true
@@ -43,6 +60,6 @@ jobs:
 
       - name: Request wallet-xp review
         if: steps.check.outputs.bumped == 'true'
-        run: gh pr edit ${{ github.event.pull_request.number }} --add-reviewer LedgerHQ/wallet-xp
+        run: gh pr edit ${{ steps.inputs.outputs.pr_number }} --add-reviewer LedgerHQ/wallet-xp
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
