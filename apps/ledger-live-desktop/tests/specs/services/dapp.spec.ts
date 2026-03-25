@@ -26,9 +26,8 @@ test.describe("Metamask Test Dapp", () => {
 
     await layout.goToDiscover();
     await discoverPage.openTestApp();
-    await drawer.continue();
-    await drawer.waitForDrawerToDisappear();
 
+    // Handle account selection drawer (auto-opened by NoAccountOverlay)
     await drawer.waitForDrawerToBeVisible();
     await drawer.selectCurrency("ethereum");
     await drawer.selectAccount("Ethereum", 0);
