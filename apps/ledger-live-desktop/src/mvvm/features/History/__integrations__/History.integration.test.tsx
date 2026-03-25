@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import type { Account } from "@ledgerhq/types-live";
 import History from "../index";
 
 const mockNavigate = jest.fn();
@@ -86,5 +87,31 @@ describe("History integration", () => {
     await user.click(operationRows[0]);
 
     expect(setDrawer).toHaveBeenCalled();
+  });
+
+  it("should render a pending section header when account has pending operations", async () => {
+    const pendingOp = {
+      ...BTC_ACCOUNT.operations[0],
+      id: "pending_op_1",
+      hash: "pending_hash_1",
+      blockHeight: null,
+      date: new Date(),
+    };
+
+    const accountWithPending: Account = {
+      ...BTC_ACCOUNT,
+      pendingOperations: [pendingOp],
+    };
+
+    render(<History />, {
+      initialState: {
+        accounts: [accountWithPending],
+        settings: AFTER_ONBOARDING_STATE,
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/pending transaction/i)).toBeVisible();
+    });
   });
 });

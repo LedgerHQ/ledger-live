@@ -1,6 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { Account } from "@ledgerhq/types-live";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useHistoryOperations } from "../useHistoryOperations";
 import { useHistoryTable } from "../useHistoryTable";
@@ -34,11 +35,31 @@ describe("useHistoryVirtualization", () => {
     expect(result.current.rowVirtualizer).toBeDefined();
 
     const { flatItems } = result.current;
-    const dayHeaders = flatItems.filter(item => item.type === "day-header");
+    const headers = flatItems.filter(
+      item => item.type === "day-header" || item.type === "section-header",
+    );
     const operations = flatItems.filter(item => item.type === "operation");
 
-    expect(dayHeaders.length).toBeGreaterThan(0);
+    expect(headers.length).toBeGreaterThan(0);
     expect(operations.length).toBeGreaterThan(0);
-    expect(flatItems[0].type).toBe("day-header");
+  });
+
+  it("inserts a pending section-header before day headers when pending operations exist", () => {
+    const account = genAccount("btc-pending", { currency: bitcoinCurrency, operationsSize: 3 });
+    const accountWithPending: Account = {
+      ...account,
+      pendingOperations: [
+        { ...account.operations[0], id: "pending_op_1", hash: "pending_hash_1", blockHeight: null },
+      ],
+    };
+
+    const { result } = renderHook(() => useComposedHook(), {
+      initialState: { accounts: [accountWithPending], settings: INITIAL_STATE },
+    });
+
+    const types = result.current.flatItems.map(item => item.type);
+    expect(types[0]).toBe("section-header");
+    expect(types).toContain("day-header");
+    expect(types).toContain("operation");
   });
 });
