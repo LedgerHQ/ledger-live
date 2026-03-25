@@ -46,11 +46,11 @@ catalogs:
       specifier: 0.1.6
       version: 0.1.6
     '@ledgerhq/lumen-ui-react':
+      specifier: 0.1.14
+      version: 0.1.14
+    '@ledgerhq/lumen-ui-rnative':
       specifier: 0.1.13
       version: 0.1.13
-    '@ledgerhq/lumen-ui-rnative':
-      specifier: 0.1.12
-      version: 0.1.12
     '@ledgerhq/speculos-device-controller':
       specifier: 0.2.3
       version: 0.2.3
@@ -932,7 +932,7 @@ importers:
         version: 0.1.6
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.13(e3565a5b1275aee5d93efe21059eb47c)
+        version: 0.1.14(e3565a5b1275aee5d93efe21059eb47c)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -1585,7 +1585,7 @@ importers:
         version: 0.1.6
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.12(d89902aee69329b81f0ddd52d4b97f69)
+        version: 0.1.13(d89902aee69329b81f0ddd52d4b97f69)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -2646,10 +2646,10 @@ importers:
         version: 0.1.6
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.13(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0)
+        version: 0.1.14(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.12(bfeef56ac4e67a6dd60bbffafd049aff)
+        version: 0.1.13(bfeef56ac4e67a6dd60bbffafd049aff)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -15754,8 +15754,8 @@ packages:
   '@ledgerhq/lumen-design-core@0.1.6':
     resolution: {integrity: sha512-E27yIKuZb46gURpb+fpIkbvGI0Y7tZaP4gDcwoynEYRcI5eEUhu/v7zEZURJHrz+bf0BOKHb44TFtFCuVVs3ww==}
 
-  '@ledgerhq/lumen-ui-react@0.1.13':
-    resolution: {integrity: sha512-9nBSyjYYXFCeySqmkBP7jsQDANFlNK97p4rDBwu7RTiyu8VHtETkp897rJVw9oNvAmcHPcTNAn4LM0uOgNo79w==}
+  '@ledgerhq/lumen-ui-react@0.1.14':
+    resolution: {integrity: sha512-F8oiFqOVg1U8UpSwlei0vgFSEc14Y+vYSFTLl9CnJ/wgNptiJRBzaFRVsrXOJB8SpDqnt5wXDPtrezURqTS5fA==}
     peerDependencies:
       '@radix-ui/react-checkbox': ^1.3.2
       '@radix-ui/react-dialog': ^1.1.15
@@ -15771,8 +15771,8 @@ packages:
       react-dom: 19.0.0
       tailwind-merge: ^2.6.0
 
-  '@ledgerhq/lumen-ui-rnative@0.1.12':
-    resolution: {integrity: sha512-kofOefBdstzAfkcDq3iS8p2fCEMyOQVnfTBDRVnPuV1eNap1JQQ+BPSOMMynX3LOWmp8FKZqXAwQx1qPWOY8nQ==}
+  '@ledgerhq/lumen-ui-rnative@0.1.13':
+    resolution: {integrity: sha512-bdaX+/SrEP4i23R8WjW1us/SuzYoJpSbbFUb+mwQYwtcOSUtWP6RzDsz54tTmlaIJQTFvYtbL3D8Pgk0ZnDThw==}
     peerDependencies:
       '@gorhom/bottom-sheet': ^5.0.0
       '@ledgerhq/lumen-design-core': 0.1.6
@@ -42819,7 +42819,7 @@ snapshots:
       tailwindcss: 4.1.18
       tslib: 2.6.2
 
-  '@ledgerhq/lumen-ui-react@0.1.13(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0)':
+  '@ledgerhq/lumen-ui-react@0.1.14(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0)':
     dependencies:
       '@ledgerhq/lumen-utils-shared': 0.1.2(react@19.0.0)
       clsx: 2.1.1
@@ -42831,7 +42831,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-react@0.1.13(e3565a5b1275aee5d93efe21059eb47c)':
+  '@ledgerhq/lumen-ui-react@0.1.14(e3565a5b1275aee5d93efe21059eb47c)':
     dependencies:
       '@ledgerhq/lumen-utils-shared': 0.1.2(react@19.0.0)
       '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -42852,7 +42852,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native
 
-  '@ledgerhq/lumen-ui-rnative@0.1.12(bfeef56ac4e67a6dd60bbffafd049aff)':
+  '@ledgerhq/lumen-ui-rnative@0.1.13(bfeef56ac4e67a6dd60bbffafd049aff)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(@types/react@19.0.14)(react-native-reanimated@4.1.6(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@5.9.3))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@ledgerhq/lumen-design-core': 0.1.6
@@ -42868,7 +42868,7 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
-  '@ledgerhq/lumen-ui-rnative@0.1.12(d89902aee69329b81f0ddd52d4b97f69)':
+  '@ledgerhq/lumen-ui-rnative@0.1.13(d89902aee69329b81f0ddd52d4b97f69)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(9b9b36296d827f645c841ba7168b6543)
       '@ledgerhq/lumen-design-core': 0.1.6
