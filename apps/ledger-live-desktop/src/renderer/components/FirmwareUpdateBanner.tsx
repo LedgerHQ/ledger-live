@@ -136,6 +136,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
 
   useEffect(() => {
     if (
+      latestFirmware &&
       !hasTrackedImpressionRef.current &&
       shouldDisplayWallet40MainNav &&
       (isOnDashboard || inManager)
@@ -146,7 +147,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
         page: inManager ? "my ledger" : "portfolio",
       });
     }
-  }, [shouldDisplayWallet40MainNav, isOnDashboard, inManager]);
+  }, [latestFirmware, shouldDisplayWallet40MainNav, isOnDashboard, inManager]);
 
   const onClick = () => {
     if (shouldDisplayWallet40MainNav) {
