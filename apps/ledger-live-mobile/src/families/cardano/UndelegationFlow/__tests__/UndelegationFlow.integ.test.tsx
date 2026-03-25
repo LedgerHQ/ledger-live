@@ -76,18 +76,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   })),
 }));
 
-beforeAll(() => {
-  server.listen();
-});
-
-afterEach(() => {
-  server.resetHandlers();
-});
-
-afterAll(() => {
-  server.close();
-});
-
 type RootStackParamList = {
   Delegations: undefined;
   [NavigatorName.CardanoUndelegationFlow]: NavigatorScreenParams<CardanoUndelegationFlowParamList>;
@@ -163,6 +151,10 @@ describe("UndelegationFlow Integration", () => {
 
   beforeEach(() => {
     server.use(...handlers);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("should navigate through the full undelegation flow without rewards", async () => {
