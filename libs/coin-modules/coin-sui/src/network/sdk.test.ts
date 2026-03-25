@@ -3784,6 +3784,118 @@ describe("getUnifiedBalanceChanges", () => {
   });
 });
 
+describe("accumulator events through modified functions", () => {
+  const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+  const recipient = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+  const coinType = "0x2::sui::SUI";
+
+  const baseTxWithAccumulator = {
+    digest: "acc-tx-digest",
+    timestampMs: "1742294454878",
+    checkpoint: "313024",
+    transaction: {
+      data: {
+        messageVersion: "v1" as const,
+        transaction: {
+          kind: "ProgrammableTransaction" as const,
+          inputs: [
+            {
+              type: "pure" as const,
+              valueType: "address",
+              value: recipient,
+            },
+          ],
+          transactions: [{ TransferObjects: [["GasCoin"], { Input: 0 }] }],
+        },
+        sender,
+        gasData: {
+          payment: [
+            {
+              objectId: "0x9d49c70b621b618c7918468a7ac286e71cffe6e30c4e4175a4385516b121cb0e",
+              version: "57",
+              digest: "2rPEonJQQUXmAmAegn3fVqBjpKrC5NadAZBetb5wJQm6",
+            },
+          ],
+          owner: sender,
+          price: "1000",
+          budget: "2988000",
+        },
+      },
+    },
+    effects: {
+      messageVersion: "v1" as const,
+      status: { status: "success" as const },
+      executedEpoch: "18",
+      gasUsed: {
+        computationCost: "1000000",
+        storageCost: "988000",
+        storageRebate: "978120",
+        nonRefundableStorageFee: "9880",
+      },
+      transactionDigest: "acc-tx-digest",
+      dependencies: [],
+      accumulatorEvents: [
+        {
+          accumulatorObj: "0xacc",
+          address: recipient,
+          operation: "merge",
+          ty: coinType,
+          value: { integer: "5000000000" },
+        },
+      ],
+    },
+    balanceChanges: [{ owner: { AddressOwner: sender }, coinType, amount: "-6000000000" }],
+  } as unknown as SuiTransactionBlockResponse;
+
+  test("getOperationAmount includes accumulator merge for recipient", () => {
+    const amount = sdk.getOperationAmount(recipient, baseTxWithAccumulator, coinType);
+    expect(amount).toEqual(new BigNumber("5000000000"));
+  });
+
+  test("getOperationAmount returns sender's balance change unaffected", () => {
+    const amount = sdk.getOperationAmount(sender, baseTxWithAccumulator, coinType);
+    expect(amount).toEqual(new BigNumber("6000000000"));
+  });
+
+  test("alpacaGetOperationAmount includes accumulator merge for recipient", () => {
+    const amount = sdk.alpacaGetOperationAmount(recipient, baseTxWithAccumulator, coinType);
+    expect(amount).toEqual(new BigNumber("5000000000"));
+  });
+
+  test("getOperationCoinType detects token from accumulator event", () => {
+    const tokenType = "0x123::test::TOKEN";
+    const tx = {
+      ...baseTxWithAccumulator,
+      balanceChanges: [{ owner: { AddressOwner: sender }, coinType, amount: "-1009880" }],
+      effects: {
+        ...baseTxWithAccumulator.effects,
+        accumulatorEvents: [
+          {
+            accumulatorObj: "0xacc",
+            address: recipient,
+            operation: "merge",
+            ty: tokenType,
+            value: { integer: "500000" },
+          },
+        ],
+      },
+    } as unknown as SuiTransactionBlockResponse;
+
+    expect(sdk.getOperationCoinType(tx)).toBe(tokenType);
+  });
+
+  test("toBlockTransaction includes operations from accumulator events", () => {
+    const result = sdk.toBlockTransaction(baseTxWithAccumulator);
+    expect(result.operations).toHaveLength(2);
+    expect(result.operations[1]).toMatchObject({
+      type: "transfer",
+      address: recipient,
+      amount: 5000000000n,
+      asset: { type: "native" },
+    });
+  });
+});
+
 describe("settlement transaction filtering in operations", () => {
   const userAddr = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
