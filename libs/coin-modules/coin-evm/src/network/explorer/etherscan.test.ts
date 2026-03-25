@@ -2498,37 +2498,6 @@ describe("EVM Family", () => {
       );
     };
 
-    it("recomputes isPageFull with user limit when probe is capped at 100", async () => {
-      const firstPageOps = createOps(Array.from({ length: 100 }, (_, i) => i + 1));
-      const mockFetch = jest
-        .fn<Promise<ETHERSCAN_API.EndpointResult>, [ETHERSCAN_API.FetchOperationsParams]>()
-        .mockResolvedValue({
-          operations: firstPageOps,
-          isDone: false,
-          boundBlock: 100,
-          isPageFull: false,
-        });
-
-      const result = await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
-        currency,
-        address: account.freshAddress,
-        accountId: account.id,
-        fromBlock: 0,
-        limit: 200,
-        sort: "desc",
-      });
-
-      expect(mockFetch).toHaveBeenCalledTimes(1);
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.objectContaining({
-          page: 1,
-          limit: 100,
-        }),
-      );
-      expect(result.operations).toHaveLength(100);
-      expect(result.isPageFull).toBe(false);
-    });
-
     it.each([
       {
         ops: [1, 2, 3, 4, 5, 6],

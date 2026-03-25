@@ -31,7 +31,7 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
-export const MAX_ETHERSCAN_OFFSET = 100;
+export const MAX_ETHERSCAN_OFFSET = 100; // some explorers limit offset to 100
 
 /**
  * Common parameters for fetching operations from an endpoint
@@ -586,7 +586,6 @@ export async function exhaustEndpoint(
   params: FetchOperationsParams,
 ): Promise<EndpointResult> {
   const { limit } = params;
-  const probeLimit = limit === undefined ? undefined : Math.min(limit + 1, MAX_ETHERSCAN_OFFSET);
   const fetchPage = (
     page: number,
     limitOverride: number | undefined = limit,
@@ -602,17 +601,18 @@ export async function exhaustEndpoint(
     return fetchPage(1);
   }
 
-  let currentPageNumber = 1;
-  // call first page with a probing limit. We usually use limit + 1 to detect if data
-  // spills over to the next page, but some explorers reject offset > 100.
-  const firstPage = await fetchPage(currentPageNumber, probeLimit);
+  // some etherscan compatible explorers cap the offset parameter, and we are fetching one extra item to detect next page
+  const effectiveLimit = Math.min(limit, MAX_ETHERSCAN_OFFSET - 1);
 
+  let currentPageNumber = 1;
+  // call first page with a probe limit to detect if a second page is needed.
+  const firstPage = await fetchPage(currentPageNumber, effectiveLimit + 1);
   // if the page is not full there is nothing to exhaust and the limit input is honored
   if (!firstPage.isPageFull) {
     // this is a bit hacky but we need to recompute isPageFull
     // because the first page has been fetched with a limit + 1
-    // in case we have ops.length == limit, then isPageFull should be true
-    return { ...firstPage, isPageFull: isPageFull(limit, firstPage.operations.length) };
+    // in case we have ops.length == effective limit, then isPageFull should be true
+    return { ...firstPage, isPageFull: isPageFull(effectiveLimit, firstPage.operations.length) };
   }
 
   // this is an optimization to avoid fetching the next page if the last 2 ops are not at the same block height (most likely case)
@@ -636,7 +636,7 @@ export async function exhaustEndpoint(
   do {
     currentPageNumber++;
     // here we call with limit + 1 so that endpoint pagination doesn't break
-    nextPage = await fetchPage(currentPageNumber, probeLimit);
+    nextPage = await fetchPage(currentPageNumber, effectiveLimit + 1);
 
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
     allOperations.push(...boundaryOps);
