@@ -115,8 +115,19 @@ export async function fetchWithRetries<T>(
 
 /** Some etherscan like APIs return an array, some return an error message on last empty page. */
 function normalizeExplorerArrayResult<T>(result: unknown): T[] {
-  if (Array.isArray(result)) return result as T[];
-  return [];
+  if (Array.isArray(result)) {
+    return result as T[];
+  }
+
+  // Some explorers return a string for an empty page; only normalize clearly empty responses.
+  if (typeof result === "string" && result.trim().length === 0) {
+    return [];
+  }
+
+  throw new InvalidExplorerResponse("Unexpected non-array result from explorer", {
+    resultType: typeof result,
+    resultValue: result,
+  });
 }
 
 function isPageFull(limitParameter: number | undefined, operationCount: number): boolean {
