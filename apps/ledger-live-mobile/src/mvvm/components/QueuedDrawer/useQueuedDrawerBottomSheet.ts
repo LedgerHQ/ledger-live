@@ -39,6 +39,7 @@ const useQueuedDrawerBottomSheet = ({
   onModalHideRef.current = onModalHide;
 
   const stateRef = useRef<DrawerState>("idle");
+  const reopenedDuringDismissRef = useRef(false);
 
   const cleanupQueue = useCallback(() => {
     if (drawerInQueueRef.current) {
@@ -48,7 +49,12 @@ const useQueuedDrawerBottomSheet = ({
   }, []);
 
   const handleOpen = useCallback(() => {
-    if (stateRef.current !== "idle") return;
+    if (stateRef.current === "open") return;
+
+    // Guard against stale onDismiss from previous dismiss animation
+    if (stateRef.current === "dismissing") {
+      reopenedDuringDismissRef.current = true;
+    }
 
     logDrawer("Opening drawer");
     stateRef.current = "open";
@@ -67,6 +73,8 @@ const useQueuedDrawerBottomSheet = ({
 
     logDrawer("Closing drawer");
     stateRef.current = "dismissing";
+    // Free queue slot immediately so the next drawer can open without waiting for dismiss animation
+    cleanupQueue();
     bottomSheetRef.current?.dismiss();
     onCloseRef.current?.();
   }, [bottomSheetRef, cleanupQueue]);
@@ -81,6 +89,11 @@ const useQueuedDrawerBottomSheet = ({
 
     if (Keyboard.isVisible()) {
       Keyboard.dismiss();
+    }
+
+    if (reopenedDuringDismissRef.current) {
+      reopenedDuringDismissRef.current = false;
+      return;
     }
 
     if (stateRef.current === "open") {
