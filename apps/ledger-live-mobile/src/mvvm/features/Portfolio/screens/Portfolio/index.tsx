@@ -64,6 +64,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     onBackFromUpdate,
     goToAnalyticsAllocations,
     shouldDisplayWallet40MainNav,
+    shouldDisplayOperationsList,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
@@ -155,7 +156,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(<PortfolioOperationsSection key="operations" />);
+    if (!shouldDisplayOperationsList) {
+      sections.push(<PortfolioOperationsSection key="operations" />);
+    }
 
     return sections;
   }, [
@@ -173,6 +176,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     backgroundColor,
     goToAnalyticsAllocations,
+    shouldDisplayOperationsList,
   ]);
 
   return (
