@@ -534,8 +534,15 @@ describe("PortfolioView", () => {
   });
 
   describe("AddAccount CTA", () => {
-    it("should render AddAccount CTA when user has zero accounts and Wallet 4.0 is enabled", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={true} />);
+    it("should render AddAccount CTA when user has zero accounts, Wallet 4.0 is enabled, and asset section is not displayed", () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={true}
+          shouldDisplayAssetSection={false}
+        />,
+      );
 
       expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
     });
@@ -547,7 +554,27 @@ describe("PortfolioView", () => {
     });
 
     it("should not render AddAccount CTA when Wallet 4.0 is disabled", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={false} />);
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={false}
+          shouldDisplayAssetSection={false}
+        />,
+      );
+
+      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
+    });
+
+    it("should not render AddAccount CTA when asset section is displayed", () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={true}
+          shouldDisplayAssetSection={true}
+        />,
+      );
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });

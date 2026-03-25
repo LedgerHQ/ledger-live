@@ -35,7 +35,8 @@ export const PortfolioView = memo(function PortfolioView({
   t,
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
-  const shouldDisplayAddAccountCta = totalAccounts === 0 && isWallet40Enabled;
+  const shouldDisplayAddAccountCta =
+    totalAccounts === 0 && isWallet40Enabled && !shouldDisplayAssetSection;
   const shouldRenderLegacyOperationsList = !shouldDisplayOperationsList && totalOperations > 0;
 
   return (
