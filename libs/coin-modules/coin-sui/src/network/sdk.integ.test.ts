@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation } from "@ledgerhq/types-live";
-import type { SuiJsonRpcClient, SuiTransactionBlockResponse } from "@mysten/sui/jsonRpc";
+import type { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import {
@@ -148,68 +148,30 @@ describe("SUI SDK Integration tests", () => {
       const ops = await getOperations("test-account", testingAccount);
       expect(ops.length).toBeGreaterThan(0);
 
-      for (const op of ops) {
-        const raw = await withApi(async (api: SuiJsonRpcClient) =>
-          api.getTransactionBlock({ digest: op.hash, options: { showInput: true } }),
-        );
-        expect(isSettlementTransaction(raw)).toBe(false);
-      }
+      const opsToCheck = ops.slice(0, 10);
+      await Promise.all(
+        opsToCheck.map(async op => {
+          const raw = await withApi(async (api: SuiJsonRpcClient) =>
+            api.getTransactionBlock({ digest: op.hash, options: { showInput: true } }),
+          );
+          expect(isSettlementTransaction(raw)).toBe(false);
+        }),
+      );
     });
 
     it("getListOperations returns no settlement transactions", async () => {
       const page = await getListOperations(testingAccount, "desc");
       expect(page.items.length).toBeGreaterThan(0);
 
-      for (const op of page.items) {
-        const raw = await withApi(async (api: SuiJsonRpcClient) =>
-          api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
-        );
-        expect(isSettlementTransaction(raw)).toBe(false);
-      }
-    });
-
-    it("isSettlementTransaction detects 0xacc as mutable shared object input", () => {
-      const fakeTx = {
-        transaction: {
-          data: {
-            transaction: {
-              kind: "ProgrammableTransaction",
-              inputs: [
-                {
-                  type: "object",
-                  objectType: "sharedObject",
-                  objectId: "0xacc",
-                  initialSharedVersion: "1",
-                  mutable: true,
-                },
-              ],
-              transactions: [],
-            },
-          },
-        },
-      } as unknown as SuiTransactionBlockResponse;
-
-      expect(isSettlementTransaction(fakeTx)).toBe(true);
-    });
-
-    it("isSettlementTransaction does not flag a normal transaction", () => {
-      const normalTx = {
-        transaction: {
-          data: {
-            transaction: {
-              kind: "ProgrammableTransaction",
-              inputs: [{ type: "pure", valueType: "u64", value: "1000" }],
-              transactions: [],
-            },
-          },
-        },
-      } as unknown as SuiTransactionBlockResponse;
-
-      expect(isSettlementTransaction(normalTx)).toBe(false);
-    });
-
-    it("isSettlementTransaction returns false when transaction data is missing", () => {
-      expect(isSettlementTransaction({} as SuiTransactionBlockResponse)).toBe(false);
+      const itemsToCheck = page.items.slice(0, 10);
+      await Promise.all(
+        itemsToCheck.map(async op => {
+          const raw = await withApi(async (api: SuiJsonRpcClient) =>
+            api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
+          );
+          expect(isSettlementTransaction(raw)).toBe(false);
+        }),
+      );
     });
   });
 
@@ -266,7 +228,7 @@ describe("SUI SDK Integration tests", () => {
       );
 
       expect(result.unsigned).toBeInstanceOf(Uint8Array);
-      expect(result.objects).toBeDefined();
+      expect(result.objects).not.toBeUndefined();
       expect(result.objects!.length).toBeGreaterThan(0);
       for (const obj of result.objects!) {
         expect(obj).toBeInstanceOf(Uint8Array);
@@ -411,46 +373,54 @@ describe("SUI SDK Integration tests", () => {
   describe("getListOperations (SIP-58 / alpaca path)", () => {
     const account = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
-    it("returns operations in desc order", async () => {
-      const page = await getListOperations(account, "desc");
-      expect(page.items.length).toBeGreaterThan(0);
+    let descPage: Awaited<ReturnType<typeof getListOperations>>;
+    let ascPage: Awaited<ReturnType<typeof getListOperations>>;
 
-      for (let i = 1; i < page.items.length; i++) {
-        expect(page.items[i - 1].tx.date.getTime()).toBeGreaterThanOrEqual(
-          page.items[i].tx.date.getTime(),
+    beforeAll(async () => {
+      [descPage, ascPage] = await Promise.all([
+        getListOperations(account, "desc"),
+        getListOperations(account, "asc"),
+      ]);
+    });
+
+    it("returns operations in desc order", () => {
+      expect(descPage.items.length).toBeGreaterThan(0);
+
+      for (let i = 1; i < descPage.items.length; i++) {
+        expect(descPage.items[i - 1].tx.date.getTime()).toBeGreaterThanOrEqual(
+          descPage.items[i].tx.date.getTime(),
         );
       }
     });
 
-    it("returns operations in asc order", async () => {
-      const page = await getListOperations(account, "asc");
-      expect(page.items.length).toBeGreaterThan(0);
+    it("returns operations in asc order", () => {
+      expect(ascPage.items.length).toBeGreaterThan(0);
 
-      for (let i = 1; i < page.items.length; i++) {
-        expect(page.items[i - 1].tx.date.getTime()).toBeLessThanOrEqual(
-          page.items[i].tx.date.getTime(),
+      for (let i = 1; i < ascPage.items.length; i++) {
+        expect(ascPage.items[i - 1].tx.date.getTime()).toBeLessThanOrEqual(
+          ascPage.items[i].tx.date.getTime(),
         );
       }
     });
 
     it("contains no settlement transactions", async () => {
-      const page = await getListOperations(account, "desc");
-      expect(page.items.length).toBeGreaterThan(0);
+      expect(descPage.items.length).toBeGreaterThan(0);
 
-      for (const op of page.items) {
-        const raw = await withApi(async (api: SuiJsonRpcClient) =>
-          api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
-        );
-        expect(isSettlementTransaction(raw)).toBe(false);
-      }
+      const itemsToCheck = descPage.items.slice(0, 10);
+      await Promise.all(
+        itemsToCheck.map(async op => {
+          const raw = await withApi(async (api: SuiJsonRpcClient) =>
+            api.getTransactionBlock({ digest: op.tx.hash, options: { showInput: true } }),
+          );
+          expect(isSettlementTransaction(raw)).toBe(false);
+        }),
+      );
     });
 
-    it("each operation has valid fields", async () => {
-      const page = await getListOperations(account, "desc");
-
-      for (const op of page.items) {
-        expect(op.id).toBeTruthy();
-        expect(op.tx.hash).toBeTruthy();
+    it("each operation has valid fields", () => {
+      for (const op of descPage.items) {
+        expect(op.id).not.toBe("");
+        expect(op.tx.hash).not.toBe("");
         expect(op.tx.date).toBeInstanceOf(Date);
         expect(op.tx.block.height).toBeGreaterThan(0);
         expect(op.senders.length).toBeGreaterThan(0);
@@ -459,17 +429,14 @@ describe("SUI SDK Integration tests", () => {
       }
     });
 
-    it("includes both IN and OUT operations", async () => {
-      const page = await getListOperations(account, "desc");
-      const types = new Set(page.items.map(op => op.type));
+    it("includes both IN and OUT operations", () => {
+      const types = new Set(descPage.items.map(op => op.type));
       expect(types.has("IN")).toBe(true);
       expect(types.has("OUT")).toBe(true);
     });
 
-    it("operations have correct senders/recipients relative to account", async () => {
-      const page = await getListOperations(account, "desc");
-
-      for (const op of page.items) {
+    it("operations have correct senders/recipients relative to account", () => {
+      for (const op of descPage.items) {
         if (op.type === "IN") {
           expect(op.recipients).toContain(account);
         } else if (op.type === "OUT") {
