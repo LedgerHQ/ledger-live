@@ -445,6 +445,8 @@ overrides:
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
   use-latest-callback: 0.1.9
+  use-isomorphic-layout-effect: ^1.2.1
+  use-sync-external-store: ^1.6.0
   ethers: 6.15.0
   bignumber.js: 9.1.2
   '@radix-ui/react-slot': ^1.2.3
@@ -21045,7 +21047,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -27829,10 +27831,6 @@ packages:
 
   graphql@16.10.0:
     resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
-    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
-
-  graphql@16.11.0:
-    resolution: {integrity: sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   graphql@16.13.2:
@@ -35962,11 +35960,6 @@ packages:
       '@types/react':
         optional: true
 
-  use-sync-external-store@1.5.0:
-    resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
-    peerDependencies:
-      react: 19.0.0
-
   use-sync-external-store@1.6.0:
     resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
@@ -36992,9 +36985,9 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@apollo/cache-control-types@1.0.3(graphql@16.11.0)':
+  '@apollo/cache-control-types@1.0.3(graphql@16.13.2)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.13.2
 
   '@apollo/client@3.12.6(graphql@16.10.0)(react@19.0.0)':
     dependencies:
@@ -37033,34 +37026,34 @@ snapshots:
       '@types/long': 4.0.2
       long: 4.0.0
 
-  '@apollo/server-gateway-interface@1.1.1(graphql@16.11.0)':
+  '@apollo/server-gateway-interface@1.1.1(graphql@16.13.2)':
     dependencies:
       '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.fetcher': 2.0.1
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
-      graphql: 16.11.0
+      graphql: 16.13.2
 
-  '@apollo/server@4.12.2(graphql@16.11.0)':
+  '@apollo/server@4.12.2(graphql@16.13.2)':
     dependencies:
-      '@apollo/cache-control-types': 1.0.3(graphql@16.11.0)
-      '@apollo/server-gateway-interface': 1.1.1(graphql@16.11.0)
+      '@apollo/cache-control-types': 1.0.3(graphql@16.13.2)
+      '@apollo/server-gateway-interface': 1.1.1(graphql@16.13.2)
       '@apollo/usage-reporting-protobuf': 4.1.1
       '@apollo/utils.createhash': 2.0.2
       '@apollo/utils.fetcher': 2.0.1
       '@apollo/utils.isnodelike': 2.0.1
       '@apollo/utils.keyvaluecache': 2.1.1
       '@apollo/utils.logger': 2.0.1
-      '@apollo/utils.usagereporting': 2.1.0(graphql@16.11.0)
+      '@apollo/utils.usagereporting': 2.1.0(graphql@16.13.2)
       '@apollo/utils.withrequired': 2.0.1
-      '@graphql-tools/schema': 9.0.19(graphql@16.11.0)
+      '@graphql-tools/schema': 9.0.19(graphql@16.13.2)
       '@types/express': 4.17.21
       '@types/express-serve-static-core': 4.17.43
       '@types/node-fetch': 2.6.11
       async-retry: 1.3.1
       cors: 2.8.5
       express: 4.22.0
-      graphql: 16.11.0
+      graphql: 16.13.2
       loglevel: 1.9.2
       lru-cache: 7.18.3
       negotiator: 0.6.4
@@ -37081,9 +37074,9 @@ snapshots:
       '@apollo/utils.isnodelike': 2.0.1
       sha.js: 2.4.12
 
-  '@apollo/utils.dropunuseddefinitions@2.0.1(graphql@16.11.0)':
+  '@apollo/utils.dropunuseddefinitions@2.0.1(graphql@16.13.2)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.13.2
 
   '@apollo/utils.fetcher@2.0.1': {}
 
@@ -37096,32 +37089,32 @@ snapshots:
 
   '@apollo/utils.logger@2.0.1': {}
 
-  '@apollo/utils.printwithreducedwhitespace@2.0.1(graphql@16.11.0)':
+  '@apollo/utils.printwithreducedwhitespace@2.0.1(graphql@16.13.2)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.13.2
 
-  '@apollo/utils.removealiases@2.0.1(graphql@16.11.0)':
+  '@apollo/utils.removealiases@2.0.1(graphql@16.13.2)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.13.2
 
-  '@apollo/utils.sortast@2.0.1(graphql@16.11.0)':
+  '@apollo/utils.sortast@2.0.1(graphql@16.13.2)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.13.2
       lodash.sortby: 4.7.0
 
-  '@apollo/utils.stripsensitiveliterals@2.0.1(graphql@16.11.0)':
+  '@apollo/utils.stripsensitiveliterals@2.0.1(graphql@16.13.2)':
     dependencies:
-      graphql: 16.11.0
+      graphql: 16.13.2
 
-  '@apollo/utils.usagereporting@2.1.0(graphql@16.11.0)':
+  '@apollo/utils.usagereporting@2.1.0(graphql@16.13.2)':
     dependencies:
       '@apollo/usage-reporting-protobuf': 4.1.1
-      '@apollo/utils.dropunuseddefinitions': 2.0.1(graphql@16.11.0)
-      '@apollo/utils.printwithreducedwhitespace': 2.0.1(graphql@16.11.0)
-      '@apollo/utils.removealiases': 2.0.1(graphql@16.11.0)
-      '@apollo/utils.sortast': 2.0.1(graphql@16.11.0)
-      '@apollo/utils.stripsensitiveliterals': 2.0.1(graphql@16.11.0)
-      graphql: 16.11.0
+      '@apollo/utils.dropunuseddefinitions': 2.0.1(graphql@16.13.2)
+      '@apollo/utils.printwithreducedwhitespace': 2.0.1(graphql@16.13.2)
+      '@apollo/utils.removealiases': 2.0.1(graphql@16.13.2)
+      '@apollo/utils.sortast': 2.0.1(graphql@16.13.2)
+      '@apollo/utils.stripsensitiveliterals': 2.0.1(graphql@16.13.2)
+      graphql: 16.13.2
 
   '@apollo/utils.withrequired@2.0.1': {}
 
@@ -37149,9 +37142,9 @@ snapshots:
     transitivePeerDependencies:
       - got
 
-  '@as-integrations/express5@1.1.2(@apollo/server@4.12.2(graphql@16.11.0))(express@5.2.1)':
+  '@as-integrations/express5@1.1.2(@apollo/server@4.12.2(graphql@16.13.2))(express@5.2.1)':
     dependencies:
-      '@apollo/server': 4.12.2(graphql@16.11.0)
+      '@apollo/server': 4.12.2(graphql@16.13.2)
       express: 5.2.1
 
   '@asamuzakjp/css-color@2.8.3':
@@ -43994,33 +43987,29 @@ snapshots:
       graphql: 16.13.2
       typescript: 6.0.2
 
-  '@graphql-tools/merge@8.4.2(graphql@16.11.0)':
+  '@graphql-tools/merge@8.4.2(graphql@16.13.2)':
     dependencies:
-      '@graphql-tools/utils': 9.2.1(graphql@16.11.0)
-      graphql: 16.11.0
+      '@graphql-tools/utils': 9.2.1(graphql@16.13.2)
+      graphql: 16.13.2
       tslib: 2.6.2
 
-  '@graphql-tools/schema@9.0.19(graphql@16.11.0)':
+  '@graphql-tools/schema@9.0.19(graphql@16.13.2)':
     dependencies:
-      '@graphql-tools/merge': 8.4.2(graphql@16.11.0)
-      '@graphql-tools/utils': 9.2.1(graphql@16.11.0)
-      graphql: 16.11.0
+      '@graphql-tools/merge': 8.4.2(graphql@16.13.2)
+      '@graphql-tools/utils': 9.2.1(graphql@16.13.2)
+      graphql: 16.13.2
       tslib: 2.6.2
       value-or-promise: 1.0.12
 
-  '@graphql-tools/utils@9.2.1(graphql@16.11.0)':
+  '@graphql-tools/utils@9.2.1(graphql@16.13.2)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
-      graphql: 16.11.0
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.13.2)
+      graphql: 16.13.2
       tslib: 2.6.2
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
       graphql: 16.10.0
-
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.11.0)':
-    dependencies:
-      graphql: 16.11.0
 
   '@graphql-typed-document-node/core@3.2.0(graphql@16.13.2)':
     dependencies:
@@ -48078,7 +48067,7 @@ snapshots:
       react: 19.0.0
       react-is: 19.1.1
       use-latest-callback: 0.1.9(react@19.0.0)
-      use-sync-external-store: 1.5.0(react@19.0.0)
+      use-sync-external-store: 1.6.0(react@19.0.0)
 
   '@react-navigation/elements@2.6.4(13d96f6cd5e1f0bc67d10dfb15604d8e)':
     dependencies:
@@ -48088,7 +48077,7 @@ snapshots:
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
       react-native-safe-area-context: 5.6.1(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       use-latest-callback: 0.1.9(react@19.0.0)
-      use-sync-external-store: 1.5.0(react@19.0.0)
+      use-sync-external-store: 1.6.0(react@19.0.0)
     optionalDependencies:
       '@react-native-masked-view/masked-view': 0.2.9(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
 
@@ -48195,8 +48184,8 @@ snapshots:
 
   '@redux-devtools/cli@4.0.4(@types/react@19.0.14)(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))':
     dependencies:
-      '@apollo/server': 4.12.2(graphql@16.11.0)
-      '@as-integrations/express5': 1.1.2(@apollo/server@4.12.2(graphql@16.11.0))(express@5.2.1)
+      '@apollo/server': 4.12.2(graphql@16.13.2)
+      '@as-integrations/express5': 1.1.2(@apollo/server@4.12.2(graphql@16.13.2))(express@5.2.1)
       '@emotion/react': 11.14.0(@types/react@19.0.14)(react@19.0.0)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@types/react@19.0.14)(react@19.0.0)
       '@redux-devtools/app': 7.0.0(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.0.0))(@types/react@19.0.14)(react@19.0.0))(@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.0.0)(redux@5.0.1))(react@19.0.0))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -48208,7 +48197,7 @@ snapshots:
       electron: 31.7.7
       express: 5.2.1
       get-port: 7.1.0
-      graphql: 16.11.0
+      graphql: 16.13.2
       knex: 3.1.0(sqlite3@5.1.7)
       lodash-es: 4.17.21
       minimist: 1.2.8
@@ -60203,8 +60192,6 @@ snapshots:
 
   graphql@16.10.0: {}
 
-  graphql@16.11.0: {}
-
   graphql@16.13.2: {}
 
   gtoken@7.1.0:
@@ -71124,10 +71111,6 @@ snapshots:
       tslib: 2.6.2
     optionalDependencies:
       '@types/react': 19.0.14
-
-  use-sync-external-store@1.5.0(react@19.0.0):
-    dependencies:
-      react: 19.0.0
 
   use-sync-external-store@1.6.0(react@19.0.0):
     dependencies:
