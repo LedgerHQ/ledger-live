@@ -407,6 +407,38 @@ describe("removeReplaced", () => {
     expect(result).toEqual([tx2, tx3, tx4]); // ✅ tx1 is removed, but order remains
   });
 
+  it("should keep all coinbase mining transactions with empty inputs (DigiByte mining scenario)", () => {
+    const coinbaseTx1: BtcOperation = {
+      ...baseTx,
+      id: "cb1-IN",
+      hash: "cb1",
+      blockHeight: 23107323,
+      date: new Date("2026-03-09T04:22:22Z"),
+      extra: { inputs: [] },
+    };
+
+    const coinbaseTx2: BtcOperation = {
+      ...baseTx,
+      id: "cb2-IN",
+      hash: "cb2",
+      blockHeight: 23122260,
+      date: new Date("2026-03-11T18:30:23Z"),
+      extra: { inputs: [] },
+    };
+
+    const coinbaseTx3: BtcOperation = {
+      ...baseTx,
+      id: "cb3-IN",
+      hash: "cb3",
+      blockHeight: 23124700,
+      date: new Date("2026-03-12T04:42:34Z"),
+      extra: { inputs: [] },
+    };
+
+    const result = removeReplaced([coinbaseTx1, coinbaseTx2, coinbaseTx3]);
+    expect(result).toEqual([coinbaseTx1, coinbaseTx2, coinbaseTx3]);
+  });
+
   it("should retain only the most confirmed+recent tx among several using same input", () => {
     const tx1 = {
       ...baseTx,
