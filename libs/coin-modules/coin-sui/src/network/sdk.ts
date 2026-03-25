@@ -1073,12 +1073,12 @@ export const getCoinsForAmount = async (
   api: SuiJsonRpcClient,
   address: string,
   coinType: string,
-  requiredAmount: number,
+  requiredAmount: bigint,
 ) => {
   const coins = [];
   let cursor = null;
   let hasNextPage = true;
-  let totalBalance = 0;
+  let totalBalance = 0n;
 
   while (hasNextPage && totalBalance < requiredAmount) {
     const response = await api.getCoins({
@@ -1088,15 +1088,18 @@ export const getCoinsForAmount = async (
     });
 
     const validCoins = response.data
-      .filter(coin => parseInt(coin.balance) > 0)
-      .sort((a, b) => parseInt(b.balance) - parseInt(a.balance));
+      .filter(coin => BigInt(coin.balance) > 0n)
+      .sort((a, b) => {
+        const diff = BigInt(b.balance) - BigInt(a.balance);
+        return diff > 0n ? 1 : diff < 0n ? -1 : 0;
+      });
 
     let currentBalance = totalBalance;
     let i = 0;
     while (i < validCoins.length && currentBalance < requiredAmount) {
       const coin = validCoins[i];
       coins.push(coin);
-      currentBalance += parseInt(coin.balance);
+      currentBalance += BigInt(coin.balance);
       i++;
     }
     totalBalance = currentBalance;
@@ -1187,7 +1190,7 @@ const createTransactionForDelegate = async (
     }
 
     const { amount } = transaction;
-    const coins = tx.splitCoins(tx.gas, [amount.toNumber()]);
+    const coins = tx.splitCoins(tx.gas, [BigInt(amount.toFixed())]);
 
     tx.moveCall({
       target: "0x3::sui_system::request_add_stake",
@@ -1273,9 +1276,9 @@ const createTransactionForOthers = async (
     }
 
     if (transaction.coinType !== DEFAULT_COIN_TYPE) {
-      const requiredAmount = transaction.amount.toNumber();
-      const coins = await getCoinsForAmount(api, address, transaction.coinType, requiredAmount);
-      const collectedBalance = coins.reduce((sum, c) => sum + parseInt(c.balance), 0);
+      const requiredAmount = BigInt(transaction.amount.toFixed());
+      const coins = await getCoinsForAmount(api, sender, transaction.coinType, requiredAmount);
+      const collectedBalance = coins.reduce((sum, c) => sum + BigInt(c.balance), 0n);
 
       if (coins.length > 0 && collectedBalance >= requiredAmount) {
         const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
@@ -1284,7 +1287,7 @@ const createTransactionForOthers = async (
           tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
         }
 
-        const [coin] = tx.splitCoins(coinObjects[0], [transaction.amount.toNumber()]);
+        const [coin] = tx.splitCoins(coinObjects[0], [BigInt(transaction.amount.toFixed())]);
         tx.transferObjects([coin], transaction.recipient);
       } else {
         const coin = coinWithBalance({
@@ -1294,7 +1297,7 @@ const createTransactionForOthers = async (
         tx.transferObjects([coin], transaction.recipient);
       }
     } else {
-      const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
+      const [coin] = tx.splitCoins(tx.gas, [BigInt(transaction.amount.toFixed())]);
       tx.transferObjects([coin], transaction.recipient);
     }
 
