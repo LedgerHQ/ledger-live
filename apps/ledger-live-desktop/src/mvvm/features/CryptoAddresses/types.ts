@@ -9,3 +9,8 @@ export type CryptoAddressesViewModel = {
   readonly rows: AccountLike[];
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
 };
+
+export type CryptoAssetsViewModel = {
+  readonly title: string;
+  readonly onBack: () => void;
+};
