@@ -1,6 +1,6 @@
 module.exports = {
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", "__tests__/test-utils"],
   moduleNameMapper: {
     "^(\\.\\.?/.*)\\.js$": "$1",
   },
@@ -10,6 +10,11 @@ module.exports = {
       {
         jsc: {
           target: "esnext",
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
         },
       },
     ],
