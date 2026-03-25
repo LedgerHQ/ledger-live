@@ -1,7 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
@@ -22,7 +22,7 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(() => mockNavigate),
 }));
 
-jest.mock("LLD/features/ModularDrawer/hooks/useOpenAssetFlow", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
   useOpenAssetFlow: jest.fn(),
 }));
 
