@@ -172,6 +172,9 @@ const getPorts = async (isSpeculosWebsocket?: boolean, wantedApiPort?: number) =
     return { apduPort, vncPort, buttonPort, automationPort };
   } else {
     const apiPort = wantedApiPort ?? (await getPort());
+    if (wantedApiPort) {
+      usedPorts.push(wantedApiPort);
+    }
     const vncPort = await getPort();
 
     return { apiPort, vncPort };
@@ -396,7 +399,7 @@ export async function createSpeculosDevice(
 
   if (!hasSucceed) {
     await delay(1000);
-    return createSpeculosDevice(arg, maxRetry - 1);
+    return createSpeculosDevice(arg, maxRetry - 1, wantedApiPort);
   }
 
   let transport: SpeculosTransport;

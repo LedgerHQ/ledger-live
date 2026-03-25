@@ -299,7 +299,7 @@ export const CLI = {
       cliOpts.push(`--approveAmount+${opts.approveAmount}`);
     }
     if (opts.waitConfirmation) {
-      cliOpts.push("--waitConfirmation");
+      cliOpts.push("--wait-confirmation");
     }
     return runCliCommandWithRetry(cliOpts.join("+"));
   },

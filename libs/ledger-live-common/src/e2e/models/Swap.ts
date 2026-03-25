@@ -1,7 +1,7 @@
 import { Transaction } from "./Transaction";
 import { Fee } from "../enum/Fee";
 import { Account } from "../enum/Account";
-import { Provider } from "e2e/enum/Provider";
+import { Provider } from "../enum/Provider";
 
 export type SwapType = Swap;
 

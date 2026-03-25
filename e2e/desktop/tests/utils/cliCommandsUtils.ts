@@ -108,8 +108,11 @@ export const approveTokenCommand =
       waitConfirmation: true,
     });
 
-    await approveToken();
-    restoreDisableBroadcast(originalDisableBroadcast);
+    try {
+      await approveToken();
+    } finally {
+      restoreDisableBroadcast(originalDisableBroadcast);
+    }
     return await result;
   };
 

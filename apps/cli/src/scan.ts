@@ -224,13 +224,19 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       return throwError(() => new Error("encrypted ledger live data is not supported"));
     }
 
+    let currencyFilter: CryptoCurrency | null | undefined;
+    if (currency) {
+      currencyFilter = findCryptoCurrencyByKeyword(currency);
+      if (!currencyFilter) {
+        throw new Error(`Unknown currency: ${currency}`);
+      }
+    }
+
     return from(appjsondata.data.accounts).pipe(
       mergeMap((a: any) => from(fromAccountRaw(a.data))),
       filter((account: Account) => {
-        if (!currency) return true;
-        const matchCurrency = findCryptoCurrencyByKeyword(currency);
-        if (!matchCurrency) return true;
-        return account.currency.id === matchCurrency.id;
+        if (!currencyFilter) return true;
+        return account.currency.id === currencyFilter.id;
       }),
       skip(index || 0) as any,
       take(length === undefined ? (index !== undefined ? 1 : Infinity) : length),

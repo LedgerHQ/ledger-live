@@ -445,6 +445,8 @@
     "src/families/evm/descriptor/index.ts",
     "src/families/evm/descriptor/send/descriptor.ts",
     "src/families/evm/descriptor/send/fees.ts",
+    "src/families/evm/getTokenAllowance.ts",
+    "src/families/evm/waitForConfirmation.ts",
     "src/families/filecoin/descriptor/index.ts",
     "src/families/filecoin/utils.ts",
     "src/families/hedera/constants.ts",
