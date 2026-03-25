@@ -186,7 +186,9 @@ describe("useBitcoinUtxoDisplayData", () => {
       totalExcludedUTXOS: 0,
       totalSpent: new BigNumber(3000),
     });
-    expect(result.current?.pickingStrategyOptions).toHaveLength(3);
+    expect(result.current?.pickingStrategyOptions).toHaveLength(
+      Object.keys(bitcoinPickingStrategy).length,
+    );
     expect(result.current?.utxoRows).toHaveLength(1);
     expect(getUTXOStatus).toHaveBeenCalledWith(
       utxo,
