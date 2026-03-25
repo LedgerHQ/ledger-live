@@ -234,7 +234,7 @@ const Body = ({
     return specific?.createSendSteps?.(params.disableBacks) ?? null;
   }, [specific, params.disableBacks]);
 
-  const steps = customSteps ?? defaultSteps;
+  const steps = (customSteps as St[] | null) ?? defaultSteps;
 
   const handleCloseModal = useCallback(() => {
     closeModal(modalName);
@@ -331,7 +331,6 @@ const Body = ({
   }
 
   return (
-    // @ts-expect-error - there is no easy way to add custom steps yet
     <Stepper {...stepperProps}>
       {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event="CloseModalSend" />
