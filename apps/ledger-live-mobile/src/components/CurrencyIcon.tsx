@@ -16,10 +16,10 @@ type Props = {
   size: number;
   disabled?: boolean;
   hideNetwork?: boolean;
-  square?: boolean;
+  squared?: boolean;
 };
 
-const CurrencyIcon = ({ size, currency, disabled, hideNetwork, square }: Props) => {
+const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props) => {
   const { colors } = useTheme();
   const validIconSize = getValidCryptoIconSizeNative(size);
 
@@ -29,7 +29,7 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork, square }: Props) 
 
   const ledgerId = currency.id;
   const ticker = currency.ticker;
-  const overridesRadius = square ? Math.round(validIconSize * 0.25) : undefined;
+  const overridesRadius = squared ? Math.round(validIconSize * 0.25) : undefined;
 
   const cryptoIconElement =
     !hideNetwork && currency.type === "TokenCurrency" ? (

@@ -33,7 +33,5 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
 
   // When the operations list section is hidden, WalletAssetsView is the last section and
   // the tab bar (rendered without safe area) would overlap the bottom content.
-  const shouldAddBottomPadding = shouldDisplayOperationsList;
-
-  return { hasMore, onPressShowAll, shouldAddBottomPadding };
+  return { hasMore, onPressShowAll, shouldAddBottomPadding: shouldDisplayOperationsList };
 }

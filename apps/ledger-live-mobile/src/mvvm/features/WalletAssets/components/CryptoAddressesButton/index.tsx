@@ -30,7 +30,7 @@ export const CryptoAddressesButton: React.FC = () => {
                 {t("portfolio.cryptoAddresses.count", { count: accountsCount })}
               </CardContentDescription>
               {firstThreeCurrencies.map(currency => (
-                <CurrencyIcon key={currency.id} currency={currency} size={20} square />
+                <CurrencyIcon key={currency.id} currency={currency} size={20} squared />
               ))}
             </CardContentRow>
           </CardContent>
