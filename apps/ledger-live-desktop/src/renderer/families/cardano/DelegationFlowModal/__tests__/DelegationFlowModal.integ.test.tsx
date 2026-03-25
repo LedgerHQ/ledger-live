@@ -159,6 +159,7 @@ describe("Cardano DelegationFlowModal Integration", () => {
 
   afterEach(() => {
     cleanup();
+    jest.restoreAllMocks();
     document.getElementById("modals")?.remove();
   });
 
