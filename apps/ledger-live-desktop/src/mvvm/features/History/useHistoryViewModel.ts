@@ -1,54 +1,48 @@
 import { useNavigate } from "react-router";
 import { useCallback } from "react";
-import { useSelector } from "LLD/hooks/redux";
-import { useTranslation } from "react-i18next";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
-import { TFunction } from "i18next";
-import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
-import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
-import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import type { Virtualizer } from "@tanstack/react-virtual";
+import { OperationDetails } from "~/renderer/drawers/OperationDetails";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { useHistoryOperations } from "./hooks/useHistoryOperations";
+import { useHistoryTable } from "./hooks/useHistoryTable";
+import { useHistoryVirtualization } from "./hooks/useHistoryVirtualization";
+import type { HistoryTable, OperationRow, VirtualItem } from "./types";
 
 export type HistoryViewModel = {
   navigateToDashboard: () => void;
-  accounts: AccountLike[];
-  filterOperations: (operation: Operation, account: AccountLike) => boolean;
-  t: TFunction;
+  table: HistoryTable;
+  parentRef: React.RefObject<HTMLDivElement | null>;
+  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  flatItems: VirtualItem[];
+  onRowClick: (row: OperationRow) => void;
 };
 
-export default function useHistoryViewModel(): HistoryViewModel {
-  // NB: This is the same logic as in the PortfolioViewModel & it will be reworked in next iterations
-  // Same for tests
-  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: shouldFilterTokenOpsZeroAmount,
-  });
-
-  const filterOperations = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      const isOperationPoisoned = isAddressPoisoningOperation(
-        operation,
-        account,
-        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-      );
-
-      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
-
-      return shouldFilterOperation;
-    },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
-  );
+export function useHistoryViewModel(): HistoryViewModel {
   const navigate = useNavigate();
-  const accounts = useSelector(accountsSelector);
-  const { t } = useTranslation();
 
   const navigateToDashboard = useCallback(() => {
     navigate("/");
   }, [navigate]);
+
+  const operations = useHistoryOperations();
+  const table = useHistoryTable(operations);
+  const { parentRef, rowVirtualizer, flatItems } = useHistoryVirtualization(table);
+
+  const onRowClick = useCallback((row: OperationRow) => {
+    const { operation, account, parentAccount } = row.original;
+    setDrawer(OperationDetails, {
+      operationId: operation.id,
+      accountId: account.id,
+      parentId: parentAccount?.id,
+    });
+  }, []);
+
   return {
     navigateToDashboard,
-    accounts,
-    filterOperations,
-    t,
+    table,
+    parentRef,
+    rowVirtualizer,
+    flatItems,
+    onRowClick,
   };
 }
