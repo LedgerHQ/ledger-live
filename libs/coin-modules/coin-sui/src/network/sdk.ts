@@ -208,7 +208,9 @@ export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolea
   return block.inputs.some(
     input =>
       input.type === "object" &&
-      "objectId" in input &&
+      "objectType" in input &&
+      input.objectType === "sharedObject" &&
+      input.mutable === true &&
       input.objectId === ACCUMULATOR_ROOT_OBJECT_ID,
   );
 }
