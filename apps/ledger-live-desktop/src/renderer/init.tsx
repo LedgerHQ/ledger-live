@@ -210,6 +210,25 @@ async function init() {
     store.dispatch(lock());
   }
 
+  const persistedFeatureFlags = await getKey("app", "featureFlags");
+  if (persistedFeatureFlags) {
+    store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
+    store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
+  } else if (
+    initialSettings?.overriddenFeatureFlags &&
+    Object.keys(initialSettings.overriddenFeatureFlags).length > 0
+  ) {
+    const filteredOverrides = Object.fromEntries(
+      Object.entries(initialSettings.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
+    );
+    store.dispatch(
+      setAllOverrides(
+        filteredOverrides as Parameters<typeof setAllOverrides>[0],
+      ),
+    );
+    store.dispatch(setBannerVisible(initialSettings.featureFlagsButtonVisible ?? false));
+  }
+
   const initialCountervalues = await getKey("app", "countervalues");
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 
@@ -228,25 +247,6 @@ async function init() {
   const marketState = await getKey("app", "market");
   if (marketState) {
     store.dispatch(importMarketState(marketState));
-  }
-
-  const persistedFeatureFlags = await getKey("app", "featureFlags");
-  if (persistedFeatureFlags) {
-    store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
-    store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
-  } else if (
-    initialSettings?.overriddenFeatureFlags &&
-    Object.keys(initialSettings.overriddenFeatureFlags).length > 0
-  ) {
-    const filteredOverrides = Object.fromEntries(
-      Object.entries(initialSettings.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
-    );
-    store.dispatch(
-      setAllOverrides(
-        filteredOverrides as Parameters<typeof setAllOverrides>[0],
-      ),
-    );
-    store.dispatch(setBannerVisible(initialSettings.featureFlagsButtonVisible ?? false));
   }
 
   webFrame.setVisualZoomLevelLimits(1, 1);
