@@ -8,6 +8,7 @@ import {
   overrideInitialStateWithGraphReworkEnabled,
   overrideInitialStateWithGraphReworkAndReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
+  overrideInitialStateWithPerpsAndAssetSection,
   overrideInitialStateWithAssetSection,
   overrideInitialStateWithNoAccountsAndAssetSection,
 } from "./shared";
@@ -106,6 +107,16 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+    });
+
+    it("should show perps entry point when assetSection is also enabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithPerpsAndAssetSection,
+      });
+
+      await screen.findByTestId("PortfolioAccountsList");
+
+      expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
     });
   });
 

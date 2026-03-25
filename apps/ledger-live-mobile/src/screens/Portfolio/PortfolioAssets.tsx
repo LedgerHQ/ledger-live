@@ -145,8 +145,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
-      {isWallet40Enabled && <PortfolioPerpsEntryPoint />}
-
       {shouldDisplayMarketBanner && __DEV__ && (
         <Box my={24}>
           <MarketBannerFeature />

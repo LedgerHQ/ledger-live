@@ -81,6 +81,21 @@ export const overrideInitialStateWithPerpsEntryPoint =
     },
   });
 
+export const overrideInitialStateWithPerpsAndAssetSection = (state: State): State => ({
+  ...state,
+  accounts: {
+    active: [mockAccount],
+  },
+  settings: {
+    ...state.settings,
+    overriddenFeatureFlags: {
+      ...state.settings.overriddenFeatureFlags,
+      lwmWallet40: { enabled: true, params: { assetSection: true } },
+      ptxPerpsLiveAppMobile: { enabled: true },
+    },
+  },
+});
+
 export const overrideInitialStateWithAssetSection =
   (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
   (state: State): State => ({
