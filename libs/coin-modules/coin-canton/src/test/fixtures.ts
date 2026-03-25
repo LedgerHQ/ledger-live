@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { createEmptyHistoryCache, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import {
+  createEmptyHistoryCache,
+  encodeAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
