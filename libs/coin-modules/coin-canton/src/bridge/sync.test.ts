@@ -84,8 +84,9 @@ const createMockOperationView = (
     fee: {
       value: "5",
       asset: {
-        type: "native",
-        issuer: null,
+        type: "native" as const,
+        instrumentAdmin: "AmuletAdmin",
+        instrumentId: "Amulet",
       },
       details: {
         type: "fee",

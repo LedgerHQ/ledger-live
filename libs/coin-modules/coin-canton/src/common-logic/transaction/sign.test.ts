@@ -90,6 +90,7 @@ describe("signTransaction", () => {
       },
       serialized: "serialized-transaction",
       hash: "test-hash",
+      step: { type: "single-step" },
     };
 
     // WHEN
@@ -127,6 +128,8 @@ describe("signTransaction", () => {
         },
         combined_hash: "combined-hash",
       },
+      challenge_nonce: "",
+      challenge_deadline: 0,
     };
 
     // WHEN
@@ -167,6 +170,7 @@ describe("signTransaction", () => {
       },
       serialized: "serialized-transaction",
       hash: "test-hash",
+      step: { type: "single-step" },
     };
 
     // WHEN & THEN
@@ -206,6 +210,7 @@ describe("signTransaction", () => {
       },
       serialized: "serialized-transaction",
       hash: "test-hash",
+      step: { type: "single-step" },
     };
 
     // WHEN & THEN
@@ -268,6 +273,7 @@ describe("signTransaction", () => {
       },
       serialized: "serialized-transaction",
       hash: "test-hash",
+      step: { type: "single-step" },
     };
 
     // WHEN
@@ -315,6 +321,8 @@ describe("signTransaction", () => {
         },
         combined_hash: "combined-hash",
       },
+      challenge_nonce: "",
+      challenge_deadline: 0,
     };
 
     // WHEN

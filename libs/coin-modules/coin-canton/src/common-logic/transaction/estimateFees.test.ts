@@ -4,10 +4,13 @@ import { estimateFees } from "./estimateFees";
 
 const mockCurrency = createMockCantonCurrency();
 const magnitude: bigint = 10n ** 38n;
-const createMockConfigWithFee = (fee: number | undefined): coinConfigModule.CantonCoinConfig => ({
-  ...createMockCoinConfigValue(),
-  fee,
-});
+const createMockConfigWithFee = (fee: number | undefined): coinConfigModule.CantonCoinConfig => {
+  const base = createMockCoinConfigValue();
+  if (fee !== undefined) {
+    return { ...base, fee };
+  }
+  return base;
+};
 
 describe("estimateFees", () => {
   const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");

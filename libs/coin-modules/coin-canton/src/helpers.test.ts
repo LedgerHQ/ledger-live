@@ -141,9 +141,7 @@ describe("isAccountEmpty", () => {
     });
 
     it("should handle undefined subAccounts", () => {
-      const accountWithUndefinedSubAccounts = createMockCantonAccount({
-        subAccounts: undefined,
-      });
+      const accountWithUndefinedSubAccounts = createMockCantonAccount();
       delete accountWithUndefinedSubAccounts.subAccounts;
 
       expect(isAccountEmpty(accountWithUndefinedSubAccounts)).toBe(true);

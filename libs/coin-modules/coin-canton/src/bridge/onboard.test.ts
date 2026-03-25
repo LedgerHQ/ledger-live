@@ -94,8 +94,11 @@ describe("onboard", () => {
 
     it("should skip submission when account is onboarded on network but has no local xpub", async () => {
       // GIVEN
-      const account = createMockCantonAccount({ xpub: undefined });
-      mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: mockPartyId });
+      const account = createMockCantonAccount();
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: mockPartyId,
+        public_key: mockPublicKey,
+      });
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
       const values = await firstValueFrom(
@@ -131,7 +134,10 @@ describe("onboard", () => {
         party_id: newPartyId,
         party_name: "test-party-name",
         public_key_fingerprint: "test-fingerprint",
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         transactions: {} as any,
+        challenge_nonce: "test-nonce",
+        challenge_deadline: 1735689599,
       });
       mockedGateway.submitOnboarding.mockResolvedValue({
         party: {
