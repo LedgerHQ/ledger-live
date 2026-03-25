@@ -9093,27 +9093,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
-      '@ledgerhq/hw-bolos':
-        specifier: workspace:^
-        version: link:../hw-bolos
-      '@ledgerhq/hw-transport':
-        specifier: workspace:*
-        version: link:../hw-transport
-      '@ledgerhq/ledger-cal-service':
-        specifier: workspace:^
-        version: link:../../../ledger-services/cal
-      fast-sha256:
-        specifier: ^1.3.0
-        version: 1.3.0
-      semver:
-        specifier: '>=7.5.2'
-        version: 7.7.3
+      '@mysten/ledgerjs-hw-app-sui':
+        specifier: ^0.8.0
+        version: 0.8.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -16881,8 +16863,14 @@ packages:
   '@ledgerhq/errors@6.27.0':
     resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
 
+  '@ledgerhq/errors@6.32.0':
+    resolution: {integrity: sha512-BjjvhLM6UXYUbhllqAduo9PSneLt9FXZ3TBEUFQ3MMSZOCHt0gAgDySLwul99R8fdYWkXBza4DYQjUNckpN2lg==}
+
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
+
+  '@ledgerhq/hw-bolos@6.35.1':
+    resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
@@ -16903,11 +16891,23 @@ packages:
       '@types/react':
         optional: true
 
+  '@ledgerhq/ledger-cal-service@1.15.1':
+    resolution: {integrity: sha512-fmg5kHzIdm1xcWpquWwf86o9QID4rtBItvD7ztSCUpAyCs4cRaOeu6/jV3pEAdjt14BFDIKSQBFZtQ9hCFAvCQ==}
+
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
   '@ledgerhq/live-env@2.22.0':
     resolution: {integrity: sha512-zOtxXQl0stQpNp/01nvClMyAdc5WLY8b4vAeP8KJvvoDPCY9VfKLNGvjfU7r/AGsTTmJqy8DOSlboQ24CNd+zg==}
+
+  '@ledgerhq/live-env@2.31.0':
+    resolution: {integrity: sha512-Hl5ldGa7lT7bKkNHruFepKhEWvb0hvjvQ1cXBbR7yp9I7EPceDXQt/uySOyaY41caWX0x27TUQIz3PVEv67HJA==}
+
+  '@ledgerhq/live-network@2.4.3':
+    resolution: {integrity: sha512-o55Mas7QvjqlwFVX5CL8DVl199i8gTn6j9Ljj+2nPetrsKtIrf2mz6leiUAgB5opWU4VyZpxKn65hXv5VD0b0Q==}
+
+  '@ledgerhq/live-promise@0.2.2':
+    resolution: {integrity: sha512-1ve8lWgXxhvWgAQ8Z+Ka6WhCVk7IZV997x2YXAblo24XB/8Rn6dqTxMosdZ+vqcPeb5wMwmbcJVi2PMOPRpRTw==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
@@ -16917,6 +16917,9 @@ packages:
 
   '@ledgerhq/logs@6.14.0':
     resolution: {integrity: sha512-kJFu1+asWQmU9XlfR1RM3lYR76wuEoPyZvkI/CNjpft78BQr3+MMf3Nu77ABzcKFnhIcmAkOLlDQ6B8L6hDXHA==}
+
+  '@ledgerhq/logs@6.16.0':
+    resolution: {integrity: sha512-v/PLfb1dq1En35kkpbfRWp8jLYgbPUXxGhmd4pmvPSIe0nRGkNTomsZASmWQAv6pRonVGqHIBVlte7j1MBbOww==}
 
   '@ledgerhq/lumen-design-core@0.1.11':
     resolution: {integrity: sha512-X+nwcaPtBX7yuoq/06/zr/pPd96xgX1zxdxFgFtI/8gx/rhfYj50GRcZ8114JxsExrmcOHK4CVpG/7tG0SOkIQ==}
@@ -17125,6 +17128,9 @@ packages:
 
   '@mysten/ledgerjs-hw-app-sui@0.7.1':
     resolution: {integrity: sha512-2KfPyTzdIeSq4auepS56T09rPE2dHz2VX3G9rFnYjayzynJtNd9tzKWPRpjpCEdBGjp8wg0kEzAeHSOwB0P/Kg==}
+
+  '@mysten/ledgerjs-hw-app-sui@0.8.0':
+    resolution: {integrity: sha512-v5yJkPO4yMs6BqYZ4mYcH0qamCoK3pkTDqGR4SI1THkI6/8n+UAhX2Hnns9OiVBkv1xyuX27leHbJwHJXv6AoA==}
 
   '@mysten/signers@1.0.1':
     resolution: {integrity: sha512-R23Q5Nm4z4ydmGSbTcS9omw2pPA522WVwkOHiF+n0NJMm/icNlMmM7rTPzA0I6LkUDx1WE+ScEfF9knuAgc/1A==}
@@ -39680,7 +39686,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-wrap-function': 7.27.1
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -39695,7 +39701,7 @@ snapshots:
 
   '@babel/helper-simple-access@7.25.9':
     dependencies:
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
@@ -39722,7 +39728,7 @@ snapshots:
   '@babel/helper-wrap-function@7.27.1':
     dependencies:
       '@babel/template': 7.28.6
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
@@ -40117,7 +40123,7 @@ snapshots:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -40218,7 +40224,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.28.5
+      '@babel/traverse': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -45162,7 +45168,7 @@ snapshots:
   '@ledgerhq/device-signer-kit-cosmos@1.0.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45187,7 +45193,7 @@ snapshots:
     dependencies:
       '@ledgerhq/context-module': 1.16.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45278,6 +45284,8 @@ snapshots:
 
   '@ledgerhq/errors@6.27.0': {}
 
+  '@ledgerhq/errors@6.32.0': {}
+
   '@ledgerhq/evm-tools@1.3.0':
     dependencies:
       '@ethersproject/constants': 5.8.0
@@ -45286,6 +45294,10 @@ snapshots:
       '@ledgerhq/live-env': 2.22.0
       axios: 1.7.7
       crypto-js: 4.2.0
+
+  '@ledgerhq/hw-bolos@6.35.1':
+    dependencies:
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
@@ -45308,6 +45320,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.14
 
+  '@ledgerhq/ledger-cal-service@1.15.1':
+    dependencies:
+      '@ledgerhq/live-env': 2.31.0
+      '@ledgerhq/live-network': 2.4.3
+
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
       bignumber.js: 9.1.2
@@ -45318,11 +45335,31 @@ snapshots:
       rxjs: 7.8.2
       utility-types: 3.11.0
 
+  '@ledgerhq/live-env@2.31.0':
+    dependencies:
+      rxjs: 7.8.2
+      utility-types: 3.11.0
+
+  '@ledgerhq/live-network@2.4.3':
+    dependencies:
+      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/live-env': 2.31.0
+      '@ledgerhq/live-promise': 0.2.2
+      '@ledgerhq/logs': 6.16.0
+      axios: 1.13.2
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-promise@0.2.2':
+    dependencies:
+      '@ledgerhq/logs': 6.16.0
+
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
 
   '@ledgerhq/logs@6.14.0': {}
+
+  '@ledgerhq/logs@6.16.0': {}
 
   '@ledgerhq/lumen-design-core@0.1.11':
     dependencies:
@@ -45685,6 +45722,16 @@ snapshots:
       '@scure/base': 2.0.0
 
   '@mysten/ledgerjs-hw-app-sui@0.7.1': {}
+
+  '@mysten/ledgerjs-hw-app-sui@0.8.0':
+    dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/hw-bolos': 6.35.1
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-cal-service': 1.15.1
+      fast-sha256: 1.3.0
+      semver: 7.7.3
 
   '@mysten/signers@1.0.1(@mysten/sui@2.9.0(typescript@6.0.2))':
     dependencies:
@@ -52329,8 +52376,8 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.29.2
+      '@babel/types': 7.29.0
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
       '@types/babel__traverse': 7.28.0
@@ -67193,8 +67240,8 @@ snapshots:
   react-docgen@8.0.2:
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/traverse': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/traverse': 7.29.0
+      '@babel/types': 7.29.0
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.28.0
       '@types/doctrine': 0.0.9
