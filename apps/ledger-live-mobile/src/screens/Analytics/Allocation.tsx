@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback, memo, useMemo } from "react";
 import { FlatList } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -10,6 +10,8 @@ import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
 import SafeAreaView from "~/components/SafeAreaView";
+import { useSelector } from "~/context/hooks";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 type ContainerProps = {
   flex?: number;
@@ -33,8 +35,23 @@ const AssetWrapperContainer = styled(Flex).attrs({
 
 const size = normalize(200);
 
-function Allocation() {
+function useAllocationDistribution() {
   const distribution = useDistribution({ showEmptyAccounts: true });
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
+
+  return useMemo(
+    () =>
+      distribution.list.filter(
+        ({ currency }) =>
+          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
+      ),
+    [distribution.list, blacklistedTokenIdsSet],
+  );
+}
+
+function Allocation() {
+  const list = useAllocationDistribution();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -47,19 +64,19 @@ function Allocation() {
     <Container isFlex edges={["bottom"]}>
       <Flex px={6}>
         <Flex>
-          <RingChart size={size} data={distribution.list} colors={colors} />
+          <RingChart size={size} data={list} colors={colors} />
         </Flex>
         <AssetWrapperContainer pointerEvents="none">
           <Text variant="h1" fontWeight="medium" color="neutral.c100">
-            {distribution.list.length}
+            {list.length}
           </Text>
           <Text variant="body" fontWeight="medium" color="neutral.c80">
-            {t("distribution.assets", { count: distribution.list.length })}
+            {t("distribution.assets", { count: list.length })}
           </Text>
         </AssetWrapperContainer>
       </Flex>
       <FlatList
-        data={distribution.list}
+        data={list}
         renderItem={renderItem}
         keyExtractor={item => item.currency.id}
         style={{ width: "100%" }}
