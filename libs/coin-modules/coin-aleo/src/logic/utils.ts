@@ -4,8 +4,8 @@ import invariant from "invariant";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
-  Operation as AlpacaOperation,
   MemoNotSupported,
+  Operation as AlpacaOperation,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import {
@@ -17,23 +17,23 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import type {
-  AleoOperation,
-  AleoTransactionType,
-  EnrichedPrivateRecord,
-  OperationDetailsExtraField,
-  Transaction,
-  TransactionType,
-  ProvableApi,
-  TransactionSelfTransfer,
   AleoAccount,
-  Intent,
-  AleoTransactionIntentData,
-  AleoPublicTransaction,
-  AleoOperationExtra,
-  TransactionPublic,
-  TransactionPrivate,
   AleoCoinConfig,
+  AleoOperation,
+  AleoOperationExtra,
+  AleoPublicTransaction,
+  AleoTransactionIntentData,
+  AleoTransactionType,
   AleoUnspentRecord,
+  EnrichedPrivateRecord,
+  Intent,
+  OperationDetailsExtraField,
+  ProvableApi,
+  Transaction,
+  TransactionPrivate,
+  TransactionPublic,
+  TransactionSelfTransfer,
+  TransactionType,
 } from "../types";
 
 export function parseMicrocredits(microcreditsU64: string): string {
@@ -483,12 +483,14 @@ export function createFeeTransactionIntent({
   executionId,
   baseFee,
   priorityFee,
+  isFeeSponsored,
 }: {
   account: AleoAccount;
   transaction: Transaction;
   executionId: string;
   baseFee: BigNumber;
   priorityFee: BigNumber;
+  isFeeSponsored: boolean;
 }): TransactionIntent<MemoNotSupported, AleoTransactionIntentData> {
   const isPrivateTx = isPrivateTransaction(transaction);
   const commonFields = {
@@ -499,7 +501,7 @@ export function createFeeTransactionIntent({
     sender: account.freshAddress,
   } as const;
 
-  if (isPrivateTx) {
+  if (isPrivateTx && !isFeeSponsored) {
     const commitment = transaction.properties.feeRecordCommitment;
     invariant(commitment, "aleo: missing fee record commitment");
     const feeRecord = getRecordByCommitment({ account, commitment });

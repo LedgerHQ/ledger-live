@@ -3,12 +3,12 @@ import { Observable } from "rxjs";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import {
-  type Transaction,
-  type AleoSigner,
   type AleoAccount,
-  type SignedAleoTransaction,
+  type AleoSigner,
   type FeeConfiguration,
   PreparedRequestResponse,
+  type SignedAleoTransaction,
+  type Transaction,
 } from "../types";
 import { sdkClient } from "../network/sdk";
 import { craftTransaction } from "../logic";
@@ -67,6 +67,7 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
       executionId: authorization.execution_id,
       baseFee,
       priorityFee,
+      isFeeSponsored: config.isFeeSponsored,
     }),
   });
 
