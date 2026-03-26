@@ -1,6 +1,7 @@
 import { renderHook } from "@tests/test-renderer";
 import { usePortfolioForAccounts } from "~/hooks/portfolio";
 import { useListItemViewModel } from "../useListItemViewModel";
+import { Asset } from "~/types/asset";
 import { bitcoin, createCryptoAsset } from "./shared";
 
 jest.mock("~/hooks/portfolio", () => ({
@@ -25,6 +26,31 @@ describe("useListItemViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPortfolio(null);
+  });
+
+  describe("placeholder assets", () => {
+    it("should show formatted 0 as counter value", () => {
+      const placeholderAsset: Asset = {
+        ...createCryptoAsset(bitcoin, 0),
+        isPlaceholder: true,
+      };
+
+      const { result } = renderHook(() => useListItemViewModel(placeholderAsset));
+
+      expect(result.current.formattedCounterValue).not.toBeNull();
+    });
+
+    it("should show dash as delta text for placeholder assets", () => {
+      const placeholderAsset: Asset = {
+        ...createCryptoAsset(bitcoin, 0),
+        isPlaceholder: true,
+      };
+
+      const { result } = renderHook(() => useListItemViewModel(placeholderAsset));
+
+      expect(result.current.deltaText).toBe("–");
+      expect(result.current.deltaColor).toBe("muted");
+    });
   });
 
   describe("delta", () => {

@@ -15,8 +15,10 @@ jest.mock("@react-navigation/native", () => ({
   useRoute: () => ({ name: "Portfolio" }),
 }));
 
+const mockAssetsData = jest.fn();
+
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => ({
-  useAssetsData: () => ({ data: undefined, isLoading: false }),
+  useAssetsData: () => mockAssetsData(),
 }));
 
 const mockCategorizedAssets = jest.fn();
@@ -58,6 +60,7 @@ const mockPortfolioWithCryptos = (
 describe("usePortfolioCryptosSectionViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAssetsData.mockReturnValue({ data: undefined, isLoading: false, isError: false });
     mockPortfolioWithCryptos();
     mockReadOnlyCoins.mockReturnValue({ sortedCryptoCurrencies: [] });
   });
@@ -225,6 +228,27 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       );
 
       expect(result.current.hasMore).toBe(false);
+    });
+  });
+
+  describe("default asset padding when user has fewer than 4 cryptos", () => {
+    it("should show only user assets when user has 4 or more cryptos", () => {
+      const fourCryptos = Array.from({ length: 4 }, () => createCryptoAsset(bitcoin, 1000));
+      mockPortfolioWithCryptos(fourCryptos);
+
+      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
+
+      expect(result.current.assetsToDisplay).toHaveLength(4);
+      expect(result.current.assetsToDisplay.every(a => !a.isPlaceholder)).toBe(true);
+    });
+
+    it("should show user assets first, with no padding when defaults unavailable", () => {
+      mockPortfolioWithCryptos([createCryptoAsset(bitcoin, 100000)]);
+
+      const { result } = renderHook(() => usePortfolioCryptosSectionViewModel());
+
+      expect(result.current.assetsToDisplay).toHaveLength(1);
+      expect(result.current.assetsToDisplay[0].currency).toBe(bitcoin);
     });
   });
 

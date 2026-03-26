@@ -4,10 +4,8 @@ import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
-import {
-  toAsset,
-  usePortfolioSectionActions,
-} from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
+import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
 
 export const MAX_STABLECOINS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_STABLECOINS = 2;
@@ -25,16 +23,6 @@ export interface PortfolioStablecoinsSectionViewModelResult {
 interface UsePortfolioStablecoinsSectionViewModelOptions {
   isEmptyState?: boolean;
   isReadOnly?: boolean;
-}
-
-/**
- * Pads `owned` with items from `defaults` (deduped by currency id) up to `max` total.
- */
-export function padStablecoins(owned: Asset[], defaults: Asset[], max: number): Asset[] {
-  if (owned.length >= max) return owned;
-  const ownedIds = new Set(owned.map(a => a.currency.id));
-  const padding = defaults.filter(p => !ownedIds.has(p.currency.id)).slice(0, max - owned.length);
-  return [...owned, ...padding];
 }
 
 const usePortfolioStablecoinsSectionViewModel = ({
@@ -71,7 +59,11 @@ const usePortfolioStablecoinsSectionViewModel = ({
 
   const assets = useMemo<Asset[]>(() => {
     if (isEmptyState || isReadOnly) return defaultStablecoins;
-    return padStablecoins(filteredStablecoins, defaultStablecoins, EMPTY_STATE_MAX_STABLECOINS);
+    return padAssetsWithDefaults(
+      filteredStablecoins,
+      defaultStablecoins,
+      EMPTY_STATE_MAX_STABLECOINS,
+    );
   }, [isEmptyState, isReadOnly, defaultStablecoins, filteredStablecoins]);
 
   const assetsCount = assets.length;

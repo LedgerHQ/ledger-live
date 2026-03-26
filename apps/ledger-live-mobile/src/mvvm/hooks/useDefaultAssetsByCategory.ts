@@ -48,14 +48,12 @@ export function useDefaultAssetsByCategory(
       if (!currency) continue;
 
       const ticker = assetsData.cryptoAssets[id]?.ticker?.toUpperCase() ?? "";
-      const { price, id: marketId } = assetsData.markets?.[currency.id] ?? {};
+      const { id: marketId } = assetsData.markets?.[currency.id] ?? {};
       const item: Asset = {
         currency,
         accounts: [],
         amount: 0,
-        countervalue: 0,
         isPlaceholder: true,
-        placeholderPrice: price,
         marketId: marketId ?? currency.id,
       };
 
