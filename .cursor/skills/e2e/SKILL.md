@@ -31,7 +31,7 @@ Before running tests, ensure these environment variables are set:
 
 ```bash
 export COINAPPS=/path/to/coin-apps
-export SEED="your 24 words seed phrase here"
+export SEED="your test seed phrase here"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 # SPECULOS_DEVICE valid values: nanoS, nanoSP, nanoX, stax, flex, nanoGen5
 export SPECULOS_DEVICE=nanoSP

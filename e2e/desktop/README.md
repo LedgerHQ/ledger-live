@@ -18,38 +18,31 @@ All build and test commands below are run from the **repo root** (`ledger-live/`
 ### 1. Prerequisites
 
 - Ledger Live repository (as mentioned in the full wiki)
+- Read the e2e environment [guide](https://ledgerhq.atlassian.net/wiki/spaces/QA/pages/6945013939/Ledger+Wallet+E2E+Environment)❗
 - Docker Desktop installed and running (Speculos runs in Docker)
-- Clone the CoinApps repository:
-
-```bash
-# HTTPS
-git clone https://github.com/LedgerHQ/coin-apps.git
-
-# OR SSH
-git clone git@github.com:LedgerHQ/coin-apps.git
-```
-
-- Pull Speculos Docker image:
+- Pull the Speculos Docker image:
 
 ```bash
 docker pull ghcr.io/ledgerhq/speculos:latest
 ```
 
-> ⚠️ Adjust repository paths according to your local setup.
+- Enable Proto for version management:
+
+```bash
+proto use
+```
 
 ### 2. Environment Variables
 
-Set the following environment variables before running tests:
+Set these environment variables before you run tests and change the values as per your testing needs:
 
 ```bash
 export MOCK=0
-export COINAPPS="/path/to/coin-apps"
-export SEED="your 24 word ledger recovery phrase here"
 export SPECULOS_IMAGE_TAG=ghcr.io/ledgerhq/speculos:latest
 export SPECULOS_DEVICE=nanoSP       # Options: nanoSP | nanoX | nanoS | stax | flex | nanoGen5
 ```
 
-> ⚠️ Replace placeholders with your local paths and credentials.
+Consider adding these exports to your profile so they persist.
 
 ### 3. Build
 
