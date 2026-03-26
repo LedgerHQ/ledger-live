@@ -953,6 +953,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Маленькая сумма. Отправляйте от {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "На связанном с этим токеном счёте есть другой токен"
     },
@@ -2747,7 +2750,15 @@
       "noAccounts" : "Для начала\nпополните кошелёк"
     },
     "seeAllAssets" : "Посмотреть все активы",
+    "cryptoAddresses" : {
+      "title" : "Криптосчета",
+      "count_one" : "Счёт: {{count}}",
+      "count_other" : "Счета: {{count}}"
+    },
     "seeAllAccounts" : "Показать все",
+    "assetSection" : {
+      "connectionFailed" : "Сбой подключения"
+    },
     "marketPriceSection" : {
       "title" : "Рыночная цена {{currencyTicker}}",
       "currencyPrice" : "Цена {{currencyTicker}}",
@@ -3563,8 +3574,10 @@
         "description" : "Локальные карточки появляются в Портфеле и других локациях без использования Braze. Они останутся, пока вы не отклоните или не подтвердите их здесь.",
         "addSampleBanner" : "Добавить пример баннера",
         "addSampleBannerDesc" : "Добавить пример полного изображения баннера в Портфеле.",
-        "addSampleActionCarousel" : "Добавить пример карусели действия",
-        "addSampleActionCarouselDesc" : "Добавить карусель карточек действий (Покупка, Обмен, Стейкинг) в Портфель.",
+        "addSampleActionCarouselIcon" : "Добавить карусель с CTA (иконка)",
+        "addSampleActionCarouselIconDesc" : "Баннер контента со спот-иконками — Купить, Обменять, Застейкать Требуется Braze-флаг размещения.",
+        "addSampleActionCarouselImageBackground" : "Добавить карусель с CTA (иконка)",
+        "addSampleActionCarouselImageBackgroundDesc" : "Медиа-баннер с фоновым изображением — Купить, Обменять, Застейкать Требуется Braze-флаг размещения.",
         "dismissAll" : "Отклонить все локальные карточки",
         "dismissAllDesc" : "Удалить все карточки содержимого, сгенерированные локально."
       }
@@ -4304,7 +4317,21 @@
         "maxFeeBelowPriorityFee" : "Максимальная комиссия должна быть больше или равна максимальной комиссии за приоритет"
       },
       "coinControl" : {
-        "title" : "Контроль монет"
+        "title" : "Контроль монет",
+        "strategy" : "Стратегия",
+        "learnMore" : "Подробнее",
+        "coinToSend" : "Монета для отправки",
+        "changeToReturn" : "Сдача на возврат",
+        "enterAmount" : "Ввод суммы",
+        "amountToSendInCurrency" : "Сумма к отправке в {{ticker}}",
+        "amountInputLabel" : "Сумма к отправке",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Старые монеты – первыми (FIFO)",
+            "OPTIMIZE_SIZE" : "Минимизация комиссии (оптимально)",
+            "MERGE_OUTPUTS" : "Минимизация будущих комиссий (консолидация монет)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "Вам отправлена неподтверждённая транзакция. Имейте в виду, что такие транзакции могут быть отменены.",
@@ -7781,6 +7808,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Криптовалюты",
+      "stablecoins" : "Стейблкойны",
       "market" : "Рынок"
     },
     "referralProgram" : "20$"
