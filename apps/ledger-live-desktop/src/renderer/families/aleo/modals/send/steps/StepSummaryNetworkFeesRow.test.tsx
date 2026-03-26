@@ -2,15 +2,15 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
 import { render, screen } from "tests/testSetup";
-import { mockAleoCoinConfig } from "./__mocks__/config.mock";
-import { aleoCurrency } from "./__mocks__/currency.mock";
-import { makeAleoTransaction } from "./__mocks__/transaction.mock";
-import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
-import * as aleoUtils from "./shared/utils";
+import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
+import { aleoCurrency } from "../../../__mocks__/currency.mock";
+import { makeAleoTransaction } from "../../../__mocks__/transaction.mock";
+import StepSummaryNetworkFeesRow from "../steps/StepSummaryNetworkFeesRow";
+import * as aleoUtils from "../../../shared/utils";
 
-jest.mock("./shared/utils", () => {
+jest.mock("../../../shared/utils", () => {
   return {
-    ...jest.requireActual("./shared/utils"),
+    ...jest.requireActual("../../../shared/utils"),
     getAleoCurrencyConfig: jest.fn(),
   };
 });

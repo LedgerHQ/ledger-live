@@ -4,7 +4,7 @@ import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import type { AleoFamily } from "./types";
+import type { AleoFamily } from "../../../types";
 
 const StepSummaryPostAlert: NonNullable<AleoFamily["StepSummaryPostAlert"]> = () => {
   const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);

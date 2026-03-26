@@ -4,8 +4,8 @@ import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
-import { getAleoTransactionTypeLabelKey } from "./shared/utils";
-import type { AleoFamily } from "./types";
+import { getAleoTransactionTypeLabelKey } from "../../../shared/utils";
+import type { AleoFamily } from "../../../types";
 
 const StepSummaryAmountRow: NonNullable<AleoFamily["StepSummaryAmountRow"]> = ({
   amount,

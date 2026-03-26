@@ -14,8 +14,8 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import i18n from "~/renderer/i18n/init";
 import type { StepProps } from "~/renderer/modals/Send/types";
-import { StepRecordPicker } from "./StepRecordPicker";
-import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
+import StepRecordPicker from "./StepRecordPicker";
+import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("~/renderer/hooks/useDateFormatter");
