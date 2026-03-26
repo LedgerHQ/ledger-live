@@ -27,11 +27,11 @@ import {
   PortfolioAssetsSection,
   WalletAssetsView,
   PortfolioCarouselSection,
-  PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
 } from "../../components";
+import { PortfolioEmptySection } from "../../views";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -78,7 +78,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     const sections: React.JSX.Element[] = [];
 
     const heroCtasNode =
-      showAssets && shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
+      shouldDisplayQuickActionCtas && shouldDisplayGraphRework ? (
         <>
           <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
           <TransferDrawer />
@@ -94,13 +94,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         ctas={heroCtasNode}
       />,
     );
-
-    if (!showAssets) {
-      sections.push(
-        <PortfolioEmptySection key="empty" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
-      );
-      return sections;
-    }
 
     if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
       sections.push(
@@ -126,6 +119,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           <MarketBanner />
         </Box>,
       );
+    }
+
+    if (!showAssets) {
+      sections.push(<PortfolioEmptySection key="empty" />);
+      return sections;
     }
 
     if (shouldDisplayAssetSection) {

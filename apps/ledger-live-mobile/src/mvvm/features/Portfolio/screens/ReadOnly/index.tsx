@@ -14,7 +14,8 @@ import { PortfolioBalanceSection } from "../../components/PortfolioBalanceSectio
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { ScreenName } from "~/const";
-import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
+import { PortfolioNoSignerContent } from "../../views/EmptySection/PortfolioNoSignerContent";
+import { PortfolioBannersSection } from "../../components/PortfolioBannersSection";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
 
 type NavigationProps = BaseComposite<
@@ -26,7 +27,6 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
     safeAreaTop,
     shouldDisplayGraphRework,
     shouldDisplayWallet40MainNav,
-    shouldDisplayAssetSection,
     isLNSUpsellBannerShown,
     source,
     onBackFromUpdate,
@@ -53,20 +53,14 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           />
         </Box>
       ),
-      <PortfolioNoSignerContent
-        key="noSigner"
+      <PortfolioBannersSection
+        key="banners"
+        isFirst={true}
         isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        shouldDisplayAssetSection={shouldDisplayAssetSection}
-        isEmptyState
       />,
+      <PortfolioNoSignerContent key="noSigner" />,
     ],
-    [
-      shouldDisplayGraphRework,
-      shouldDisplayAssetSection,
-      isLNSUpsellBannerShown,
-      onBackFromUpdate,
-      safeAreaTop,
-    ],
+    [shouldDisplayGraphRework, isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (

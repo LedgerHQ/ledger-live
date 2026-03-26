@@ -8,7 +8,6 @@ import {
   ethCurrency,
   overrideInitialStateWithAssetSection,
 } from "../../../__integrations__/shared";
-import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 
 const mockNavigate = jest.fn();
 
@@ -57,28 +56,17 @@ describe("PortfolioEmptySection", () => {
 
   describe("when user has no accounts (NoAccountsContent)", () => {
     it("should render an add account button", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection />, {
         overrideInitialState: emptyAccountState,
       });
 
       expect(await screen.findByText(/add crypto account/i)).toBeVisible();
     });
 
-    it("should render quick actions CTAs", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+    it("should open the add account drawer when pressing the add button", async () => {
+      const { user } = renderWithReactQuery(<PortfolioEmptySection />, {
         overrideInitialState: emptyAccountState,
       });
-
-      expect(screen.getByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container)).toBeVisible();
-    });
-
-    it("should open the add account drawer when pressing the add button", async () => {
-      const { user } = renderWithReactQuery(
-        <PortfolioEmptySection isLNSUpsellBannerShown={false} />,
-        {
-          overrideInitialState: emptyAccountState,
-        },
-      );
 
       const addButton = await screen.findByText(/add crypto account/i);
       await user.press(addButton);
@@ -86,26 +74,18 @@ describe("PortfolioEmptySection", () => {
       expect(await screen.findByTestId("modal-close-button")).toBeVisible();
     });
 
-    it("should not display the cryptos section", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+    it("should not display the see all assets button", () => {
+      renderWithReactQuery(<PortfolioEmptySection />, {
         overrideInitialState: emptyAccountState,
       });
 
       expect(screen.queryByText(/see all assets/i)).toBeNull();
     });
-
-    it("should render portfolio banners section", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
-        overrideInitialState: emptyAccountState,
-      });
-
-      expect(screen.getAllByTestId("portfolio-banners-section").length).toBeGreaterThan(0);
-    });
   });
 
   describe("when user has accounts (NoSignerContent)", () => {
     it("should render the cryptos section with assets", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection />, {
         overrideInitialState: createAccountState,
       });
 
@@ -113,35 +93,19 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render the read-only coins fallback when assetSection flag is off", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection />, {
         overrideInitialState: overrideInitialStateWithAssetSection(false),
       });
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
     });
 
-    it("should render quick actions CTAs", () => {
-      render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
-        overrideInitialState: createAccountState,
-      });
-
-      expect(screen.getByTestId(QUICK_ACTIONS_TEST_IDS.ctas.container)).toBeVisible();
-    });
-
     it("should not display the add account button", () => {
-      render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      render(<PortfolioEmptySection />, {
         overrideInitialState: createAccountState,
       });
 
       expect(screen.queryByText(/add crypto account/i)).toBeNull();
-    });
-
-    it("should display the portfolio banners section", () => {
-      render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
-        overrideInitialState: createAccountState,
-      });
-
-      expect(screen.getAllByTestId("portfolio-banners-section").length).toBeGreaterThan(0);
     });
   });
 });
