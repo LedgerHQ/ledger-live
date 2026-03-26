@@ -825,9 +825,9 @@
     "spendYourCrypto" : "Utilisez vos cryptos",
     "payDescription" : "Effectuez vos achats en ligne et en magasin avec une carte crypto.",
     "exploreCards" : "Découvrir les cartes",
-    "iAlreadyHaveACard" : "J’ai déjà une carte",
+    "iAlreadyHaveACard" : "J’ai une carte",
     "unlockLiquidity" : "Utilisez vos cryptos au quotidien",
-    "exploreCryptoCardsDescription" : "Découvrez nos cartes crypto et trouvez celle qui est faite pour vous."
+    "exploreCryptoCardsDescription" : "Découvrez les cartes crypto et trouvez celle qui est faite pour vous."
   },
   "lend" : {
     "title" : "Prêter",
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Virement bancaire",
-          "description" : "Recevez des stablecoins par virement bancaire."
+          "title" : "Via un virement bancaire",
+          "description" : "Recevez des stablecoins en réalisant un virement depuis votre banque."
         },
         "fromCrypto" : {
-          "title" : "Recevoir des cryptos"
+          "title" : "Via une adresse crypto"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "Carte Notification",
             "action" : "Carte Action",
-            "portfolio" : "Carte Portfolio",
+            "portfolio" : "Portefeuille",
+            "bottomPortfolio" : "Portefeuille bas",
             "title" : "Titre",
             "description" : "Description",
             "order" : "Ordre",
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Compte vide"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Montant trop bas. Le minimum est {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Ce compte de tokens associé contient un autre token"
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "Solde insuffisant"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "Appairage expiré",
+      "description" : "La connexion à l’app Concordium ID a expiré. Veuillez réessayer."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "La session a expiré",
+      "description" : "La session de l’app Concordium ID n’est plus active. Veuillez la réappairer."
     },
     "StacksMemoTooLong" : {
       "title" : "Mémo trop long"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "Solde insuffisant. Le solde minimum requis est de 0,02 TON."
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "Sélectionnez une entrée privée valide pour le montant"
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "Sélectionnez une entrée privée valide pour les frais"
     },
     "BackupAppDataError" : {
       "title" : "Erreur de synchronisation des données de l’app"
@@ -8065,19 +8083,22 @@
   "portfolio" : {
     "title" : "Accueil",
     "today" : "Aujourd’hui",
+    "carousel" : {
+      "title" : "Pour vous"
+    },
     "addAccountCta" : "Ajouter un compte crypto",
-    "noBalanceTitle" : "Sécurisez vos cryptos",
+    "noBalanceTitle" : "Commencez par\ndéposer des actifs",
     "perpsEntry" : {
       "title" : "Perpétuels",
       "description" : "Tradez avec effet de levier",
       "cta" : "Découvrir"
     },
-    "noDeviceTitle" : "Le wallet le plus sécurisé"
+    "noDeviceTitle" : "Votre wallet\ncrypto sécurisé"
   },
   "marketBanner" : {
-    "title" : "Explorer le marché",
+    "title" : "Explorez le marché",
     "genericError" : "Échec de la connexion",
-    "cta" : "Afficher tout",
+    "cta" : "Voir tout",
     "scrollLeft" : "Défiler à gauche",
     "scrollRight" : "Défiler à droite",
     "fearAndGreed" : {
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "Peur+",
       "fear" : "Peur",
+      "cautious" : "Prudence",
       "neutral" : "Neutre",
-      "greed" : "Cupidité",
-      "extremeGreed" : "Cupidité+"
+      "optimistic" : "Optimisme",
+      "greedy" : "Cupidité"
     },
     "dialog" : {
       "title" : "Sentiment du marché",
-      "content" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
+      "content" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base des tendances et de l’activité. Utilisez-le pour prendre le pouls du marché : des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
       "cta" : "Compris"
     }
   },
@@ -8107,7 +8128,7 @@
     "buyALedger" : "Acheter un Ledger"
   },
   "assets" : {
-    "cryptos" : "Cryptos",
+    "cryptos" : "Crypto",
     "stablecoins" : "Stablecoins",
     "cryptoAccounts" : "Comptes crypto",
     "accountsCount_one" : "{{count}} compte",
@@ -8120,8 +8141,37 @@
       "balance" : "Solde",
       "value" : "Valeur",
       "trend" : "Tendance 1J",
-      "trendTooltip" : "Variation du solde sur 24h."
+      "trendTooltip" : "Évolution de votre solde au cours des dernières 24 heures."
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "Comptes crypto",
+    "tableActions" : {
+      "searchAddress" : "Rechercher une adresse",
+      "addAddress" : "Ajouter une adresse"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "Nom",
+        "address" : "Adresse",
+        "value" : "Valeur"
+      },
+      "editName" : "Modifier le nom",
+      "emptyState" : "Pas encore d’adresse crypto",
+      "emptySearchState" : "Aucun compte ne correspond à votre recherche."
+    },
+    "editName" : {
+      "title" : "Modifier le nom de l’adresse",
+      "input" : "Nom de l’adresse",
+      "suggestions" : {
+        "trading" : "Trading {{asset}}",
+        "savings" : "Épargne {{asset}}"
+      },
+      "cta" : "Confirmer"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "Crypto-actifs"
   },
   "nftEntryPoint" : {
     "title" : "NFT (tokens non fongibles)",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "Historique",
+      "tooltip" : "Historique"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité.\n Liste des comptes touchés : {{accounts}}. Cliquez pour réessayer",
-      "emptyErrorToolTip" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité.\n Cliquez pour réessayer",
-      "upToDate" : "Tout est à jour",
-      "lastSync" : "Dernière synchro : {{timeAgo}}. Cliquez pour actualiser"
+      "errorToolTip" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\n Comptes concernés : {{accounts}} Cliquez pour réessayer",
+      "emptyErrorToolTip" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\n Cliquez pour réessayer",
+      "upToDate" : "Portefeuille à jour",
+      "lastSync" : "Dernière synchro : {{timeAgo}}. Cliquez pour actualiser",
+      "refreshing" : "Actualisation..."
     },
     "notificationIndicator" : {
       "tooltip" : "Notifications"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "Solde privé",
         "public" : "Solde public",
-        "lastUpdate" : "Dernière mise à jour",
+        "lastUpdate" : "Dernière mise à jour : {{label}}",
+        "recently" : "Récemment",
         "switchBalance" : "Changer la source du solde"
+      },
+      "recordPicker" : {
+        "label" : "Historique disponible",
+        "noRecords" : "Aucun historique",
+        "noRecordsAlert" : "Votre historique est vide. Effectuez un transfert interne ou recevez des actifs privés pour commencer.",
+        "alert" : "Le plafond de dépense dépend de la valeur maximale de l’entrée sélectionnée (record). Les frais sont pris en charge par Provable pour les utilisateurs de Ledger.",
+        "recordsLimit" : "L’historique affiche {{max}} entrées maximum"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "Public",
         "private" : "Privé"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "Envoyer depuis"
+      },
+      "summary" : {
+        "coveredByProvable" : "Sponsorisé par Provable",
+        "proofGenerationWarning" : "Une transaction Aleo nécessite la génération d’une preuve. Vous devrez patienter un peu."
       }
     }
   },
@@ -8312,6 +8384,25 @@
     "cta" : {
       "continue" : "Continuer",
       "explore" : "Explorer"
+    }
+  },
+  "history" : {
+    "title" : "Transactions",
+    "pending" : "Transaction en attente",
+    "pending_other" : "Transactions en attente",
+    "columns" : {
+      "type" : "Type",
+      "address" : "Adresse",
+      "amount" : "Montant",
+      "value" : "Valeur"
+    },
+    "address" : {
+      "from" : "De",
+      "to" : "À"
+    },
+    "emptyState" : {
+      "title" : "Aucune transaction pour le moment",
+      "description" : "Revenez plus tard pour voir vos transactions."
     }
   }
 }
