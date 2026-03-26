@@ -39,26 +39,26 @@ jobs:
       - name: install dependencies
         run: pnpm i -F "ledger-live"
 
-      - name: exit prerelease mode
-        run: pnpm changeset pre exit
-
-      - name: versioning
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm changeset version
-
-      - name: git add
-        run: |
-          git add .
-
-      - name: commit
-        uses: planetscale/ghcommit-action@v0.2.9
-        with:
-          commit_message: "chore(release): :rocket: prepare release [skip ci]"
-          repo: ${{ github.repository }}
-          branch: ${{ inputs.ref }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      # - name: exit prerelease mode
+      #   run: pnpm changeset pre exit
+      #
+      # - name: versioning
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: pnpm changeset version
+      #
+      # - name: git add
+      #   run: |
+      #     git add .
+      #
+      # - name: commit
+      #   uses: planetscale/ghcommit-action@v0.2.9
+      #   with:
+      #     commit_message: "chore(release): :rocket: prepare release [skip ci]"
+      #     repo: ${{ github.repository }}
+      #     branch: ${{ inputs.ref }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: pull commit
         run: |
