@@ -47,7 +47,7 @@ export default function StepPair({
               )}
 
               {isInstalled === true && (
-                <Flex alignItems="center" pt={4}>
+                <Flex alignItems="center" my={6}>
                   <Button
                     type="main"
                     onPress={() => openIdApp(walletConnectUri)}
