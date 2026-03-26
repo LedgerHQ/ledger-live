@@ -338,10 +338,12 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Check currency to swap from contains $0")
   async checkAssetFromContains(expected: string) {
-    // The swap app can reload after account additions or a currency switch, leaving _webviewPage
-    // pointing at a stale/closed context. Reset so getWebView() always re-acquires the live page.
     this._webviewPage = undefined;
     const webview = await this.getWebView();
+    await webview.waitForFunction(
+      testId => document.querySelector(`[data-testid='${testId}']`)?.textContent !== "Choose asset",
+      this.fromAccountCoinSelector,
+    );
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
   }
 

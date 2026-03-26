@@ -30,6 +30,7 @@ export class AccountPage extends AppPage {
   private accountButton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });
   private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
+  private showAllTokensButton = this.page.getByTestId("account-tokens-show-all-button");
   private addTokenButton = this.page.getByRole("button", { name: "Add token" });
   private viewDetailsButton = this.page.getByText("View details");
   private editName = this.page.locator("#input-edit-name");
@@ -177,7 +178,12 @@ export class AccountPage extends AppPage {
 
   @step("Navigate to token in account")
   async navigateToTokenInAccount(tokenAccount: AccountType) {
-    await this.tokenRow(tokenAccount.currency.ticker).click();
+    const row = this.tokenRow(tokenAccount.currency.ticker);
+    await this.showAllTokensButton.or(row).first().waitFor({ state: "visible" });
+    if (await this.showAllTokensButton.isVisible()) {
+      await this.showAllTokensButton.click();
+    }
+    await row.click();
     await this.waitForAccountHeaderName(tokenAccount.currency.name, tokenAccount.currency.ticker);
   }
 
