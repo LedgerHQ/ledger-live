@@ -16,7 +16,14 @@ const appSourcePrefixes = [
 ];
 
 function compile() {
-  const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());
+  const configPath = path.join(projectDirectory, "tsconfig.json");
+  const config = ts.parseJsonConfigFileContent(
+    require("../tsconfig.json"),
+    ts.sys,
+    projectDirectory,
+    undefined,
+    configPath,
+  );
   const program = ts.createProgram(config.fileNames, {
     ...config.options,
     noEmit: true,

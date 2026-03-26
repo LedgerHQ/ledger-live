@@ -6,7 +6,6 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib-es",
     "rootDir": "src",
