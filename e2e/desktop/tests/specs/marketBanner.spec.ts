@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { expect } from "@playwright/test";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -6,6 +7,7 @@ import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 test.describe("Market Banner", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "speculos-tests-app",
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });

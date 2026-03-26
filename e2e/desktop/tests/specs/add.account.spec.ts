@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -33,6 +34,7 @@ const currencies = [
 for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
+      teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
       // TODO: this can be removed once Aleo is released on production

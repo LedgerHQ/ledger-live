@@ -36,6 +36,12 @@ export async function addBugLink(ids: string[]) {
   }
 }
 
+export async function addTeamOwner(team: string) {
+  await allure.owner(team);
+  await allure.parentSuite(team);
+  await allure.feature(team);
+}
+
 export async function captureArtifacts(
   page: Page,
   testInfo: TestInfo,

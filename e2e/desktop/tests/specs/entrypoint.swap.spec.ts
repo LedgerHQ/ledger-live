@@ -1,4 +1,5 @@
 import test from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import {
   Account,
   TokenAccount,
@@ -30,6 +31,7 @@ test.describe("Swap flow from different entry point", () => {
   const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
@@ -273,6 +275,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     });
 
     test.use({
+      teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: app,
 
@@ -372,6 +375,7 @@ test.describe("Swap history", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "swap-history",
     speculosApp: app,
   });
@@ -459,6 +463,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   });
 
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
 
