@@ -5,13 +5,20 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
+import { track } from "~/analytics";
+import { replaceAccounts } from "~/actions/accounts";
 import { useCryptoAddressesButtonViewModel } from "../useCryptoAddressesButtonViewModel";
+
+jest.mock("~/analytics", () => ({ track: jest.fn() }));
+
+const mockTrack = track as jest.Mock;
 
 const mockNavigate = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
+  useRoute: () => ({ name: "Portfolio" }),
 }));
 
 const mockCategorizedAssets = jest.fn();
@@ -136,7 +143,7 @@ describe("useCryptoAddressesButtonViewModel", () => {
     });
   });
 
-  describe("onPress — navigation", () => {
+  describe("onPress — with accounts (view)", () => {
     it("should navigate to AssetsList", () => {
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
         overrideInitialState: withAccounts([btcAccount]),
@@ -154,6 +161,109 @@ describe("useCryptoAddressesButtonViewModel", () => {
           isSyncEnabled: true,
         },
       });
+    });
+
+    it("should track account_cta with type view", () => {
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([btcAccount]),
+      });
+
+      act(() => {
+        result.current.onPress();
+      });
+
+      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+        button: "account_cta",
+        type: "view",
+        page: "Portfolio",
+      });
+    });
+  });
+
+  describe("onPress — without accounts (add)", () => {
+    it("should open add account drawer when no accounts", () => {
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([]),
+      });
+
+      act(() => {
+        result.current.onPress();
+      });
+
+      expect(result.current.isAddAccountOpen).toBe(true);
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("should track account_cta with type add", () => {
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([]),
+      });
+
+      act(() => {
+        result.current.onPress();
+      });
+
+      expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+        button: "account_cta",
+        type: "add",
+        page: "Portfolio",
+      });
+    });
+
+    it("should close add account drawer on onCloseAddAccount", () => {
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([]),
+      });
+
+      act(() => {
+        result.current.onPress();
+      });
+
+      expect(result.current.isAddAccountOpen).toBe(true);
+
+      act(() => {
+        result.current.onCloseAddAccount();
+      });
+
+      expect(result.current.isAddAccountOpen).toBe(false);
+    });
+  });
+
+  describe("hasAccounts", () => {
+    it("should be true when accounts exist", () => {
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([btcAccount]),
+      });
+
+      expect(result.current.hasAccounts).toBe(true);
+    });
+
+    it("should be false when no accounts", () => {
+      const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([]),
+      });
+
+      expect(result.current.hasAccounts).toBe(false);
+    });
+  });
+
+  describe("drawer auto-close on account added", () => {
+    it("should close the add account drawer when hasAccounts flips to true", () => {
+      const { result, store } = renderHook(() => useCryptoAddressesButtonViewModel(), {
+        overrideInitialState: withAccounts([]),
+      });
+
+      act(() => {
+        result.current.onPress();
+      });
+
+      expect(result.current.isAddAccountOpen).toBe(true);
+
+      act(() => {
+        store.dispatch(replaceAccounts([btcAccount] as Parameters<typeof replaceAccounts>[0]));
+      });
+
+      expect(result.current.isAddAccountOpen).toBe(false);
     });
   });
 });

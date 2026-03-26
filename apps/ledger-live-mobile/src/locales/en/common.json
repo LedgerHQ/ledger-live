@@ -2753,7 +2753,8 @@
     "cryptoAddresses": {
       "title": "Crypto accounts",
       "count_one": "{{count}} account",
-      "count_other": "{{count}} accounts"
+      "count_other": "{{count}} accounts",
+      "noAccountsYet": "No accounts yet"
     },
     "seeAllAccounts": "See all accounts",
     "assetSection": {
