@@ -62,11 +62,13 @@ function buildAccountBridge(signerContext: SignerContext) {
   const wrappedBroadcast: AccountBridge<Transaction, BitcoinAccount>["broadcast"] = async ({
     account,
     signedOperation,
+    broadcastConfig,
   }) => {
     calculateFees.reset();
     return broadcast({
       account,
       signedOperation,
+      ...(broadcastConfig ? { broadcastConfig } : {}),
     });
   };
 
