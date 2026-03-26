@@ -8390,6 +8390,11 @@
       "summary": {
         "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
+      },
+      "mandatoryPrivateSync": {
+        "title": "Syncing your private balance ({{percentage}}%)",
+        "desc": "Please wait",
+        "error": "Private sync failed. Please try again later."
       }
     }
   },

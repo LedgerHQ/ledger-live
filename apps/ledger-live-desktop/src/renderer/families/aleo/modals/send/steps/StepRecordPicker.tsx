@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { AccountLike } from "@ledgerhq/types-live";
 import type {
   AleoAccount,
   AleoUnspentRecord,
@@ -20,6 +19,7 @@ import Box from "~/renderer/components/Box/Box";
 import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
+import { isAleoAccount } from "./utils";
 
 interface Props {
   account: AleoAccount;
@@ -189,8 +189,6 @@ const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props
     </Box>
   );
 };
-
-const isAleoAccount = (acc: AccountLike): acc is AleoAccount => "aleoResources" in acc;
 
 const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
   if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
