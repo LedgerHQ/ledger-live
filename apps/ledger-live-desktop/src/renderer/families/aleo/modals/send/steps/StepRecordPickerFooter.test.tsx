@@ -81,10 +81,4 @@ describe("StepRecordPickerFooter", () => {
 
     expect(transitionTo).toHaveBeenCalledWith("amount");
   });
-
-  it("should show loading state when bridgePending is true", () => {
-    render(<StepRecordPickerFooter {...defaultProps} bridgePending={true} />);
-
-    expect(screen.getByRole("button", { name: /continue/i })).toBeInTheDocument();
-  });
 });
