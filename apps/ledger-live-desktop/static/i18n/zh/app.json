@@ -825,8 +825,8 @@
     "spendYourCrypto" : "使用加密货币消费",
     "payDescription" : "使用加密货币卡进行线上或线下支付",
     "exploreCards" : "了解加密货币卡",
-    "iAlreadyHaveACard" : "我已经有一张卡",
-    "unlockLiquidity" : "释放流动性",
+    "iAlreadyHaveACard" : "我有一张卡",
+    "unlockLiquidity" : "在现实生活中使用加密货币",
     "exploreCryptoCardsDescription" : "探索我们的加密货币卡，找到最适合您的那一款"
   },
   "lend" : {
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "银行转账",
-          "description" : "通过发送现金接收稳定币"
+          "title" : "通过银行转账",
+          "description" : "只需发送现金即可接收稳定币"
         },
         "fromCrypto" : {
-          "title" : "接收加密货币"
+          "title" : "通过加密货币地址"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "通知内容卡",
             "action" : "行动内容卡",
-            "portfolio" : "资产组合内容卡",
+            "portfolio" : "资产组合",
+            "bottomPortfolio" : "底部资产组合",
             "title" : "标题",
             "description" : "描述",
             "order" : "编号",
@@ -5966,7 +5967,7 @@
         "auth" : {
           "title" : "授权",
           "validator" : "授权",
-          "hint" : "自动接收汇入该账户的资金。",
+          "hint" : "自动接收转入该账户的资金。",
           "reonboard" : {
             "hint" : "检测到发生拓扑变化。请重新授权 Ledger 验证者以继续自动接收资金。"
           },
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "数额太低。发送至少 {{minimumAmount}}。"
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "该关联代币账户持有另一种代币"
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "抱歉，资金不足"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "配对已过期",
+      "description" : "连接 Concordium ID 应用程序已超时。请重试。"
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "会话已过期",
+      "description" : "Concordium ID 应用程序的会话不再活跃。请重新配对。"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "资金不足。所需最低余额为 0.02 TON。"
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "请为数额选择有效的私密记录。"
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "请为费用选择有效的私密记录。"
     },
     "BackupAppDataError" : {
       "title" : "应用程序数据备份过程中出错"
@@ -8065,14 +8083,17 @@
   "portfolio" : {
     "title" : "首页",
     "today" : "今天",
+    "carousel" : {
+      "title" : "为您而设"
+    },
     "addAccountCta" : "添加加密货币账户",
-    "noBalanceTitle" : "保护您的加密货币",
+    "noBalanceTitle" : "首先为您的钱包充值",
     "perpsEntry" : {
       "title" : "永续合约",
       "description" : "杠杆交易",
       "cta" : "探索"
     },
-    "noDeviceTitle" : "最安全的钱包"
+    "noDeviceTitle" : "您的安全加密货币钱包"
   },
   "marketBanner" : {
     "title" : "探索市场",
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "恐惧+",
       "fear" : "恐惧",
+      "cautious" : "谨慎",
       "neutral" : "中立",
-      "greed" : "贪婪",
-      "extremeGreed" : "贪婪+"
+      "optimistic" : "乐观",
+      "greedy" : "贪婪"
     },
     "dialog" : {
       "title" : "情绪指数",
-      "content" : "情绪指数反映了市场的情绪状态。其数值范围为 0 至 100，数值越低表示越恐惧，数值越高表示越贪婪。",
+      "content" : "根据趋势和活动显示整体市场情绪（从 0 到 100）。以此了解市场表现：数值较低表示恐惧，数值较高表示贪婪。",
       "cta" : "知道了"
     }
   },
@@ -8120,8 +8141,37 @@
       "balance" : "余额",
       "value" : "价值",
       "trend" : "1 天趋势",
-      "trendTooltip" : "24 小时余额变更"
+      "trendTooltip" : "您的余额在过去 24 小时内的变化。"
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "加密货币账户",
+    "tableActions" : {
+      "searchAddress" : "搜索地址",
+      "addAddress" : "添加地址"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "名称",
+        "address" : "地址",
+        "value" : "价值"
+      },
+      "editName" : "编辑名称",
+      "emptyState" : "暂无加密地址",
+      "emptySearchState" : "没有与您的搜索相符的账户。"
+    },
+    "editName" : {
+      "title" : "编辑地址名称",
+      "input" : "地址名称",
+      "suggestions" : {
+        "trading" : "{{asset}} 交易",
+        "savings" : "{{asset}} 存款"
+      },
+      "cta" : "确认"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "加密资产"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非同质化代币）",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "历史记录",
+      "tooltip" : "历史记录"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "出现临时网络问题。您的资产安全无虞。\n 受影响的账户列表：{{accounts}}点按重试",
-      "emptyErrorToolTip" : "出现临时网络问题。您的资产安全无虞。\n 点按重试",
-      "upToDate" : "已同步至最新状态",
-      "lastSync" : "上次同步：{{timeAgo}}点按刷新"
+      "errorToolTip" : "您的资产安全无虞。出现临时同步问题。\n受影响的账户：{{accounts}}。点按重试",
+      "emptyErrorToolTip" : "您的资产安全无虞。出现临时同步问题。\n点按重试",
+      "upToDate" : "资产组合已更新",
+      "lastSync" : "上次同步：{{timeAgo}}点按刷新",
+      "refreshing" : "刷新中..."
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "私密余额",
         "public" : "公开余额",
-        "lastUpdate" : "最新更新",
+        "lastUpdate" : "最新更新：{{label}}",
+        "recently" : "最近",
         "switchBalance" : "切换余额来源"
+      },
+      "recordPicker" : {
+        "label" : "可用记录",
+        "noRecords" : "没有可用记录",
+        "noRecordsAlert" : "您没有任何记录。进行自转账或接收私人资金即可开始使用。",
+        "alert" : "最大可支出数额取决于您所选记录的最大值。费用由 Provable 为 Ledger 用户承担。",
+        "recordsLimit" : "最多显示 {{max}} 条记录"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "公开",
         "private" : "私密"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "来自"
+      },
+      "summary" : {
+        "coveredByProvable" : "由 Provable 赞助",
+        "proofGenerationWarning" : "Aleo 交易需要生成证明。这可能需要一些时间。"
       }
     }
   },
@@ -8312,6 +8384,25 @@
     "cta" : {
       "continue" : "继续",
       "explore" : "探索我的全新资产组合"
+    }
+  },
+  "history" : {
+    "title" : "交易",
+    "pending" : "待处理交易",
+    "pending_other" : "待处理交易",
+    "columns" : {
+      "type" : "类型",
+      "address" : "地址",
+      "amount" : "数额",
+      "value" : "价值"
+    },
+    "address" : {
+      "from" : "从",
+      "to" : "到"
+    },
+    "emptyState" : {
+      "title" : "暂无交易",
+      "description" : "请稍后再来查看您的交易。"
     }
   }
 }
