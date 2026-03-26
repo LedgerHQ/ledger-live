@@ -266,7 +266,6 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 400,
     getChangesStats: featureFlagsNotEquals,
     lense: featureFlagsLense,
-    saveAtStart: true,
   });
 
   return null;

@@ -18,6 +18,7 @@ import {
   getCountervalues,
   getCryptoAssetsCacheState,
   getFeatureFlagsState,
+  saveFeatureFlagsState,
   getSettings,
   getBle,
   getPostOnboardingState,
@@ -180,23 +181,35 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (persistedFeatureFlags) {
         store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
         store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
-      } else if (
-        settingsData?.overriddenFeatureFlags &&
-        Object.keys(settingsData.overriddenFeatureFlags).length > 0
-      ) {
-        const filteredOverrides = Object.fromEntries(
-          Object.entries(settingsData.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
-        );
-        store.dispatch(setAllOverrides(filteredOverrides as Parameters<typeof setAllOverrides>[0]));
-        store.dispatch(
-          setBannerVisible(
-            settingsData.featureFlagsBannerVisible ??
-              ("featureFlagsButtonVisible" in settingsData &&
-              typeof settingsData["featureFlagsButtonVisible"] === "boolean"
-                ? settingsData["featureFlagsButtonVisible"]
-                : false),
-          ),
-        );
+      } else if (settingsData) {
+        // One-time migration from legacy settings fields. Write the new featureFlags key directly
+        // so DBSave does not need saveAtStart and avoids a spurious write on every subsequent boot.
+        const rawOverrides = settingsData.overriddenFeatureFlags;
+        const filteredOverrides: Parameters<typeof setAllOverrides>[0] = rawOverrides
+          ? Object.fromEntries(Object.entries(rawOverrides).filter(([, v]) => v !== undefined))
+          : {};
+        const hasLegacyOverrides = Object.keys(filteredOverrides).length > 0;
+        if (hasLegacyOverrides) {
+          store.dispatch(setAllOverrides(filteredOverrides));
+        }
+
+        const legacyBannerVisible =
+          settingsData.featureFlagsBannerVisible ??
+          ("featureFlagsButtonVisible" in settingsData &&
+          typeof settingsData["featureFlagsButtonVisible"] === "boolean"
+            ? settingsData["featureFlagsButtonVisible"]
+            : undefined);
+
+        if (typeof legacyBannerVisible === "boolean") {
+          store.dispatch(setBannerVisible(legacyBannerVisible));
+        }
+
+        if (hasLegacyOverrides || typeof legacyBannerVisible === "boolean") {
+          await saveFeatureFlagsState({
+            overrides: filteredOverrides,
+            bannerVisible: legacyBannerVisible ?? false,
+          });
+        }
       }
 
       setInitialCountervalues(initialCountervalues);
