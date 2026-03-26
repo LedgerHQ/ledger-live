@@ -823,10 +823,10 @@
     "title" : "บัตร",
     "imageAlt" : "ภาพบัตร",
     "spendYourCrypto" : "ใช้จ่ายคริปโตของคุณ",
-    "payDescription" : "ชำระทางออนไลน์หรือในร้านค้าด้วยบัตรคริปโต",
+    "payDescription" : "ชำระทั้งออนไลน์หรือในร้านค้าได้ด้วยบัตรคริปโต",
     "exploreCards" : "ดูบัตรต่าง ๆ",
     "iAlreadyHaveACard" : "ฉันมีบัตรอยู่แล้ว",
-    "unlockLiquidity" : "ใช้จ่ายผ่านคริปโตได้ง่ายขึ้น",
+    "unlockLiquidity" : "ใช้จ่ายคริปโตได้ในชีวิตจริง",
     "exploreCryptoCardsDescription" : "ดูบัตรคริปโตของเราแล้วเลือกใบที่เหมาะกับคุณที่สุด"
   },
   "lend" : {
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "การโอนเงินผ่านธนาคาร",
-          "description" : "รับสเตเบิลคอยน์ด้วยการส่งเงินสด"
+          "title" : "โดยการโอนเงินจากบัญชีธนาคาร",
+          "description" : "รับสเตเบิลคอยน์ได้ง่าย ๆ เพียงแค่ส่งเงินสด"
         },
         "fromCrypto" : {
-          "title" : "รับคริปโต"
+          "title" : "โดยการโอนเงินจาก Address ของคริปโต"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "การ์ดเนื้อหาสำหรับการแจ้งเตือน",
             "action" : "Action Content Card",
-            "portfolio" : "การ์ดเนื้อหาสำหรับพอร์ตโฟลิโอ",
+            "portfolio" : "พอร์ตโฟลิโอ",
+            "bottomPortfolio" : "พอร์ตโฟลิโอด้านล่าง",
             "title" : "ชื่อเรื่อง",
             "description" : "คำอธิบาย",
             "order" : "คำสั่ง",
@@ -5966,7 +5967,7 @@
         "auth" : {
           "title" : "การอนุญาต",
           "validator" : "อนุญาต",
-          "hint" : "รับเงินทุนเข้าบัญชีนี้โดยอัตโนมัติ",
+          "hint" : "Automatically accept incoming funds to this account.",
           "reonboard" : {
             "hint" : "ตรวจพบการเปลี่ยนแปลง Topology โปรดให้อนุญาตผู้ตรวจสอบ Ledger ดำเนินการรับเงินโดยอัตโนมัติต่อไป"
           },
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "ยังไม่มีเงินทุนเข้าบัญชี"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "จำนวนน้อยเกินไป โปรดส่งขั้นต่ำ {{minimumAmount}}"
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "บัญชีโทเคนที่เกี่ยวข้องนี้มีโทเคนอื่น"
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "ขออภัย เงินทุนไม่พอ"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "การจับคู่หมดอายุ",
+      "description" : "การเชื่อมต่อกับแอป Concordium ID หมดเวลาแล้ว โปรดลองอีกครั้ง"
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "เซสชันหมดอายุ",
+      "description" : "เซสชันแอป Concordium ID หมดอายุการใช้งานแล้ว กรุณาจับคู่อีกครั้ง"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "เงินทุนไม่เพียงพอ ยอดคงเหลือขั้นต่ำที่ต้องมีคือ 0.02 TON"
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "Select a valid private record for the amount."
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "Select a valid private record for the fee."
     },
     "BackupAppDataError" : {
       "title" : "เกิดข้อผิดพลาดระหว่างการสำรองข้อมูลแอป"
@@ -8065,14 +8083,17 @@
   "portfolio" : {
     "title" : "หน้าหลัก",
     "today" : "วันนี้",
+    "carousel" : {
+      "title" : "สำหรับคุณ"
+    },
     "addAccountCta" : "เพิ่มบัญชีคริปโต",
-    "noBalanceTitle" : "ปกป้องคริปโตของคุณ",
+    "noBalanceTitle" : "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ",
     "perpsEntry" : {
       "title" : "สัญญาซื้อขายล่วงหน้าคริปโตแบบไม่มีวันหมดอายุ (Perpetuals)",
       "description" : "เทรดแบบมีเลเวอเรจ",
       "cta" : "ผู้ให้บริการ"
     },
-    "noDeviceTitle" : "วอลเล็ตที่ปลอดภัยที่สุด"
+    "noDeviceTitle" : "คริปโตวอลเล็ตที่ปลอดภัยของคุณ"
   },
   "marketBanner" : {
     "title" : "สำรวจตลาด",
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "กลัวขั้นสุด",
       "fear" : "กลัว",
+      "cautious" : "ระวัง",
       "neutral" : "ปกติ",
-      "greed" : "โลภ",
-      "extremeGreed" : "โลภขั้นสุด"
+      "optimistic" : "มีความหวัง",
+      "greedy" : "โลภ"
     },
     "dialog" : {
       "title" : "ดัชนีวัดอารมณ์",
-      "content" : "ดัชนีวัดอารมณ์บ่งชี้ถึงสภาวะทางอารมณ์ของตลาด โดยมีช่วงตั้งแต่ 0 ถึง 100 โดยมูลค่าที่ต่ำกว่าแสดงถึงความกลัวขั้นสุด และมูลค่าที่สูงกว่าแสดงถึงความโลภขั้นสุด",
+      "content" : "แสดงความเชื่อมั่นโดยรวมของตลาดตั้งแต่ 0 ถึง 100 โดยอิงตามแนวโน้มและกิจกรรม ใช้เพื่อทำความเข้าใจพฤติกรรมของตลาด: ค่าที่ต่ำหมายถึงความกลัว และค่าที่สูงหมายถึงความโลภ",
       "cta" : "เข้าใจแล้ว"
     }
   },
@@ -8120,8 +8141,37 @@
       "balance" : "ยอดคงเหลือในบัญชี",
       "value" : "มูลค่า",
       "trend" : "แนวโน้ม 1 วัน",
-      "trendTooltip" : "การเปลี่ยนแปลงของยอดคงเหลือใน 24 ชม. ที่ผ่านมา"
+      "trendTooltip" : "การเปลี่ยนแปลงยอดคงเหลือในบัญชีของคุณในช่วง 24 ชั่วโมงที่ผ่านมา"
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "บัญชีคริปโต",
+    "tableActions" : {
+      "searchAddress" : "ค้นหาที่อยู่",
+      "addAddress" : "เพิ่มที่อยู่"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "ชื่อ",
+        "address" : "Address",
+        "value" : "มูลค่า"
+      },
+      "editName" : "แก้ไขชื่อ",
+      "emptyState" : "ตอนนี้ยังไม่มีที่อยู่คริปโต",
+      "emptySearchState" : "ไม่มีบัญชีที่ตรงกับการค้นหาของคุณ"
+    },
+    "editName" : {
+      "title" : "แก้ไขชื่อที่อยู่",
+      "input" : "ชื่อที่อยู่",
+      "suggestions" : {
+        "trading" : "{{asset}} สำหรับซื้อขาย",
+        "savings" : "{{asset}} สำหรับสะสม"
+      },
+      "cta" : "ยืนยัน"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "สินทรัพย์คริปโต"
   },
   "nftEntryPoint" : {
     "title" : "NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "ประวัติ",
+      "tooltip" : "ประวัติ"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "เกิดปัญหาเครือข่ายชั่วคราว สินทรัพย์ของคุณยังปลอดภัย\n บัญชีที่ได้รับผลกระทบ: {{accounts}} แตะเพื่อลองใหม่",
-      "emptyErrorToolTip" : "เกิดปัญหาเครือข่ายชั่วคราว สินทรัพย์ของคุณยังปลอดภัย\n แตะเพื่อลองใหม่",
-      "upToDate" : "เป็นปัจจุบันแล้ว",
-      "lastSync" : "ซิงค์ล่าสุด: {{timeAgo}} แตะเพื่อรีเฟรช"
+      "errorToolTip" : "สินทรัพย์ของคุณยังปลอดภัย นี่เป็นปัญหาการซิงค์ชั่วคราว\n บัญชีที่ได้รับผลกระทบ: {{accounts}} แตะเพื่อลองใหม่",
+      "emptyErrorToolTip" : "สินทรัพย์ของคุณยังปลอดภัย นี่เป็นปัญหาการซิงค์ชั่วคราว\n แตะเพื่อลองใหม่",
+      "upToDate" : "พอร์ตโฟลิโอเป็นปัจจุบันแล้ว",
+      "lastSync" : "ซิงค์ล่าสุด: {{timeAgo}} แตะเพื่อรีเฟรช",
+      "refreshing" : "กำลังรีเฟรช..."
     },
     "notificationIndicator" : {
       "tooltip" : "การแจ้งเตือน"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "Private Balance",
         "public" : "ยอดคงเหลือสาธารณะ",
-        "lastUpdate" : "อัปเดตล่าสุด",
+        "lastUpdate" : "อัปเดตล่าสุด: {{label}}",
+        "recently" : "ล่าสุด",
         "switchBalance" : "สลับที่มาของยอดบัญชี"
+      },
+      "recordPicker" : {
+        "label" : "ข้อมูลที่มี",
+        "noRecords" : "ไม่มีข้อมูล",
+        "noRecordsAlert" : "คุณไม่มีข้อมูลที่ใช้ได้ โอนเงินเข้าบัญชีตัวเอง หรือรับโอนสินทรัพย์แบบส่วนตัวเพื่อเริ่มต้น",
+        "alert" : "จำนวนเงินสูงสุดที่คุณสามารถใช้จ่ายได้ขึ้นอยู่กับมูลค่าสูงสุดของรายการที่คุณเลือก ผู้ใช้ Ledger นั้นจะได้รับการสนับสนุนค่าธรรมเนียมจาก Provable",
+        "recordsLimit" : "กำลังแสดงสูงสุด {{max}} ธุรกรรม"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "สาธารณะ",
         "private" : "ส่วนตัว"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "ส่งจาก"
+      },
+      "summary" : {
+        "coveredByProvable" : "สนับสนุนโดย Provable",
+        "proofGenerationWarning" : "ธุรกรรม Aleo จำเป็นต้องมีการสร้างหลักฐาน ซึ่งอาจใช้เวลาสักครู่"
       }
     }
   },
@@ -8312,6 +8384,25 @@
     "cta" : {
       "continue" : "ดำเนินการต่อ",
       "explore" : "สำรวจพอร์ตการลงทุนใหม่ของฉัน"
+    }
+  },
+  "history" : {
+    "title" : "ธุรกรรม",
+    "pending" : "Pending transaction",
+    "pending_other" : "Pending transactions",
+    "columns" : {
+      "type" : "ประเภท",
+      "address" : "Address",
+      "amount" : "จำนวน",
+      "value" : "มูลค่า"
+    },
+    "address" : {
+      "from" : "จาก",
+      "to" : "ไปยัง"
+    },
+    "emptyState" : {
+      "title" : "No transactions yet",
+      "description" : "Come back later to see your transactions."
     }
   }
 }
