@@ -953,6 +953,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Compte vide"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Montant trop bas. Le minimum est {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Ce compte de tokens associé contient un autre token"
     },
@@ -2747,7 +2750,15 @@
       "noAccounts" : "Commencez par\ndéposer des actifs"
     },
     "seeAllAssets" : "Voir tous les actifs",
+    "cryptoAddresses" : {
+      "title" : "Comptes crypto",
+      "count_one" : "{{count}} compte",
+      "count_other" : "{{count}} comptes"
+    },
     "seeAllAccounts" : "Voir tous les comptes",
+    "assetSection" : {
+      "connectionFailed" : "Échec de la connexion"
+    },
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
@@ -3563,8 +3574,10 @@
         "description" : "Les cartes locales apparaissent dans Portefeuille (et ailleurs), sans passer par Braze. Elles y restent jusqu’à ce que vous les fermiez ou les supprimiez.",
         "addSampleBanner" : "Ajouter une bannière test",
         "addSampleBannerDesc" : "Ajoutez une bannière hero test dans Portefeuille.",
-        "addSampleActionCarousel" : "Ajouter un carrousel test",
-        "addSampleActionCarouselDesc" : "Ajoutez un carrousel d’actions cards (Acheter, Échanger, Staker) dans Portefeuille.",
+        "addSampleActionCarouselIcon" : "Ajouter un carrousel (icône)",
+        "addSampleActionCarouselIconDesc" : "ContentBanner avec des icônes Spot : acheter, échanger, staker. Nécessite un indicateur de placement pour Braze.",
+        "addSampleActionCarouselImageBackground" : "Ajouter un carrousel (image)",
+        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner avec image_background : acheter, échanger, staker. Nécessite un indicateur de placement pour Braze.",
         "dismissAll" : "Fermer toutes les cartes locales",
         "dismissAllDesc" : "Supprimez toutes les content cards générées en local."
       }
@@ -4304,7 +4317,21 @@
         "maxFeeBelowPriorityFee" : "Les frais max. doivent être supérieurs ou égaux aux frais de priorité max."
       },
       "coinControl" : {
-        "title" : "Contrôle des coins"
+        "title" : "Contrôle des coins",
+        "strategy" : "La stratégie",
+        "learnMore" : "En savoir plus",
+        "coinToSend" : "Crypto à envoyer",
+        "changeToReturn" : "Crypto à rendre",
+        "enterAmount" : "Entrer le montant",
+        "amountToSendInCurrency" : "Montant à envoyer en {{ticker}}",
+        "amountInputLabel" : "Montant à envoyer",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Coins plus anciens en premier (FIFO)",
+            "OPTIMIZE_SIZE" : "Réduire les frais (optimiser la taille)",
+            "MERGE_OUTPUTS" : "Réduire les frais à venir (fusionner des coins)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées.",
@@ -7781,6 +7808,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Crypto",
+      "stablecoins" : "Stablecoins",
       "market" : "Marché"
     },
     "referralProgram" : "20 USD"
