@@ -31,6 +31,7 @@ import {
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
+  PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
@@ -127,6 +128,12 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         </Box>,
       );
     }
+
+    sections.push(
+      <Box key="perps" px={6}>
+        <PortfolioPerpsEntryPoint key="perpsEntryPoint" />
+      </Box>,
+    );
 
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
