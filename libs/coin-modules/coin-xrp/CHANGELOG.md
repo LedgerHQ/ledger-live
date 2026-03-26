@@ -1,5 +1,25 @@
 # @ledgerhq/coin-xrp
 
+## 7.20.0
+
+### Minor Changes
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+- [#15366](https://github.com/LedgerHQ/ledger-live/pull/15366) [`b78589c`](https://github.com/LedgerHQ/ledger-live/commit/b78589c7458ce37160264cd9f28f8d7abcca3942) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-xrp): extract Ledger Wallet related code
+
+- [#15373](https://github.com/LedgerHQ/ledger-live/pull/15373) [`4d94eef`](https://github.com/LedgerHQ/ledger-live/commit/4d94eef660be490c7cf1a8757c677bdba0105264) Thanks [@qperrot](https://github.com/qperrot)! - Fix XRP operation listing to include non-Payment transactions received by the queried account (for example `AccountDelete` with `Destination` set to the account). Add unit and integration test coverage to ensure these transactions are returned as `IN` operations with correct sender, recipient, and fee payer.
+
+- [#15387](https://github.com/LedgerHQ/ledger-live/pull/15387) [`5eeb5c0`](https://github.com/LedgerHQ/ledger-live/commit/5eeb5c0af77c9930de849fd23d4a724be7b3bee5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-xrp): remove unused `feeCustomUnit`
+
+### Patch Changes
+
+- Updated dependencies [[`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05), [`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb), [`01c81b1`](https://github.com/LedgerHQ/ledger-live/commit/01c81b112ab326eff436f0f3279a1225c073f897)]:
+  - @ledgerhq/coin-framework@7.0.0
+  - @ledgerhq/errors@6.32.0
+  - @ledgerhq/cryptoassets@13.43.0
+  - @ledgerhq/live-network@2.4.2
+
 ## 7.20.0-next.0
 
 ### Minor Changes

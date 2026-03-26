@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "1.0.1-next.0",
+  "version": "1.0.1",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
