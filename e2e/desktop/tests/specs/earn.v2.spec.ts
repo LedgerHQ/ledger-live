@@ -84,7 +84,7 @@ test.describe("Earn [v2]", () => {
 
   const coldStartCurrencies = [
     { account: Account.ETH_2, xrayTicket: "B2CQA-4640" },
-    { account: Account.ATOM_2, xrayTicket: "B2CQA-4640" },
+    { account: Account.ATOM_2, xrayTicket: "B2CQA-4719" },
   ];
 
   for (const { account, xrayTicket } of coldStartCurrencies) {
@@ -126,13 +126,13 @@ test.describe("Earn [v2]", () => {
     },
     {
       account: Account.NEAR_1,
-      hotStartXrayTicket: "B2CQA-4641",
-      positionXrayTicket: "B2CQA-4646",
+      hotStartXrayTicket: "B2CQA-4720",
+      positionXrayTicket: "B2CQA-4725",
     },
     {
       account: Account.ATOM_1,
-      hotStartXrayTicket: "B2CQA-4641",
-      positionXrayTicket: "B2CQA-4646",
+      hotStartXrayTicket: "B2CQA-4721",
+      positionXrayTicket: "B2CQA-4726",
     },
   ];
 
@@ -290,9 +290,9 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: ETH Provider Staking Flows ---
 
   const ethProviders = [
-    { provider: Provider.LIDO, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { provider: Provider.STADER_LABS, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
-    { provider: Provider.KILN, xrayTicket: undefined as string | undefined }, // replace with real xrayTicket
+    { provider: Provider.LIDO, xrayTicket: "B2CQA-4722" },
+    { provider: Provider.STADER_LABS, xrayTicket: "B2CQA-4723" },
+    { provider: Provider.KILN, xrayTicket: "B2CQA-4724" },
   ];
 
   for (const { provider, xrayTicket } of ethProviders) {
