@@ -516,15 +516,11 @@ async function getBlockReceipts(
   });
 }
 
-async function traceBlockViaGethDebug(
+async function traceBlockGeth(
   api: JsonRpcProvider,
-  blockHeight: number | "latest",
+  blockHeight: number,
 ): Promise<TraceBlockItem[]> {
-  const rpcBlockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  const blockNumberForItems =
-    blockHeight === "latest"
-      ? Number(BigInt((await api.send("eth_blockNumber", [])) as string))
-      : blockHeight;
+  const rpcBlockTag = ethers.toQuantity(blockHeight);
 
   let debugResults: unknown;
   try {
@@ -549,9 +545,33 @@ async function traceBlockViaGethDebug(
 
   if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
 
-  const items = gethCallTracerToTraceBlockItems(blockNumberForItems, debugResults);
+  const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
 
   return items;
+}
+
+async function traceBlockErigon(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  return await api.send("trace_block", [blockTag]);
+}
+
+function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+async function callTraceBlock(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  return await traceBlockErigon(api, blockHeight).catch(error => {
+    if (isUnsupportedRpcMethodError(error) && isNumber(blockHeight)) {
+      return traceBlockGeth(api, blockHeight);
+    }
+    throw error;
+  });
 }
 
 async function traceBlock(
@@ -559,17 +579,7 @@ async function traceBlock(
   _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
-  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  let traces: unknown;
-  try {
-    traces = await api.send("trace_block", [blockTag]);
-  } catch (error) {
-    if (isUnsupportedRpcMethodError(error)) {
-      return traceBlockViaGethDebug(api, blockHeight);
-    }
-    throw error;
-  }
-
+  const traces = await callTraceBlock(api, blockHeight);
   if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
 
   return traces.map((trace, index) => {
