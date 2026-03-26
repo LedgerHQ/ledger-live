@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
     "allowJs": true, // we might want to change to false
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
