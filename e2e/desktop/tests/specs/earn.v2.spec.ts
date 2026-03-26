@@ -117,15 +117,27 @@ test.describe("Earn [v2]", () => {
     });
   }
 
-  // Hot start: accounts with active stake positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
-  const hotStartCurrencies = [
-    { account: Account.SOL_2, xrayTicket: "B2CQA-4641" },
-    { account: Account.NEAR_1, xrayTicket: "B2CQA-4641" },
-    { account: Account.ATOM_1, xrayTicket: "B2CQA-4641" },
+  // Hot start & Position → Account: accounts with active stake positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
+  const activePositionCurrencies = [
+    {
+      account: Account.SOL_2,
+      hotStartXrayTicket: "B2CQA-4641",
+      positionXrayTicket: "B2CQA-4646",
+    },
+    {
+      account: Account.NEAR_1,
+      hotStartXrayTicket: "B2CQA-4641",
+      positionXrayTicket: "B2CQA-4646",
+    },
+    {
+      account: Account.ATOM_1,
+      hotStartXrayTicket: "B2CQA-4641",
+      positionXrayTicket: "B2CQA-4646",
+    },
   ];
 
-  for (const { account, xrayTicket } of hotStartCurrencies) {
-    test.describe(`Hot start - ${account.currency.ticker}`, () => {
+  for (const { account, hotStartXrayTicket, positionXrayTicket } of activePositionCurrencies) {
+    test.describe(`Hot start & Position - ${account.currency.ticker}`, () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
@@ -137,7 +149,7 @@ test.describe("Earn [v2]", () => {
         `Earn v2 hot start page shows ${account.currency.ticker} with rewards`,
         {
           tag: getTags(account),
-          ...xrayAnnotation(xrayTicket),
+          ...xrayAnnotation(hotStartXrayTicket),
         },
         async ({ app }) => {
           await registerXrayLink(test.info());
@@ -145,6 +157,21 @@ test.describe("Earn [v2]", () => {
           await app.earnDashboard.verifyHotStartPage();
           await app.earnDashboard.verifyPositionRowPresent(account.currency.ticker);
           await app.earnDashboard.verifyRewardsSummaryBoxes();
+        },
+      );
+
+      test(
+        `Earn v2 position row navigates to account page for ${account.currency.ticker}`,
+        {
+          tag: getTags(account),
+          ...xrayAnnotation(positionXrayTicket),
+        },
+        async ({ app }) => {
+          await registerXrayLink(test.info());
+          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnDashboard.verifyHotStartPage();
+          await app.earnDashboard.clickPositionRow(account.currency.ticker);
+          await app.account.waitForAccountHeaderName(account.accountName);
         },
       );
     });
@@ -196,92 +223,63 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: CTA Flows ---
 
-  test.describe("CTA → Native staking (SOL)", () => {
-    const account = Account.SOL_2;
-    const xrayTicket: string | undefined = "B2CQA-4643";
-
-    test.use({
-      userdata: "skip-onboarding",
-      speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
-      cliCommands: [liveDataWithAddressCommand(account)],
-    });
-
-    test(
-      "Earn v2 CTA opens native staking flow for SOL",
-      {
-        tag: getTags(account),
-        ...xrayAnnotation(xrayTicket),
-      },
-      async ({ app, page }) => {
-        await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
-        await selectAccountInModularSelector(app, page, account);
-        // SOL uses native staking: LLD opens the staking modal
+  const ctaFlows = [
+    {
+      name: "CTA → Native staking (SOL)",
+      account: Account.SOL_2 as Account | TokenAccount,
+      ticker: Account.SOL_2.currency.ticker,
+      xrayTicket: "B2CQA-4643" as string | undefined,
+      verify: async (app: any, page: any) => {
         await expect(page.getByTestId("modal-container")).toBeVisible();
       },
-    );
-  });
-
-  test.describe("CTA → Partner dapp (ETH)", () => {
-    const account = Account.ETH_1;
-    const xrayTicket: string | undefined = "B2CQA-4644";
-
-    test.use({
-      userdata: "skip-onboarding",
-      speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
-      cliCommands: [liveDataWithAddressCommand(account)],
-    });
-
-    test(
-      "Earn v2 CTA opens partner dapp flow for ETH",
-      {
-        tag: getTags(account),
-        ...xrayAnnotation(xrayTicket),
-      },
-      async ({ app, page }) => {
-        await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
-        await selectAccountInModularSelector(app, page, account);
-        // ETH uses partner dapps (Lido, Kiln, etc.): a provider selection should appear
-        // or the dapp opens directly depending on the configured provider
+    },
+    {
+      name: "CTA → Partner dapp (ETH)",
+      account: Account.ETH_1 as Account | TokenAccount,
+      ticker: Account.ETH_1.currency.ticker,
+      xrayTicket: "B2CQA-4644" as string | undefined,
+      verify: async (app: any, page: any) => {
         await expect(
           page.getByTestId("modal-container").or(page.locator("[data-test-id*='provider']")),
         ).toBeVisible();
       },
-    );
-  });
-
-  test.describe("CTA → Earn staking (USDT)", () => {
-    const account = TokenAccount.ETH_USDT_1;
-    const xrayTicket: string | undefined = "B2CQA-4645";
-
-    test.use({
-      userdata: "skip-onboarding",
-      speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
-      cliCommands: [liveDataWithAddressCommand(account)],
-    });
-
-    test(
-      "Earn v2 CTA opens earn deposit flow for USDT",
-      {
-        tag: getTags(account),
-        ...xrayAnnotation(xrayTicket),
-      },
-      async ({ app, page }) => {
-        await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.clickAssetEarnCta("USDT");
-        await selectAccountInModularSelector(app, page, account);
-        // USDT uses the earn native deposit flow
+    },
+    {
+      name: "CTA → Earn staking (USDT)",
+      account: TokenAccount.ETH_USDT_1 as Account | TokenAccount,
+      ticker: "USDT",
+      xrayTicket: "B2CQA-4645" as string | undefined,
+      verify: async (app: any) => {
         await app.earnDashboard.verifyDepositFlowVisible();
       },
-    );
-  });
+    },
+  ];
+
+  for (const { name, account, ticker, xrayTicket, verify } of ctaFlows) {
+    test.describe(name, () => {
+      test.use({
+        userdata: "skip-onboarding",
+        speculosApp: account.currency.speculosApp,
+        featureFlags: EARN_V2_DESKTOP_FLAGS,
+        cliCommands: [liveDataWithAddressCommand(account)],
+      });
+
+      test(
+        `Earn v2 ${name}`,
+        {
+          tag: getTags(account),
+          ...xrayAnnotation(xrayTicket),
+        },
+        async ({ app, page }) => {
+          await registerXrayLink(test.info());
+          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnDashboard.clickAssetEarnCta(ticker);
+          await selectAccountInModularSelector(app, page, account);
+          await verify(app, page);
+        },
+      );
+    });
+  }
 
   // --- Navigation: ETH Provider Staking Flows ---
 
@@ -324,39 +322,6 @@ test.describe("Earn [v2]", () => {
   }
 
   // --- Navigation: Position Row Flows ---
-
-  // Position → Account: native staking positions (provided by QA: SOL_2, NEAR_1, ATOM_1)
-  const positionAccountCurrencies = [
-    { account: Account.SOL_2, xrayTicket: "B2CQA-4646" },
-    { account: Account.NEAR_1, xrayTicket: "B2CQA-4646" },
-    { account: Account.ATOM_1, xrayTicket: "B2CQA-4646" },
-  ];
-
-  for (const { account, xrayTicket } of positionAccountCurrencies) {
-    test.describe(`Position → Account (${account.currency.ticker})`, () => {
-      test.use({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_DESKTOP_FLAGS,
-        cliCommands: [liveDataCommand(account)],
-      });
-
-      test(
-        `Earn v2 position row navigates to account page for ${account.currency.ticker}`,
-        {
-          tag: getTags(account),
-          ...xrayAnnotation(xrayTicket),
-        },
-        async ({ app }) => {
-          await registerXrayLink(test.info());
-          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-          await app.earnDashboard.verifyHotStartPage();
-          await app.earnDashboard.clickPositionRow(account.currency.ticker);
-          await app.account.waitForAccountHeaderName(account.accountName);
-        },
-      );
-    });
-  }
 
   test.describe("Position → Dapp (ETH)", () => {
     const account = Account.ETH_1;
