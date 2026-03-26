@@ -190,7 +190,6 @@ describe("PendingTransferProposals", () => {
           expect.objectContaining({
             currency: mockAccount.currency,
             device: mockDevice,
-            accounts: [],
             mainAccount: mockAccount,
             navigationSnapshot: expect.objectContaining({
               type: "transfer-proposal",
