@@ -38,6 +38,7 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { openEarnSimulator } from "LLD/features/EarnSimulator/earnSimulatorDialog";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -283,6 +284,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             entryPoint: "get-funds",
             source,
           });
+          return { success: true };
+        } else if (action === "simulate-investment") {
+          dispatch(openEarnSimulator());
           return { success: true };
         }
         throw new Error("Unknown navigation action");

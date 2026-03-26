@@ -8386,5 +8386,16 @@
       "continue": "Continue",
       "explore": "Explore my new portfolio"
     }
+  },
+  "earn": {
+    "simulator": {
+      "title": "Earn simulator",
+      "totalRewards": "Total rewards",
+      "rewards": "Rewards",
+      "deposits": "Deposits",
+      "initialDeposit": "Initial deposit",
+      "monthlyDeposit": "Monthly deposit",
+      "earnCurrency": "Earn {{currency}}"
+    }
   }
 }
