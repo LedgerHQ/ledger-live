@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -39,10 +39,15 @@
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./*.js": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },

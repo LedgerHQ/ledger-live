@@ -111,4 +111,15 @@ describe("getCertificate", () => {
       });
     },
   );
+
+  it("retrieves info for perps", async () => {
+    // When
+    const result = await getCertificate("europa", "perps_data", "latest", {
+      env: "test",
+      signatureKind: "test",
+    });
+
+    // Then
+    expect(result.descriptor).not.toBeUndefined();
+  });
 });

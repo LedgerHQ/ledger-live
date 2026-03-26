@@ -1,5 +1,5 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";

@@ -1,16 +1,15 @@
 import { AssertionError, fail } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { Transaction } from "ethers";
-import { getCoinConfig } from "../../config";
-import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
+import { GasEstimationError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import { Transaction as EvmTransaction } from "../../types";
 import { getGasOptions } from "../gasTracker/ledger";
-import * as LEDGER_API from "./ledger";
+import { createLedgerNodeApi } from "./ledger";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
@@ -31,97 +30,54 @@ const currency = {
   ethereumLikeInfo: {},
 } as CryptoCurrency;
 
-const wrongCurrency = {
-  ...getCryptoCurrencyById("ethereum"),
-  id: "wrong-currency" as CryptoCurrencyId,
-  ethereumLikeInfo: {},
-} as CryptoCurrency;
-
-jest.mock("../../config");
-const mockGetConfig = jest.mocked(getCoinConfig);
-
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
+const ledgerConfig = { type: "ledger" as const, explorerId: "eth" as const, retries: 2 };
+
 describe("EVM Family", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-
-    mockGetConfig.mockImplementation((currency: { id: string }): any => {
-      switch (currency.id) {
-        case "ethereum": {
-          return {
-            info: {
-              node: {
-                type: "ledger",
-                explorerId: "eth",
-              },
-            },
-          };
-        }
-        case "optimism": {
-          return {
-            info: {
-              node: {
-                type: "ledger",
-                explorerId: "optimism",
-              },
-            },
-          };
-        }
-        case "scroll": {
-          return {
-            info: {
-              node: {
-                type: "ledger",
-                explorerId: "scroll",
-              },
-            },
-          };
-        }
-        case "wrong-currency":
-          return {
-            info: {
-              node: {
-                type: "wrongtype",
-                uri: "eth",
-              },
-            },
-          };
-      }
-    });
-  });
-
-  describe("network/node/index.ts", () => {
-    describe("fetchWithRetries", () => {
+  describe("network/node/ledger.ts", () => {
+    describe("createLedgerNodeApi / retries", () => {
       it("should retry on fail", async () => {
-        let retries = 2;
+        const api = createLedgerNodeApi(ledgerConfig);
+        let attempts = 2;
         const spy = jest.spyOn(axios, "request").mockImplementation(async () => {
-          if (retries) {
-            --retries;
+          if (attempts) {
+            --attempts;
             throw new Error();
           }
-          return { data: true };
+          return {
+            data: {
+              hash: "0xabc",
+              block: { hash: "0xblock", height: 1, time: new Date().toISOString() },
+              nonce_value: 0,
+              gas_price: "0",
+              gas_used: "0",
+              value: "0",
+              status: 1,
+              from: "0xfrom",
+              to: "0xto",
+              transfer_events: [],
+            },
+          };
         });
-        const response = await LEDGER_API.fetchWithRetries({} as any, retries);
-
-        expect(response).toEqual(true);
-        // it should fail 2 times and succeed on the next try
+        const response = await api.getTransaction(currency, "0xHash");
+        expect(response.hash).toEqual("0xabc");
         expect(spy).toHaveBeenCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {
+        const api = createLedgerNodeApi({ ...ledgerConfig, retries: 2 });
         const SpyError = class SpyError extends Error {};
-
-        let retries = LEDGER_API.DEFAULT_RETRIES_API + 1;
+        let attempts = 3;
         jest.spyOn(axios, "request").mockImplementation(async () => {
-          if (retries) {
-            --retries;
+          if (attempts) {
+            --attempts;
             throw new SpyError();
           }
-          return { data: true };
+          return { data: {} };
         });
         try {
-          await LEDGER_API.fetchWithRetries({} as any);
+          await api.getTransaction(currency, "0xHash");
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -133,19 +89,8 @@ describe("EVM Family", () => {
     });
 
     describe("getTransaction", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getTransaction(wrongCurrency, "0xHash");
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: {
             hash: "0x8d5ef4d7673fbfa6a4755cdfdb913742c47c7fdac2d214046387bbcbf10957c9",
@@ -191,7 +136,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await LEDGER_API.getTransaction(currency, "0xHash");
+        const response = await api.getTransaction(currency, "0xHash");
         expect(response).toEqual({
           gasPrice: "83953611012",
           gasUsed: "21000",
@@ -228,74 +173,19 @@ describe("EVM Family", () => {
     });
 
     describe("getCoinBalance", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getCoinBalance(wrongCurrency, "0xAddress");
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: { balance: "6969" },
         }));
 
-        expect(await LEDGER_API.getCoinBalance(currency, "0xkvn")).toEqual(new BigNumber("6969"));
-      });
-    });
-
-    describe("getBatchTokenBalances", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getBatchTokenBalances([], { currency: wrongCurrency });
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
-      it("should return the expected payload", async () => {
-        jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
-          data: [
-            { address: "0xkvn", contract: "0xusdc", balance: "6969" },
-            { address: "0xkvn", contract: "0xsquid", balance: "420" },
-          ],
-        }));
-
-        expect(
-          await LEDGER_API.getBatchTokenBalances(
-            [
-              { address: "0xkvn", contract: "0xusdc" },
-              { address: "0xkvn", contract: "0xsquid" },
-            ],
-            { currency },
-          ),
-        ).toEqual([new BigNumber("6969"), new BigNumber("420")]);
+        expect(await api.getCoinBalance(currency, "0xkvn")).toEqual(new BigNumber("6969"));
       });
     });
 
     describe("getTokenBalance", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getTokenBalance(wrongCurrency, "0xAddress", "0xContract");
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: [
             { address: "0xkvn", contract: "0xusdc", balance: "6969" },
@@ -303,54 +193,32 @@ describe("EVM Family", () => {
           ],
         }));
 
-        expect(await LEDGER_API.getTokenBalance(currency, "0xusdc", "0xkvn")).toEqual(
+        expect(await api.getTokenBalance(currency, "0xusdc", "0xkvn")).toEqual(
           new BigNumber("6969"),
         );
       });
     });
 
     describe("getTransactionCount", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getTransactionCount(wrongCurrency, "0xAddress");
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: { address: "0xkvn", nonce: 123 },
         }));
 
-        expect(await LEDGER_API.getTransactionCount(currency, "0xkvn")).toEqual(123);
+        expect(await api.getTransactionCount(currency, "0xkvn")).toEqual(123);
       });
     });
 
     describe("getGasEstimation", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getGasEstimation({ ...account, currency: wrongCurrency }, {} as any);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should throw GasEstimationError on failure", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementation(async () => {
           throw new Error();
         });
 
         try {
-          await LEDGER_API.getGasEstimation(account, {} as any);
+          await api.getGasEstimation(account, {} as any);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -361,12 +229,13 @@ describe("EVM Family", () => {
       });
 
       it("should throw GasEstimationError if request throws ECONNABORTED", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest
           .spyOn(axios, "request")
           .mockImplementation(() => Promise.reject({ code: "ECONNABORTED" }));
 
         try {
-          await LEDGER_API.getGasEstimation(account, {} as any);
+          await api.getGasEstimation(account, {} as any);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
@@ -377,6 +246,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementation(async ({ data: transaction }) => {
           return (transaction as any)?.data?.length > 2
             ? {
@@ -409,27 +279,16 @@ describe("EVM Family", () => {
           data: Buffer.from("ffff", "hex"),
         };
 
-        expect(await LEDGER_API.getGasEstimation(account, transaction)).toEqual(new BigNumber(789));
-        expect(await LEDGER_API.getGasEstimation(account, transactionWithData)).toEqual(
+        expect(await api.getGasEstimation(account, transaction)).toEqual(new BigNumber(789));
+        expect(await api.getGasEstimation(account, transactionWithData)).toEqual(
           new BigNumber(1_000_000),
         );
       });
     });
 
     describe("getFeeData", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getFeeData(wrongCurrency, {} as any);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the fee data based on the transaction's feesStrategy", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         mockGetGasOptions.mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
@@ -451,15 +310,15 @@ describe("EVM Family", () => {
           },
         }));
 
-        const slowFeeData = await LEDGER_API.getFeeData(currency, {
+        const slowFeeData = await api.getFeeData(currency, {
           type: 2,
           feesStrategy: "slow",
         } as any);
-        const mediumFeeData = await LEDGER_API.getFeeData(currency, {
+        const mediumFeeData = await api.getFeeData(currency, {
           type: 2,
           feesStrategy: "medium",
         } as any);
-        const fastFeeData = await LEDGER_API.getFeeData(currency, {
+        const fastFeeData = await api.getFeeData(currency, {
           type: 2,
           feesStrategy: "fast",
         } as any);
@@ -485,6 +344,7 @@ describe("EVM Family", () => {
       });
 
       it("should return medium fee data if feesStrategy is not provided", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         mockGetGasOptions.mockImplementation(async () => ({
           slow: {
             maxFeePerGas: new BigNumber(1),
@@ -506,7 +366,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const feeData = await LEDGER_API.getFeeData(currency, { type: 2 } as any);
+        const feeData = await api.getFeeData(currency, { type: 2 } as any);
 
         expect(feeData).toEqual({
           maxFeePerGas: new BigNumber(5),
@@ -518,36 +378,26 @@ describe("EVM Family", () => {
     });
 
     describe("broadcastTransaction", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.broadcastTransaction(wrongCurrency, "0xSignedTx");
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: {
             result: "0xHash",
           },
         }));
 
-        expect(await LEDGER_API.broadcastTransaction(currency, "0xSigneTx")).toEqual("0xHash");
+        expect(await api.broadcastTransaction(currency, "0xSigneTx")).toEqual("0xHash");
       });
 
       it("should include mevProtected=true in the request parameters when specified", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         const mockRequest = jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: {
             result: "0xHash",
           },
         }));
 
-        await LEDGER_API.broadcastTransaction(currency, "0xSignedTx", { mevProtected: true });
+        await api.broadcastTransaction(currency, "0xSignedTx", { mevProtected: true });
 
         expect(mockRequest).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -561,13 +411,14 @@ describe("EVM Family", () => {
       });
 
       it("should include source headers when source is provided", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         const mockRequest = jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: {
             result: "0xHash",
           },
         }));
 
-        await LEDGER_API.broadcastTransaction(currency, "0xSignedTx", {
+        await api.broadcastTransaction(currency, "0xSignedTx", {
           mevProtected: false,
           source: { type: "live-app", name: "test-manifest-id" },
         });
@@ -585,13 +436,14 @@ describe("EVM Family", () => {
       });
 
       it("should not include source headers when source is not provided", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         const mockRequest = jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: {
             result: "0xHash",
           },
         }));
 
-        await LEDGER_API.broadcastTransaction(currency, "0xSignedTx", { mevProtected: false });
+        await api.broadcastTransaction(currency, "0xSignedTx", { mevProtected: false });
 
         expect(mockRequest).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -606,19 +458,8 @@ describe("EVM Family", () => {
     });
 
     describe("getBlockByHeight", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getBlockByHeight(wrongCurrency, "latest");
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementation(async ({ url }) => {
           if (url?.endsWith("current")) {
             return {
@@ -644,14 +485,14 @@ describe("EVM Family", () => {
           };
         });
 
-        expect(await LEDGER_API.getBlockByHeight(currency, 12)).toEqual({
+        expect(await api.getBlockByHeight(currency, 12)).toEqual({
           hash: "0xhash",
           height: 123,
           timestamp: Date.now(),
           parentHash: "0xparentHash",
           transactionHashes: ["0xTx1", "0xTx2"],
         });
-        expect(await LEDGER_API.getBlockByHeight(currency, "latest")).toEqual({
+        expect(await api.getBlockByHeight(currency, "latest")).toEqual({
           hash: "0xhashLatest",
           height: 456,
           timestamp: Date.now(),
@@ -662,25 +503,13 @@ describe("EVM Family", () => {
     });
 
     describe("getOptimismAdditionalFees", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getOptimismAdditionalFees(wrongCurrency, {} as any);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return 0 for an incompatible currency", async () => {
-        expect(await LEDGER_API.getOptimismAdditionalFees(currency, {} as any)).toEqual(
-          new BigNumber(0),
-        );
+        const api = createLedgerNodeApi(ledgerConfig);
+        expect(await api.getOptimismAdditionalFees(currency, {} as any)).toEqual(new BigNumber(0));
       });
 
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: [
             {
@@ -694,7 +523,6 @@ describe("EVM Family", () => {
           ],
         }));
 
-        // Build a serialized transaction, the exact same way we do in `estimateFees`
         const transaction = Transaction.from({
           to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           value: 1n,
@@ -711,7 +539,7 @@ describe("EVM Family", () => {
         });
 
         expect(
-          await LEDGER_API.getOptimismAdditionalFees(
+          await api.getOptimismAdditionalFees(
             { ...currency, id: "optimism" },
             transaction.serialized,
           ),
@@ -720,25 +548,13 @@ describe("EVM Family", () => {
     });
 
     describe("getScrollAdditionalFees", () => {
-      it("should throw with misconfigured currency", async () => {
-        try {
-          await LEDGER_API.getScrollAdditionalFees(wrongCurrency, {} as any);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(LedgerNodeUsedIncorrectly);
-        }
-      });
-
       it("should return 0 for an incompatible currency", async () => {
-        expect(await LEDGER_API.getScrollAdditionalFees(currency, {} as any)).toEqual(
-          new BigNumber(0),
-        );
+        const api = createLedgerNodeApi(ledgerConfig);
+        expect(await api.getScrollAdditionalFees(currency, {} as any)).toEqual(new BigNumber(0));
       });
 
       it("should return the expected payload", async () => {
+        const api = createLedgerNodeApi(ledgerConfig);
         jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
           data: [
             {
@@ -752,7 +568,6 @@ describe("EVM Family", () => {
           ],
         }));
 
-        // Build a serialized transaction, the exact same way we do in `estimateFees`
         const transaction = Transaction.from({
           to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
           value: 1n,
@@ -769,10 +584,7 @@ describe("EVM Family", () => {
         });
 
         expect(
-          await LEDGER_API.getScrollAdditionalFees(
-            { ...currency, id: "scroll" },
-            transaction.serialized,
-          ),
+          await api.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction.serialized),
         ).toEqual(new BigNumber("100000000"));
       });
     });

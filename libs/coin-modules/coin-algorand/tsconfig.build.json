@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "customConditions": []
+  },
   "exclude": [
     "src/api/subscan.ts",
     "src/api/websocket.ts",

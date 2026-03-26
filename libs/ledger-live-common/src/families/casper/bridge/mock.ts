@@ -20,7 +20,7 @@ import { getEstimatedFees } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/fee
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getAddress, isAddressValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/addresses";
 import { validateMemo } from "@ledgerhq/coin-casper/logic/validateMemo";
 import {

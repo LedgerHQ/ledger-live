@@ -57,6 +57,7 @@ declare global {
   var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
+  var getElementByIdWithDescendantTexts: typeof NativeElementHelpers.getElementByIdWithDescendantTexts;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
   var getElementsById: typeof NativeElementHelpers.getElementsById;
   var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;

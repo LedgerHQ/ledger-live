@@ -38,11 +38,11 @@ describe("FearAndGreed Integration", () => {
 
   describe("Mood levels", () => {
     it.each([
-      { value: 15, label: "Fear+", classification: "Extreme Fear" },
-      { value: 45, label: "Fear", classification: "Fear" },
+      { value: 15, label: "Fear", classification: "Extreme Fear" },
+      { value: 40, label: "Cautious", classification: "Fear" },
       { value: 50, label: "Neutral", classification: "Neutral" },
-      { value: 70, label: "Greed", classification: "Greed" },
-      { value: 90, label: "Greed+", classification: "Extreme Greed" },
+      { value: 70, label: "Optimistic", classification: "Greed" },
+      { value: 90, label: "Greedy", classification: "Extreme Greed" },
     ])("should render $label when value is $value", async ({ value, label, classification }) => {
       server.use(
         http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(value, classification))),
@@ -65,7 +65,9 @@ describe("FearAndGreed Integration", () => {
       await user.press(card);
 
       expect(
-        screen.getByText(/the mood index indicates the emotional state of the market/i),
+        screen.getByText(
+          /Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed./i,
+        ),
       ).toBeVisible();
     });
   });

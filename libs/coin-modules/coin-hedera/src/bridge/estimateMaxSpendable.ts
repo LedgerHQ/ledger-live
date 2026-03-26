@@ -1,5 +1,5 @@
-import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { HEDERA_OPERATION_TYPES } from "../constants";

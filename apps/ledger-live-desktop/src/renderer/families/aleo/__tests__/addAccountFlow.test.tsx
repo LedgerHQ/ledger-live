@@ -199,7 +199,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await userEvent.click(learnMoreLink);
 
     expect(openURL).toHaveBeenCalledTimes(1);
-    expect(openURL).toHaveBeenCalledWith(urls.aleo.viewKeyLearnMore);
+    expect(openURL).toHaveBeenCalledWith(urls.aleo.learnMore);
   });
 
   it("should find and add Aleo accounts", async () => {

@@ -1,5 +1,5 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
+import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   importAccountsReduce,

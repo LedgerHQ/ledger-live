@@ -1,8 +1,8 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import eip55 from "eip55";
 import { VechainSigner } from "../types";
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 
 const resolver = (signerContext: SignerContext<VechainSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

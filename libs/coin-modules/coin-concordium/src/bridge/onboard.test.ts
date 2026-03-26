@@ -1,4 +1,9 @@
-import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  ConcordiumSessionExpiredError,
+  LockedDeviceError,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
 import {
@@ -151,7 +156,7 @@ describe("onboard", () => {
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
-        "No active WalletConnect session",
+        ConcordiumSessionExpiredError,
       );
     });
 
@@ -287,7 +292,7 @@ describe("onboard", () => {
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
-      account.freshAddressPath = "m/1105'/0'/1'/2'/3'/4'";
+      account.freshAddressPath = "44'/919'/404'/404'/5'";
 
       // WHEN
       const observable = onboardAccount(currency.id, "test-device", account);
@@ -297,7 +302,7 @@ describe("onboard", () => {
       expect(getPublicKey).toHaveBeenCalledWith(
         signerContext,
         "test-device",
-        "m/1105'/0'/1'/2'/3'/4'",
+        "44'/919'/404'/404'/5'",
       );
     });
 

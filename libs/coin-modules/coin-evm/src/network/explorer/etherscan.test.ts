@@ -17,7 +17,7 @@ import {
   PagingState,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
-import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
@@ -1588,7 +1588,6 @@ describe("EVM Family", () => {
     it.each([
       ["ledger", { type: "ledger", explorerId: "eth" }],
       ["none", { type: "none" }],
-      ["teloscan", { type: "teloscan", uri: "https://teloscan.io" }],
     ] as const)("returns empty array for %s explorer type", async (_, explorer) => {
       mockGetConfig.mockImplementation((): any => ({
         info: {
@@ -1619,6 +1618,27 @@ describe("EVM Family", () => {
       const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
 
       expect(result).toEqual([]);
+    });
+
+    it("throws when API returns blockscout-style no internal transactions response", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "blockscout", uri: "https://blockscout.com/api" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: {
+          status: "0",
+          message: "No internal transactions found",
+          result: [],
+        },
+      });
+
+      await expect(
+        ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight),
+      ).rejects.toThrow(EtherscanAPIError);
     });
 
     it("loops over pagination until all internal txs are drained", async () => {

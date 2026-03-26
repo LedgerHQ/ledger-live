@@ -28,7 +28,7 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "node scripts/check-export-rules.mjs && eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"
   },
@@ -68,16 +68,19 @@
   },
   "exports": {
     "./ids": {
+      "@ledgerhq/source": "./src/ids/index.ts",
       "types": "./lib/ids/index.d.ts",
       "require": "./lib/ids/index.js",
       "default": "./lib-es/ids/index.js"
     },
     "./store": {
+      "@ledgerhq/source": "./src/store/index.ts",
       "types": "./lib/store/index.d.ts",
       "require": "./lib/store/index.js",
       "default": "./lib-es/store/index.js"
     },
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "types": "./lib/api/index.d.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"

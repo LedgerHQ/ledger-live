@@ -1,6 +1,6 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { InvalidAddress } from "@ledgerhq/errors";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";

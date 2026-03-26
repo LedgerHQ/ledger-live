@@ -122,7 +122,7 @@ describe("BalanceSelector", () => {
   });
 
   describe("when transaction is a self-transfer (convert_public_to_private)", () => {
-    it("should render public and private balance options as disabled", () => {
+    it("should render public and private balance options as enabled", () => {
       render(
         <BalanceSelector
           transaction={makeAleoTransaction({ mode: "convert_public_to_private" })}
@@ -135,7 +135,7 @@ describe("BalanceSelector", () => {
         .getAllByRole("button")
         .filter(btn => btn.hasAttribute("disabled"));
 
-      expect(disabledButtons.length).toBe(2);
+      expect(disabledButtons.length).toBe(0);
       expect(screen.getByText(/Public balance/)).toBeInTheDocument();
       expect(screen.getByText(/Private balance/)).toBeInTheDocument();
     });
@@ -156,7 +156,7 @@ describe("BalanceSelector", () => {
   });
 
   describe("when transaction is a self-transfer (convert_private_to_public)", () => {
-    it("should render public and private balance options as disabled", () => {
+    it("should render public and private balance options as enabled", () => {
       render(
         <BalanceSelector
           transaction={makeAleoTransaction({ mode: "convert_private_to_public" })}
@@ -169,7 +169,7 @@ describe("BalanceSelector", () => {
         .getAllByRole("button")
         .filter(btn => btn.hasAttribute("disabled"));
 
-      expect(disabledButtons.length).toBe(2);
+      expect(disabledButtons.length).toBe(0);
     });
 
     it("should call onChange with 'public' when the switch button is clicked", async () => {

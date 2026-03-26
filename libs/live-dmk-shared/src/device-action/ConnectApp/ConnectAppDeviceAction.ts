@@ -91,6 +91,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
         application: this.input.application,
         dependencies: this.input.dependencies,
         requireLatestFirmware: this.input.requireLatestFirmware,
+        allowMissingApplication: this.input.allowMissingApplication,
       },
     }).makeStateMachine(internalApi);
 
@@ -486,6 +487,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
               application: this.input.application,
               dependencies: this.input.dependencies,
               requireLatestFirmware: this.input.requireLatestFirmware,
+              allowMissingApplication: this.input.allowMissingApplication,
             }),
             onSnapshot: {
               actions: assign({

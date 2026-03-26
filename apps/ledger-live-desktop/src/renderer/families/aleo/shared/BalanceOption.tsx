@@ -25,7 +25,7 @@ const BalanceLabel = styled.p<TextState>`
 `;
 
 const BalanceValue = styled.p<TextState>`
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: ${p => {
     if (p.$disabled) return p.theme.colors.neutral.c80;
@@ -34,7 +34,7 @@ const BalanceValue = styled.p<TextState>`
 `;
 
 const LastUpdateText = styled.p`
-  font-size: 13px;
+  font-size: 12px;
   color: ${p => p.theme.colors.neutral.c70};
   margin-top: 4px;
 `;

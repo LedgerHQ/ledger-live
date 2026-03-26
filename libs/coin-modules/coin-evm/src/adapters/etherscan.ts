@@ -1,13 +1,16 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import type { BlockOperation, TransferBlockOperation } from "@ledgerhq/coin-framework/api/index";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
-} from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+} from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
+import {
+  encodeOperationId,
+  encodeSubOperationId,
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";

@@ -1,10 +1,16 @@
-import { Api, BufferTxData, MemoNotSupported, Operation } from "@ledgerhq/coin-framework/api/types";
+import {
+  AlpacaApi,
+  BufferTxData,
+  MemoNotSupported,
+  Operation,
+} from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Optimism Network", () => {
-  let module: Api<MemoNotSupported, BufferTxData>;
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();

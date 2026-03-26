@@ -4,9 +4,13 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { accountsWithUpToDateCheckSelector, hasNoAccountsSelector } from "~/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { useAccountsSyncStatus } from "@ledgerhq/live-common/bridge/react/index";
-import { useSyncLifecycle, type SyncPhase } from "./useSyncLifecycle";
-import { useManualRefresh } from "./useManualRefresh";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import {
+  useAccountsSyncStatus,
+  useSyncLifecycle,
+  useManualRefresh,
+  type SyncPhase,
+} from "@ledgerhq/live-common/bridge/react/index";
 import {
   selectLastUserSyncClickTimestamp,
   selectHasCompletedInitialSync,
@@ -65,15 +69,6 @@ export function usePortfolioBalance() {
   const { allAccounts, accountsWithError, areAllAccountsUpToDate } =
     useAccountsSyncStatus(accountsWithUpToDateCheck);
 
-  const maybeAccountNames = useBatchMaybeAccountName(accountsWithError);
-  const listOfErrorAccountNames = useMemo(
-    () =>
-      maybeAccountNames
-        .map((name, i) => name ?? getDefaultAccountName(accountsWithError[i]))
-        .join("/"),
-    [maybeAccountNames, accountsWithError],
-  );
-
   const hasEverBeenUpToDateRef = useRef(areAllAccountsUpToDate);
   useEffect(() => {
     if (areAllAccountsUpToDate) {
@@ -88,6 +83,22 @@ export function usePortfolioBalance() {
     hasAccountDegradation ||
     syncSources.hasWalletSyncError ||
     isOffline;
+
+  // When offline with no specific bridge errors, every account is impacted
+  const accountsImpactedByError =
+    isOffline && accountsWithError.length === 0 ? allAccounts : accountsWithError;
+  const errorCurrencyIds = useMemo(
+    () => accountsImpactedByError.map(a => getAccountCurrency(a).id),
+    [accountsImpactedByError],
+  );
+  const maybeAccountNames = useBatchMaybeAccountName(accountsImpactedByError);
+  const listOfErrorAccountNames = useMemo(
+    () =>
+      maybeAccountNames
+        .map((name, i) => name ?? getDefaultAccountName(accountsImpactedByError[i]))
+        .join("/"),
+    [maybeAccountNames, accountsImpactedByError],
+  );
 
   const syncPhase: SyncPhase = useSyncLifecycle(
     isBalanceLoading,
@@ -114,8 +125,11 @@ export function usePortfolioBalance() {
     syncPhase,
     isBalanceLoading,
     isColdStart,
+    isManualRefreshLoading,
     allAccounts,
     accountsWithError,
+    accountsImpactedByError,
+    errorCurrencyIds,
     listOfErrorAccountNames,
     areAllAccountsUpToDate,
     hasAccounts,

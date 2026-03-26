@@ -70,7 +70,7 @@ export async function listOperations(
   async function getAccountTransactions(
     address: string,
     opts: GetTransactionsOptions,
-  ): Promise<[boolean, GetTransactionsOptions, XrplOperation[], XrplOperation[]]> {
+  ): Promise<[boolean, GetTransactionsOptions, XrplOperation[], XrplOperation[], XrplOperation[]]> {
     const response = await getTransactions(address, opts);
     const txs = response.transactions;
     const responseMarker = response.marker;
@@ -79,6 +79,10 @@ export async function listOperations(
     // Non-Payment transactions sent by this account: the account paid fees but transferred no XRP.
     const feeOnlyTxs = txs.filter(
       tx => tx.tx_json.TransactionType !== "Payment" && tx.tx_json.Account === address,
+    );
+    // Non-Payment transactions received by this account: the account received XRP but did not pay fees.
+    const receivedTxs = txs.filter(
+      tx => tx.tx_json.TransactionType !== "Payment" && tx.tx_json.Destination === address,
     );
 
     const shortage = (opts.limit && txs.length < opts.limit) || false;
@@ -89,35 +93,36 @@ export async function listOperations(
       nextOpts.marker = responseMarker;
       if (nextOpts.limit) nextOpts.limit -= paymentTxs.length;
     }
-    return [shortage, nextOpts, paymentTxs, feeOnlyTxs];
+    return [shortage, nextOpts, paymentTxs, feeOnlyTxs, receivedTxs];
   }
 
-  let [txShortage, nextOptions, transactions, feeOnlyTxs] = await getAccountTransactions(
-    address,
-    options,
-  );
+  let [txShortage, nextOptions, transactions, feeOnlyTxs, receivedTxs] =
+    await getAccountTransactions(address, options);
   const isEnough = () => txShortage || (limit && transactions.length >= limit);
   // We need to call the node RPC multiple times to get the desired number of transactions by the limiter.
   while (nextOptions.limit && !isEnough()) {
-    const [newTxShortage, newNextOptions, newTransactions, newFeeOnlyTxs] =
+    const [newTxShortage, newNextOptions, newTransactions, newFeeOnlyTxs, newReceivedTxs] =
       await getAccountTransactions(address, nextOptions);
     txShortage = newTxShortage;
     nextOptions = newNextOptions;
     transactions = transactions.concat(newTransactions);
     feeOnlyTxs = feeOnlyTxs.concat(newFeeOnlyTxs);
+    receivedTxs = receivedTxs.concat(newReceivedTxs);
   }
 
   // the order is reversed so that the results are always sorted by newest tx first element of the list
   if (order === "asc") {
     transactions.reverse();
     feeOnlyTxs.reverse();
+    receivedTxs.reverse();
   }
 
   // the next index to start the pagination from
   const next = nextOptions.marker ? JSON.stringify(nextOptions.marker) : "";
   const paymentOps = transactions.map(convertToCoreOperation(address));
   const feeOps = feeOnlyTxs.map(convertFeeToCoreOperation);
-  return [[...paymentOps, ...feeOps], next];
+  const receivedOps = receivedTxs.map(convertToCoreOperation(address));
+  return [[...paymentOps, ...feeOps, ...receivedOps], next];
 }
 
 const convertToCoreOperation =

@@ -10,7 +10,14 @@ import { fromTransactionRaw } from "../transaction";
 import type { Transaction } from "../types";
 
 export const hedera: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["syncHash"],
+  FIXME_ignoreAccountFields: [
+    "syncHash",
+    // pending rewards change on a daily basis
+    "hederaResources.delegation.pendingReward",
+    // balance of ERC20 token account may change without any operation (e.g. Bonzo aUSDC)
+    "balance",
+    "spendableBalance",
+  ],
   scanAccounts: [
     {
       name: "hedera seed 1",

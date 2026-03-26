@@ -1,5 +1,5 @@
-import * as jsHelpers from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import * as jsHelpers from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -8,8 +8,8 @@ import { getAccountShape } from "./synchronisation";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
 jest.mock("./network/Cosmos");
-jest.mock("@ledgerhq/coin-framework/account");
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/account");
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 
 const infoMock = {
   currency: {

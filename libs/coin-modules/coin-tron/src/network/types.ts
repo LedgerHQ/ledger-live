@@ -135,6 +135,11 @@ export type TransactionInfoTronAPI = {
   };
 };
 
+export type TransactionInfoByBlockNumAPI = {
+  id: string;
+  fee: number;
+};
+
 export function isTransactionTronAPI(tx: unknown): tx is TransactionTronAPI {
   return (tx as TransactionTronAPI).txID !== undefined;
 }

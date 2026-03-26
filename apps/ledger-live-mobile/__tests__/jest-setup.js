@@ -90,10 +90,32 @@ jest.mock("react-native-haptic-feedback", () => ({
   },
 }));
 
+jest.mock("expo-haptics", () => ({
+  impactAsync: jest.fn(),
+  notificationAsync: jest.fn(),
+  selectionAsync: jest.fn(),
+  ImpactFeedbackStyle: {
+    Light: "light",
+    Medium: "medium",
+    Heavy: "heavy",
+    Soft: "soft",
+    Rigid: "rigid",
+  },
+  NotificationFeedbackType: {
+    Success: "success",
+    Warning: "warning",
+    Error: "error",
+  },
+}));
+
 jest.mock("react-native-launch-arguments", () => ({}));
 
 NativeModules.BluetoothHelperModule = {
   E_BLE_CANCELLED: "BLE_UNKNOWN_STATE",
+};
+
+NativeModules.ReduceTransparencyModule = {
+  getReduceTransparencyEnabled: () => Promise.resolve(false),
 };
 
 jest.mock("react-native-share", () => ({
@@ -320,8 +342,8 @@ console.log = (...args) => {
 };
 
 // Mock isCurrencySupported globally for tests
-jest.mock("@ledgerhq/coin-framework/currencies/support", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-framework/currencies/support");
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies/support");
   return {
     ...actual,
     isCurrencySupported: jest.fn(() => true),

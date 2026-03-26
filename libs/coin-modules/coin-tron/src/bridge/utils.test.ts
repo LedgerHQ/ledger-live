@@ -2,7 +2,7 @@ import { OperationType } from "@ledgerhq/types-live";
 import { TrongridTxInfo, TrongridTxType } from "../types";
 import { txInfoToOperation } from "./utils";
 
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   encodeOperationId: jest.fn(() => "encodedOpId"),
 }));
 

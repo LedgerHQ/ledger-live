@@ -1,5 +1,5 @@
-import * as serialization from "./serialization";
+import * as api from "./api";
 
 export default {
-  serialization,
+  api,
 };

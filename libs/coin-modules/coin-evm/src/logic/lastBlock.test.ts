@@ -1,35 +1,36 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmCoinConfig, setCoinConfig } from "../config";
-import ledgerNode from "../network/node/ledger";
-import { getBlockByHeight as externalGetBlockByHeight } from "../network/node/rpc.common";
+import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import { getNodeApi } from "../network/node";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import { lastBlock } from "./lastBlock";
 
-jest.mock("../network/node/rpc.common", () => ({
-  getBlockByHeight: jest.fn(),
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
 }));
 
-jest.mock("../network/node/ledger", () => ({
-  __esModule: true,
-  default: {
-    getBlockByHeight: jest.fn(),
-  },
-}));
-
-const mockExternalGetBlockByHeight = externalGetBlockByHeight as jest.Mock;
-const mockLedgerGetBlockByHeight = ledgerNode.getBlockByHeight as jest.Mock;
+const mockGetNodeApi = jest.mocked(getNodeApi);
 
 describe("lastBlock", () => {
+  const externalMocks = mockNodeApi();
+  const ledgerMocks = mockNodeApi();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
+      const config = getCoinConfig(currency);
+      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
+    });
   });
 
   it.each([
-    ["an external node", "external", mockExternalGetBlockByHeight],
-    ["a ledger node", "ledger", mockLedgerGetBlockByHeight],
-  ])("returns last block info using %s", async (_, type, mockGetBlockByHeight) => {
+    ["an external node", "external", externalMocks],
+    ["a ledger node", "ledger", ledgerMocks],
+  ])("returns last block info using %s", async (_, type, nodeApiMock) => {
     setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-    mockGetBlockByHeight.mockResolvedValue({
+    nodeApiMock.getBlockByHeight.mockResolvedValue({
       hash: "hash",
+      parentHash: "parentHash",
       height: 33,
       timestamp: new Date("2025-12-31").getTime(),
     });

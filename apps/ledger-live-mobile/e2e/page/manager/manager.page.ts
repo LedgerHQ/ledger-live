@@ -1,4 +1,4 @@
-import { expect, element, by } from "detox";
+import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ManagerPage {
@@ -59,11 +59,12 @@ export default class ManagerPage {
         : installedDesc.some(installedElement => installedElement.includes(app + " (outdated)"))
           ? "canUpdate"
           : "notInstalled";
+      const appRowId = this.appRow(app);
+      const appStateId = this.appState(app, status);
 
-      await scrollToId(this.appRow(app), this.deviceInfoScrollView);
-      await expect(
-        element(by.id(this.appRow(app)).withDescendant(by.id(this.appState(app, status)))),
-      ).toBeVisible();
+      await scrollToId(appRowId, this.deviceInfoScrollView);
+      await expect(getElementById(appRowId)).toBeVisible();
+      await expect(getElementById(appStateId)).toBeVisible();
     }
   }
 }

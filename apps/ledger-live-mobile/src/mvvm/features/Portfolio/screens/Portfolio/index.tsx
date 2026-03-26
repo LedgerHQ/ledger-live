@@ -19,19 +19,20 @@ import { getProgressViewOffset } from "../../utils/getProgressViewOffset";
 import usePortfolioViewModel from "./usePortfolioViewModel";
 import { useScrollToTop } from "./useScrollToTop";
 
-import { Box } from "@ledgerhq/native-ui";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
+import MarketBanner from "LLM/features/MarketBanner";
 
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
   PortfolioCarouselSection,
+  PortfolioCryptosSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
 } from "../../components";
-
+import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -49,11 +50,14 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
     shouldDisplayGraphRework,
     backgroundColor,
+    isSyncError,
     openAddModal,
     closeAddModal,
     handleHeightChange,
@@ -115,15 +119,31 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       />,
     );
 
-    sections.push(
-      <PortfolioAssetsSection
-        key="assets"
-        isAccountListUIEnabled={isAccountListUIEnabled}
-        hideEmptyTokenAccount={hideEmptyTokenAccount}
-        openAddModal={openAddModal}
-        onHeightChange={handleHeightChange}
-      />,
-    );
+    if (shouldDisplayMarketBanner) {
+      sections.push(
+        <Box key="marketBanner" px={6} pt={6}>
+          <MarketBanner />
+        </Box>,
+      );
+    }
+
+    if (shouldDisplayAssetSection) {
+      sections.push(
+        <Box key="cryptos" px={6}>
+          <PortfolioCryptosSection />
+        </Box>,
+      );
+    } else {
+      sections.push(
+        <PortfolioAssetsSection
+          key="assets"
+          isAccountListUIEnabled={isAccountListUIEnabled}
+          hideEmptyTokenAccount={hideEmptyTokenAccount}
+          openAddModal={openAddModal}
+          onHeightChange={handleHeightChange}
+        />,
+      );
+    }
 
     if (isAWalletCardDisplayed) {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
@@ -145,6 +165,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
   }, [
     showAssets,
     shouldDisplayGraphRework,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
     shouldDisplayQuickActionCtas,
@@ -171,6 +193,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
           useSafeArea={!shouldDisplayWallet40MainNav}
           overrideRefreshControlProps={{ progressViewOffset }}
+          isError={isSyncError}
         />
         <AddAccountDrawer
           isOpened={isAddModalOpened}

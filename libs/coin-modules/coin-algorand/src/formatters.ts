@@ -1,5 +1,5 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 import type { AlgorandAccount, AlgorandOperation } from "./types";

@@ -1,4 +1,4 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ONE_SUI } from "../constants";

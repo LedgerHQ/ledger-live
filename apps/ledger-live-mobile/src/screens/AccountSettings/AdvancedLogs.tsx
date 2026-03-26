@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import { View, StyleSheet } from "react-native";
 import { Alert } from "@ledgerhq/native-ui";
 import type { DerivationMode } from "@ledgerhq/types-live";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { getAccountCurrency, isAccount } from "@ledgerhq/live-common/account/index";
 import LText from "~/components/LText";
 import NavigationScrollView from "~/components/NavigationScrollView";

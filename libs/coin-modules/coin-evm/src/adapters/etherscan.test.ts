@@ -1,4 +1,4 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {

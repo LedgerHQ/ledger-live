@@ -1,6 +1,6 @@
 /* eslint-disable no-irregular-whitespace */
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { Address, Cell } from "@ton/core";
 import BigNumber from "bignumber.js";

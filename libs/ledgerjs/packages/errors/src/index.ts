@@ -62,6 +62,7 @@ export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecogniz
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
+export const InvalidTransactionError = createCustomErrorClass("InvalidTransactionError");
 export const InvalidNonce = createCustomErrorClass("InvalidNonce");
 export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
   "InvalidAddressBecauseDestinationIsAlsoSource",
@@ -205,6 +206,16 @@ export const ReplacementTransactionUnderpriced = createCustomErrorClass(
 // Bitcoin family
 export const OpReturnDataSizeLimit = createCustomErrorClass("OpReturnSizeLimit");
 export const DustLimit = createCustomErrorClass("DustLimit");
+
+// Concordium family
+export const ConcordiumInsufficientFunds = createCustomErrorClass("ConcordiumInsufficientFunds");
+export const ConcordiumMemoTooLong = createCustomErrorClass("ConcordiumMemoTooLong");
+export const ConcordiumPairingExpiredError = createCustomErrorClass(
+  "ConcordiumPairingExpiredError",
+);
+export const ConcordiumSessionExpiredError = createCustomErrorClass(
+  "ConcordiumSessionExpiredError",
+);
 
 // Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");

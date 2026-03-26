@@ -1,5 +1,3 @@
-import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
@@ -10,6 +8,8 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -60,6 +60,7 @@ import {
 } from "./network/chain/web3";
 import { deriveRawCommandDescriptor, toLiveTransaction } from "./rawTransaction";
 import { UserInputType } from "./signer";
+import { createStakeAccountSeed } from "./stakeAccountSeed";
 import type {
   CommandDescriptor,
   SolanaAccount,
@@ -646,7 +647,7 @@ async function deriveStakeCreateAccountCommandDescriptor(
 
   await validateValidatorCommon(delegate.voteAccAddress, errors, api);
 
-  const stakeAccAddressSeed = `stake:${Math.random().toString()}`;
+  const stakeAccAddressSeed = createStakeAccountSeed();
   const stakeAccAddress = await getStakeAccountAddressWithSeed({
     fromAddress: mainAccount.freshAddress,
     seed: stakeAccAddressSeed,
@@ -836,7 +837,7 @@ async function deriveStakeSplitCommandDescriptor(
 
   const commandFees = await getStakeAccountMinimumBalanceForRentExemption(api);
 
-  const splitStakeAccAddrSeed = `stake:${Math.random().toString()}`;
+  const splitStakeAccAddrSeed = createStakeAccountSeed();
   const splitStakeAccAddr = await getStakeAccountAddressWithSeed({
     fromAddress: mainAccount.freshAddress,
     seed: splitStakeAccAddrSeed,

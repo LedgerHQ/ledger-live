@@ -4,7 +4,7 @@ import formatters from "./formatters";
 import type { AlgorandAccount, AlgorandOperation } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   getAccountCurrency: jest.fn().mockReturnValue({
     units: [{ name: "Algo", code: "ALGO", magnitude: 6 }],
   }),

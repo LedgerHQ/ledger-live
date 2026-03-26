@@ -1,7 +1,7 @@
 import React, { memo, type ReactNode } from "react";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { FlexBoxProps } from "@ledgerhq/native-ui/lib/components/Layout/Flex/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import Animated from "react-native-reanimated";
 
 interface SectionContainerProps extends FlexBoxProps {

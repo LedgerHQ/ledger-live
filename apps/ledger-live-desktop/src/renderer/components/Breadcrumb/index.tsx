@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   flex: 1;
-  width: 0;
+  min-width: 0;
   flex-shrink: 1;
   text-overflow: ellipsis;
   break-word: break-all;

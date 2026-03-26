@@ -1,6 +1,9 @@
-import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import {
+  decodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { Address, BitReader, BitString, Cell, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";

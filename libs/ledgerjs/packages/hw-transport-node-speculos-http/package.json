@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-speculos-http",
-  "version": "6.35.0",
+  "version": "6.35.1",
   "description": "Ledger Hardware Wallet communication layer with speculos Nano simulator using the http api",
   "keywords": [
     "Ledger",
@@ -58,5 +58,22 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/SpeculosHttpTransport.ts",
+      "import": "./lib-es/SpeculosHttpTransport.js",
+      "require": "./lib/SpeculosHttpTransport.js",
+      "default": "./lib/SpeculosHttpTransport.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

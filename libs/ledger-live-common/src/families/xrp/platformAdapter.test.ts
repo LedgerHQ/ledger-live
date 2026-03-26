@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { FAMILIES, RippleTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
-import { Transaction } from "@ledgerhq/coin-xrp/types";
 import xrp from "./platformAdapter";
+import { Transaction } from "./types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for XRP platform tx", () => {

@@ -14,6 +14,7 @@ Follow all project rules in `.cursor/rules/`. Pay special attention to:
 - `ldls-native.mdc` — Lumen UI for mobile (`src/mvvm/`)
 - `coin-families-contract.mdc` — No coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
 - `jest-mocks.mdc` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
+- `team-split-convention.mdc` — Multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
 
 ## Review Scope
 
@@ -34,6 +35,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - Missing integration tests for new features under `src/mvvm/` (required by `react-mvvm.mdc`)
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead (see `coin-families-contract.mdc`)
+- **Cross-team files:** When a PR touches a file or directory that is owned by or relevant to multiple teams, suggest refactoring to the **team-split convention** (splitting reduces friction between teams in CODEOWNERS by giving each team clear ownership of its files): split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. For the full convention and examples, see `.cursor/rules/team-split-convention.mdc` (CODEOWNERS defines the allowed `team-*` slugs).
 
 ## Confidence Scoring
 

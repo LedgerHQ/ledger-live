@@ -2,8 +2,8 @@ import {
   SpeculosButton,
   deviceActionFlow,
   formatDeviceAmount,
-} from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { DeviceAction, State } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { TOKEN_TRANSFER_MAX_FEE } from "./constants";
 import type { Transaction } from "./types";
 import { BotScenario } from "./utils";

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-webhid",
-  "version": "6.33.0",
+  "version": "6.34.0",
   "description": "Ledger Hardware Wallet WebHID implementation of the communication layer",
   "keywords": [
     "Ledger",
@@ -57,5 +57,22 @@
     "coverage": "jest --coverage",
     "unimported": "unimported"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/TransportWebHID.ts",
+      "import": "./lib-es/TransportWebHID.js",
+      "require": "./lib/TransportWebHID.js",
+      "default": "./lib/TransportWebHID.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
+  }
 }

@@ -1,4 +1,4 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";

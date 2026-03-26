@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { urls } from "~/config/urls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";

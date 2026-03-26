@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import aleoCoinConfig from "../config";
 import { estimateFees } from "../logic";
 import { calculateAmount } from "../logic/utils";

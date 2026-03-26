@@ -161,7 +161,7 @@ const SwapOperationDetails = ({
       url = "https://track.swapkit.dev/tx/$hash".replace("$hash", operation.hash);
       break;
     case "swapsxyz":
-      url = "https://scan.swaps.xyz/transactions/$hash".replace("$hash", operation.hash);
+      url = `https://scan.swaps.xyz/transactions/${swapId}`;
       break;
     case "okx":
       if (mainCurrency?.id) {

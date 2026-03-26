@@ -1,5 +1,5 @@
-import { bip32asBuffer } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { bip32asBuffer } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getAddressFormatDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 const addressFormatMap = {

@@ -3,7 +3,7 @@ import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import SelectFeesStrategy from "./SelectFeesStrategy";
-import { Transaction } from "@ledgerhq/coin-evm/lib/types/transaction";
+import { Transaction } from "@ledgerhq/coin-evm/types/transaction";
 import { AccountLike } from "@ledgerhq/types-live";
 
 jest.mock("@react-navigation/native", () => ({

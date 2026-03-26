@@ -1,6 +1,6 @@
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";

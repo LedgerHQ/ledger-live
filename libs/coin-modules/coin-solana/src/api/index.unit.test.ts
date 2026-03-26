@@ -1,10 +1,22 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { AlpacaApi, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  Balance,
+  CraftedTransaction,
+  Operation,
+  Page,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
+import { craftRawTransaction } from "../logic/craftRawTransaction";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
 import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 import { ChainAPI } from "../network";
 import { createApi } from ".";
 
@@ -24,6 +36,26 @@ jest.mock("../logic/lastBlock", () => ({
 
 jest.mock("../logic/combine", () => ({
   combine: jest.fn(),
+}));
+
+jest.mock("../logic/craftTransaction", () => ({
+  craftTransaction: jest.fn(),
+}));
+
+jest.mock("../logic/craftRawTransaction", () => ({
+  craftRawTransaction: jest.fn(),
+}));
+
+jest.mock("../logic/estimateFees", () => ({
+  estimateFees: jest.fn(),
+}));
+
+jest.mock("../logic/getBalance", () => ({
+  getBalance: jest.fn(),
+}));
+
+jest.mock("../logic/listOperations", () => ({
+  listOperations: jest.fn(),
 }));
 
 describe("createApi", () => {
@@ -79,24 +111,119 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly to broadcast", async () => {
+    jest.mocked(broadcast).mockResolvedValueOnce("txHash");
+
     const api: AlpacaApi = createApi(mockConfig, "solana");
-    await api.broadcast("transaction");
+    const result = await api.broadcast("transaction");
 
     expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
+    expect(result).toBe("txHash");
+  });
+
+  it("should pass parameters correctly to getBalance and return its result", async () => {
+    const mockBalances: Balance[] = [{ value: BigInt(1000), asset: { type: "native" as const } }];
+    jest.mocked(getBalance).mockResolvedValueOnce(mockBalances);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const result = await api.getBalance("address");
+
+    expect(getBalance).toHaveBeenCalledWith(mockChainAPI, "address", {
+      token2022Enabled: false,
+    });
+    expect(result).toEqual(mockBalances);
   });
 
   it("should pass parameters correctly to lastBlock", async () => {
+    const mockedDate = new Date();
+    jest.mocked(lastBlock).mockResolvedValueOnce({ height: 100, hash: "hash", time: mockedDate });
     const api: AlpacaApi = createApi(mockConfig, "solana");
-    await api.lastBlock();
+    const result = await api.lastBlock();
 
     expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
+    expect(result).toEqual({ height: 100, hash: "hash", time: mockedDate });
   });
 
   it("should pass parameters correctly to combine", async () => {
+    jest.mocked(combine).mockReturnValueOnce("txHash");
     const api: AlpacaApi = createApi(mockConfig, "solana");
-    await api.combine("transaction", "signature");
+    const result = await api.combine("transaction", "signature");
 
     expect(combine).toHaveBeenCalledWith("transaction", "signature");
+    expect(result).toBe("txHash");
+  });
+
+  it("should pass parameters correctly to craftTransaction", async () => {
+    const mockResult: CraftedTransaction = {
+      transaction: "base64tx",
+      details: {
+        estimatedFee: "5000",
+        lastValidBlockHeight: 100,
+        recentBlockhash: "recentBlockhash",
+      },
+    };
+    jest.mocked(craftTransaction).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const intent: TransactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(1000000),
+      asset: { type: "native" },
+    };
+    const customFees = { value: 10000n };
+    const result = await api.craftTransaction(intent, customFees);
+
+    expect(craftTransaction).toHaveBeenCalledWith(mockChainAPI, intent, customFees);
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should pass parameters correctly to craftRawTransaction", async () => {
+    const mockResult: CraftedTransaction = {
+      transaction: "base64tx",
+      details: { recentBlockhash: "recentBlockhash" },
+    };
+    jest.mocked(craftRawTransaction).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const result = await api.craftRawTransaction("tx", "sender", "pubkey", 42n);
+
+    expect(craftRawTransaction).toHaveBeenCalledWith("tx", "sender");
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should pass parameters correctly to estimateFees", async () => {
+    const mockResult = { value: 5000n };
+    jest.mocked(estimateFees).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const intent: TransactionIntent = {
+      intentType: "transaction",
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(1000000),
+      asset: { type: "native" },
+    };
+    const result = await api.estimateFees(intent);
+
+    expect(estimateFees).toHaveBeenCalledWith(mockChainAPI, intent, undefined);
+    expect(result).toEqual(mockResult);
+  });
+
+  it("should pass parameters correctly to listOperations", async () => {
+    const mockResult: Page<Operation> = { items: [], next: "next" };
+    jest.mocked(listOperations).mockResolvedValueOnce(mockResult);
+
+    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const result = await api.listOperations("address", { minHeight: 14, order: "asc" });
+
+    expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {
+      minHeight: 14,
+      order: "asc",
+    });
+    expect(result).toEqual(mockResult);
   });
 
   it("should throw for unsupported methods", () => {
@@ -111,20 +238,11 @@ describe("createApi", () => {
       asset: { type: "native" },
     };
 
-    expect(() => api.craftTransaction(intent)).toThrow("craftTransaction is not supported");
-    expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 42n)).toThrow(
-      "craftRawTransaction is not supported",
-    );
-    expect(() => api.estimateFees(intent)).toThrow("estimateFees is not supported");
-    expect(() => api.getBalance("address")).toThrow("getBalance is not supported");
     expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
     expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
     expect(() => api.getValidators()).toThrow("getValidators is not supported");
-    expect(() => api.listOperations("address", { minHeight: 14, order: "asc" })).toThrow(
-      "listOperations is not supported",
-    );
     expect(() => api.validateIntent(intent, [])).toThrow("validateIntent is not supported");
     expect(() => api.getNextSequence("address")).toThrow("getNextSequence is not supported");
     expect(() => api.validateAddress("address", {})).toThrow("validateAddress is not supported");

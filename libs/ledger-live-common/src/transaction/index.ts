@@ -1,4 +1,4 @@
-export * from "@ledgerhq/coin-framework/transaction/common";
+export * from "@ledgerhq/ledger-wallet-framework/transaction/common";
 export * from "./signOperation";
 export * from "./deviceTransactionConfig";
 import type {

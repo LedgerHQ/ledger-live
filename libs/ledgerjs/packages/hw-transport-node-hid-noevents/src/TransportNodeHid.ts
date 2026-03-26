@@ -107,7 +107,7 @@ export default class TransportNodeHidNoEvents extends Transport {
     }
   };
 
-  writeHID = (content: Buffer): Promise<void> => {
+  writeHID = (content: Uint8Array): Promise<void> => {
     const data = [0x00];
 
     for (let i = 0; i < content.length; i++) {

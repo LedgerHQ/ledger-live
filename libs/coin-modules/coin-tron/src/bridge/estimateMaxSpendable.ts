@@ -1,4 +1,4 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Transaction, TronAccount } from "../types";

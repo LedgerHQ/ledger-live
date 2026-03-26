@@ -1,4 +1,4 @@
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
 import invariant from "invariant";

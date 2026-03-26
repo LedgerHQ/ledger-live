@@ -12,6 +12,7 @@ const baseProps: PortfolioBalanceSectionViewProps = {
   countervalueChange: { percentage: 1.5, value: 150 },
   unit: usd.units[0],
   isBalanceAvailable: true,
+  isAnalyticPillVisible: true,
   isLoading: false,
   shouldDisplayBalanceRefreshRework: false,
   onToggleDiscreetMode: jest.fn(),
@@ -47,23 +48,40 @@ describe("PortfolioBalanceSectionView", () => {
 
   describe("loading states", () => {
     it("should use loading testID and hide analytics pill when balance is not available", () => {
-      renderView({ isBalanceAvailable: false });
+      renderView({ isBalanceAvailable: false, isAnalyticPillVisible: false });
 
       expect(screen.getByTestId("portfolio-balance-loading")).toBeVisible();
+      expect(screen.getByTestId("portfolio-placeholder-balance")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-balance-amount")).toBeNull();
       expect(screen.queryByTestId("portfolio-balance-normal")).toBeNull();
       expect(screen.queryByTestId("portfolio-balance-analytics-pill")).toBeNull();
     });
 
-    it("should show shimmer when balance refresh rework is enabled and loading", () => {
+    it("should show skeleton when balance refresh rework is enabled and loading", () => {
       renderView({
         isBalanceAvailable: false,
+        isAnalyticPillVisible: true,
         isLoading: true,
         shouldDisplayBalanceRefreshRework: true,
       });
 
       expect(screen.getByTestId("portfolio-balance-loading")).toBeVisible();
+      expect(screen.getByTestId("portfolio-placeholder-balance")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-balance-amount")).toBeNull();
+      expect(screen.getByTestId("portfolio-balance-analytics-pill")).toBeVisible();
+    });
+
+    it("should show shimmer on amount when balance is available and loading with rework enabled", () => {
+      renderView({
+        isBalanceAvailable: true,
+        isLoading: true,
+        shouldDisplayBalanceRefreshRework: true,
+      });
+
+      expect(screen.getByTestId("portfolio-balance-normal")).toBeVisible();
       expect(screen.getByTestId("portfolio-balance-amount")).toBeVisible();
-      expect(screen.queryByTestId("portfolio-balance-analytics-pill")).toBeNull();
+      expect(screen.queryByTestId("portfolio-placeholder-balance")).toBeNull();
+      expect(screen.getByTestId("portfolio-balance-analytics-pill")).toBeVisible();
     });
   });
 });

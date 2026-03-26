@@ -13,11 +13,12 @@ import {
   XStateDeviceAction,
 } from "@ledgerhq/device-management-kit";
 
-import type {
-  PrepareConnectManagerDAOutput,
-  PrepareConnectManagerDAInput,
-  PrepareConnectManagerDAError,
-  PrepareConnectManagerDAIntermediateValue,
+import {
+  type PrepareConnectManagerDAOutput,
+  type PrepareConnectManagerDAInput,
+  type PrepareConnectManagerDAError,
+  type PrepareConnectManagerDAIntermediateValue,
+  prepareConnectManagerDAStateStep,
 } from "./types";
 
 export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
@@ -72,6 +73,7 @@ export class PrepareConnectManagerDeviceAction extends XStateDeviceAction<
             unlockTimeout: _.input.unlockTimeout,
           },
           intermediateValue: {
+            step: prepareConnectManagerDAStateStep.DEVICE_READY,
             requiredUserInteraction: UserInteractionRequired.None,
           },
           _internalState: undefined,

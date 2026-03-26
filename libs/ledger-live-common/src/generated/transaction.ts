@@ -1,3 +1,4 @@
+import xrp from "../families/xrp/transaction";
 import aleo from "@ledgerhq/coin-aleo/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import aptos from "@ledgerhq/coin-aptos/transaction";
@@ -24,11 +25,11 @@ import tezos from "@ledgerhq/coin-tezos/transaction";
 import ton from "@ledgerhq/coin-ton/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import vechain from "@ledgerhq/coin-vechain/transaction";
-import xrp from "@ledgerhq/coin-xrp/transaction";
 import sui from "@ledgerhq/coin-sui/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
 
 export default {
+  xrp,
   aleo,
   algorand,
   aptos,
@@ -55,7 +56,6 @@ export default {
   ton,
   tron,
   vechain,
-  xrp,
   sui,
   mina,
 };

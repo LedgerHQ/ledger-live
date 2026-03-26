@@ -3,8 +3,8 @@ import {
   updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { CoinConfig } from "@ledgerhq/coin-framework/config";
 import type {
   AccountBridge,
@@ -12,10 +12,10 @@ import type {
   CurrencyBridge,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { Observable } from "rxjs";
-import aleoCoinConfig, { type AleoCoinConfig } from "../config";
-import type { AleoAccount, Transaction as AleoTransaction } from "../types/index";
+import aleoCoinConfig from "../config";
+import type { AleoAccount, AleoCoinConfig, Transaction as AleoTransaction } from "../types";
 import type { AleoSigner } from "../types/signer";
 import resolver from "../signer/getAddress";
 import { validateAddress } from "../logic/validateAddress";

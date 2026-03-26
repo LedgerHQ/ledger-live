@@ -1,5 +1,5 @@
 import React from "react";
-import { render, LONG_TIMEOUT, waitForElementToBeRemoved } from "@tests/test-renderer";
+import { render, LONG_TIMEOUT, waitForElementToBeRemoved, waitFor } from "@tests/test-renderer";
 import { TestPages } from "./shared";
 import { TestIdPrefix, testIds } from "../TestScreens";
 
@@ -206,11 +206,15 @@ describe("QueuedDrawer", () => {
     helpers.expectAllDrawersClosed();
     await helpers.openDrawer1();
     await user.press(elements.closeButton());
-    expect(queryByText(drawer1Text)).toBeNull();
+    await waitFor(() => {
+      expect(queryByText(drawer1Text)).toBeNull();
+    });
     await helpers.openDrawer1();
     await user.press(elements.inDrawer1Drawer2Button());
     await user.press(elements.closeButton());
-    expect(queryByText(drawer1Text)).toBeNull();
+    await waitFor(() => {
+      expect(queryByText(drawer1Text)).toBeNull();
+    });
     expect(await findByText(drawer2Text)).toBeVisible();
   });
 
@@ -258,7 +262,9 @@ describe("QueuedDrawer", () => {
     await helpers.waitForMainScreenDisappear();
     expect(await findByText(drawerOnScreen1Text)).toBeVisible();
     await user.press(elements.closeButton());
-    helpers.expectDrawersClosed(drawerOnScreen1Text, drawer1Text, drawer2Text, drawer4Text);
+    await waitFor(() => {
+      helpers.expectDrawersClosed(drawerOnScreen1Text, drawer1Text, drawer2Text, drawer4Text);
+    });
     await user.press(elements.navigateBackButton());
     await helpers.expectBackOnMainScreen();
     await helpers.openDrawer1();

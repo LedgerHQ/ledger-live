@@ -1,4 +1,3 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -6,6 +5,7 @@ import {
   RecipientRequired,
   AmountRequired,
 } from "@ledgerhq/errors";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";

@@ -176,6 +176,21 @@
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
       "description" : ""
     },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Solde insuffisant"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Le mémo dépasse la longueur maximale",
+      "description" : "Votre mémo contient {{memoLength}} bytes, mais la longueur maximale autorisée est de {{maxLength}} bytes. Veuillez réduire la taille du mémo."
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "Appairage expiré",
+      "description" : "La connexion à l’app Concordium ID a expiré. Veuillez réessayer."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "La session a expiré",
+      "description" : "La session de l’app Concordium ID n’est plus active. Veuillez la réappairer."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Une erreur est survenue (Erreur #1).",
       "description" : "Enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
@@ -2728,8 +2743,8 @@
     },
     "walletBalance" : "Solde total",
     "balance" : {
-      "noSigner" : "Le wallet le plus\nsécurisé",
-      "noAccounts" : "Sécurisez\nvos cryptos"
+      "noSigner" : "Votre wallet\ncrypto sécurisé",
+      "noAccounts" : "Commencez par\ndéposer des actifs"
     },
     "seeAllAssets" : "Voir tous les actifs",
     "seeAllAccounts" : "Voir tous les comptes",
@@ -2760,10 +2775,10 @@
       "buyLedger" : "Acheter un Ledger",
       "transferDrawer" : {
         "title" : "Transférer",
-        "receiveCrypto" : "Recevoir des cryptos",
+        "receiveCrypto" : "Recevoir via une adresse crypto",
         "sendCrypto" : "Envoyer des cryptos",
-        "bankTransfer" : "Virement bancaire",
-        "bankTransferDescription" : "Recevez des stablecoins par virement bancaire."
+        "bankTransfer" : "Recevoir par virement bancaire",
+        "bankTransferDescription" : "Recevez des stablecoins en réalisant un virement depuis votre banque."
       }
     },
     "recoverBanner" : {
@@ -2779,8 +2794,8 @@
     },
     "refreshStatus" : {
       "refreshing" : "Actualisation...",
-      "upToDate" : "Tout est à jour",
-      "syncError" : "Échec de synchronisation pour certains comptes"
+      "upToDate" : "Portefeuille à jour",
+      "syncError" : "Certaines données de compte n’ont pas pu être chargées"
     }
   },
   "addAccountsModal" : {
@@ -8297,8 +8312,8 @@
     }
   },
   "marketBanner" : {
-    "title" : "Explorer le marché",
-    "viewAll" : "Afficher tout",
+    "title" : "Explorez le marché",
+    "viewAll" : "Voir tout",
     "viewAllAccessibilityHint" : "Appuyez deux fois pour afficher tous les actifs",
     "connectionFailed" : "Échec de la connexion",
     "errorAccessibilityHint" : "Impossible de charger les données du marché. Veuillez réessayer plus tard.",
@@ -8579,11 +8594,24 @@
         "title" : "Avertissement",
         "description" : "Concordium requiert une vérification externe de votre identité. Veuillez lire ces avertissements de sécurité :",
         "list" : {
-          "1" : "L’adresse n’est pas vérifiée : votre appareil Ledger ne peut pas vérifier les adresses bénéficiaires sur Concordium. Vérifiez-les manuellement avant de recevoir des actifs.",
-          "2" : "L’application Concordium ID utilise une phrase de récupération différente : vous devrez créer une NOUVELLE phrase de 24 mots dans l’application. N’utilisez JAMAIS votre phrase Ledger.",
-          "3" : "Vous quitterez automatiquement Ledger Wallet : votre identité sera vérifiée dans l’application externe de Concordium. Cette étape est requise par la blockchain Concordium.",
-          "4" : "La signature des transactions reste sécurisée : seul votre appareil Ledger peut signer des transactions et créer des comptes."
+          "1" : {
+            "title" : "Pas de vérification d’adresse",
+            "description" : "Votre appareil Ledger ne peut pas vérifier les adresses bénéficiaires sur Concordium. Vérifiez-les manuellement avant de recevoir des actifs."
+          },
+          "2" : {
+            "title" : "L’application Concordium ID utilise 24 mots distincts",
+            "description" : "Vous devrez créer une NOUVELLE phrase de 24 mots dans l’application de Concordium. N’utilisez JAMAIS votre phrase Ledger."
+          },
+          "3" : {
+            "title" : "Vous quitterez Ledger Wallet",
+            "description" : "Votre identité sera vérifiée dans l’application externe de Concordium. Cette étape est requise par la blockchain Concordium."
+          },
+          "4" : {
+            "title" : "La signature des transactions reste sécurisée",
+            "description" : "Seul votre appareil Ledger peut signer des transactions et créer des comptes."
+          }
         },
+        "guide" : "Veuillez lire le guide avant de continuer :",
         "allow" : "Accepter"
       },
       "pair" : {
@@ -8591,26 +8619,33 @@
         "connecting" : "Connexion en cours...",
         "scanQRCodeOrDownload" : "Scannez le code QR avec un autre appareil, ou téléchargez l’application Concordium ID pour continuer.",
         "openIdApp" : "Ouvrir l’app Concordium ID",
-        "success" : "Appairage avec l’app Concordium ID réussi.",
-        "error" : "Échec de l’appairage avec l’app Concordium ID."
+        "success" : "Connexion à l’app Concordium ID établie.",
+        "continue" : "Continuer",
+        "error" : "Échec de la connexion à l’app Concordium ID. Veuillez réessayer."
       },
       "create" : {
-        "title" : "Créer un compte",
+        "title" : "Ajouter un compte Concordium",
         "prepare" : {
-          "title" : "Pour créer un compte, saisissez le code ci-dessous dans l’application Concordium ID."
-        }
+          "title" : "Pour créer un compte, saisissez le code ci-dessous dans l’application Concordium ID.",
+          "resendButton" : "Renvoyer la confirmation",
+          "resendDescription" : "Renvoi disponible dans {{count}}s"
+        },
+        "submitting" : "Création de votre compte...",
+        "keepDeviceNearby" : "Approuvez la transaction sur votre appareil Ledger. Gardez-le à portée de main.",
+        "success" : "Votre compte Concordium a été créé.",
+        "error" : "Échec de la création de compte. Veuillez réessayer."
       }
     }
   },
   "fearAndGreed" : {
     "title" : "Sentiment du marché",
-    "description" : "Cet indice reflète l’état émotionnel du marché. Il varie de 0 à 100 : une valeur basse indique une peur extrême (pessimisme), et une valeur élevée correspond à une cupidité extrême (optimisme).",
+    "description" : "Cet indicateur représente le sentiment général du marché de 0 à 100, sur la base des tendances et de l’activité. Utilisez-le pour prendre le pouls du marché : des valeurs basses indiquent la peur, des valeurs élevées signalent la cupidité.",
     "levels" : {
-      "extremeFear" : "Peur+",
       "fear" : "Peur",
+      "cautious" : "Prudence",
       "neutral" : "Neutre",
-      "greed" : "Cupidité",
-      "extremeGreed" : "Cupidité+"
+      "optimistic" : "Optimisme",
+      "greedy" : "Cupidité"
     },
     "tileTitle" : "Sentiment"
   },
@@ -8658,6 +8693,7 @@
     "home" : "Accueil",
     "swap" : "Swap",
     "earn" : "Gagner",
+    "yield" : "Rendement",
     "card" : "Carte"
   },
   "syncIndicator" : {
@@ -8667,8 +8703,8 @@
       "default" : "Synchroniser"
     },
     "bottomSheet" : {
-      "title" : "Échec de la synchronisation de certains comptes",
-      "description" : "Le réseau a rencontré un problème temporaire. Vos actifs sont en sécurité. Liste des comptes touchés : {{accounts}}.",
+      "title" : "Certaines données de compte n’ont pas pu être chargées",
+      "description" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\nComptes concernés : {{accounts}}",
       "close" : "Fermer"
     }
   },

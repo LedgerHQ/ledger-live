@@ -6,7 +6,7 @@ import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
 import LText from "~/components/LText";
 import RecipientInput from "~/components/RecipientInput";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 
 type Props = {
   onChangeText: (value: string) => void;

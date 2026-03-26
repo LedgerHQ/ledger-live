@@ -5,7 +5,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import invariant from "invariant";
 
 import { TrackScreen, track } from "~/analytics";

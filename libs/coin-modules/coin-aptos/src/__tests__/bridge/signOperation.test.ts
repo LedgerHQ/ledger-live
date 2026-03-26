@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";

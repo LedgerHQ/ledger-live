@@ -1,9 +1,9 @@
 import invariant from "invariant";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync/index";
-import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
-import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
+import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
+import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
+import walletsync from "@ledgerhq/live-wallet/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
 import { runCliCommand, runCliCommandWithRetry } from "./runCli";
 import {

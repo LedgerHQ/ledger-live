@@ -1,18 +1,17 @@
-import { getSyncHash as baseGetSyncHash } from "@ledgerhq/coin-framework/account/sync";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
+import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/sync";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 
-jest.mock("./network/node/rpc.common", () => ({
-  ...jest.requireActual("./network/node/rpc.common"),
-  getOptimismAdditionalFees: jest.fn(),
-  getScrollAdditionalFees: jest.fn(),
+jest.mock("./network/node/index", () => ({
+  ...jest.requireActual("./network/node/index"),
+  getNodeApi: jest.fn((...args: unknown[]) =>
+    jest.requireActual("./network/node/index").getNodeApi(...args),
+  ),
 }));
 
-const mockGetOptimismAdditionalFees = getOptimismAdditionalFees as jest.Mock;
-const mockGetScrollAdditionalFees = getScrollAdditionalFees as jest.Mock;
 import { getCoinConfig } from "./config";
 import { makeAccount, makeOperation, makeTokenAccount } from "./fixtures/common.fixtures";
 import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";
@@ -24,9 +23,13 @@ import {
   getSyncHash,
   mergeSubAccounts,
 } from "./logic";
-import { getOptimismAdditionalFees, getScrollAdditionalFees } from "./network/node/rpc.common";
+import { getNodeApi } from "./network/node/index";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "./utils";
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
+const mockGetOptimismAdditionalFees = jest.fn();
+const mockGetScrollAdditionalFees = jest.fn();
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
@@ -36,7 +39,7 @@ const WETH_TOKEN = wethTokenData as unknown as TokenCurrency;
 jest.mock("./config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
-jest.mock("@ledgerhq/coin-framework/account/sync");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/sync");
 const mockedBaseGetSyncHash = jest.mocked(baseGetSyncHash);
 
 mockGetConfig.mockImplementation((currency: { id: string }): any => {
@@ -210,6 +213,13 @@ describe("EVM Family", () => {
 
       beforeEach(() => {
         jest.clearAllMocks();
+        mockGetNodeApi.mockImplementation(
+          () =>
+            ({
+              getOptimismAdditionalFees: mockGetOptimismAdditionalFees,
+              getScrollAdditionalFees: mockGetScrollAdditionalFees,
+            }) as any,
+        );
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {

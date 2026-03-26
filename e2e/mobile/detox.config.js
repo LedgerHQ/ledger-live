@@ -23,7 +23,7 @@ module.exports = {
   testRunner: {
     $0: "jest",
     args: {
-      config: "jest.config.ts",
+      config: "jest.config.js",
     },
     jest: {
       setupTimeout: 500000,

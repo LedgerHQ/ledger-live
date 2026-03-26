@@ -1,0 +1,155 @@
+import { renderHook, waitFor, act } from "@tests/test-renderer";
+import { Subject } from "rxjs";
+import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { ConcordiumSessionExpiredError, LockedDeviceError } from "@ledgerhq/errors";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { CreateStatus, getConfirmationCode, useOnboarding } from "../hooks/useOnboarding";
+
+let onboardSubject: Subject<unknown>;
+
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  getCurrencyBridge: () => ({
+    onboardAccount: () => onboardSubject.asObservable(),
+    pairWalletConnect: jest.fn(),
+  }),
+}));
+
+const currency = getCryptoCurrencyById("concordium");
+const creatableAccount = genAccount("concordium-1", { currency });
+const sessionTopic = "ABCD1234longersessiontopic";
+
+describe("getConfirmationCode", () => {
+  it("should return first 4 chars uppercased", () => {
+    expect(getConfirmationCode("abcd1234")).toBe("ABCD");
+  });
+
+  it("should handle already uppercase input", () => {
+    expect(getConfirmationCode("WXYZ9999")).toBe("WXYZ");
+  });
+});
+
+describe("useOnboarding", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    onboardSubject = new Subject();
+  });
+
+  it("should start in PREPARING state with confirmation code", () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    expect(result.current.createStatus).toBe(CreateStatus.PREPARING);
+    expect(result.current.confirmationCode).toBe("ABCD");
+  });
+
+  it("should transition to SUBMITTING on SIGN status", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.next({ status: AccountOnboardStatus.SIGN });
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.SUBMITTING);
+    });
+  });
+
+  it("should transition to SUBMITTING on SUBMIT status", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.next({ status: AccountOnboardStatus.SUBMIT });
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.SUBMITTING);
+    });
+  });
+
+  it("should transition to SUCCESS and expose completed account when result arrives", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.next({ account: creatableAccount });
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.SUCCESS);
+      expect(result.current.completedAccount).toBe(creatableAccount);
+    });
+  });
+
+  it("should call onSessionExpired on expired error", async () => {
+    const onSessionExpired = jest.fn();
+    renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.error(new ConcordiumSessionExpiredError());
+    });
+
+    await waitFor(() => {
+      expect(onSessionExpired).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("should transition to DEVICE_LOCKED on LockedDeviceError", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.error(new LockedDeviceError());
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.DEVICE_LOCKED);
+      expect(onSessionExpired).not.toHaveBeenCalled();
+    });
+  });
+
+  it("should transition to ERROR on non-expiry error", async () => {
+    const onSessionExpired = jest.fn();
+    const { result } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    act(() => {
+      onboardSubject.error(new Error("network failure"));
+    });
+
+    await waitFor(() => {
+      expect(result.current.createStatus).toBe(CreateStatus.ERROR);
+      expect(onSessionExpired).not.toHaveBeenCalled();
+    });
+  });
+
+  it("should unsubscribe on unmount", () => {
+    const onSessionExpired = jest.fn();
+    const { unmount } = renderHook(() =>
+      useOnboarding(currency, "device-id", creatableAccount, sessionTopic, onSessionExpired),
+    );
+
+    expect(onboardSubject.observed).toBe(true);
+
+    act(() => {
+      unmount();
+    });
+
+    expect(onboardSubject.observed).toBe(false);
+  });
+});

@@ -15,7 +15,7 @@ import { PLATFORM_FAMILIES_ENUM, PlatformTransaction } from "@ledgerhq/live-comm
 import prepareSignTransaction from "./liveSDKLogic";
 
 // Fake the support of the test currency
-jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => ({
   isCurrencySupported: () => true,
 }));
 

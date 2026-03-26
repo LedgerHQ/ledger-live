@@ -50,6 +50,7 @@ import {
   deserializeSignature,
   serializeTransaction,
   deserializeTransaction,
+  extractInitiator,
   extractFeesPayer,
   getOperationValue,
   getMemoFromBase64,
@@ -302,11 +303,56 @@ describe("logic utils", () => {
     });
   });
 
-  describe("extractFeesPayer", () => {
+  describe("extractInitiator", () => {
     it("returns Hedera account ID from valid transaction_id", () => {
-      expect(extractFeesPayer("0.0.12345-1625097600-000")).toBe("0.0.12345");
+      expect(extractInitiator("0.0.12345-1625097600-000")).toBe("0.0.12345");
     });
-    // other kind of check are unnecessary, we trust the mirror node data
+  });
+
+  describe("extractFeesPayer", () => {
+    it("returns transfer account that paid exactly charged fee", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.10067173-1761755118-730000493",
+          charged_tx_fee: 40743,
+          transfers: [
+            { account: "0.0.23", amount: -40743 },
+            { account: "0.0.801", amount: 40743 },
+          ],
+        }),
+      ).toBe("0.0.23");
+    });
+
+    it("falls back to transaction initiator when that account is debited", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.8835924-1760510872-123456789",
+          charged_tx_fee: 1176695,
+          transfers: [
+            { account: "0.0.15", amount: 55631 },
+            { account: "0.0.801", amount: 1121064 },
+            { account: "0.0.8835924", amount: -3176695 },
+            { account: "0.0.9124531", amount: 1000000 },
+            { account: "0.0.9169746", amount: 1000000 },
+          ],
+        }),
+      ).toBe("0.0.8835924");
+    });
+
+    it("falls back to transaction initiator when no other transfer can be used to identify the fee payer", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.10067173-1761755118-029000738",
+          charged_tx_fee: 42782,
+          transfers: [
+            { account: "0.0.34", amount: 2039 },
+            { account: "0.0.801", amount: 40743 },
+            { account: "0.0.10067174", amount: -50000 },
+            { account: "0.0.10067175", amount: 7218 },
+          ],
+        }),
+      ).toBe("0.0.10067173");
+    });
   });
 
   describe("getTransactionExplorer", () => {
@@ -1480,6 +1526,74 @@ describe("logic utils", () => {
       });
 
       expect(timestamps).toEqual([mirrorTx1.consensus_timestamp]);
+    });
+
+    it("should filter out child mirror transactions (parent_consensus_timestamp !== null) when they have a corresponding ERC20 transfer", () => {
+      const rootTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: "hash-root",
+        name: "CONTRACTCALL",
+        nonce: 0,
+        parent_consensus_timestamp: null,
+      });
+      const childTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+        transaction_hash: "hash-child-1",
+        name: "CONTRACTCALL",
+        nonce: 1,
+        parent_consensus_timestamp: rootTx.consensus_timestamp,
+      });
+
+      const erc20ForChild1 = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: childTx1.consensus_timestamp,
+          transaction_hash: childTx1.transaction_hash,
+        }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [rootTx, childTx1],
+        enrichedERC20Transfers: [erc20ForChild1],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.merged).toEqual([
+        { type: "erc20", data: erc20ForChild1 },
+        { type: "mirror", data: rootTx },
+      ]);
+    });
+
+    it("should keep child mirror transactions when there is no corresponding ERC20 transfer", () => {
+      const rootTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: "hash-root",
+        name: "CONTRACTCALL",
+        parent_consensus_timestamp: null,
+      });
+      const childTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+        transaction_hash: "hash-child",
+        name: "CRYPTOTRANSFER",
+        parent_consensus_timestamp: rootTx.consensus_timestamp,
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [rootTx, childTx],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      // without ERC20 data, child transactions are not filtered
+      expect(result.merged).toEqual([
+        { type: "mirror", data: childTx },
+        { type: "mirror", data: rootTx },
+      ]);
     });
 
     it("should not trigger delay detection for non-CONTRACTCALL transactions", () => {

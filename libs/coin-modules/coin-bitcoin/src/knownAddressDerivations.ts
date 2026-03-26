@@ -1,4 +1,4 @@
-import { pathStringToArray } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { extractHashFromScriptPubKey } from "@ledgerhq/psbtv2";
 import type { Account as WalletAccount } from "./wallet-btc";
 

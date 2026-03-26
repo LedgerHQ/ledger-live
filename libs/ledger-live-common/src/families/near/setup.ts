@@ -7,8 +7,8 @@ import { NearAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-near
 import Near from "@ledgerhq/hw-app-near";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
-import { NearSigner } from "@ledgerhq/coin-near/lib/signer";
-import { NearCoinConfig } from "@ledgerhq/coin-near/lib/config";
+import { NearSigner } from "@ledgerhq/coin-near/signer";
+import { NearCoinConfig } from "@ledgerhq/coin-near/config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";

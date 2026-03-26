@@ -7,7 +7,6 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-  Api,
   AssetInfo,
   Page,
   Stake,
@@ -15,7 +14,9 @@ import type {
   Cursor,
   CraftedTransaction,
   Validator,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import network from "@ledgerhq/live-network";
 
 function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
@@ -213,4 +214,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
     validateAddress(_address: string): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
-  }) satisfies Api<any>;
+  }) satisfies AlpacaApi<any> & BridgeApi;

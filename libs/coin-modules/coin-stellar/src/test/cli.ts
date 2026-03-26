@@ -1,4 +1,4 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import type { Transaction } from "../types";

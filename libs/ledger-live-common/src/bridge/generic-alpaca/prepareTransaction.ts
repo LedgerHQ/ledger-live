@@ -3,7 +3,7 @@ import { getAlpacaApi } from "./alpaca";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { GenericTransaction } from "./types";
 

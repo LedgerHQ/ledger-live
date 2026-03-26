@@ -71,7 +71,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       }
 
       await app.mainNavigation.openSettings();
-      await app.settings.openManageLedgerSync();
+      await app.settings.enableWalletSync();
       await app.ledgerSync.expectSyncAccountsButtonExist();
 
       await app.ledgerSync.syncAccounts();

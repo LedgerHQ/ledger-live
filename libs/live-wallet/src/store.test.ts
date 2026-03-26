@@ -1,4 +1,4 @@
-import { toAccountRaw } from "@ledgerhq/coin-framework/serialization";
+import { toAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization";
 import {
   accountNameSelector,
   accountNameWithDefaultSelector,
@@ -17,7 +17,7 @@ import {
   walletSyncUpdate,
   walletSyncStateSelector,
 } from "./store";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 

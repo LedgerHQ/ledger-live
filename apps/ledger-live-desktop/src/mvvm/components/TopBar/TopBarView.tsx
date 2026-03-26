@@ -10,7 +10,7 @@ import Updater from "LLD/features/Updater";
 
 const TopBarView = ({ slots, shouldShowFirmwareUpdateBanner }: TopBarViewProps) => {
   return (
-    <NavBar className="items-center px-32 pt-32 pb-24">
+    <NavBar className="w-full min-w-0 items-center px-32 pt-32 pb-24">
       <NavBarTitle className="h-48">
         <Breadcrumb />
       </NavBarTitle>

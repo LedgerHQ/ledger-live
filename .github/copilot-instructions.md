@@ -1,5 +1,5 @@
 <!-- Source: .cursor/agents/code-reviewer.md -->
-<!-- Last synced: 2026-02-13 -->
+<!-- Last synced: 2026-03-13 -->
 
 # Ledger Live Monorepo
 
@@ -55,6 +55,13 @@ If in doubt, the lockfile diff should be explainable by the set of `package.json
 - **Mobile:** Same idea: optional slots or generated maps (e.g. `NoAssociatedAccounts`), implemented per family; generic code looks up by contract, not by `family === "…"`.
 
 When a flow needs new coin-specific behaviour, the fix is to **extend the contract** (new optional slot) and implement it in the family folder, not to add branching in generic code. This keeps the codebase ready for modularisation and lazy loading. See `.cursor/rules/coin-families-contract.mdc` for the full rule and the Scan Device “no associated accounts” example.
+
+## Cross-team files (team-split convention)
+
+When a PR touches a file or directory that is **owned by or relevant to multiple teams**, suggest refactoring to the **team-split convention**: splitting reduces friction between teams in CODEOWNERS by giving each team clear ownership of its files.
+
+- Split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts` (one file or small set per team; index re-exports all).
+- For the full convention and examples, see **`.cursor/rules/team-split-convention.mdc`**. CODEOWNERS defines the allowed `team-*` slugs.
 
 ## Translations
 

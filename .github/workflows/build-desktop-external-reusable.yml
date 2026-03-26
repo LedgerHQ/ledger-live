@@ -74,7 +74,7 @@ jobs:
           os: ${{ steps.os.outputs.result }}
       - name: Build the app
         id: build-app
-        run: pnpm build:lld
+        run: pnpm turbo build --filter=ledger-live-desktop
       - name: Save result
         id: save-result
         shell: bash

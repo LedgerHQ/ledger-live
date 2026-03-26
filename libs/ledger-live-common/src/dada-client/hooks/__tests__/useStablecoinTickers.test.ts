@@ -88,10 +88,31 @@ describe("useStablecoinTickers", () => {
 
     renderHook(() => useStablecoinTickers(hookParams.product, hookParams.version));
 
-    expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith({
-      category: AssetCategory.Stablecoins,
-      product: hookParams.product,
-      version: hookParams.version,
+    expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith(
+      {
+        category: AssetCategory.Stablecoins,
+        product: hookParams.product,
+        version: hookParams.version,
+      },
+      { skip: undefined },
+    );
+  });
+
+  it("should skip the query when skip is true", () => {
+    mockUseGetAssetsByCategoryQuery.mockReturnValue({
+      ...defaultMockValues,
+      isUninitialized: true,
     });
+
+    renderHook(() => useStablecoinTickers(hookParams.product, hookParams.version, true));
+
+    expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith(
+      {
+        category: AssetCategory.Stablecoins,
+        product: hookParams.product,
+        version: hookParams.version,
+      },
+      { skip: true },
+    );
   });
 });

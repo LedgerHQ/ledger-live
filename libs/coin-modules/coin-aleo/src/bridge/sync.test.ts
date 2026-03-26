@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { SyncConfig } from "@ledgerhq/types-live";
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";

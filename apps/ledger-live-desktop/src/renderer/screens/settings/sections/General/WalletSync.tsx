@@ -39,7 +39,13 @@ const WalletSyncRow = ({ variant = "manage" }: WalletSyncRowProps) => {
 
   if (variant === "sync") {
     return (
-      <Button small event="Sync WalletSync" primary onClick={handleSyncClick}>
+      <Button
+        data-testid="button-sync-walletSync"
+        small
+        event="Sync WalletSync"
+        primary
+        onClick={handleSyncClick}
+      >
         {t("walletSync.banner.cta")}
       </Button>
     );
@@ -47,7 +53,13 @@ const WalletSyncRow = ({ variant = "manage" }: WalletSyncRowProps) => {
 
   if (variant === "manage") {
     return (
-      <Button small event="Manage WalletSync" primary onClick={handleManageClick}>
+      <Button
+        data-testid="button-manage-walletSync"
+        small
+        event="Manage WalletSync"
+        primary
+        onClick={handleManageClick}
+      >
         {t("walletSync.manage.cta")}
       </Button>
     );

@@ -1,4 +1,4 @@
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { broadcastTx } from "../network/api";

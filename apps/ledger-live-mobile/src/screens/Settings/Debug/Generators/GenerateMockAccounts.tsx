@@ -2,6 +2,7 @@ import React from "react";
 import sample from "lodash/sample";
 import { Alert } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
+import { v4 as uuid } from "uuid";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SettingsRow from "~/components/SettingsRow";
@@ -13,7 +14,7 @@ const generateMockAccounts = (count: number) =>
   Array(count)
     .fill(null)
     .map(() => {
-      return genAccount(String(Math.random()), {
+      return genAccount(uuid(), {
         currency: sample(listSupportedCurrencies()),
       });
     });

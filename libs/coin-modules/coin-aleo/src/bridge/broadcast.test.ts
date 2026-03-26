@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Operation } from "@ledgerhq/types-live";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { broadcast as logicBroadcast } from "../logic/broadcast";
 import { broadcast as bridgeBroadcast } from "./broadcast";
 
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../logic/broadcast");
 
 const mockLogicBroadcast = jest.mocked(logicBroadcast);

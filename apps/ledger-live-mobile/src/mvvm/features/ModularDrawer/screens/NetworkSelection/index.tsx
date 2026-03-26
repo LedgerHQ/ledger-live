@@ -1,11 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  AssetType,
-  NetworkItem,
-  Network as NetworkType,
-} from "@ledgerhq/native-ui/lib/pre-ldls/index";
+import { AssetType, NetworkItem, Network as NetworkType } from "@ledgerhq/native-ui/pre-ldls/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
@@ -16,7 +12,7 @@ import {
 } from "../../analytics";
 import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
-import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
+import { useNetworkConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
 import { ApyIndicator } from "../../components/ApyIndicator";
@@ -80,22 +76,15 @@ const NetworkSelection = ({
     ],
   );
 
-  const networkConfigurationDeps = {
+  const formattedNetworks = useNetworkConfiguration(availableNetworks ?? [], {
     useAccountData,
     accountsCount,
     accountsCountAndApy,
     ApyIndicator,
     useBalanceDeps,
     balanceItem,
-  };
-
-  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
-
-  const transformNetworks = makeNetworkConfigurationHook({
-    networksConfig: networksConfiguration,
+    ...networksConfiguration,
   });
-
-  const formattedNetworks = transformNetworks(availableNetworks ?? []);
 
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 

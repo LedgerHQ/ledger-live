@@ -15,13 +15,6 @@ jest.mock("../../network/proxyClient", () => ({
   }),
 }));
 
-jest.mock("../../network/grpcClient", () => ({
-  getBlockChainParameters: jest.fn().mockResolvedValue({
-    euroPerEnergy: { numerator: "1", denominator: "1" },
-    microCcdPerEuro: { numerator: "1000000", denominator: "1" },
-  }),
-}));
-
 const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
 
 describe("logic/transaction", () => {

@@ -1,5 +1,5 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import { Transaction as TyphonTransaction, types as TyphonTypes } from "@stricahq/typhonjs";

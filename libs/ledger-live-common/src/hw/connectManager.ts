@@ -10,7 +10,6 @@ import { isCharonSupported } from "@ledgerhq/device-core";
 import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type Transport from "@ledgerhq/hw-transport";
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { PrepareConnectManagerDeviceAction } from "@ledgerhq/live-dmk-shared";
 import type { ListAppsEvent } from "../apps";
 import { listAppsUseCase } from "../device/use-cases/listAppsUseCase";
@@ -24,6 +23,7 @@ import { LockedDeviceEvent } from "./actions/types";
 import { ManagerRequest } from "./actions/manager";
 import { PrepareConnectManagerEventMapper } from "./connectManagerEventMapper";
 import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
+import { isDmkTransport } from "./dmkUtils";
 
 export type Input = {
   deviceId: string;
@@ -140,17 +140,6 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
       sub.unsubscribe();
     };
   });
-
-const isDmkTransport = (
-  transport: Transport,
-): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
-  return (
-    "dmk" in transport &&
-    transport.dmk !== undefined &&
-    "sessionId" in transport &&
-    transport.sessionId !== undefined
-  );
-};
 
 export default function connectManagerFactory(
   {

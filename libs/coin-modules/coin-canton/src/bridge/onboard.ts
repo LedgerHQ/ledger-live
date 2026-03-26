@@ -1,6 +1,6 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";

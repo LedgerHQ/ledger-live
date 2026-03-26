@@ -6,21 +6,21 @@ import {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
 } from "./transaction";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
-} from "@ledgerhq/coin-framework/serialization";
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import { Transaction, TransactionRaw, TransactionStatus, TransactionStatusRaw } from "../types";
 import { Account } from "@ledgerhq/types-live";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/account/index");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 jest.mock("@ledgerhq/coin-framework/currencies/index");
-jest.mock("@ledgerhq/coin-framework/serialization");
+jest.mock("@ledgerhq/ledger-wallet-framework/serialization");
 
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);

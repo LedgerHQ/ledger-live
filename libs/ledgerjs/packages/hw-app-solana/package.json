@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-solana",
-  "version": "7.9.0",
+  "version": "7.9.1",
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
     "Ledger",
@@ -56,5 +56,22 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "unimported": "unimported"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Solana.ts",
+      "import": "./lib-es/Solana.js",
+      "require": "./lib/Solana.js",
+      "default": "./lib/Solana.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

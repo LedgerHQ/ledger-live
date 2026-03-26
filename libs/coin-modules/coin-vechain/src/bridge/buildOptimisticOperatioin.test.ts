@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Transaction } from "../types";
 import { Account } from "@ledgerhq/types-live";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 
 const mockedEncodeOperationId = jest.mocked(encodeOperationId);
 

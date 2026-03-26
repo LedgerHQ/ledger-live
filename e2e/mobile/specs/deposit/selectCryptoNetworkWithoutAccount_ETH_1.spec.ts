@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSelectCryptoNetworkTest } from "./deposit";
-import { assetAvailableNetworks } from "@ledgerhq/live-common/lib/e2e/data/assetsDrawer";
+import { assetAvailableNetworks } from "@ledgerhq/live-common/e2e/data/assetsDrawer";
 
 const testConfig = {
   account: Account.ETH_1,

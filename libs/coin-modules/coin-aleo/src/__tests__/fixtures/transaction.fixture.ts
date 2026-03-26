@@ -11,7 +11,7 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
     useAllAmount: false,
     mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     ...overrides,
-  };
+  } as Transaction;
 };
 
 export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): TransactionRaw => {
@@ -23,5 +23,5 @@ export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): Tr
     useAllAmount: false,
     mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     ...overrides,
-  };
+  } as TransactionRaw;
 };

@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughSpendableBalance,
@@ -9,13 +8,12 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
-import type { Transaction } from "@ledgerhq/coin-xrp/types";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   scanAccounts,
@@ -27,6 +25,7 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { validateAddress } from "../../../bridge/validateAddress";
+import { Transaction } from "../types";
 
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];
@@ -42,7 +41,6 @@ const createTransaction = (): Transaction => ({
   amount: new BigNumber(0),
   recipient: "",
   fees: new BigNumber(10),
-  feeCustomUnit: getCryptoCurrencyById("ripple").units[1],
   tag: undefined,
   networkInfo: null,
   useAllAmount: false,

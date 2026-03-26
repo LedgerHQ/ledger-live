@@ -7,4 +7,7 @@ export type Asset = {
   distribution?: number;
   amount: number;
   countervalue?: number;
+  isPlaceholder?: boolean;
+  placeholderPrice?: number;
+  marketId?: string;
 };

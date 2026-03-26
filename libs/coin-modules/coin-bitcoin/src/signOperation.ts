@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { isSegwitDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Observer } from "rxjs";
 import type { Transaction } from "./types";

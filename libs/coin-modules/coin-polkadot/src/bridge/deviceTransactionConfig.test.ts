@@ -7,8 +7,8 @@ import getDeviceTransactionConfig from "./deviceTransactionConfig";
 
 // Module-level mocks
 const mockGetMainAccount = jest.fn();
-jest.mock("@ledgerhq/coin-framework/account", () => ({
-  ...jest.requireActual("@ledgerhq/coin-framework/account"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account"),
   getMainAccount: (...args: unknown[]) => mockGetMainAccount(...args),
 }));
 

@@ -14,7 +14,7 @@ import { NavigatorName } from "~/const";
 import type { TabItemConfig, MainTabBarViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
 import { track } from "~/analytics";
-import { LABELKEY_MAP, TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "./constants";
+import { getLabelKey, TRACKING_LABEL_MAP, TRACKING_MENUENTRY_EVENT } from "./constants";
 import { scrollToTopEvent } from "./scrollToTopEvent";
 
 type UseMainTabBarViewModelParams = Pick<BottomTabBarProps, "state" | "navigation">;
@@ -63,7 +63,7 @@ export const useMainTabBarViewModel = ({
     () =>
       state.routes.map(route => ({
         value: route.name,
-        label: t(LABELKEY_MAP[route.name] ?? route.name),
+        label: t(getLabelKey(route.name)),
         testID: TAB_TEST_IDS[route.name],
         ...TAB_ICONS[route.name],
       })),

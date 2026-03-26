@@ -100,8 +100,8 @@ describe("getBlockV2", () => {
     expect(hgraphClient.getLatestIndexedConsensusTimestamp).toHaveBeenCalledTimes(1);
   });
 
-  it("should extract fee payer from transaction_id", async () => {
-    const mockTx = {
+  it("should extract fee payer from transaction_id by default", async () => {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash",
       name: "CRYPTOTRANSFER",
@@ -110,7 +110,7 @@ describe("getBlockV2", () => {
       staking_reward_transfers: [],
       transfers: [],
       token_transfers: [],
-    };
+    });
 
     (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -120,8 +120,36 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].feesPayer).toBe("0.0.999");
   });
 
+  it("should infer fee payer from transfers when initiator is not debited", async () => {
+    const mockTx = getMockedMirrorTransaction({
+      transaction_id: "0.0.10067173-1761755118-730000493",
+      transaction_hash: "hash",
+      name: "CRYPTOTRANSFER",
+      result: "INSUFFICIENT_PAYER_BALANCE",
+      charged_tx_fee: 40743,
+      staking_reward_transfers: [],
+      transfers: [
+        { account: "0.0.23", amount: -40743 },
+        { account: "0.0.801", amount: 40743 },
+      ],
+      token_transfers: [],
+    });
+
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlockV2(100);
+    const payerOperation = result.transactions[0].operations.find(op => op.address === "0.0.23");
+
+    expect(result.transactions[0].feesPayer).toBe("0.0.23");
+    expect(payerOperation).toMatchObject({
+      address: "0.0.23",
+      amount: BigInt(0),
+    });
+  });
+
   it("should exclude fee from payer's operation amount", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash",
       name: "CRYPTOTRANSFER",
@@ -139,7 +167,7 @@ describe("getBlockV2", () => {
         },
       ],
       token_transfers: [],
-    };
+    });
 
     (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -154,7 +182,7 @@ describe("getBlockV2", () => {
   });
 
   it("should handle HTS token transfers", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash",
       name: "CRYPTOTRANSFER",
@@ -174,7 +202,7 @@ describe("getBlockV2", () => {
           amount: 1000,
         },
       ],
-    };
+    });
 
     (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -262,7 +290,7 @@ describe("getBlockV2", () => {
         asset: {
           type: "native",
         },
-        amount: BigInt(-300000),
+        amount: BigInt(0),
       },
       {
         type: "transfer",
@@ -386,7 +414,7 @@ describe("getBlockV2", () => {
     expect(result.transactions[0].operations).toEqual([
       {
         address: mockMirrorAccount.account,
-        amount: BigInt(-300000),
+        amount: BigInt(0),
         asset: {
           type: "native",
         },
@@ -414,7 +442,7 @@ describe("getBlockV2", () => {
   });
 
   it("should mark failed transactions", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash",
       name: "CRYPTOTRANSFER",
@@ -423,7 +451,7 @@ describe("getBlockV2", () => {
       staking_reward_transfers: [],
       transfers: [],
       token_transfers: [],
-    };
+    });
 
     (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
@@ -434,7 +462,7 @@ describe("getBlockV2", () => {
   });
 
   it("should analyze CRYPTOUPDATEACCOUNT transactions for staking", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash_update",
       name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
@@ -444,7 +472,7 @@ describe("getBlockV2", () => {
       staking_reward_transfers: [],
       transfers: [],
       token_transfers: [],
-    };
+    });
     const mockStakingAnalysis: StakingAnalysis = {
       operationType: "DELEGATE",
       targetStakingNodeId: 5,
@@ -471,7 +499,7 @@ describe("getBlockV2", () => {
   });
 
   it("should handle UNDELEGATE staking operation", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash_undelegate",
       name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
@@ -481,7 +509,7 @@ describe("getBlockV2", () => {
       staking_reward_transfers: [],
       transfers: [],
       token_transfers: [],
-    };
+    });
     const mockStakingAnalysis: StakingAnalysis = {
       operationType: "UNDELEGATE",
       targetStakingNodeId: null,
@@ -505,7 +533,7 @@ describe("getBlockV2", () => {
   });
 
   it("should handle REDELEGATE staking operation", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash_redelegate",
       name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
@@ -515,7 +543,7 @@ describe("getBlockV2", () => {
       staking_reward_transfers: [],
       transfers: [],
       token_transfers: [],
-    };
+    });
     const mockStakingAnalysis: StakingAnalysis = {
       operationType: "REDELEGATE",
       targetStakingNodeId: 10,
@@ -548,7 +576,7 @@ describe("getBlockV2", () => {
     const rewardAccount2 = 191772;
     const chargedFee = 79874;
 
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash",
       name: "CRYPTOTRANSFER",
@@ -587,7 +615,7 @@ describe("getBlockV2", () => {
         },
       ],
       token_transfers: [],
-    };
+    });
 
     const totalRewards = mockTx.staking_reward_transfers.reduce((acc, t) => acc + t.amount, 0);
 
@@ -643,7 +671,7 @@ describe("getBlockV2", () => {
   });
 
   it("should handle CRYPTOUPDATEACCOUNT if it's not related to staking", async () => {
-    const mockTx = {
+    const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash_regular_update",
       name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
@@ -662,7 +690,7 @@ describe("getBlockV2", () => {
         },
       ],
       token_transfers: [],
-    };
+    });
 
     (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([]);
     (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);

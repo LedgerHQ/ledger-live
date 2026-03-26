@@ -23,6 +23,8 @@ const targets = [
   "walletApiAdapter.ts",
 ];
 
+const familiesExtracted = ["xrp"];
+
 // Coins using coin-framework
 const familiesWPackage = [
   "aleo",
@@ -150,6 +152,13 @@ function genCoinFrameworkTarget(targetFile) {
         ) {
           imports += `import ${family} from "@ledgerhq/coin-${family}/${targetName}";\n`;
           exprts += `\n  ${family},`;
+        } else if (
+          fs.existsSync(
+            path.join(libsDir, `ledger-live-common/src/families/${family}/bot`, targetFile),
+          )
+        ) {
+          imports += `import ${family} from "../families/${family}/bot/${targetName}";\n`;
+          exprts += `\n  ${family},`;
         }
         break;
       // We still use bridge/js file inside "families" directory
@@ -213,9 +222,12 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    const importPath = familiesWPackage.includes(family) ? "@ledgerhq/coin-" : "../families/";
+    const importPath =
+      familiesWPackage.includes(family) && !familiesExtracted.includes(family)
+        ? "@ledgerhq/coin-"
+        : "../families/";
     const typesAsFolder = (() => {
-      if (!familiesWPackage.includes(family)) {
+      if (!familiesWPackage.includes(family) || familiesExtracted.includes(family)) {
         return "";
       }
 

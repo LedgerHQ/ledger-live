@@ -1,23 +1,51 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { render } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSharedNavigator } from "./shared";
-import { DeviceLike, State } from "~/reducers/types";
+import { State } from "~/reducers/types";
 import { setEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
 
-const LAST_SEEN_DEVICE = {
+const mockSelectedDevice: Device = {
+  deviceId: "1",
+  deviceName: "STAX A",
   modelId: DeviceModelId.stax,
-} as DeviceModelInfo;
+  wired: false,
+};
 
-const DEVICE = {
-  id: "1",
-  name: "STAX A",
-  modelId: DeviceModelId.stax,
-} as DeviceLike;
+const mockDiscoveredDevice = {
+  id: "mock-discovered-device",
+} as DiscoveredDevice;
+
+jest.mock("~/components/SelectDevice2", () => {
+  const React = jest.requireActual("react");
+  const { TouchableOpacity, Text } = jest.requireActual("react-native");
+
+  return {
+    __esModule: true,
+    default: ({
+      onSelect,
+    }: {
+      onSelect: (device: Device, discoveredDevice: DiscoveredDevice) => void;
+    }) => (
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={mockSelectedDevice.deviceName}
+        onPress={() => onSelect(mockSelectedDevice, mockDiscoveredDevice)}
+      >
+        <Text>{mockSelectedDevice.deviceName}</Text>
+      </TouchableOpacity>
+    ),
+  };
+});
 
 describe("WalletSyncActivation", () => {
+  afterEach(() => {
+    setEnv("MOCK", "");
+  });
+
   it("Should open WalletSyncActivation Flow and go through device selection", async () => {
     setEnv("MOCK", "1");
 
@@ -36,11 +64,6 @@ describe("WalletSyncActivation", () => {
               },
             },
           },
-          seenDevice: [LAST_SEEN_DEVICE],
-        },
-        ble: {
-          ...state.ble,
-          knownDevices: [DEVICE],
         },
       }),
     });

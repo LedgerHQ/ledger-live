@@ -25,8 +25,6 @@ export enum ExchangeModeEnum {
 
 export type ExchangeMode = "sell" | "swap" | "fund" | "legacy";
 
-const shouldRestartFlow = (error: Error) => error.name === "InvalidTransactionError";
-
 export type Data = {
   provider: string;
   exchange: Exchange;
@@ -334,11 +332,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     if (broadcastRef.current || !signedOperation) return;
     broadcast(signedOperation)
       .then(onBroadcastSuccess, error => {
-        if (shouldRestartFlow(error)) {
-          onCancel(error);
-          onClose?.();
-          return;
-        }
         setError(error);
       })
       .finally(() => (broadcastRef.current = true));

@@ -52,7 +52,7 @@ describe("recover.handler", () => {
       expect(context.navigate).toHaveBeenCalledWith("/recover/platform", undefined, "?step=2");
     });
 
-    it("handles empty path", () => {
+    it("handles empty path by navigating to /recover/ when no recoverAppId in context", () => {
       const context = createMockContext();
 
       recoverHandler(
@@ -65,6 +65,21 @@ describe("recover.handler", () => {
       );
 
       expect(context.navigate).toHaveBeenCalledWith("/recover/", undefined, "");
+    });
+
+    it("uses recoverAppId from context when path is empty (e.g. ledgerwallet://recover)", () => {
+      const context = createMockContext({ recoverAppId: "protect-id" });
+
+      recoverHandler(
+        {
+          type: "recover",
+          path: "",
+          search: "",
+        },
+        context,
+      );
+
+      expect(context.navigate).toHaveBeenCalledWith("/recover/protect-id", undefined, "");
     });
   });
 

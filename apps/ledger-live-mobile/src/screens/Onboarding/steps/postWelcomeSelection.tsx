@@ -5,7 +5,7 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
+import { setOnboardingHasDevice } from "~/actions/settings";
 import { track, updateIdentify } from "~/analytics";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -64,18 +64,15 @@ function PostWelcomeSelection() {
   useFocusEffect(() => {
     if (!modalOpen) {
       identifyUser(null);
-      dispatch(setReadOnlyMode(true));
     }
   });
 
   const setupLedger = () => {
-    dispatch(setReadOnlyMode(false));
     identifyUser(null);
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
   };
 
   const accessExistingWallet = () => {
-    dispatch(setReadOnlyMode(false));
     identifyUser(null);
     navigation.navigate(ScreenName.OnboardingWelcomeBack);
   };

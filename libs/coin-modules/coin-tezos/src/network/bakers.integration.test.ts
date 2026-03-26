@@ -1,5 +1,5 @@
-import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { DerivationMode, type CryptoAssetsStore } from "@ledgerhq/types-live";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { loadAccountDelegation, listBakers } from "../network/bakers";

@@ -162,9 +162,10 @@ export function runAddSubAccountTest(testConfig: {
   asset: AccountType;
   tmslinks: string[];
   tags: string[];
+  networks?: string[];
 }) {
   describe("Add subAccount without parent", () => {
-    const { asset, tmslinks, tags } = testConfig;
+    const { asset, tmslinks, tags, networks } = testConfig;
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
@@ -184,7 +185,12 @@ export function runAddSubAccountTest(testConfig: {
         await app.addAccount.importWithYourLedger();
         await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
         await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-        await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
+        if (networks) {
+          await app.modularDrawer.validateNetworksScreen(networks);
+          await app.modularDrawer.selectNetwork(asset.parentAccount!.currency.name);
+        } else {
+          await app.modularDrawer.selectNetworkIfAsked(asset.parentAccount!.currency.name);
+        }
       } else {
         await app.addAccount.importWithYourLedger();
         await app.common.performSearch(

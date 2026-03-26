@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "globals": {},
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "plugins": ["eslint", "oxc", "unicorn", "typescript", "react", "jest"],
+  "ignorePatterns": ["*.min.js"],
+  "rules": {
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-empty-pattern": "warn",
+    "eslint/no-constant-binary-expression": "warn",
+    "react/no-did-mount-set-state": "warn",
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/no-new-array": "off",
+    "jest/no-conditional-expect": "warn",
+    "jest/expect-expect": "warn",
+    "jest/require-to-throw-message": "warn",
+    "jest/valid-title": "warn",
+    "jest/no-disabled-tests": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/**/__tests__/**/*.ts",
+        "src/**/__tests__/**/*.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.integration.ts",
+        "**/*.integration.tsx"
+      ],
+      "env": {
+        "jest": true
+      },
+      "plugins": ["jest"]
+    }
+  ]
+}

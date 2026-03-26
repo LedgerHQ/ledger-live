@@ -23,8 +23,6 @@ export const CRED_ID = "cc".repeat(48);
 
 export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
   networkType: "testnet",
-  grpcUrl: "grpc.testnet.concordium.com",
-  grpcPort: 20000,
   proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
   minReserve: 100000,
 };
@@ -62,7 +60,7 @@ export function createFixtureAccount(overrides?: Partial<Account>): Account {
     index: 0,
     currency: createFixtureCurrency(),
     freshAddress: VALID_ADDRESS,
-    freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
+    freshAddressPath: "44'/919'/404'/404'/0'",
     balance: new BigNumber(10000000),
     spendableBalance: new BigNumber(9900000),
     blockHeight: 1000,

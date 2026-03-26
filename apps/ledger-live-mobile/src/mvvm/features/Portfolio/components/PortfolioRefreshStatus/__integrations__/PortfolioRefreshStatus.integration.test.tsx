@@ -14,8 +14,11 @@ jest.mock("react-native-reanimated", () => {
     useAnimatedStyle: () => ({}),
     useAnimatedReaction: () => {},
     withTiming: (toValue: unknown) => toValue,
+    withRepeat: (animation: unknown) => animation,
     withDelay: (_delay: number, animation: unknown) => animation,
     withSpring: (toValue: unknown) => toValue,
+    cancelAnimation: () => {},
+    useReducedMotion: () => false,
     default: {
       View: RN.View,
       Text: RN.Text,
@@ -118,7 +121,7 @@ describe("PortfolioRefreshStatus", () => {
       completeRefresh(store);
 
       expect(screen.getByTestId("portfolio-refresh-status-up-to-date")).toBeVisible();
-      expect(screen.getByText("You're up to date")).toBeVisible();
+      expect(screen.getByText("Portfolio up to date")).toBeVisible();
       expect(screen.getByTestId("portfolio-refresh-status-checkmark")).toBeTruthy();
       expect(screen.queryByTestId("portfolio-refresh-status-spinner")).toBeNull();
     });

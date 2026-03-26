@@ -7,6 +7,7 @@ import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { useTheme } from "styled-components/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
 
 type TickerProps = {
   currency: CryptoOrTokenCurrency;
@@ -15,7 +16,9 @@ type TickerProps = {
 
 export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
   const theme = useTheme();
+  const reduceTransparencyEnabled = useReduceTransparencyEnabled();
   const midColor = getCurrencyColor(currency);
+
   return (
     <View style={styles.container}>
       <Svg style={[styles.gradientTop, { width: width }]}>
@@ -40,15 +43,24 @@ export const Ticker: React.FC<TickerProps> = ({ currency, width }) => {
         borderRadius={40}
         style={{ overflow: "hidden" }}
       >
-        <BlurView
-          style={{
-            position: "absolute",
-            inset: 0,
-          }}
-          overlayColor={theme.colors.opacityDefault.c10}
-          blurType={theme.theme}
-          blurAmount={70}
-        />
+        {reduceTransparencyEnabled ? (
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              { backgroundColor: theme.colors.background.main },
+            ]}
+          />
+        ) : (
+          <BlurView
+            style={{
+              position: "absolute",
+              inset: 0,
+            }}
+            overlayColor={theme.colors.opacityDefault.c10}
+            blurType={theme.theme}
+            blurAmount={70}
+          />
+        )}
         <Flex>
           <CircleCurrencyIcon currency={currency} size={24} sizeRatio={0.9} />
         </Flex>

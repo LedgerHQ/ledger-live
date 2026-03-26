@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-solana",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Package to facilitate bundling hw-app-solana in the SolanaWrapper Swift package",
   "keywords": [
     "Ledger",
@@ -54,5 +54,22 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Wrapper.ts",
+      "import": "./lib-es/Wrapper.js",
+      "require": "./lib/Wrapper.js",
+      "default": "./lib/Wrapper.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

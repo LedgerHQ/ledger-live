@@ -4,7 +4,7 @@ import makeCliTools from "./cli-transaction";
 import type { AlgorandAccount, Transaction } from "./types";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   getAccountCurrency: jest.fn((account: TokenAccount) => account.token),
 }));
 

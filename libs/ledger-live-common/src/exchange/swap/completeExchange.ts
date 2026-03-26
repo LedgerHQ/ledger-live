@@ -28,8 +28,8 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
-import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
@@ -286,7 +286,13 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
+        // During signature delegation, Exchange does not remap refusal errors from the coin app/OS.
+        // 0x6a84: user refused the proposal for an owned destination address.
+        // 0x5501: BOLOS/OS-level refusal (not an Exchange app error code).
+        if (
+          e instanceof TransportStatusError &&
+          (e.statusCode === 0x6a84 || e.statusCode === 0x5501)
+        ) {
           throw new TransactionRefusedOnDevice();
         }
 

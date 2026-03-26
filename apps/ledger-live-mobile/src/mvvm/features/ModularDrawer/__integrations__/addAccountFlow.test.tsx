@@ -133,7 +133,7 @@ const advanceTimers = () => {
 describe("AddAccountFlow with MAD", () => {
   it("should do the add account flow then go back to the previous screen", async () => {
     const { getByText, queryByText, user } = render(
-      <ModularDrawerSharedNavigator flow="add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,
     );
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -164,7 +164,7 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should do the add account flow and go back to the previous screen automatically", async () => {
     const { getByText, user, queryByText } = render(
-      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
     );
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -193,7 +193,7 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should do the add account flow then add funds actions", async () => {
     const { getByText, getByTestId, user } = render(
-      <ModularDrawerSharedNavigator flow="add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,
     );
     expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
@@ -221,7 +221,7 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should return to device selection on retry when device is locked in inline flow", async () => {
     const { user, getByText, queryByText, getByTestId } = render(
-      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
     );
 
     // Navigate through the add account flow
@@ -273,7 +273,7 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should close flow and return to initial screen when clicking X button on error modal in inline flow", async () => {
     const { user, getByText, queryByText, getByTestId } = render(
-      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
     );
 
     // Navigate through the add account flow
@@ -326,7 +326,7 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should close flow and return to device selection when clicking X button on error modal in non-inline flow", async () => {
     const { user, getByText, queryByText, getByTestId } = render(
-      <ModularDrawerSharedNavigator flow="add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="add_account" />,
     );
 
     // Navigate through the add account flow
@@ -379,7 +379,7 @@ describe("AddAccountFlow with MAD", () => {
 
   it("should close inline flow and return to initial screen after account creation", async () => {
     const { user, getByText, queryByText } = render(
-      <ModularDrawerSharedNavigator flow="not_add_account" />,
+      <ModularDrawerSharedNavigator useDeviceSelectionState flow="not_add_account" />,
     );
 
     // Navigate through the add account flow

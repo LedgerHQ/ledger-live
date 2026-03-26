@@ -10,7 +10,7 @@ import type {
   StakeState,
   Cursor,
 } from "@ledgerhq/coin-framework/api/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
@@ -59,6 +59,9 @@ const MULTI_GET_OBJECTS_LIMIT = 50;
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
+
+const STAKING_REQUEST_EVENT = "0x3::staking_pool::StakingRequestEvent";
+const UNSTAKING_REQUEST_EVENT = "0x3::validator::UnstakingRequestEvent";
 
 /** Default options for querying transactions. */
 const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
@@ -325,7 +328,7 @@ export const getOperationExtra = (digest: string): Promise<Record<string, string
 
     if (isUnstaking(response.transaction?.data?.transaction)) {
       const { principal_amount: amount, validator_address: address } = response.events?.find(
-        e => e.type === "0x3::validator::UnstakingRequestEvent",
+        e => e.type === UNSTAKING_REQUEST_EVENT,
       )?.parsedJson as Record<string, string>;
       const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
 
@@ -439,6 +442,46 @@ export const alpacaGetOperationAmount = (
 };
 
 /**
+ * Extract staking/unstaking event details from transaction events.
+ * For DELEGATE: extracts validatorAddress, stakedObjectId from StakingRequestEvent
+ * For UNDELEGATE: extracts validatorAddress, rewardAmount, withdrawnAmount (from principal_amount) from UnstakingRequestEvent
+ */
+export function getStakingEventDetails(
+  transaction: SuiTransactionBlockResponse,
+): Record<string, unknown> {
+  const stakingDetails = transaction.events?.find(e => e.type === STAKING_REQUEST_EVENT)
+    ?.parsedJson as Record<string, string> | undefined;
+
+  if (stakingDetails) {
+    return Object.fromEntries(
+      Object.entries({
+        stakedObjectId: stakingDetails.staked_sui_id,
+        validatorAddress: stakingDetails.validator_address,
+      }).filter(([, v]) => v !== undefined),
+    );
+  }
+
+  const unstakingDetails = transaction.events?.find(e => e.type === UNSTAKING_REQUEST_EVENT)
+    ?.parsedJson as Record<string, string> | undefined;
+
+  if (unstakingDetails) {
+    return Object.fromEntries(
+      Object.entries({
+        rewardAmount: unstakingDetails.reward_amount
+          ? BigInt(unstakingDetails.reward_amount)
+          : undefined,
+        validatorAddress: unstakingDetails.validator_address,
+        withdrawnAmount: unstakingDetails.principal_amount
+          ? BigInt(unstakingDetails.principal_amount)
+          : undefined,
+      }).filter(([, v]) => v !== undefined),
+    );
+  }
+
+  return {};
+}
+
+/**
  * This function is only used by alpaca code path
  *
  * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
@@ -481,10 +524,11 @@ export function alpacaTransactionToOp(
   };
 
   if (type === "DELEGATE" || type === "UNDELEGATE") {
-    // for staking, the amount is stored in the details
     op.details = {
       stakedAmount: op.value,
+      ...getStakingEventDetails(transaction),
     };
+    // for staking, the amount is stored in the details
     op.value = 0n;
   }
 
@@ -863,6 +907,7 @@ export const getListOperations = async (
         type: "OUT",
         cursor: rpcCursor,
         order: rpcOrder,
+        options: { showEvents: true },
       }),
       queryTransactions({
         api,
@@ -870,6 +915,7 @@ export const getListOperations = async (
         type: "IN",
         cursor: rpcCursor,
         order: rpcOrder,
+        options: { showEvents: true },
       }),
     ]);
 
@@ -1230,8 +1276,9 @@ export const queryTransactions = async (params: {
   type: OperationType;
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
+  options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
 }): Promise<PaginatedTransactionResponse> => {
-  const { api, addr, type, cursor, order } = params;
+  const { api, addr, type, cursor, order, options = {} } = params;
   // what we really want is a FromOrToAddress filter, but it's not supported yet
   // it would relieve a lot of complexity in the merged/sorted pagination and cursor boundary filtering logic above
   const filter: QueryTransactionBlocksParams["filter"] =
@@ -1241,7 +1288,7 @@ export const queryTransactions = async (params: {
     filter,
     cursor,
     order,
-    options: TRANSACTIONS_QUERY_OPTIONS,
+    options: { ...TRANSACTIONS_QUERY_OPTIONS, ...options },
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
   });
 };
@@ -1255,15 +1302,16 @@ export const queryTransactions = async (params: {
 export const queryTransactionsByDigest = async (params: {
   api: SuiClient;
   digests: string[];
+  options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
 }): Promise<SuiTransactionBlockResponse[]> => {
-  const { api, digests } = params;
+  const { api, digests, options = {} } = params;
   const chunkSize = TRANSACTIONS_LIMIT_PER_QUERY;
   const responses: SuiTransactionBlockResponse[] = [];
 
   for (let i = 0; i < digests.length; i += chunkSize) {
     const chunk = await api.multiGetTransactionBlocks({
       digests: digests.slice(i, i + chunkSize),
-      options: TRANSACTIONS_QUERY_OPTIONS,
+      options: { ...TRANSACTIONS_QUERY_OPTIONS, ...options },
     });
     responses.push(...chunk);
   }

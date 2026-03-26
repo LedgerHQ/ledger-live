@@ -19,15 +19,25 @@ import { useNetInfo } from "@react-native-community/netinfo";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
+const SWAP_PARAM_KEYS: string[] = [
+  "defaultAccount",
+  "defaultCurrency",
+  "currency",
+  "affiliate",
+  "fromTokenId",
+  "toTokenId",
+  "fromCurrencyId",
+  "toCurrencyId",
+  "amountFrom",
+];
+
+const isRecord = (data: unknown): data is Record<string, unknown> =>
+  data != null && typeof data === "object";
+
 const isDefaultAccountSwapParamsList = (
   params: DefaultAccountSwapParamList | unknown,
 ): params is DefaultAccountSwapParamList =>
-  params != null &&
-  typeof params === "object" &&
-  (("defaultAccount" in params && params.defaultAccount !== undefined) ||
-    ("defaultCurrency" in params && params.defaultCurrency !== undefined) ||
-    ("currency" in params && params.currency !== undefined) ||
-    ("affiliate" in params && params.affiliate !== undefined));
+  isRecord(params) && SWAP_PARAM_KEYS.some(key => key in params && params[key] !== undefined);
 
 /**
  * Shared hook encapsulating swap live app state:

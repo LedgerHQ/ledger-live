@@ -4,7 +4,10 @@ import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
 import { useAmountScreenViewModel } from "../useAmountScreenViewModel";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -12,7 +15,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { createMockAccount } from "../../../Recipient/__integrations__/__fixtures__/accounts";
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
-jest.mock("@ledgerhq/coin-framework/account/helpers");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
   getSendDescriptor: jest.fn(),
   sendFeatures: {

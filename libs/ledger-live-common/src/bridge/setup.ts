@@ -2,8 +2,8 @@
 
 import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { PassthroughFn, SignerContext } from "@ledgerhq/coin-framework/signer";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { PassthroughFn, SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { MessageSignerFn, SignMessage } from "../hw/signMessage/types";
 import { GetAddressOptions, Resolver } from "../hw/getAddress/types";
 import { withDevice } from "../hw/deviceAccess";

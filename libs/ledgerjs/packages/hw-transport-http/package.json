@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.35.0",
+  "version": "6.35.1",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -24,13 +24,23 @@
   },
   "exports": {
     ".": {
+      "@ledgerhq/source": "./src/withStaticURLs.ts",
       "import": "./lib-es/withStaticURLs.js",
       "require": "./lib/withStaticURLs.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
     },
     "./WebSocketTransport": {
       "import": "./lib-es/WebSocketTransport.js",
       "require": "./lib/WebSocketTransport.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "main": "lib/withStaticURLs.js",
   "module": "lib-es/withStaticURLs.js",

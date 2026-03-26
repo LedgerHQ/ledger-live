@@ -4,7 +4,7 @@ import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 
 const App = () => {
   const [accountIndex, setAccountIndex] = useState("ACCOUNT");

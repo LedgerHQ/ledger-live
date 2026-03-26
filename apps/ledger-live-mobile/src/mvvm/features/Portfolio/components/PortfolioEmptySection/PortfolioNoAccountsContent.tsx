@@ -4,12 +4,14 @@ import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
+import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
 
 type PortfolioNoAccountsContentProps = {
   readonly isLNSUpsellBannerShown: boolean;
+  readonly shouldDisplayAssetSection?: boolean;
   readonly openAddModal: () => void;
   readonly closeAddModal: () => void;
   readonly isAddModalOpened: boolean;
@@ -17,6 +19,7 @@ type PortfolioNoAccountsContentProps = {
 
 const PortfolioNoAccountsContent = ({
   isLNSUpsellBannerShown,
+  shouldDisplayAssetSection = false,
   openAddModal,
   closeAddModal,
   isAddModalOpened,
@@ -30,10 +33,15 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
+      {shouldDisplayAssetSection && <PortfolioCryptosSection isEmptyState />}
       <Button
         appearance="gray"
         size="lg"
-        lx={{ width: "full" }}
+        lx={{
+          width: "full",
+          marginTop: "s24",
+          marginBottom: "s48",
+        }}
         onPress={openAddModal}
         testID="add-account-cta"
       >

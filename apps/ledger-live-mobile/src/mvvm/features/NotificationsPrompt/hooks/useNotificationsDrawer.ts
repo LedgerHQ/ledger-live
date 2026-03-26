@@ -131,6 +131,15 @@ export const useNotificationsDrawer = ({
       }
 
       const shouldPrompt = shouldPromptOptInDrawerAfterAction();
+
+      track("attempt_to_trigger_push_notification_drawer_after_action", {
+        action: actionSource,
+        shouldPrompt,
+        variant: featureNewWordingNotificationsDrawer?.params?.variant,
+        repromptDelay: nextRepromptDelay,
+        dismissedCount: pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length ?? 0,
+      });
+
       if (!shouldPrompt) {
         return;
       }
@@ -211,6 +220,8 @@ export const useNotificationsDrawer = ({
       featureNewWordingNotificationsDrawer?.enabled,
       featureNewWordingNotificationsDrawer?.params?.variant,
       openDrawer,
+      nextRepromptDelay,
+      pushNotificationsDataOfUser?.dismissedOptInDrawerAtList?.length,
     ],
   );
 

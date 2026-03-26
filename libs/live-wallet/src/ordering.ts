@@ -1,6 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import { flattenAccounts, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
-import type { FlattenAccountsOptions } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import type { FlattenAccountsOptions } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletState, accountNameWithDefaultSelector } from "./store";

@@ -12,7 +12,11 @@ import { setupGoToDashboardMock } from "../__test-utils__/setupTestMachine";
 import { testDeviceActionStates } from "../__test-utils__/testDeviceActionStates";
 
 import { PrepareConnectManagerDeviceAction } from "./PrepareConnectManagerDeviceAction";
-import type { PrepareConnectManagerDAState } from "./types";
+import {
+  type PrepareConnectManagerDAIntermediateValue,
+  type PrepareConnectManagerDAState,
+  prepareConnectManagerDAStateStep,
+} from "./types";
 
 jest.mock("@ledgerhq/device-management-kit", () => {
   const original = jest.requireActual<typeof import("@ledgerhq/device-management-kit")>(
@@ -45,17 +49,19 @@ describe("PrepareConnectManagerDeviceAction", () => {
         const deviceAction = new PrepareConnectManagerDeviceAction({ input: {} });
 
         const expectedStates: Array<PrepareConnectManagerDAState> = [
+          // DeviceReady (initial)
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              step: prepareConnectManagerDAStateStep.DEVICE_READY,
+            },
+            status: DeviceActionStatus.Pending,
+          },
           // GoToDashboard
           {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
-            },
-            status: DeviceActionStatus.Pending,
-          },
-          {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-            },
+            } as PrepareConnectManagerDAIntermediateValue,
             status: DeviceActionStatus.Pending,
           },
           // Success
@@ -80,17 +86,19 @@ describe("PrepareConnectManagerDeviceAction", () => {
         const deviceAction = new PrepareConnectManagerDeviceAction({ input: {} });
 
         const expectedStates: Array<PrepareConnectManagerDAState> = [
+          // DeviceReady (initial)
+          {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+              step: prepareConnectManagerDAStateStep.DEVICE_READY,
+            },
+            status: DeviceActionStatus.Pending,
+          },
           // GoToDashboard
           {
             intermediateValue: {
               requiredUserInteraction: UserInteractionRequired.None,
-            },
-            status: DeviceActionStatus.Pending,
-          },
-          {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-            },
+            } as PrepareConnectManagerDAIntermediateValue,
             status: DeviceActionStatus.Pending,
           },
           // Error is ignored

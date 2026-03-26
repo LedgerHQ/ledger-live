@@ -25,7 +25,7 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
     .catch(e => {
       tracer.trace(`Error from getAppAndVersion: ${e}`, { error: e });
       if (e instanceof TransportStatusError) {
-        if (e.statusCode === 0x6e00) {
+        if (e.statusCode === 0x6e00 || e.statusCode === 0x6e01) {
           return true;
         }
 

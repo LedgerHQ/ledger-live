@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-ledger-key-ring-protocol",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Ledger Key Ring Protocol hardware layer",
   "keywords": [
     "Ledger"
@@ -42,7 +42,7 @@
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/hw-ledger-key-ring-protocol",
     "test": "jest",
     "coverage": "jest --coverage"
@@ -62,5 +62,22 @@
         "lib-es/*"
       ]
     }
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

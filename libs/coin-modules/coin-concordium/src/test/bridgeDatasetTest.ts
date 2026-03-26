@@ -30,66 +30,6 @@ export const dataset: DatasetTest<Transaction> = {
       accounts: [
         {
           transactions: [
-            // FIXME
-
-            /*
-        {
-          name: "not enough spendable balance with base reserve",
-          transaction: fromTransactionRaw({
-            family: "xrp",
-            recipient: "rB6pwovsyrFWhPYUsjj9V3CHck985QjiXi",
-            amount: "15000000",
-            tag: null,
-            fee: "1",
-            feeCustomUnit: null,
-            networkInfo: null,
-          }),
-          expectedStatus: {
-            amount: BigNumber("15000000"),
-            estimatedFees: BigNumber("1"),
-            errors: {
-              amount: new NotEnoughSpendableBalance(null, {
-                minimumAmount: formatCurrencyUnit(
-                  rippleUnit,
-                  BigNumber("20"),
-                  {
-                    disableRounding: true,
-                    useGrouping: false,
-                    showCode: true,
-                  }
-                ),
-              }),
-            },
-            warnings: {},
-            totalSpent: BigNumber("15000001"),
-          },
-        },
-        */
-            // FIXME
-
-            /*
-        {
-          name: "operation amount to low to create the recipient account",
-          transaction: fromTransactionRaw({
-            family: "xrp",
-            recipient: newAddress1,
-            amount: "10000000",
-            tag: null,
-            fee: "1",
-            feeCustomUnit: null,
-            networkInfo: null
-          }),
-          expectedStatus: {
-            amount: BigNumber("10000000"),
-            estimatedFees: BigNumber("1"),
-            errors: {
-              amount: new NotEnoughBalanceBecauseDestinationNotCreated()
-            },
-            warnings: {},
-            totalSpent: BigNumber("10000001")
-          }
-        },
-        */
             {
               name: "recipient and sender must not be the same",
               transaction: fromTransactionRaw({

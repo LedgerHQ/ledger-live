@@ -6,10 +6,14 @@ export type EvmConfig = {
     | {
         type: "external";
         uri: string;
+        /** Number of retries for RPC calls. Defaults to 3 if not set. Set to 0 for no retries. */
+        retries?: number;
       }
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
+        /** Number of retries for Ledger explorer API calls. Defaults to 2 if not set. Set to 0 for no retries. */
+        retries?: number;
       };
   explorer:
     | {
@@ -33,6 +37,9 @@ export type EvmConfig = {
   };
   showNfts: boolean;
 };
+
+export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;
+export type LedgerNodeConfig = Extract<EvmConfig["node"], { type: "ledger" }>;
 
 export type EvmConfigInfo = CurrencyConfig & EvmConfig;
 

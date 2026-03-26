@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EventEmitter } from "events";
+import { v4 as uuid } from "uuid";
 
 declare global {
   interface Window {
@@ -98,11 +99,10 @@ type ReceivedMessageType =
   | JsonRpcSucessfulResponseMessage;
 
 /**
- * We return a random number between the 0 and the maximum safe integer so that we always generate a unique identifier,
- * across all communication channels.
+ * We return a unique identifier for JSON-RPC requests across all communication channels.
  */
-function getUniqueId(): number {
-  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+function getUniqueId(): string {
+  return uuid();
 }
 
 // Kept to check the diff with all events and before

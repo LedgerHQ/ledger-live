@@ -1,9 +1,9 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import type { Transaction } from "../types";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({

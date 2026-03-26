@@ -6,7 +6,6 @@ import {
   SelectItemText,
   SelectTrigger,
   Subheader,
-  SubheaderAction,
   SubheaderRow,
   SubheaderTitle,
 } from "@ledgerhq/lumen-ui-react";
@@ -34,14 +33,14 @@ export const StrategySelect = ({
   return (
     <div className="flex flex-col gap-12">
       <Subheader>
-        <SubheaderRow className="px-8">
-          <SubheaderTitle>{strategyLabel}</SubheaderTitle>
-          <SubheaderAction onClick={onLearnMoreClick}>
-            <Link appearance="accent" underline={false} size="md">
-              {learnMoreLabel}
-            </Link>
-          </SubheaderAction>
-        </SubheaderRow>
+        <div className="flex items-center gap-24">
+          <SubheaderRow className="min-w-0 flex-1">
+            <SubheaderTitle>{strategyLabel}</SubheaderTitle>
+          </SubheaderRow>
+          <Link appearance="accent" underline={false} size="md" onClick={onLearnMoreClick}>
+            {learnMoreLabel}
+          </Link>
+        </div>
       </Subheader>
       <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger />

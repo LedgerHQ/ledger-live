@@ -1,9 +1,9 @@
-import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

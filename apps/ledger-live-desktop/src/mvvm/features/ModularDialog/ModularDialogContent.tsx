@@ -32,7 +32,7 @@ export const ModularDialogContent = ({
   return (
     <>
       <DialogHeader
-        appearance="extended"
+        appearance="expanded"
         title={t(TranslationKeyMap[currentStep])}
         description={description}
         onClose={handleClose}

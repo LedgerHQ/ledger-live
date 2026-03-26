@@ -2,8 +2,8 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
-import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { GetAccountShape, makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAddressFromPublicKey } from "@stacks/transactions";
 import BigNumber from "bignumber.js";

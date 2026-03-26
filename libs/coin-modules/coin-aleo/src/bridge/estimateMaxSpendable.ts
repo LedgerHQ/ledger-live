@@ -1,5 +1,5 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AleoAccount, Transaction as AleoTransaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";

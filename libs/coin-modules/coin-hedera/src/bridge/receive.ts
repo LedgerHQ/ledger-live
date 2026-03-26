@@ -1,6 +1,6 @@
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { isSegwitDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account, AccountBridge, DerivationMode } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { Transaction } from "../types";

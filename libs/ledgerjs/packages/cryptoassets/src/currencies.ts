@@ -966,16 +966,16 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "coreum",
     coinType: CoinType.ATOM,
-    name: "Coreum",
+    name: "TX",
     managerAppName: "Cosmos",
-    ticker: "COREUM",
+    ticker: "TX",
     scheme: "coreum",
     color: "#6DD39A",
     family: "cosmos",
     units: [
       {
-        name: "Core",
-        code: "CORE",
+        name: "TX",
+        code: "TX",
         magnitude: 6,
       },
       {

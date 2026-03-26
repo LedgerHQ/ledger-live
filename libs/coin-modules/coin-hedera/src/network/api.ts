@@ -242,11 +242,12 @@ async function findTransactionByContractCallV2({
     url: `${API_URL}/api/v1/transactions?${params.toString()}`,
   });
 
-  // try to find the CONTRACT_CALL transaction related to the given address
+  // try to find main CONTRACT_CALL transaction related to the given address
   const relatedTx = res.data.transactions.find(tx => {
     return (
       tx.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
-      tx.transaction_id.startsWith(payerAddress)
+      tx.transaction_id.startsWith(payerAddress) &&
+      tx.parent_consensus_timestamp === null
     );
   });
 

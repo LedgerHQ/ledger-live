@@ -1,8 +1,8 @@
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runPortfolioTransactionsHistoryTest } from "./portfolio";
 
 runPortfolioTransactionsHistoryTest(
-  Currency.BTC,
+  Account.BTC_NATIVE_SEGWIT_1,
   ["B2CQA-2073"],
   ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", `@bitcoin`, `@family-bitcoin`],
 );

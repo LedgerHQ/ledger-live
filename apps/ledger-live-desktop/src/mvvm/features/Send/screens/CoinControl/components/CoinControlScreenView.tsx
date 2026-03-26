@@ -2,12 +2,10 @@ import React from "react";
 import { AmountInput } from "./AmountInput";
 import { StrategySelect } from "./StrategySelect";
 import { CoinControlFooter } from "./CoinControlFooter";
-import { FeePresetOption } from "../../../hooks/useFeePresetOptions";
-import { FeePresetLegendMap } from "../../../hooks/useFeePresetLegends";
-import { FeeFiatMap } from "../../../hooks/useFeePresetFiatValues";
+import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
 import { UtxoSelector } from "./UtxoSelector";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
-import type { BitcoinUtxoDisplayData } from "../hooks/useBitcoinUtxoDisplayData";
+import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 
@@ -27,14 +25,7 @@ type CoinControlScreenViewProps = Readonly<{
   enterAmountPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
-  feesRowLabel: string;
-  feesRowValue: string;
-  feesRowStrategyLabel: string;
-  selectedFeeStrategy: string | null;
-  feePresetOptions: readonly FeePresetOption[];
-  fiatByPreset: FeeFiatMap;
-  legendByPreset: FeePresetLegendMap;
-  onSelectFeeStrategy: (strategy: string) => void;
+  networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
   reviewDisabled: boolean;
@@ -59,14 +50,7 @@ export function CoinControlScreenView({
   enterAmountPlaceholder,
   amountToSendLabel,
   amountInputLabel,
-  feesRowLabel,
-  feesRowValue,
-  feesRowStrategyLabel,
-  selectedFeeStrategy,
-  feePresetOptions,
-  fiatByPreset,
-  legendByPreset,
-  onSelectFeeStrategy,
+  networkFees,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -99,14 +83,7 @@ export function CoinControlScreenView({
         changeToReturnFormatted={changeToReturnFormatted}
         changeToReturnLabel={changeToReturnLabel}
         enterAmountPlaceholder={enterAmountPlaceholder}
-        feesRowLabel={feesRowLabel}
-        feesRowValue={feesRowValue}
-        feesRowStrategyLabel={feesRowStrategyLabel}
-        selectedFeeStrategy={selectedFeeStrategy}
-        feePresetOptions={feePresetOptions}
-        fiatByPreset={fiatByPreset}
-        legendByPreset={legendByPreset}
-        onSelectFeeStrategy={onSelectFeeStrategy}
+        networkFees={networkFees}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}
         reviewDisabled={reviewDisabled}

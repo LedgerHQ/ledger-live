@@ -3,47 +3,66 @@ import {
   Box,
   Button,
   Subheader,
+  SubheaderCount,
   SubheaderRow,
-  SubheaderTitle,
   SubheaderShowMore,
+  SubheaderTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import Assets from "~/screens/Portfolio/Assets";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
-import { Asset } from "~/types/asset";
+import AssetListItem from "./AssetListItem";
+import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionViewModel";
 
 interface PortfolioCryptosSectionProps {
-  readonly assets: Asset[];
-  readonly onPressShowAll: () => void;
+  isEmptyState?: boolean;
+  isReadOnly?: boolean;
 }
 
-export const PortfolioCryptosSection = ({
-  assets,
-  onPressShowAll,
-}: PortfolioCryptosSectionProps) => {
+const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> = ({
+  isEmptyState,
+  isReadOnly,
+}) => {
   const { t } = useTranslation();
+  const { assetsCount, hasMore, assetsToDisplay, onPressShowAll, onItemPress } =
+    usePortfolioCryptosSectionViewModel({ isEmptyState, isReadOnly });
+
+  if (assetsCount === 0) return null;
 
   return (
-    <Box key="cryptos">
+    <Box>
       <Subheader>
         <SubheaderRow
-          onPress={onPressShowAll}
+          onPress={hasMore ? onPressShowAll : undefined}
+          accessibilityRole={hasMore ? "button" : undefined}
           lx={{ marginBottom: "s12" }}
-          accessibilityRole="button"
         >
-          <SubheaderTitle>{`${t("wallet.tabs.crypto")} (${String(assets.length)})`}</SubheaderTitle>
-          <SubheaderShowMore />
+          <SubheaderTitle>{t("wallet.tabs.crypto")}</SubheaderTitle>
+          {hasMore && (
+            <>
+              <SubheaderCount value={assetsCount} />
+              <SubheaderShowMore />
+            </>
+          )}
         </SubheaderRow>
       </Subheader>
-      <Assets assets={assets} />
-      <Button
-        appearance="gray"
-        size="lg"
-        isFull
-        onPress={onPressShowAll}
-        lx={{ marginTop: "s24", marginBottom: "s48" }}
-      >
-        {t("portfolio.seeAllAssets")}
-      </Button>
+      <Box testID="PortfolioCryptosList">
+        {assetsToDisplay.map(item => (
+          <AssetListItem key={item.currency.id} asset={item} onPress={onItemPress} />
+        ))}
+      </Box>
+      {hasMore && (
+        <Button
+          appearance="gray"
+          size="lg"
+          isFull
+          onPress={onPressShowAll}
+          lx={{ marginTop: "s24", marginBottom: "s24" }}
+        >
+          {t("portfolio.seeAllAssets")}
+        </Button>
+      )}
     </Box>
   );
 };
+
+export const PortfolioCryptosSection = withDiscreetMode(PortfolioCryptosSectionComponent);

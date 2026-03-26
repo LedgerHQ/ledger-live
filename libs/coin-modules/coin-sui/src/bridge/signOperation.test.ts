@@ -1,5 +1,5 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { LedgerSigner } from "@mysten/signers/ledger";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";

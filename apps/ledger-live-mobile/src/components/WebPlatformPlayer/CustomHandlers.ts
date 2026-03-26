@@ -13,7 +13,7 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import prepareSignTransaction from "../Web3AppWebview/liveSDKLogic";
 import { useDispatch } from "~/context/hooks";
 import { addOneAccount } from "~/actions/accounts";
-import { setAccountName } from "@ledgerhq/live-wallet/lib/store";
+import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { Linking } from "react-native";
 

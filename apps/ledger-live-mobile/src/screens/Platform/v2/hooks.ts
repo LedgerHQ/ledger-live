@@ -23,6 +23,8 @@ import { useSelector } from "~/context/hooks";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useDB } from "../../../db";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { NavigatorName, ScreenName } from "~/const";
 import { useBanner } from "~/components/banners/hooks";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../../reducers/settings";
@@ -135,6 +137,7 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
       const shouldUseLegacyRebornFlow = isReadOnly && !shouldUseLazyOnboarding;
 
       if (shouldUseLegacyRebornFlow && !hasOrderedNano && !isLedgerShopApp) {
+        setOriginFlow(HOOKS_TRACKING_LOCATIONS.platform);
         navigateToRebornFlow();
         return;
       }

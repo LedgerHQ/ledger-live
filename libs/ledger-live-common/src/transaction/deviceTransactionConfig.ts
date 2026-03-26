@@ -1,4 +1,4 @@
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import perFamily from "../generated/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField } from "../generated/deviceTransactionConfig";
 import type { Transaction, TransactionStatus } from "../generated/types";

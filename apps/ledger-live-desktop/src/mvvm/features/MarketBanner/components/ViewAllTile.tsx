@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import { Tile, TileSpot, TileTitle, TileContent } from "@ledgerhq/lumen-ui-react";
+import { Tile, Spot, TileTitle, TileContent } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 
 export const ViewAllTile = () => {
@@ -19,7 +19,7 @@ export const ViewAllTile = () => {
       onClick={goToMarket}
       data-testid="market-banner-view-all"
     >
-      <TileSpot appearance="icon" icon={ChevronRight} size={40} />
+      <Spot appearance="icon" icon={ChevronRight} size={40} />
       <TileContent>
         <TileTitle>{t("marketBanner.cta")}</TileTitle>
       </TileContent>
