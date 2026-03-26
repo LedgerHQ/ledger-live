@@ -4,11 +4,11 @@ import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
-import { PortfolioCryptosSection } from "LLM/features/WalletAssets/views/CryptosSection";
-import { PortfolioStablecoinsSection } from "LLM/features/WalletAssets/views/StablecoinsSection";
+import { CryptoAddressesButton } from "LLM/features/WalletAssets/components/CryptoAddressesButton";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
-import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
+import { useTranslation } from "~/context/Locale";
+import { PortfolioEmptyAssetSections } from "./PortfolioEmptyAssetSections";
 
 type PortfolioNoAccountsContentProps = {
   readonly isLNSUpsellBannerShown: boolean;
@@ -34,30 +34,29 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
+      <PortfolioEmptyAssetSections shouldDisplayAssetSection={shouldDisplayAssetSection} />
       {shouldDisplayAssetSection ? (
-        <>
-          <PortfolioCryptosSection isEmptyState />
-          <Box lx={{ marginTop: "s24" }}>
-            <PortfolioStablecoinsSection isEmptyState />
-          </Box>
-        </>
+        <Box lx={{ marginTop: "s24", marginBottom: "s48" }}>
+          <CryptoAddressesButton />
+        </Box>
       ) : (
-        <PortfolioCryptosSection isReadOnly />
+        <>
+          <Button
+            appearance="gray"
+            size="lg"
+            lx={{ width: "full", marginTop: "s24", marginBottom: "s48" }}
+            onPress={openAddModal}
+            testID="add-account-cta"
+          >
+            {t("account.emptyState.addCryptoAccount")}
+          </Button>
+          <AddAccountDrawer
+            isOpened={isAddModalOpened}
+            onClose={closeAddModal}
+            doesNotHaveAccount
+          />
+        </>
       )}
-      <Button
-        appearance="gray"
-        size="lg"
-        lx={{
-          width: "full",
-          marginTop: "s24",
-          marginBottom: "s48",
-        }}
-        onPress={openAddModal}
-        testID="add-account-cta"
-      >
-        {t("account.emptyState.addCryptoAccount")}
-      </Button>
-      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} doesNotHaveAccount />
     </Box>
   );
 };
