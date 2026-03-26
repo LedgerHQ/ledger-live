@@ -53,7 +53,8 @@ export function SendHeader() {
     memoType: uiConfig.memoType,
     memoTypeOptions,
     onMemoChange: memo => {
-      transaction.setRecipient({ ...state.recipient, memo });
+      const address = state.recipient?.address ?? recipientSearch.value;
+      transaction.setRecipient({ ...state.recipient, address, memo });
     },
     onMemoSkip: () => {
       navigation.goToNextStep();

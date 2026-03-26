@@ -35,7 +35,6 @@ export class SendModal extends Modal {
     if (!recipient) {
       throw new Error("Recipient address is not set");
     }
-    await this.recipientInput.clear();
     await this.recipientInput.fill(recipient);
   }
 
