@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import type { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
@@ -27,15 +27,17 @@ export type HistoryExportDialogViewModel = {
 };
 
 type UseHistoryExportDialogViewModelArgs = {
-  onResult?: () => void;
+  setDialogHeight?: (h: "fixed" | "hug") => void;
 };
 
 export function useHistoryExportDialogViewModel({
-  onResult,
+  setDialogHeight,
 }: UseHistoryExportDialogViewModelArgs = {}): HistoryExportDialogViewModel {
   const rawAccounts = useSelector(accountsSelector);
   const names = useBatchMaybeAccountName(rawAccounts);
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
+
+  const handleResult = useCallback(() => setDialogHeight?.("hug"), [setDialogHeight]);
 
   const {
     success,
@@ -46,8 +48,8 @@ export function useHistoryExportDialogViewModel({
   } = useExportOperationsCsv({
     accounts: rawAccounts,
     checkedIds,
-    onSuccess: onResult,
-    onError: onResult,
+    onSuccess: handleResult,
+    onError: handleResult,
   });
 
   const accounts: ExportAccount[] = useMemo(
@@ -75,7 +77,8 @@ export function useHistoryExportDialogViewModel({
   const resetState = useCallback(() => {
     resetExportState();
     setCheckedIds([]);
-  }, [resetExportState]);
+    setDialogHeight?.("fixed");
+  }, [resetExportState, setDialogHeight]);
 
   return {
     accounts,

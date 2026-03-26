@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "LLD/hooks/redux";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
@@ -69,7 +69,7 @@ export function useExportOperationsCsv({
         defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
         filters: [{ name: "All Files", extensions: ["csv"] }],
       });
-      if (path) {
+      if (path?.filePath) {
         const csv = accountsOpToCSV(
           accounts.filter(a => checkedIds.includes(a.id)),
           countervalueCurrency,
