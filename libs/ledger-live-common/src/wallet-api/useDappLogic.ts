@@ -16,6 +16,7 @@ import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
+import { isLedgerButtonReferer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
@@ -574,8 +575,14 @@ export function useDappLogic({
 
               tracking.dappSendTransactionSuccess(manifest, trackingData);
 
-              if (referer === "ledger-button") {
-                console.log("successfully broadcasted tx with referer", referer);
+              if (isLedgerButtonReferer(referer)) {
+                reportLedgerButtonBroadcast({
+                  dappId: manifest.id,
+                  chainId: currentNetwork.chainID,
+                  networkName: trackingData.network,
+                  transactionHash: optimisticOperation.hash,
+                  referer,
+                });
               }
 
               postMessage(
@@ -724,6 +731,7 @@ export function useDappLogic({
       mevProtected,
       nanoApp,
       postMessage,
+      referer,
       setCurrentAccount,
       setCurrentAccountHist,
       tracking,
