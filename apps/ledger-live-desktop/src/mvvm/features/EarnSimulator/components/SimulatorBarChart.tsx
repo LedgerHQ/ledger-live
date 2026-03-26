@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import * as d3scale from "d3-scale";
-import type { YearProjection } from "../utils/compoundInterest";
+import type { YearProjection } from "@ledgerhq/live-common/earn-simulator/compoundInterest";
 
 type Props = {
   data: YearProjection[];

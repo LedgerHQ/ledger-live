@@ -2,7 +2,10 @@ import { useState, useMemo, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
-import { computeProjections, YearProjection } from "../../utils/compoundInterest";
+import {
+  computeProjections,
+  YearProjection,
+} from "@ledgerhq/live-common/earn-simulator/compoundInterest";
 
 const DEFAULT_CURRENCY_ID = "solana";
 const DEFAULT_CURRENCY_NAME = "Solana";

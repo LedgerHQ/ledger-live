@@ -1,7 +1,10 @@
 import { useState, useMemo, useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
-import { computeProjections, YearProjection } from "../utils/compoundInterest";
+import {
+  computeProjections,
+  YearProjection,
+} from "@ledgerhq/live-common/earn-simulator/compoundInterest";
 import { closeEarnSimulator } from "../earnSimulatorDialog";
 
 const DEFAULT_CURRENCY_ID = "solana";

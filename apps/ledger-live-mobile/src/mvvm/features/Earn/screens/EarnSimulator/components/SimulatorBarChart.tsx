@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import Svg, { Rect, Path, Text as SvgText } from "react-native-svg";
 import * as d3scale from "d3-scale";
 import { Text } from "@ledgerhq/native-ui";
-import type { YearProjection } from "../../../utils/compoundInterest";
+import type { YearProjection } from "@ledgerhq/live-common/earn-simulator/compoundInterest";
 
 type Props = {
   data: YearProjection[];
