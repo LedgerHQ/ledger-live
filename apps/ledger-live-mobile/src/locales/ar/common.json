@@ -176,6 +176,21 @@
       "title" : "المكافآت أصغر من الرسوم المقدرة للمطالبة بهم.",
       "description" : ""
     },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "عفواً، الأموال المتوفرة غير كافية"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) تتجاوز الحد الأقصى للطول",
+      "description" : "ملاحظتك يبلغ طولها {{memoLength}} بايت، لكن الحد الأقصى المسموح به هو {{maxLength}} بايت. يُرجى تقليل حجم الملاحظة."
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "انتهت مدة الإقران",
+      "description" : "انتهت مهلة الاتصال بتطبيق Concordium ID. يُرجى إعادة المحاولة."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "انتهت مدة الجلسة",
+      "description" : "لم تعد جلسة تطبيق Concordium ID نشطة. يُرجى الإقران مرةً أخرى."
+    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "حدث خطأ ما (الخطأ #1)",
       "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
@@ -937,6 +952,9 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
+    },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "المبلغ منخفض جداً. أرسل على الأقل {{minimumAmount}}."
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "حساب رمز التوكن المرتبط هذا يحتفظ برمز توكن آخر"
@@ -2728,11 +2746,19 @@
     },
     "walletBalance" : "رصيد المحفظة",
     "balance" : {
-      "noSigner" : "المحفظة الأكثر\nأماناً",
-      "noAccounts" : "تأمين\nأصولك المشفرة"
+      "noSigner" : "محفظة الأصول المشفرة\nالآمنة الخاصة بك",
+      "noAccounts" : "ابدأ بتمويل\nمحفظتك"
     },
     "seeAllAssets" : "رؤية جميع الأصول",
+    "cryptoAddresses" : {
+      "title" : "حسابات الأصول المشفرة",
+      "count_one" : "{{count}} حساب",
+      "count_other" : "{{count}} حساب"
+    },
     "seeAllAccounts" : "رؤية جميع الحسابات",
+    "assetSection" : {
+      "connectionFailed" : "فشل الاتصال"
+    },
     "marketPriceSection" : {
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
@@ -2760,10 +2786,10 @@
       "buyLedger" : "شراء Ledger",
       "transferDrawer" : {
         "title" : "تحويل",
-        "receiveCrypto" : "تلقي الأصول المشفرة",
+        "receiveCrypto" : "تلقى عبر عنوان أصل مشفر",
         "sendCrypto" : "إرسال أصول مشفرة",
-        "bankTransfer" : "تحويل بنكي",
-        "bankTransferDescription" : "تلقي العملات المستقرة بواسطة إرسال النقود"
+        "bankTransfer" : "تلقى عبر تحويل البنكي",
+        "bankTransferDescription" : "تلقى العملات المستقرة ببساطة من خلال إرسال النقود."
       }
     },
     "recoverBanner" : {
@@ -2779,8 +2805,8 @@
     },
     "refreshStatus" : {
       "refreshing" : "جارٍ التحديث...",
-      "upToDate" : "أنت على أحدث إصدار",
-      "syncError" : "بعض الحسابات فشلت في المزامنة"
+      "upToDate" : "المحفظة الاستثمارية مُحدّثة",
+      "syncError" : "تعذر تحميل بعض بيانات الحساب"
     }
   },
   "addAccountsModal" : {
@@ -3548,8 +3574,10 @@
         "description" : "البطاقات المحلية تظهر في المحفظة الاستثمارية (وأماكن الأخرى) بدون Braze. إنها تستمر حتى تتجاهلها أو تحذفها هنا.",
         "addSampleBanner" : "إضافة شريط عينة",
         "addSampleBannerDesc" : "إضافة شريط رئيسي عينة إلى المحفظة الاستثمارية.",
-        "addSampleActionCarousel" : "إضافة شريط إجراء دوار عينة",
-        "addSampleActionCarouselDesc" : "إضافة شريط دوار من بطاقات الإجراءات (شراء، بيع، تكديس) إلى المحفظة الاستثمارية.",
+        "addSampleActionCarouselIcon" : "إضافة شريط دوّار للإجراءات (أيقونة)",
+        "addSampleActionCarouselIconDesc" : "لافتة المحتوى مع أيقونات النقاط — شراء، مبادلة، تكديس. يتطلب علامة وضع Braze.",
+        "addSampleActionCarouselImageBackground" : "إضافة شريط دوّار للإجراءات (صورة)",
+        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner مع image_background — شراء ومبادلة وتكديس. يتطلب علامة وضع Braze.",
         "dismissAll" : "تجاهل كل البطاقات المحلية",
         "dismissAllDesc" : "حذف كل بطاقات المحتوى التي تم إنشاؤها محلياً."
       }
@@ -4289,7 +4317,21 @@
         "maxFeeBelowPriorityFee" : "يجب أن يكون الحد الأقصى للرسوم أكبر من أو يساوي الحد الأقصى لرسوم الأولوية"
       },
       "coinControl" : {
-        "title" : "التحكم في العملات"
+        "title" : "التحكم في العملات",
+        "strategy" : "الاستراتيجية",
+        "learnMore" : "تعرّف على المزيد",
+        "coinToSend" : "العملة المراد إرسالها",
+        "changeToReturn" : "المتبقي المراد إرجاعه",
+        "enterAmount" : "أدخل المبلغ",
+        "amountToSendInCurrency" : "المبلغ المراد إرساله بعملة {{ticker}}",
+        "amountInputLabel" : "المبلغ المطلوب إرساله",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (الأول دخولاً هو الأوّل خروجاً)",
+            "OPTIMIZE_SIZE" : "تقليل الرسوم (تحقيق الحجم الأمثل)",
+            "MERGE_OUTPUTS" : "تقليل الرسوم المستقبلية (دمج العملات)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "لديك معاملات واردة مُعلقة. يُرجى الانتباه، المعاملات المُعلقة يمكن عكسها.",
@@ -7766,6 +7808,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "الأصول المشفرة",
+      "stablecoins" : "العملات المستقرة",
       "market" : "السوق"
     },
     "referralProgram" : "$20"
@@ -8579,11 +8622,24 @@
         "title" : "إقرار",
         "description" : "Concordium يتطلب تحقق خارجي من الهويّة. يُرجى قراءة تحذيرات الأمان الهامة هذه:",
         "list" : {
-          "1" : "لا تأكيد صحة العنوان – جهازك Ledger لا يمكنه تأكيد صحة عناوين تلقي Concordium. تأكد من صحة العناوين يدوياً قبل تلقي الأموال.",
-          "2" : "تطبيق Concordium ID يستخدم بذرةً منفصلةً – ستقوم بإنشاء 24 كلمة جديدة في تطبيق Concordium. لا تستخدم بذرة Ledger الخاصة بك أبداً.",
-          "3" : "سيعاد توجيهك خارج Ledger Wallet – التحقق من الهويّة يحدث في تطبيق محفظة Concordium الخارجي. هذا مطلوب بواسطة بروتوكول سلسلة كتل Concordium.",
-          "4" : "توقيع المعاملة يظل آمناً – فقط جهازك Ledger يمكنه توقيع المعاملات وإنشاء الحسابات."
+          "1" : {
+            "title" : "لا يوجد تحقق من العنوان",
+            "description" : "جهازك Ledger لا يمكنه تأكيد صحة عناوين تلقي Concordium. تأكد من صحة العناوين يدوياً قبل تلقي الأموال."
+          },
+          "2" : {
+            "title" : "تطبيق Concordium ID يستخدم بذرة منفصلة",
+            "description" : "ستقوم بإنشاء 24 كلمة جديدة في تطبيق Concordium. لا تستخدم بذرة Ledger الخاصة بك أبداً."
+          },
+          "3" : {
+            "title" : "سيتم إعادة توجيهك خارج Ledger Wallet",
+            "description" : "يحدث التحقق من الهويّة في تطبيق محفظة Concordium الخارجي. هذا مطلوب بواسطة بروتوكول سلسلة كتل Concordium."
+          },
+          "4" : {
+            "title" : "توقيع المعاملة يظل آمناً",
+            "description" : "فقط جهازك Ledger يمكنه توقيع المعاملات وإنشاء الحسابات."
+          }
         },
+        "guide" : "يُرجى قراءة الدليل قبل المتابعة:",
         "allow" : "موافقة"
       },
       "pair" : {
@@ -8591,26 +8647,33 @@
         "connecting" : "جاري الاتصال...",
         "scanQRCodeOrDownload" : "امسح كود QR ضوئياً بجهاز آخر، أو قم بتنزيل تطبيق Concordium ID للمتابعة.",
         "openIdApp" : "افتح تطبيق Concordium ID",
-        "success" : "تم الإقران مع تطبيق Concordium ID بنجاح.",
-        "error" : "تعذر الإقران مع تطبيق Concordium ID."
+        "success" : "تم الاتصال بتطبيق Concordium ID بنجاح.",
+        "continue" : "متابعة",
+        "error" : "تعذر الاتصال بتطبيق Concordium ID. يُرجى إعادة المحاولة."
       },
       "create" : {
-        "title" : "إنشاء حساب",
+        "title" : "إضافة حساب Concordium",
         "prepare" : {
-          "title" : "لإنشاء حساب، طابق الكود أدناه في تطبيق Concordium ID"
-        }
+          "title" : "لإنشاء حساب، طابق الكود أدناه في تطبيق Concordium ID",
+          "resendButton" : "إعادة إرسال التأكيد",
+          "resendDescription" : "إعادة الإرسال متاحة خلال {{count}} ثانية"
+        },
+        "submitting" : "جارٍ إنشاء حسابك...",
+        "keepDeviceNearby" : "قم بالموافقة على المعاملة على جهازك Ledger. احتفظ بجهازك Ledger بالقرب منك.",
+        "success" : "تمّ إنشاء حساب Concordium الخاص بك بنجاح.",
+        "error" : "فشل إنشاء الحساب. يُرجى إعادة المحاولة."
       }
     }
   },
   "fearAndGreed" : {
     "title" : "مؤشر الحالة المزاجية",
-    "description" : "مؤشر الحالة المزاجية يشير إلى الحالة العاطفية للسوق. يتراوح بين 0 و 100، حيث تشير القيمة الأقل إلى الخوف الشديد، والقيمة الأعلى إلى الطمع الشديد.",
+    "description" : "يُظهر شعور السوق الإجمالي من 0 إلى 100، بناءً على الاتجاهات والنشاط. استخدمه لفهم كيف يتصرف السوق: القيَّم الأقل تشير إلى الخوف، والقيَّم الأعلى تشير إلى الطمع.",
     "levels" : {
-      "extremeFear" : "خوف+",
       "fear" : "خوف",
+      "cautious" : "حَذِر",
       "neutral" : "محايد",
-      "greed" : "طمع",
-      "extremeGreed" : "طمع+"
+      "optimistic" : "متفائل",
+      "greedy" : "طمّاع"
     },
     "tileTitle" : "الحالة المزاجية"
   },
@@ -8627,7 +8690,7 @@
   },
   "cardLanding" : {
     "title" : "أنفِق\nأصولك المشفرة",
-    "subtitle" : "ادفع عبر الإنترنت أو في المتاجر الفعلية باستخدام بطاقة أصول مشفرة",
+    "subtitle" : "ادفع عبر الإنترنت أو في المتاجر الفعلية عن طريق بطاقة أصول مشفرة.",
     "ctas" : {
       "exploreCards" : "استكشف البطاقات",
       "iHaveACard" : "لديّ بطاقة"
@@ -8658,6 +8721,7 @@
     "home" : "الصفحة الرئيسية",
     "swap" : "مبادلة",
     "earn" : "اكسب",
+    "yield" : "العائد",
     "card" : "البطاقة"
   },
   "syncIndicator" : {
@@ -8667,8 +8731,8 @@
       "default" : "مزامنة"
     },
     "bottomSheet" : {
-      "title" : "تعذرت مزامنة بعض الحسابات",
-      "description" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة. قائمة الحسابات المتأثرة: {{accounts}}.",
+      "title" : "تعذر تحميل بعض بيانات الحساب",
+      "description" : "أصولك آمنة. هذه مشكلة مزامنة مؤقتة.\nالحسابات المتأثرة: {{accounts}}",
       "close" : "إغلاق"
     }
   },
