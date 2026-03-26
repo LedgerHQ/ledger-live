@@ -119,7 +119,7 @@ export default {
                                             await waitForTransactionConfirmation(
                                               getMainAccount(account),
                                               op.hash,
-                                              timeoutMs ? { timeoutMs } : undefined,
+                                              timeoutMs ? { timeoutMs } : {},
                                             );
                                             l(
                                               `✔️ transaction confirmed on-chain (hash: ${op.hash})`,

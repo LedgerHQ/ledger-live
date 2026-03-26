@@ -4,7 +4,7 @@ import { CLI } from "tests/utils/cliUtils";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { approveToken } from "@ledgerhq/live-common/lib/e2e/families/evm";
+import { approveToken } from "@ledgerhq/live-common/e2e/families/evm";
 
 type LiveDataCommandOptions = {
   readonly useScheme?: boolean;
@@ -96,7 +96,7 @@ export const liveDataWithRecipientAddressCommand = (
   };
 };
 export const approveTokenCommand =
-  (account: TokenAccount, spender: string, minAmount: number) => async () => {
+  (account: TokenAccount, spender: string, approveAmount: string) => async () => {
     const originalDisableBroadcast = setDisableBroadcast("0");
 
     const result = CLI.tokenApproval({
@@ -105,7 +105,7 @@ export const approveTokenCommand =
       spender: spender,
       token: account.currency.id,
       mode: "approve",
-      approveAmount: String(minAmount),
+      approveAmount,
       waitConfirmation: true,
     });
 

@@ -10,7 +10,6 @@ import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 
 const readFileAsync = promisify(readFile);
-const IS_NOT_MOCK = process.env.MOCK == "0";
 
 async function attachIfExists(
   testInfo: TestInfo,
@@ -93,12 +92,13 @@ export async function captureArtifacts(
   page: Page,
   testInfo: TestInfo,
   electronApp: ElectronApplication,
+  takeSpeculosScreenshot: boolean,
   webviewCollector?: WebviewLogCollector,
 ) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
 
-  if (IS_NOT_MOCK) {
+  if (takeSpeculosScreenshot) {
     await attachSpeculosScreenshots(testInfo);
   }
 

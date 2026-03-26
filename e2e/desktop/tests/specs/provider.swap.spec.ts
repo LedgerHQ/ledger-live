@@ -4,51 +4,37 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
-const app: AppInfos = AppInfos.EXCHANGE;
+const app: AppInfos = AppInfos.ETHEREUM;
 
 const providerFlowTests = [
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDC_1,
-    provider: Provider.VELORA,
-    xrayTicket: "B2CQA-3119",
-    bugTicket: "QAA-854",
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: TokenAccount.ETH_USDT_1,
     provider: Provider.ONE_INCH,
     xrayTicket: "B2CQA-3120",
-    bugTicket: "QAA-854",
+  },
+  {
+    fromAccount: TokenAccount.ETH_USDT_1,
+    toAccount: Account.ETH_1,
+    provider: Provider.OKX,
+    xrayTicket: "B2CQA-4728",
   },
 ];
 
-for (const { fromAccount, toAccount, provider, xrayTicket, bugTicket } of providerFlowTests) {
+for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests) {
   test.describe(`Swap - ${provider.uiName} flow`, () => {
     setupEnv(true);
-
-    const accPair: string[] = [fromAccount, toAccount].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
-    );
-
-    test.beforeEach(async () => {
-      setExchangeDependencies(
-        accPair.map(appName => ({
-          name: appName,
-        })),
-      );
-    });
 
     test.use({
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: app,
+      speculosApp: provider.app,
 
       cliCommandsOnApp: [
         [
@@ -83,23 +69,24 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTicket } of provid
             type: "TMS",
             description: xrayTicket,
           },
-          { type: "BUG", description: bugTicket },
         ],
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-        const swap = new Swap(fromAccount, toAccount, minAmount);
+        await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
+        const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-
         await app.swap.selectSpecificProvider(provider, electronApp);
+
         await app.swap.clickExchangeButton(electronApp);
         await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
         await app.swap.clickExecuteSwapButton(electronApp);
         await app.swap.clickContinueButton();
+        await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
+        await app.swap.expectTransactionSentToasterToBeVisible();
       },
     );
   });

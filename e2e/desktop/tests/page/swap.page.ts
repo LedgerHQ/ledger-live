@@ -11,6 +11,7 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
+import BigNumber from "bignumber.js";
 import {
   approveTokenCommand,
   isTokenAllowanceSufficientCommand,
@@ -34,7 +35,7 @@ export class SwapPage extends WebViewAppPage {
   private toAccountCoinSelector = "to-account-coin-selector";
   private quoteCardProviderName = "compact-quote-card-provider-";
   private specificQuoteCardProviderName = (provider: string) =>
-    `compact-quote-card-provider-name-${provider}`;
+    `compact-quote-card-provider-name-${provider.toLowerCase()}`;
   private numberOfQuotes = "number-of-quotes";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
@@ -194,7 +195,7 @@ export class SwapPage extends WebViewAppPage {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
       if (provider && provider.isNative) {
         const providerLocator = webview
-          .getByTestId(this.specificQuoteCardProviderName(provider.name.toLowerCase()))
+          .getByTestId(this.specificQuoteCardProviderName(provider.name))
           .first();
 
         await providerLocator.isVisible();
@@ -219,7 +220,7 @@ export class SwapPage extends WebViewAppPage {
 
     for (const providerName of providers) {
       const providerLocator = webview
-        .getByTestId(this.specificQuoteCardProviderName(providerName.toLowerCase()))
+        .getByTestId(this.specificQuoteCardProviderName(providerName))
         .first();
 
       if (await providerLocator.isVisible()) {
@@ -618,7 +619,11 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Ensure token approval")
-  async ensureTokenApproval(fromAccount: TokenAccount, provider: Provider, minAmount: string) {
+  async ensureTokenApproval(
+    fromAccount: Account | TokenAccount,
+    provider: Provider,
+    minAmount: string,
+  ) {
     if (!provider.contractAddress || !fromAccount.parentAccount) return;
 
     const currentAllowance = await isTokenAllowanceSufficientCommand(
@@ -635,9 +640,9 @@ export class SwapPage extends WebViewAppPage {
       const result = await approveTokenCommand(
         fromAccount,
         provider.contractAddress,
-        Number(minAmount) * 1.2,
+        new BigNumber(minAmount).times(12).div(10).toFixed(),
       )();
-      allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
+      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
     } finally {
       await cleanSpeculos(speculos, previousSpeculosPort);
     }

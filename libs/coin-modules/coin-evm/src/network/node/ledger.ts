@@ -62,8 +62,8 @@ async function getTransaction(
   });
   return {
     hash: ledgerTransaction.hash,
-    blockHeight: ledgerTransaction.block.height,
-    blockHash: ledgerTransaction.block.hash,
+    blockHeight: ledgerTransaction.block?.height,
+    blockHash: ledgerTransaction.block?.hash,
     nonce: ledgerTransaction.nonce_value,
     gasPrice: ledgerTransaction.gas_price,
     gasUsed: ledgerTransaction.gas_used,

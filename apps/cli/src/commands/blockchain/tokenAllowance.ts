@@ -108,7 +108,7 @@ function formatAllowanceOutput(
     `Owner: ${result.owner}`,
     `Spender: ${result.spender}`,
     `Allowance: ${formatted}`,
-    `Raw (wei): ${result.allowance.toFixed(0)}`,
+    `Raw (smallest unit): ${result.allowance.toFixed(0)}`,
   ].join("\n");
 }
 

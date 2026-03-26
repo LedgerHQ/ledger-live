@@ -33,28 +33,23 @@ export async function getEvmTokenAllowance(
 ): Promise<GetEvmTokenAllowanceResult> {
   if (account.currency.family !== "evm") {
     throw new Error(
-      `getEvmTokenAllowance requires an EVM account; got ${account.currency.family}. Use --currency with an EVM chain (e.g. ethereum, polygon).`,
+      `The account currency must be EVM (family "evm"); received: "${account.currency.family}".`,
     );
   }
 
   const tokenCurrency = await getCryptoAssetsStore().findTokenById(tokenId);
   if (!tokenCurrency) {
-    throw new Error(
-      `Token "${tokenId}" not found. Use a token id (e.g. ethereum/erc20/usd__coin for USDC, ethereum/erc20/usd_tether__erc20_ for USDT).`,
-    );
+    throw new Error(`No token found for id "${tokenId}".`);
   }
 
   if (tokenCurrency.parentCurrency.id !== account.currency.id) {
     throw new Error(
-      `Token ${tokenId} is not on ${account.currency.id}. Use a token for the account's chain.`,
+      `Token "${tokenId}" is on chain "${tokenCurrency.parentCurrency.id}", but the account currency is "${account.currency.id}"; they must match.`,
     );
   }
 
   // Ensure EVM coin config is set (e.g. when CLI runs tokenAllowance without having used the bridge)
-  createApi(
-    getCurrencyConfiguration<EvmConfigInfo>(account.currency),
-    account.currency.id,
-  );
+  createApi(getCurrencyConfiguration<EvmConfigInfo>(account.currency.id), account.currency.id);
 
   const nodeApi = getNodeApi(account.currency);
   const allowance = await nodeApi.getTokenAllowance(

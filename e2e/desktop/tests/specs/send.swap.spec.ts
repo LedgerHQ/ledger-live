@@ -9,7 +9,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
-const app: AppInfos = AppInfos.EXCHANGE;
+const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 
 const swaps = [
   {
@@ -243,7 +243,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     test.use({
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: app,
+      speculosApp: exchangeApp,
 
       cliCommandsOnApp: [
         [
@@ -280,15 +280,17 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         swap.setProvider(provider);
         await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
 
-        await app.swap.clickExchangeButton(electronApp);
-        if (provider.app && speculos) {
-          await speculos.relaunch(provider.app.name);
-
+        if (provider.app) {
+          if (provider.app !== exchangeApp) {
+            await speculos.relaunch(provider.app.name);
+          }
+          await app.swap.clickExchangeButton(electronApp);
           await app.swap.clickExecuteSwapButton(electronApp);
           await app.swap.clickContinueButton();
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swap.expectTransactionSentToasterToBeVisible();
         } else {
+          await app.swap.clickExchangeButton(electronApp);
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,

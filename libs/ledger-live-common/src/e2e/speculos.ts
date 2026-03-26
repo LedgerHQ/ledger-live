@@ -466,7 +466,7 @@ export async function startSpeculos(
   try {
     return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
-      : await createSpeculosDevice(deviceParams, undefined, wantedApiPort).then(device => {
+      : await createSpeculosDevice(deviceParams, 3, wantedApiPort).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return {
             id: device.id,

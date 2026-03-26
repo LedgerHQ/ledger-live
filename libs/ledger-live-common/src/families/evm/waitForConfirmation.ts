@@ -44,6 +44,6 @@ export async function waitForTransactionConfirmation(
   }
 
   throw new Error(
-    `Transaction ${hash} not confirmed within ${timeoutMs}ms. Increase --wait-confirmation-timeout or check the network.`,
+    `Transaction ${hash} was not confirmed within ${timeoutMs}ms.`,
   );
 }
