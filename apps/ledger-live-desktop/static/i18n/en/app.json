@@ -7241,6 +7241,12 @@
     "TonMinimumRequired": {
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
     },
+    "AleoAmountRecordRequired": {
+      "title": "Select a valid private record for the amount."
+    },
+    "AleoFeeRecordRequired": {
+      "title": "Select a valid private record for the fee."
+    },
     "BackupAppDataError": {
       "title": "Error during app data backup"
     },
