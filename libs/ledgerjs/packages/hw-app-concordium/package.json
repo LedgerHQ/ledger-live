@@ -3,62 +3,28 @@
   "version": "0.6.1",
   "description": "Ledger Hardware Wallet Concordium Application API",
   "keywords": [
-    "Ledger",
-    "LedgerWallet",
     "CCD",
     "Concordium",
+    "Flex",
+    "Hardware Wallet",
+    "Ledger",
+    "LedgerWallet",
     "NanoS+",
     "NanoX",
-    "Flex",
-    "Stax",
-    "Hardware Wallet"
+    "Stax"
   ],
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-concordium",
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-concordium",
-  "publishConfig": {
-    "access": "public"
-  },
   "main": "lib/Concordium.js",
   "module": "lib-es/Concordium.js",
   "types": "lib/Concordium.d.ts",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@ledgerhq/concordium-core": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*"
-  },
-  "devDependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "documentation": "14.0.2",
-    "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest --config=jest.config.ts",
-    "test-integ": "jest --config=jest.integ.config.ts",
-    "unimported": "unimported"
-  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/Concordium.ts",
@@ -75,5 +41,39 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest --config=jest.config.ts",
+    "test-integ": "jest --config=jest.integ.config.ts",
+    "unimported": "unimported"
+  },
+  "dependencies": {
+    "@ledgerhq/concordium-core": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*"
+  },
+  "devDependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "documentation": "14.0.2",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "ts-node": "^10.4.0"
   }
 }

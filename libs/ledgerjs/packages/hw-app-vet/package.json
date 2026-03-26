@@ -3,35 +3,27 @@
   "version": "0.11.1",
   "description": "Ledger Hardware Wallet VeChain Application API",
   "keywords": [
+    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
-    "VeChain",
-    "vet",
-    "vtho",
-    "VeThor",
     "NanoS",
-    "Hardware Wallet"
+    "VeChain",
+    "VeThor",
+    "vet",
+    "vtho"
   ],
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-vet",
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-vet",
-  "publishConfig": {
-    "access": "public"
-  },
   "main": "lib/Vet.js",
   "module": "lib-es/Vet.js",
-  "dependencies": {
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "@vechain/sdk-core": "2.0.0"
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -41,20 +33,27 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },
+  "dependencies": {
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@vechain/sdk-core": "2.0.0"
+  },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
     "source-map-support": "^0.5.21",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
-  },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  }
 }

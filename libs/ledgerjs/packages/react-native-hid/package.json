@@ -4,66 +4,27 @@
   "nativePackage": true,
   "description": "Ledger Hardware Wallet Web implementation of the communication layer, using U2F api",
   "keywords": [
+    "Blue",
+    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
+    "NanoS",
     "U2F",
     "browser",
-    "web",
-    "NanoS",
-    "Blue",
-    "Hardware Wallet"
+    "web"
   ],
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/react-native-hid",
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/react-native-hid",
-  "publishConfig": {
-    "access": "public"
-  },
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
-    "rxjs": "catalog:"
-  },
-  "devDependencies": {
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "documentation": "14.0.2",
-    "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "ts-node": "^10.4.0",
-    "yarn-add-no-save": "^1.0.3"
-  },
-  "peerDependencies": {
-    "react-native": "*"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/react-native-hid"
-  },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/index.ts",
@@ -80,5 +41,44 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../../.. -W libs/ledgerjs/packages/react-native-hid"
+  },
+  "dependencies": {
+    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/logs": "workspace:^",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "documentation": "14.0.2",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.4.0",
+    "yarn-add-no-save": "^1.0.3"
+  },
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "nativePackage": true
 }
