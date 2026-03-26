@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getExplorerApi } from "../network/explorer";
@@ -115,6 +117,72 @@ describe("getBalance", () => {
 
     expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
   });
+
+  it.each([
+    {
+      title: "only one 1 token",
+      operations: {
+        lastTokenOperations: [{ contract: "0x123" }, { contract: "0x456" }],
+        nextPagingToken: "",
+      },
+      includeAssets: (assetInfo: AssetInfo) => {
+        return Promise.resolve(
+          "assetReference" in assetInfo && assetInfo.assetReference === "0x123",
+        );
+      },
+      expected: [
+        {
+          value: BigInt("1000000"),
+          asset: { type: "erc20", assetReference: "0x123", assetOwner: "address" },
+        },
+      ],
+    },
+    {
+      title: "all tokens except one",
+      operations: {
+        lastTokenOperations: [{ contract: "0x123" }, { contract: "0x456" }, { contract: "0x789" }],
+        nextPagingToken: "",
+      },
+      includeAssets: (assetInfo: AssetInfo) => {
+        return Promise.resolve(
+          "assetReference" in assetInfo && assetInfo.assetReference !== "0x789",
+        );
+      },
+      expected: [
+        {
+          value: BigInt("1"),
+          asset: { type: "erc20", assetReference: "0x123", assetOwner: "0x000" },
+        },
+        {
+          value: BigInt("2"),
+          asset: { type: "0x456", assetReference: "0x456", assetOwner: "0x000" },
+        },
+      ],
+    },
+  ])(
+    "should fetch balance only for tokens filtered by options: $title",
+    async ({ operations, includeAssets, expected }) => {
+      nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber("0"));
+      mockGetStakes.mockResolvedValue({ items: [] });
+
+      mockGetExplorerApi.mockReturnValue({
+        getOperations: jest.fn().mockResolvedValue(operations),
+      });
+
+      const currency = {} as unknown as CryptoCurrency;
+      const userAddress = "0x000";
+
+      await getBalance(currency, userAddress, { includeAssets });
+
+      for (const balance of expected) {
+        expect(nodeApiMock.getTokenBalance).toHaveBeenCalledWith(
+          currency,
+          userAddress,
+          balance.asset.assetReference,
+        );
+      }
+    },
+  );
 
   it("is resilient when failing to fetch token balances", async () => {
     nodeApiMock.getCoinBalance.mockResolvedValue(new BigNumber(10));

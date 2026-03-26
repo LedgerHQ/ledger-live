@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genericGetAccountShape } from "../getAccountShape";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 
 const getSyncHashMock = jest.fn();
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
@@ -62,6 +63,8 @@ const chains = [
   { currency: { id: "ripple", name: "XRP" }, network: "mainnet" },
   { currency: { id: "tezos", name: "Tezos" }, network: "mainnet" },
 ];
+
+setupMockCryptoAssetsStore();
 
 describe("genericGetAccountShape", () => {
   beforeEach(() => {

@@ -40,7 +40,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance: address => getBalance(address),
+    getBalance: (address: string) => getBalance(address),
     lastBlock,
     getBlock,
     getBlockInfo,

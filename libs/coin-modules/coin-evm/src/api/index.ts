@@ -17,6 +17,7 @@ import type {
   TransactionIntent,
   TransactionValidation,
   Validator,
+  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
@@ -78,7 +79,8 @@ export function createApi(
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFeesParameters?: FeeEstimation["parameters"],
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
-    getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
+    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> =>
+      getBalance(currency, address, options),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
       address: string,
