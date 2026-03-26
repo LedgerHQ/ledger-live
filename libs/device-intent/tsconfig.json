@@ -5,7 +5,8 @@
     "declarationMap": true,
     "jsx": "react-jsx",
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": ["jest"]
   },
   "include": ["src/**/*"]
 }
