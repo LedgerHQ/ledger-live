@@ -40,9 +40,6 @@ export class EarnPage extends WebViewAppPage {
     await earnFunction();
     await appReadyPromise;
 
-    // "Earn Live App Loaded" fires when the WalletAPI client connects, before data has loaded.
-    // Wait for the loading skeleton to disappear to confirm the homescreen has finished
-    // fetching data and the tab bar (or screen content) is ready for interaction.
     const webview = await this.getWebView();
     await webview.getByTestId(this.loadingSkeleton).first().waitFor({ state: "hidden" });
   }

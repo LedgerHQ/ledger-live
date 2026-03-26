@@ -340,10 +340,6 @@ export class SwapPage extends WebViewAppPage {
   async checkAssetFromContains(expected: string) {
     this._webviewPage = undefined;
     const webview = await this.getWebView();
-    await webview.waitForFunction(
-      testId => document.querySelector(`[data-testid='${testId}']`)?.textContent !== "Choose asset",
-      this.fromAccountCoinSelector,
-    );
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
   }
 
@@ -358,10 +354,19 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const selector = webview.getByTestId(this.fromAccountCoinSelector);
 
-    await webview.waitForFunction(selectorTestId => {
-      const el = document.querySelector(`[data-testid='${selectorTestId}']`);
-      return el && el.textContent && el.textContent !== "Choose asset";
-    }, this.fromAccountCoinSelector);
+    try {
+      await webview.waitForFunction(
+        selectorTestId => {
+          const el = document.querySelector(`[data-testid='${selectorTestId}']`);
+          return el && el.textContent && el.textContent !== "Choose asset";
+        },
+        this.fromAccountCoinSelector,
+        { timeout: 5_000 },
+      );
+    } catch {
+      // Page context closed or from-selector not yet pre-populated; caller will proceed to manual selection
+      return false;
+    }
 
     const text = await selector.textContent();
     return text?.includes(asset) ?? false;
@@ -428,13 +433,13 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Select to account coin selector")
-  async selectToAccountCoinSelector(_electronApp: ElectronApplication) {
+  async selectToAccountCoinSelector() {
     const webview = await this.getWebView();
     await webview.getByTestId(this.toAccountCoinSelector).click();
   }
 
   @step("Select from account coin selector")
-  async selectFromAccountCoinSelector(_electronApp: ElectronApplication) {
+  async selectFromAccountCoinSelector() {
     const webview = await this.getWebView();
     await webview.getByTestId(this.fromAccountCoinSelector).click();
   }

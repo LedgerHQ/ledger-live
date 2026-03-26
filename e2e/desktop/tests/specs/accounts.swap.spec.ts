@@ -335,13 +335,13 @@ test.describe("Swap a coin for which you have no account yet - from present to n
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
 
-      await app.swap.selectFromAccountCoinSelector(electronApp);
+      await app.swap.selectFromAccountCoinSelector();
 
       const selector = await getModularSelector(app, "ASSET");
       if (selector) {
         await selectAccountMAD(selector, account1);
 
-        await app.swap.selectToAccountCoinSelector(electronApp);
+        await app.swap.selectToAccountCoinSelector();
         await selector.selectAsset(account2.currency);
         await selector.selectNetwork(account2.currency);
         await selector.clickOnAddAndExistingAccount();
@@ -408,7 +408,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
 
-      await app.swap.selectFromAccountCoinSelector(electronApp);
+      await app.swap.selectFromAccountCoinSelector();
       const selector = await getModularSelector(app, "ASSET");
       if (selector) {
         await selector.selectAsset(account1.currency);
@@ -418,7 +418,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
-        await app.swap.selectToAccountCoinSelector(electronApp);
+        await app.swap.selectToAccountCoinSelector();
         await selectAccountMAD(selector, account2);
       } else {
         await app.swap.selectAssetFrom(electronApp, account1.currency.name);
@@ -465,13 +465,13 @@ test.describe("Swap a coin for which you have no account yet - both not present"
       ],
       annotation: { type: "TMS", description: xrayTicket },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
 
-      await app.swap.selectFromAccountCoinSelector(electronApp);
+      await app.swap.selectFromAccountCoinSelector();
 
       const selector = await getModularSelector(app, "ASSET");
       if (selector) {
@@ -482,7 +482,7 @@ test.describe("Swap a coin for which you have no account yet - both not present"
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
-        await app.swap.selectToAccountCoinSelector(electronApp);
+        await app.swap.selectToAccountCoinSelector();
         await selector.selectAsset(account2.currency);
         await selector.selectNetwork(account2.currency);
         await selector.clickOnAddAndExistingAccount();

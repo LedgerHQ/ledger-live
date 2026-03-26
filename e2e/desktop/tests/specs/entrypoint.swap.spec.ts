@@ -317,7 +317,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           app.mainNavigation.openTargetFromMainNavigation("swap"),
         );
 
-        await app.swap.selectFromAccountCoinSelector(electronApp);
+        await app.swap.selectFromAccountCoinSelector();
 
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {
@@ -325,7 +325,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           await selector.selectNetwork(fromAccount.currency);
           await selector.selectAccountByName(fromAccount);
 
-          await app.swap.selectToAccountCoinSelector(electronApp);
+          await app.swap.selectToAccountCoinSelector();
           await selector.selectAsset(toAccount.currency);
           await selector.selectNetwork(toAccount.currency);
           await selector.selectAccountByName(toAccount);

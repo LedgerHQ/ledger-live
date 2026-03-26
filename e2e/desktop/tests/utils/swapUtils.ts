@@ -48,19 +48,19 @@ export async function performSwapUntilQuoteSelectionStep(
     swap.accountToDebit.currency.ticker,
   );
   if (!isAssetFromSelected) {
-    await selectAccountFrom(app, electronApp, swap);
+    await selectAccountFrom(app, swap);
   }
   const isAssetToSelected = await app.swap.checkIfToAssetIsAlreadySelected(
     swap.accountToCredit.currency.ticker,
   );
   if (!isAssetToSelected) {
-    await selectAccountTo(app, electronApp, swap);
+    await selectAccountTo(app, swap);
   }
   await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
 
-async function selectAccountFrom(app: Application, electronApp: ElectronApplication, swap: Swap) {
-  await app.swap.selectFromAccountCoinSelector(electronApp);
+async function selectAccountFrom(app: Application, swap: Swap) {
+  await app.swap.selectFromAccountCoinSelector();
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToDebit);
@@ -68,8 +68,8 @@ async function selectAccountFrom(app: Application, electronApp: ElectronApplicat
   }
 }
 
-async function selectAccountTo(app: Application, electronApp: ElectronApplication, swap: Swap) {
-  await app.swap.selectToAccountCoinSelector(electronApp);
+async function selectAccountTo(app: Application, swap: Swap) {
+  await app.swap.selectToAccountCoinSelector();
   const selector = await getModularSelector(app, "ASSET");
   if (selector) {
     await selectAccountMAD(selector, swap.accountToCredit);
