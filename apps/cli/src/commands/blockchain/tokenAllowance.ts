@@ -94,6 +94,7 @@ function formatAllowanceOutput(
     return JSON.stringify({
       allowance: result.allowance.toFixed(0),
       allowanceFormatted: formatted,
+      unitMagnitude: result.unit.magnitude,
       symbol: result.symbol,
       tokenId: result.tokenId,
       owner: result.owner,

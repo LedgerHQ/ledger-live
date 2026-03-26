@@ -624,7 +624,7 @@ export class SwapPage extends WebViewAppPage {
     const currentAllowance = await isTokenAllowanceSufficientCommand(
       fromAccount,
       provider.contractAddress!,
-      Number(minAmount),
+      minAmount,
     )();
     console.log("CLI result: Current Allowance: ", currentAllowance);
     if (currentAllowance) return;
