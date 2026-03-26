@@ -1,4 +1,5 @@
-import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { handlers as perpsHandlers, PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
@@ -39,12 +40,40 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
     [dispatch],
   );
 
+  const uiSigningExecute = useCallback(
+    ({
+      device,
+      sign,
+      onSuccess,
+      onError,
+      onCancel,
+    }: {
+      device: Device;
+      sign: () => Promise<PerpsSignResult>;
+      onSuccess: (result: PerpsSignResult) => void;
+      onError: (error: Error) => void;
+      onCancel: () => void;
+    }) => {
+      dispatch(
+        openModal("MODAL_PERPS_SIGNING", {
+          device,
+          sign,
+          onSuccess,
+          onError,
+          onCancel,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({
       accounts,
       uiHooks: {
         "device.select": uiDeviceSelect,
+        "signing.execute": uiSigningExecute,
       },
     });
-  }, [accounts, uiDeviceSelect]);
+  }, [accounts, uiDeviceSelect, uiSigningExecute]);
 }

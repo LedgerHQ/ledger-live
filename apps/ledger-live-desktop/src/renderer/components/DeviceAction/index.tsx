@@ -239,6 +239,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     requestOpenApp,
     allowOpeningRequestedWording,
     installingApp,
+    currentAppOp,
     progress,
     listingApps,
     requiresAppInstallation,
@@ -471,8 +472,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderRequestQuitApp({ modelId, type });
   }
 
-  if (installingApp && requestOpenApp && request) {
-    const appName = requestOpenApp;
+  if (installingApp && (requestOpenApp ?? currentAppOp?.name) && request) {
+    const appName = requestOpenApp ?? currentAppOp?.name ?? "";
     return (
       <InstallingApp
         type={type}

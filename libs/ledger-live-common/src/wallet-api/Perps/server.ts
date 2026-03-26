@@ -25,6 +25,13 @@ export type PerpsUiHooks = {
     onSuccess: (result: Pick<AppResult, "device">) => void;
     onCancel: () => void;
   }) => void;
+  "signing.execute": (params: {
+    device: Device;
+    sign: () => Promise<PerpsSignResult>;
+    onSuccess: (result: PerpsSignResult) => void;
+    onError: (error: Error) => void;
+    onCancel: () => void;
+  }) => void;
 };
 
 export type PerpsSignParams = {
@@ -46,7 +53,7 @@ const PERPS_APP_NAME = "Hyperliquid";
 
 export const handlers = ({
   accounts,
-  uiHooks: { "device.select": uiDeviceSelect },
+  uiHooks: { "device.select": uiDeviceSelect, "signing.execute": uiSigningExecute },
 }: {
   accounts: AccountLike[];
   uiHooks: PerpsUiHooks;
@@ -74,7 +81,7 @@ export const handlers = ({
         );
       }
 
-      // Ask user to select a device via the UI
+      // Step 1: Ask user to select a device via the UI
       const device = await new Promise<Device>((resolve, reject) => {
         uiDeviceSelect({
           appName: PERPS_APP_NAME,
@@ -87,31 +94,43 @@ export const handlers = ({
       // CALL Cal Service
       const certificate = await calService.getCertificate(device.modelId, "perps_data");
 
-      return firstValueFrom(
-        withDevice(
-          device.deviceId,
-          device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
-        )(transport =>
-          from(
-            (async () => {
-              if (!isDmkTransport(transport)) {
-                throw new Error("Not DMK transport");
-              }
-              const { dmk, sessionId } = transport;
+      // Step 2: Sign via the UI — keeps a modal open while the device waits for confirmation
+      return new Promise<PerpsSignResult>((resolve, reject) => {
+        uiSigningExecute({
+          device,
+          sign: () =>
+            firstValueFrom(
+              withDevice(
+                device.deviceId,
+                device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
+              )(transport =>
+                from(
+                  (async () => {
+                    if (!isDmkTransport(transport)) {
+                      throw new Error("Not DMK transport");
+                    }
+                    const { dmk, sessionId } = transport;
 
-              const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
-              const signatures = await hyperliquidSigner.signActions(
-                derivationPath,
-                convertCertificateToDeviceData(certificate),
-                new Uint8Array(Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex")),
-                params.actions.map(convertAction),
-              );
+                    const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
+                    const signatures = await hyperliquidSigner.signActions(
+                      derivationPath,
+                      convertCertificateToDeviceData(certificate),
+                      new Uint8Array(
+                        Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex"),
+                      ),
+                      params.actions.map(convertAction),
+                    );
 
-              return { signatures };
-            })(),
-          ),
-        ),
-      );
+                    return { signatures };
+                  })(),
+                ),
+              ),
+            ),
+          onSuccess: resolve,
+          onError: reject,
+          onCancel: () => reject(new Error("User cancelled signing")),
+        });
+      });
     }),
   };
 };

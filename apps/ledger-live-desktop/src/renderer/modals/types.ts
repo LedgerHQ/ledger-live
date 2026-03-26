@@ -9,6 +9,7 @@ import { DataProp as ExchangeCryptoDeviceDataProp } from "./ExchangeDeviceConfir
 import { Data as PlatformExchangeStartData } from "./Platform/Exchange/StartExchange/index";
 import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/CompleteExchange/Body";
 import { Data as ConnectDeviceData } from "./ConnectDevice/index";
+import { Data as PerpsSignData } from "./PerpsSign";
 import { Params as SignTransactionData } from "./SignTransaction/Body";
 import { Params as SignRawTransactionData } from "./SignRawTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
@@ -75,6 +76,7 @@ export type GlobalModalData = {
   MODAL_PLATFORM_EXCHANGE_START: PlatformExchangeStartData;
   MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_CONNECT_DEVICE: ConnectDeviceData;
+  MODAL_PERPS_SIGNING: PerpsSignData;
   MODAL_EXCHANGE_CRYPTO_DEVICE: ExchangeCryptoDeviceDataProp;
 
   MODAL_WEBSOCKET_BRIDGE: {

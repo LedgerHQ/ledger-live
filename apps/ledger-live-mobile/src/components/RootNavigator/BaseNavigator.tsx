@@ -63,6 +63,7 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
+import PerpsSign from "~/screens/PerpsSign";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -567,6 +568,18 @@ export default function BaseNavigator() {
           name={ScreenName.DeviceConnect}
           component={DeviceConnect}
           options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
+          listeners={({ route }) => ({
+            beforeRemove: () => handleOnClose(route),
+          })}
+        />
+        <Stack.Screen
+          name={ScreenName.PerpsSign}
+          component={PerpsSign}
+          options={{
+            headerShown: true,
+            title: t("perps.sign.title", { defaultValue: "Confirm on your Ledger" }),
+            headerLeft: () => null,
+          }}
           listeners={({ route }) => ({
             beforeRemove: () => handleOnClose(route),
           })}

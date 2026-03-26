@@ -320,6 +320,13 @@ export type BaseNavigatorStackParamList = {
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
   };
+  [ScreenName.PerpsSign]: {
+    device: import("@ledgerhq/live-common/hw/actions/types").Device;
+    sign: () => Promise<import("@ledgerhq/live-common/wallet-api/Perps/server").PerpsSignResult>;
+    onSuccess: (result: import("@ledgerhq/live-common/wallet-api/Perps/server").PerpsSignResult) => void;
+    onError: (error: Error) => void;
+    onCancel: () => void;
+  };
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
   };
