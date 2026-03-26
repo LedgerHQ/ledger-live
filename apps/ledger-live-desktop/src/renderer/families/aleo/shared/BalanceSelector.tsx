@@ -1,7 +1,7 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Flex } from "@ledgerhq/react-ui";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { useTranslation } from "react-i18next";
 import {
   isPublicTransaction,

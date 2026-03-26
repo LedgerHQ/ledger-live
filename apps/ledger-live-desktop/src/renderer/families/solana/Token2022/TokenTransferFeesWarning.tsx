@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import BigNumber from "bignumber.js";
 import { Trans } from "react-i18next";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { Transaction, SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
 import Alert from "~/renderer/components/Alert";
 

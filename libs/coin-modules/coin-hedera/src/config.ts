@@ -1,4 +1,7 @@
-import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-module-framework/config";
 
 export type HederaConfig = {
   useHgraphForErc20: boolean;
@@ -6,6 +9,9 @@ export type HederaConfig = {
 
 export type HederaCoinConfig = CurrencyConfig & HederaConfig;
 
-const coinConfig = buildCoinConfig<HederaCoinConfig>();
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<HederaCoinConfig>) => void;
+  getCoinConfig: (currencyId?: string) => HederaCoinConfig;
+} = buildCoinConfig<HederaCoinConfig>();
 
 export default coinConfig;

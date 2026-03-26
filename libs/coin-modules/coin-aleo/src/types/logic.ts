@@ -3,7 +3,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
   TxDataNotSupported,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import type { TRANSACTION_TYPE } from "../constants";
 import type {
   AleoJWT,

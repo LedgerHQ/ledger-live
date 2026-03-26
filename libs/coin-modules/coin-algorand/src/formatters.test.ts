@@ -10,7 +10,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/coin-framework/currencies/index", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/index", () => ({
   formatCurrencyUnit: jest
     .fn()
     .mockImplementation((unit: Unit, amount: BigNumber, options?: { showCode?: boolean }) => {

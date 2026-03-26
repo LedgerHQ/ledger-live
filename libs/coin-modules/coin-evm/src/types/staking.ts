@@ -1,4 +1,4 @@
-import type { Stake } from "@ledgerhq/coin-framework/api/types";
+import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";

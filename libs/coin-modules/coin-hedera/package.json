@@ -84,7 +84,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@hashgraph/sdk": "2.78.0",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

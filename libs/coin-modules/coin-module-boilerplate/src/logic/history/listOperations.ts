@@ -1,4 +1,8 @@
-import type { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-framework/api/index";
+import type {
+  ListOperationsOptions,
+  Operation,
+  Page,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { getTransactions } from "../../network/indexer";
 import { BoilerplateOperation } from "../../network/types";
 

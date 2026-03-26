@@ -1,4 +1,4 @@
-import { Operation, Page } from "@ledgerhq/coin-framework/api/types";
+import { Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
 import {
   getAccountTransactions,
   AlgoTransaction,

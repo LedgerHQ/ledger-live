@@ -1,4 +1,4 @@
-import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { getAccountInfo, getServerInfos } from "../network";
 import { parseAPIValue } from "./common";

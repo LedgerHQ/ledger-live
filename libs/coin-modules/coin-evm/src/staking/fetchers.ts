@@ -1,4 +1,4 @@
-import { Stake } from "@ledgerhq/coin-framework/api/types";
+import { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";

@@ -40,7 +40,7 @@ jest.mock("../useCoinControlAmountInput", () => ({
     debounceTimeoutRef: { current: null },
   }),
 }));
-jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
 }));
 

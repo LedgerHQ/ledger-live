@@ -15,7 +15,7 @@ import type {
   CraftedTransaction,
   Balance,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
   broadcast,

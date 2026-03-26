@@ -1,5 +1,5 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { isStakingTransactionIntent } from "@ledgerhq/coin-framework/utils";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { isStakingTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { PublicKey } from "@solana/web3.js";
 import { StakeMeta } from "./network/chain/account/stake";

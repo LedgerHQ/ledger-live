@@ -1,4 +1,4 @@
-import type { Balance, Stake } from "@ledgerhq/coin-framework/api/index";
+import type { Balance, Stake } from "@ledgerhq/coin-module-framework/api/index";
 import api from "../network/tzkt";
 
 /**

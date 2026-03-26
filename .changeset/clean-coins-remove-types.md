@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/coin-framework": major
 "@ledgerhq/live-common": patch
 "@ledgerhq/coin-evm": patch
 "@ledgerhq/coin-aleo": patch

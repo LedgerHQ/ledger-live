@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -17,7 +17,7 @@ import getEstimatedFees from "./getEstimatedFees";
 import getTransactionStatus from "./getTransactionStatus";
 
 // Mock dependencies
-jest.mock("@ledgerhq/coin-framework/currencies", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies", () => ({
   formatCurrencyUnit: jest.fn().mockReturnValue("0.1 MINA"),
 }));
 jest.mock("./getEstimatedFees");

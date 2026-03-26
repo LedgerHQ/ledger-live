@@ -1,4 +1,7 @@
-import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, {
+  type CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-module-framework/config";
 
 export type PolkadotConfig = {
   node: {
@@ -19,6 +22,9 @@ export type PolkadotConfig = {
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;
 
-const coinConfig = buildConConfig<PolkadotCoinConfig>();
+const coinConfig: {
+  setCoinConfig: (config: CoinConfig<PolkadotCoinConfig>) => void;
+  getCoinConfig: (currencyId?: string) => PolkadotCoinConfig;
+} = buildCoinConfig<PolkadotCoinConfig>();
 
 export default coinConfig;

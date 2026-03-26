@@ -1,4 +1,7 @@
-import type { TransactionIntent, TransactionValidation } from "@ledgerhq/coin-framework/api/types";
+import type {
+  TransactionIntent,
+  TransactionValidation,
+} from "@ledgerhq/coin-module-framework/api/types";
 import {
   InvalidAddress,
   RecipientRequired,

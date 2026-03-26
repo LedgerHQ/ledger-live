@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import coinConfig from "../config";
 import { estimateFees } from "./estimateFees";

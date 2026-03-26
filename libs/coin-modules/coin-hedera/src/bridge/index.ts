@@ -1,4 +1,4 @@
-import type { CoinConfig } from "@ledgerhq/coin-framework/config";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,

@@ -1,4 +1,4 @@
-import { Operation } from "@ledgerhq/coin-framework/api/index";
+import { Operation } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import {
   defaultFetchParams,

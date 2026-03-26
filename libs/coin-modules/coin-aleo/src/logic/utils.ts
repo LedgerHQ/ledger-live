@@ -7,7 +7,7 @@ import type {
   Operation as AlpacaOperation,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import {
   decodeAccountId,
   encodeAccountId,

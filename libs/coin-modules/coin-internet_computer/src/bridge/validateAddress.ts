@@ -1,4 +1,4 @@
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
 import { validateAddress as zondaxValidateAddress } from "@zondax/ledger-live-icp/utils";
 
 export async function validateAddress(

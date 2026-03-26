@@ -1,5 +1,5 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";

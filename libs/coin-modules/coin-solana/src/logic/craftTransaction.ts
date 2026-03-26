@@ -3,8 +3,8 @@ import type {
   FeeEstimation,
   StakingTransactionIntent,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
-import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { trace } from "@ledgerhq/logs";
 import {
   PublicKey,

@@ -1,4 +1,4 @@
-import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { getTransactionParams } from "../network";
 
 // Single signature size in bytes

@@ -1,4 +1,4 @@
-import { Page, Stake } from "@ledgerhq/coin-framework/api/types";
+import { Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { STAKING_CONTRACTS, STAKING_CONFIG } from "../staking";
 

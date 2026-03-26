@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
+import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";

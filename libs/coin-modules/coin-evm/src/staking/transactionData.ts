@@ -1,4 +1,7 @@
-import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
+import type {
+  TransactionIntent,
+  MemoNotSupported,
+} from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { StakingOperation } from "../types/staking";
 import { isStakingIntent } from "../utils";

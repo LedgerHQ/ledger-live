@@ -17,7 +17,7 @@ import type {
   CraftedTransaction,
   BufferTxData,
   AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";

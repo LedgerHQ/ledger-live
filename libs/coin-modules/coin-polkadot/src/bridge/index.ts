@@ -1,4 +1,4 @@
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   updateTransaction,

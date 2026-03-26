@@ -1,5 +1,5 @@
-import { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import buildCoinConfig from "@ledgerhq/coin-framework/config";
+import { type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 
 export type SuiConfig = {
   node: {

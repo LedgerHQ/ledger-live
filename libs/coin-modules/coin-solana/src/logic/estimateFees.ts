@@ -1,4 +1,4 @@
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";

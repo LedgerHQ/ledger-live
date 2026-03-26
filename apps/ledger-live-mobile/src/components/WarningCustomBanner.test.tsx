@@ -2,7 +2,7 @@ import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import WarningCustomBanner from "./WarningCustomBanner";
-import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 describe("WarningCustomBanner", () => {
   it("renders nothing if currencyConfig is not provided", () => {

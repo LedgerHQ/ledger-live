@@ -1,4 +1,4 @@
-import type { Stake } from "@ledgerhq/coin-framework/api/types";
+import type { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { getAllBalancesCached, getStakes } from "../network";
 import { getBalance } from "./getBalance";
 

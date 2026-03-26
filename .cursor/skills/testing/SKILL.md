@@ -18,7 +18,7 @@ description: Write unit and integration tests for Ledger Wallet apps. Use for Je
 4. **One behavior per test** — Name: `it("should <behavior> when <condition>")`.
 5. **Query priority**: `getByRole` > `getByLabelText` > `getByText` > `getByTestId` (last resort).
 6. **Feature flags via store, never mocked** — Use `overriddenFeatureFlags` in `initialState.settings`.
-7. **Use existing factories** — `genAccount()` from `@ledgerhq/coin-framework/mocks/account`, `getCryptoCurrencyById()` from `@ledgerhq/live-common/currencies`. Never recreate account/currency data from scratch.
+7. **Use existing factories** — `genAccount()` from `@ledgerhq/ledger-wallet-framework/mocks/account`, `getCryptoCurrencyById()` from `@ledgerhq/live-common/currencies`. Never recreate account/currency data from scratch.
 
 ---
 
@@ -157,7 +157,7 @@ Before creating anything, check these locations:
 
 | Location | What's there |
 | --- | --- |
-| `@ledgerhq/coin-framework/mocks/account` | `genAccount()`, `genTokenAccount()` |
+| `@ledgerhq/ledger-wallet-framework/mocks/account` | `genAccount()`, `genTokenAccount()` |
 | `@ledgerhq/live-common/currencies` | `getCryptoCurrencyById()`, `getTokenById()` |
 | `tests/handlers/` | MSW handlers (market, assets, countervalues, cryptoIcons) |
 | `tests/handlers/fixtures/` | JSON fixtures for API responses |

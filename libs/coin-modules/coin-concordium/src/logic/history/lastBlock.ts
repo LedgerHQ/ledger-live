@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { getConsensusInfo } from "../../network/proxyClient";
 
 export async function lastBlock(currencyId: string): Promise<BlockInfo> {

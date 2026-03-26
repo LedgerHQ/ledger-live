@@ -11,7 +11,7 @@ import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/set
 
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
-jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
 }));
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({

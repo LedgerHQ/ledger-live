@@ -1,6 +1,9 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
-import type { BlockOperation, TransferBlockOperation } from "@ledgerhq/coin-framework/api/index";
+import type {
+  BlockOperation,
+  TransferBlockOperation,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import {

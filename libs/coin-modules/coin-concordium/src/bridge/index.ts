@@ -3,7 +3,7 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { CoinConfig } from "@ledgerhq/coin-framework/config";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import concordiumCoinConfig from "../config";

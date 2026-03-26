@@ -6,7 +6,7 @@ import {
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { AssetInfo, Balance } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { mergeOps } from "../jsHelpers";
 import { cleanedOperation } from "./utils";
 import { OperationCommon } from "./types";

@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/types";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
 import { HEDERA_TRANSACTION_NAMES, FINALITY_MS } from "../constants";

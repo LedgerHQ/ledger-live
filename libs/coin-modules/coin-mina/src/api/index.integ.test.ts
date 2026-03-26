@@ -1,4 +1,4 @@
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { getCoinConfig } from "../config";
 import { getAccount, getBlockInfo, getTransactions } from ".";
 

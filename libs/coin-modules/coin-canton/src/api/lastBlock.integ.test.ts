@@ -1,4 +1,4 @@
-import { AlpacaApi } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from ".";
 
 let api: AlpacaApi;

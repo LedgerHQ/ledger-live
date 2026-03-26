@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -16,7 +16,7 @@ import { IconAccount, Transaction } from "../../types";
 
 jest.mock("../../logic");
 jest.mock("../../api");
-jest.mock("@ledgerhq/coin-framework/currencies/index");
+jest.mock("@ledgerhq/coin-module-framework/currencies/index");
 
 const mockedLogic = jest.mocked(logic);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);

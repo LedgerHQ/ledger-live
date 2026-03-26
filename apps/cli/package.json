@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-bitcoin": "workspace:^",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
