@@ -28,6 +28,7 @@ describe("getPrivateBalance", () => {
       },
       feeSafetyMultiplier: 1,
       isFeeSponsored: true,
+      useEncryptedProve: false,
     }));
   });
 

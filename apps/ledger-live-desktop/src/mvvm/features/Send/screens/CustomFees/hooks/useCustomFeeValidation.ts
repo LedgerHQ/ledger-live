@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { CustomFeeInputDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
+import type { CustomFeeInputDescriptor } from "@ledgerhq/live-common/bridge/descriptor/types";
 import BigNumber from "bignumber.js";
 import {
   isValidNumberForInput,

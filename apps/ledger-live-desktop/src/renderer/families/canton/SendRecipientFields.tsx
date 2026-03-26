@@ -55,7 +55,6 @@ const Root = (props: {
       };
 
       handleTopologyChangeError(dispatch, {
-        accounts: [],
         currency: account.currency,
         device,
         mainAccount,

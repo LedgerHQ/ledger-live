@@ -12,6 +12,7 @@ export const lwdWallet40 = flagWith(
     balanceRefreshRework: z.boolean(),
     assetSection: z.boolean(),
     newReceiveDialog: z.boolean(),
+    operationsList: z.boolean(),
   },
   {
     enabled: false,
@@ -25,6 +26,7 @@ export const lwdWallet40 = flagWith(
       newReceiveDialog: true,
       balanceRefreshRework: true,
       assetSection: true,
+      operationsList: true,
     },
   },
 );

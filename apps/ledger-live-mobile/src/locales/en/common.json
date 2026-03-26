@@ -953,6 +953,9 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaRecipientAccountNotFunded": {
+      "title": "Amount too low. Send at least {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken": {
       "title": "This associated token account holds another token"
     },
@@ -2747,7 +2750,15 @@
       "noAccounts": "Start by funding\nyour wallet"
     },
     "seeAllAssets": "See all assets",
+    "cryptoAddresses": {
+      "title": "Crypto accounts",
+      "count_one": "{{count}} account",
+      "count_other": "{{count}} accounts"
+    },
     "seeAllAccounts": "See all accounts",
+    "assetSection": {
+      "connectionFailed": "Connection failed"
+    },
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
@@ -3564,8 +3575,10 @@
         "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
         "addSampleBanner": "Add sample banner",
         "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
-        "addSampleActionCarousel": "Add sample action carousel",
-        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "addSampleActionCarouselIcon": "Add action carousel (icon)",
+        "addSampleActionCarouselIconDesc": "ContentBanner with Spot icons — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselImageBackground": "Add action carousel (image)",
+        "addSampleActionCarouselImageBackgroundDesc": "MediaBanner with image_background — Buy, Swap, Stake. Requires Braze placement flag.",
         "dismissAll": "Dismiss all local cards",
         "dismissAllDesc": "Remove all locally generated content cards."
       }
@@ -4305,7 +4318,21 @@
         "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
       },
       "coinControl": {
-        "title": "Coin control"
+        "title": "Coin control",
+        "strategy": "Strategy",
+        "learnMore": "Learn more",
+        "coinToSend": "Coin to send",
+        "changeToReturn": "Change to return",
+        "enterAmount": "Enter amount",
+        "amountToSendInCurrency": "Amount to send in {{ticker}}",
+        "amountInputLabel": "Amount to send",
+        "bitcoin": {
+          "pickingStrategyLabels": {
+            "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
+            "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
+            "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+          }
+        }
       }
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
@@ -5083,13 +5110,13 @@
   "FirmwareUpdate": {
     "banner": {
       "wallet40": {
-          "title": {
-            "default": "OS update available",
-            "manager": "Ledger OS update available"
-          },
-          "version": "Version {{firmwareVersion}}",
-          "cta": "Update"
+        "title": {
+          "default": "OS update available",
+          "manager": "Ledger OS update available"
         },
+        "version": "Version {{firmwareVersion}}",
+        "cta": "Update"
+      },
       "title": "OS update available",
       "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
@@ -7788,6 +7815,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
+      "stablecoins": "Stablecoin",
       "market": "Market"
     },
     "referralProgram": "$20"

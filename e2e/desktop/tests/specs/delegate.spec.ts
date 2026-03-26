@@ -72,7 +72,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 4"),
+    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment"),
     xrayTicket: "B2CQA-2766",
   },
   {

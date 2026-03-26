@@ -109,6 +109,7 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
       </ScrollArea>
       <Button
         data-testid="v3-hide-seed-drawer"
+        flexShrink={0}
         mt="auto"
         left="-258px"
         width="248px"

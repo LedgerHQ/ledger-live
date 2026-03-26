@@ -1,5 +1,5 @@
-import { memoToBufferCV, hexMemoToString, bufferMemoToString, processMemoCV } from "./memoUtils";
 import { bufferCV, someCV, noneCV, cvToHex } from "@stacks/transactions";
+import { memoToBufferCV, hexMemoToString, bufferMemoToString, processMemoCV } from "./memoUtils";
 
 describe("memoToBufferCV", () => {
   test.each([undefined, null, ""])(

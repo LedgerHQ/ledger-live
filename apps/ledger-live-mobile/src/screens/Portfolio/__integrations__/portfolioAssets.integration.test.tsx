@@ -226,6 +226,60 @@ describe("portfolioAssets", () => {
     expect(queryByText(/see all accounts/i)).toBeNull();
   });
 
+  describe("Perps Entry Point", () => {
+    it("should render perps entry point when wallet 4.0 is disabled", async () => {
+      const { findByTestId } = render(
+        <TestNavigator>
+          <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        </TestNavigator>,
+        {
+          overrideInitialState: (state: State) => {
+            const base = INITIAL_STATE.overrideInitialState(state);
+            return {
+              ...base,
+              settings: {
+                ...base.settings,
+                overriddenFeatureFlags: {
+                  ...base.settings.overriddenFeatureFlags,
+                  lwmWallet40: { enabled: false },
+                  ptxPerpsLiveAppMobile: { enabled: true },
+                },
+              },
+            };
+          },
+        },
+      );
+
+      expect(await findByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
+
+    it("should not render perps entry point when wallet 4.0 is enabled", async () => {
+      const { queryByTestId } = render(
+        <TestNavigator>
+          <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
+        </TestNavigator>,
+        {
+          overrideInitialState: (state: State) => {
+            const base = INITIAL_STATE.overrideInitialState(state);
+            return {
+              ...base,
+              settings: {
+                ...base.settings,
+                overriddenFeatureFlags: {
+                  ...base.settings.overriddenFeatureFlags,
+                  lwmWallet40: { enabled: true },
+                  ptxPerpsLiveAppMobile: { enabled: true },
+                },
+              },
+            };
+          },
+        },
+      );
+
+      expect(queryByTestId("portfolio-perps-entry-point")).toBeNull();
+    });
+  });
+
   it("should render accounts list", async () => {
     const { getByText, getByTestId, user } = render(
       <TestNavigator>

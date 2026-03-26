@@ -7,6 +7,10 @@ const api = getChainAPI({ endpoint: "https://solana.coin.ledger.com" });
 const ACTIVE_ADDRESS = "7VHUFJHWu2CuExkJcJrzhQPJ2oygupTWkL2A2For4BmE";
 const UNUSED_ADDRESS = Keypair.generate().publicKey.toBase58();
 
+const KNOWN_TYPES = ["IN", "OUT", "FEES", "NONE", "DELEGATE", "UNDELEGATE", "WITHDRAW_UNBONDED"];
+
+// Per-type coverage (all 7 types) is in listOperations.test.ts (MSW) and
+// listOperations.unit.test.ts. This file focuses on real-RPC smoke tests.
 describe("listOperations (integration)", () => {
   it("fetches operations for an active account", async () => {
     const result = await listOperations(api, ACTIVE_ADDRESS, {
@@ -22,7 +26,7 @@ describe("listOperations (integration)", () => {
       expect(op.tx.block.height).toBeGreaterThan(0);
       expect(op.tx.block.time).toBeInstanceOf(Date);
       expect(typeof op.value).toBe("bigint");
-      expect(["IN", "OUT", "FEES", "NONE"]).toContain(op.type);
+      expect(KNOWN_TYPES).toContain(op.type);
     }
   });
 

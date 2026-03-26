@@ -127,6 +127,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     ledgerOpType?: string | undefined;
     memo?: string | undefined;
     internal?: boolean;
+    feePayer?: string;
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {
@@ -164,6 +165,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 
   if (op.details?.internal === true) {
     extra.internal = op.details?.internal;
+  }
+
+  if (typeof op.tx.feesPayer === "string") {
+    extra.feePayer = op.tx.feesPayer;
   }
 
   const bnFees = new BigNumber(op.tx.fees.toString());

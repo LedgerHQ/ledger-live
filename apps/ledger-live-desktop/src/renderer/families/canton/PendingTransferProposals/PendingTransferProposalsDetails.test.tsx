@@ -96,12 +96,6 @@ describe("PendingTransactionDetails", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
   });
 
   describe("when proposal exists", () => {
@@ -219,67 +213,49 @@ describe("PendingTransactionDetails", () => {
       expect(screen.getByText("families.canton.pendingTransactions.expired")).toBeInTheDocument();
     });
 
-    it("should update time remaining every second", async () => {
-      const account = createMockAccount("receiver-address");
-      const parentAccount = createMockParentAccount("receiver-address");
-      const futureTime = Date.now() + 10000; // 10 seconds from now to ensure it doesn't expire
+    it("should update time remaining every second", () => {
+      jest.useFakeTimers();
+      try {
+        const now = Date.now();
+        jest.setSystemTime(now);
 
-      const accountWithFutureExpiry = {
-        ...account,
-        cantonResources: {
-          pendingTransferProposals: [
-            {
-              ...account.cantonResources!.pendingTransferProposals[0],
-              expires_at_micros: futureTime * 1000,
-            },
-          ],
-        },
-      };
+        const account = createMockAccount("receiver-address");
+        const parentAccount = createMockParentAccount("receiver-address");
+        const futureTime = now + 10_000;
 
-      render(
-        <PendingTransactionDetails
-          account={accountWithFutureExpiry}
-          parentAccount={parentAccount}
-          contractId="contract-123"
-          onOpenModal={mockOnOpenModal}
-          onClose={mockOnClose}
-        />,
-      );
+        const accountWithFutureExpiry = {
+          ...account,
+          cantonResources: {
+            pendingTransferProposals: [
+              {
+                ...account.cantonResources!.pendingTransferProposals[0],
+                expires_at_micros: futureTime * 1000,
+              },
+            ],
+          },
+        };
 
-      // Run timers to trigger initial useEffect
-      await act(async () => {
-        jest.runOnlyPendingTimers();
-      });
+        render(
+          <PendingTransactionDetails
+            account={accountWithFutureExpiry}
+            parentAccount={parentAccount}
+            contractId="contract-123"
+            onOpenModal={mockOnOpenModal}
+            onClose={mockOnClose}
+          />,
+        );
 
-      // Wait for initial time remaining to be calculated and displayed
-      await waitFor(() => {
-        // Check that time remaining value is displayed
-        const timeRemaining = screen.getByText(/\d+[hms]/);
-        expect(timeRemaining).toBeInTheDocument();
-      });
+        const timerEl = screen.getByText(/\d+[hms]/);
+        const initialText = timerEl.textContent;
 
-      // Verify time remaining is displayed initially
-      const initialTimeRemaining = screen.getByText(/\d+[hms]/);
-      expect(initialTimeRemaining).toBeInTheDocument();
+        act(() => {
+          jest.advanceTimersByTime(1_000);
+        });
 
-      // Advance time by 1 second and wait for re-render
-      await act(async () => {
-        jest.advanceTimersByTime(1000);
-      });
-
-      // Run pending timers to trigger the interval callback
-      await act(async () => {
-        jest.runOnlyPendingTimers();
-      });
-
-      // The time remaining should still be visible after advancing time
-      // The value should have updated (decreased by 1 second)
-      await waitFor(() => {
-        const updatedTimeRemaining = screen.queryByText(/\d+[hms]/);
-        expect(updatedTimeRemaining).toBeInTheDocument();
-        // The value should be different (or at least the element should exist)
-        expect(updatedTimeRemaining?.textContent).toBeTruthy();
-      });
+        expect(screen.getByText(/\d+[hms]/).textContent).not.toBe(initialText);
+      } finally {
+        jest.useRealTimers();
+      }
     });
   });
 

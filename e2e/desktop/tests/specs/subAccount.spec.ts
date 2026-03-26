@@ -78,7 +78,7 @@ for (const token of subAccounts) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.portfolio.openAddAccountModal();
+        await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {

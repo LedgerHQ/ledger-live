@@ -54,6 +54,7 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: Props) => {
           return (
             <DefaultSendBody
               title={t("aleo.selfTransfer.modal.title")}
+              modalName={AleoCustomModal.SELF_TRANSFER}
               stepId={stepId}
               onClose={onClose}
               onChangeStepId={handleStepChange}

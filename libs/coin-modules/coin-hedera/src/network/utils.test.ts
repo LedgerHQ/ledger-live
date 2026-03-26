@@ -480,7 +480,7 @@ describe("network utils", () => {
 
       expect(result).toEqual([
         {
-          transfer: mockERC20Transfer,
+          transfers: [mockERC20Transfer],
           contractCallResult: mockContractCallResult,
           mirrorTransaction: mockMirrorTransaction,
         },
@@ -492,6 +492,19 @@ describe("network utils", () => {
         timestamp: "1704067200.000000000",
         payerAddress: `0.0.${payerAccountId}`,
       });
+    });
+
+    it("should group multiple transfers with the same transaction hash into one enriched result", async () => {
+      const transfer1 = { ...mockERC20Transfer, amount: 1000 };
+      const transfer2 = { ...mockERC20Transfer, amount: 2000 }; // same transaction_hash
+
+      const result = await enrichERC20Transfers([transfer1, transfer2]);
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          transfers: [transfer1, transfer2],
+        }),
+      ]);
     });
 
     it("should skip transfers where mirror transaction is not found", async () => {
@@ -510,7 +523,7 @@ describe("network utils", () => {
       );
 
       const result = await enrichERC20Transfers(transfers);
-      const txHashes = result.map(r => r.transfer.transaction_hash);
+      const txHashes = result.flatMap(r => r.transfers.map(t => t.transaction_hash));
 
       expect(txHashes).toEqual([mockERC20Transfer.transaction_hash, "hash456"]);
     });

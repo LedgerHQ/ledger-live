@@ -9,6 +9,27 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 let earnReady: Promise<string>;
 
+const stakeProgramOverride = {
+  // TODO: sync Firebase environments and remove this override when final variant is chosen
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["ethereum"],
+      redirects: {
+        "ethereum/erc20/usd__coin": {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum/erc20/usd__coin",
+            intent: "deposit",
+            deposit: "stablecoin",
+          },
+        },
+      },
+    },
+  },
+};
+
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
     currency: currencyApp.name,
@@ -18,11 +39,7 @@ const liveDataCommand = (currencyApp: { name: string }, index: number) => (userd
   });
 
 async function beforeAllFunction(options: ApplicationOptions) {
-  await app.init({
-    userdata: options.userdata,
-    speculosApp: options.speculosApp,
-    cliCommands: options.cliCommands,
-  });
+  await app.init(options);
 
   await app.portfolio.waitForPortfolioPageToLoad();
   earnReady = waitEarnReady();
@@ -38,6 +55,7 @@ export async function runInlineAddAccountTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
+        featureFlags: stakeProgramOverride,
       });
     });
 
@@ -90,6 +108,7 @@ export async function runStartETHStakingFromEarnDashboardTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
+        featureFlags: stakeProgramOverride,
         cliCommands: [
           async (userdataPath?: string) => {
             await CLI.liveData({

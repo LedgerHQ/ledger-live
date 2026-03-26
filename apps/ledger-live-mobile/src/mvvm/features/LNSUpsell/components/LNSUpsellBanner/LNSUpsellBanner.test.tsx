@@ -7,7 +7,7 @@ import { render, screen, fireEvent, renderHook } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import { LNSUpsellBanner } from ".";
 
-describe("LNSUpsellBanner ", () => {
+describe("LNSUpsellBanner", () => {
   let t: ReturnType<typeof useTranslation>["t"];
 
   beforeEach(() => {

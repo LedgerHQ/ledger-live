@@ -7,7 +7,6 @@ import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 const app: AppInfos = AppInfos.LS;
 const firstAccountId = accounts[0].id;
@@ -64,11 +63,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      if (!(await isWallet40Enabled(app.getPage()))) {
-        // you can only go to empty accounts list on legacy
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.expectAccountsCount(0);
-      }
+      await app.portfolio.checkAddAccountButtonVisibility();
 
       await app.mainNavigation.openSettings();
       await app.settings.enableWalletSync();
@@ -88,7 +83,11 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.accounts.navigateToAccountByName(secondAccountName);
       await app.account.expectAccountVisibility(secondAccountName);
       await app.account.renameAccount(secondAccountName + "_renamed");
-      await app.layout.syncAccounts();
+
+      if (await app.layout.topbarSynchronizeButton.isEnabled()) {
+        // trigger sync if not triggered automatically
+        await app.layout.syncAccounts();
+      }
 
       expect(await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app)).toBeDefined();
 

@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "customConditions": []
+    "customConditions": [],
+    "types": [
+      "node",
+      "web-bluetooth"
+    ]
   },
   "exclude": [
     "**/*.test.ts",

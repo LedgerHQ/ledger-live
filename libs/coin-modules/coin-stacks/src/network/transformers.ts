@@ -1,6 +1,5 @@
-import { TransactionResponse } from "../types/api";
-import { fetchFungibleTokenMetadataCached } from "./api";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { FungibleTokenMetadataResponse, TransactionResponse } from "../types/api";
 
 // Extracts token transfer transactions from a transaction list
 export const extractTokenTransferTransactions = (
@@ -20,8 +19,11 @@ export const extractSendManyTransactions = (
 
 // Fetches asset identifier from contract ID using metadata API
 // Returns undefined if metadata fetch fails or no matching token found
-const getAssetIdFromContractId = async (contractId: string): Promise<string | undefined> => {
-  const metadata = await fetchFungibleTokenMetadataCached(contractId);
+const getAssetIdFromContractId = async (
+  contractId: string,
+  fetchTokenCached: (contractAddress: string) => Promise<FungibleTokenMetadataResponse>,
+): Promise<string | undefined> => {
+  const metadata = await fetchTokenCached(contractId);
 
   if (metadata.results.length === 1) {
     // If there's only one result, use its asset_identifier
@@ -50,6 +52,7 @@ const getAssetIdFromContractId = async (contractId: string): Promise<string | un
 export const findFinalTokenId = async (
   tokenId: string,
   prevRecords: Record<string, string>,
+  fetchTokenCached: (contractAddress: string) => Promise<FungibleTokenMetadataResponse>,
 ): Promise<string> => {
   // Check if we've already resolved this token ID
   if (prevRecords[tokenId]) {
@@ -71,7 +74,7 @@ export const findFinalTokenId = async (
   const [contractAddress, _] = contractId.split(".");
 
   // Fetch metadata from the blockchain (cached for performance)
-  const metadata = await fetchFungibleTokenMetadataCached(contractAddress);
+  const metadata = await fetchTokenCached(contractAddress);
 
   // If only one result, use it as the canonical identifier
   if (metadata.results.length === 1) {
@@ -115,6 +118,7 @@ const getAssetNameFromPostConditions = (tx: TransactionResponse): string | undef
 // Determines token ID from contract ID and asset name
 const resolveTokenId = async (
   contractId: string,
+  fetchTokenCached: (contractAddress: string) => Promise<FungibleTokenMetadataResponse>,
   assetName?: string,
 ): Promise<string | undefined> => {
   if (assetName) {
@@ -122,7 +126,7 @@ const resolveTokenId = async (
   }
 
   // If no asset name from post_conditions, try fetching metadata
-  return getAssetIdFromContractId(contractId);
+  return getAssetIdFromContractId(contractId, fetchTokenCached);
 };
 
 // Adds transaction to the map grouped by token ID
@@ -140,6 +144,7 @@ const addTransactionToMap = (
 // Extracts and groups contract transactions by token ID
 export const extractContractTransactions = async (
   transactions: TransactionResponse[],
+  fetchTokenCached: (contractAddress: string) => Promise<FungibleTokenMetadataResponse>,
 ): Promise<Record<string, TransactionResponse[]>> => {
   const contractTxsMap: Record<string, TransactionResponse[]> = {};
   const finalTokenIdMap: Record<string, string> = {};
@@ -151,12 +156,12 @@ export const extractContractTransactions = async (
     if (!contractId) continue;
 
     const assetName = getAssetNameFromPostConditions(tx);
-    const tokenId = await resolveTokenId(contractId, assetName);
+    const tokenId = await resolveTokenId(contractId, fetchTokenCached, assetName);
 
     if (!tokenId) continue;
 
     // Resolve to final token ID
-    const finalTokenId = await findFinalTokenId(tokenId, finalTokenIdMap);
+    const finalTokenId = await findFinalTokenId(tokenId, finalTokenIdMap, fetchTokenCached);
     finalTokenIdMap[tokenId] = finalTokenId;
 
     addTransactionToMap(contractTxsMap, finalTokenId.toLowerCase(), tx);

@@ -823,11 +823,11 @@
     "title": "Card",
     "imageAlt": "Card Image",
     "spendYourCrypto": "Spend your crypto",
-    "payDescription": "Pay online or in store with a crypto card",
+    "payDescription": "Pay online or in stores with a crypto card.",
     "exploreCards": "Explore Cards",
-    "iAlreadyHaveACard": "I already have a card",
-    "unlockLiquidity": "Unlock liquidity",
-    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best"
+    "iAlreadyHaveACard": "I have a card",
+    "unlockLiquidity": "Spend crypto in real life",
+    "exploreCryptoCardsDescription": "Explore our crypto cards and find the one that suits you best."
   },
   "lend": {
     "title": "Lend crypto",
@@ -2273,11 +2273,11 @@
     "steps": {
       "options": {
         "fromBank": {
-          "title": "Bank transfer",
-          "description": "Receive stablecoin by sending cash"
+          "title": "Via bank transfer",
+          "description": "Receive stablecoin by simply sending cash"
         },
         "fromCrypto": {
-          "title": "Receive crypto"
+          "title": "Via crypto address"
         }
       }
     }
@@ -4638,7 +4638,8 @@
           "fields": {
             "notification": "Notification Content Card",
             "action": "Action Content Card",
-            "portfolio": "Portfolio Content Card",
+            "portfolio": "Portfolio",
+            "bottomPortfolio": "Bottom Portfolio",
             "title": "Title",
             "description": "Description",
             "order": "Order",
@@ -5993,7 +5994,7 @@
         "auth": {
           "title": "Authorization",
           "validator": "Authorize",
-          "hint": "Automaticaly accept incoming funds to this account.",
+          "hint": "Automatically accept incoming funds to this account.",
           "reonboard": {
             "hint": "A topology change has been detected. Please re-authorize the Ledger validator to continue receiving funds automatically."
           },
@@ -6966,6 +6967,9 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaRecipientAccountNotFunded": {
+      "title": "Amount too low. Send at least {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken": {
       "title": "This associated token account holds another token"
     },
@@ -7236,6 +7240,12 @@
     },
     "TonMinimumRequired": {
       "title": "Insufficient funds. The minimum required balance is 0.02 TON."
+    },
+    "AleoAmountRecordRequired": {
+      "title": "Select a valid private record for the amount."
+    },
+    "AleoFeeRecordRequired": {
+      "title": "Select a valid private record for the fee."
     },
     "BackupAppDataError": {
       "title": "Error during app data backup"
@@ -8100,17 +8110,20 @@
   "portfolio": {
     "title": "Home",
     "today": "Today",
+    "carousel": {
+      "title": "For you"
+    },
     "addAccountCta": "Add crypto account",
-    "noBalanceTitle": "Secure your crypto",
+    "noBalanceTitle": "Start by funding your wallet",
     "perpsEntry": {
       "title": "Perpetuals",
       "description": "Trade with leverage",
       "cta": "Discover"
     },
-    "noDeviceTitle": "The most secure wallet"
+    "noDeviceTitle": "Your secure crypto wallet"
   },
   "marketBanner": {
-    "title": "Explore market",
+    "title": "Explore the market",
     "genericError": "Connection failed",
     "cta": "View all",
     "scrollLeft": "Scroll left",
@@ -8129,7 +8142,7 @@
     },
     "dialog": {
       "title": "Mood index",
-      "content": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
       "cta": "Got it"
     }
   },
@@ -8142,7 +8155,7 @@
     "buyALedger": "Buy a Ledger"
   },
   "assets": {
-    "cryptos": "Cryptos",
+    "cryptos": "Crypto",
     "stablecoins": "Stablecoins",
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
@@ -8155,8 +8168,37 @@
       "balance": "Balance",
       "value": "Value",
       "trend": "1D Trend",
-      "trendTooltip": "24h balance change"
+      "trendTooltip": "Changes to your balance in the last 24 hours."
     }
+  },
+  "cryptoAddresses": {
+    "title": "Crypto accounts",
+    "tableActions": {
+      "searchAddress": "Search address",
+      "addAddress": "Add address"
+    },
+    "table": {
+      "columns": {
+        "name": "Name",
+        "address": "Address",
+        "value": "Value"
+      },
+      "editName": "Edit name",
+      "emptyState": "No crypto address yet",
+      "emptySearchState": "No accounts match your search"
+    },
+    "editName": {
+      "title": "Edit address name",
+      "input": "Address name",
+      "suggestions": {
+        "trading": "{{asset}} trading",
+        "savings": "{{asset}} savings"
+      },
+      "cta": "Confirm"
+    }
+  },
+  "cryptoAssets": {
+    "title": "Crypto assets"
   },
   "nftEntryPoint": {
     "title": "NFT (Non Fungible Tokens)",
@@ -8166,10 +8208,14 @@
     }
   },
   "topBar": {
+    "history": {
+      "cta": "History",
+      "tooltip": "History"
+    },
     "activityIndicator": {
-      "errorToolTip": "There was a temporary network issue. Your assets are safe.\n List of accounts impacted: {{accounts}}. Tap to retry",
-      "emptyErrorToolTip": "There was a temporary network issue. Your assets are safe.\n Tap to retry",
-      "upToDate": "You're up to date",
+      "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
+      "emptyErrorToolTip": "Your assets are safe. This is a temporary sync issue.\n Tap to retry",
+      "upToDate": "Portfolio up to date",
       "lastSync": "Last sync: {{timeAgo}}. Tap to refresh",
       "refreshing": "Refreshing..."
     },
@@ -8311,8 +8357,16 @@
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
-        "lastUpdate": "Last update",
+        "lastUpdate": "Last updated: {{label}}",
+        "recently": "Recently",
         "switchBalance": "Switch balance source"
+      },
+      "recordPicker": {
+        "label": "Available records",
+        "noRecords": "No records available",
+        "noRecordsAlert": "You don't have any records available. Perform self transfer or receive private funds to get started.",
+        "alert": "The maximum spendable amount depends on the maximum value of your selected record. Fees are sponsored by Provable for Ledger users.",
+        "recordsLimit": "Maximum {{max}} records are shown"
       }
     },
     "account": {
@@ -8334,7 +8388,7 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Covered by Provable",
+        "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
       }
     }
@@ -8363,6 +8417,25 @@
     "cta": {
       "continue": "Continue",
       "explore": "Explore my new portfolio"
+    }
+  },
+  "history": {
+    "title": "Transactions",
+    "pending": "Pending transaction",
+    "pending_other": "Pending transactions",
+    "columns": {
+      "type": "Type",
+      "address": "Address",
+      "amount": "Amount",
+      "value": "Value"
+    },
+    "address": {
+      "from": "From",
+      "to": "To"
+    },
+    "emptyState": {
+      "title": "No transactions yet",
+      "description": "Come back later to see your transactions."
     }
   }
 }

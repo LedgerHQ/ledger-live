@@ -31,6 +31,7 @@ describe("useSwapTopBarHeaderViewModel", () => {
       onDiscoverPress: noop,
       onNotificationsPress: noop,
       onSettingsPress: noop,
+      onTransactionHistoryPress: noop,
       hasUnreadNotifications: false,
       hasAccounts: false,
       isSyncError: false,

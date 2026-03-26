@@ -6,6 +6,7 @@
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib",
+    "rootDir": "src",
     "typeRoots": ["./types", "./node_modules/@types"],
     "types": ["node", "jest"]
   },

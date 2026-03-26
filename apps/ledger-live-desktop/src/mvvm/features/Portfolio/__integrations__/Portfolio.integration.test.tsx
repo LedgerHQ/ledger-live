@@ -24,6 +24,13 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
+// Prevent loading ESM-only @braze/web-sdk (pulled in by BottomCarouselContentCards via usePortfolioCarouselCards)
+jest.mock("@braze/web-sdk", () => ({
+  getCachedContentCards: jest.fn(() => ({ cards: [] })),
+  logCardDismissal: jest.fn(),
+  logContentCardClick: jest.fn(),
+}));
+
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
@@ -124,6 +131,8 @@ describe("PortfolioView", () => {
     shouldDisplayGraphRework: true,
     shouldDisplayQuickActionCtas: true,
     shouldDisplayAssetSection: true,
+    shouldDisplayOperationsList: true,
+    shouldDisplayBrazePlacement: false,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
     accounts: [],
@@ -391,7 +400,7 @@ describe("PortfolioView", () => {
         expect(screen.getByTestId("trending-assets-list")).toBeVisible();
       });
 
-      expect(screen.getByText("Explore market")).toBeVisible();
+      expect(screen.getByText("Explore the market")).toBeVisible();
     });
 
     it("should render MarketBanner skeleton while loading", () => {
@@ -423,7 +432,7 @@ describe("PortfolioView", () => {
 
     it("should not render MarketBanner when shouldDisplayMarketBanner is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayMarketBanner={false} />);
-      expect(screen.queryByText("Explore market")).toBeNull();
+      expect(screen.queryByText("Explore the market")).toBeNull();
     });
   });
 
@@ -513,20 +522,27 @@ describe("PortfolioView", () => {
         expect(screen.getByText("Bitcoin")).toBeVisible();
       });
 
-      expect(screen.queryByText("Cryptos")).toBeVisible();
+      expect(screen.queryByText("Crypto")).toBeVisible();
       expect(screen.queryByText("Stablecoins")).toBeVisible();
     });
 
     it("should render AssetDistribution when shouldDisplayAssetSection is false", () => {
       render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
 
-      expect(screen.queryByText("Cryptos")).not.toBeInTheDocument();
+      expect(screen.queryByText("Crypto")).not.toBeInTheDocument();
     });
   });
 
   describe("AddAccount CTA", () => {
-    it("should render AddAccount CTA when user has zero accounts and Wallet 4.0 is enabled", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={true} />);
+    it("should render AddAccount CTA when user has zero accounts, Wallet 4.0 is enabled, and asset section is not displayed", () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={true}
+          shouldDisplayAssetSection={false}
+        />,
+      );
 
       expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
     });
@@ -538,7 +554,27 @@ describe("PortfolioView", () => {
     });
 
     it("should not render AddAccount CTA when Wallet 4.0 is disabled", () => {
-      render(<PortfolioView {...defaultProps} totalAccounts={0} isWallet40Enabled={false} />);
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={false}
+          shouldDisplayAssetSection={false}
+        />,
+      );
+
+      expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
+    });
+
+    it("should not render AddAccount CTA when asset section is displayed", () => {
+      render(
+        <PortfolioView
+          {...defaultProps}
+          totalAccounts={0}
+          isWallet40Enabled={true}
+          shouldDisplayAssetSection={true}
+        />,
+      );
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });

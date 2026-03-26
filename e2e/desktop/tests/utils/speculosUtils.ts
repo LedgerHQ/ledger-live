@@ -31,10 +31,11 @@ export async function launchSpeculos(appName: string, testTitle?: string): Promi
   setEnv("SPECULOS_API_PORT", device.port);
   process.env.SPECULOS_API_PORT = device.port.toString();
 
-  if (device.appVersion) {
-    allure.parameter("App name:", device.appName || "");
-    allure.parameter("App version:", device.appVersion || "");
+  let info = `App: ${device.appName || ""} (${device.appVersion || ""})`;
+  if (device.dependencies?.length) {
+    info += `\nDependencies: ${device.dependencies?.map(dep => dep.name + " (" + dep.appVersion + ")").join(", ") || ""}`;
   }
+  await allure.description("SPECULOS\n" + info);
 
   console.warn(
     `Speculos ${device.id} started on port ${device.port}, address: ${process.env.SPECULOS_ADDRESS || "http://localhost"}`,

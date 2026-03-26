@@ -34,9 +34,8 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     steps:
-
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -46,7 +45,8 @@ jobs:
         id: setup-caches
         with:
           skip-turbo-cache: "false"
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -61,12 +61,12 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
         run: |
-          
+
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
-        
-          pnpm turbo run coverage --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1 
+
+          pnpm turbo run coverage --filter="./libs/**" --filter="!./libs/ui/**" --concurrency=4 -- --runInBand=1
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
@@ -75,11 +75,11 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
         run: |
-          
+
           echo "::group::Processing coverage files"
-          
+
           testCommand=(pnpm turbo test --concurrency=4)
-          
+
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
             echo "Processing library at path: $lib"
@@ -94,13 +94,13 @@ jobs:
               
               name=$(jq -r '.name' "$package_json")
               testCommand+=(--filter "$name")
-          
+
             else
               echo "No coverage or test script found for $lib, skipping."
             fi
-          
+
           done
-          
+
           testCommand+=(--filter="!./libs/ui/**")
 
           echo "::endgroup::"
@@ -153,7 +153,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -198,7 +199,6 @@ jobs:
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
 
-
   test-docs:
     name: "Libraries Documentation Check"
     runs-on: ubuntu-22.04
@@ -212,7 +212,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}

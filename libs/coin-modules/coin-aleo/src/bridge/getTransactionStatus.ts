@@ -10,16 +10,40 @@ import { BigNumber } from "bignumber.js";
 import type {
   AleoAccount,
   Transaction as AleoTransaction,
+  TransactionPrivate,
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
   TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
-import { calculateAmount, getAvailableBalance, isSelfTransferTransaction } from "../logic/utils";
+import {
+  calculateAmount,
+  getAvailableBalance,
+  getRecordByCommitment,
+  isPrivateTransaction,
+  isSelfTransferTransaction,
+} from "../logic/utils";
 import aleoCoinConfig from "../config";
+import { AleoAmountRecordRequired, AleoFeeRecordRequired } from "../errors";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
+
+function validateRecord({
+  account,
+  commitment,
+  error,
+}: {
+  account: AleoAccount;
+  commitment: TransactionPrivate["properties"]["amountRecordCommitment"];
+  error: Error;
+}): Error | null {
+  if (!commitment || !getRecordByCommitment({ account, commitment })) {
+    return error;
+  }
+
+  return null;
+}
 
 async function validateRecipient({
   account,
@@ -85,6 +109,28 @@ async function handleTransferTransaction({
 
   if (transaction.amount.eq(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
+  }
+
+  if (isPrivateTransaction(transaction)) {
+    const amountRecordError = validateRecord({
+      account,
+      commitment: transaction.properties.amountRecordCommitment,
+      error: new AleoAmountRecordRequired(),
+    });
+    if (amountRecordError) {
+      errors.amountRecord = amountRecordError;
+    }
+
+    if (!config.isFeeSponsored) {
+      const feeRecordError = validateRecord({
+        account,
+        commitment: transaction.properties.feeRecordCommitment,
+        error: new AleoFeeRecordRequired(),
+      });
+      if (feeRecordError) {
+        errors.feeRecord = feeRecordError;
+      }
+    }
   }
 
   if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {

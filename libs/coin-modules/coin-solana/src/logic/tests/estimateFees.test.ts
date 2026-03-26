@@ -59,17 +59,21 @@ describe("estimateFees (MSW integration)", () => {
     expect(result.value).toBe(5000n);
   });
 
-  it("should throw for unsupported intent types", async () => {
-    await expect(
-      estimateFees(api, {
-        intentType: "staking",
-        type: "delegate",
-        sender: TEST_ADDRESS,
-        recipient: TEST_RECIPIENT,
-        amount: 1_000_000n,
-        asset: { type: "native" },
-      }),
-    ).rejects.toThrow("Unsupported intent type: staking");
+  it("should estimate fees for staking intent types", async () => {
+    server.use(stubFeeEstimation(5000));
+
+    const result = await estimateFees(api, {
+      intentType: "staking",
+      type: "stake.createAccount",
+      mode: "delegate",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      valAddress: TEST_RECIPIENT,
+      amount: 1_000_000n,
+      asset: { type: "native" },
+    } as any);
+
+    expect(result.value).toBe(5000n);
   });
 
   describe("SPL Token fee estimation", () => {

@@ -5,6 +5,7 @@ import {
   EarnActionTypes,
   EarnPayload,
   EarnSetInfoModalPayload,
+  EarnSetInfoBottomSheetPayload,
   EarnSetMenuModalPayload,
   EarnSetProtocolInfoModalPayload,
 } from "../actions/types";
@@ -12,6 +13,7 @@ import type { EarnState, State } from "./types";
 
 export const INITIAL_STATE: EarnState = {
   infoModal: {},
+  infoBottomSheet: undefined,
   menuModal: undefined,
   protocolInfoModal: undefined,
 };
@@ -20,6 +22,10 @@ const handlers: ReducerMap<EarnState, EarnPayload> = {
   [EarnActionTypes.EARN_INFO_MODAL]: (state, action): EarnState => ({
     ...state,
     infoModal: (action as Action<EarnSetInfoModalPayload>).payload ?? {},
+  }),
+  [EarnActionTypes.EARN_INFO_BOTTOM_SHEET]: (state, action): EarnState => ({
+    ...state,
+    infoBottomSheet: (action as Action<EarnSetInfoBottomSheetPayload>).payload,
   }),
   [EarnActionTypes.EARN_MENU_MODAL]: (state, action): EarnState => ({
     ...state,
@@ -38,6 +44,11 @@ export const exportSelector = storeSelector;
 export const earnInfoModalSelector = createSelector(
   storeSelector,
   (state: EarnState) => state.infoModal,
+);
+
+export const earnInfoBottomSheetSelector = createSelector(
+  storeSelector,
+  (state: EarnState) => state.infoBottomSheet,
 );
 
 export const earnMenuModalSelector = createSelector(

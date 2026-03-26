@@ -64,6 +64,8 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 
 ### Developing with Ledger Live Common
 
+- **Linting:** uses [oxlint](https://oxc.rs/docs/guide/usage/linter) with `.oxlintrc.json`. Auto-fix: `pnpm common lint:fix` (oxlint `--fix` only; does not reformat files). **Formatting** is optional: [oxfmt](https://oxc.rs/docs/guide/usage/formatter) with `.oxfmtrc.json` (aligned with the repo root `.prettierrc`, e.g. `arrowParens: "avoid"`). Run `pnpm common format` or `pnpm common format:check` when you want to apply or verify oxfmt; some paths are ignored via `ignorePatterns` in `.oxfmtrc.json`. From the repo root: `pnpm common lint` (or `pnpm common lint:ci` for CI-style, errors only).
+
 - [Developing setup](https://github.com/LedgerHQ/ledger-live/wiki/LLC:developing)
 - The different test approaches
   - Unit test of live-common logic

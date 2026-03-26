@@ -7,6 +7,8 @@ import { ModularDrawer } from "./drawer/modular.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
 
 export class EarnPage extends WebViewAppPage {
+  protected readonly webviewIdentifier = "earn";
+
   private earnMoreRewardTabButton = "tab-earn-more";
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
   private potentialRewardsBalanceCard = "Rewards you could earn-balance-card";

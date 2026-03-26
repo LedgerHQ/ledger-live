@@ -78,6 +78,7 @@
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
     },
+    "./test-helpers/staticTime": "./src/test-helpers/staticTime.ts",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",

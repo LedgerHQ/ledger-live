@@ -11,10 +11,6 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
   useCountervaluesPolling: () => ({}),
 }));
 
-jest.mock("@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider", () => ({
-  CountervaluesMarketcapProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
-
 jest.mock("~/renderer/logger", () => ({
   __esModule: true,
   default: {

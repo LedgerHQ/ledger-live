@@ -1,12 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { BigNumber } from "bignumber.js";
-import {
-  getDescriptor,
-  getSendDescriptor,
-  sendFeatures,
-  applyMemoToTransaction,
-} from "./descriptor";
+import { getDescriptor, getSendDescriptor } from "./descriptor/registry";
+import { sendFeatures } from "./descriptor/send/features";
+import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
 
 jest.mock("../config/index");

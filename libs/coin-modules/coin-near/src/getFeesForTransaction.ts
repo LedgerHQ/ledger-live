@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { getCurrentNearPreloadData } from "./preload";
-import { getGasPrice } from "./api";
+import { getGasPrice } from "./api/node";
 import { isImplicitAccount, getStakingFees } from "./logic";
+import { getCurrentNearPreloadData } from "./preload-data";
 import { Transaction } from "./types";
 
 const getEstimatedFees = async (transaction: Transaction): Promise<BigNumber> => {

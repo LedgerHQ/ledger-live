@@ -325,7 +325,7 @@ describe("getAccountShape", () => {
 
       // THEN
       expect(mockGetStakesRaw).toHaveBeenCalledTimes(1);
-      expect(mockGetStakesRaw).toHaveBeenCalledWith(address);
+      expect(mockGetStakesRaw).toHaveBeenCalledWith(address, "sui");
     });
 
     it("includes empty stakes in suiResources when no stakes are returned", async () => {

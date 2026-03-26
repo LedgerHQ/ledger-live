@@ -28,7 +28,7 @@ export class MainNavigationPage extends AppPage {
   private readonly layout = new Layout(this.page);
 
   private readonly sideBarButton: (name: TargetName | RegExp) => Locator = targetName =>
-    this.page.getByRole("navigation").getByRole("button", { name: targetName });
+    this.page.getByTestId("sidebar-navigation").getByRole("button", { name: targetName });
 
   private async expectPath(expectedPath: RegExp) {
     await expect(this.page).toHaveURL(url => {

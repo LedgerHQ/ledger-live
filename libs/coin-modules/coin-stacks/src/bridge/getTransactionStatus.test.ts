@@ -1,9 +1,9 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { StacksMemoTooLong } from "../errors";
+import * as logicValidateMemo from "../logic/validateMemo";
 import { Transaction } from "../types";
 import { getTransactionStatus } from "./getTransactionStatus";
-import * as logicValidateMemo from "../logic/validateMemo";
 
 jest.mock("../logic/validateMemo", () => {
   const actual = jest.requireActual("../logic/validateMemo");

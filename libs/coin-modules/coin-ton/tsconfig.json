@@ -11,7 +11,8 @@
       "dom"
     ],
     "types": ["node", "jest"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "rootDir": "src"
   },
   "include": [
     "src/**/*"

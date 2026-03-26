@@ -21,6 +21,8 @@ interface ProviderConfig {
 }
 
 export class BuyAndSellPage extends WebViewAppPage {
+  protected readonly webviewIdentifier = "buy";
+
   private navigationTabs = "navigation-tabs";
   private cryptoCurrencySelectorLabel = "account-details";
   private cryptoCurrencySelector = "crypto-amount-option-button";
@@ -197,10 +199,16 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.verifyElementIsNotVisible(this.providersList);
   }
 
-  @step("Verify info box")
-  async verifyInfoBox() {
+  @step("Verify buy info box")
+  async verifyBuyInfoBox() {
     await this.verifyElementIsVisible(this.infoBox);
     await this.verifyElementText(this.infoBox, "Buy securely with Ledger");
+  }
+
+  @step("Verify sell info box")
+  async verifySellInfoBox() {
+    await this.verifyElementIsVisible(this.infoBox);
+    await this.verifyElementText(this.infoBox, "Sell securely with Ledger");
   }
 
   @step("Enter amount to pay $0")

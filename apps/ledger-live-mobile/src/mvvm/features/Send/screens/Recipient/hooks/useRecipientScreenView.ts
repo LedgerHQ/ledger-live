@@ -3,7 +3,7 @@ import {
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { RecentAddress } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

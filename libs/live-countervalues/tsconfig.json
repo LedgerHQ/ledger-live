@@ -9,7 +9,8 @@
     "jsx": "react",
     "lib": ["es2022", "dom"],
     "types": ["node", "jest"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "rootDir": "src"
   },
   "include": ["src/**/*"]
 }

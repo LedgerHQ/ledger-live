@@ -30,6 +30,7 @@
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-signer-kit-aleo": "0.0.0-develop-20260323001608",
     "@ledgerhq/errors": "workspace:^",
     "rxjs": "catalog:"
   },

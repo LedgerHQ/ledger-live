@@ -205,12 +205,12 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toEqual(stateA1);
   });
 
-  it("it should handle initPostOnboarding", () => {
+  it("should handle initPostOnboarding", () => {
     state = reducer(state, initPostOnboarding(...initializationParamsA));
     expect(state).toEqual(stateA0);
   });
 
-  it("it should handle setPostOnboardingActionCompleted", () => {
+  it("should handle setPostOnboardingActionCompleted", () => {
     state = stateA0;
     state = reducer(
       state,
@@ -221,19 +221,19 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toEqual(stateA1);
   });
 
-  it("it should handle clearPostOnboardingLastActionCompleted", () => {
+  it("should handle clearPostOnboardingLastActionCompleted", () => {
     state = stateA1;
     state = reducer(state, clearPostOnboardingLastActionCompleted());
     expect(state).toEqual({ ...stateA2 });
   });
 
-  it("it should handle hidePostOnboardingWalletEntryPoint", () => {
+  it("should handle hidePostOnboardingWalletEntryPoint", () => {
     state = stateA3;
     state = reducer(state, hidePostOnboardingWalletEntryPoint());
     expect(state).toEqual(stateA4);
   });
 
-  it("it should handle setPostOnboardingWalletEntryPointEligibility", () => {
+  it("should handle setPostOnboardingWalletEntryPointEligibility", () => {
     state = stateA0;
     state = reducer(state, setPostOnboardingWalletEntryPointEligibility(true));
     expect(state.walletEntryPointEligibleForPortfolio).toBe(true);
@@ -263,7 +263,7 @@ describe("postOnboarding reducer (& action creators)", () => {
     expect(state).toBe(stateBefore);
   });
 
-  it("it should handle successive actions properly", () => {
+  it("should handle successive actions properly", () => {
     // initializing state with new device & set of actions
     state = reducer(state, initPostOnboarding(...initializationParamsA));
     expect(state).toEqual(stateA0);

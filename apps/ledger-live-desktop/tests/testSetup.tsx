@@ -1,5 +1,4 @@
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
-import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -15,7 +14,6 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
 import { config } from "react-transition-group";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
-import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import type { ReduxStore } from "~/state-manager/configureStore";
@@ -51,6 +49,7 @@ interface RenderReturn {
   container: HTMLElement;
   i18n: typeof i18n;
   rerender: (ui: React.ReactElement) => void;
+  unmount: () => void;
 }
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 type DeepPartial<T> = T extends Function
@@ -70,15 +69,12 @@ function CountervaluesProviders({
   children: React.ReactNode;
   savedState?: CounterValuesStateRaw | undefined;
 }) {
-  const marketcapBridge = useCountervaluesMarketcapBridge();
   const bridge = useCountervaluesBridge();
 
   return (
-    <CountervaluesMarketcapProvider bridge={marketcapBridge}>
-      <CountervaluesProvider bridge={bridge} savedState={savedState}>
-        {children}
-      </CountervaluesProvider>
-    </CountervaluesMarketcapProvider>
+    <CountervaluesProvider bridge={bridge} savedState={savedState}>
+      {children}
+    </CountervaluesProvider>
   );
 }
 

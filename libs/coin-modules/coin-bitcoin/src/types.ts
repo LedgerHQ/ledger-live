@@ -127,6 +127,7 @@ export const bitcoinPickingStrategy = {
   DEEP_OUTPUTS_FIRST: 0,
   OPTIMIZE_SIZE: 1,
   MERGE_OUTPUTS: 2,
+  CUSTOM: 3,
 };
 export type BitcoinPickingStrategy =
   (typeof bitcoinPickingStrategy)[keyof typeof bitcoinPickingStrategy];

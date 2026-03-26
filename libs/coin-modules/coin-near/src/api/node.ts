@@ -1,10 +1,13 @@
-import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-network/network";
 import liveNetwork from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
+import { getCoinConfig } from "../config";
+import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
-import { getCurrentNearPreloadData } from "../preload";
+import { getCurrentNearPreloadData } from "../preload-data";
 import { NearAccount } from "../types";
 import {
   NearAccessKey,
@@ -14,9 +17,6 @@ import {
   NearRawValidator,
   NearStakingPosition,
 } from "./sdk.types";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
-import { getCoinConfig } from "../config";
 
 export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
   const currencyConfig = getCoinConfig();

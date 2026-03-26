@@ -4,6 +4,7 @@ import {
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
 import { flow } from "lodash/fp";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
@@ -44,6 +45,7 @@ export function useCountervaluesBridge() {
       setState: flow(setCountervaluesState, dispatch),
       setStateError: flow(setCountervaluesStateError, dispatch),
       setStatePending: flow(setCountervaluesStatePending, dispatch),
+      useMarketcapIds: useGetCounterValueIdsPolling,
       usePollingIsPolling: useCountervaluesPollingIsPolling,
       usePollingTriggerLoad: useCountervaluesPollingTriggerLoad,
       useState: useCountervaluesState,

@@ -40,8 +40,17 @@ export class PortfolioPage extends AppPage {
     await expect(locator).toBeVisible();
   }
 
-  @step("Open `Add account` modal")
-  async openAddAccountModal() {
+  @step("Check add account button visibility")
+  async checkAddAccountButtonVisibility() {
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioAddAccountButton
+      : this.addAccountButton;
+
+    await this.checkVisibility(selector);
+  }
+
+  @step("Click add account button")
+  async clickAddAccountButton() {
     const selector = (await isWallet40Enabled(this.page))
       ? this.portfolioAddAccountButton
       : this.addAccountButton;
@@ -156,7 +165,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
     const operationRow = this.operationRows.first();
-    await operationRow.isVisible();
+    await this.checkVisibility(operationRow);
   }
 
   @step("Expect operation to contain counter value $0")
@@ -265,23 +274,23 @@ export class PortfolioPage extends AppPage {
     await expect(this.quickActionButton("send")).toBeEnabled();
   }
 
-  @step("Check add account button visibility")
-  async checkAddAccountButtonVisibility() {
-    await this.checkVisibility(this.portfolioAddAccountButton);
-  }
-
   @step("Check no device title is visible")
   async checkNoDeviceTitleVisibility() {
     await this.checkVisibility(this.noDeviceTitle);
   }
 
-  @step("Click add account button")
-  async clickAddAccountButton() {
-    await this.portfolioAddAccountButton.click();
-  }
-
   @step("Click send button")
   async clickSendButton() {
     await this.quickActionButton("send").click();
+  }
+
+  @step("Click sell button")
+  async clickSellButton() {
+    await this.quickActionButton("sell").click();
+  }
+
+  @step("Click buy button")
+  async clickBuyButton() {
+    await this.quickActionButton("buy").click();
   }
 }

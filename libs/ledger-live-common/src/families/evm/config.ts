@@ -621,6 +621,42 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_mantle: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.mantle.xyz",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.mantle.xyz/api",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_mantle_sepolia: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.sepolia.mantle.xyz",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.sepolia.mantle.xyz/api",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_boba: {
     type: "object",
     default: {

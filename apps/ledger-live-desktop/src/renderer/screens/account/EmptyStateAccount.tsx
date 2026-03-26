@@ -85,8 +85,8 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               {"and"}
               <Text ff="Inter|SemiBold" color="neutral.c100">
                 {account &&
-                  account.type === "Account" &&
-                  (account.currency.tokenTypes || []).join(", ")}
+                  account.type === "TokenAccount" &&
+                  (account.token.parentCurrency.tokenTypes || []).join(", ")}
                 {"tokens"}
               </Text>
             </Trans>

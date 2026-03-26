@@ -44,6 +44,11 @@ const handlers = [
   createHistoricalHandler("daily"),
   createHistoricalHandler("hourly"),
 
+  http.get(
+    `${COUNTERVALUES_BASE}/supported/crypto`,
+    () => new Response(JSON.stringify([]), { status: 200 }),
+  ),
+
   http.get(`${COUNTERVALUES_BASE}/spot/simple`, ({ request }) => {
     const url = new URL(request.url);
     const to = url.searchParams.get("to");

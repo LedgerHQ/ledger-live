@@ -27,17 +27,17 @@ describe("getNodeApi memoization", () => {
     expect(third).toBe(cachedInstance);
   });
 
-  function mkConf(node: { type: string; uri: string; retries: number }): EvmCoinConfig {
+  function generateConfig(node: { type: string; uri: string; retries: number }): EvmCoinConfig {
     return { info: { node } } as unknown as EvmCoinConfig;
   }
   it("should return different NodeApi instances for different retries", () => {
     const currency = { id: "ethereum" } as any;
     const nodeConf1 = { type: "external", uri: "u", retries: 2 };
-    setCoinConfig(() => mkConf(nodeConf1));
+    setCoinConfig(() => generateConfig(nodeConf1));
     const node1 = getNodeApi(currency);
 
     const nodeConf2 = { ...nodeConf1, retries: 5 };
-    setCoinConfig(() => mkConf(nodeConf2));
+    setCoinConfig(() => generateConfig(nodeConf2));
 
     const node2 = getNodeApi(currency);
     expect(node1).not.toBe(node2);
@@ -46,18 +46,18 @@ describe("getNodeApi memoization", () => {
   it("should return different NodeApi instances for different uris", () => {
     const currency = { id: "ethereum" } as any;
     const nodeConf1 = { type: "external", uri: "u1", retries: 2 };
-    setCoinConfig(() => mkConf(nodeConf1));
+    setCoinConfig(() => generateConfig(nodeConf1));
     const node1 = getNodeApi(currency);
 
     const nodeConf2 = { ...nodeConf1, uri: "u2" };
-    setCoinConfig(() => mkConf(nodeConf2));
+    setCoinConfig(() => generateConfig(nodeConf2));
     const node2 = getNodeApi(currency);
 
     expect(node1).not.toBe(node2);
   });
 
   it("should return different NodeApi instances for different currencies", () => {
-    const conf = mkConf({ type: "external", uri: "u1", retries: 2 });
+    const conf = generateConfig({ type: "external", uri: "u1", retries: 2 });
     setCoinConfig(() => conf);
 
     const currency1 = { id: "ethereum1" } as any;

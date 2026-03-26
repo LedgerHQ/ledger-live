@@ -3,27 +3,20 @@ import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-help
 import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
-import { deserializeTransaction } from "../logic/utils";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 
 describe("createApi", () => {
   const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
   const testAccountAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
+  const mockConfig = getMockedConfig("testnet");
 
   const api = createApi(
     {
-      networkType: "testnet",
+      ...mockConfig,
       apiUrls: {
         node: getEnv("ALEO_TESTNET_NODE_ENDPOINT"),
         sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
       },
-      feeByTransactionType: {
-        [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 34060,
-        [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2308,
-        [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 17972,
-        [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
-      },
-      feeSafetyMultiplier: 1,
-      isFeeSponsored: true,
     },
     "aleo",
   );
@@ -44,57 +37,6 @@ describe("createApi", () => {
       });
 
       expect(fees.value).toBeGreaterThanOrEqual(0n);
-    });
-  });
-
-  // TODO: adjusts implementation to latest backend changes and re-enable
-  describe.skip("craftTransaction", () => {
-    it("should craft valid transfer_public transaction", async () => {
-      const { transaction } = await api.craftTransaction({
-        intentType: "transaction",
-        asset: { type: "native" },
-        type: "transfer_public",
-        amount: 100n,
-        sender: testAccountAddress,
-        recipient: emptyAccountAddress,
-      });
-
-      const deserialized = deserializeTransaction<{ inputs: unknown[] }>(transaction);
-
-      expect(typeof transaction).toBe("string");
-      expect(transaction.length).toBeGreaterThan(0);
-      expect(deserialized).toMatchObject({
-        is_root: true,
-        network_id: expect.any(Number),
-        program_id: expect.any(String),
-        function_name: expect.any(String),
-        inputs: expect.any(Array),
-      });
-      expect(deserialized.inputs.length).toBeGreaterThan(0);
-    });
-
-    it("should craft valid transfer_public_to_private transaction", async () => {
-      const { transaction } = await api.craftTransaction({
-        intentType: "transaction",
-        asset: { type: "native" },
-        type: "transfer_public_to_private",
-        amount: 100n,
-        sender: testAccountAddress,
-        recipient: testAccountAddress,
-      });
-
-      const deserialized = deserializeTransaction<{ inputs: unknown[] }>(transaction);
-
-      expect(typeof transaction).toBe("string");
-      expect(transaction.length).toBeGreaterThan(0);
-      expect(deserialized).toMatchObject({
-        is_root: true,
-        network_id: expect.any(Number),
-        program_id: expect.any(String),
-        function_name: expect.any(String),
-        inputs: expect.any(Array),
-      });
-      expect(deserialized.inputs.length).toBeGreaterThan(0);
     });
   });
 

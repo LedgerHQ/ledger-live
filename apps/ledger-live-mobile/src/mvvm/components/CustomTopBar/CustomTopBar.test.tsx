@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Stax } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
-import { CustomTopBar, TopBarActionIcon } from "./index";
+import { CustomTopBar, TopBarActionIcon, useMyLedgerTopBarAction } from "./index";
 
 jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
   const makeIcon = (testID: string) => () => <Text testID={testID}>{testID}</Text>;
@@ -42,13 +42,30 @@ const withLastConnectedDevice =
     },
   });
 
+const emptyTrailing: readonly TopBarActionIcon[] = [];
+
+function TopBarHarness({
+  trailingIcons,
+  extraLeadingIcons = emptyTrailing,
+}: Readonly<{
+  trailingIcons: readonly TopBarActionIcon[];
+  extraLeadingIcons?: readonly TopBarActionIcon[];
+}>) {
+  const myLedgerAction = useMyLedgerTopBarAction(mockOnMyLedgerPress);
+  const leadingIcons = useMemo(
+    () => [myLedgerAction, ...extraLeadingIcons],
+    [extraLeadingIcons, myLedgerAction],
+  );
+  return <CustomTopBar leadingIcons={leadingIcons} trailingIcons={trailingIcons} />;
+}
+
 describe("CustomTopBar", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("should call expected callbacks when myLedger and custom action buttons are pressed", async () => {
-    const customIcons: readonly TopBarActionIcon[] = [
+  it("should call expected callbacks when myLedger and trailing action buttons are pressed", async () => {
+    const trailingIcons: readonly TopBarActionIcon[] = [
       {
         id: "custom-settings",
         icon: CustomIcon,
@@ -59,7 +76,7 @@ describe("CustomTopBar", () => {
     ];
 
     const { user, getByTestId } = renderWithReactQuery(
-      <CustomTopBar onMyLedgerPress={mockOnMyLedgerPress} customIcons={customIcons} />,
+      <TopBarHarness trailingIcons={trailingIcons} />,
       {
         overrideInitialState: withLastConnectedDevice(DeviceModelId.stax),
       },
@@ -72,9 +89,9 @@ describe("CustomTopBar", () => {
     expect(mockOnCustomActionPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should render only my ledger button when no custom icons are provided", async () => {
+  it("should render only my ledger button when no trailing icons are provided", async () => {
     const { user, getByTestId, queryByTestId } = renderWithReactQuery(
-      <CustomTopBar onMyLedgerPress={mockOnMyLedgerPress} customIcons={[]} />,
+      <TopBarHarness trailingIcons={[]} />,
       {
         overrideInitialState: withLastConnectedDevice(DeviceModelId.stax),
       },
@@ -86,11 +103,35 @@ describe("CustomTopBar", () => {
     expect(queryByTestId("topbar-custom-settings")).toBeNull();
   });
 
-  it("should call the matching callback for each custom icon", async () => {
+  it("should render extra leading icons after my ledger", async () => {
+    const onLeadingPress = jest.fn();
+    const extraLeadingIcons: readonly TopBarActionIcon[] = [
+      {
+        id: "leading-discover",
+        icon: CustomIcon,
+        callback: onLeadingPress,
+        testID: "topbar-leading",
+        accessibilityLabel: "Discover",
+      },
+    ];
+
+    const { user, getByTestId } = renderWithReactQuery(
+      <TopBarHarness trailingIcons={[]} extraLeadingIcons={extraLeadingIcons} />,
+      {
+        overrideInitialState: withLastConnectedDevice(DeviceModelId.stax),
+      },
+    );
+
+    await user.press(getByTestId("topbar-leading"));
+
+    expect(onLeadingPress).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call the matching callback for each trailing icon", async () => {
     const onFirstPress = jest.fn();
     const onSecondPress = jest.fn();
 
-    const customIcons: readonly TopBarActionIcon[] = [
+    const trailingIcons: readonly TopBarActionIcon[] = [
       {
         id: "custom-first",
         icon: CustomIcon,
@@ -108,7 +149,7 @@ describe("CustomTopBar", () => {
     ];
 
     const { user, getByTestId } = renderWithReactQuery(
-      <CustomTopBar onMyLedgerPress={mockOnMyLedgerPress} customIcons={customIcons} />,
+      <TopBarHarness trailingIcons={trailingIcons} />,
       {
         overrideInitialState: withLastConnectedDevice(DeviceModelId.stax),
       },
@@ -129,20 +170,15 @@ describe("CustomTopBar", () => {
     [DeviceModelId.apex, "device-icon-apex"],
     [DeviceModelId.stax, "device-icon-stax"],
   ])("should render %s icon for model %s", (modelId, expectedIconTestId) => {
-    const { getByTestId } = renderWithReactQuery(
-      <CustomTopBar onMyLedgerPress={mockOnMyLedgerPress} customIcons={[]} />,
-      {
-        overrideInitialState: withLastConnectedDevice(modelId),
-      },
-    );
+    const { getByTestId } = renderWithReactQuery(<TopBarHarness trailingIcons={[]} />, {
+      overrideInitialState: withLastConnectedDevice(modelId),
+    });
 
     expect(getByTestId(expectedIconTestId)).toBeTruthy();
   });
 
   it("should fallback to stax icon when no device is connected", () => {
-    const { getByTestId } = renderWithReactQuery(
-      <CustomTopBar onMyLedgerPress={mockOnMyLedgerPress} customIcons={[]} />,
-    );
+    const { getByTestId } = renderWithReactQuery(<TopBarHarness trailingIcons={[]} />);
 
     expect(getByTestId("device-icon-stax")).toBeTruthy();
   });

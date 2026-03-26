@@ -7,9 +7,10 @@ export class InstallSetOfApps extends AppPage {
   private cancelCtaButton = this.page.getByTestId("skip-cta-button");
   private inputOptionSelector = this.page.getByTestId("input-option-selector");
   container = this.page.getByTestId("install-set-of-apps-container");
+  private restoreDrawerBody = this.container.getByTestId("install-set-of-apps-restore-body");
 
   private circleProgressSelector = (circleProgress: string) =>
-    this.page.locator(`circle[style="stroke-dashoffset: ${circleProgress};"]`);
+    this.page.locator(`circle[style*="stroke-dashoffset: ${circleProgress}"]`);
   private installingText = this.page.getByTestId("installing-text");
 
   async waitForLaunch() {
@@ -39,6 +40,11 @@ export class InstallSetOfApps extends AppPage {
   async startRestoreAppsFromStax() {
     await this.inputOptionSelector.click();
     await this.page.getByText("Restore from Ledger Stax").click();
+  }
+
+  /** Wait until the step body shows restore mode so the CTA starts restore, not install. */
+  async waitForRestoreDrawerVisible() {
+    await this.restoreDrawerBody.waitFor({ state: "visible" });
   }
 
   async waitForCircleProgress(circleProgress: string) {

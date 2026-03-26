@@ -4,11 +4,17 @@
 export const SIDEBAR_VALUE_TO_PATH = {
   home: "/",
   accounts: "/accounts",
+  cryptos: "/cryptos",
   swap: "/swap",
   earn: "/earn",
   discover: "/platform",
   card: "/card-new-wallet",
 } as const;
+
+/** Sidebar "Accounts" entry navigates to CryptoAddresses (Cryptos page) when asset section FF is on, else legacy accounts page. */
+export function getAccountsSidebarPath(shouldDisplayAssetSection: boolean): string {
+  return shouldDisplayAssetSection ? SIDEBAR_VALUE_TO_PATH.cryptos : SIDEBAR_VALUE_TO_PATH.accounts;
+}
 
 export type SideBarNavValue = keyof typeof SIDEBAR_VALUE_TO_PATH;
 
@@ -20,6 +26,7 @@ export type SideBarNavValue = keyof typeof SIDEBAR_VALUE_TO_PATH;
 export const SIDEBAR_VALUE_TO_TRACK_ENTRY: Record<SideBarNavValue, string> = {
   home: "/portfolio",
   accounts: "accounts",
+  cryptos: "cryptos",
   swap: "swap",
   earn: "earn",
   discover: "platform",

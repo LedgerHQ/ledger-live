@@ -18,13 +18,14 @@ export interface PreparedRequestResponse {
   input_types: string[];
   nested_calls?: PreparedRequestResponse[];
   record_commitments?: string[];
+  tlv: string;
 }
 
 interface TransferPrivateIntent {
   type: "transfer_private";
   amount: string;
   to: string;
-  record: string;
+  record: AleoDecryptedRecordResponse;
 }
 
 interface TransferPublicIntent {
@@ -37,7 +38,7 @@ interface TransferPrivateToPublicIntent {
   type: "transfer_private_to_public";
   amount: string;
   to: string;
-  record: string;
+  record: AleoDecryptedRecordResponse;
 }
 
 interface TransferPublicToPrivateIntent {
@@ -51,7 +52,7 @@ interface FeePrivateIntent {
   base_fee: string;
   priority_fee: string;
   execution_id: string;
-  record: string;
+  record: AleoDecryptedRecordResponse;
 }
 
 interface FeePublicIntent {
@@ -69,7 +70,17 @@ export type Intent =
   | FeePrivateIntent
   | FeePublicIntent;
 
-export interface PrepareRequestBody {
-  view_key: string;
-  intent: Intent;
+export interface FeeConfiguration {
+  function_name: "fee_private" | "fee_public";
+  max_base_fee: string;
+  max_priority_fee: string;
+}
+
+export interface AuthorizationResponse {
+  authorization: string;
+  execution_id: string;
+}
+
+export interface EncryptProvingRequestResponse {
+  encrypted: string;
 }

@@ -113,7 +113,6 @@ const PendingTransferProposals: React.FC<Props> = ({ account, parentAccount }) =
           handleTopologyChangeError(dispatch, {
             currency: parentAccount.currency,
             device,
-            accounts: [],
             mainAccount: parentAccount,
             navigationSnapshot: {
               type: "transfer-proposal",

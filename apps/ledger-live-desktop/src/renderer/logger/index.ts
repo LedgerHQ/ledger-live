@@ -1,6 +1,7 @@
 import winston, { LogEntry } from "winston";
 import Transport from "winston-transport";
 import { captureException, captureBreadcrumb } from "~/sentry/renderer";
+import * as datadog from "~/datadog/renderer";
 const { format } = winston;
 const { combine, json, timestamp } = format;
 
@@ -270,6 +271,12 @@ export default {
       message: event,
       data: properties,
     });
+    datadog.addBreadcrumb({
+      level: "info",
+      category: "track",
+      message: event,
+      data: properties as Record<string, unknown>,
+    });
   },
   analyticsPage: (category: string, name?: string | null, properties?: object | null) => {
     const message = name ? `${category} ${name}` : category;
@@ -284,6 +291,12 @@ export default {
       category: "page",
       message,
       data: properties || undefined,
+    });
+    datadog.addBreadcrumb({
+      level: "info",
+      category: "page",
+      message,
+      data: (properties ?? undefined) as Record<string, unknown> | undefined,
     });
   },
   countervalues: (...args: unknown[]) => {
@@ -320,14 +333,20 @@ export default {
         category: "context",
         message: context,
       });
+      datadog.addBreadcrumb({
+        level: "error",
+        category: "context",
+        message: context,
+      });
     }
     if (error instanceof Error) {
-      logger.log("error", error && error.message, {
-        stack: error && error.stack,
+      logger.log("error", error?.message, {
+        stack: error?.stack,
 
         ...error,
       });
       captureException(error);
+      datadog.captureException(error);
     }
   },
   add,

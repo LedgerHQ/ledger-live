@@ -403,4 +403,116 @@ describe("featureFlagsSlice extraReducers (legacy bridge)", () => {
       expect(store.getState().featureFlags.bannerVisible).toBe(true);
     });
   });
+
+  describe.each(["SETTINGS_IMPORT", "FETCH_SETTINGS"] as const)(
+    "%s (settings hydration bridge)",
+    actionType => {
+      it("hydrates overrides and resolved from overriddenFeatureFlags", () => {
+        const store = createStore();
+        store.dispatch({
+          type: actionType,
+          payload: { overriddenFeatureFlags: { mockFeature: { enabled: true, params: { v: 1 } } } },
+        });
+        expect(store.getState().featureFlags.overrides).toEqual({
+          mockFeature: { enabled: true, params: { v: 1 } },
+        });
+        expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
+          enabled: true,
+          params: { v: 1 },
+        });
+      });
+
+      it("filters out undefined values from overriddenFeatureFlags", () => {
+        const store = createStore();
+        store.dispatch({
+          type: actionType,
+          payload: {
+            overriddenFeatureFlags: { mockFeature: { enabled: true }, ptxCard: undefined },
+          },
+        });
+        expect(store.getState().featureFlags.overrides).toEqual({
+          mockFeature: { enabled: true },
+        });
+        expect(store.getState().featureFlags.overrides.ptxCard).toBeUndefined();
+      });
+
+      it("clears stale overrides when overriddenFeatureFlags is empty", () => {
+        const store = createStore({
+          overrides: { mockFeature: { enabled: true } },
+          remote: {},
+          resolved: { ...defaults, mockFeature: { enabled: true } },
+          bannerVisible: false,
+        });
+        store.dispatch({
+          type: actionType,
+          payload: { overriddenFeatureFlags: {} },
+        });
+        expect(store.getState().featureFlags.overrides).toEqual({});
+        expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
+      });
+
+      it("hydrates bannerVisible from featureFlagsBannerVisible", () => {
+        const store = createStore();
+        store.dispatch({
+          type: actionType,
+          payload: { featureFlagsBannerVisible: true },
+        });
+        expect(store.getState().featureFlags.bannerVisible).toBe(true);
+      });
+
+      it("hydrates bannerVisible from featureFlagsButtonVisible", () => {
+        const store = createStore();
+        store.dispatch({
+          type: actionType,
+          payload: { featureFlagsButtonVisible: true },
+        });
+        expect(store.getState().featureFlags.bannerVisible).toBe(true);
+      });
+
+      it("prefers featureFlagsBannerVisible over featureFlagsButtonVisible", () => {
+        const store = createStore();
+        store.dispatch({
+          type: actionType,
+          payload: { featureFlagsBannerVisible: false, featureFlagsButtonVisible: true },
+        });
+        expect(store.getState().featureFlags.bannerVisible).toBe(false);
+      });
+
+      it("does not change bannerVisible when neither field is present", () => {
+        const store = createStore({
+          overrides: {},
+          remote: {},
+          resolved: defaults,
+          bannerVisible: true,
+        });
+        store.dispatch({
+          type: actionType,
+          payload: { overriddenFeatureFlags: {} },
+        });
+        expect(store.getState().featureFlags.bannerVisible).toBe(true);
+      });
+
+      it("handles both overrides and banner in a single payload", () => {
+        const store = createStore();
+        store.dispatch({
+          type: actionType,
+          payload: {
+            overriddenFeatureFlags: { mockFeature: { enabled: true } },
+            featureFlagsBannerVisible: true,
+          },
+        });
+        expect(store.getState().featureFlags.overrides).toEqual({
+          mockFeature: { enabled: true },
+        });
+        expect(store.getState().featureFlags.bannerVisible).toBe(true);
+      });
+
+      it("no-ops when payload is falsy", () => {
+        const store = createStore();
+        const before = store.getState().featureFlags;
+        store.dispatch({ type: actionType, payload: null });
+        expect(store.getState().featureFlags).toEqual(before);
+      });
+    },
+  );
 });

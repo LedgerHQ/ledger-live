@@ -40,13 +40,13 @@ describe("AddAccount", () => {
     // Open drawer
     await user.press(addAssetButton);
     // Wait for the drawer to open
-    expect(await screen.findByText(/add another account/i));
-    expect(await screen.findByText(/Use your Ledger device/i));
+    expect(await screen.findByText(/add another account/i)).toBeVisible();
+    expect(await screen.findByText(/Use your Ledger device/i)).toBeVisible();
     await act(async () => {
       fireEvent.press(await screen.findByText(/Use Ledger Sync/i));
     });
     expect(await screen.findByText(/choose your sync method/i)).toBeVisible();
-    expect(await screen.findByText(/Scan QR code/i));
+    expect(await screen.findByText(/Scan QR code/i)).toBeVisible();
   });
 
   /**====== use ModularDrawer Test =======*/
@@ -81,8 +81,8 @@ describe("AddAccount", () => {
     // Open drawer
     await user.press(addAssetButton);
     // Wait for the drawer to open
-    expect(await screen.findByText(/add another account/i));
-    expect(await screen.findByText(/Use your Ledger device/i));
+    expect(await screen.findByText(/add another account/i)).toBeVisible();
+    expect(await screen.findByText(/Use your Ledger device/i)).toBeVisible();
 
     // Press the "Use your Ledger device" button to trigger ModularDrawer
     await user.press(screen.getByText(/Use your Ledger device/i));

@@ -6,8 +6,6 @@ import { Search } from "@ledgerhq/native-ui/pre-ldls/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = SearchProps & {
-  onFocus: () => void;
-  onBlur: () => void;
   withHorizontalPadding?: boolean;
 };
 
@@ -17,8 +15,6 @@ const SearchInputContainer = ({
   assetsConfiguration,
   formatAssetConfig,
   onPressIn,
-  onFocus,
-  onBlur,
   withHorizontalPadding = false,
 }: Props) => {
   const { t } = useTranslation();
@@ -34,8 +30,6 @@ const SearchInputContainer = ({
   return (
     <Flex mb={4} {...(withHorizontalPadding ? { px: 4 } : {})}>
       <Search
-        onFocus={onFocus}
-        onBlur={onBlur}
         onPressIn={onPressIn}
         value={displayedValue}
         debounceTime={modularDrawer?.params?.searchDebounceTime}

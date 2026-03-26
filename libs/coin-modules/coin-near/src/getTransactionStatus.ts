@@ -1,4 +1,5 @@
-import { BigNumber } from "bignumber.js";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -8,18 +9,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { Transaction, StatusErrorMap, NearAccount, TransactionStatus } from "./types";
-import {
-  isValidAddress,
-  isImplicitAccount,
-  getMaxAmount,
-  getTotalSpent,
-  getYoctoThreshold,
-} from "./logic";
+import { BigNumber } from "bignumber.js";
 import { fetchAccountDetails } from "./api";
-import { getCurrentNearPreloadData } from "./preload";
+import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 import {
   NearNewAccountWarning,
   NearActivationFeeNotCovered,
@@ -30,7 +22,15 @@ import {
   NearRecommendUnstake,
   NearStakingThresholdNotMet,
 } from "./errors";
-import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
+import {
+  isValidAddress,
+  isImplicitAccount,
+  getMaxAmount,
+  getTotalSpent,
+  getYoctoThreshold,
+} from "./logic";
+import { getCurrentNearPreloadData } from "./preload-data";
+import type { Transaction, StatusErrorMap, NearAccount, TransactionStatus } from "./types";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

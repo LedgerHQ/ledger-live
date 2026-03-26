@@ -1,5 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getSendDescriptor, sendFeatures } from "../../bridge/descriptor";
+import { getSendDescriptor } from "../../bridge/descriptor/registry";
+import { sendFeatures } from "../../bridge/descriptor/send/features";
 import type { SendFlowUiConfig } from "./types";
 
 export const DEFAULT_SEND_UI_CONFIG: SendFlowUiConfig = {

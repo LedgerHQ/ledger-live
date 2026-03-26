@@ -1,12 +1,12 @@
-import invariant from "invariant";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 
+import invariant from "invariant";
 import type { Transaction } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { acceptTokenTransfer, acceptTransaction } from "./bot-deviceActions";
 
 const MIN_SAFE = new BigNumber(10000);

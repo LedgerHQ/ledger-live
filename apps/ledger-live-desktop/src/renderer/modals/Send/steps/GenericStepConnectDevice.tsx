@@ -13,6 +13,7 @@ import { closeModal } from "~/renderer/actions/modals";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
+import type { ModalData } from "~/renderer/modals/types";
 
 const Result = (
   props:
@@ -37,6 +38,7 @@ export default function StepConnectDevice({
   parentAccount,
   transaction,
   status,
+  modalName = "MODAL_SEND",
   transitionTo,
   onOperationBroadcasted,
   onTransactionError,
@@ -49,6 +51,7 @@ export default function StepConnectDevice({
   parentAccount?: Account | undefined | null;
   transaction?: Transaction | undefined | null;
   status: TransactionStatus;
+  modalName?: keyof ModalData;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
@@ -99,7 +102,7 @@ export default function StepConnectDevice({
                 onOperationBroadcasted(operation);
                 transitionTo("confirmation");
               } else {
-                dispatch(closeModal("MODAL_SEND"));
+                dispatch(closeModal(modalName));
                 onConfirmationHandler(operation);
               }
             },
@@ -108,7 +111,7 @@ export default function StepConnectDevice({
                 onTransactionError(error);
                 transitionTo("confirmation");
               } else {
-                dispatch(closeModal("MODAL_SEND"));
+                dispatch(closeModal(modalName));
                 onFailHandler(error);
               }
             },
@@ -119,7 +122,7 @@ export default function StepConnectDevice({
             onTransactionError(transactionSignError);
             transitionTo("confirmation");
           } else {
-            dispatch(closeModal("MODAL_SEND"));
+            dispatch(closeModal(modalName));
             onFailHandler(transactionSignError);
           }
         }

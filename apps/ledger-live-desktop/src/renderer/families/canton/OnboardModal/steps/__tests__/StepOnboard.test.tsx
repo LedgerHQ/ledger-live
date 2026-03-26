@@ -1,24 +1,15 @@
-import React from "react";
-import { render, screen, cleanup } from "tests/testSetup";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import StepOnboard, { StepOnboardFooter } from "../StepOnboard";
-import { StepProps, StepId } from "../../types";
+import React from "react";
+import { render, screen } from "tests/testSetup";
 import {
+  createMockAccount,
   createMockCantonCurrency,
   createMockDevice,
-  createMockAccount,
   createMockImportableAccount,
   createMockStepProps,
 } from "../../__tests__/testUtils";
-
-jest.mock("@ledgerhq/live-wallet/accountName", () => ({
-  getDefaultAccountNameForCurrencyIndex: jest.fn(
-    ({ currency, index }) => `${currency.name} ${index + 1}`,
-  ),
-}));
-jest.mock("../../components/TransactionConfirm", () => ({
-  TransactionConfirm: () => <div data-testid="transaction-confirm" />,
-}));
+import { StepId } from "../../types";
+import StepOnboard, { StepOnboardFooter } from "../StepOnboard";
 
 describe("StepOnboard", () => {
   const mockCurrency = createMockCantonCurrency();
@@ -26,7 +17,7 @@ describe("StepOnboard", () => {
   const mockAccount = createMockAccount();
   const mockImportableAccount = createMockImportableAccount();
 
-  const defaultProps: StepProps = createMockStepProps({
+  const defaultProps = createMockStepProps({
     device: mockDevice,
     currency: mockCurrency,
     creatableAccount: mockAccount,
@@ -36,130 +27,119 @@ describe("StepOnboard", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-    cleanup();
+  it("should hide importable accounts section when none exist", () => {
+    render(<StepOnboard {...defaultProps} importableAccounts={[]} />);
+    expect(screen.queryByText(/onboarded accounts/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
   });
 
-  it("should display accounts correctly based on availability", () => {
-    const testCases = [
-      { importableAccounts: [], creatableAccount: mockAccount, expectImportable: false },
-      {
-        importableAccounts: [mockImportableAccount],
-        creatableAccount: mockAccount,
-        expectImportable: true,
-      },
-    ];
-
-    testCases.forEach(({ importableAccounts, creatableAccount, expectImportable }) => {
-      const props = { ...defaultProps, importableAccounts, creatableAccount };
-      const { container } = render(<StepOnboard {...props} />);
-
-      if (expectImportable) {
-        expect(screen.getByText("Onboarded accounts")).toBeInTheDocument();
-      } else {
-        expect(screen.queryByText("Onboarded accounts")).not.toBeInTheDocument();
-      }
-      expect(screen.getByText("New Account")).toBeInTheDocument();
-      container.remove();
-    });
+  it("should show importable accounts section when they exist", () => {
+    render(<StepOnboard {...defaultProps} />);
+    expect(screen.getByText(/onboarded accounts/i)).toBeInTheDocument();
+    expect(screen.getByText(/new account/i)).toBeInTheDocument();
   });
 
-  it("should render correct footer buttons and handle interactions", () => {
-    const testCases = [
-      { status: OnboardStatus.INIT, expectedButton: "Continue", shouldBeDisabled: false },
-      { status: OnboardStatus.SUCCESS, expectedButton: "Continue", shouldBeDisabled: false },
-      { status: OnboardStatus.ERROR, expectedButton: "Try again", shouldBeDisabled: false },
-      {
-        status: OnboardStatus.PREPARE,
-        expectedButton: "Continue",
-        shouldBeDisabled: false,
-        isProcessing: false,
-      },
-      {
-        status: OnboardStatus.PREPARE,
-        expectedButton: "Continue",
-        shouldBeDisabled: true,
-        isProcessing: true,
-      },
-      { status: OnboardStatus.SIGN, expectedButton: null }, // No button for SIGN
-    ];
-
-    testCases.forEach(({ status, expectedButton, shouldBeDisabled, isProcessing }) => {
-      const { container } = render(
+  it.each([
+    {
+      status: OnboardStatus.INIT,
+      expectedButton: /continue/i,
+      isProcessing: false,
+      disabled: false,
+    },
+    {
+      status: OnboardStatus.SUCCESS,
+      expectedButton: /continue/i,
+      isProcessing: false,
+      disabled: false,
+    },
+    {
+      status: OnboardStatus.ERROR,
+      expectedButton: /try again/i,
+      isProcessing: false,
+      disabled: false,
+    },
+    {
+      status: OnboardStatus.PREPARE,
+      expectedButton: /continue/i,
+      isProcessing: false,
+      disabled: false,
+    },
+    {
+      status: OnboardStatus.PREPARE,
+      expectedButton: /continue/i,
+      isProcessing: true,
+      disabled: true,
+    },
+  ])(
+    "should render $expectedButton button (disabled=$disabled) when status=$status",
+    ({ status, expectedButton, isProcessing, disabled }) => {
+      render(
         <StepOnboardFooter
           {...defaultProps}
           onboardingStatus={status}
-          isProcessing={!!isProcessing}
+          isProcessing={isProcessing}
         />,
       );
-
-      if (expectedButton) {
-        const button = screen.getByRole("button", { name: expectedButton });
-        expect(button).toBeInTheDocument();
-        if (shouldBeDisabled) {
-          expect(button).toBeDisabled();
-        } else {
-          expect(button).not.toBeDisabled();
-        }
+      const button = screen.getByRole("button", { name: expectedButton });
+      if (disabled) {
+        expect(button).toBeDisabled();
       } else {
-        expect(screen.queryByRole("button")).not.toBeInTheDocument();
+        expect(button).not.toBeDisabled();
       }
-      container.remove();
-    });
+    },
+  );
+
+  it("should render no button during SIGN status", () => {
+    render(<StepOnboardFooter {...defaultProps} onboardingStatus={OnboardStatus.SIGN} />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
-  it("should call correct handlers on button clicks", async () => {
+  it("should call onOnboardAccount when continue is clicked in INIT state", async () => {
     const onOnboardAccount = jest.fn();
-    const onRetry = jest.fn();
-    const transitionTo = jest.fn();
-
-    // Test INIT status
-    const { container: container1 } = render(
+    const { user } = render(
       <StepOnboardFooter
         {...defaultProps}
         onOnboardAccount={onOnboardAccount}
         onboardingStatus={OnboardStatus.INIT}
       />,
     );
-    const continueButton = await screen.findByRole("button", { name: "Continue" });
-    continueButton.click();
-    expect(onOnboardAccount).toHaveBeenCalled();
-    container1.remove();
 
-    // Test ERROR status
-    const { container: container2 } = render(
+    await user.click(screen.getByRole("button", { name: /continue/i }));
+    expect(onOnboardAccount).toHaveBeenCalled();
+  });
+
+  it("should call onRetryOnboardAccount when retry is clicked in ERROR state", async () => {
+    const onRetry = jest.fn();
+    const { user } = render(
       <StepOnboardFooter
         {...defaultProps}
         onRetryOnboardAccount={onRetry}
         onboardingStatus={OnboardStatus.ERROR}
       />,
     );
-    const retryButton = await screen.findByRole("button", { name: "Try again" });
-    retryButton.click();
-    expect(onRetry).toHaveBeenCalled();
-    container2.remove();
 
-    // Test SUCCESS status
-    const { container: container3 } = render(
+    await user.click(screen.getByRole("button", { name: /try again/i }));
+    expect(onRetry).toHaveBeenCalled();
+  });
+
+  it("should call transitionTo with AUTHORIZE when continue is clicked in SUCCESS state", async () => {
+    const transitionTo = jest.fn();
+    const { user } = render(
       <StepOnboardFooter
         {...defaultProps}
         transitionTo={transitionTo}
         onboardingStatus={OnboardStatus.SUCCESS}
       />,
     );
-    const successButton = await screen.findByRole("button", { name: "Continue" });
-    successButton.click();
+
+    await user.click(screen.getByRole("button", { name: /continue/i }));
     expect(transitionTo).toHaveBeenCalledWith(StepId.AUTHORIZE);
-    container3.remove();
   });
 
   it("should render currency badge in footer", () => {
     render(<StepOnboardFooter {...defaultProps} />);
-
     expect(screen.getByText("Canton")).toBeInTheDocument();
   });
 });

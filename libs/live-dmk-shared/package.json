@@ -39,7 +39,7 @@
     "@types/semver": "catalog:",
     "purify-ts": "^2.1.0",
     "semver": "catalog:",
-    "xstate": "^5.19.2"
+    "xstate": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",

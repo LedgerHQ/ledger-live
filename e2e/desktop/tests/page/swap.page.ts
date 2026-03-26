@@ -1,4 +1,4 @@
-import { AppPage } from "./abstractClasses";
+import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -12,7 +12,8 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
-export class SwapPage extends AppPage {
+export class SwapPage extends WebViewAppPage {
+  protected readonly webviewIdentifier = "swap";
   private static readonly EXPORT_SOURCE_PATH = path.resolve("./ledgerwallet-swap-history.csv");
   private static readonly EXPORT_ARTIFACT_PATH = path.resolve(
     __dirname,
@@ -39,9 +40,6 @@ export class SwapPage extends AppPage {
   private insufficientFundsBuyButton = "insufficient-funds-buy-button";
   private insufficientFundsWarning = "insufficient-funds-warning";
   private executeButtonDisabled = "execute-button-disabled";
-
-  // Exchange Drawer Components
-  readonly swapId = this.page.getByTestId("swap-id");
 
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
@@ -332,17 +330,16 @@ export class SwapPage extends AppPage {
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
   }
 
-  @step("Check currency to swap from is $0")
-  async switchYouSendAndYouReceive(electronApp: ElectronApplication) {
-    const [, webview] = electronApp.windows();
+  @step("Click switch button")
+  async switchYouSendAndYouReceive() {
+    const webview = await this.getWebView();
     await webview.getByTestId(this.switchButton).click();
   }
 
-  @step("Check currency to swap from is $1")
-  async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
-    const fromAccount = webview.getByTestId(this.fromAccountCoinSelector);
-    await expect(fromAccount).toContainText(currency);
+  @step("Check currency to swap from contains $0")
+  async checkAssetFromContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
   }
 
   @step("Expect asset or account selected $0 to be displayed")
@@ -352,11 +349,8 @@ export class SwapPage extends AppPage {
   }
 
   @step("Check if $0 asset is already selected")
-  async checkIfFromAssetIsAlreadySelected(
-    asset: string,
-    electronApp: ElectronApplication,
-  ): Promise<boolean> {
-    const [, webview] = electronApp.windows();
+  async checkIfFromAssetIsAlreadySelected(asset: string): Promise<boolean> {
+    const webview = await this.getWebView();
     const selector = webview.getByTestId(this.fromAccountCoinSelector);
 
     await webview.waitForFunction(selectorTestId => {
@@ -369,11 +363,8 @@ export class SwapPage extends AppPage {
   }
 
   @step("Check if $0 asset is already selected")
-  async checkIfToAssetIsAlreadySelected(
-    asset: string,
-    electronApp: ElectronApplication,
-  ): Promise<boolean> {
-    const [, webview] = electronApp.windows();
+  async checkIfToAssetIsAlreadySelected(asset: string): Promise<boolean> {
+    const webview = await this.getWebView();
     const selector = webview.getByTestId(this.toAccountCoinSelector);
 
     const text = await selector.textContent();
@@ -429,15 +420,10 @@ export class SwapPage extends AppPage {
     await webview.getByTestId(this.fromAccountCoinSelector).click();
   }
 
-  @step("Check currency to swap to is $1")
-  async checkAssetTo(electronApp: ElectronApplication, currency: string) {
-    const [, webview] = electronApp.windows();
-    const assetTo = webview.getByTestId(this.toAccountCoinSelector);
-    if (currency === "") {
-      await expect(assetTo).toContainText("Choose asset");
-    } else {
-      await expect(assetTo).toContainText(currency);
-    }
+  @step("Check currency to swap to contains $0")
+  async checkAssetToContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
   }
 
   @step("Verify swap amount error message match: $1")
@@ -464,17 +450,28 @@ export class SwapPage extends AppPage {
 
   @step("Go and wait for Swap app to be ready")
   async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
-    const appReadyPromise = this.page
-      .waitForEvent("console", {
-        predicate: msg => msg.text().toLowerCase().includes("swap live app loaded"),
-        timeout: 20_000,
-      })
-      .catch(() => {
-        console.log("WARNING: Swap app did not load within the expected time!");
-      });
-
+    this._webviewPage = undefined;
     await swapFunction();
-    await appReadyPromise;
+
+    const overallTimeout = 90_000;
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < overallTimeout) {
+      try {
+        this._webviewPage = undefined;
+        const remaining = overallTimeout - (Date.now() - startTime);
+        const webview = await this.getWebView(remaining);
+        await webview.waitForSelector(`[data-testid="${this.fromAccountCoinSelector}"]`, {
+          timeout: Math.min(15_000, overallTimeout - (Date.now() - startTime)),
+        });
+        return;
+      } catch {
+        // The webview may have reloaded or been replaced; reset and retry
+        await this.page.waitForTimeout(500);
+      }
+    }
+
+    throw new Error(`Swap app did not become ready within ${overallTimeout}ms`);
   }
 
   @step("Verify provider URL")

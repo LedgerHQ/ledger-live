@@ -70,7 +70,7 @@ export class Application extends PageHolder {
   public settings = new SettingsPage(this.page);
   public settingsModal = new SettingsModal(this.page);
   public speculos = new SpeculosPage(this.page);
-  public swap = new SwapPage(this.page);
+  public swap = new SwapPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);

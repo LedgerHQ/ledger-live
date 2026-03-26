@@ -1,8 +1,8 @@
 import { BlockInfo } from "@ledgerhq/coin-framework/api/types";
 import { getLastBlock } from "../network/sdk";
 
-export async function lastBlock(): Promise<BlockInfo> {
-  const { digest, sequenceNumber, timestampMs } = await getLastBlock();
+export async function lastBlock(currencyId?: string): Promise<BlockInfo> {
+  const { digest, sequenceNumber, timestampMs } = await getLastBlock(currencyId);
 
   return {
     height: Number(sequenceNumber),

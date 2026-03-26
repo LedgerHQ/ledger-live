@@ -49,7 +49,7 @@ export const etherscanOperationToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
-  const to = safeEncodeEIP55(etherscanOp.to);
+  const to = safeEncodeEIP55(etherscanOp.to) || safeEncodeEIP55(etherscanOp.contractAddress);
   const value = safeBigNumber(etherscanOp.value);
   const fee = safeBigNumber(etherscanOp.gasUsed).times(safeBigNumber(etherscanOp.gasPrice));
   const hasFailed = etherscanOp.isError === "1";
@@ -67,37 +67,29 @@ export const etherscanOperationToOperations = (
     types.push("NONE");
   }
 
-  const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
-
-  return types.map(type => {
-    let operationValue: BigNumber = value;
-
-    if (valueIncludesFees.includes(type) && hasFailed) {
-      operationValue = fee;
-    } else if (valueIncludesFees.includes(type)) {
-      operationValue = value.plus(fee);
-    }
-
-    return {
-      id: encodeOperationId(accountId, etherscanOp.hash, type),
-      hash: etherscanOp.hash,
-      type,
-      value: operationValue,
-      fee,
-      senders: [from],
-      recipients: [to],
-      blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
-      blockHash: etherscanOp.blockHash,
-      transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
-      accountId: accountId,
-      date: new Date(Number.parseInt(etherscanOp.timeStamp, 10) * 1000),
-      subOperations: [],
-      nftOperations: [],
-      internalOperations: [],
-      hasFailed,
-      extra: {},
-    } as Operation;
-  });
+  // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
+  return types.map(
+    type =>
+      ({
+        id: encodeOperationId(accountId, etherscanOp.hash, type),
+        hash: etherscanOp.hash,
+        type,
+        value,
+        fee,
+        senders: [from],
+        recipients: [to],
+        blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
+        blockHash: etherscanOp.blockHash,
+        transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
+        accountId: accountId,
+        date: new Date(Number.parseInt(etherscanOp.timeStamp, 10) * 1000),
+        subOperations: [],
+        nftOperations: [],
+        internalOperations: [],
+        hasFailed,
+        extra: {},
+      }) as Operation,
+  );
 };
 
 /**

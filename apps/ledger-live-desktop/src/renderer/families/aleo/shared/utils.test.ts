@@ -1,7 +1,7 @@
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
-import type { AleoCoinConfig } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";
 import { getAleoCurrencyConfig, getAleoTransactionTypeLabelKey } from "./utils";
@@ -9,21 +9,6 @@ import { getAleoCurrencyConfig, getAleoTransactionTypeLabelKey } from "./utils";
 jest.mock("@ledgerhq/live-common/config/index");
 
 const mockGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
-
-const mockAleoCoinConfig: AleoCoinConfig = {
-  status: { type: "active" },
-  networkType: "mainnet",
-  apiUrls: { node: "https://node.aleo.org", sdk: "https://sdk.aleo.org" },
-  feeByTransactionType: {
-    [TRANSACTION_TYPE.TRANSFER_PUBLIC]: 1000,
-    [TRANSACTION_TYPE.TRANSFER_PRIVATE]: 2000,
-    [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE]: 3000,
-    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 4000,
-  },
-  feeSafetyMultiplier: 1.5,
-  isFeeSponsored: false,
-};
-
 describe("getAleoCurrencyConfig", () => {
   beforeEach(() => {
     jest.clearAllMocks();

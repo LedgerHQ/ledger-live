@@ -53,7 +53,7 @@ export const buildSignOperation = (
               suiClient,
             );
             return ledgerSigner.signTransaction(unsigned, objects, resolution);
-          }),
+          }, account.currency.id),
         );
 
         subscriber.next({

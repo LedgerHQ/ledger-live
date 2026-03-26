@@ -221,6 +221,16 @@ describe("useAssetsViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
+  it("should navigate to /assets when stablecoins onNavigate is called", () => {
+    const { result } = renderHook(() => useAssetsViewModel());
+
+    act(() => {
+      result.current.sections[1].onNavigate();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/assets");
+  });
+
   it("should navigate to /asset when onItemClick is called with a real item", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const realItem: AssetTableItem = { ...BITCOIN_ASSET, isPlaceholder: false };
@@ -316,7 +326,7 @@ describe("useAssetsViewModel", () => {
   it("should have pre-resolved titles in sections", () => {
     const { result } = renderHook(() => useAssetsViewModel());
 
-    expect(result.current.sections[0].title).toBe("Cryptos");
+    expect(result.current.sections[0].title).toBe("Crypto");
     expect(result.current.sections[1].title).toBe("Stablecoins");
   });
 

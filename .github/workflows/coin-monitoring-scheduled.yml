@@ -14,7 +14,8 @@ jobs:
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
         id: monitoring
         timeout-minutes: 120

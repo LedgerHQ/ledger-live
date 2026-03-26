@@ -70,7 +70,9 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToPortfolio());
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("home"),
+      );
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
       await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/, electronApp);
     },
@@ -96,13 +98,13 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2986",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
 
       await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
-      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
     },
   );
 
@@ -126,7 +128,7 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2987",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       if (await isWallet40Enabled(app.getPage())) {
@@ -138,8 +140,8 @@ test.describe("Swap flow from different entry point", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
-      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.accountName);
     },
   );
 
@@ -163,7 +165,7 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2988",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       if (await isWallet40Enabled(app.getPage())) {
@@ -174,7 +176,7 @@ test.describe("Swap flow from different entry point", () => {
 
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
       await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
-      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
     },
   );
 
@@ -198,15 +200,15 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2989",
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(
         getParentAccountName(swapEntryPoint.swap.accountToDebit),
       );
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
-      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.swap.checkAssetTo(electronApp, swapEntryPoint.swap.accountToDebit.accountName);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
+      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.accountName);
     },
   );
 

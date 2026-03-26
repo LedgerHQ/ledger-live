@@ -39,6 +39,7 @@ export const buildTransaction = async (
       type: mode,
       useAllAmount,
       stakedSuiId,
+      currencyId: account.currency.id,
     },
     withObjects,
     resolution,

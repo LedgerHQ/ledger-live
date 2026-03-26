@@ -9,9 +9,10 @@ let configDir = (() => {
 
   // we load in async the user data. there is a short period where this will be "" but then it becomes the real path
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const invoke = require("electron")?.ipcRenderer?.invoke;
-  if (typeof invoke === "function") {
-    const promise = invoke("getPathUserData");
+  const electron = require("electron");
+  const ipc = electron?.ipcRenderer ?? electron?.default?.ipcRenderer;
+  if (ipc && typeof ipc.invoke === "function") {
+    const promise = ipc.invoke("getPathUserData");
     if (promise != null && typeof promise.then === "function") {
       promise.then((path: string) => {
         configDir = path;
@@ -31,9 +32,10 @@ let homeDir = (() => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const invoke = require("electron")?.ipcRenderer?.invoke;
-  if (typeof invoke === "function") {
-    const promise = invoke("getPathHome");
+  const electron = require("electron");
+  const ipc = electron?.ipcRenderer ?? electron?.default?.ipcRenderer;
+  if (ipc && typeof ipc.invoke === "function") {
+    const promise = ipc.invoke("getPathHome");
     if (promise != null && typeof promise.then === "function") {
       promise.then((path: string) => {
         homeDir = path;

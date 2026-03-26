@@ -47,7 +47,7 @@ describe("Stacks network API integration", () => {
       expect(result.offset).toBe(0);
       expect(result.total).toBeGreaterThan(0);
       result.results.forEach(result => {
-        expect(result.asset_identifier).toBeDefined();
+        expect(result.asset_identifier).toEqual(expect.any(String));
       });
     });
   });

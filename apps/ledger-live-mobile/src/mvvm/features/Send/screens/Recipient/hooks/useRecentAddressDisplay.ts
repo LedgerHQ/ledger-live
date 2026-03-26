@@ -21,8 +21,8 @@ export function useRecentAddressDisplay(recentAddress: RecentAddress) {
     recentAddress.ensName ??
     (recentAddress.isLedgerAccount && accountName
       ? accountName
-      : recentAddress.name ??
-        formatAddress(recentAddress.address, { prefixLength: 5, suffixLength: 4 }));
+      : (recentAddress.name ??
+        formatAddress(recentAddress.address, { prefixLength: 5, suffixLength: 4 })));
 
   const dateText = useFormatRelativeDate()(recentAddress.lastUsedAt);
 

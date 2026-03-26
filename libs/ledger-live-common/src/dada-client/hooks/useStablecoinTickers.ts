@@ -5,7 +5,7 @@ import { AssetCategory } from "../state-manager/types";
 const emptySet = new Set<string>();
 
 export function useStablecoinTickers(product: "llm" | "lld", version: string, skip?: boolean) {
-  const { data, isLoading } = useGetAssetsByCategoryQuery(
+  const { data, isLoading, isError } = useGetAssetsByCategoryQuery(
     {
       category: AssetCategory.Stablecoins,
       product,
@@ -17,5 +17,5 @@ export function useStablecoinTickers(product: "llm" | "lld", version: string, sk
     () => (data ? new Set(data.map(t => t.toUpperCase())) : emptySet),
     [data],
   );
-  return { tickers, isLoading };
+  return { tickers, isLoading, isError };
 }

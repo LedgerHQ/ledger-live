@@ -68,6 +68,8 @@ setSupportedCurrencies([
   "energy_web",
   "astar",
   "metis",
+  "mantle",
+  "mantle_sepolia",
   "boba",
   "moonriver",
   "velas_evm",

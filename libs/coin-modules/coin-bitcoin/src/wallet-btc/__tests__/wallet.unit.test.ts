@@ -8,6 +8,7 @@ import Xpub from "../xpub";
 import { PickingStrategy } from "../pickingstrategies/types";
 import { TX, Address, Output } from "../storage/types";
 import { DerivationModes, TransactionInfo } from "../types";
+import * as utils from "../utils";
 
 import { getMockAccount } from "./fixtures/common.fixtures";
 import { mockSigner } from "../../fixtures/common.fixtures";
@@ -789,12 +790,15 @@ describe("BitcoinLikeWallet", () => {
     });
 
     it("estimate fees for one utxo", async () => {
-      // NOTE: setting the feePerByte to 0 to avoid the fee calculation
-      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 0, []);
+      const feePerByte = 1;
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, feePerByte, []);
+      const expectedFees =
+        feePerByte *
+        utils.maxTxSizeCeil(1, [], true, mockAccount.xpub.crypto, mockAccount.xpub.derivationMode);
 
       expect(mockAccount.xpub.getXpubAddresses).toHaveBeenCalled();
       expect(mockAccount.xpub.getAccountAddresses).toHaveBeenCalledWith(1);
-      expect(maxSpendable.toNumber()).toEqual(UTXO_VALUES.utxo1);
+      expect(maxSpendable.toNumber()).toEqual(UTXO_VALUES.utxo1 - expectedFees);
     });
 
     it("estimate fees when one of the utxos is a change address", async () => {
@@ -813,13 +817,17 @@ describe("BitcoinLikeWallet", () => {
       mockAccount.xpub.storage.getAddressUnspentUtxos = jest
         .fn()
         .mockResolvedValue(utxosWithChangeAddress);
+      const feePerByte = 1;
       const maxSpendableWithChangeAddressUtxo = await wallet.estimateAccountMaxSpendable(
         mockAccount,
-        0,
+        feePerByte,
         [],
       );
+      const expectedFees =
+        feePerByte *
+        utils.maxTxSizeCeil(2, [], true, mockAccount.xpub.crypto, mockAccount.xpub.derivationMode);
       expect(maxSpendableWithChangeAddressUtxo.toNumber()).toEqual(
-        UTXO_VALUES.utxo1 + UTXO_VALUES.utxo2,
+        UTXO_VALUES.utxo1 + UTXO_VALUES.utxo2 - expectedFees,
       );
     });
 
@@ -837,12 +845,69 @@ describe("BitcoinLikeWallet", () => {
       mockAccount.xpub.storage.getAddressUnspentUtxos = jest
         .fn()
         .mockResolvedValue(utxosWithUnconfirmedTx);
+      const feePerByte = 1;
       const maxSpendableWithUnconfirmedTx = await wallet.estimateAccountMaxSpendable(
         mockAccount,
-        0,
+        feePerByte,
         [],
       );
-      expect(maxSpendableWithUnconfirmedTx.toNumber()).toEqual(UTXO_VALUES.utxo1);
+      const expectedFees =
+        feePerByte *
+        utils.maxTxSizeCeil(1, [], true, mockAccount.xpub.crypto, mockAccount.xpub.derivationMode);
+      expect(maxSpendableWithUnconfirmedTx.toNumber()).toEqual(UTXO_VALUES.utxo1 - expectedFees);
+    });
+
+    it("excludes utxos whose effective value is zero or negative", async () => {
+      const fixedVBytes = utils.maxTxVBytesCeil(
+        0,
+        [],
+        false,
+        mockAccount.xpub.crypto,
+        mockAccount.xpub.derivationMode,
+      );
+      const oneInputVBytes =
+        utils.maxTxVBytesCeil(
+          1,
+          [],
+          false,
+          mockAccount.xpub.crypto,
+          mockAccount.xpub.derivationMode,
+        ) - fixedVBytes;
+      const ineffectiveUtxoValue = oneInputVBytes;
+      const utxosWithIneffectiveValue = [
+        ...utxos,
+        {
+          value: `${ineffectiveUtxoValue}`,
+          address: "address1",
+          output_hash: "hash-ineffective",
+          output_index: 1,
+          block_height: 1000,
+        },
+      ] as Output[];
+
+      mockAccount.xpub.storage.getAddressUnspentUtxos = jest
+        .fn()
+        .mockResolvedValue(utxosWithIneffectiveValue);
+
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 1, []);
+      const expectedFees = utils.maxTxSizeCeil(
+        1,
+        [],
+        true,
+        mockAccount.xpub.crypto,
+        mockAccount.xpub.derivationMode,
+      );
+
+      expect(maxSpendable.toNumber()).toEqual(UTXO_VALUES.utxo1 - expectedFees);
+    });
+
+    it("rounds feePerByte up like the real build", async () => {
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 1.2, []);
+      const expectedFees =
+        2 *
+        utils.maxTxSizeCeil(1, [], true, mockAccount.xpub.crypto, mockAccount.xpub.derivationMode);
+
+      expect(maxSpendable.toNumber()).toEqual(UTXO_VALUES.utxo1 - expectedFees);
     });
   });
 });

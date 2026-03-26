@@ -210,4 +210,12 @@ export class Currency {
   );
 
   static readonly ALEO = new Currency("Aleo", "ALEO", "aleo", AppInfos.ALEO, [Network.ALEO]);
+
+  static readonly ICP = new Currency(
+    "Internet Computer",
+    "ICP",
+    "internet_computer",
+    AppInfos.INTERNET_COMPUTER,
+    [Network.INTERNET_COMPUTER],
+  );
 }

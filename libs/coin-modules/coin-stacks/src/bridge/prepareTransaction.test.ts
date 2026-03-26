@@ -1,13 +1,13 @@
-import BigNumber from "bignumber.js";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import { estimateTransaction, estimateTransactionByteLength } from "@stacks/transactions";
+import BigNumber from "bignumber.js";
 import { Transaction } from "../types";
+import { prepareTransaction } from "./prepareTransaction";
 import { validateAddress } from "./utils/addresses";
 import { findNextNonce, getAddress } from "./utils/misc";
 import { getSubAccount } from "./utils/token";
 import { createTransaction } from "./utils/transactions";
-import { prepareTransaction } from "./prepareTransaction";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("@stacks/transactions");

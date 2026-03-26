@@ -20,7 +20,7 @@ export default function StepPairSuccess({ onContinue }: Props) {
         </Alert>
       </Flex>
       <Flex px={6} pb={10}>
-        <Button type="main" onPress={onContinue}>
+        <Button type="main" onPress={onContinue} accessibilityRole="button">
           <Trans i18nKey="concordium.onboard.pair.continue" />
         </Button>
       </Flex>

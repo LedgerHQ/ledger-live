@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   ContentBanner,
   ContentBannerContent,
@@ -6,30 +6,42 @@ import {
   ContentBannerTitle,
   InteractiveIcon,
   Spot,
+  MediaBanner,
+  MediaBannerTitle,
+  MediaBannerDescription,
 } from "@ledgerhq/lumen-ui-react";
-import { Close, Settings } from "@ledgerhq/lumen-ui-react/symbols";
+import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
 
-export type ContentBannerActionCardProps = {
-  title: string;
-  description?: string;
-  onClose: () => void;
-  onClick: () => void;
-};
+import type { ContentBannerActionCardProps } from "./types";
+import { useContentBannerActionCardViewModel } from "./useContentBannerActionCardViewModel";
 
-export const ContentBannerActionCard = ({
-  title,
-  description,
-  onClose,
-  onClick,
-}: ContentBannerActionCardProps) => {
-  const handleClose = useCallback(
-    (e?: React.MouseEvent) => {
-      e?.preventDefault();
-      e?.stopPropagation();
-      onClose();
-    },
-    [onClose],
-  );
+export type { ContentBannerActionCardProps } from "./types";
+export { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "./types";
+
+export const ContentBannerActionCard = (props: ContentBannerActionCardProps) => {
+  const { title, description, onClick } = props;
+  const {
+    closeAriaLabel,
+    handleClose,
+    handleMediaBannerClick,
+    hasImageBackground,
+    icon,
+    imageUrl,
+  } = useContentBannerActionCardViewModel(props);
+
+  if (hasImageBackground) {
+    return (
+      <MediaBanner
+        imageUrl={imageUrl}
+        onClose={handleClose}
+        onClick={handleMediaBannerClick}
+        closeAriaLabel={closeAriaLabel}
+      >
+        {title && <MediaBannerTitle>{title}</MediaBannerTitle>}
+        {description && <MediaBannerDescription>{description}</MediaBannerDescription>}
+      </MediaBanner>
+    );
+  }
 
   return (
     <div className="relative">
@@ -39,7 +51,7 @@ export const ContentBannerActionCard = ({
         className="w-full cursor-pointer border-none bg-transparent p-0 text-left"
       >
         <ContentBanner className="pr-48">
-          <Spot appearance="icon" icon={Settings} size={48} />
+          <Spot appearance="icon" icon={icon} size={48} />
           <ContentBannerContent>
             {title && <ContentBannerTitle>{title}</ContentBannerTitle>}
             {description && <ContentBannerDescription>{description}</ContentBannerDescription>}
@@ -49,11 +61,11 @@ export const ContentBannerActionCard = ({
       <InteractiveIcon
         type="button"
         iconType="stroked"
-        aria-label="Close content banner"
+        aria-label={closeAriaLabel}
         onClick={handleClose}
         className="absolute top-8 right-8"
       >
-        <Close size={16} />
+        <Icons.Close size={16} />
       </InteractiveIcon>
     </div>
   );

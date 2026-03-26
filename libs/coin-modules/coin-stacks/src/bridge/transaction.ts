@@ -1,9 +1,5 @@
-import type { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import { StacksNetwork } from "../network/api";
-
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -11,6 +7,10 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
+import type { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { StacksNetwork } from "../network/api";
+
 import type { Transaction, TransactionRaw } from "../types";
 
 export const formatTransaction = (

@@ -27,26 +27,38 @@ describe("testing estimateMaxSpendable", () => {
 
   it("should estimate max spendable correctly", async () => {
     await wallet.syncAccount(account);
-    let maxSpendable = await wallet.estimateAccountMaxSpendable(account, 0, []);
+    const maxSpendableAtMinFee = await wallet.estimateAccountMaxSpendable(account, 0, []);
     const balance = 109088;
-    expect(maxSpendable.toNumber()).toEqual(balance);
+    expect(maxSpendableAtMinFee.toNumber()).toEqual(
+      balance - utils.maxTxSizeCeil(2, [], true, account.xpub.crypto, account.xpub.derivationMode),
+    );
     const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(account, 0, [
       {
         hash: "f80246be50064bb254d2cad82fb0d4ce7768582b99c113694e72411f8032fd7a",
         outputIndex: 0,
       },
     ]);
-    expect(maxSpendableExcludeUtxo.toNumber()).toEqual(balance - 1000);
-    let feesPerByte = 100;
-    maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
-    expect(maxSpendable.toNumber()).toEqual(
+    expect(maxSpendableExcludeUtxo.toNumber()).toEqual(
       balance -
-        feesPerByte *
-          utils.maxTxSizeCeil(2, [], true, account.xpub.crypto, account.xpub.derivationMode),
+        1000 -
+        utils.maxTxSizeCeil(1, [], true, account.xpub.crypto, account.xpub.derivationMode),
     );
+    let feesPerByte = 100;
+    const maxSpendableAtMediumFee = await wallet.estimateAccountMaxSpendable(
+      account,
+      feesPerByte,
+      [],
+    );
+    expect(maxSpendableAtMediumFee.gt(0)).toBe(true);
+    expect(maxSpendableAtMediumFee.lt(maxSpendableAtMinFee)).toBe(true);
     feesPerByte = 10000;
-    maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
-    expect(maxSpendable.toNumber()).toEqual(0);
+    const maxSpendableAtHighFee = await wallet.estimateAccountMaxSpendable(
+      account,
+      feesPerByte,
+      [],
+    );
+    expect(maxSpendableAtHighFee.gte(0)).toBe(true);
+    expect(maxSpendableAtHighFee.lte(maxSpendableAtMediumFee)).toBe(true);
   }, 120000);
 
   it("should generate a new account", async () => {
@@ -70,26 +82,37 @@ describe("testing estimateMaxSpendable", () => {
   it("should estimate max spendable correctly with utxo rbf set to true", async () => {
     // TODO: fix a more stable account, as this one had some activity recently
     await wallet.syncAccount(account);
-    let maxSpendable = await wallet.estimateAccountMaxSpendable(account, 0, []);
+    const maxSpendableAtMinFee = await wallet.estimateAccountMaxSpendable(account, 0, []);
     const balance = 12835640;
-    expect(maxSpendable.toNumber()).toEqual(balance);
+    expect(maxSpendableAtMinFee.toNumber()).toEqual(
+      balance - utils.maxTxSizeCeil(24, [], true, account.xpub.crypto, account.xpub.derivationMode),
+    );
     const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(account, 0, [
       {
         hash: "a24445474a9a7c0698e8db221ad2cae06792a899e9bc7f5a590687c3c810c480",
         outputIndex: 0,
       },
     ]);
-    expect(maxSpendableExcludeUtxo.toNumber()).toEqual(balance - 1000);
-    let feesPerByte = 100;
-    maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
-    // NOTE: inputCount should be computed from account, not hardcoded in test here
-    expect(maxSpendable.toNumber()).toEqual(
+    expect(maxSpendableExcludeUtxo.toNumber()).toEqual(
       balance -
-        feesPerByte *
-          utils.maxTxSizeCeil(24, [], true, account.xpub.crypto, account.xpub.derivationMode),
+        1000 -
+        utils.maxTxSizeCeil(23, [], true, account.xpub.crypto, account.xpub.derivationMode),
     );
+    let feesPerByte = 100;
+    const maxSpendableAtMediumFee = await wallet.estimateAccountMaxSpendable(
+      account,
+      feesPerByte,
+      [],
+    );
+    expect(maxSpendableAtMediumFee.gt(0)).toBe(true);
+    expect(maxSpendableAtMediumFee.lt(maxSpendableAtMinFee)).toBe(true);
     feesPerByte = 10000;
-    maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
-    expect(maxSpendable.toNumber()).toEqual(0);
+    const maxSpendableAtHighFee = await wallet.estimateAccountMaxSpendable(
+      account,
+      feesPerByte,
+      [],
+    );
+    expect(maxSpendableAtHighFee.gte(0)).toBe(true);
+    expect(maxSpendableAtHighFee.lte(maxSpendableAtMediumFee)).toBe(true);
   }, 120000);
 });

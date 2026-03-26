@@ -27,13 +27,13 @@
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/cryptoassets": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",
     "bignumber.js": "9"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",

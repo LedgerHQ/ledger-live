@@ -25,12 +25,13 @@ import MarketBanner from "LLM/features/MarketBanner";
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
+  WalletAssetsView,
   PortfolioCarouselSection,
-  PortfolioCryptosSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
+  PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
@@ -64,6 +65,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     onBackFromUpdate,
     goToAnalyticsAllocations,
     shouldDisplayWallet40MainNav,
+    shouldDisplayOperationsList,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
@@ -127,12 +129,14 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
+    sections.push(
+      <Box key="perps" px={6}>
+        <PortfolioPerpsEntryPoint key="perpsEntryPoint" />
+      </Box>,
+    );
+
     if (shouldDisplayAssetSection) {
-      sections.push(
-        <Box key="cryptos" px={6}>
-          <PortfolioCryptosSection />
-        </Box>,
-      );
+      sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
       sections.push(
         <PortfolioAssetsSection
@@ -159,7 +163,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(<PortfolioOperationsSection key="operations" />);
+    if (!shouldDisplayOperationsList) {
+      sections.push(<PortfolioOperationsSection key="operations" />);
+    }
 
     return sections;
   }, [
@@ -177,6 +183,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     backgroundColor,
     goToAnalyticsAllocations,
+    shouldDisplayOperationsList,
   ]);
 
   return (

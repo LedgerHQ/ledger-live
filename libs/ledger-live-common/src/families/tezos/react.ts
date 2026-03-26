@@ -9,7 +9,7 @@ export function useBakers(whitelistAddresses: string[]): Baker[] {
   );
   useEffect(() => {
     bakers.listBakers(whitelistAddresses).then(setWhitelistedBakers);
-  }, [bakers, whitelistAddresses]);
+  }, [whitelistAddresses]);
 
   return whitelistedBakers;
 }

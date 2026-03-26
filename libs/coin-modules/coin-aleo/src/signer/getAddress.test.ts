@@ -4,12 +4,12 @@ import getAddressResolver from "./getAddress";
 describe("getAddress", () => {
   const mockCurrency = getMockedCurrency();
   const mockDeviceId = "mock-device-id";
-  const mockPath = "44'/683'/0";
-  const mockAddress = Buffer.from("aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7p");
+  const mockPath = "44'/683'/0'/0'";
+  const mockAddress = "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7p";
   const derivationMode = "aleo";
 
   const mockSigner = {
-    getAddress: jest.fn().mockResolvedValue(mockAddress),
+    getAddress: jest.fn().mockResolvedValue({ address: mockAddress }),
   };
 
   const mockSignerContext = jest
@@ -32,7 +32,7 @@ describe("getAddress", () => {
 
     expect(mockSigner.getAddress).toHaveBeenCalledWith(mockPath, true);
     expect(result).toEqual({
-      address: mockAddress.toString(),
+      address: mockAddress,
       publicKey: "",
       path: mockPath,
     });

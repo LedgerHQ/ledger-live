@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { Carousel } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
-import { usePortfolioCards } from "../../hooks/usePortfolioCards";
+import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
 import Slide from "./Slide";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -22,7 +22,7 @@ const CarouselWrapper = styled.div<{ $isWallet40Enabled: boolean }>`
 `;
 
 function PortfolioContentCards() {
-  const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCards();
+  const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCarouselCards("top");
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
   const handlePrevButton = () => trackSlide("prev");
   const handleNextButton = () => trackSlide("next");
@@ -53,5 +53,5 @@ function PortfolioContentCards() {
 }
 
 function trackSlide(button: "prev" | "next") {
-  track("contentcards_slide", { button, page: "Portfolio", type: "portfolio_carousel" });
+  track("contentcards_slide", { button, page: "Portfolio", type: "carousel_portfolio" });
 }

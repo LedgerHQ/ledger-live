@@ -9,7 +9,7 @@ import {
 import { ApyIndicator } from "../../components/ApyIndicator";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import SkeletonList from "../../components/Skeleton/SkeletonList";
+import SkeletonList from "../../components/SkeletonList";
 import {
   useModularDrawerAnalytics,
   TrackDrawerScreen,
@@ -125,10 +125,6 @@ const AssetSelection = ({
     ],
   );
 
-  const handleSearchFocus = () => {};
-
-  const handleSearchBlur = () => {};
-
   const renderItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
     [handleAssetClick],
@@ -194,20 +190,12 @@ const AssetSelection = ({
           <SearchInputContainer
             source={source}
             flow={flow}
-            onFocus={handleSearchFocus}
-            onBlur={handleSearchBlur}
             onPressIn={expandToFullHeight}
             withHorizontalPadding
           />
         </>
       ) : (
-        <SearchInputContainer
-          source={source}
-          flow={flow}
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
-          onPressIn={expandToFullHeight}
-        />
+        <SearchInputContainer source={source} flow={flow} onPressIn={expandToFullHeight} />
       )}
       {renderContent()}
     </>
