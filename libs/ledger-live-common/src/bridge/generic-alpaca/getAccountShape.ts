@@ -7,9 +7,10 @@ import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo, BalanceOptions, Operation } from "@ledgerhq/coin-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -296,7 +297,28 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
 
     const blockInfo = await alpacaApi.lastBlock();
-    const balanceRes = await alpacaApi.getBalance(address);
+
+    const cryptoAssetStore = getCryptoAssetsStore();
+    const balanceOptions: BalanceOptions = {
+      includeAssets: async (assetInfo: AssetInfo) => {
+        if (
+          "assetReference" in assetInfo &&
+          assetInfo.assetReference !== null &&
+          assetInfo.assetReference !== undefined
+        ) {
+          const tokenCurrency = await cryptoAssetStore.findTokenByAddressInCurrency(
+            assetInfo.assetReference,
+            currency.id,
+          );
+
+          return tokenCurrency !== undefined;
+        }
+
+        return true;
+      },
+    };
+    const balanceRes = await alpacaApi.getBalance(address, balanceOptions);
+
     const nativeAsset = extractBalance(balanceRes, "native");
 
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");

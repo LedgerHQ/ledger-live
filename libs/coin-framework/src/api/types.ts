@@ -485,6 +485,12 @@ export type AddressValidationCurrencyParameters = {
   networkId: number;
 };
 
+export type BalanceOptions = {
+  // Mandatory options: coin module must respect these requirements, or raise an error if unable to
+  /** Asset whitelist (if provided, only matching assets are included) */
+  includeAssets?: (asset: AssetInfo) => Promise<boolean | undefined>;
+};
+
 export type AlpacaApi<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
@@ -557,7 +563,7 @@ export type AlpacaApi<
    * @see getStakes
    * @see listOperations
    */
-  getBalance: (address: string) => Promise<Balance[]>;
+  getBalance: (address: string, options?: BalanceOptions) => Promise<Balance[]>;
 
   /**
    * List operations for an address/account.
