@@ -293,6 +293,12 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   deprecationDoNotRemind: string[];
+  analyticsConsentInfo: AnalyticsConsentInfo;
+};
+
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export type NotificationsSettings = {
