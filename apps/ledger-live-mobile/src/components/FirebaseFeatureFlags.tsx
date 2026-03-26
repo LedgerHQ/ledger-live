@@ -48,8 +48,8 @@ export const FirebaseFeatureFlagsProvider = ({
       });
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv: _, ...pureValue } = value;
-        const overridenValue = { ...pureValue, overridesRemote: true };
-        dispatch(setOverride({ key, value: overridenValue }));
+        const overriddenValue = { ...pureValue, overridesRemote: true };
+        dispatch(setOverride({ key, value: overriddenValue }));
       } else {
         dispatch(setOverride({ key, value: undefined }));
       }

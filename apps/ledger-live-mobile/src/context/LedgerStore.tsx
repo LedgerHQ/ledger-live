@@ -187,10 +187,16 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         const filteredOverrides = Object.fromEntries(
           Object.entries(settingsData.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
         );
+        store.dispatch(setAllOverrides(filteredOverrides as Parameters<typeof setAllOverrides>[0]));
         store.dispatch(
-          setAllOverrides(filteredOverrides as Parameters<typeof setAllOverrides>[0]),
+          setBannerVisible(
+            settingsData.featureFlagsBannerVisible ??
+              ("featureFlagsButtonVisible" in settingsData &&
+              typeof settingsData["featureFlagsButtonVisible"] === "boolean"
+                ? settingsData["featureFlagsButtonVisible"]
+                : false),
+          ),
         );
-        store.dispatch(setBannerVisible(settingsData.featureFlagsBannerVisible ?? false));
       }
 
       setInitialCountervalues(initialCountervalues);

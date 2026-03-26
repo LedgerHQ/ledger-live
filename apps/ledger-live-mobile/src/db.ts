@@ -311,9 +311,18 @@ export async function saveIdentities(persistedData: PersistedIdentities): Promis
   await storage.save("identities", persistedData);
 }
 
-export function getFeatureFlagsState(): Promise<Pick<FeatureFlagsState, "overrides" | "bannerVisible"> | null> {
-  return storage.get("featureFlags") as Promise<Pick<FeatureFlagsState, "overrides" | "bannerVisible"> | null>;
+export function getFeatureFlagsState(): Promise<Pick<
+  FeatureFlagsState,
+  "overrides" | "bannerVisible"
+> | null> {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return storage.get("featureFlags") as Promise<Pick<
+    FeatureFlagsState,
+    "overrides" | "bannerVisible"
+  > | null>;
 }
-export async function saveFeatureFlagsState(obj: Pick<FeatureFlagsState, "overrides" | "bannerVisible">): Promise<void> {
+export async function saveFeatureFlagsState(
+  obj: Pick<FeatureFlagsState, "overrides" | "bannerVisible">,
+): Promise<void> {
   await storage.save("featureFlags", obj);
 }
