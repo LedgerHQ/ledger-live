@@ -54,7 +54,7 @@ test.describe("Earn [v2]", () => {
   // --- User States ---
 
   test.describe("Ice cold start", () => {
-    const account = Account.ETH_1;
+    const account = Account.ETH_3;
 
     test.use({
       userdata: "skip-onboarding",
@@ -83,7 +83,7 @@ test.describe("Earn [v2]", () => {
   });
 
   const coldStartCurrencies = [
-    { account: Account.ETH_1, xrayTicket: "B2CQA-4640" },
+    { account: Account.ETH_2, xrayTicket: "B2CQA-4640" },
     { account: Account.ATOM_2, xrayTicket: "B2CQA-4640" },
   ];
 
@@ -157,7 +157,7 @@ test.describe("Earn [v2]", () => {
     const xrayTicket: string | undefined = "B2CQA-4642";
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       featureFlags: EARN_V2_DESKTOP_FLAGS,
     });
@@ -395,7 +395,7 @@ test.describe("Earn [v2]", () => {
         // After clicking, LLD navigates to the partner dapp via custom.navigate → redirect-provider.
         // The earn webview closes as LLD navigates to the dapp platform page.
         // Verify the main page URL changed to the platform route.
-        await expect(page).toHaveURL(/\/platform\//, { timeout: 10_000 });
+        await expect(page).toHaveURL(/\/platform\//);
       },
     );
   });
