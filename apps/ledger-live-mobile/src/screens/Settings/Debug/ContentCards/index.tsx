@@ -19,8 +19,13 @@ export default function DebugContentCards() {
     dispatch(addLocalContentCards({ category, cards }));
   }, [dispatch]);
 
-  const onAddSampleActionCarousel = useCallback(() => {
-    const { category, cards } = buildSampleActionCarousel();
+  const onAddSampleActionCarouselIcon = useCallback(() => {
+    const { category, cards } = buildSampleActionCarousel("icon");
+    dispatch(addLocalContentCards({ category, cards }));
+  }, [dispatch]);
+
+  const onAddSampleActionCarouselImageBackground = useCallback(() => {
+    const { category, cards } = buildSampleActionCarousel("imageBackground");
     dispatch(addLocalContentCards({ category, cards }));
   }, [dispatch]);
 
@@ -41,10 +46,16 @@ export default function DebugContentCards() {
         onPress={onAddSampleBanner}
       />
       <SettingsRow
-        title={t("settings.debug.contentCards.addSampleActionCarousel")}
-        desc={t("settings.debug.contentCards.addSampleActionCarouselDesc")}
+        title={t("settings.debug.contentCards.addSampleActionCarouselIcon")}
+        desc={t("settings.debug.contentCards.addSampleActionCarouselIconDesc")}
         iconLeft={<IconsLegacy.BoxMedium size={24} color="black" />}
-        onPress={onAddSampleActionCarousel}
+        onPress={onAddSampleActionCarouselIcon}
+      />
+      <SettingsRow
+        title={t("settings.debug.contentCards.addSampleActionCarouselImageBackground")}
+        desc={t("settings.debug.contentCards.addSampleActionCarouselImageBackgroundDesc")}
+        iconLeft={<IconsLegacy.LayersMedium size={24} color="black" />}
+        onPress={onAddSampleActionCarouselImageBackground}
       />
       <SettingsRow
         title={t("settings.debug.contentCards.dismissAll")}

@@ -79,12 +79,20 @@ export function buildSampleBanner(): {
   return { category, cards: [heroCard] };
 }
 
-const ACTION_SAMPLES = [
+/** Braze action card layout for Portfolio: `ContentBanner` + Spot (icon) vs `MediaBanner` (image_background). */
+export type SampleActionBannerVariant = "icon" | "imageBackground";
+
+const ACTION_SAMPLE_ITEMS: {
+  title: string;
+  description: string;
+  link: string;
+  icon: string;
+}[] = [
   {
     title: "Buy",
     description: "Buy crypto with card or bank transfer",
     link: "ledgerlive://buy",
-    image: SAMPLE_IMAGE,
+    icon: "Plus",
   },
   {
     title: "Swap",
@@ -100,7 +108,9 @@ const ACTION_SAMPLES = [
   },
 ];
 
-export function buildSampleActionCarousel(): {
+export function buildSampleActionCarousel(
+  variant: SampleActionBannerVariant = "icon",
+): {
   category: CategoryContentCard;
   cards: BrazeContentCard[];
 } {
@@ -120,7 +130,7 @@ export function buildSampleActionCarousel(): {
     isDismissable: true,
   };
 
-  const cards = ACTION_SAMPLES.map((item, index) =>
+  const cards = ACTION_SAMPLE_ITEMS.map((item, index) =>
     createBrazeLikeCard(
       `local-action-${ts}-${index}`,
       categoryId,
@@ -131,10 +141,11 @@ export function buildSampleActionCarousel(): {
       {
         title: item.title,
         description: item.description,
-        ...(item.image ? { image: item.image } : {}),
-        ...(item.icon ? { icon: item.icon } : {}),
         link: item.link,
         order: String(index),
+        ...(variant === "imageBackground"
+          ? { image_background: SAMPLE_IMAGE }
+          : { icon: item.icon }),
       },
     ),
   );

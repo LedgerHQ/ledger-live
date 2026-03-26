@@ -5,6 +5,9 @@ import {
   ContentBannerContent,
   ContentBannerDescription,
   ContentBannerTitle,
+  MediaBanner,
+  MediaBannerDescription,
+  MediaBannerTitle,
   Pressable,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -39,16 +42,15 @@ const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
 
   if (imageBackground && imageBackground.length > 0) {
     return (
-      <Pressable onPress={metadata.actions?.onClick} key={metadata.id}>
-        <ContentBanner onClose={handleDismiss}>
-          <ContentBannerContent>
-            <ContentBannerTitle>{title ?? ""}</ContentBannerTitle>
-            {description ? (
-              <ContentBannerDescription>{description}</ContentBannerDescription>
-            ) : null}
-          </ContentBannerContent>
-        </ContentBanner>
-      </Pressable>
+      <MediaBanner
+        key={metadata.id}
+        imageUrl={imageBackground}
+        onClose={handleDismiss}
+        onPress={metadata.actions?.onClick}
+      >
+        {title ? <MediaBannerTitle>{title}</MediaBannerTitle> : null}
+        {description ? <MediaBannerDescription>{description}</MediaBannerDescription> : null}
+      </MediaBanner>
     );
   }
 
