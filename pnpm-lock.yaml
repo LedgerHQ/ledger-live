@@ -11357,6 +11357,33 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
 
+  tools/actions/build-checks:
+    devDependencies:
+      '@actions/core':
+        specifier: 1.10.1
+        version: 1.10.1
+      '@actions/github':
+        specifier: 6.0.0
+        version: 6.0.0
+      '@rslib/core':
+        specifier: 'catalog:'
+        version: 0.19.3(typescript@6.0.2)
+      '@types/stream-json':
+        specifier: 1.7.7
+        version: 1.7.7
+      '@types/unzipper':
+        specifier: 0.10.9
+        version: 0.10.9
+      stream-json:
+        specifier: 1.8.0
+        version: 1.8.0
+      tsx:
+        specifier: 4.20.6
+        version: 4.20.6
+      unzipper:
+        specifier: 0.10.14
+        version: 0.10.14
+
   tools/actions/change-product-name:
     devDependencies:
       '@actions/core':
@@ -16170,12 +16197,6 @@ packages:
   '@octokit/openapi-types@22.2.0':
     resolution: {integrity: sha512-QBhVjcUa9W7Wwhm6DBFu6ZZ+1/t/oYxqc2tp81Pi41YNuJinbFRx8B133qVOrAaBbF7D/m0Et6f9/pZt9Rc+tg==}
 
-  '@octokit/plugin-paginate-rest@9.2.1':
-    resolution: {integrity: sha512-wfGhE/TAkXZRLjksFXuDZdmGnJQHvtU/joFQdweXUgzo1XwvBCD4o4+75NtFfjfLK5IwLf9vHTfSiU3sLRYpRw==}
-    engines: {node: '>= 18'}
-    peerDependencies:
-      '@octokit/core': '5'
-
   '@octokit/plugin-paginate-rest@9.2.2':
     resolution: {integrity: sha512-u3KYkGF7GcZnSD/3UP0S7K5XUFT2FkOQdcfXZGZQPGv3lm4F2Xbf71lvjldr8c1H3nNbF+33cLEkWYbokGWqiQ==}
     engines: {node: '>= 18'}
@@ -19604,7 +19625,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -20893,6 +20914,12 @@ packages:
 
   '@types/statuses@2.0.5':
     resolution: {integrity: sha512-jmIUGWrAiwu3dZpxntxieC+1n/5c3mjrImkmOSQ2NC5uP6cYO4aAZDdSmRcI5C1oiTmqlZGHC+/NmJrKogbP5A==}
+
+  '@types/stream-chain@2.1.0':
+    resolution: {integrity: sha512-guDyAl6s/CAzXUOWpGK2bHvdiopLIwpGu8v10+lb9hnQOyo4oj/ZUQFOvqFjKGsE3wJP1fpIesCcMvbXuWsqOg==}
+
+  '@types/stream-json@1.7.7':
+    resolution: {integrity: sha512-hHG7cLQ09H/m9i0jzL6UJAeLLxIWej90ECn0svO4T8J0nGcl89xZDQ2ujT4WKlvg0GWkcxJbjIDzW/v7BYUM6Q==}
 
   '@types/styled-components@5.1.34':
     resolution: {integrity: sha512-mmiVvwpYklFIv9E8qfxuPyIt/OuyIrn6gMOAMOFUO3WJfSrSE+sGUoa4PiZj77Ut7bKZpaa6o1fBKS/4TOEvnA==}
@@ -35441,7 +35468,7 @@ snapshots:
     dependencies:
       '@actions/http-client': 2.2.1
       '@octokit/core': 5.1.0
-      '@octokit/plugin-paginate-rest': 9.2.1(@octokit/core@5.1.0)
+      '@octokit/plugin-paginate-rest': 9.2.2(@octokit/core@5.1.0)
       '@octokit/plugin-rest-endpoint-methods': 10.4.1(@octokit/core@5.1.0)
       undici: 7.18.2
 
@@ -43576,11 +43603,6 @@ snapshots:
 
   '@octokit/openapi-types@22.2.0': {}
 
-  '@octokit/plugin-paginate-rest@9.2.1(@octokit/core@5.1.0)':
-    dependencies:
-      '@octokit/core': 5.1.0
-      '@octokit/types': 12.6.0
-
   '@octokit/plugin-paginate-rest@9.2.2(@octokit/core@5.1.0)':
     dependencies:
       '@octokit/core': 5.1.0
@@ -50246,6 +50268,15 @@ snapshots:
   '@types/stack-utils@2.0.3': {}
 
   '@types/statuses@2.0.5': {}
+
+  '@types/stream-chain@2.1.0':
+    dependencies:
+      '@types/node': 24.12.0
+
+  '@types/stream-json@1.7.7':
+    dependencies:
+      '@types/node': 24.12.0
+      '@types/stream-chain': 2.1.0
 
   '@types/styled-components@5.1.34(@types/react@19.0.14)':
     dependencies:
