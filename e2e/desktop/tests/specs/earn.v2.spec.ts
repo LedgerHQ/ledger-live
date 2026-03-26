@@ -223,22 +223,28 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: CTA Flows ---
 
-  const ctaFlows = [
+  const ctaFlows: {
+    name: string;
+    account: Account;
+    ticker: string;
+    xrayTicket: string | undefined;
+    verify: (app: any, page: any) => Promise<void>;
+  }[] = [
     {
       name: "CTA → Native staking (SOL)",
-      account: Account.SOL_2 as Account | TokenAccount,
+      account: Account.SOL_2,
       ticker: Account.SOL_2.currency.ticker,
-      xrayTicket: "B2CQA-4643" as string | undefined,
-      verify: async (app: any, page: any) => {
+      xrayTicket: "B2CQA-4643",
+      verify: async (app, page) => {
         await expect(page.getByTestId("modal-container")).toBeVisible();
       },
     },
     {
       name: "CTA → Partner dapp (ETH)",
-      account: Account.ETH_1 as Account | TokenAccount,
+      account: Account.ETH_1,
       ticker: Account.ETH_1.currency.ticker,
-      xrayTicket: "B2CQA-4644" as string | undefined,
-      verify: async (app: any, page: any) => {
+      xrayTicket: "B2CQA-4644",
+      verify: async (app, page) => {
         await expect(
           page.getByTestId("modal-container").or(page.locator("[data-test-id*='provider']")),
         ).toBeVisible();
@@ -246,10 +252,10 @@ test.describe("Earn [v2]", () => {
     },
     {
       name: "CTA → Earn staking (USDT)",
-      account: TokenAccount.ETH_USDT_1 as Account | TokenAccount,
+      account: TokenAccount.ETH_USDT_1,
       ticker: "USDT",
-      xrayTicket: "B2CQA-4645" as string | undefined,
-      verify: async (app: any) => {
+      xrayTicket: "B2CQA-4645",
+      verify: async app => {
         await app.earnDashboard.verifyDepositFlowVisible();
       },
     },
