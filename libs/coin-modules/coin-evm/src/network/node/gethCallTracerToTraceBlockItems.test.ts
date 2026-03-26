@@ -100,7 +100,7 @@ describe("gethCallTracerToTraceBlockItems", () => {
     ).toEqual(expected);
   });
 
-  it("skips null / empty roots and maps multiple txs", () => {
+  it("skips null top-level entries and maps wrapped txs in block order", () => {
     const debugTraceResults = [
       null,
       {
@@ -115,12 +115,9 @@ describe("gethCallTracerToTraceBlockItems", () => {
           calls: [],
         },
       },
-      { txHash: "0xc", result: null },
     ];
 
-    const items = gethCallTracerToTraceBlockItems(blockNumber, debugTraceResults);
-
-    expect(items).toEqual([
+    expect(gethCallTracerToTraceBlockItems(blockNumber, debugTraceResults)).toEqual([
       {
         action: { from: "0xbb", to: "0xcc", callType: "call", value: "0x1" },
         result: { gasUsed: "0x2", output: "0x" },
@@ -132,6 +129,18 @@ describe("gethCallTracerToTraceBlockItems", () => {
         type: "call",
       },
     ]);
+  });
+
+  it("throws when wrapped entry has null result", () => {
+    expect(() =>
+      gethCallTracerToTraceBlockItems(blockNumber, [{ txHash: "0xc", result: null }]),
+    ).toThrow(/tx 0xc.*null or undefined "result"/);
+  });
+
+  it("throws when wrapped entry omits result", () => {
+    expect(() => gethCallTracerToTraceBlockItems(blockNumber, [{ txHash: "0xd", foo: 1 }])).toThrow(
+      /tx 0xd.*missing required "result"/,
+    );
   });
 
   it("throws when entry is a plain call-tracer object without txHash wrapper", () => {

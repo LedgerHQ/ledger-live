@@ -40,7 +40,10 @@ export function gethCallTracerToTraceBlockItems(
 }
 
 /**
- * @returns `null` to skip (null entry, null result, or empty object)
+ * @returns `null` to skip a top-level null/undefined entry, non-object entry, empty object, or
+ *   unrecognized shape without a tx hash wrapper (not a bare call frame).
+ * @throws When `{ txHash | transactionHash, result }` is present but `result` is missing, null,
+ *   undefined, or not a plain object — avoids silently dropping a transaction trace.
  */
 function parseDebugTraceBlockEntry(
   entry: unknown,
@@ -58,19 +61,28 @@ function parseDebugTraceBlockEntry(
         ? o.transactionHash
         : null;
 
-  if (txHash !== null && "result" in o) {
+  if (txHash !== null) {
+    if (!("result" in o)) {
+      throw new Error(
+        `debug_traceBlockByNumber entry at index ${index} (tx ${txHash}) is missing required "result"; expected { txHash, result }`,
+      );
+    }
     const inner = o.result;
-    if (inner === null || inner === undefined) return null;
+    if (inner === null || inner === undefined) {
+      throw new Error(
+        `debug_traceBlockByNumber entry at index ${index} (tx ${txHash}) has null or undefined "result"`,
+      );
+    }
     if (typeof inner !== "object") {
       throw new Error(
-        `debug_traceBlockByNumber entry at index ${index} has invalid result (expected object)`,
+        `debug_traceBlockByNumber entry at index ${index} (tx ${txHash}) has invalid "result" (expected object)`,
       );
     }
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return { txHash, root: inner as Record<string, unknown> };
   }
 
-  if (txHash === null && ("type" in o || "from" in o || "calls" in o)) {
+  if ("type" in o || "from" in o || "calls" in o) {
     throw new Error(
       `debug_traceBlockByNumber entry at index ${index} is missing txHash; expected { txHash, result }`,
     );
