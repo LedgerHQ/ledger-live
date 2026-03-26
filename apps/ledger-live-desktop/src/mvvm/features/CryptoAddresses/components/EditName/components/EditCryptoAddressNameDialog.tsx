@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -12,6 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
 import { Chip } from "./Chip";
+import { markRowClickSuppressedAfterEditDialogOverlayDismiss } from "../../PlainCryptoTable";
 
 type EditCryptoAddressNameDialogProps = {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export const EditCryptoAddressNameDialog = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
+  const pendingOverlayDismissRef = useRef(false);
 
   const normalizedValue = normalizeName(value);
   const isConfirmDisabled = normalizedValue.length === 0 || normalizedValue === initialValue.trim();
@@ -41,15 +43,28 @@ export const EditCryptoAddressNameDialog = ({
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
       setValue(initialValue);
+      pendingOverlayDismissRef.current = false;
+    } else if (pendingOverlayDismissRef.current) {
+      markRowClickSuppressedAfterEditDialogOverlayDismiss();
+      pendingOverlayDismissRef.current = false;
     }
     setOpen(newOpen);
+  };
+
+  const handlePointerDownOutside: React.ComponentProps<
+    typeof DialogContent
+  >["onPointerDownOutside"] = () => {
+    pendingOverlayDismissRef.current = true;
   };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent data-testid="edit-crypto-address-name-dialog-content">
+      <DialogContent
+        data-testid="edit-crypto-address-name-dialog-content"
+        onPointerDownOutside={handlePointerDownOutside}
+      >
         <DialogHeader
           appearance="expanded"
           title={t("cryptoAddresses.editName.title")}

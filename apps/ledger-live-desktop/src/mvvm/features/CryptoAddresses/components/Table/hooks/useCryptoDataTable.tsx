@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { TableSortButton, useLumenDataTable } from "@ledgerhq/lumen-ui-react";
+import { useLumenDataTable } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,6 @@ import {
   AccountRowActionCell,
   AccountValueCell,
 } from "../Cell";
-const SORT_HEADER_BUTTON_CLASS = "[&_svg]:!opacity-100";
 
 type UseCryptoDataTableParams = {
   readonly rows: AccountLike[];
@@ -53,15 +52,7 @@ export function useCryptoDataTable({
             undefined,
             { sensitivity: "base" },
           ),
-        header: ({ column }) => (
-          <TableSortButton
-            className={SORT_HEADER_BUTTON_CLASS}
-            sortDirection={column.getIsSorted() || undefined}
-            onClick={column.getToggleSortingHandler()}
-          >
-            {t("cryptoAddresses.table.columns.name")}
-          </TableSortButton>
-        ),
+        header: t("cryptoAddresses.table.columns.name"),
         cell: ({ row }) => (
           <AccountNameCell
             account={row.original}
@@ -86,16 +77,7 @@ export function useCryptoDataTable({
           const fiatB = balanceSortFiatByAccountId.get(rowB.original.id) ?? new BigNumber(0);
           return fiatA.comparedTo(fiatB);
         },
-        header: ({ column }) => (
-          <TableSortButton
-            className={SORT_HEADER_BUTTON_CLASS}
-            align="end"
-            sortDirection={column.getIsSorted() || undefined}
-            onClick={column.getToggleSortingHandler()}
-          >
-            {t("cryptoAddresses.table.columns.value")}
-          </TableSortButton>
-        ),
+        header: t("cryptoAddresses.table.columns.value"),
         cell: ({ row }) => <AccountValueCell account={row.original} />,
         meta: { align: "end" },
       },
