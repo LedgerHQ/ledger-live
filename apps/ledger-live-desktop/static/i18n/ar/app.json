@@ -823,10 +823,10 @@
     "title" : "البطاقة",
     "imageAlt" : "صورة البطاقة",
     "spendYourCrypto" : "أنفِق أصولك المشفرة",
-    "payDescription" : "ادفع عبر الإنترنت أو في المتاجر الفعلية باستخدام بطاقة أصول مشفرة",
+    "payDescription" : "ادفع عبر الإنترنت أو في المتاجر الفعلية عن طريق بطاقة أصول مشفرة.",
     "exploreCards" : "استكشف البطاقات",
-    "iAlreadyHaveACard" : "لديّ بطاقة بالفعل",
-    "unlockLiquidity" : "إلغاء قفل السيولة",
+    "iAlreadyHaveACard" : "لديّ بطاقة",
+    "unlockLiquidity" : "أنفق الأصول المشفرة في الحياة الفعلية",
     "exploreCryptoCardsDescription" : "استكشف بطاقات الأصول المشفرة لدينا واعثر على البطاقة الأكثر ملاءمةً لك"
   },
   "lend" : {
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "تحويل بنكي",
-          "description" : "تلقي العملات المستقرة بواسطة إرسال النقود"
+          "title" : "عبر التحويل البنكي",
+          "description" : "تلقى العملات المستقرة ببساطة من خلال إرسال النقود."
         },
         "fromCrypto" : {
-          "title" : "تلقي الأصول المشفرة"
+          "title" : "عبر عنوان أصل مشفر"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "بطاقة محتوى الإشعار",
             "action" : "بطاقة محتوى الإجراء",
-            "portfolio" : "Portfolio Content Card",
+            "portfolio" : "المحفظة الاستثمارية",
+            "bottomPortfolio" : "Bottom Portfolio",
             "title" : "العنوان",
             "description" : "الوصف",
             "order" : "الطلب",
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "المبلغ منخفض جداً. أرسل على الأقل {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "حساب رمز التوكن المرتبط هذا يحتفظ برمز توكن آخر"
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "عفواً، الأموال المتوفرة غير كافية"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "انتهت مدة الإقران",
+      "description" : "انتهت مهلة الاتصال بتطبيق Concordium ID. يُرجى إعادة المحاولة."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "انتهت مدة الجلسة",
+      "description" : "لم تعد جلسة تطبيق Concordium ID نشطة. يُرجى الإقران مرةً أخرى."
     },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "الأموال المتوفرة غير كافية. الحد الأدنى المطلوب للرصيد هو 0.2 TON."
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "اختر سجلاً خاصاً صالحاً للمبلغ."
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "اختر سجلاً خاصاً صالحاً للرسوم."
     },
     "BackupAppDataError" : {
       "title" : "خطأ أثناء النسخ الاحتياطي لبيانات التطبيق"
@@ -8065,14 +8083,17 @@
   "portfolio" : {
     "title" : "الصفحة الرئيسية",
     "today" : "اليوم",
+    "carousel" : {
+      "title" : "من أجلك"
+    },
     "addAccountCta" : "إضافة حساب أصل مشفر",
-    "noBalanceTitle" : "تأمين أصولك المشفرة",
+    "noBalanceTitle" : "ابدأ بتمويل محفظتك",
     "perpsEntry" : {
       "title" : "العقود الدائمة",
       "description" : "تداول باستخدام رافعة مالية",
       "cta" : "اكتشف"
     },
-    "noDeviceTitle" : "المحفظة الأكثر أماناً"
+    "noDeviceTitle" : "محفظة الأصول المشفرة الآمنة الخاصة بك"
   },
   "marketBanner" : {
     "title" : "استكشف السوق",
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "خوف+",
       "fear" : "خوف",
+      "cautious" : "حَذِر",
       "neutral" : "محايد",
-      "greed" : "طمع",
-      "extremeGreed" : "طمع+"
+      "optimistic" : "متفائل",
+      "greedy" : "طمّاع"
     },
     "dialog" : {
       "title" : "مؤشر الحالة المزاجية",
-      "content" : "مؤشر الحالة المزاجية يشير إلى الحالة العاطفية للسوق. يتراوح بين 0 و 100، حيث تشير القيمة الأقل إلى الخوف الشديد، والقيمة الأعلى إلى الطمع الشديد.",
+      "content" : "يُظهر شعور السوق الإجمالي من 0 إلى 100، بناءً على الاتجاهات والنشاط. استخدمه لفهم كيف يتصرف السوق: القيَّم الأقل تشير إلى الخوف، والقيَّم الأعلى تشير إلى الطمع.",
       "cta" : "فهمت ذلك"
     }
   },
@@ -8120,8 +8141,37 @@
       "balance" : "الرصيد",
       "value" : "القيمة",
       "trend" : "اتجاه يوم 1",
-      "trendTooltip" : "تغيُّر الرصيد خلال 24 ساعة"
+      "trendTooltip" : "التعديلات على رصيدك خلال آخر 24 ساعة."
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "حسابات الأصول المشفرة",
+    "tableActions" : {
+      "searchAddress" : "ابحث عن العنوان",
+      "addAddress" : "إضافة عنوان"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "الاسم",
+        "address" : "عنوان",
+        "value" : "القيمة"
+      },
+      "editName" : "تعديل الاسم",
+      "emptyState" : "لا يوجد عنوان أصول مشفرة بعد",
+      "emptySearchState" : "لا توجد حسابات تطابق بحثك"
+    },
+    "editName" : {
+      "title" : "تعديل اسم العنوان",
+      "input" : "اسم العنوان",
+      "suggestions" : {
+        "trading" : "تداول {{asset}}",
+        "savings" : "مدخرات {{asset}}"
+      },
+      "cta" : "تأكيد"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "الأصول المشفرة"
   },
   "nftEntryPoint" : {
     "title" : "الرموز غير القابلة للاستبدال (NFT)",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "السجل",
+      "tooltip" : "السجل"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة.\n قائمة الحسابات المتأثرة: {{accounts}}. انقر لإعادة المحاولة",
-      "emptyErrorToolTip" : "كانت هناك مشكلة مؤقتة في الشبكة. أصولك آمنة.\n انقر لإعادة المحاولة",
-      "upToDate" : "أنت على أحدث إصدار",
-      "lastSync" : "آخر مزامنة: {{timeAgo}} انقر للتحديث"
+      "errorToolTip" : "أصولك آمنة. هذه مشكلة مزامنة مؤقتة.\n الحسابات المتأثرة: {{accounts}}. انقر لإعادة المحاولة",
+      "emptyErrorToolTip" : "أصولك آمنة. هذه مشكلة مزامنة مؤقتة.\n انقر لإعادة المحاولة",
+      "upToDate" : "المحفظة الاستثمارية مُحدّثة",
+      "lastSync" : "آخر مزامنة: {{timeAgo}} انقر للتحديث",
+      "refreshing" : "جارٍ التحديث..."
     },
     "notificationIndicator" : {
       "tooltip" : "الإشعارات"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "الرصيد الخاص",
         "public" : "الرصيد العام",
-        "lastUpdate" : "آخر تحديث",
+        "lastUpdate" : "آخر تحديث: {{label}}",
+        "recently" : "مؤخراً",
         "switchBalance" : "تغيير مصدر الرصيد"
+      },
+      "recordPicker" : {
+        "label" : "السجلات المتاحة",
+        "noRecords" : "لا توجد سجلات متاحة",
+        "noRecordsAlert" : "ليس لديك أي سجلات متاحة. قم بإجراء تحويل ذاتي أو تلقى أموال خاصة للبدء.",
+        "alert" : "يعتمد الحد الأقصى للمبلغ الذي يمكن إنفاقه على القيمة القصوى للسجل الذي اخترته. الرسوم تحت رعاية Provable لمستخدمي Ledger.",
+        "recordsLimit" : "يتم عرض {{max}} سجل كحد أقصى"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "عام",
         "private" : "خاص"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "الإرسال من"
+      },
+      "summary" : {
+        "coveredByProvable" : "برعاية Provable",
+        "proofGenerationWarning" : "معاملة Aleo تتطلب إنشاء إثبات. هذا قد يستغرق بعض الوقت."
       }
     }
   },
@@ -8312,6 +8384,25 @@
     "cta" : {
       "continue" : "متابعة",
       "explore" : "استكشاف محفظتي الاستثمارية الجديدة"
+    }
+  },
+  "history" : {
+    "title" : "المعاملات",
+    "pending" : "معاملة مُعلَّقة",
+    "pending_other" : "معاملات مُعلَّقة",
+    "columns" : {
+      "type" : "النوع",
+      "address" : "عنوان",
+      "amount" : "المبلغ",
+      "value" : "القيمة"
+    },
+    "address" : {
+      "from" : "من",
+      "to" : "إلى"
+    },
+    "emptyState" : {
+      "title" : "لا توجد معاملات بعد",
+      "description" : "عد لاحقاً لرؤية معاملاتك."
     }
   }
 }
