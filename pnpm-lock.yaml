@@ -25,8 +25,8 @@ catalogs:
       specifier: 1.12.0
       version: 1.12.0
     '@ledgerhq/device-signer-kit-hyperliquid':
-      specifier: 1.0.1
-      version: 1.0.1
+      specifier: 1.0.2
+      version: 1.0.2
     '@ledgerhq/device-signer-kit-solana':
       specifier: 1.7.1
       version: 1.7.1
@@ -10262,7 +10262,7 @@ importers:
         version: 1.2.0(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 1.0.1(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        version: 1.0.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -15629,8 +15629,8 @@ packages:
       '@ledgerhq/context-module': 1.15.0
       '@ledgerhq/device-management-kit': ^1.2.0
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.0.1':
-    resolution: {integrity: sha512-rp4sepeSzu9t+RsSpz3GVBi2ZIgtGwTgbmex3zg1x2BUkE147r1XwHPQraO5aDArRUTUYj+TVkn3K1peNkGK7A==}
+  '@ledgerhq/device-signer-kit-hyperliquid@1.0.2':
+    resolution: {integrity: sha512-vOHQRrMsUj4XMI4LC+WcerH0yyIiWw2kPHK0yN847FccKaB5x9+wiz2zWgcqk7fKHqYFr1S5GqXjmaiRWiAcwA==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
 
@@ -42619,7 +42619,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.0.1(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@1.0.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
