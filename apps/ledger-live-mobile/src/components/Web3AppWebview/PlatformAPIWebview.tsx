@@ -463,25 +463,24 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [receive] = useJSONRPCServer(handlers, handleSend);
     const handleMessage = useCallback(
       (e: WebViewMessageEvent) => {
-        if (e.nativeEvent?.data) {
-          try {
-            const msg = JSON.parse(e.nativeEvent.data);
-            if (Config.DETOX && msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+        const data = e.nativeEvent?.data;
+        if (!data) return;
+
+        try {
+          const msg = JSON.parse(data);
+          if (Config.DETOX) {
+            if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
               webviewLogStore.addNetworkLog(msg.payload);
               return;
             }
-            if (Config.DETOX && msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+            if (msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
               webviewLogStore.addConsoleLog(msg.payload);
               return;
             }
-            receive(msg);
-          } catch {
-            try {
-              receive(JSON.parse(e.nativeEvent.data));
-            } catch {
-              // ignore malformed messages
-            }
           }
+          receive(msg);
+        } catch {
+          // Invalid JSON or receive() rejected — same as historical Platform WebView handling
         }
       },
       [receive],
