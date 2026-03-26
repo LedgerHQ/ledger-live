@@ -57,6 +57,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "market",
   "cryptoAssets",
   "identities",
+  "featureFlags",
   "discover",
   "ptx",
   "PLAYWRIGHT_RUN", // e2e fixtures: localStorage seed (e.g. acceptedTermsVersion) and env overrides

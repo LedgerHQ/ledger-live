@@ -5,12 +5,8 @@ import { FeatureFlagsProvider, isFeature } from "@ledgerhq/live-common/featureFl
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
-import { overriddenFeatureFlagsSelector } from "../reducers/settings";
-import {
-  setOverriddenFeatureFlag,
-  setOverriddenFeatureFlags,
-  setSelectedTimeRange,
-} from "../actions/settings";
+import { featureFlagsOverridesSelector, setOverride, setAllOverrides } from "@shared/feature-flags";
+import { setSelectedTimeRange } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 
@@ -21,7 +17,7 @@ export const FirebaseFeatureFlagsProvider = ({
   const { config: remoteConfig } = useFirebaseRemoteConfig();
 
   const dispatch = useDispatch();
-  const localOverrides = useSelector(overriddenFeatureFlagsSelector);
+  const localOverrides = useSelector(featureFlagsOverridesSelector);
   const { shouldDisplayGraphRework: isWallet40GraphReworkEnabled } =
     useWalletFeaturesConfig("desktop");
 
@@ -31,9 +27,9 @@ export const FirebaseFeatureFlagsProvider = ({
       if (!isEqual(actualRemoteValue, value)) {
         const { overriddenByEnv, ...pureValue } = value; // eslint-disable-line
         const overridenValue = { ...pureValue, overridesRemote: true };
-        dispatch(setOverriddenFeatureFlag({ key, value: overridenValue }));
+        dispatch(setOverride({ key, value: overridenValue }));
       } else {
-        dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
+        dispatch(setOverride({ key, value: undefined }));
       }
     },
     [dispatch, getFeature],
@@ -41,13 +37,13 @@ export const FirebaseFeatureFlagsProvider = ({
 
   const resetFeature = useCallback(
     (key: FeatureId): void => {
-      dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
+      dispatch(setOverride({ key, value: undefined }));
     },
     [dispatch],
   );
 
   const resetFeatures = useCallback((): void => {
-    dispatch(setOverriddenFeatureFlags({}));
+    dispatch(setAllOverrides({}));
   }, [dispatch]);
 
   const wrappedGetFeature = useCallback(
@@ -68,7 +64,7 @@ export const FirebaseFeatureFlagsProvider = ({
     if (isWallet40GraphReworkEnabled) {
       dispatch(setSelectedTimeRange("day"));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run only once
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- run only once
   }, []);
 
   const contextValue = useMemo(
