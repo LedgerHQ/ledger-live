@@ -24,7 +24,7 @@ function getSendOperationType(
 }
 
 function isGatewayOperationType(value: string | undefined): value is GatewayOperationType {
-  return value !== undefined && value in OPERATION_TYPE_MAP;
+  return value !== undefined && Object.prototype.hasOwnProperty.call(OPERATION_TYPE_MAP, value);
 }
 
 function getOperationTypeFromDetails(operationType: string | undefined): OperationType | null {

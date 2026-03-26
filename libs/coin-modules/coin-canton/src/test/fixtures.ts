@@ -119,6 +119,7 @@ export const createMockCantonAccount = (
     return {
       ...baseAccount,
       cantonResources: {
+        ...cantonResources,
         ...cantonResourcesFromOverrides,
         ...partialCantonResources,
       },
@@ -293,7 +294,7 @@ export const createMockPendingTransferProposal = createFactory<TransferProposal>
   instrument_id: DEFAULT_VALUES.INSTRUMENT.ID,
   amount: "100",
   memo: "test memo",
-  expires_at_micros: Date.now() * 1000 + 86400000000, // 1 day from now
+  expires_at_micros: 1_800_000_000_000_000, // fixed far-future timestamp (microseconds)
   update_id: "test-update-id",
 });
 

@@ -53,7 +53,7 @@ describe("getBalance", () => {
       {
         value: BigInt(1000),
         locked: BigInt(0),
-        asset: { type: "native" },
+        asset: { type: "native-id" },
         utxoCount: 1,
         instrumentId: "native-id",
         adminId: "AmuletAdmin",

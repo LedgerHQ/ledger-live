@@ -1,11 +1,12 @@
 import type { AssetInfo, Cursor, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import coinConfig, { isGatewayEnabled } from "../../config";
 import { getOperations } from "../../network/gateway";
 import type { AssetView } from "../../types/gateway";
 
-function convertAssetViewToAssetInfo(asset?: AssetView): AssetInfo {
+function convertAssetViewToAssetInfo(nativeInstrumentId: string, asset?: AssetView): AssetInfo {
   if (!asset || asset.type === "native") {
-    return { type: "native" };
+    return { type: nativeInstrumentId };
   }
 
   if (asset.type === "token") {
@@ -35,6 +36,8 @@ export async function listOperations(
   limit?: number,
   _order?: "asc" | "desc",
 ): Promise<Page<Operation>> {
+  if (!isGatewayEnabled(currency)) throw new Error("Not implemented");
+  const { nativeInstrumentId } = coinConfig.getCoinConfig(currency);
   const { operations, next } = await getOperations(currency, partyId, {
     cursor: cursor !== undefined ? parseInt(cursor) : undefined,
     minOffset: minHeight,
@@ -43,7 +46,7 @@ export async function listOperations(
   const ops: Operation[] = [];
   for (const tx of operations) {
     if (tx.type === "Send" && tx.senders && tx.recipients && tx.transfers?.length) {
-      const asset = convertAssetViewToAssetInfo(tx.asset);
+      const asset = convertAssetViewToAssetInfo(nativeInstrumentId, tx.asset);
 
       ops.push({
         id: tx.uid,

@@ -88,7 +88,7 @@ const txInfoToOperationAdapter =
       type,
       value,
       fee: feeValue,
-      blockHash: hash,
+      blockHash: hash ?? "",
       blockHeight: height,
       senders,
       recipients,

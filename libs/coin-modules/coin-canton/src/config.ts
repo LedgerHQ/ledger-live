@@ -22,4 +22,8 @@ const coinConfig: {
   getCoinConfig: (currencyId?: string) => CantonCoinConfig;
 } = buildCoinConfig<CantonCoinConfig>();
 
+export function isGatewayEnabled(currency: CryptoCurrency): boolean {
+  return coinConfig.getCoinConfig(currency).useGateway === true;
+}
+
 export default coinConfig;
