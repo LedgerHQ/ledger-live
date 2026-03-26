@@ -33,18 +33,6 @@ function setupEnv(disableBroadcast?: boolean) {
   });
 }
 
-async function selectAccountInModularSelector(app: any, page: any, account: Account) {
-  const selector = await getModularSelector(app, "ACCOUNT");
-  if (selector) {
-    await selector.selectAccount(account);
-    await expect(
-      page
-        .getByTestId("modular-drawer-screen-ACCOUNT_SELECTION")
-        .or(page.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")),
-    ).toBeHidden();
-  }
-}
-
 test.describe("Earn [v2]", () => {
   setupEnv(true);
   test.use({
@@ -71,13 +59,12 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app }) => {
         await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.verifyIceColdStartPage();
-        await app.earnDashboard.clickIceColdStartEarnCTA();
+        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+        await app.earnV2Dashboard.verifyIceColdStartPage();
+        await app.earnV2Dashboard.clickIceColdStartEarnCTA();
         const selector = await getModularSelector(app, "ASSET");
-        if (selector) {
-          await selector.validateItems();
-        }
+        expect(selector).toBeTruthy();
+        await selector!.validateItems();
       },
     );
   });
@@ -102,16 +89,13 @@ test.describe("Earn [v2]", () => {
           tag: getTags(account),
           ...xrayAnnotation(xrayTicket),
         },
-        async ({ app }) => {
+        async ({ app, page }) => {
           await registerXrayLink(test.info());
-          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-          await app.earnDashboard.verifyColdStartPage();
-          await app.earnDashboard.verifyAssetReadyToEarn(account.currency.ticker);
-          await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
-          const selector = await getModularSelector(app, "ACCOUNT");
-          if (selector) {
-            await selector.validateItems();
-          }
+          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnV2Dashboard.verifyColdStartPage();
+          await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
+          await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+          await expect(page.getByTestId("modal-container")).toBeVisible();
         },
       );
     });
@@ -153,10 +137,10 @@ test.describe("Earn [v2]", () => {
         },
         async ({ app }) => {
           await registerXrayLink(test.info());
-          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-          await app.earnDashboard.verifyHotStartPage();
-          await app.earnDashboard.verifyPositionRowPresent(account.currency.ticker);
-          await app.earnDashboard.verifyRewardsSummaryBoxes();
+          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnV2Dashboard.verifyHotStartPage();
+          await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
+          await app.earnV2Dashboard.verifyRewardsSummaryBoxes();
         },
       );
 
@@ -168,9 +152,9 @@ test.describe("Earn [v2]", () => {
         },
         async ({ app }) => {
           await registerXrayLink(test.info());
-          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-          await app.earnDashboard.verifyHotStartPage();
-          await app.earnDashboard.clickPositionRow(account.currency.ticker);
+          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnV2Dashboard.verifyHotStartPage();
+          await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
           await app.account.waitForAccountHeaderName(account.accountName);
         },
       );
@@ -197,8 +181,8 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app }) => {
         await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.clickIceColdStartEarnCTA();
+        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+        await app.earnV2Dashboard.clickIceColdStartEarnCTA();
         const assetSelector = await getModularSelector(app, "ASSET");
         if (assetSelector) {
           await assetSelector.selectAsset(account.currency);
@@ -253,10 +237,10 @@ test.describe("Earn [v2]", () => {
     {
       name: "CTA → Earn staking (USDT)",
       account: TokenAccount.ETH_USDT_1,
-      ticker: "USDT",
+      ticker: TokenAccount.ETH_USDT_1.currency.ticker,
       xrayTicket: "B2CQA-4645",
       verify: async app => {
-        await app.earnDashboard.verifyDepositFlowVisible();
+        await app.earnV2Dashboard.verifyDepositFlowVisible();
       },
     },
   ];
@@ -278,9 +262,9 @@ test.describe("Earn [v2]", () => {
         },
         async ({ app, page }) => {
           await registerXrayLink(test.info());
-          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-          await app.earnDashboard.clickAssetEarnCta(ticker);
-          await selectAccountInModularSelector(app, page, account);
+          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnV2Dashboard.clickAssetEarnCta(ticker);
+          await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
           await verify(app, page);
         },
       );
@@ -312,16 +296,17 @@ test.describe("Earn [v2]", () => {
           tag: getTags(account),
           ...xrayAnnotation(xrayTicket),
         },
-        async ({ app }) => {
+        async ({ app, page }) => {
           await registerXrayLink(test.info());
-          await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-          await app.earnDashboard.clickAssetEarnCta(account.currency.ticker);
-          const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
+          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+          await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+          const verifyProviderUrlPromise = app.earnV2Dashboard.verifyProviderURL(
             provider.uiName,
             account,
           );
           await app.delegate.goToProviderLiveApp(provider.uiName);
           await verifyProviderUrlPromise;
+          await expect(page).toHaveURL(/\/platform\//);
         },
       );
     });
@@ -359,10 +344,10 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app, page }) => {
         await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.verifyHotStartPage();
-        await app.earnDashboard.verifyPositionRowPresent(account.currency.ticker);
-        await app.earnDashboard.clickPositionRow(account.currency.ticker);
+        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+        await app.earnV2Dashboard.verifyHotStartPage();
+        await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
+        await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
         // After clicking, LLD navigates to the partner dapp via custom.navigate → redirect-provider.
         // The earn webview closes as LLD navigates to the dapp platform page.
         // Verify the main page URL changed to the platform route.
@@ -390,11 +375,11 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app }) => {
         await registerXrayLink(test.info());
-        await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
-        await app.earnDashboard.verifyHotStartPage();
-        await app.earnDashboard.verifyPositionRowPresent("USDT");
-        await app.earnDashboard.clickPositionRow("USDT");
-        await app.earnDashboard.verifyWithdrawalFlowVisible();
+        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
+        await app.earnV2Dashboard.verifyHotStartPage();
+        await app.earnV2Dashboard.verifyPositionRowPresent(TokenAccount.ETH_USDT_1.currency.ticker);
+        await app.earnV2Dashboard.clickPositionRow(TokenAccount.ETH_USDT_1.currency.ticker);
+        await app.earnV2Dashboard.verifyWithdrawalFlowVisible();
       },
     );
   });

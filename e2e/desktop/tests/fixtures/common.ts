@@ -19,7 +19,7 @@ import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
