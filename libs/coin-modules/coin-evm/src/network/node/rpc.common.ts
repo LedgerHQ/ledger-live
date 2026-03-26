@@ -234,17 +234,17 @@ async function getFeeData(
 
   const feeData = await (async (): Promise<
     | {
-      maxPriorityFeePerGas: BigNumber;
-      maxFeePerGas: BigNumber;
-      nextBaseFee: BigNumber;
-      gasPrice?: undefined;
-    }
+        maxPriorityFeePerGas: BigNumber;
+        maxFeePerGas: BigNumber;
+        nextBaseFee: BigNumber;
+        gasPrice?: undefined;
+      }
     | {
-      maxPriorityFeePerGas?: undefined;
-      maxFeePerGas?: undefined;
-      nextBaseFee?: undefined;
-      gasPrice: BigNumber;
-    }
+        maxPriorityFeePerGas?: undefined;
+        maxFeePerGas?: undefined;
+        nextBaseFee?: undefined;
+        gasPrice: BigNumber;
+      }
   > => {
     if (currencySupports1559) {
       const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
@@ -255,8 +255,8 @@ async function getFeeData(
       // Taking the average priority fee used on the last 5 blocks
       const maxPriorityFeeAverage = feeHistory.reward
         ? feeHistory.reward
-          .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
-          .dividedToIntegerBy(feeHistory.reward.length)
+            .reduce((acc, [curr]) => acc.plus(new BigNumber(curr)), new BigNumber(0))
+            .dividedToIntegerBy(feeHistory.reward.length)
         : new BigNumber(0);
 
       // A maxPriorityFeePerGas too low might make a transaction stuck forever
@@ -345,13 +345,13 @@ async function getBlockByHeight(
     block.transactions === undefined
       ? undefined
       : block.transactions.map((tx, index) => {
-        if (typeof tx !== "string") {
-          throw new TypeError(
-            `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
-          );
-        }
-        return tx;
-      });
+          if (typeof tx !== "string") {
+            throw new TypeError(
+              `Block ${blockHeight} contains malformed transaction hash at index ${index}`,
+            );
+          }
+          return tx;
+        });
 
   const prefetchedTransactions = prefetchTxs ? getPrefetchedBlockTransactions(block) : undefined;
   const transactions = prefetchedTransactions?.map((tx, index) => {
@@ -440,32 +440,32 @@ async function getBlockByHeightFromRawRpc(
   const transactions =
     prefetchTxs && rawTransactions
       ? rawTransactions.map(tx => {
-        if (typeof tx === "string")
-          throw new Error("Expected prefetched transaction object, got hash string");
-        if (typeof tx !== "object" || tx === null)
-          throw new Error("Malformed prefetched transaction in eth_getBlockByNumber response");
-        if (!("hash" in tx) || typeof tx.hash !== "string")
-          throw new Error(
-            "Malformed prefetched transaction hash in eth_getBlockByNumber response",
-          );
-        if (!("from" in tx) || typeof tx.from !== "string")
-          throw new Error(
-            "Malformed prefetched transaction from in eth_getBlockByNumber response",
-          );
-        if ("to" in tx && tx.to !== null && tx.to !== undefined && typeof tx.to !== "string")
-          throw new Error("Malformed prefetched transaction to in eth_getBlockByNumber response");
-        if ("value" in tx && tx.value !== undefined && typeof tx.value !== "string")
-          throw new Error(
-            "Malformed prefetched transaction value in eth_getBlockByNumber response",
-          );
+          if (typeof tx === "string")
+            throw new Error("Expected prefetched transaction object, got hash string");
+          if (typeof tx !== "object" || tx === null)
+            throw new Error("Malformed prefetched transaction in eth_getBlockByNumber response");
+          if (!("hash" in tx) || typeof tx.hash !== "string")
+            throw new Error(
+              "Malformed prefetched transaction hash in eth_getBlockByNumber response",
+            );
+          if (!("from" in tx) || typeof tx.from !== "string")
+            throw new Error(
+              "Malformed prefetched transaction from in eth_getBlockByNumber response",
+            );
+          if ("to" in tx && tx.to !== null && tx.to !== undefined && typeof tx.to !== "string")
+            throw new Error("Malformed prefetched transaction to in eth_getBlockByNumber response");
+          if ("value" in tx && tx.value !== undefined && typeof tx.value !== "string")
+            throw new Error(
+              "Malformed prefetched transaction value in eth_getBlockByNumber response",
+            );
 
-        return {
-          hash: tx.hash,
-          value: BigInt(tx.value ?? "0x0").toString(),
-          from: tx.from,
-          to: tx.to ?? undefined,
-        };
-      })
+          return {
+            hash: tx.hash,
+            value: BigInt(tx.value ?? "0x0").toString(),
+            from: tx.from,
+            to: tx.to ?? undefined,
+          };
+        })
       : undefined;
 
   return {
@@ -533,13 +533,14 @@ async function traceBlockViaGethDebug(
       { tracer: "callTracer" },
     ]);
   } catch (error) {
-    const exception = () => new UnsupportedRpcMethodError(
-      "debug_traceBlockByNumber is not supported by this RPC provider",
-      {
-        method: "debug_traceBlockByNumber",
-        rawError: error,
-      },
-    );
+    const exception = (): Error =>
+      new UnsupportedRpcMethodError(
+        "debug_traceBlockByNumber is not supported by this RPC provider",
+        {
+          method: "debug_traceBlockByNumber",
+          rawError: error,
+        },
+      );
     if (isUnsupportedRpcMethodError(error) || isUnsupportedRpcMethodErrorMsg(error)) {
       throw exception();
     }

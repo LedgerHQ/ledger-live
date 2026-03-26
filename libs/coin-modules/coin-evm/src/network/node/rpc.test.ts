@@ -940,9 +940,7 @@ describe("EVM Family", () => {
             return {
               hash: "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
               number: "0x1",
-              transactions: [
-                "0x1111111111111111111111111111111111111111111111111111111111111111",
-              ],
+              transactions: ["0x1111111111111111111111111111111111111111111111111111111111111111"],
             };
           }
           if (method === "debug_traceBlockByNumber") {

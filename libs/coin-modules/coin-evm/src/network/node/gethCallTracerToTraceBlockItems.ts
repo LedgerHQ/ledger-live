@@ -24,7 +24,7 @@ export type GethCallFrame = {
 export function gethCallTracerToTraceBlockItems(
   blockNumber: number,
   /** `debug_traceBlockByNumber` JSON-RPC `result` — one element per tx in block order */
-  debugTraceResults: readonly unknown[]
+  debugTraceResults: readonly unknown[],
 ): TraceBlockItem[] {
   const out: TraceBlockItem[] = [];
 
