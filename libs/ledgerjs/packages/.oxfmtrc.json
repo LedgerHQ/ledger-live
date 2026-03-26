@@ -4,5 +4,5 @@
   "trailingComma": "all",
   "arrowParens": "avoid",
   "sortPackageJson": false,
-  "ignorePatterns": ["**/generate-protocol.json"]
+  "ignorePatterns": ["**/*.md", "**/*.json"]
 }

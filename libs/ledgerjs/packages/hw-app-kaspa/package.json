@@ -2,22 +2,46 @@
   "name": "@ledgerhq/hw-app-kaspa",
   "version": "1.6.0",
   "description": "",
-  "keywords": [
-    "Ledger"
-  ],
-  "homepage": "https://github.com/coderofstuff/hw-app-kaspa#readme",
-  "bugs": {
-    "url": "https://github.com/coderofstuff/hw-app-kaspa/issues"
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "test": "jest",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix"
   },
-  "license": "ISC",
-  "author": "coderofstuff",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/coderofstuff/hw-app-kaspa.git"
   },
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
+  "keywords": [
+    "Ledger"
+  ],
+  "author": "coderofstuff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coderofstuff/hw-app-kaspa/issues"
+  },
+  "homepage": "https://github.com/coderofstuff/hw-app-kaspa#readme",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "bignumber.js": "^9.1.2",
+    "bip32-path": "^0.4.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.9.2"
+  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/index.ts",
@@ -34,29 +58,5 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
-  },
-  "scripts": {
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "test": "jest",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix"
-  },
-  "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "bignumber.js": "^9.1.2",
-    "bip32-path": "^0.4.2"
-  },
-  "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "jest": "catalog:",
-    "ts-node": "^10.9.2"
   }
 }

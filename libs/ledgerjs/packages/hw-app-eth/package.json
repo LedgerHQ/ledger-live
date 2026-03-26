@@ -3,25 +3,77 @@
   "version": "7.6.1",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
-    "Blue",
-    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
+    "eth",
     "NanoS",
-    "eth"
+    "Blue",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-eth",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-eth",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/Eth.js",
   "module": "lib-es/Eth.js",
   "types": "lib/Eth.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/rlp": "^5.7.0",
+    "@ethersproject/transactions": "^5.7.0",
+    "@ledgerhq/domain-service": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/evm-tools": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "axios": "catalog:",
+    "bignumber.js": "^9.1.2",
+    "semver": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "devDependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/constants": "^5.7.0",
+    "@ethersproject/units": "^5.7.0",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "documentation": "14.0.2",
+    "jest": "catalog:",
+    "nock": "^13.0.5",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.4.0"
+  },
+  "overrides": {
+    "@ethersproject/providers": {
+      "ws": "8.18.3"
+    }
+  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/Eth.ts",
@@ -38,56 +90,5 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "unimported": "unimported"
-  },
-  "dependencies": {
-    "@ethersproject/abi": "^5.7.0",
-    "@ethersproject/rlp": "^5.7.0",
-    "@ethersproject/transactions": "^5.7.0",
-    "@ledgerhq/domain-service": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/evm-tools": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
-    "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
-    "semver": "catalog:"
-  },
-  "devDependencies": {
-    "@ethersproject/bignumber": "^5.7.0",
-    "@ethersproject/constants": "^5.7.0",
-    "@ethersproject/units": "^5.7.0",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "documentation": "14.0.2",
-    "jest": "catalog:",
-    "nock": "^13.0.5",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0"
-  },
-  "overrides": {
-    "@ethersproject/providers": {
-      "ws": "8.18.3"
-    }
   }
 }

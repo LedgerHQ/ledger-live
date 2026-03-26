@@ -3,26 +3,66 @@
   "version": "6.37.1",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
-    "HNT",
-    "Hardware Wallet",
-    "Helium",
     "Ledger",
     "LedgerWallet",
+    "Helium",
+    "HNT",
     "NanoS",
-    "NanoX"
+    "NanoX",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-helium",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-helium",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/Helium.js",
   "module": "lib-es/Helium.js",
   "types": "lib/Helium.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@helium/address": "^4.6.2",
+    "@helium/proto": "^1.6.0",
+    "@helium/transactions": "^4.7.5",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "bignumber.js": "^9.1.2",
+    "bip32-path": "^0.4.2",
+    "long": "^5.2.0"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "axios": "catalog:",
+    "documentation": "14.0.2",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/Helium.ts",
@@ -39,45 +79,5 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "unimported": "unimported"
-  },
-  "dependencies": {
-    "@helium/address": "^4.6.2",
-    "@helium/proto": "^1.6.0",
-    "@helium/transactions": "^4.7.5",
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "bignumber.js": "^9.1.2",
-    "bip32-path": "^0.4.2",
-    "long": "^5.2.0"
-  },
-  "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "axios": "catalog:",
-    "documentation": "14.0.2",
-    "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0"
   }
 }

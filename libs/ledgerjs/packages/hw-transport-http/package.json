@@ -3,26 +3,25 @@
   "version": "6.35.1",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
-    "Blue",
-    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
-    "NanoS",
+    "proxy",
     "http",
-    "proxy"
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-http",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "main": "lib/withStaticURLs.js",
-  "module": "lib-es/withStaticURLs.js",
-  "types": "lib/withStaticURLs.d.ts",
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-http",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/withStaticURLs.ts",
@@ -43,8 +42,16 @@
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "access": "public"
+  "main": "lib/withStaticURLs.js",
+  "module": "lib-es/withStaticURLs.js",
+  "types": "lib/withStaticURLs.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@ledgerhq/logs": "workspace:^",
+    "axios": "catalog:",
+    "ws": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -58,22 +65,16 @@
     "coverage": "jest --coverage",
     "unimported": "unimported"
   },
-  "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
-    "axios": "catalog:",
-    "ws": "catalog:"
-  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "devDependencies": {
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "documentation": "14.0.2",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
   }
 }

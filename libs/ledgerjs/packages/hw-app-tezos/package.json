@@ -3,26 +3,61 @@
   "version": "6.35.1",
   "description": "Ledger Hardware Wallet Tezos Application API",
   "keywords": [
-    "Blue",
-    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
-    "NanoS",
+    "xtz",
     "Tezos",
-    "xtz"
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-tezos",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-tezos",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/Tezos.js",
   "module": "lib-es/Tezos.js",
   "types": "lib/Tezos.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/hw-transport": "workspace:*",
+    "@noble/hashes": "1.8.0",
+    "bs58check": "catalog:",
+    "invariant": "^2.2.4"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "documentation": "14.0.2",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/Tezos.ts",
@@ -39,39 +74,5 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "unimported": "unimported"
-  },
-  "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:*",
-    "@noble/hashes": "1.8.0",
-    "bs58check": "catalog:",
-    "invariant": "^2.2.4"
-  },
-  "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "documentation": "14.0.2",
-    "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0"
   }
 }

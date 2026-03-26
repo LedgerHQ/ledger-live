@@ -3,24 +3,64 @@
   "version": "0.21.1",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
-    "Blue",
-    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
-    "NanoS"
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-exchange",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-exchange",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
+    "bignumber.js": "^9.1.2",
+    "invariant": "^2.2.2",
+    "protobufjs": "7.2.5",
+    "protobufjs-cli": "1.1.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@noble/curves": "1.9.7",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "bip32-path": "^0.4.2",
+    "documentation": "14.0.2",
+    "jest": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "prebuild": "pnpm pbjs -t json -r ledger_swap -o src/generate-protocol.json ./protocol.proto",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src --ignore-pattern '**/setupTests.ts'",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest --config=jest.config.ts --runInBand",
+    "test-integ": "jest --config=jest.integ.config.ts",
+    "unimported": "unimported"
+  },
   "exports": {
     ".": {
       "@ledgerhq/source": "./src/index.ts",
@@ -37,45 +77,5 @@
       "default": "./lib/*.js"
     },
     "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "prebuild": "pnpm pbjs -t json -r ledger_swap -o src/generate-protocol.json ./protocol.proto",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest --config=jest.config.ts --runInBand",
-    "test-integ": "jest --config=jest.integ.config.ts",
-    "unimported": "unimported"
-  },
-  "dependencies": {
-    "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:*",
-    "bignumber.js": "^9.1.2",
-    "invariant": "^2.2.2",
-    "protobufjs": "7.2.5",
-    "protobufjs-cli": "1.1.2"
-  },
-  "devDependencies": {
-    "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/live-dmk-speculos": "workspace:^",
-    "@noble/curves": "1.9.7",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "@types/node": "catalog:",
-    "bip32-path": "^0.4.2",
-    "documentation": "14.0.2",
-    "jest": "catalog:",
-    "ts-node": "^10.4.0"
   }
 }

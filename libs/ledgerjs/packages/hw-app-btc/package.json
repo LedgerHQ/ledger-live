@@ -3,22 +3,24 @@
   "version": "10.20.1",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
-    "Bitcoin",
-    "Blue",
-    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
+    "btc",
+    "Bitcoin",
     "NanoS",
-    "btc"
+    "Blue",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-btc",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-btc",
+  "publishConfig": {
+    "access": "public"
   },
   "main": "lib/Btc.js",
   "module": "lib-es/Btc.js",
@@ -59,22 +61,7 @@
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/.test.ts.disabled|node_modules|lib-es|lib/' --passWithNoTests",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest",
-    "unimported": "unimported"
-  },
+  "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
@@ -91,8 +78,6 @@
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
@@ -100,6 +85,22 @@
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
     "ts-node": "^10.4.0"
-  }
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/.test.ts.disabled|node_modules|lib-es|lib/' --passWithNoTests",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }

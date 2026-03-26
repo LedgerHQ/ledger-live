@@ -3,62 +3,31 @@
   "version": "0.6.1",
   "description": "Ledger Hardware Wallet Concordium Application API",
   "keywords": [
-    "CCD",
-    "Concordium",
-    "Flex",
-    "Hardware Wallet",
     "Ledger",
     "LedgerWallet",
+    "CCD",
+    "Concordium",
     "NanoS+",
     "NanoX",
-    "Stax"
+    "Flex",
+    "Stax",
+    "Hardware Wallet"
   ],
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-concordium",
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "main": "lib/Concordium.js",
-  "module": "lib-es/Concordium.js",
-  "types": "lib/Concordium.d.ts",
-  "exports": {
-    ".": {
-      "@ledgerhq/source": "./src/Concordium.ts",
-      "import": "./lib-es/Concordium.js",
-      "require": "./lib/Concordium.js",
-      "default": "./lib/Concordium.js"
-    },
-    "./lib-es/*": "./lib-es/*.js",
-    "./lib/*": "./lib/*.js",
-    "./*": {
-      "@ledgerhq/source": "./src/*.ts",
-      "import": "./lib-es/*.js",
-      "require": "./lib/*.js",
-      "default": "./lib/*.js"
-    },
-    "./package.json": "./package.json"
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-concordium",
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests",
-    "prewatch": "pnpm build",
-    "watch": "tsc --watch --project tsconfig.build.json",
-    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "oxlint ./src",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest --config=jest.config.ts",
-    "test-integ": "jest --config=jest.integ.config.ts",
-    "unimported": "unimported"
-  },
+  "main": "lib/Concordium.js",
+  "module": "lib-es/Concordium.js",
+  "types": "lib/Concordium.d.ts",
+  "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/concordium-core": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*"
@@ -75,5 +44,36 @@
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "oxlint ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest --config=jest.config.ts",
+    "test-integ": "jest --config=jest.integ.config.ts",
+    "unimported": "unimported"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/Concordium.ts",
+      "import": "./lib-es/Concordium.js",
+      "require": "./lib/Concordium.js",
+      "default": "./lib/Concordium.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }
