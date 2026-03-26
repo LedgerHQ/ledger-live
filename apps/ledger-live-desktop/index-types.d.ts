@@ -1,3 +1,6 @@
+/// <reference types="jest" />
+/// <reference types="jest-dom" />
+
 declare const INDEX_URL: string;
 declare const __SENTRY_URL__: string;
 declare const __DATADOG_APPLICATION_ID__: string | null;
@@ -10,6 +13,8 @@ declare const __PRERELEASE__: string;
 declare const __CHANNEL__: string;
 declare const __static: string;
 declare const __DEV__: boolean;
+
+declare module "*.css";
 
 declare module "*.svg";
 declare module "*.png";
