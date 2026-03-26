@@ -15,11 +15,7 @@ import { useDistribution as useDistributionCommon } from "@ledgerhq/live-counter
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
-import {
-  counterValueCurrencySelector,
-  orderAccountsSelector,
-  selectedTimeRangeSelector,
-} from "../reducers/settings";
+import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -107,7 +103,6 @@ export function useCleanCache() {
 
 export function useUserSettings() {
   const trackingPairs = useTrackingPairs();
-  const selectedTimeRange = useSelector(selectedTimeRangeSelector);
 
   const granularitiesRatesConfig = useFeature("llCounterValueGranularitiesRates");
   const granularitiesRates = useMemo(
@@ -130,9 +125,8 @@ export function useUserSettings() {
         "config_countervalues_marketCapBatchingAfterRank",
       ),
       granularitiesRates,
-      selectedTimeRange,
     }),
-    [granularitiesRates, trackingPairs, selectedTimeRange],
+    [granularitiesRates, trackingPairs],
   );
 }
 
