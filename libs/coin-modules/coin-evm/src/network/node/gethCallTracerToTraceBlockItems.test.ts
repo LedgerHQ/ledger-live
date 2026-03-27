@@ -1,5 +1,5 @@
-import flareBlock0x36ffc39CallTracerTrace from "./resources/flare-0x36ffc39-debug-trace-block-call-tracer.json";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
+import flareBlock0x36ffc39CallTracerTrace from "./resources/flare-0x36ffc39-debug-trace-block-call-tracer.json";
 import type { TraceBlockItem } from "./types";
 import { isTraceBlockItem } from "./types";
 
