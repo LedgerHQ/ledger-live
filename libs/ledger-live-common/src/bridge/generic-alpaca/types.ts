@@ -4,8 +4,8 @@ import type {
   TransactionCommon,
   TransactionCommonRaw,
 } from "@ledgerhq/types-live";
-import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import BigNumber from "bignumber.js";
 
 type NetworkInfo = {

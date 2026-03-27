@@ -1,7 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import type { Transaction } from "../types";
+import type { Transaction } from "./types";
 
 const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 

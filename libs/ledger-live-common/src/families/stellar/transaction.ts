@@ -9,7 +9,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getAssetCodeIssuer } from "./logic";
 import type { Transaction, TransactionRaw } from "./types";
 
 // FIXME: recheck fields here (mode -> type?)
@@ -39,6 +38,15 @@ export function formatTransaction(
             disableRounding: true,
           })
     }${memoValue ? "\n  memo=" + memoValue : ""}`;
+}
+
+function getAssetCodeIssuer(tr: Transaction | TransactionRaw): string[] {
+  if (tr.subAccountId) {
+    const assetString = tr.subAccountId.split("+")[1];
+    return assetString.split(":");
+  }
+
+  return [tr.assetReference || "", tr.assetOwner || ""];
 }
 
 function fromTransactionRaw(tr: TransactionRaw): Transaction {

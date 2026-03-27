@@ -9,7 +9,7 @@ import BigNumber from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import type { Transaction } from "../types";
-import { acceptTransaction } from "./bot-deviceActions";
+import { acceptTransaction } from "./deviceActions";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");

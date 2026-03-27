@@ -59,7 +59,7 @@ describe("operations", () => {
   };
 
   it("should return 0 operations for a valid account", async () => {
-    mockGetOperations.mockResolvedValue([[], ""]);
+    mockGetOperations.mockResolvedValue({ items: [], next: "" });
 
     // When
     const operations = await api.listOperations("addr", {
@@ -73,7 +73,7 @@ describe("operations", () => {
   });
 
   it("should return 1 operation for a valid account", async () => {
-    mockGetOperations.mockResolvedValue([[mockOperation], ""]);
+    mockGetOperations.mockResolvedValue({ items: [mockOperation], next: "" });
 
     // When
     const operations = await api.listOperations("addr", {
@@ -88,8 +88,8 @@ describe("operations", () => {
 
   it("should call multiple times listOperations", async () => {
     mockGetOperations
-      .mockResolvedValueOnce([[mockOperation], "10"])
-      .mockResolvedValueOnce([[mockOperation], ""]);
+      .mockResolvedValueOnce({ items: [mockOperation], next: "10" })
+      .mockResolvedValueOnce({ items: [mockOperation], next: "" });
 
     // When
     const operations = await api.listOperations("addr", {

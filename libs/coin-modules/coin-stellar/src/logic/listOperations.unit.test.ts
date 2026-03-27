@@ -105,8 +105,8 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual([
-      [
+    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual({
+      items: [
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
@@ -174,8 +174,8 @@ describe("listOperations", () => {
           value: 505000000n,
         },
       ],
-      "token3",
-    ]);
+      next: "token3",
+    });
   });
 
   it("stops at minHeight", async () => {
@@ -247,8 +247,8 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    expect(await listOperations("address", { order: "asc", minHeight: 41 })).toEqual([
-      [
+    expect(await listOperations("address", { order: "asc", minHeight: 41 })).toEqual({
+      items: [
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
@@ -294,8 +294,8 @@ describe("listOperations", () => {
           value: 11100n,
         },
       ],
-      "",
-    ]);
+      next: "",
+    });
   });
 
   it("should return memo if set", async () => {
@@ -327,8 +327,8 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual([
-      [
+    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual({
+      items: [
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
@@ -355,8 +355,8 @@ describe("listOperations", () => {
           },
         },
       ],
-      "token1",
-    ]);
+      next: "token1",
+    });
   });
 
   it("uses fee_account as feesPayer for fee bump transactions when fee_account differs from source_account", async () => {
@@ -387,7 +387,7 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    const [operations] = await listOperations("address", { order: "asc", minHeight: 0 });
+    const { items: operations } = await listOperations("address", { order: "asc", minHeight: 0 });
     expect(operations).toHaveLength(1);
     expect(operations[0]).toMatchObject({
       tx: {
