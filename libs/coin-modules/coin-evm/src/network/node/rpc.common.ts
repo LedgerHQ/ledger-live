@@ -520,33 +520,23 @@ async function traceBlockGeth(
   api: JsonRpcProvider,
   blockHeight: number,
 ): Promise<TraceBlockItem[]> {
-  const rpcBlockTag = ethers.toQuantity(blockHeight);
-
-  let debugResults: unknown;
-  try {
-    debugResults = await api.send("debug_traceBlockByNumber", [
-      rpcBlockTag,
-      { tracer: "callTracer" },
-    ]);
-  } catch (error) {
-    const exception = (): Error =>
-      new UnsupportedRpcMethodError(
-        "debug_traceBlockByNumber is not supported by this RPC provider",
-        {
-          method: "debug_traceBlockByNumber",
-          rawError: error,
-        },
-      );
-    if (isUnsupportedRpcMethodError(error) || isUnsupportedRpcMethodErrorMsg(error)) {
-      throw exception();
-    }
-    throw error;
-  }
-
+  const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
+  const debugResults = await api
+    .send("debug_traceBlockByNumber", [rpcBlockTag, { tracer: "callTracer" }])
+    .catch(error => {
+      if (isUnsupportedRpcMethodError(error) || isUnsupportedRpcMethodErrorMsg(error)) {
+        throw new UnsupportedRpcMethodError(
+          "debug_traceBlockByNumber is not supported by this RPC provider",
+          {
+            method: "debug_traceBlockByNumber",
+            rawError: error,
+          },
+        );
+      }
+      throw error;
+    });
   if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
-
   const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
-
   return items;
 }
 

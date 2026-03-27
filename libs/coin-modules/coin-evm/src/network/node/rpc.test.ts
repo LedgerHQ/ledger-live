@@ -936,13 +936,7 @@ describe("EVM Family", () => {
           if (method === "trace_block") {
             throw { code, message };
           }
-          if (method === "eth_getBlockByNumber") {
-            return {
-              hash: "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-              number: "0x1",
-              transactions: ["0x1111111111111111111111111111111111111111111111111111111111111111"],
-            };
-          }
+
           if (method === "debug_traceBlockByNumber") {
             throw { code, message };
           }

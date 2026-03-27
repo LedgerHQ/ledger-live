@@ -26,17 +26,13 @@ export function gethCallTracerToTraceBlockItems(
   /** `debug_traceBlockByNumber` JSON-RPC `result` — one element per tx in block order */
   debugTraceResults: readonly unknown[],
 ): TraceBlockItem[] {
-  const out: TraceBlockItem[] = [];
-
-  for (let txPos = 0; txPos < debugTraceResults.length; txPos++) {
-    const entry = debugTraceResults[txPos];
-    const parsed = parseDebugTraceBlockEntry(entry, txPos);
-    if (parsed === null) continue;
-
-    out.push(...flattenCallFrame(parsed.root, [], blockNumber, parsed.txHash, txPos));
-  }
-
-  return out;
+  return debugTraceResults
+    .flatMap((entry, txPos) => {
+      const parsed = parseDebugTraceBlockEntry(entry, txPos);
+      if (parsed === null) return [];
+      return flattenCallFrame(parsed.root, [], blockNumber, parsed.txHash, txPos);
+    })
+    .filter(item => item !== null);
 }
 
 /**
