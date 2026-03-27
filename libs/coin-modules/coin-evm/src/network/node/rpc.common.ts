@@ -14,7 +14,12 @@ import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { withRetries } from "../withRetries";
-import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
+import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
+import {
+  hasErrorCode,
+  isUnsupportedRpcMethodErrorMsg,
+  isUnsupportedRpcMethodError,
+} from "./rpc.errors";
 import {
   NodeApi,
   ERC20Transfer,
@@ -22,10 +27,10 @@ import {
   LogWithAddress,
   TransactionReceipt,
   TraceBlockItem,
+  isTraceBlockItem,
   TransactionInfo,
   BlockByHeightResult,
   BlockReceiptInfo,
-  isTraceBlockCallAction,
 } from "./types";
 
 /**
@@ -511,16 +516,36 @@ async function getBlockReceipts(
   });
 }
 
-async function traceBlock(
+async function traceBlockGeth(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  blockHeight: number,
+): Promise<TraceBlockItem[]> {
+  const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
+  const debugResults = await api
+    .send("debug_traceBlockByNumber", [rpcBlockTag, { tracer: "callTracer" }])
+    .catch(error => {
+      if (isUnsupportedRpcMethodError(error) || isUnsupportedRpcMethodErrorMsg(error)) {
+        throw new UnsupportedRpcMethodError(
+          "debug_traceBlockByNumber is not supported by this RPC provider",
+          {
+            method: "debug_traceBlockByNumber",
+            rawError: error,
+          },
+        );
+      }
+      throw error;
+    });
+  if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
+  const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
+  return items;
+}
+
+async function traceBlockErigon(
+  api: JsonRpcProvider,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  let traces: unknown;
-  try {
-    traces = await api.send("trace_block", [blockTag]);
-  } catch (error) {
+  return await api.send("trace_block", [blockTag]).catch(error => {
     if (isUnsupportedRpcMethodError(error)) {
       throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
         method: "trace_block",
@@ -528,8 +553,31 @@ async function traceBlock(
       });
     }
     throw error;
-  }
+  });
+}
 
+function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+async function callTraceBlock(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  return await traceBlockErigon(api, blockHeight).catch(error => {
+    if (isNumber(blockHeight)) {
+      return traceBlockGeth(api, blockHeight);
+    }
+    throw error;
+  });
+}
+
+async function traceBlock(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  const traces = await callTraceBlock(api, blockHeight);
   if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
 
   return traces.map((trace, index) => {
@@ -538,25 +586,6 @@ async function traceBlock(
     }
     return trace;
   });
-}
-
-function isTraceBlockItem(value: unknown): value is TraceBlockItem {
-  if (typeof value !== "object" || value === null) return false;
-  const o = value as Record<string, unknown>;
-  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
-  const action = o.action as Record<string, unknown>;
-  if (o.error !== undefined && typeof o.error !== "string") return false;
-
-  const result = o.result;
-  const resultOk =
-    result === undefined ||
-    result === null ||
-    (typeof result === "object" &&
-      ((result as Record<string, unknown>).error === undefined ||
-        typeof (result as Record<string, unknown>).error === "string"));
-  const validCall = typeof o.transactionHash === "string" && resultOk;
-
-  return !isTraceBlockCallAction(action) || validCall;
 }
 
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
