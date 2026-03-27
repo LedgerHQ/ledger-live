@@ -74,6 +74,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
       "senders": [
         "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
       ],
+      "transactionSequenceNumber": "15",
       "type": "IN",
       "value": "3000000000",
     },
@@ -116,6 +117,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
       "senders": [
         "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
       ],
+      "transactionSequenceNumber": "1",
       "type": "OUT",
       "value": "1010000000",
     },
@@ -137,6 +139,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
       "senders": [
         "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
       ],
+      "transactionSequenceNumber": "0",
       "type": "REDELEGATE",
       "value": "0",
     },
@@ -181,6 +184,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
       "senders": [
         "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
       ],
+      "transactionSequenceNumber": "1",
       "type": "IN",
       "value": "1000000000",
     },
