@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
@@ -11,16 +11,23 @@ import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAsset
 
 interface CryptoAddressesButtonViewModelResult {
   accountsCount: number;
+  hasAccounts: boolean;
   firstThreeCurrencies: (CryptoCurrency | TokenCurrency)[];
   onPress: () => void;
+  isAddAccountOpen: boolean;
+  onCloseAddAccount: () => void;
 }
 
 export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewModelResult {
   const accounts = useSelector(shallowAccountsSelector);
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const route = useRoute();
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
+  const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
 
   const accountsCount = accounts.length;
+  const hasAccounts = accountsCount > 0;
+  const shouldShowAddAccount = isAddAccountOpen && !hasAccounts;
 
   const firstThreeCurrencies = useMemo(
     () =>
@@ -32,19 +39,38 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
   );
 
   const onPress = useCallback(() => {
-    track("button_clicked", {
-      button: "crypto_accounts",
-      page: "Wallet",
-    });
-    navigation.navigate(NavigatorName.Assets, {
-      screen: ScreenName.AssetsList,
-      params: {
-        sourceScreenName: ScreenName.Portfolio,
-        showHeader: true,
-        isSyncEnabled: true,
-      },
-    });
-  }, [navigation]);
+    if (hasAccounts) {
+      track("button_clicked", {
+        button: "account_cta",
+        type: "view",
+        page: route.name,
+      });
+      navigation.navigate(NavigatorName.Assets, {
+        screen: ScreenName.AssetsList,
+        params: {
+          sourceScreenName: ScreenName.Portfolio,
+          showHeader: true,
+          isSyncEnabled: true,
+        },
+      });
+    } else {
+      track("button_clicked", {
+        button: "account_cta",
+        type: "add",
+        page: route.name,
+      });
+      setIsAddAccountOpen(true);
+    }
+  }, [hasAccounts, navigation, route.name]);
 
-  return { accountsCount, firstThreeCurrencies, onPress };
+  const onCloseAddAccount = useCallback(() => setIsAddAccountOpen(false), []);
+
+  return {
+    accountsCount,
+    hasAccounts,
+    firstThreeCurrencies,
+    onPress,
+    isAddAccountOpen: shouldShowAddAccount,
+    onCloseAddAccount,
+  };
 }
