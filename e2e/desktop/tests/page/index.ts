@@ -15,7 +15,6 @@ import { LiveApp } from "./liveApp.page";
 import { LockscreenPage } from "./lockscreen.page";
 import { MarketPage } from "./market.page";
 import { Modal } from "tests/component/modal.component";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { OnboardingPage } from "./onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { PageHolder } from "./abstractClasses";
@@ -56,7 +55,6 @@ export class Application extends PageHolder {
   public LockscreenPage = new LockscreenPage(this.page);
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
-  public modularDrawer = new ModularDrawer(this.page);
   public modularDialog = new ModularDialog(this.page);
   public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public onboarding = new OnboardingPage(this.page);

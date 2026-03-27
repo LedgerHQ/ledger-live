@@ -1,16 +1,5 @@
 import { useCallback, useState } from "react";
-import {
-  MODULAR_DRAWER_STEP,
-  ModularDrawerStep,
-  NAVIGATION_DIRECTION,
-  NavigationDirection,
-} from "../types";
-
-const ACCOUNT_SELECTION_STEP_ORDER: ModularDrawerStep[] = [
-  "ASSET_SELECTION",
-  "NETWORK_SELECTION",
-  "ACCOUNT_SELECTION",
-];
+import { NavigationDirection } from "../components/AnimatedScreenWrapper";
 
 interface UseGenericNavigationProps<T> {
   stepOrder: T[];
@@ -49,15 +38,4 @@ export function useGenericNavigation<T>({
     goToStep,
     setCurrentStep,
   };
-}
-
-export function useModularDrawerNavigation(
-  initialStep: ModularDrawerStep = MODULAR_DRAWER_STEP.ASSET_SELECTION,
-) {
-  return useGenericNavigation({
-    stepOrder: ACCOUNT_SELECTION_STEP_ORDER,
-    initialStep,
-    forwardDirection: NAVIGATION_DIRECTION.FORWARD,
-    backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
-  });
 }

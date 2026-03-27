@@ -108,10 +108,7 @@ async function load(ns: string): Promise<unknown> {
     const dataObj = data as Record<string, unknown>;
 
     if (ns === "app") {
-      memoryNamespaces[ns] = pick(dataObj, APP_NAMESPACE_TOP_LEVEL_KEYS) as Record<
-        string,
-        unknown
-      >;
+      memoryNamespaces[ns] = pick(dataObj, APP_NAMESPACE_TOP_LEVEL_KEYS) as Record<string, unknown>;
     } else {
       memoryNamespaces[ns] = dataObj;
     }

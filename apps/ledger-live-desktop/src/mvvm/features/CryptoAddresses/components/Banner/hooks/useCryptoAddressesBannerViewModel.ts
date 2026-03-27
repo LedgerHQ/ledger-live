@@ -4,7 +4,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";

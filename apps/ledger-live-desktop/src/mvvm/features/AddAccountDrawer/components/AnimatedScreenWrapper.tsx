@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
 import React from "react";
-import type { ModularDrawerAddAccountStep } from "../../AddAccountDrawer/domain";
-import type { ModularDrawerStep, NavigationDirection } from "../types";
+import type { ModularDrawerAddAccountStep } from "../domain";
+
+export const NAVIGATION_DIRECTION = {
+  FORWARD: "FORWARD",
+  BACKWARD: "BACKWARD",
+} as const;
+
+export type NavigationDirection = (typeof NAVIGATION_DIRECTION)[keyof typeof NAVIGATION_DIRECTION];
 
 const TOP_BAR = 62;
 
@@ -12,7 +18,7 @@ const AnimatedScreenWrapper = ({
   ...props
 }: {
   children: React.ReactNode;
-  screenKey: ModularDrawerStep | ModularDrawerAddAccountStep;
+  screenKey: ModularDrawerAddAccountStep;
   direction: NavigationDirection;
 }) => {
   const variants = {

@@ -62,7 +62,7 @@ const defaultStore = {
       },
     ],
   },
-  modularDrawer: { flow: "Modular Account Flow", source: "Accounts" },
+  modularDialog: { flow: "Modular Account Flow", source: "Accounts" },
 };
 
 const store = createStore(() => defaultStore);

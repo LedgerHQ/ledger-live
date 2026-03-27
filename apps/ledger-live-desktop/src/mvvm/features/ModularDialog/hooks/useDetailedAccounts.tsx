@@ -13,12 +13,12 @@ import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hoo
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";
-import { useOpenAssetFlowDialog } from "./useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "./useOpenAssetFlow";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 export const useDetailedAccounts = (
@@ -28,8 +28,8 @@ export const useDetailedAccounts = (
   const { trackModularDialogEvent } = useModularDialogAnalytics();
   const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const source = useSelector(modularDrawerSourceSelector);
-  const { openAddAccountFlow } = useOpenAssetFlowDialog(
+  const source = useSelector(modularDialogSourceSelector);
+  const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
   );

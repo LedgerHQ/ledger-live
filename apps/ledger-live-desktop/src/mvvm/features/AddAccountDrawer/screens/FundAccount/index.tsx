@@ -8,7 +8,7 @@ import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/ad
 import { useAccountFormatter } from "../AccountsAdded/hooks";
 import { ActionsContainer } from "./components";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 interface Props {
   account: Account;
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const FundAccount = ({ account, currency }: Props) => {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const formattedAccount = useAccountFormatter()(account);
 
   return (

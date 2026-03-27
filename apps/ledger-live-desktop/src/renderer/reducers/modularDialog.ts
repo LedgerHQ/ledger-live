@@ -15,7 +15,7 @@ export interface ModularDialogParams {
   onClose?: () => void;
 }
 
-export interface ModularDrawerState {
+export interface ModularDialogState {
   searchedValue?: string;
   isDebuggingDuplicates: boolean;
   flow: string;
@@ -24,7 +24,7 @@ export interface ModularDrawerState {
   dialogParams: ModularDialogParams | null;
 }
 
-const initialState: ModularDrawerState = {
+const initialState: ModularDialogState = {
   searchedValue: undefined,
   isDebuggingDuplicates: false,
   flow: "",
@@ -33,8 +33,8 @@ const initialState: ModularDrawerState = {
   dialogParams: null,
 };
 
-const modularDrawerSlice = createSlice({
-  name: "modularDrawer",
+const modularDialogSlice = createSlice({
+  name: "modularDialog",
   initialState,
   reducers: {
     setSearchedValue: (state, action: PayloadAction<string | undefined>) => {
@@ -43,7 +43,7 @@ const modularDrawerSlice = createSlice({
     setIsDebuggingDuplicates: (state, action: PayloadAction<boolean>) => {
       state.isDebuggingDuplicates = action.payload;
     },
-    resetModularDrawerState: () => initialState,
+    resetModularDialogState: () => initialState,
     setFlowValue: (state, action: PayloadAction<string>) => {
       state.flow = action.payload;
     },
@@ -61,38 +61,38 @@ const modularDrawerSlice = createSlice({
   },
 });
 
-export const modularDrawerSearchedSelector = (state: State) => state.modularDrawer.searchedValue;
-export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;
-export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
-export const modularDialogIsOpenSelector = (state: State) => state.modularDrawer.isOpen;
+export const modularDialogSearchedSelector = (state: State) => state.modularDialog.searchedValue;
+export const modularDialogFlowSelector = (state: State) => state.modularDialog.flow;
+export const modularDialogSourceSelector = (state: State) => state.modularDialog.source;
+export const modularDialogIsOpenSelector = (state: State) => state.modularDialog.isOpen;
 export const modularDialogOnCloseSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.onClose;
+  state.modularDialog.dialogParams?.onClose;
 export const modularDialogOnAccountSelectedSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.onAccountSelected;
+  state.modularDialog.dialogParams?.onAccountSelected;
 export const modularDialogOnAssetSelectedSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.onAssetSelected;
+  state.modularDialog.dialogParams?.onAssetSelected;
 export const modularDialogConfigurationSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.dialogConfiguration;
+  state.modularDialog.dialogParams?.dialogConfiguration;
 export const modularDialogCurrenciesSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.currencies;
+  state.modularDialog.dialogParams?.currencies;
 export const modularDialogUseCaseSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.useCase;
+  state.modularDialog.dialogParams?.useCase;
 export const modularDialogUiUseCaseSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.uiUseCase;
+  state.modularDialog.dialogParams?.uiUseCase;
 export const modularDialogAreCurrenciesFilteredSelector = (state: State) =>
-  state.modularDrawer.dialogParams?.areCurrenciesFiltered;
+  state.modularDialog.dialogParams?.areCurrenciesFiltered;
 
-export const modularDrawerIsDebuggingDuplicatesSelector = (state: State) =>
-  state.modularDrawer.isDebuggingDuplicates;
+export const modularDialogIsDebuggingDuplicatesSelector = (state: State) =>
+  state.modularDialog.isDebuggingDuplicates;
 
 export const {
   setSearchedValue,
   setIsDebuggingDuplicates,
-  resetModularDrawerState,
+  resetModularDialogState,
   setFlowValue,
   setSourceValue,
   openDialog,
   closeDialog,
-} = modularDrawerSlice.actions;
+} = modularDialogSlice.actions;
 
-export default modularDrawerSlice.reducer;
+export default modularDialogSlice.reducer;

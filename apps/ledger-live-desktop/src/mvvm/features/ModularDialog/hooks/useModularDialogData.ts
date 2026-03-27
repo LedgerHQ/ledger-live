@@ -6,8 +6,8 @@ import {
   modularDialogAreCurrenciesFilteredSelector,
   modularDialogCurrenciesSelector,
   modularDialogUseCaseSelector,
-  modularDrawerSearchedSelector,
-} from "~/renderer/reducers/modularDrawer";
+  modularDialogSearchedSelector,
+} from "~/renderer/reducers/modularDialog";
 import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
@@ -21,7 +21,7 @@ export function useModularDialogData() {
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
     [modularDrawerFeature?.params?.backendEnvironment],
   );
-  const searchedValue = useSelector(modularDrawerSearchedSelector);
+  const searchedValue = useSelector(modularDialogSearchedSelector);
 
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
   const useCase = useSelector(modularDialogUseCaseSelector);

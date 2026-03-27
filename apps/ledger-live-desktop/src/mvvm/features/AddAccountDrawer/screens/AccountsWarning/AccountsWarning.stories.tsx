@@ -5,7 +5,7 @@ import { legacy_createStore as createStore } from "redux";
 import AccountsWarning from ".";
 import { bitcoinCurrency } from "../../../__mocks__/useSelectAssetFlow.mock";
 
-const store = createStore(() => ({ modularDrawer: { source: "someSource" } }));
+const store = createStore(() => ({ modularDialog: { source: "someSource" } }));
 
 const meta: Meta<typeof AccountsWarning> = {
   title: "ModularDialog/AccountsWarning",

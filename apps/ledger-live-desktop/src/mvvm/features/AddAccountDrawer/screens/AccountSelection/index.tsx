@@ -7,16 +7,16 @@ import { SelectAccountList } from "./components/List";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
-import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
+import TrackDialogScreen from "LLD/features/ModularDialog/analytics/TrackDialogScreen";
 import {
-  MODULAR_DRAWER_PAGE_NAME,
-  ModularDrawerEventName,
-} from "../../analytics/modularDrawer.types";
+  MODULAR_DIALOG_PAGE_NAME,
+  ModularDialogEventName,
+} from "LLD/features/ModularDialog/analytics/modularDialog.types";
 
 type Props = {
   asset: CryptoOrTokenCurrency;
   hideAddAccountButton?: boolean;
-  overridePageName?: ModularDrawerEventName;
+  overridePageName?: ModularDialogEventName;
   uiUseCase?: string;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
@@ -51,8 +51,8 @@ export const AccountSelection = ({
 
   return (
     <>
-      <TrackDrawerScreen
-        page={overridePageName ?? MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
+      <TrackDialogScreen
+        page={overridePageName ?? MODULAR_DIALOG_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
       />
       <SelectAccountList
         accounts={accounts}
