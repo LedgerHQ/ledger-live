@@ -1,24 +1,42 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
-import { useAssetsViewModel, padItems, resolveMarketId } from "../useAssetsViewModel";
+import { useAssetsViewModel } from "../useAssetsViewModel";
+import { padItems, resolveMarketId } from "../../utils/assetTableHelpers";
 import {
   createMockCategorizedAssets,
   BITCOIN_ASSET,
   STABLECOIN_ASSET,
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import type { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
-import { EMPTY_STATE_CRYPTOS, EMPTY_STATE_STABLECOINS, MAX_ITEM_DISPLAYED } from "../../constants";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  ASSETS_PAGE_CATEGORY_CRYPTOS,
+  ASSETS_PAGE_CATEGORY_STABLECOINS,
+  EMPTY_STATE_CRYPTOS,
+  EMPTY_STATE_STABLECOINS,
+  MAX_ITEM_DISPLAYED,
+} from "../../constants";
+import { buildAssetsPagePath } from "../../utils/buildAssetsPagePath";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import type { AssetTableItem } from "../../types";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import useCryptoAssetsViewModel from "LLD/features/CryptoAddresses/hooks/useCryptoAssetsViewModel";
+import { buildPlaceholderAssetItemsFromAssetsData } from "../../utils/buildPlaceholderAssetItemsFromAssetsData";
 
 const mockNavigate = jest.fn();
+const mockSetTrackingSource = jest.fn();
+const mockSearchParamsRef = { current: new URLSearchParams() };
+
+jest.mock("~/renderer/analytics/TrackPage", () => ({
+  setTrackingSource: (...args: unknown[]) => mockSetTrackingSource(...args),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: jest.fn(() => mockNavigate),
+  useSearchParams: jest.fn(() => [mockSearchParamsRef.current, jest.fn()]),
 }));
 const mockedUseNavigate = jest.mocked(useNavigate);
 
@@ -62,7 +80,7 @@ const ripple = getCryptoCurrencyById("ripple");
 const tron = getCryptoCurrencyById("tron");
 
 function buildMockAssetsData(
-  cryptos: { id: string; ticker: string; currencyObj: typeof solana }[],
+  cryptos: { id: string; ticker: string; currencyObj: CryptoOrTokenCurrency }[],
 ): AssetsDataWithPagination {
   const cryptoAssets: AssetsDataWithPagination["cryptoAssets"] = {};
   const cryptoOrTokenCurrencies: AssetsDataWithPagination["cryptoOrTokenCurrencies"] = {};
@@ -171,6 +189,35 @@ describe("resolveMarketId", () => {
   });
 });
 
+describe("buildPlaceholderAssetItemsFromAssetsData", () => {
+  it("classifies tickers present in stablecoinTickers as stablecoin placeholders", () => {
+    const data = buildMockAssetsData([
+      { id: STABLECOIN_ASSET.currency.id, ticker: "USDC", currencyObj: STABLECOIN_ASSET.currency },
+    ]);
+    const { cryptos, stablecoins } = buildPlaceholderAssetItemsFromAssetsData(
+      data,
+      new Set(["USDC"]),
+    );
+
+    expect(cryptos).toHaveLength(0);
+    expect(stablecoins).toHaveLength(1);
+    expect(stablecoins[0].currency.id).toBe(STABLECOIN_ASSET.currency.id);
+    expect(stablecoins[0].isPlaceholder).toBe(true);
+    expect(stablecoins[0].placeholderPrice).toBe(100);
+  });
+
+  it("classifies tickers not in stablecoinTickers as crypto placeholders", () => {
+    const data = buildMockAssetsData([
+      { id: BITCOIN_ASSET.currency.id, ticker: "BTC", currencyObj: BITCOIN_ASSET.currency },
+    ]);
+    const { cryptos, stablecoins } = buildPlaceholderAssetItemsFromAssetsData(data, new Set());
+
+    expect(stablecoins).toHaveLength(0);
+    expect(cryptos).toHaveLength(1);
+    expect(cryptos[0].currency.id).toBe(BITCOIN_ASSET.currency.id);
+  });
+});
+
 describe("useAssetsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -211,24 +258,26 @@ describe("useAssetsViewModel", () => {
     expect(stablecoins.totalCount).toBe(mockCategorizedAssets.stablecoins.length);
   });
 
-  it("should navigate to /cryptos when onNavigate is called", () => {
+  it("should navigate to /assets with cryptos category when cryptos onNavigate is called", () => {
     const { result } = renderHook(() => useAssetsViewModel());
 
     act(() => {
       result.current.sections[0].onNavigate();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+    expect(mockNavigate).toHaveBeenCalledWith(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_CRYPTOS));
   });
 
-  it("should navigate to /assets when stablecoins onNavigate is called", () => {
+  it("should navigate to /assets with stablecoins category when stablecoins onNavigate is called", () => {
     const { result } = renderHook(() => useAssetsViewModel());
 
     act(() => {
       result.current.sections[1].onNavigate();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/assets");
+    expect(mockNavigate).toHaveBeenCalledWith(
+      buildAssetsPagePath(ASSETS_PAGE_CATEGORY_STABLECOINS),
+    );
   });
 
   it("should navigate to /asset when onItemClick is called with a real item", () => {
@@ -467,5 +516,120 @@ describe("useAssetsViewModel", () => {
 
       expect(result.current.isLoading).toBe(true);
     });
+  });
+});
+
+describe("useCryptoAssetsViewModel", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSetTrackingSource.mockClear();
+    mockedUseNavigate.mockReturnValue(mockNavigate);
+    mockSearchParamsRef.current = new URLSearchParams();
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+      categorizedAssets: mockCategorizedAssets,
+      isLoadingStablecoinTickers: false,
+      stablecoinTickers: new Set(["USDC"]),
+    });
+    mockUseAssetsData.mockReturnValue({ data: undefined, isLoading: false });
+  });
+
+  it("returns stablecoins title by default (no category query)", () => {
+    const { result } = renderHook(() => useCryptoAssetsViewModel());
+    expect(result.current.title).toBe("Stablecoins");
+  });
+
+  it("returns cryptos title when category=cryptos", () => {
+    mockSearchParamsRef.current.set("category", "cryptos");
+    const { result } = renderHook(() => useCryptoAssetsViewModel());
+    expect(result.current.title).toBe("Crypto");
+  });
+
+  it("lists owned cryptos when category=cryptos and user has accounts", () => {
+    mockSearchParamsRef.current.set("category", "cryptos");
+    const { result } = renderHook(() => useCryptoAssetsViewModel(), {
+      initialState: onboardedStateWithAccounts,
+    });
+    expect(
+      result.current.items.some(
+        item => item.currency.id === BITCOIN_ASSET.currency.id && !item.isPlaceholder,
+      ),
+    ).toBe(true);
+  });
+
+  it("navigates home when onBack is called", () => {
+    const { result } = renderHook(() => useCryptoAssetsViewModel());
+
+    act(() => {
+      result.current.onBack();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+  });
+
+  it("lists owned stablecoins when the user has accounts", () => {
+    const { result } = renderHook(() => useCryptoAssetsViewModel(), {
+      initialState: onboardedStateWithAccounts,
+    });
+
+    expect(
+      result.current.items.some(
+        item => item.currency.id === STABLECOIN_ASSET.currency.id && !item.isPlaceholder,
+      ),
+    ).toBe(true);
+  });
+
+  it("navigates to the asset page and sets tracking when a real row is activated", () => {
+    const { result } = renderHook(() => useCryptoAssetsViewModel(), {
+      initialState: onboardedStateWithAccounts,
+    });
+    const real = result.current.items.find(item => !item.isPlaceholder);
+    expect(real).toBeDefined();
+
+    act(() => {
+      result.current.onAssetRowClick(real!);
+    });
+
+    expect(mockSetTrackingSource).toHaveBeenCalledWith("crypto assets");
+    expect(mockNavigate).toHaveBeenCalledWith(`/asset/${real!.currency.id}`);
+  });
+
+  it("navigates to the market page when a placeholder row is activated", () => {
+    const usdc = STABLECOIN_ASSET.currency;
+    mockUseAssetsData.mockReturnValue({
+      data: buildMockAssetsData([{ id: usdc.id, ticker: "USDC", currencyObj: usdc }]),
+      isLoading: false,
+    });
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+      categorizedAssets: createMockCategorizedAssets({ cryptos: [], stablecoins: [] }),
+      isLoadingStablecoinTickers: false,
+      stablecoinTickers: new Set(["USDC"]),
+    });
+
+    const { result } = renderHook(() => useCryptoAssetsViewModel(), {
+      initialState: onboardedStateWithAccounts,
+    });
+
+    const placeholder = result.current.items.find(item => item.isPlaceholder);
+    expect(placeholder).toBeDefined();
+
+    act(() => {
+      result.current.onAssetRowClick(placeholder!);
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/market/${encodeURIComponent(resolveMarketId(placeholder!.marketId ?? placeholder!.currency.id))}`,
+    );
+  });
+
+  it("is loading while stablecoin tickers are loading", () => {
+    mockUseCategorizedAssetsFromPortfolio.mockReturnValue({
+      categorizedAssets: mockCategorizedAssets,
+      isLoadingStablecoinTickers: true,
+      stablecoinTickers: new Set(["USDC"]),
+    });
+
+    const { result } = renderHook(() => useCryptoAssetsViewModel());
+
+    expect(result.current.isLoading).toBe(true);
   });
 });

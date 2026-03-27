@@ -31,7 +31,7 @@ export function CryptoAddressesView({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-32">
+    <div className="flex flex-col gap-32 pb-32">
       <TrackPage category="Crypto" />
       <PageHeader title={t("cryptoAddresses.title")} />
       <div data-testid="crypto-page-content" className="flex flex-col gap-12">
