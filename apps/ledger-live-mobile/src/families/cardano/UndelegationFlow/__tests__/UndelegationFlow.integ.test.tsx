@@ -154,7 +154,7 @@ describe("UndelegationFlow Integration", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it("should navigate through the full undelegation flow without rewards", async () => {

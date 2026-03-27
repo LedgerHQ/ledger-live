@@ -16,6 +16,16 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { CardanoDelegationFlowParamList } from "../types";
 import { http, HttpResponse } from "msw";
 
+const mockAccount: CardanoAccount = getCardanoAccountFixture({
+  delegation: {
+    rewards: new BigNumber("0"),
+    status: false,
+    poolId: undefined,
+    dRepHex: undefined,
+    deposit: "0",
+  },
+});
+
 jest.mock("LLM/hooks/useAccountScreen", () => ({
   useAccountScreen: () => ({ account: mockAccount, parentAccount: null }),
 }));
@@ -57,16 +67,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     ),
   })),
 }));
-
-const mockAccount: CardanoAccount = getCardanoAccountFixture({
-  delegation: {
-    rewards: new BigNumber("0"),
-    status: false,
-    poolId: undefined,
-    dRepHex: undefined,
-    deposit: "0",
-  },
-});
 
 import { ScreenName } from "~/const";
 
@@ -156,7 +156,7 @@ describe("DelegationFlow Integration", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it("should navigate through the delegation flow", async () => {
