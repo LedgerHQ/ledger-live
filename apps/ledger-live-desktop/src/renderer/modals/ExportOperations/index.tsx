@@ -1,17 +1,10 @@
-import { ipcRenderer } from "electron";
-import React, { memo, useState, useCallback, useEffect, useRef } from "react";
+import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
-import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { createStructuredSelector } from "reselect";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import { Account } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import logger from "~/renderer/logger";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";
 import { colors } from "~/renderer/styles/theme";
@@ -24,96 +17,27 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
 import { ModalData } from "../types";
-import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
-import { walletSelector } from "~/renderer/reducers/wallet";
-
-/** Account (and subAccounts) have all operations loaded: operations.length === operationsCount */
-function hasFullOperations(account: Account): boolean {
-  if (account.operations.length !== account.operationsCount) return false;
-  const subAccounts = account.subAccounts ?? [];
-  return subAccounts.every(sub => sub.operations.length === sub.operationsCount);
-}
+import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
 
 type OwnProps = object;
 type Props = OwnProps & {
   closeModal: (a: keyof ModalData) => void;
   accounts: Account[];
-  countervalueCurrency?: Currency;
 };
 
 const mapStateToProps = createStructuredSelector({
   accounts: accountsSelector,
-  countervalueCurrency: counterValueCurrencySelector,
 });
 const mapDispatchToProps = {
   closeModal,
 };
-const exportOperations = async (
-  path: Electron.SaveDialogReturnValue,
-  csv: string,
-  callback?: () => void,
-) => {
-  try {
-    const res = await ipcRenderer.invoke("export-operations", path, csv);
-    if (res && callback) {
-      callback();
-    }
-  } catch {
-    // ignore
-  }
-};
-function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props) {
+function ExportOperations({ accounts, closeModal }: Props) {
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
-  const [success, setSuccess] = useState(false);
-  const sync = useBridgeSync();
-  const countervalueState = useCountervaluesState();
-  const getDateTxt = useTechnicalDateFn();
-  const walletState = useSelector(walletSelector);
+  const { success, isLoading, exportCsv, resetState } = useExportOperationsCsv({
+    accounts,
+    checkedIds,
+  });
 
-  // Schedule full sync once when export modal opens so export can have all operations
-  const hasScheduledSync = useRef(false);
-  useEffect(() => {
-    if (accounts.length === 0 || hasScheduledSync.current) return;
-    hasScheduledSync.current = true;
-    sync({
-      type: "SYNC_SOME_ACCOUNTS",
-      accountIds: accounts.map(a => a.id),
-      priority: 10,
-      reason: "export-operations",
-    });
-  }, [accounts, sync]);
-
-  const selectedAccounts = accounts.filter(a => checkedIds.includes(a.id));
-  const selectedAccountsHaveFullOps =
-    selectedAccounts.length > 0 && selectedAccounts.every(hasFullOperations);
-  const selectedAccountsNeedSync = selectedAccounts.length > 0 && !selectedAccountsHaveFullOps;
-
-  const exportCsv = useCallback(async () => {
-    const path = await ipcRenderer.invoke("show-save-dialog", {
-      title: "Exported account transactions",
-      defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
-      filters: [
-        {
-          name: "All Files",
-          extensions: ["csv"],
-        },
-      ],
-    });
-    if (path) {
-      exportOperations(
-        path,
-        accountsOpToCSV(
-          accounts.filter(account => checkedIds.includes(account.id)),
-          countervalueCurrency,
-          countervalueState,
-          walletState,
-        ),
-        () => {
-          setSuccess(true);
-        },
-      );
-    }
-  }, [accounts, checkedIds, countervalueCurrency, countervalueState, getDateTxt, walletState]);
   const onClose = useCallback(() => closeModal("MODAL_EXPORT_OPERATIONS"), [closeModal]);
   const handleButtonClick = useCallback(() => {
     let exporting = false;
@@ -146,9 +70,9 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
     });
   }, []);
   const onHide = useCallback(() => {
-    setSuccess(false);
+    resetState();
     setCheckedIds([]);
-  }, []);
+  }, [resetState]);
   return (
     <Modal name="MODAL_EXPORT_OPERATIONS" centered onHide={onHide}>
       <ModalBody
@@ -199,7 +123,7 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
           <Box horizontal justifyContent="flex-end">
             <Button
               disabled={!success && !checkedIds.length}
-              isLoading={selectedAccountsNeedSync}
+              isLoading={isLoading}
               onClick={handleButtonClick}
               event={!success ? "Operation history" : undefined}
               data-testid="export-operations-save-button"

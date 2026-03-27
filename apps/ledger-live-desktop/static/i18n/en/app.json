@@ -8436,6 +8436,24 @@
     "emptyState": {
       "title": "No transactions yet",
       "description": "Come back later to see your transactions."
+    },
+    "actionsBar": {
+      "csv": "CSV"
+    },
+    "exportDialog": {
+      "title": "Transaction History",
+      "description": "Choose the accounts to include in the export",
+      "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
+      "accountsToInclude": "Accounts to include",
+      "selectAll": "Select all ({{count}})",
+      "deselectAll": "Deselect all ({{count}})",
+      "export": "Export history",
+      "successTitle": "Transaction history saved successfully",
+      "successDescription": "The CSV file of your transaction history was saved successfully in the selected folder",
+      "done": "Done",
+      "errorTitle": "Something went wrong",
+      "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
+      "tryAgain": "Try again"
     }
   }
 }
