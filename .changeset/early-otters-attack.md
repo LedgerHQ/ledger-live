@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-signer-hyperliquid": patch
+"@ledgerhq/live-signer-hyperliquid": minor
 ---
 
 Update hyperliquid signer version

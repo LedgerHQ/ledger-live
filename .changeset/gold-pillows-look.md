@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-cli": patch
-"@ledgerhq/live-common": patch
-"live-mobile": patch
+"@ledgerhq/live-cli": minor
+"@ledgerhq/live-common": minor
+"live-mobile": minor
 ---
 
 fix: replace exec/execSync with execFile/execFileSync to avoid shell injection
