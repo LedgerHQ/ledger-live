@@ -300,6 +300,8 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
+  totalMarketCap: boolean;
+  topGainersLosers: boolean;
 };
 
 // === WALLET CONNECT STATE ===

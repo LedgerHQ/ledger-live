@@ -145,6 +145,8 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
+    totalMarketCap: true,
+    topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
@@ -213,6 +215,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       ...filteredPayload,
+      notifications: {
+        ...state.notifications,
+        ...filteredPayload.notifications,
+      },
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
