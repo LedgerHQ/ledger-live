@@ -2807,7 +2807,8 @@
     "refreshStatus": {
       "refreshing": "Refreshing...",
       "upToDate": "Portfolio up to date",
-      "syncError": "Some account data couldn’t load"
+      "syncError": "Some account data couldn’t load",
+      "offline": "You’re offline. Please check your connection"
     }
   },
   "addAccountsModal": {
