@@ -1,4 +1,3 @@
-import type { DecryptedTransaction, DecryptedOutput } from "@ledgerhq/zcash-decrypt";
 import type { BigNumber } from "bignumber.js";
 
 export type * from "./jsonRpcClient";
@@ -7,13 +6,30 @@ export type * from "./ZCash";
 
 export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
 
+export type DecryptedOutputRaw = {
+  memo: string;
+  transfer_type: string;
+  amount: string;
+};
+
+export type DecryptedOutput = {
+  memo: string;
+  transfer_type: string;
+  amount: BigNumber;
+};
+
+export type DecryptedTransaction = {
+  orchard_outputs: DecryptedOutput[];
+  sapling_outputs: DecryptedOutput[];
+};
+
 export type ShieldedTransaction = {
   id: string;
   hex: string;
   blockHeight: number;
   blockHash: string;
   timestamp: number;
-  fee: number;
+  fee: BigNumber;
   decryptedData?: DecryptedTransaction;
 };
 
@@ -43,16 +59,11 @@ export type ShieldedTransactionRaw = {
   blockHeight: number;
   blockHash: string;
   timestamp: number;
-  fee: number;
+  fee: string;
   decryptedData?: {
-    orchard_outputs: DecryptedOutput[];
-    sapling_outputs: DecryptedOutput[];
+    orchard_outputs: DecryptedOutputRaw[];
+    sapling_outputs: DecryptedOutputRaw[];
   };
-};
-
-export type ShieldedSyncResult = {
-  operations: ShieldedTransaction[];
-  latestBlockHeight: number;
 };
 
 export const ZCASH_SHIELDED_TX_IN_TYPES = ["SHIELDED_TX_SAPLING_IN", "SHIELDED_TX_ORCHARD_IN"];
