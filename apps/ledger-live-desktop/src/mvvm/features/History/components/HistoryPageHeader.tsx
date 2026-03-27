@@ -5,7 +5,12 @@ import { Csv } from "@ledgerhq/lumen-ui-react/symbols";
 import { useTranslation } from "react-i18next";
 import { HistoryExportDialog } from "./HistoryExportDialog";
 
-export default function HistoryPageHeader({ onBack }: { readonly onBack: () => void }) {
+type Props = Readonly<{
+  onBack: () => void;
+  onExportClick: () => void;
+}>;
+
+export default function HistoryPageHeader({ onBack, onExportClick }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -14,7 +19,7 @@ export default function HistoryPageHeader({ onBack }: { readonly onBack: () => v
       onBack={onBack}
       trailing={
         <HistoryExportDialog>
-          <Button appearance="transparent" size="sm" icon={Csv}>
+          <Button appearance="transparent" size="sm" icon={Csv} onClick={onExportClick}>
             {t("history.actionsBar.csv")}
           </Button>
         </HistoryExportDialog>
