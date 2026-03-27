@@ -144,10 +144,7 @@ export default function PerpsSign({ navigation, route }: NavigationProps) {
             </Tag>
           ) : null}
           <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={4}>
-            {t("SignMessageConfirm.title", { wording: productName })}
-          </Text>
-          <Text variant="bodyLineHeight" color="neutral.c70" textAlign="center">
-            {t("SignMessageConfirm.description")}
+            {t("ValidateOnDevice.title.send", { productName })}
           </Text>
         </Flex>
       </ScrollView>
