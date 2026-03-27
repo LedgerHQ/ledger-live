@@ -5,6 +5,7 @@ import PageHeader from "LLD/components/PageHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 import { PlainCryptoTable } from "./components/PlainCryptoTable";
+import { ASSETS_TRACKING_PAGE_NAME } from "./constants";
 
 export type CryptoAssetsViewProps = {
   readonly title: string;
@@ -23,7 +24,7 @@ export function CryptoAssetsView({
 }: CryptoAssetsViewProps) {
   return (
     <div className="flex flex-col gap-32 pb-32">
-      <TrackPage category="Crypto assets" />
+      <TrackPage category={ASSETS_TRACKING_PAGE_NAME} />
       <PageHeader title={title} onBack={onBack} />
       <div data-testid="crypto-assets-page-content" className="flex flex-col gap-12">
         {isLoading ? (

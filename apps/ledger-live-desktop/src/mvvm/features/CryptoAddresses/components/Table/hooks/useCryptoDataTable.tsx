@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useLumenDataTable } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -8,7 +8,9 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import type { ColumnDef, Row } from "@tanstack/react-table";
+import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
+import { track } from "~/renderer/analytics/segment";
+import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import {
   AccountAddressCell,
   AccountNameCell,
@@ -97,14 +99,30 @@ export function useCryptoDataTable({
     [t, walletState, lookupParentAccount, balanceSortFiatByAccountId],
   );
 
+  const [sorting, setSorting] = useState<SortingState>([{ id: "balance", desc: true }]);
+
+  const handleSortingChange = useCallback(
+    (updater: Updater<SortingState>) => {
+      const next = typeof updater === "function" ? updater(sorting) : updater;
+      const sort = next[0];
+      if (sort) {
+        track("changeSort", {
+          [sort.id]: sort.desc ? "desc" : "asc",
+          page: CRYPTO_TRACKING_PAGE_NAME,
+        });
+      }
+      setSorting(next);
+    },
+    [sorting],
+  );
+
   const table = useLumenDataTable({
     data: rows,
     columns,
     enableMultiSort: false,
     enableSortingRemoval: false,
-    initialState: {
-      sorting: [{ id: "balance", desc: true }],
-    },
+    state: { sorting },
+    onSortingChange: handleSortingChange,
   });
 
   const handleRowClick = useCallback(

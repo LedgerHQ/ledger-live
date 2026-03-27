@@ -18,6 +18,11 @@ import {
 } from "../constants";
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems, resolveMarketId } from "../utils/assetTableHelpers";
+import { track } from "~/renderer/analytics/segment";
+import {
+  ASSETS_TRACKING_PAGE_NAME,
+  CRYPTO_TRACKING_PAGE_NAME,
+} from "../../CryptoAddresses/constants";
 
 export function useAssetsViewModel(): AssetsViewProps {
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
@@ -42,10 +47,20 @@ export function useAssetsViewModel(): AssetsViewProps {
   const { t } = useTranslation();
 
   const onNavigateToCryptos = useCallback(() => {
+    track("button_clicked", {
+      button: "account_cta",
+      type: "view",
+      page: CRYPTO_TRACKING_PAGE_NAME,
+    });
     navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_CRYPTOS));
   }, [navigate]);
 
   const onNavigateToCryptoAssets = useCallback(() => {
+    track("button_clicked", {
+      button: "account_cta",
+      type: "view",
+      page: ASSETS_TRACKING_PAGE_NAME,
+    });
     navigate(buildAssetsPagePath(ASSETS_PAGE_CATEGORY_STABLECOINS));
   }, [navigate]);
 
