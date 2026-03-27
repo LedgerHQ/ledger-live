@@ -13,6 +13,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { EarnScreen } from "~/screens/PTX/Earn";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
+import { EarnMenuBottomSheet } from "~/screens/PTX/Earn/EarnMenuBottomSheet";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
 import { EarnInfoBottomSheet } from "~/screens/PTX/Earn/EarnInfoBottomSheet";
@@ -178,6 +179,7 @@ const Earn = (props: NavigationProps) => {
       <EarnInfoDrawer />
       <EarnInfoBottomSheet />
       <EarnMenuDrawer navigation={navigation} />
+      <EarnMenuBottomSheet navigation={navigation} />
     </>
   );
 };

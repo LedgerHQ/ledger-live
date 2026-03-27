@@ -328,6 +328,7 @@ export type EarnState = {
     title?: string;
     options: { label: string; metadata: OptionMetadata }[];
   };
+  menuBottomSheet?: { icon: string; label: string; metadata: OptionMetadata }[];
   protocolInfoModal?: true;
 };
 
