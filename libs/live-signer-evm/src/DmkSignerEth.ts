@@ -16,6 +16,7 @@ import {
   DeviceManagementKit,
   hexaStringToBuffer,
 } from "@ledgerhq/device-management-kit";
+import { ContextModuleBuilder, type ContextModuleCalBranch } from "@ledgerhq/context-module";
 import { EIP712Message } from "@ledgerhq/types-live";
 import {
   EthAppPleaseEnableContractData,
@@ -37,11 +38,25 @@ export class DmkSignerEth implements EvmSigner {
     readonly dmk: DeviceManagementKit,
     readonly sessionId: string,
   ) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const calBranch: ContextModuleCalBranch = "staging-v2" as ContextModuleCalBranch;
+    const contextModule = new ContextModuleBuilder({
+      originToken: "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5",
+    })
+      .setCalConfig({
+        url: "https://crypto-assets-service.api.ledger.com/v1",
+        mode: "prod",
+        branch: calBranch,
+      })
+      .build();
+
     this.signer = new SignerEthBuilder({
       dmk,
       sessionId,
       originToken: "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5",
-    }).build();
+    })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
