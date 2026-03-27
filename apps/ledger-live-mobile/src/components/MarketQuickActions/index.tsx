@@ -65,7 +65,7 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
       <QuickActionList
         data={quickActionsData}
         key={quickActionsData.length}
-        numColumns={quickActionsData.length}
+        numColumns={3}
         id="asset_five_columns"
         testID="market-quick-action-button"
       />
