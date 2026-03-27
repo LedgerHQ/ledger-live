@@ -68,6 +68,19 @@ describe("LNSUpsellBanner", () => {
       });
     });
 
+    it("should render Lumen MediaBanner and track click when lwdWallet40 brazePlacement is on", () => {
+      renderBanner({ brazePlacement: true });
+      fireEvent.click(screen.getByTestId("lns-upsell-media-banner"));
+
+      expect(openURL).toHaveBeenCalledTimes(1);
+      expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        link: "https://example.com/optInCta",
+        page,
+      });
+    });
+
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
       fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
@@ -102,6 +115,7 @@ describe("LNSUpsellBanner", () => {
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
       targetedByHighTierUpsell = false,
+      brazePlacement = false,
     }) {
       const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
@@ -118,6 +132,14 @@ describe("LNSUpsellBanner", () => {
             anonymousUserNotifications: {},
             overriddenFeatureFlags: {
               lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
+              ...(brazePlacement
+                ? {
+                    lwdWallet40: {
+                      enabled: true,
+                      params: { brazePlacement: true },
+                    },
+                  }
+                : {}),
             },
           },
           dynamicContent: {

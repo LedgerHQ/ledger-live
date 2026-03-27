@@ -18,7 +18,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
     if (ctaLink) Linking.openURL(ctaLink);
   };
 
-  return { isShown, discount, tracking, handleCTAPress };
+  return { location, isShown, discount, tracking, handleCTAPress };
 }
 
 const AnalyticsPageMap = {

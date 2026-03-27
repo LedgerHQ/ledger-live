@@ -8,16 +8,16 @@ import type { LNSBannerLocation, LNSBannerModel } from "./types";
 type Props = BaseStyledProps & Readonly<{ location: LNSBannerLocation }>;
 
 export function LNSUpsellBanner({ location, ...styledProps }: Props) {
-  return <View {...styledProps} {...useLNSUpsellBannerModel(location)} location={location} />;
+  return <View {...styledProps} {...useLNSUpsellBannerModel(location)} />;
 }
 
 function View({
-  location,
+  location: _location,
   isShown,
   tracking,
   handleCTAPress,
   ...styledProps
-}: Props & LNSBannerModel) {
+}: BaseStyledProps & LNSBannerModel) {
   const { t } = useTranslation();
 
   if (!isShown) return null;

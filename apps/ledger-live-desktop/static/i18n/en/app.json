@@ -8014,6 +8014,16 @@
       "cta": "Learn more"
     }
   },
+  "lnsUpsellMediaBanner": {
+    "opted_in": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "Get an exclusive 20% off on the latest Ledger signers."
+    },
+    "opted_out": {
+      "title": "Upgrade your Ledger Nano S™",
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
+    }
+  },
   "modularAssetDrawer": {
     "addAccounts": {
       "title": "Select the accounts you want to add",
