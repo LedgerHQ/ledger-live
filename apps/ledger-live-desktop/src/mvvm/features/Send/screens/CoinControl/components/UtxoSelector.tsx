@@ -11,10 +11,10 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { Check } from "@ledgerhq/lumen-ui-react/symbols";
 import React from "react";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 
 type UtxoSelectorProps = Readonly<{
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   coinToSendLabel: string;
 }>;
 
@@ -30,7 +30,7 @@ export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorP
       </Subheader>
       <div>
         {rows.map(row => (
-          <ListItem key={`${row.utxo.hash}-${row.utxo.outputIndex}`} disabled={row.disabled}>
+          <ListItem key={row.rowKey} disabled={row.disabled}>
             <ListItemLeading>
               <ListItemContent>
                 <ListItemTitle>{row.titleLabel}</ListItemTitle>

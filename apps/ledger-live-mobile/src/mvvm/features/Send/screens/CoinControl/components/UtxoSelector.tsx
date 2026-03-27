@@ -12,11 +12,11 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import React from "react";
 import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
 import { ScrollView } from "react-native";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 
 type UtxoSelectorProps = Readonly<{
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   coinToSendLabel: string;
 }>;
 
@@ -32,7 +32,7 @@ export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorP
       </Subheader>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         {rows.map(row => (
-          <ListItem key={`${row.utxo.hash}-${row.utxo.outputIndex}`} disabled={row.disabled}>
+          <ListItem key={row.rowKey} disabled={row.disabled}>
             <ListItemLeading>
               <ListItemContent>
                 <ListItemTitle>{row.titleLabel}</ListItemTitle>
