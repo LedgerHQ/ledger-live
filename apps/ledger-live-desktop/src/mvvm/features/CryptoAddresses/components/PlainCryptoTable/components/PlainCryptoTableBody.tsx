@@ -7,8 +7,6 @@ import {
   type Table as TanStackTable,
 } from "@tanstack/react-table";
 
-import { shouldSuppressCryptoTableRowClick } from "../utils/cryptoRowClickGuard";
-
 /** Resolves click target when `target` is a Text node (no `closest`). */
 function eventTargetElement(target: EventTarget | null): Element | null {
   if (target == null) return null;
@@ -38,7 +36,6 @@ export function PlainCryptoTableBody<TData extends RowData>({
   const clickable = !!onRowClick;
 
   const handleRowClick = (row: Row<TData>) => (e: React.MouseEvent<HTMLTableRowElement>) => {
-    if (shouldSuppressCryptoTableRowClick()) return;
     const el = eventTargetElement(e.target);
     if (el?.closest(ROW_CLICK_IGNORE_SELECTOR)) return;
     onRowClick?.(row);

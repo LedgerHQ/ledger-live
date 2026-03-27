@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -12,7 +12,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
 import { Chip } from "./Chip";
-import { markRowClickSuppressedAfterEditDialogOverlayDismiss } from "../../PlainCryptoTable";
 
 type EditCryptoAddressNameDialogProps = {
   children: React.ReactNode;
@@ -30,31 +29,48 @@ export const EditCryptoAddressNameDialog = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
-  const pendingOverlayDismissRef = useRef(false);
+  const clickGuardRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      clickGuardRef.current?.abort();
+    };
+  }, []);
 
   const normalizedValue = normalizeName(value);
   const isConfirmDisabled = normalizedValue.length === 0 || normalizedValue === initialValue.trim();
 
-  const handleConfirm = () => {
-    onConfirm(normalizedValue);
-    setOpen(false);
-  };
-
   const handleOpenChange = (newOpen: boolean) => {
+    clickGuardRef.current?.abort();
+    clickGuardRef.current = null;
     if (newOpen) {
       setValue(initialValue);
-      pendingOverlayDismissRef.current = false;
-    } else if (pendingOverlayDismissRef.current) {
-      markRowClickSuppressedAfterEditDialogOverlayDismiss();
-      pendingOverlayDismissRef.current = false;
     }
     setOpen(newOpen);
   };
 
-  const handlePointerDownOutside: React.ComponentProps<
-    typeof DialogContent
-  >["onPointerDownOutside"] = () => {
-    pendingOverlayDismissRef.current = true;
+  /** Prevents Radix "ghost click": swallow the resulting click before closing. */
+  const handlePointerDownOutside: NonNullable<
+    React.ComponentProps<typeof DialogContent>["onPointerDownOutside"]
+  > = e => {
+    e.preventDefault();
+    clickGuardRef.current?.abort();
+    const ac = new AbortController();
+    clickGuardRef.current = ac;
+    globalThis.addEventListener(
+      "click",
+      ev => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        handleOpenChange(false);
+      },
+      { capture: true, once: true, signal: ac.signal },
+    );
+  };
+
+  const handleConfirm = () => {
+    onConfirm(normalizedValue);
+    handleOpenChange(false);
   };
 
   return (
@@ -68,7 +84,7 @@ export const EditCryptoAddressNameDialog = ({
         <DialogHeader
           appearance="expanded"
           title={t("cryptoAddresses.editName.title")}
-          onClose={() => setOpen(false)}
+          onClose={() => handleOpenChange(false)}
         />
         <DialogBody className="flex flex-col gap-16">
           <TextInput
