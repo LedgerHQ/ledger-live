@@ -134,7 +134,11 @@ function TokensList({ account }: Props) {
         </AccountContextMenu>
       ))}
       {shouldSliceList && (
-        <TokenShowMoreIndicator expanded={!collapsed} onClick={toggleCollapse}>
+        <TokenShowMoreIndicator
+          expanded={!collapsed}
+          onClick={toggleCollapse}
+          data-testid="account-tokens-show-all-button"
+        >
           <Box horizontal alignContent="center" justifyContent="center">
             <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
               {t(translationMap[collapsed ? "see" : "hide"], {

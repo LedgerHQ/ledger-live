@@ -12,7 +12,10 @@ export abstract class WebViewAppPage extends AppPage {
   @step("Wait for WebView to be available")
   protected async getWebView(timeout = 60_000): Promise<Page> {
     if (this._webviewPage) {
-      return this._webviewPage;
+      if (!this._webviewPage.isClosed()) {
+        return this._webviewPage;
+      }
+      this._webviewPage = undefined;
     }
     if (!this.electronApp) {
       throw new Error("No ElectronApplication instance available");

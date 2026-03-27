@@ -617,7 +617,7 @@ for (const currency of liveApps) {
 
         await app.account.startStakingFlowFromMainStakeButton();
         if (currency.delegate.account.currency.name == Currency.ETH.name) {
-          await app.delegate.goToProviderLiveApp(currency.delegate.provider);
+          await app.delegate.clickLidoProvider();
         }
         await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
       },

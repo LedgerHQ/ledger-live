@@ -20,6 +20,7 @@ export class EarnPage extends WebViewAppPage {
   private totalRewardsBalanceCard = "Total rewards-balance-card";
   private depositedAssetsText = "Deposited assets";
   private tabAssetsButton = "tab-assets";
+  private loadingSkeleton = "loading-skeleton";
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
@@ -38,6 +39,9 @@ export class EarnPage extends WebViewAppPage {
 
     await earnFunction();
     await appReadyPromise;
+
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.loadingSkeleton).first().waitFor({ state: "hidden" });
   }
 
   @step("Go to assets tab")
@@ -51,9 +55,7 @@ export class EarnPage extends WebViewAppPage {
   async goToEarnMoreTab() {
     const webview = await this.getWebView();
     const buttonLocator = webview.locator(`[data-test-id="${this.earnMoreRewardTabButton}"]`);
-    if (await buttonLocator.isVisible()) {
-      await buttonLocator.click();
-    }
+    await buttonLocator.click();
   }
 
   @step("Click on stake button")

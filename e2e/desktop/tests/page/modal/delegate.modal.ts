@@ -32,6 +32,7 @@ export class DelegateModal extends Modal {
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
+  private lidoProvider = this.page.getByTestId("stake-provider-container-lido");
 
   @step("Get title provider on row $0")
   async getTitleProvider(row: number): Promise<string> {
@@ -177,6 +178,11 @@ export class DelegateModal extends Modal {
   @step("Click on lock button for CELO")
   async clickCeloLockButton() {
     await this.celoLockButton.click();
+  }
+
+  @step("Click on Lido provider")
+  async clickLidoProvider() {
+    await this.lidoProvider.click();
   }
 
   @step("Check alert message is visible when locking CELO")
