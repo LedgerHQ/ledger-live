@@ -6,6 +6,5 @@ export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
 export { validateIntent } from "./validateIntent";
-export { getTokenFromAsset, getAssetFromToken } from "./getTokenFromAsset";
 export { getAssetCodeIssuer, STELLAR_BURN_ADDRESS } from "./utils";
 export { validateMemo } from "./validateMemo";

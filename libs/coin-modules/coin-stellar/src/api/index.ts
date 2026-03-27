@@ -14,7 +14,6 @@ import {
   AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { xdr } from "@stellar/stellar-sdk";
@@ -28,15 +27,12 @@ import {
   validateIntent,
   lastBlock,
   listOperations,
-  STELLAR_BURN_ADDRESS,
-  getTokenFromAsset,
-  getAssetFromToken,
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
-import { StellarBurnAddressError, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 
-export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & BridgeApi {
+export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -55,7 +51,7 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & Bridg
     getBalance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block> {
+    getBlock(_height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -72,19 +68,6 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> & Bridg
       const sequence = await fetchSequence(address);
       return BigInt(sequence.plus(1).toFixed());
     },
-    getTokenFromAsset,
-    getAssetFromToken,
-    getChainSpecificRules: () => ({
-      getAccountShape: (address: string) => {
-        // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
-        if (address === STELLAR_BURN_ADDRESS) {
-          throw new StellarBurnAddressError();
-        }
-      },
-      getTransactionStatus: {
-        throwIfPendingOperation: true,
-      },
-    }),
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },

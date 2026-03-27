@@ -4,6 +4,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { getAlpacaApi } from "./alpaca";
+import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
@@ -279,14 +280,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
     const alpacaApi = getAlpacaApi(currency.id, kind);
+    const bridgeApi = getBridgeApi(currency, network);
 
-    if (alpacaApi.getChainSpecificRules) {
-      const chainSpecificValidation = alpacaApi.getChainSpecificRules();
-      if (chainSpecificValidation.getAccountShape) {
-        chainSpecificValidation.getAccountShape(address);
-      }
+    const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
+    if (chainSpecificValidation) {
+      chainSpecificValidation.getAccountShape(address);
     }
-
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -298,7 +297,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const blockInfo = await alpacaApi.lastBlock();
     const balanceRes = await alpacaApi.getBalance(address);
     const nativeAsset = extractBalance(balanceRes, "native");
-
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
 
@@ -313,7 +311,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const cursor = oldOps[0]?.extra?.pagingToken || "";
     const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
     const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
-
     // Calculate minHeight for pagination
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
     const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
@@ -346,7 +343,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       allTokenAssetsBalances,
       syncConfig,
       operations: newAssetOperations,
-      getTokenFromAsset: alpacaApi.getTokenFromAsset,
+      getTokenFromAsset: bridgeApi.getTokenFromAsset,
     });
     const subAccounts = syncFromScratch
       ? newSubAccounts
@@ -372,7 +369,6 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
-
     const res: Partial<Account> = {
       id: accountId,
       xpub: address,

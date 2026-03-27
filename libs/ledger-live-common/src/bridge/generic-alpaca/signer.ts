@@ -1,14 +1,14 @@
 import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
 import Stellar from "@ledgerhq/hw-app-str";
 import { StrKey } from "@stellar/stellar-sdk";
-import { CreateSigner, executeWithSigner } from "../../setup";
+import { CreateSigner, executeWithSigner } from "../setup";
 import Transport from "@ledgerhq/hw-transport";
-import { AlpacaSigner } from "./types";
+import type { AlpacaSigner } from "./types";
 import { DerivationType, LedgerSigner as TaquitoLedgerSigner } from "@taquito/ledger-signer";
 import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
 import Tezos from "@ledgerhq/hw-app-tezos";
-import { context as evmContext, getAddress as evmGetAddress } from "./Eth";
-import { context as xrpContext, getAddress as xrpGetAddress } from "./Xrp";
+import evmSigner from "./families/evm/signer";
+import xrpSigner from "./families/xrp/signer";
 
 const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
   const stellar = new Stellar(transport);
@@ -71,10 +71,7 @@ export function getSigner(network: string): AlpacaSigner {
   switch (network) {
     case "ripple":
     case "xrp": {
-      return {
-        getAddress: xrpGetAddress,
-        context: xrpContext,
-      };
+      return xrpSigner;
     }
     case "stellar": {
       return {
@@ -89,10 +86,7 @@ export function getSigner(network: string): AlpacaSigner {
       };
     }
     case "evm": {
-      return {
-        getAddress: evmGetAddress,
-        context: evmContext,
-      };
+      return evmSigner;
     }
   }
   throw new Error(`signer for ${network} not implemented`);

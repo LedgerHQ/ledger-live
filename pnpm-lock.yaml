@@ -6925,6 +6925,9 @@ importers:
       date-fns:
         specifier: ^2.23.0
         version: 2.30.0
+      eip55:
+        specifier: ^2.1.1
+        version: 2.1.1
       ethers:
         specifier: 6.15.0
         version: 6.15.0

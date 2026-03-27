@@ -304,6 +304,7 @@
     "bip39": "^3.0.4",
     "bs58": "catalog:",
     "date-fns": "^2.23.0",
+    "eip55": "^2.1.1",
     "ethers": "catalog:",
     "expect": "catalog:",
     "fuse.js": "^6.6.2",

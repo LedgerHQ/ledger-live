@@ -323,12 +323,7 @@
     "src/cmc-client/index.ts",
     "src/cmc-client/__mocks__/fearAndGreed.mock.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -349,7 +344,7 @@
     "src/bridge/descriptor/send/features.ts",
     "src/bridge/descriptor/send/memo.ts",
     "src/bridge/descriptor/types.ts",
-    "src/bridge/generic-alpaca/signer/Eth.ts",
+    "src/bridge/generic-alpaca/families/evm/signer.ts",
     "src/bridge/jsHelpers.ts",
     "src/cg-client/api/index.ts",
     "src/cg-client/constants.ts",
@@ -616,12 +611,7 @@
     "@react-native/virtualized-lists",
     "@solana/buffer-layout",
     "@solana/codecs-numbers",
-    [
-      "@solana/codecs-numbers",
-      [
-        "node_modules/@solana/web3.js/lib/index.cjs.js"
-      ]
-    ],
+    ["@solana/codecs-numbers", ["node_modules/@solana/web3.js/lib/index.cjs.js"]],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",
