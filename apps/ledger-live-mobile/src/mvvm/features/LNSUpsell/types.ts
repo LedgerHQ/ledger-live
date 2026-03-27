@@ -6,6 +6,7 @@ export type LNSBannerLocation = Extract<
 >;
 
 export type LNSBannerModel = {
+  location: LNSBannerLocation;
   isShown: boolean;
   discount?: number;
   tracking: "opted_in" | "opted_out";
