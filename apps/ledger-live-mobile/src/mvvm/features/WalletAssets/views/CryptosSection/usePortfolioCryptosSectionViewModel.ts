@@ -7,6 +7,7 @@ import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
+import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 export const MAX_ASSETS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_ASSETS = 4;
@@ -23,14 +24,14 @@ export interface PortfolioCryptosSectionViewModelResult {
 }
 
 interface UsePortfolioCryptosSectionViewModelOptions {
-  isEmptyState?: boolean;
-  isReadOnly?: boolean;
+  variant?: WalletAssetsVariant;
 }
 
 const usePortfolioCryptosSectionViewModel = ({
-  isEmptyState = false,
-  isReadOnly = false,
+  variant = "normal",
 }: UsePortfolioCryptosSectionViewModelOptions = {}): PortfolioCryptosSectionViewModelResult => {
+  const isEmptyState = variant === "emptyState";
+  const isReadOnly = variant === "readOnly";
   const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);

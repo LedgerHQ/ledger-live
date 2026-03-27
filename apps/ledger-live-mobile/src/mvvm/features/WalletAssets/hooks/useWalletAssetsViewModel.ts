@@ -11,12 +11,14 @@ interface WalletAssetsViewModelResult {
   hasMore: boolean;
   onPressShowAll: () => void;
   shouldAddBottomPadding: boolean;
+  shouldDisplayAssetSection: boolean;
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false);
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
-  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayOperationsList, shouldDisplayAssetSection } =
+    useWalletFeaturesConfig("mobile");
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -33,5 +35,10 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
 
   // When the operations list section is hidden, WalletAssetsView is the last section and
   // the tab bar (rendered without safe area) would overlap the bottom content.
-  return { hasMore, onPressShowAll, shouldAddBottomPadding: shouldDisplayOperationsList };
+  return {
+    hasMore,
+    onPressShowAll,
+    shouldAddBottomPadding: shouldDisplayOperationsList,
+    shouldDisplayAssetSection,
+  };
 }

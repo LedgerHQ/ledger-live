@@ -6,6 +6,7 @@ import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
+import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 export const MAX_STABLECOINS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_STABLECOINS = 2;
@@ -21,14 +22,14 @@ export interface PortfolioStablecoinsSectionViewModelResult {
 }
 
 interface UsePortfolioStablecoinsSectionViewModelOptions {
-  isEmptyState?: boolean;
-  isReadOnly?: boolean;
+  variant?: WalletAssetsVariant;
 }
 
 const usePortfolioStablecoinsSectionViewModel = ({
-  isEmptyState = false,
-  isReadOnly = false,
+  variant = "normal",
 }: UsePortfolioStablecoinsSectionViewModelOptions = {}): PortfolioStablecoinsSectionViewModelResult => {
+  const isEmptyState = variant === "emptyState";
+  const isReadOnly = variant === "readOnly";
   const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);

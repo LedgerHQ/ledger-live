@@ -26,7 +26,6 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
     safeAreaTop,
     shouldDisplayGraphRework,
     shouldDisplayWallet40MainNav,
-    shouldDisplayAssetSection,
     isLNSUpsellBannerShown,
     source,
     onBackFromUpdate,
@@ -53,20 +52,9 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           />
         </Box>
       ),
-      <PortfolioNoSignerContent
-        key="noSigner"
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        shouldDisplayAssetSection={shouldDisplayAssetSection}
-        isEmptyState
-      />,
+      <PortfolioNoSignerContent key="noSigner" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
     ],
-    [
-      shouldDisplayGraphRework,
-      shouldDisplayAssetSection,
-      isLNSUpsellBannerShown,
-      onBackFromUpdate,
-      safeAreaTop,
-    ],
+    [shouldDisplayGraphRework, isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (

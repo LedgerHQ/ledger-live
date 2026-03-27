@@ -6,18 +6,14 @@ import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import MarketBanner from "LLM/features/MarketBanner";
 import TrackScreen from "~/analytics/TrackScreen";
 import { TRACKING_LABEL_MAP } from "LLM/components/MainTabBar/constants";
-import { PortfolioEmptyAssetSections } from "./PortfolioEmptyAssetSections";
+import { WalletAssetsView } from "LLM/features/WalletAssets";
 
 interface PortfolioNoSignerContentProps {
   readonly isLNSUpsellBannerShown: boolean;
-  readonly shouldDisplayAssetSection?: boolean;
-  readonly isEmptyState?: boolean;
 }
 
 export const PortfolioNoSignerContent = ({
   isLNSUpsellBannerShown,
-  shouldDisplayAssetSection = false,
-  isEmptyState,
 }: PortfolioNoSignerContentProps) => (
   <Box lx={{ paddingHorizontal: "s16" }}>
     <TrackScreen name={TRACKING_LABEL_MAP[NavigatorName.Portfolio]} />
@@ -25,9 +21,6 @@ export const PortfolioNoSignerContent = ({
     <TransferDrawer />
     <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
     <MarketBanner />
-    <PortfolioEmptyAssetSections
-      shouldDisplayAssetSection={shouldDisplayAssetSection}
-      isEmptyState={isEmptyState}
-    />
+    <WalletAssetsView variant="readOnly" noPaddingHorizontal />
   </Box>
 );

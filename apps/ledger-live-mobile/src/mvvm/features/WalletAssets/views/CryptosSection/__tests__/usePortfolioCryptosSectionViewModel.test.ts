@@ -221,10 +221,10 @@ describe("usePortfolioCryptosSectionViewModel", () => {
     });
   });
 
-  describe("isEmptyState", () => {
+  describe("variant: emptyState", () => {
     it("should always return hasMore false", () => {
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isEmptyState: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "emptyState" }),
       );
 
       expect(result.current.hasMore).toBe(false);
@@ -259,7 +259,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(result.current.assetsCount).toBe(2);
@@ -274,7 +274,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(result.current.hasMore).toBe(true);
@@ -286,7 +286,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       act(() => {
@@ -304,7 +304,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(result.current.assetsToDisplay[0]).toMatchObject({
@@ -320,7 +320,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
       });
 
       const { result } = renderHook(() =>
-        usePortfolioCryptosSectionViewModel({ isReadOnly: true }),
+        usePortfolioCryptosSectionViewModel({ variant: "readOnly" }),
       );
 
       act(() => {

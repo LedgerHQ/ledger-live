@@ -9,10 +9,6 @@ import { track } from "~/analytics";
 import { replaceAccounts } from "~/actions/accounts";
 import { useCryptoAddressesButtonViewModel } from "../useCryptoAddressesButtonViewModel";
 
-jest.mock("~/analytics", () => ({ track: jest.fn() }));
-
-const mockTrack = track as jest.Mock;
-
 const mockNavigate = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
