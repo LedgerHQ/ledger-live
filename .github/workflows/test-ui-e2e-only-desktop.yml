@@ -343,7 +343,7 @@ jobs:
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
 
   report-to-allure-device2:
-    name: "Create Allure Report - ${{ inputs.speculos_device == 'nanoSP and stax' && 'stax' || 'skipped' }}"
+    name: "Create Allure Report - device 2"
     runs-on: [ledger-live-medium]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
