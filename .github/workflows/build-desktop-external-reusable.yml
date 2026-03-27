@@ -21,9 +21,9 @@ jobs:
       matrix:
         config:
           [
-            { name: "Linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage", output-name: "linux" },
-            { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", output-name: "win" },
-            { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
+            { name: "Linux", os: "ubuntu-22.04", image: "linux-x86_64.AppImage", platform: "linux" },
+            { name: "Windows", os: "windows-2022", dotnet: true, image: "win-x64.exe", platform: "win" },
+            { name: "macOS", os: "macos-14", image: "mac.dmg", platform: "mac" },
           ]
     runs-on: ${{ matrix.config.os }}
     name: "${{ matrix.config.name }} Build (External)"
@@ -40,11 +40,11 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ("${{ matrix.config.output-name }}" === "linux") {
+            if ("${{ matrix.config.platform }}" === "linux") {
               return "linux"
-            } else if ("${{ matrix.config.output-name }}" === "mac") {
+            } else if ("${{ matrix.config.platform }}" === "mac") {
               return "mac"
-            } else if ("${{ matrix.config.output-name }}" === "win") {
+            } else if ("${{ matrix.config.platform }}" === "win") {
               return "win"
             }
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -81,7 +81,7 @@ jobs:
         shell: bash
         if: ${{ !cancelled() }}
         run: |
-          echo "${{matrix.config.output-name}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
+          echo "${{matrix.config.platform}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
       - name: Upload app
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
