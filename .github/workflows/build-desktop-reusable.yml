@@ -70,7 +70,7 @@ jobs:
         id: build-desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         with:
-          os: ${{ matrix.config.output-name }}
+          os: ${{ matrix.config['output-name'] }}
 
       - name: Build the app
         id: build-app
@@ -79,12 +79,12 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
           GENERATE_METAFILES: "lite"
-          RSDOCTOR: "${{ matrix.config.output-name == 'linux' && '1' || '' }}"
+          RSDOCTOR: "${{ matrix.config['output-name'] == 'linux' && '1' || '' }}"
         run: pnpm turbo build --filter=ledger-live-desktop
 
       - name: Upload Rsdoctor desktop report data
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ matrix.config.output-name == 'linux' && !cancelled() && steps.build-app.outcome == 'success' }}
+        if: ${{ matrix.config['output-name'] == 'linux' && !cancelled() && steps.build-app.outcome == 'success' }}
         with:
           name: rsdoctor-desktop
           path: ${{ github.workspace }}/rsdoctor
@@ -100,7 +100,7 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}
         with:
-          name: ${{ matrix.config.output-name }}-js-bundle-metafiles
+          name: ${{ matrix.config['output-name'] }}-js-bundle-metafiles
           path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
 
       - name: Push status
