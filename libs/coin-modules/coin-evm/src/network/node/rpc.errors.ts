@@ -30,6 +30,20 @@ export function isUnsupportedRpcMethodErrorMsg(error: unknown): boolean {
   return collectRpcErrorFields(error).messages.some(m => m.toLowerCase().includes(marker));
 }
 
+function extractRpcErrorCode(key: string, field: unknown): string | null {
+  if (key === "code") {
+    return normalizeRpcErrorCode(field);
+  }
+  return null;
+}
+
+function extractRpcErrorMessage(key: string, field: unknown): string | null {
+  if (key === "message" && typeof field === "string") {
+    return field;
+  }
+  return null;
+}
+
 /** Walks nested RPC / ethers error shapes once; collects `code` and `message` fields (incl. JSON in `responseBody`). */
 function collectRpcErrorFields(error: unknown): { codes: string[]; messages: string[] } {
   const codes = new Set<string>();
@@ -43,14 +57,14 @@ function collectRpcErrorFields(error: unknown): { codes: string[]; messages: str
     visited.add(value);
 
     for (const [key, field] of Object.entries(value)) {
-      if (key === "code") {
-        const normalizedCode = normalizeRpcErrorCode(field);
-        if (normalizedCode) {
-          codes.add(normalizedCode);
-        }
+      const code = extractRpcErrorCode(key, field);
+      if (code) {
+        codes.add(code);
       }
-      if (key === "message" && typeof field === "string") {
-        messages.push(field);
+
+      const message = extractRpcErrorMessage(key, field);
+      if (message) {
+        messages.push(message);
       }
 
       // Some providers wrap RPC error payloads in a stringified response body.

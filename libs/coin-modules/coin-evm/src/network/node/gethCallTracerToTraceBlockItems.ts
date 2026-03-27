@@ -36,6 +36,21 @@ export function gethCallTracerToTraceBlockItems(
     .filter(item => item !== null);
 }
 
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function stringValue(value: unknown, orDefault: string): string {
+  if (isString(value)) return value;
+  return orDefault;
+}
+
+function extractTxHash(o: Record<string, unknown>): string | null {
+  if (isString(o.txHash)) return o.txHash;
+  if (isString(o.transactionHash)) return o.transactionHash;
+  return null;
+}
+
 /**
  * @returns `null` to skip a top-level null/undefined entry, non-object entry, empty object, or
  *   unrecognized shape without a tx hash wrapper (not a bare call frame).
@@ -47,16 +62,9 @@ function parseDebugTraceBlockEntry(
   index: number,
 ): { txHash: string; root: Record<string, unknown> } | null {
   if (entry === null || entry === undefined) return null;
-  if (typeof entry !== "object") return null;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  if (typeof entry !== "object" || entry === null) return null;
   const o = entry as Record<string, unknown>;
-
-  const txHash =
-    typeof o.txHash === "string"
-      ? o.txHash
-      : typeof o.transactionHash === "string"
-        ? o.transactionHash
-        : null;
+  const txHash = extractTxHash(o);
 
   if (txHash !== null) {
     if (!("result" in o)) {
@@ -71,11 +79,11 @@ function parseDebugTraceBlockEntry(
       );
     }
     if (typeof inner !== "object") {
-      throw new Error(
+      throw new TypeError(
         `debug_traceBlockByNumber entry at index ${index} (tx ${txHash}) has invalid "result" (expected object)`,
       );
     }
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+
     return { txHash, root: inner as Record<string, unknown> };
   }
 
@@ -152,6 +160,13 @@ function weiValueString(value: unknown): string {
   }
 }
 
+const callTypes = ["CALL", "CALLCODE", "DELEGATECALL", "STATICCALL"];
+
+function extractErrorMessage(node: Record<string, unknown>): string | undefined {
+  if (isString(node.error)) return node.error;
+  if (isString(node.revertReason)) return node.revertReason;
+  return undefined;
+}
 function buildTraceBlockItemFromCallFrame(
   node: Record<string, unknown>,
   traceAddress: number[],
@@ -160,17 +175,11 @@ function buildTraceBlockItemFromCallFrame(
   transactionHash: string,
   transactionPosition: number,
 ): TraceBlockItem {
-  const gethType = typeof node.type === "string" ? node.type : "UNKNOWN";
+  const gethType = isString(node.type) ? node.type : "UNKNOWN";
   const itemType = gethFrameTypeToItemType(gethType);
   const callType = gethFrameTypeToCallType(gethType);
 
-  const errMsg =
-    typeof node.error === "string" && node.error
-      ? node.error
-      : typeof node.revertReason === "string" && node.revertReason
-        ? node.revertReason
-        : undefined;
-
+  const errMsg = extractErrorMessage(node);
   let result: TraceBlockResult | null | undefined;
   let topError: string | undefined;
 
@@ -179,18 +188,16 @@ function buildTraceBlockItemFromCallFrame(
     topError = errMsg;
   } else {
     result = {
-      gasUsed: typeof node.gasUsed === "string" ? node.gasUsed : "0x0",
-      output: typeof node.output === "string" ? node.output : "0x",
+      gasUsed: stringValue(node.gasUsed, "0x0"),
+      output: stringValue(node.output, "0x"),
     };
   }
 
-  const from = typeof node.from === "string" ? node.from : "";
-  const to = typeof node.to === "string" ? node.to : "";
+  const from = stringValue(node.from, "");
+  const to = stringValue(node.to, "");
   const value = weiValueString(node.value);
 
-  const upper = gethType.toUpperCase();
-  const isCallLike =
-    upper === "CALL" || upper === "CALLCODE" || upper === "DELEGATECALL" || upper === "STATICCALL";
+  const isCallLike = callTypes.includes(gethType.toUpperCase());
 
   let action: TraceBlockItem["action"];
   if (isCallLike) {
