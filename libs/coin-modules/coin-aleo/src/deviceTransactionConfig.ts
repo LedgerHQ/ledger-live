@@ -1,5 +1,7 @@
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
+import aleoCoinConfig from "./config";
 import { TRANSACTION_TYPE } from "./constants";
 import type { Transaction, TransactionType, TransactionStatus } from "./types";
 
@@ -11,6 +13,8 @@ const mapTransactionModeToMethod: Record<TransactionType, string> = {
 };
 
 async function getDeviceTransactionConfig({
+  account,
+  parentAccount,
   transaction,
   status,
 }: {
@@ -21,6 +25,8 @@ async function getDeviceTransactionConfig({
 }): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
   const method = mapTransactionModeToMethod[transaction.mode] ?? "Unknown";
+  const mainAccount = getMainAccount(account, parentAccount);
+  const config = aleoCoinConfig.getCoinConfig(mainAccount.currency);
 
   fields.push({
     type: "text",
@@ -33,7 +39,13 @@ async function getDeviceTransactionConfig({
     label: "Amount",
   });
 
-  if (!status.estimatedFees.isZero()) {
+  if (config.isFeeSponsored) {
+    fields.push({
+      type: "text",
+      label: "Fees",
+      value: "Sponsored by Provable",
+    });
+  } else if (!status.estimatedFees.isZero()) {
     fields.push({
       type: "fees",
       label: "Fees",
