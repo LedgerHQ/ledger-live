@@ -30,8 +30,16 @@ describe("Flare (external node)", () => {
       // - test on the tip of the chain without guarantees there is actually internal txs
       // - test that the call is not failing (getBlock should not reject)
       const info = await module.lastBlock();
-      const block = await module.getBlock(info.height).catch(e => {
-        throw e.rawError;
+      const block = await module.getBlock(info.height).catch((e: unknown) => {
+        if (
+          e &&
+          typeof e === "object" &&
+          "rawError" in e &&
+          (e as { rawError?: unknown }).rawError
+        ) {
+          throw (e as { rawError: unknown }).rawError;
+        }
+        throw e;
       });
       expect(block.info.height).toBe(info.height);
     });

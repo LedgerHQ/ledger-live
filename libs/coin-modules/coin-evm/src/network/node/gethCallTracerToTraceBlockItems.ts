@@ -3,7 +3,8 @@ import type { TraceBlockItem, TraceBlockOtherAction, TraceBlockResult } from "./
 /**
  * Geth `debug_traceBlockByNumber` with `callTracer` returns one entry per transaction (same order as
  * the block). Each element must be `{ txHash, result }` (or `{ transactionHash, result }`) where `result`
- * is the call tree root or `null`.
+ * is the call tree root object. Entries that wrap a tx hash but have a missing, null, undefined, or
+ * non-object `result` are treated as errors to avoid silently dropping transaction traces.
  *
  * @see https://geth.ethereum.org/docs/developers/evm-tracing/built-in-tracers#call-tracer
  */

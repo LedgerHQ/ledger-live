@@ -545,7 +545,15 @@ async function traceBlockErigon(
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  return await api.send("trace_block", [blockTag]);
+  return await api.send("trace_block", [blockTag]).catch(error => {
+    if (isUnsupportedRpcMethodError(error)) {
+      throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
+        method: "trace_block",
+        rawError: error,
+      });
+    }
+    throw error;
+  });
 }
 
 function isNumber(value: unknown): value is number {
@@ -557,7 +565,7 @@ async function callTraceBlock(
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   return await traceBlockErigon(api, blockHeight).catch(error => {
-    if (isUnsupportedRpcMethodError(error) && isNumber(blockHeight)) {
+    if (isNumber(blockHeight)) {
       return traceBlockGeth(api, blockHeight);
     }
     throw error;
