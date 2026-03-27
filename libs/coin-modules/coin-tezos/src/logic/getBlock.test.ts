@@ -882,9 +882,7 @@ describe("delegation operations", () => {
   it("includes both transactions and delegations in the same block", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
-    mockFetchBlockTransactions.mockResolvedValue([
-      makeTx({ hash: "opTx1", amount: 1_000_000 }),
-    ]);
+    mockFetchBlockTransactions.mockResolvedValue([makeTx({ hash: "opTx1", amount: 1_000_000 })]);
     mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ hash: "opDelegation1" })]);
 
     // When
