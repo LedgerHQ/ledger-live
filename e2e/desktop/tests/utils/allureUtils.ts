@@ -6,6 +6,7 @@ import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 
 const readFileAsync = promisify(readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -36,10 +37,11 @@ export async function addBugLink(ids: string[]) {
   }
 }
 
-export async function addTeamOwner(team: string) {
-  await allure.owner(team);
-  await allure.parentSuite(team);
-  await allure.feature(team);
+export async function addTeamOwner(team: Team) {
+  const teamString = team.toString();
+  await allure.owner(teamString);
+  await allure.parentSuite(teamString);
+  await allure.feature(teamString);
 }
 
 export async function captureArtifacts(
