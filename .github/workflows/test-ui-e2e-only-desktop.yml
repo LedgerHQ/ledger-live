@@ -306,7 +306,7 @@ jobs:
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
   report-to-allure:
-    name: "Create Allure Report"
+    name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
     runs-on: [ledger-live-medium]
     needs: [prepare-devices, e2e-tests]
     outputs:
@@ -343,7 +343,7 @@ jobs:
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
 
   report-to-allure-device2:
-    name: "Create Allure Report (${{ needs.prepare-devices.outputs.device_2 }})"
+    name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_2 || 'skipped' }}"
     runs-on: [ledger-live-medium]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
