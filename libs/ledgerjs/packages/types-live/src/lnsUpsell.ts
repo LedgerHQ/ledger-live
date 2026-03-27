@@ -14,4 +14,5 @@ export type LlmNanoSUpsellBannersConfig = {
   wallet?: boolean;
   link: string;
   "%"?: number;
+  img?: string;
 };
