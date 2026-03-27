@@ -2925,6 +2925,10 @@
       "UPDATE_ACCOUNT": "Updated account"
     }
   },
+  "operationsList": {
+    "to": "To",
+    "from": "From"
+  },
   "operationDetails": {
     "title": "Transaction details",
     "account": "Account",
@@ -3001,6 +3005,8 @@
   },
   "operationList": {
     "noOperations": "No Operations",
+    "emptyTitle": "No transactions yet",
+    "emptySubtitle": "Come back later to see your transactions.",
     "noMoreTransactions": "No other transactions"
   },
   "selectableAccountsList": {
