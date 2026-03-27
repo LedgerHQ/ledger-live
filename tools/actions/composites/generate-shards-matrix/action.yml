@@ -65,16 +65,20 @@ runs:
       run: |
         TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | wc -w)
 
+        # Target one shard per group of 3 tests (matches 3 emulators/simulators per runner).
+        # This ensures all emulators are kept busy without spinning up unnecessary runners.
+        EMULATORS_PER_RUNNER=3
+        BASE_SHARD=$(( (TEST_COUNT + EMULATORS_PER_RUNNER - 1) / EMULATORS_PER_RUNNER ))
+
         if [ "${{ inputs.event_name }}" = "schedule" ]; then
-          SHARD_COUNT_IOS=$(( TEST_COUNT < 12 ? TEST_COUNT : 12 ))
-          SHARD_COUNT_ANDROID=$(( TEST_COUNT < 12 ? TEST_COUNT : 12 ))
+          SHARD_COUNT_IOS=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
+          SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
-          SHARD_COUNT_IOS=$(( TEST_COUNT < 6 ? TEST_COUNT : 6 ))
-          SHARD_COUNT_ANDROID=$(( TEST_COUNT < 12 ? TEST_COUNT : 12 ))
+          SHARD_COUNT_IOS=$(( BASE_SHARD < 6 ? BASE_SHARD : 6 ))
+          SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         else
-          SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
-          SHARD_COUNT_IOS=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
-          SHARD_COUNT_ANDROID=$(( SHARD_COUNT > 12 ? 12 : SHARD_COUNT ))
+          SHARD_COUNT_IOS=$(( BASE_SHARD < 3 ? BASE_SHARD : 3 ))
+          SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         fi
         
         if [ "${{ inputs.max_shards }}" -gt 0 ]; then
