@@ -1,3 +1,4 @@
+import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 /**
@@ -88,6 +89,69 @@ export type FeePresetOption = Readonly<{
   disabled?: boolean;
 }>;
 
+/** Strategy option for coin control (i18n key resolved by the UI layer). */
+export type CoinControlPickingStrategyOption = Readonly<{
+  value: number;
+  labelKey: string;
+}>;
+
+/** Single spendable coin row in the coin control list (family-agnostic). */
+export type CoinControlUtxoRow = Readonly<{
+  /** Stable key for React lists and toggle targeting (coin-specific encoding). */
+  rowKey: string;
+  titleLabel: string;
+  formattedValue: string;
+  excluded: boolean;
+  exclusionReason: "pickPendingUtxo" | "userExclusion" | undefined;
+  isUsedInTx: boolean;
+  unconfirmed: boolean;
+  disabled: boolean;
+  confirmations: number;
+}>;
+
+export type CoinControlDisplayData = Readonly<{
+  pickingStrategyOptions: readonly CoinControlPickingStrategyOption[];
+  pickingStrategyValue: number;
+  totalExcludedUTXOS: number;
+  totalSpent: BigNumber;
+  utxoRows: readonly CoinControlUtxoRow[];
+}>;
+
+export type CoinControlGetDisplayDataParams = Readonly<{
+  account: AccountLike;
+  transaction: unknown;
+  status: unknown;
+  locale: string;
+}>;
+
+export type CoinControlBuildStrategyChangePatchParams = Readonly<{
+  transaction: unknown;
+  strategy: number;
+  displayData: CoinControlDisplayData | null;
+}>;
+
+export type CoinControlBuildToggleRowExclusionPatchParams = Readonly<{
+  transaction: unknown;
+  rowKey: string;
+  displayData: CoinControlDisplayData | null;
+}>;
+
+/**
+ * Coin-specific coin control: UTXO list, strategy selector, and transaction patches.
+ * Implemented per family (e.g. Bitcoin) and attached to `FeeDescriptor.coinControl`.
+ */
+export type CoinControlConfig = Readonly<{
+  /** Numeric value for the "custom / manual selection" strategy (e.g. Bitcoin CUSTOM). */
+  customStrategyValue: number;
+  getDisplayData: (params: CoinControlGetDisplayDataParams) => CoinControlDisplayData | null;
+  buildStrategyChangePatch: (
+    params: CoinControlBuildStrategyChangePatchParams,
+  ) => Record<string, unknown> | null;
+  buildToggleRowExclusionPatch: (
+    params: CoinControlBuildToggleRowExclusionPatchParams,
+  ) => Record<string, unknown> | null;
+}>;
+
 /**
  * Fee input options
  */
@@ -138,6 +202,8 @@ export type FeeDescriptor = {
    * (Not yet implemented)
    */
   customAssets?: FeeAssetsConfig;
+  /** When `hasCoinControl` is true, describes rows and patches for the coin control step. */
+  coinControl?: CoinControlConfig;
 };
 
 export type SendAmountDescriptor = Readonly<{
