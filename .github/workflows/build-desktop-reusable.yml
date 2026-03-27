@@ -79,12 +79,13 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
           GENERATE_METAFILES: "lite"
-          RSDOCTOR: "${{ matrix.config.platform == 'linux' && '1' || '' }}"
+          # Use runner.os (not matrix) — matrix.config.* in env: did not evaluate in practice for RSDOCTOR.
+          RSDOCTOR: ${{ runner.os == 'Linux' && '1' || '' }}
         run: pnpm turbo build --filter=ledger-live-desktop
 
       - name: Upload Rsdoctor desktop report data
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        if: ${{ matrix.config.platform == 'linux' && !cancelled() && steps.build-app.outcome == 'success' }}
+        if: ${{ runner.os == 'Linux' && !cancelled() && steps.build-app.outcome == 'success' }}
         with:
           name: rsdoctor-desktop
           path: ${{ github.workspace }}/rsdoctor
