@@ -50,7 +50,7 @@ describe("FirmwareUpdateBannerEntry", () => {
         expect(screen.getByTestId("topbar-os-update-button")).toBeVisible();
       });
 
-      it("tracks banner_impression on portfolio page", () => {
+      it("tracks banner_impression on portfolio page when latestFirmware is set", () => {
         jest.mocked(track).mockClear();
         render(<FirmwareUpdateBannerEntry />, {
           initialState: initialState({
@@ -63,6 +63,15 @@ describe("FirmwareUpdateBannerEntry", () => {
           banner: "OS update",
           page: "portfolio",
         });
+      });
+
+      it("does not track banner_impression on portfolio page when latestFirmware is null", () => {
+        jest.mocked(track).mockClear();
+        render(<FirmwareUpdateBannerEntry />, {
+          initialState: initialState(),
+          initialRoute: "/",
+        });
+        expect(track).not.toHaveBeenCalledWith("banner_impression", expect.anything());
       });
 
       it("tracks button_clicked and navigates when topbar button is clicked", async () => {
