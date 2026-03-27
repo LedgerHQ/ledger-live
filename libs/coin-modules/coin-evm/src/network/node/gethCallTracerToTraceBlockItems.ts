@@ -119,11 +119,10 @@ function flattenCallFrame(
 
   for (let i = 0; i < calls.length; i++) {
     const child = calls[i];
-    if (child && typeof child === "object") {
+    if (child && typeof child === "object" && child !== null) {
       items.push(
         ...flattenCallFrame(
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          child as Record<string, unknown>,
+          child,
           [...traceAddress, i],
           blockNumber,
           transactionHash,
