@@ -68,10 +68,6 @@ jest.mock("../DRepDelegationSelfTransactionInfoDrawer", () => {
     isOpen ? <View testID="drep-self-tx-drawer" /> : null;
 });
 
-jest.mock("~/reducers/wallet", () => ({
-  ...jest.requireActual("~/reducers/wallet"),
-  useAccountName: () => "Mock Account",
-}));
 jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ADA", magnitude: 6 }),
 }));
