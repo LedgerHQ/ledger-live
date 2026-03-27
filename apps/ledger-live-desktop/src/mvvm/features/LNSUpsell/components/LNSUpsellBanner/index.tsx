@@ -1,33 +1,67 @@
 import { t } from "i18next";
 import { Trans } from "react-i18next";
 import React, { type ReactElement } from "react";
-import { BannerCard, Button, Icons, Link, NotificationCard, Text } from "@ledgerhq/react-ui";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { BannerCard, Button, Flex, Icons, Link, NotificationCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import type { LNSBannerLocation } from "LLD/features/LNSUpsell/types";
 import { useLNSUpsellBannerModel } from "./useLNSUpsellBannerModel";
+import { LNSUpsellMediaBanner } from "./LNSUpsellMediaBanner";
+import lnsUpsellBannerWebp from "~/renderer/images/lns-upsell-banner.webp";
 import { useViewNotification } from "./useViewNotification";
 import type { LNSBannerModel } from "./types";
 
 type Props = FlexBoxProps & { location: LNSBannerLocation };
 
 export function LNSUpsellBanner({ location, ...boxProps }: Props) {
-  return <View {...useLNSUpsellBannerModel(location)} location={location} {...boxProps} />;
+  const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("desktop");
+  return (
+    <View
+      {...useLNSUpsellBannerModel(location)}
+      location={location}
+      shouldUseLumenMediaBanner={shouldDisplayBrazePlacement}
+      {...boxProps}
+    />
+  );
 }
 
 function View({
   location,
   variant,
-  discount,
   tracking,
+  discount,
   handleCTAClick,
+  imageUrl: _imageUrlUnused,
+  shouldUseLumenMediaBanner,
   ...boxProps
-}: Props & LNSBannerModel): ReactElement | null {
+}: Props &
+  LNSBannerModel & {
+    shouldUseLumenMediaBanner: boolean;
+  }): ReactElement | null {
   useViewNotification(location, variant);
 
-  switch (variant.type) {
-    case "none":
-      return null;
+  if (variant.type === "none") return null;
 
+  if (shouldUseLumenMediaBanner) {
+    return (
+      <Flex
+        width="50%"
+        maxWidth="50%"
+        minWidth={0}
+        alignSelf="flex-start"
+        {...boxProps}
+      >
+        <LNSUpsellMediaBanner
+          title={t(`lnsUpsellMediaBanner.${tracking}.title`)}
+          description={t(`lnsUpsellMediaBanner.${tracking}.description`)}
+          imageUrl={lnsUpsellBannerWebp}
+          onClick={handleCTAClick}
+        />
+      </Flex>
+    );
+  }
+
+  switch (variant.type) {
     case "banner":
       return (
         <BannerCard
@@ -69,5 +103,8 @@ function View({
           isHighlighted
         />
       );
+
+    default:
+      return null;
   }
 }
