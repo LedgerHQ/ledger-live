@@ -4659,18 +4659,23 @@
       },
       "mockAccounts": {
         "title": "Generate mock accounts",
-        "description": "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
-        "customGenerate": {
-          "title": "Custom generation",
-          "desc": "Select currencies and add tokens"
+        "description": "Pick what you need, then hit generate. All existing accounts will be replaced.",
+        "random": {
+          "title": "Random accounts",
+          "desc": "Generate accounts with random currencies and operations",
+          "countLabel": "How many"
         },
-        "quickGenerate": {
-          "title": "Quick generation",
-          "desc": "Generate 10 random accounts with random currencies"
+        "empty": {
+          "title": "Empty account",
+          "desc": "One Ethereum account with zero balance and no operations"
         },
-        "emptyGenerate": {
-          "title": "Empty generation",
-          "desc": "Generate an empty account"
+        "stablecoins": {
+          "title": "Stablecoin accounts",
+          "desc": "One account per supported chain, each with stablecoin sub-accounts (USDC, USDT, DAI...)"
+        },
+        "manual": {
+          "title": "Custom accounts",
+          "desc": "Pick specific currencies and optional token IDs"
         },
         "currencySelector": {
           "placeholder": "Choose currencies...",
@@ -4684,15 +4689,20 @@
           "label": "Token IDs (optional)",
           "placeholder": "token1, token2, token3"
         },
+        "summary": {
+          "title": "Will generate:",
+          "empty": "Enable at least one option above to generate accounts.",
+          "randomAccounts": "{{count}} random accounts",
+          "emptyAccount": "1 empty Ethereum account",
+          "stablecoinAccounts": "Stablecoin accounts (ETH, TRX, SOL, ALGO)",
+          "manualAccounts": "{{count}} custom account",
+          "manualAccounts_other": "{{count}} custom accounts"
+        },
         "buttons": {
-          "generateAccounts": "Generate {{count}} account",
-          "generateAccounts_other": "Generate {{count}} accounts",
-          "generateAccountsQuick": "Generate {{count}} accounts",
-          "generateEmptyAccount": "Generate empty account"
+          "generate": "Generate accounts"
         },
         "alerts": {
-          "selectCurrency": "Please select at least one currency",
-          "confirmErase": "Existing accounts will be erased. Continue?",
+          "confirmErase": "Existing accounts will be replaced. Continue?",
           "generateError": "Failed to generate mock accounts. Please try again."
         }
       },

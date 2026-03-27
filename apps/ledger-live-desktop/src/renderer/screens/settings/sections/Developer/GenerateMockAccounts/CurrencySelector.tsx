@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { getSupportedCurrencies } from "./utils";
-import CheckBox from "~/renderer/components/CheckBox";
+import { Checkbox } from "@ledgerhq/lumen-ui-react";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
@@ -53,9 +53,11 @@ const SearchContainer = styled(Box)`
 
 type Props = {
   selectedCurrencies: Record<string, boolean>;
+  selectedCount?: number;
   onCurrencyToggle: (currencyId: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  allowedCurrencyIds?: string[];
 };
 
 const SelectionDisplay = ({
@@ -105,7 +107,7 @@ const CurrencyItemComponent = ({
   onToggle: () => void;
 }) => (
   <CurrencyItem horizontal alignItems="center" py={2} px={3} onClick={onToggle}>
-    <CheckBox isChecked={isSelected} onChange={onToggle} />
+    <Checkbox checked={isSelected} onCheckedChange={() => onToggle()} />
     <Box ml={2} horizontal alignItems="center" flex={1}>
       <CryptoCurrencyIcon currency={currency} size={28} />
       <Box ml={2} flex={1}>
@@ -144,16 +146,23 @@ const useClickOutside = (
 
 export default function CurrencySelector({
   selectedCurrencies,
+  selectedCount: selectedCountProp,
   onCurrencyToggle,
   placeholder = "...",
   disabled = false,
+  allowedCurrencyIds,
 }: Props) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const allCurrencies = getSupportedCurrencies();
+  const allCurrencies = useMemo(() => {
+    const supported = getSupportedCurrencies();
+    return allowedCurrencyIds
+      ? supported.filter(c => allowedCurrencyIds.includes(c.id))
+      : supported;
+  }, [allowedCurrencyIds]);
   const sortedCurrencies = useCurrenciesByMarketcap(allCurrencies);
 
   const filteredCurrencies = useMemo(() => {
@@ -167,7 +176,8 @@ export default function CurrencySelector({
     );
   }, [sortedCurrencies, searchValue]);
 
-  const selectedCount = Object.values(selectedCurrencies).filter(Boolean).length;
+  const selectedCount =
+    selectedCountProp ?? Object.values(selectedCurrencies).filter(Boolean).length;
   const selectedCurrenciesList = sortedCurrencies.filter(c => selectedCurrencies[c.id]);
 
   useClickOutside(containerRef, () => setIsOpen(false), isOpen);
@@ -181,13 +191,6 @@ export default function CurrencySelector({
   const handleSearchChange = useCallback((value: string) => {
     setSearchValue(value);
   }, []);
-
-  const handleCurrencyToggle = useCallback(
-    (currencyId: string) => {
-      onCurrencyToggle(currencyId);
-    },
-    [onCurrencyToggle],
-  );
 
   return (
     <Box relative ref={containerRef}>
@@ -234,7 +237,7 @@ export default function CurrencySelector({
                 key={currency.id}
                 currency={currency}
                 isSelected={selectedCurrencies[currency.id] || false}
-                onToggle={() => handleCurrencyToggle(currency.id)}
+                onToggle={() => onCurrencyToggle(currency.id)}
               />
             ))
           )}
