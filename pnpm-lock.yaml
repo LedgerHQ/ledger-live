@@ -685,9 +685,15 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-live
       '@zondax/ledger-live-icp':
         specifier: 1.4.1
         version: 1.4.1
@@ -761,12 +767,6 @@ importers:
         specifier: 'catalog:'
         version: 8.18.3
     devDependencies:
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-cryptoassets
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-live
       '@pnpm/exportable-manifest':
         specifier: 1000.0.7
         version: 1000.0.7
@@ -19571,7 +19571,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
