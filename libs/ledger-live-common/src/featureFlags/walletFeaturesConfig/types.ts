@@ -4,6 +4,7 @@ export type Wallet40Params = {
   readonly marketBanner?: boolean;
   readonly graphRework?: boolean;
   readonly quickActionCtas?: boolean;
+  readonly quickActionsCtasVariant?: boolean;
   readonly newReceiveDialog?: boolean;
   readonly mainNavigation?: boolean;
   readonly lazyOnboarding?: boolean;
@@ -30,6 +31,8 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayGraphRework: boolean;
   /** Whether to show quick action CTAs */
   readonly shouldDisplayQuickActionCtas: boolean;
+  /** Whether to show the quick actions CTAs variant */
+  readonly shouldDisplayQuickActionsCtasVariant: boolean;
   /** Whether to show the new receive options dialog (Lumen) */
   readonly shouldDisplayNewReceiveDialog: boolean;
   /** Whether to show the wallet 4.0 main navigation */

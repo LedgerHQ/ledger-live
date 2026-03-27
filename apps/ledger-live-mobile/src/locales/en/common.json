@@ -2785,6 +2785,8 @@
       "buy": "Buy",
       "connect": "Connect",
       "buyLedger": "Buy a Ledger",
+      "receive": "Receive",
+      "send": "Send",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive via crypto address",
@@ -3652,7 +3654,8 @@
         },
         "fiat": {
           "title": "Via bank transfer",
-          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "description": "Receive stablecoin by simply sending cash.",
+          "description_legacy": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         }
       },
       "memoTag": {
