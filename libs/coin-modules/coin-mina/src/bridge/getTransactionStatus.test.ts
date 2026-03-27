@@ -101,6 +101,18 @@ describe("getTransactionStatus", () => {
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
   });
 
+  it("should allow self-delegation for unstake txType", async () => {
+    const txUnstake = {
+      ...mockTransaction,
+      recipient: mockAccount.freshAddress,
+      txType: "unstake" as const,
+    };
+
+    const result = await getTransactionStatus(mockAccount, txUnstake);
+
+    expect(result.errors.recipient).toBeUndefined();
+  });
+
   it("should handle invalid memo with InvalidMemoMina error", async () => {
     const veryLongMemo = "a".repeat(33); // Create memo longer than MAX_MEMO_LENGTH (32)
     const txWithInvalidMemo = {

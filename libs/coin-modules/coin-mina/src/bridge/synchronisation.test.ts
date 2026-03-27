@@ -137,6 +137,24 @@ describe("synchronisation", () => {
       });
     });
 
+    it("should map undelegate transaction (self-delegation)", async () => {
+      const mockTxn = createMockTxn({
+        type: "REDELEGATE",
+        senderAddress: mockAddress,
+        receiverAddress: "not_used",
+        memo: "undelegate",
+        status: "Success",
+      });
+      // Override the delegate_change operation to have delegate_change_target = sender (self-delegation)
+      mockTxn.transaction.operations[0].metadata = { delegate_change_target: mockAddress };
+
+      const result = await mapRosettaTxnToOperation(mockAccountId, mockAddress, mockTxn);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe("UNDELEGATE");
+      expect(result[0].recipients).toEqual([mockAddress]);
+    });
+
     it("should handle failed transactions", async () => {
       const mockTxn = createMockTxn({
         type: "OUT",

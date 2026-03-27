@@ -31,7 +31,7 @@ function validateRecipient(
     return;
   }
 
-  if (transaction.recipient === account.freshAddress) {
+  if (transaction.recipient === account.freshAddress && transaction.txType !== "unstake") {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 }
@@ -66,7 +66,7 @@ const getTransactionStatus: AccountBridge<
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;
 
-  if (t.txType !== "stake" && t.fees.fee.lte(0)) {
+  if (t.txType !== "stake" && t.txType !== "unstake" && t.fees.fee.lte(0)) {
     errors.fees = new FeeNotLoaded();
   }
 
@@ -83,7 +83,7 @@ const getTransactionStatus: AccountBridge<
   const totalSpent = getTotalSpent(a, t, estimatedFees);
   const amount = useAllAmount ? maxAmountWithFees : new BigNumber(t.amount);
 
-  if (t.txType !== "stake" && amount.lte(0) && !t.useAllAmount) {
+  if (t.txType !== "stake" && t.txType !== "unstake" && amount.lte(0) && !t.useAllAmount) {
     errors.amount = new AmountRequired();
   }
 

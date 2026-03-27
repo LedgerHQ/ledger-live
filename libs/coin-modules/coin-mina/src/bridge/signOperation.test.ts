@@ -51,6 +51,7 @@ describe("signOperation", () => {
         recipients: [mockTransaction.recipient],
         accountId: mockAccount.id,
         date: expect.any(Date),
+        transactionSequenceNumber: new BigNumber(1),
         extra: {
           memo: "test memo",
           accountCreationFee: "0",
@@ -82,6 +83,15 @@ describe("signOperation", () => {
 
       expect(result.type).toBe("DELEGATE");
       expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "DELEGATE");
+    });
+
+    it("should build UNDELEGATE operation when txType is unstake", () => {
+      const unstakeTx = createMockTransaction({ txType: "unstake" });
+
+      const result = buildOptimisticOperation(mockAccount, unstakeTx, new BigNumber(10));
+
+      expect(result.type).toBe("UNDELEGATE");
+      expect(encodeOperationId).toHaveBeenCalledWith(mockAccount.id, "", "UNDELEGATE");
     });
   });
 
