@@ -10,10 +10,10 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "freshAddressPath": "44'/195'/0'/0/0",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
     "index": 0,
-    "operationsCount": 197,
+    "operationsCount": 196,
     "pendingOperations": [],
     "seedIdentifier": "049fc19cbc6d0f525b1c6947b4a36aec74b48e15f2531c5e7e58d272c9e926786da290eb3505d8fab9c83818c1174d9bc96fd18e0527365cba6b9534d43ad5052b",
-    "spendableBalance": "27781772",
+    "spendableBalance": "1781772",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -30,14 +30,30 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       "lastWithdrawnRewardDate": "2022-05-19T12:45:36.000Z",
       "legacyFrozen": {
         "bandwidth": undefined,
-        "energy": undefined,
+        "energy": {
+          "amount": "26000000",
+          "expiredAt": "2020-02-01T16:04:51.000Z",
+        },
       },
-      "tronPower": 0,
+      "tronPower": 26,
       "unFrozen": {
         "bandwidth": [],
         "energy": [],
       },
-      "votes": [],
+      "votes": [
+        {
+          "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+          "voteCount": 15,
+        },
+        {
+          "address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+          "voteCount": 1,
+        },
+        {
+          "address": "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB",
+          "voteCount": 2,
+        },
+      ],
     },
     "used": true,
   },
@@ -3473,24 +3489,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hasFailed": false,
       "hash": "ca05e36bb9546d435346384e7de0c96138c8fac50e0392faaa4ec9170ae22b05",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-ca05e36bb9546d435346384e7de0c96138c8fac50e0392faaa4ec9170ae22b05-LEGACY_UNFREEZE",
-      "recipients": [],
-      "senders": [
-        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
-      ],
-      "type": "LEGACY_UNFREEZE",
-      "value": "0",
-    },
-    {
-      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
-      "blockHash": null,
-      "blockHeight": 80419790,
-      "extra": {
-        "unfreezeAmount": "26000000",
-      },
-      "fee": "0",
-      "hasFailed": false,
-      "hash": "cccab482c0695b2681261a6973d4cf32b587b4f7e5486715027e65b343ebcc03",
-      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-cccab482c0695b2681261a6973d4cf32b587b4f7e5486715027e65b343ebcc03-LEGACY_UNFREEZE",
       "recipients": [],
       "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
