@@ -30,13 +30,14 @@ export type Props = {
   params: {
     account: Account;
     source?: string;
+    mode?: "undelegate";
   };
   t: TFunction;
   device: Device | null | undefined;
   openModal: OpenModal;
 };
 
-const steps: St[] = [
+const delegateSteps: St[] = [
   {
     id: "validator",
     label: <Trans i18nKey="mina.selectValidator.stepLabels.chooseValidator" />,
@@ -49,6 +50,20 @@ const steps: St[] = [
     label: <Trans i18nKey="mina.selectValidator.stepLabels.connectDevice" />,
     component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
+  },
+  {
+    id: "confirmation",
+    label: <Trans i18nKey="mina.selectValidator.stepLabels.confirmation" />,
+    component: StepConfirmation,
+    footer: StepConfirmationFooter,
+  },
+];
+
+const undelegateSteps: St[] = [
+  {
+    id: "connectDevice",
+    label: <Trans i18nKey="mina.selectValidator.stepLabels.connectDevice" />,
+    component: GenericStepConnectDevice,
   },
   {
     id: "confirmation",
@@ -72,7 +87,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
 
-  const { account, source = "Account Page" } = params;
+  const { account, source = "Account Page", mode } = params;
+  const steps = mode === "undelegate" ? undelegateSteps : delegateSteps;
 
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
     useBridgeTransaction(() => {
@@ -80,7 +96,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {
-        txType: "stake",
+        txType: mode === "undelegate" ? "unstake" : "stake",
+        ...(mode === "undelegate" ? { recipient: account.freshAddress } : {}),
       });
 
       return {
@@ -93,8 +110,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
   const handleRetry = useCallback(() => {
     setTransactionError(null);
-    onChangeStepId("validator");
-  }, [onChangeStepId]);
+    onChangeStepId(mode === "undelegate" ? "connectDevice" : "validator");
+  }, [onChangeStepId, mode]);
 
   const handleTransactionError = useCallback((error: Error) => {
     if (!(error instanceof UserRefusedOnDevice)) {
@@ -128,7 +145,15 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
 
   return (
     <Stepper
-      title={<Trans i18nKey="mina.selectValidator.title" />}
+      title={
+        <Trans
+          i18nKey={
+            mode === "undelegate"
+              ? "mina.selectValidator.undelegateTitle"
+              : "mina.selectValidator.title"
+          }
+        />
+      }
       device={device}
       account={account}
       transaction={transaction}
@@ -137,7 +162,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       steps={steps}
       errorSteps={errorSteps}
       disabledSteps={[]}
-      hideBreadcrumb={!!error && ["validator"].includes(stepId)}
+      hideBreadcrumb={!!error && (mode === "undelegate" ? false : stepId === "validator")}
       onRetry={handleRetry}
       onStepChange={handleStepChange}
       onClose={onClose}
