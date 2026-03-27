@@ -26,6 +26,7 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     isSyncDrawerOpen,
     openSyncDrawer,
     closeSyncDrawer,
+    onTryRefresh,
   } = useTopBarViewModel(navigation, screenName);
 
   return (
@@ -44,6 +45,7 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
       isSyncDrawerOpen={isSyncDrawerOpen}
       openSyncDrawer={openSyncDrawer}
       closeSyncDrawer={closeSyncDrawer}
+      onTryRefresh={onTryRefresh}
     />
   );
 }
