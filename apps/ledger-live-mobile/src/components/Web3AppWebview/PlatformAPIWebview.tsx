@@ -478,9 +478,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               return;
             }
           }
-          receive(msg);
+          void receive(msg);
         } catch {
-          // Invalid JSON or receive() rejected — same as historical Platform WebView handling
+          void receive(data);           // let JSON-RPC handle / error-respond
         }
       },
       [receive],

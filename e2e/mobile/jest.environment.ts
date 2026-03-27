@@ -190,9 +190,6 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     if (["hook_failure", "test_fn_failure"].includes(event.name)) {
       this.global.IS_FAILED = true;
-    }
-
-    if (this.global.IS_FAILED && ["test_fn_start", "test_fn_failure"].includes(event.name)) {
       await takeSpeculosScreenshot();
       await takeAppScreenshot("Test Failure");
       try {
