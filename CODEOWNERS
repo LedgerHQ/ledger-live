@@ -365,8 +365,8 @@ tools/actions/composites/merge-e2e-detox-timings/                           @led
 **/knip.json                                          @ledgerhq/platform
 
 # CI — Turborepo & Nx
-/turbo.json                                           @ledgerhq/wallet-ci
-/nx.json                                              @ledgerhq/wallet-ci
+/turbo.json                                           @ledgerhq/platform @ledgerhq/wallet-ci
+/nx.json                                              @ledgerhq/platform @ledgerhq/wallet-ci
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 .github/copilot-instructions.md
