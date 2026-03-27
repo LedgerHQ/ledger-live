@@ -79,6 +79,7 @@ export const mapRosettaTxnToOperation = async (
     invariant(fromAccount, "mina: missing fromAccount");
     invariant(toAccount, "mina: missing toAccount");
 
+    const nonce = txn.transaction.metadata?.nonce;
     const op: MinaOperation = {
       id: "",
       type: "NONE",
@@ -92,6 +93,7 @@ export const mapRosettaTxnToOperation = async (
       senders: [fromAccount],
       recipients: [toAccount],
       date,
+      transactionSequenceNumber: nonce !== undefined ? new BigNumber(nonce) : undefined,
       extra: {
         memo,
         accountCreationFee: accountCreationFee.toString(),
@@ -108,8 +110,8 @@ export const mapRosettaTxnToOperation = async (
         id: encodeOperationId(accountId, hash, type),
       });
     } else if (redelegateTransaction) {
-      // delegate change
-      const type = "REDELEGATE";
+      // delegate change — if sender delegates to themselves, it's an undelegate
+      const type = fromAccount === toAccount ? "UNDELEGATE" : "REDELEGATE";
       ops.push({
         ...op,
         value: new BigNumber(0),
@@ -162,7 +164,19 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     getEpochInfo(),
     fetchValidators(),
   ]);
-  const delegateAddress = delegateKey || address;
+
+  // GraphQL may lag behind Rosetta. Fall back to the most recent delegation-related op
+  // to determine the current delegate state without waiting for the GraphQL to catch up.
+  const graphqlDelegateAddress = delegateKey || address;
+  const lastDelegationOp = operations.find(
+    op => op.type === "REDELEGATE" || op.type === "DELEGATE" || op.type === "UNDELEGATE",
+  );
+  const delegateAddress =
+    graphqlDelegateAddress !== address
+      ? graphqlDelegateAddress
+      : lastDelegationOp?.type === "UNDELEGATE"
+        ? address
+        : (lastDelegationOp?.recipients[0] ?? address);
 
   const shape: Partial<MinaAccount> = {
     id: accountId,

@@ -14,12 +14,13 @@ export const buildTransaction = async (
   try {
     const accountNum = getAccountNumFromPath(a.freshAddressPath);
     invariant(accountNum !== undefined, "mina: accountNum is required to build transaction");
+
     return {
-      txType: t.txType === "stake" ? TxType.DELEGATION : TxType.PAYMENT,
+      txType: t.txType === "stake" || t.txType === "unstake" ? TxType.DELEGATION : TxType.PAYMENT,
       senderAccount: accountNum,
       senderAddress: a.freshAddress,
       receiverAddress: t.recipient,
-      amount: t.txType === "stake" ? 0 : t.amount.toNumber(),
+      amount: t.txType === "stake" || t.txType === "unstake" ? 0 : t.amount.toNumber(),
       fee: t.fees.fee.toNumber(),
       nonce: BigNumber(t.nonce).toNumber(),
       memo: t.memo ?? "",

@@ -67,6 +67,12 @@ describe("transaction", () => {
       expect(result.txType).toBe("stake");
     });
 
+    it("should set txType when value is unstake", () => {
+      const result = fromTransactionRaw({ ...baseRaw, txType: "unstake" });
+
+      expect(result.txType).toBe("unstake");
+    });
+
     it("should not set txType when absent", () => {
       const result = fromTransactionRaw(baseRaw);
 
@@ -100,6 +106,14 @@ describe("transaction", () => {
       const result = toTransactionRaw(tx);
 
       expect(result.txType).toBe("stake");
+    });
+
+    it("should include txType unstake when present", () => {
+      const tx = createMockTransaction({ txType: "unstake" });
+
+      const result = toTransactionRaw(tx);
+
+      expect(result.txType).toBe("unstake");
     });
 
     it("should not include txType when absent", () => {
@@ -137,6 +151,14 @@ describe("transaction", () => {
       expect(restored.memo).toBe(original.memo);
       expect(restored.nonce).toBe(original.nonce);
       expect(restored.txType).toBe(original.txType);
+    });
+
+    it("should preserve txType unstake through fromRaw(toRaw(tx))", () => {
+      const original = createMockTransaction({ txType: "unstake" });
+
+      const restored = fromTransactionRaw(toTransactionRaw(original));
+
+      expect(restored.txType).toBe("unstake");
     });
   });
 

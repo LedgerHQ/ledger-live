@@ -28,7 +28,12 @@ export const buildOptimisticOperation = (
     value = value.minus(transaction.fees.accountCreationFee);
   }
 
-  const type: OperationType = transaction.txType === "stake" ? "DELEGATE" : "OUT";
+  const type: OperationType =
+    transaction.txType === "stake"
+      ? "DELEGATE"
+      : transaction.txType === "unstake"
+        ? "UNDELEGATE"
+        : "OUT";
 
   const operation: MinaOperation = {
     id: encodeOperationId(account.id, "", type),
@@ -42,6 +47,7 @@ export const buildOptimisticOperation = (
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     date: new Date(),
+    transactionSequenceNumber: new BigNumber(transaction.nonce),
     extra: {
       memo: transaction.memo,
       accountCreationFee: transaction.fees.accountCreationFee.toString(),

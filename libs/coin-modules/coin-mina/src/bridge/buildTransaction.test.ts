@@ -65,4 +65,18 @@ describe("buildTransaction", () => {
 
     await expect(buildTransaction(mockAccount as Account, mockTransaction)).rejects.toThrow();
   });
+
+  it("should build DELEGATION transaction with amount 0 when txType is unstake", async () => {
+    const unstakeTx: Transaction = {
+      ...mockTransaction,
+      txType: "unstake",
+      recipient: mockAccount.freshAddress as string,
+    };
+
+    const result = await buildTransaction(mockAccount as Account, unstakeTx);
+
+    expect(result.txType).toBe(TxType.DELEGATION);
+    expect(result.amount).toBe(0);
+    expect(result.receiverAddress).toBe(mockAccount.freshAddress);
+  });
 });
