@@ -4,12 +4,18 @@ import { WebViewAppPage } from "./webViewApp.page";
 
 export abstract class EarnBasePage extends WebViewAppPage {
   protected readonly webviewIdentifier = "earn";
+  private readonly loadingSkeletonTestId = "loading-skeleton";
 
   @step("Go and wait for Earn app to be ready")
   async goAndWaitForEarnToBeReady(earnFunction: () => Promise<void>) {
-    const appReadyPromise = new Promise<void>(resolve => {
+    const appReadyPromise = new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(
+        () => reject(new Error("Earn Live App did not load within 30s")),
+        30000,
+      );
       this.page.on("console", msg => {
         if (msg.type() === "info" && msg.text().includes("Earn Live App Loaded")) {
+          clearTimeout(timeout);
           resolve();
         }
       });
@@ -19,7 +25,7 @@ export abstract class EarnBasePage extends WebViewAppPage {
     await appReadyPromise;
 
     const webview = await this.getWebView();
-    await webview.getByTestId(this.loadingSkeleton).first().waitFor({ state: "hidden" });
+    await webview.getByTestId(this.loadingSkeletonTestId).first().waitFor({ state: "hidden" });
   }
 
   @step("Verify provider URL")

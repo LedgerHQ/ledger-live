@@ -10,6 +10,7 @@ import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
 import { liveDataCommand, liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import type { Application } from "tests/page";
 
 const EARN_LOCAL_MANIFEST: LiveAppManifest = earnLocalManifestJson as LiveAppManifest;
 
@@ -21,17 +22,19 @@ function getTags(account: Account) {
 }
 
 function setupEnv(disableBroadcast?: boolean) {
-  const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
   test.beforeAll(async () => {
     if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
   test.afterAll(async () => {
-    if (originalBroadcastValue === undefined) {
-      delete process.env.DISABLE_TRANSACTION_BROADCAST;
-    } else {
-      process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
-    }
+    delete process.env.DISABLE_TRANSACTION_BROADCAST;
   });
+}
+
+async function navigateToEarn(app: Application) {
+  await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+  await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
+    app.mainNavigation.openTargetFromMainNavigation("earn"),
+  );
 }
 
 test.describe("Earn [v2]", () => {
@@ -59,15 +62,12 @@ test.describe("Earn [v2]", () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("earn"),
-        );
+        await navigateToEarn(app);
         await app.earnV2Dashboard.verifyIceColdStartPage();
         await app.earnV2Dashboard.clickIceColdStartEarnCTA();
         const selector = await getModularSelector(app, "ASSET");
-        expect(selector).toBeTruthy();
-        await selector!.validateItems();
+        if (!selector) throw new Error("Expected modular ASSET selector to be visible");
+        await selector.validateItems();
       },
     );
   });
@@ -93,10 +93,7 @@ test.describe("Earn [v2]", () => {
           annotation: { type: "TMS", description: xrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-            app.mainNavigation.openTargetFromMainNavigation("earn"),
-          );
+          await navigateToEarn(app);
           await app.earnV2Dashboard.verifyColdStartPage();
           await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
           await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
@@ -141,10 +138,7 @@ test.describe("Earn [v2]", () => {
           annotation: { type: "TMS", description: hotStartXrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-            app.mainNavigation.openTargetFromMainNavigation("earn"),
-          );
+          await navigateToEarn(app);
           await app.earnV2Dashboard.verifyHotStartPage();
           await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
           await app.earnV2Dashboard.verifyRewardsSummaryBoxes();
@@ -158,10 +152,7 @@ test.describe("Earn [v2]", () => {
           annotation: { type: "TMS", description: positionXrayTicket },
         },
         async ({ app }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-            app.mainNavigation.openTargetFromMainNavigation("earn"),
-          );
+          await navigateToEarn(app);
           await app.earnV2Dashboard.verifyHotStartPage();
           await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
           await app.account.waitForAccountHeaderName(account.accountName);
@@ -189,26 +180,19 @@ test.describe("Earn [v2]", () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("earn"),
-        );
+        await navigateToEarn(app);
         await app.earnV2Dashboard.clickIceColdStartEarnCTA();
+
         const assetSelector = await getModularSelector(app, "ASSET");
-        if (assetSelector) {
-          await assetSelector.selectAsset(account.currency);
-        }
-        const selector = await getModularSelector(app, "ACCOUNT");
-        if (selector) {
-          await selector.clickOnAddAndExistingAccount();
-          await app.scanAccountsDrawer.selectFirstAccount();
-          await app.scanAccountsDrawer.clickContinueButton();
-        } else {
-          await app.delegateDrawer.clickOnAddAccountButton();
-          await app.addAccount.addAccounts();
-          await app.addAccount.done();
-          await app.delegateDrawer.selectAccountByName(account);
-        }
+        if (!assetSelector) throw new Error("Expected modular ASSET selector to be visible");
+        await assetSelector.selectAsset(account.currency);
+
+        const accountSelector = await getModularSelector(app, "ACCOUNT");
+        if (!accountSelector) throw new Error("Expected modular ACCOUNT selector to be visible");
+        await accountSelector.clickOnAddAndExistingAccount();
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
+
         await app.addAccount.close();
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.expectAccountsCountToBeNotNull();
@@ -218,69 +202,83 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: CTA Flows ---
 
-  const ctaFlows: {
-    name: string;
-    account: Account;
-    ticker: string;
-    xrayTicket: string;
-    verify: (app: any, page: any) => Promise<void>;
-  }[] = [
-    {
-      name: "CTA → Native staking (SOL)",
-      account: Account.SOL_2,
-      ticker: Account.SOL_2.currency.ticker,
-      xrayTicket: "B2CQA-4643",
-      verify: async (app, _page) => {
+  test.describe("CTA → Native staking (SOL)", () => {
+    const account = Account.SOL_2;
+
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      cliCommands: [liveDataWithAddressCommand(account)],
+    });
+
+    const xrayTicket = "B2CQA-4643";
+    test(
+      "Earn v2 CTA → Native staking (SOL)",
+      {
+        tag: getTags(account),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
+      async ({ app }) => {
+        await navigateToEarn(app);
+        await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+        await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
         await app.earnV2Dashboard.verifyModalContainerVisible();
       },
-    },
-    {
-      name: "CTA → Partner dapp (ETH)",
-      account: Account.ETH_1,
-      ticker: Account.ETH_1.currency.ticker,
-      xrayTicket: "B2CQA-4644",
-      verify: async (app, _page) => {
+    );
+  });
+
+  test.describe("CTA → Partner dapp (ETH)", () => {
+    const account = Account.ETH_1;
+
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      cliCommands: [liveDataWithAddressCommand(account)],
+    });
+
+    const xrayTicket = "B2CQA-4644";
+    test(
+      "Earn v2 CTA → Partner dapp (ETH)",
+      {
+        tag: getTags(account),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
+      async ({ app }) => {
+        await navigateToEarn(app);
+        await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+        await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
         await app.earnV2Dashboard.verifyModalOrProviderVisible();
       },
-    },
-    {
-      name: "CTA → Earn staking (USDT)",
-      account: TokenAccount.ETH_USDT_1,
-      ticker: TokenAccount.ETH_USDT_1.currency.ticker,
-      xrayTicket: "B2CQA-4645",
-      verify: async app => {
+    );
+  });
+
+  test.describe("CTA → Earn staking (USDT)", () => {
+    const account = TokenAccount.ETH_USDT_1;
+
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      cliCommands: [liveDataWithAddressCommand(account)],
+    });
+
+    const xrayTicket = "B2CQA-4645";
+    test(
+      "Earn v2 CTA → Earn staking (USDT)",
+      {
+        tag: getTags(account),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
+      async ({ app }) => {
+        await navigateToEarn(app);
+        await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+        await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
         await app.earnV2Dashboard.verifyDepositFlowVisible();
       },
-    },
-  ];
-
-  for (const { name, account, ticker, xrayTicket, verify } of ctaFlows) {
-    test.describe(name, () => {
-      test.use({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_DESKTOP_FLAGS,
-        cliCommands: [liveDataWithAddressCommand(account)],
-      });
-
-      test(
-        `Earn v2 ${name}`,
-        {
-          tag: getTags(account),
-          annotation: { type: "TMS", description: xrayTicket },
-        },
-        async ({ app, page }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-            app.mainNavigation.openTargetFromMainNavigation("earn"),
-          );
-          await app.earnV2Dashboard.clickAssetEarnCta(ticker);
-          await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
-          await verify(app, page);
-        },
-      );
-    });
-  }
+    );
+  });
 
   // --- Navigation: ETH Provider Staking Flows ---
 
@@ -308,10 +306,7 @@ test.describe("Earn [v2]", () => {
           annotation: { type: "TMS", description: xrayTicket },
         },
         async ({ app, page }) => {
-          await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-            app.mainNavigation.openTargetFromMainNavigation("earn"),
-          );
+          await navigateToEarn(app);
           await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
           const verifyProviderUrlPromise = app.earnV2Dashboard.verifyProviderURL(
             provider.uiName,
@@ -356,46 +351,39 @@ test.describe("Earn [v2]", () => {
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, page }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("earn"),
-        );
+        await navigateToEarn(app);
         await app.earnV2Dashboard.verifyHotStartPage();
         await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
         await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
-        // After clicking, LLD navigates to the partner dapp via custom.navigate → redirect-provider.
-        // The earn webview closes as LLD navigates to the dapp platform page.
-        // Verify the main page URL changed to the platform route.
         await expect(page).toHaveURL(/\/platform\//);
       },
     );
   });
 
+  // ETH parent account is used for setup; the test verifies the USDT token position within it
   test.describe("Position → Withdrawal (USDT)", () => {
-    const account = Account.ETH_1;
+    const parentAccount = Account.ETH_1;
+    const tokenAccount = TokenAccount.ETH_USDT_1;
 
     test.use({
       userdata: "skip-onboarding",
-      speculosApp: account.currency.speculosApp,
+      speculosApp: parentAccount.currency.speculosApp,
       featureFlags: EARN_V2_DESKTOP_FLAGS,
-      cliCommands: [liveDataWithAddressCommand(account)],
+      cliCommands: [liveDataWithAddressCommand(parentAccount)],
     });
 
     const xrayTicket = "B2CQA-4648";
     test(
       "Earn v2 position row navigates to withdrawal for USDT",
       {
-        tag: getTags(account),
+        tag: getTags(parentAccount),
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await app.earnV2Dashboard.goAndWaitForEarnToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("earn"),
-        );
+        await navigateToEarn(app);
         await app.earnV2Dashboard.verifyHotStartPage();
-        await app.earnV2Dashboard.verifyPositionRowPresent(TokenAccount.ETH_USDT_1.currency.ticker);
-        await app.earnV2Dashboard.clickPositionRow(TokenAccount.ETH_USDT_1.currency.ticker);
+        await app.earnV2Dashboard.verifyPositionRowPresent(tokenAccount.currency.ticker);
+        await app.earnV2Dashboard.clickPositionRow(tokenAccount.currency.ticker);
         await app.earnV2Dashboard.verifyWithdrawalFlowVisible();
       },
     );

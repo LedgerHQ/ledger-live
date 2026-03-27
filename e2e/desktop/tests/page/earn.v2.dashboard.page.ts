@@ -2,7 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { EarnBasePage } from "./earn.base.page";
-import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { getModularSelector, getModularLocator } from "tests/utils/modularSelectorUtils";
 import type { Application } from "./index";
 
 export class EarnV2Page extends EarnBasePage {
@@ -65,14 +65,14 @@ export class EarnV2Page extends EarnBasePage {
   @step("Verify position row present: $0")
   async verifyPositionRowPresent(identifier: string) {
     const webview = await this.getWebView();
-    const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: identifier });
+    const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: new RegExp(identifier) });
     await expect(row.first()).toBeVisible();
   }
 
   @step("Click position row: $0")
   async clickPositionRow(identifier: string) {
     const webview = await this.getWebView();
-    const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: identifier });
+    const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: new RegExp(identifier) });
     await row.first().click();
   }
 
@@ -89,13 +89,6 @@ export class EarnV2Page extends EarnBasePage {
   }
 
   // Navigation
-
-  @step("Verify navigated away from earn dashboard")
-  async verifyNavigatedFromDashboard() {
-    await this.verifyElementIsNotVisible(this.tokensToEarnBanner);
-    await this.verifyElementIsNotVisible(this.maxPotentialRewards);
-  }
-
   @step("Verify navigated to deposit flow")
   async verifyDepositFlowVisible() {
     const webview = await this.getWebView();
@@ -113,21 +106,7 @@ export class EarnV2Page extends EarnBasePage {
     const selector = await getModularSelector(app, "ACCOUNT");
     if (selector) {
       await selector.selectAccount(account);
-      await expect(
-        this.page
-          .getByTestId("modular-drawer-screen-ACCOUNT_SELECTION")
-          .or(this.page.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION")),
-      ).toBeHidden();
+      await expect(getModularLocator(this.page, "ACCOUNT")).toBeHidden();
     }
-  }
-
-  @step("Get stake platform for currency: $0")
-  async getStakePlatform(currencyId: string): Promise<string | null> {
-    const webview = await this.getWebView();
-    const url = webview.url();
-    const param = new URL(url).searchParams.get("stakeProgramsParam");
-    if (!param) return null;
-    const redirects: Record<string, string> = JSON.parse(param);
-    return redirects[currencyId] ?? null;
   }
 }
