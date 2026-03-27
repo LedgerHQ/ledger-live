@@ -52,13 +52,12 @@ jobs:
       - name: Resolve PR base and trigger baseline upload
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          REPO: ${{ github.repository }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           set -euo pipefail
-          RUN_ID="${{ github.event.workflow_run.id }}"
-          HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
-          HEAD_BRANCH="${{ github.event.workflow_run.head_branch }}"
-          REPO="${{ github.repository }}"
-          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
 
           if [ "$CONCLUSION" != "success" ]; then
             echo "Skipping: triggering workflow conclusion=$CONCLUSION (need success)."
@@ -90,10 +89,11 @@ jobs:
             exit 0
           fi
 
-          echo "Dispatching baseline upload: run=$RUN_ID base=$BASE head_sha=$HEAD_SHA ref=$HEAD_BRANCH desktop=$DESKTOP mobile=$MOBILE"
+          echo "Dispatching baseline upload: run=$RUN_ID base=$BASE head_sha=$HEAD_SHA desktop=$DESKTOP mobile=$MOBILE"
+          # Use commit SHA as --ref so the worker run's GITHUB_SHA matches the built artifacts (not branch tip).
           gh workflow run rsdoctor-baseline-upload.yml \
             --repo "$REPO" \
-            --ref "$HEAD_BRANCH" \
+            --ref "$HEAD_SHA" \
             -f "source_run_id=$RUN_ID" \
             -f "target_branch=$BASE" \
             -f "head_sha=$HEAD_SHA" \
@@ -112,12 +112,27 @@ jobs:
       issues: write
       id-token: write
     steps:
+      # Checkout uses the run's GITHUB_SHA (workflow_dispatch --ref from coordinator is the commit SHA).
+      # Avoid ref: ${{ github.event.inputs.* }} so CodeQL does not treat checkout as user-controlled YAML injection.
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: ${{ github.event.inputs.head_sha }}
           sparse-checkout: |
             tools/actions/rsdoctor-pr-validator
           sparse-checkout-cone-mode: false
+
+      - name: Verify workflow ref matches head_sha input
+        env:
+          INPUT_HEAD_SHA: ${{ github.event.inputs.head_sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "$INPUT_HEAD_SHA" ]; then
+            echo "::error::head_sha input is required"
+            exit 1
+          fi
+          if [ "$INPUT_HEAD_SHA" != "$GITHUB_SHA" ]; then
+            echo "::error::head_sha input ($INPUT_HEAD_SHA) does not match run GITHUB_SHA ($GITHUB_SHA)"
+            exit 1
+          fi
 
       - uses: ./tools/actions/rsdoctor-pr-validator
         with:
