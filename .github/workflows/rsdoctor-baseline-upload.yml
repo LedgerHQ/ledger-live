@@ -1,0 +1,128 @@
+# Seeds Rsdoctor baselines from existing CI artifacts (no rebuild).
+# "[All Platforms] - Build and Test - PR" already uploads rsdoctor-desktop / rsdoctor-mobile;
+# when that run succeeds and the PR targets an Rsdoctor stack branch, we re-download those
+# artifacts and call rsdoctor-action in workflow_dispatch mode (the only event besides push
+# that uploads baselines — workflow_run alone is ignored by rsdoctor-action).
+# See https://rsdoctor.dev/guide/start/action
+name: "[CI] Rsdoctor baseline upload"
+
+on:
+  workflow_run:
+    workflows: ["[All Platforms] - Build and Test - PR"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Actions run id that has rsdoctor-desktop and/or rsdoctor-mobile artifacts
+        required: true
+        type: string
+      target_branch:
+        description: Rsdoctor baseline key (PR base ref, e.g. feat/rsdoctor-optimized)
+        required: true
+        type: string
+      head_sha:
+        description: Commit SHA the artifacts were built for (source workflow head_sha)
+        required: true
+        type: string
+      desktop_artifact_name:
+        description: Artifact name for desktop; empty skips
+        required: false
+        default: ""
+        type: string
+      mobile_artifact_name:
+        description: Artifact name for mobile; empty skips
+        required: false
+        default: ""
+        type: string
+
+concurrency:
+  group: rsdoctor-baseline-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch-baseline-worker:
+    name: "Rsdoctor baseline — dispatch worker"
+    if: github.event_name == 'workflow_run'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Resolve PR base and trigger baseline upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          RUN_ID="${{ github.event.workflow_run.id }}"
+          HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
+          HEAD_BRANCH="${{ github.event.workflow_run.head_branch }}"
+          REPO="${{ github.repository }}"
+          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+
+          if [ "$CONCLUSION" != "success" ]; then
+            echo "Skipping: triggering workflow conclusion=$CONCLUSION (need success)."
+            exit 0
+          fi
+
+          BASE=$(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq '.pull_requests[0].base.ref // empty')
+          if [ -z "$BASE" ]; then
+            echo "Skipping: no pull_requests[] on run (e.g. merge_group-only); baseline seed expects a PR run with API metadata."
+            exit 0
+          fi
+
+          case "$BASE" in
+            feat/rsdoctor-optimized|feat/rsdoctor-optimized-pinned|feat/rsdoctor-optimized-test-1) ;;
+            *)
+              echo "Skipping: base ref '$BASE' is not an Rsdoctor stack integration branch."
+              exit 0
+              ;;
+          esac
+
+          NAMES=$(gh api "repos/$REPO/actions/runs/$RUN_ID/artifacts" --jq '.artifacts[].name')
+          DESKTOP=""
+          MOBILE=""
+          echo "$NAMES" | grep -qxF rsdoctor-desktop && DESKTOP=rsdoctor-desktop || true
+          echo "$NAMES" | grep -qxF rsdoctor-mobile && MOBILE=rsdoctor-mobile || true
+
+          if [ -z "$DESKTOP" ] && [ -z "$MOBILE" ]; then
+            echo "Skipping: no rsdoctor-desktop or rsdoctor-mobile on run $RUN_ID."
+            exit 0
+          fi
+
+          echo "Dispatching baseline upload: run=$RUN_ID base=$BASE head_sha=$HEAD_SHA ref=$HEAD_BRANCH desktop=$DESKTOP mobile=$MOBILE"
+          gh workflow run rsdoctor-baseline-upload.yml \
+            --repo "$REPO" \
+            --ref "$HEAD_BRANCH" \
+            -f "source_run_id=$RUN_ID" \
+            -f "target_branch=$BASE" \
+            -f "head_sha=$HEAD_SHA" \
+            -f "desktop_artifact_name=$DESKTOP" \
+            -f "mobile_artifact_name=$MOBILE"
+
+  seed-from-artifacts:
+    name: "Rsdoctor baseline (from artifacts, no rebuild)"
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ github.event.inputs.head_sha }}
+          sparse-checkout: |
+            tools/actions/rsdoctor-pr-validator
+          sparse-checkout-cone-mode: false
+
+      - uses: ./tools/actions/rsdoctor-pr-validator
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          target_branch: ${{ github.event.inputs.target_branch }}
+          artifact_run_id: ${{ github.event.inputs.source_run_id }}
+          desktop_artifact_name: ${{ github.event.inputs.desktop_artifact_name }}
+          mobile_artifact_name: ${{ github.event.inputs.mobile_artifact_name }}

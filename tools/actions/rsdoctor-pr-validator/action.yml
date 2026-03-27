@@ -21,6 +21,12 @@ inputs:
     description: Workflow artifact name for mobile Rsdoctor data; empty skips mobile download.
     required: false
     default: ""
+  artifact_run_id:
+    description: >
+      When set, download named artifacts from this workflow run via `gh run download` instead of
+      `actions/download-artifact` (same-run only). Use for baseline upload after "[All Platforms] - Build and Test - PR".
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
@@ -30,22 +36,43 @@ runs:
         rm -rf rsdoctor .rsdoctor-merge
         mkdir -p rsdoctor .rsdoctor-merge
 
-    - name: Download desktop Rsdoctor artifact
+    - name: Download desktop Rsdoctor artifact (this run)
       id: dl-desktop
-      if: ${{ inputs.desktop_artifact_name != '' }}
+      if: ${{ inputs.artifact_run_id == '' && inputs.desktop_artifact_name != '' }}
       uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
       with:
         name: ${{ inputs.desktop_artifact_name }}
         path: .rsdoctor-merge/desktop-in
 
-    - name: Download mobile Rsdoctor artifact
+    - name: Download mobile Rsdoctor artifact (this run)
       id: dl-mobile
-      if: ${{ inputs.mobile_artifact_name != '' }}
+      if: ${{ inputs.artifact_run_id == '' && inputs.mobile_artifact_name != '' }}
       continue-on-error: true
       uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
       with:
         name: ${{ inputs.mobile_artifact_name }}
         path: .rsdoctor-merge/mobile-in
+
+    - name: Download Rsdoctor artifacts (other workflow run)
+      if: ${{ inputs.artifact_run_id != '' && (inputs.desktop_artifact_name != '' || inputs.mobile_artifact_name != '') }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github_token }}
+      run: |
+        set -euo pipefail
+        RUN_ID="${{ inputs.artifact_run_id }}"
+        REPO="${{ github.repository }}"
+        if [ -n "${{ inputs.desktop_artifact_name }}" ]; then
+          mkdir -p .rsdoctor-merge/desktop-in
+          gh run download "$RUN_ID" --repo "$REPO" -n "${{ inputs.desktop_artifact_name }}" -D .rsdoctor-merge/desktop-in
+        fi
+        if [ -n "${{ inputs.mobile_artifact_name }}" ]; then
+          mkdir -p .rsdoctor-merge/mobile-in
+          gh run download "$RUN_ID" --repo "$REPO" -n "${{ inputs.mobile_artifact_name }}" -D .rsdoctor-merge/mobile-in || {
+            echo "::warning::Mobile Rsdoctor artifact download failed; continuing without mobile."
+            rm -rf .rsdoctor-merge/mobile-in
+          }
+        fi
 
     - name: Merge artifacts into rsdoctor/
       id: rsdoctor_data
