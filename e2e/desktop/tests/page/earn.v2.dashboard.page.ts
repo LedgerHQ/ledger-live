@@ -13,6 +13,8 @@ export class EarnV2Page extends EarnBasePage {
   private readonly footerDisclaimer = "footer-disclaimer";
   private readonly assetItemTicker = (ticker: string) =>
     `asset-item-ticker-${ticker.toLowerCase()}`;
+  private readonly iceColdStartEarnCta = "ice-cold-start-earn-cta";
+  private readonly modalContainer = this.page.getByTestId("modal-container");
 
   // Ice Cold Start
 
@@ -26,7 +28,7 @@ export class EarnV2Page extends EarnBasePage {
   @step("Click ice cold start earn CTA")
   async clickIceColdStartEarnCTA() {
     const webview = await this.getWebView();
-    await webview.getByTestId("ice-cold-start-earn-cta").click();
+    await webview.getByTestId(this.iceColdStartEarnCta).click();
   }
 
   // Cold Start
@@ -72,6 +74,18 @@ export class EarnV2Page extends EarnBasePage {
     const webview = await this.getWebView();
     const row = webview.getByTestId(/^deposit-row-/).filter({ hasText: identifier });
     await row.first().click();
+  }
+
+  @step("Verify modal container is visible")
+  async verifyModalContainerVisible() {
+    await expect(this.modalContainer).toBeVisible();
+  }
+
+  @step("Verify modal or provider is visible")
+  async verifyModalOrProviderVisible() {
+    await expect(
+      this.modalContainer.or(this.page.locator("[data-test-id*='provider']")),
+    ).toBeVisible();
   }
 
   // Navigation

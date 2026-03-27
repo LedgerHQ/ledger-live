@@ -6,7 +6,6 @@ import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
-import { getDescription } from "tests/utils/customJsonReporter";
 
 const readFileAsync = promisify(readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -28,25 +27,6 @@ async function attachIfExists(
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {
     await allure.tms(id);
-  }
-}
-
-/**
- * Build test metadata (annotation) for an optional xray ticket.
- * Returns an object spread that can be merged into the test options.
- */
-export function xrayAnnotation(xrayTicket: string | undefined) {
-  return xrayTicket ? { annotation: { type: "TMS", description: xrayTicket } } : {};
-}
-
-/**
- * If an xray ticket is present, register its TMS link in allure.
- * Call at the top of every test body that has an xray ticket.
- */
-export async function registerXrayLink(testInfo: TestInfo) {
-  const tmsDescription = getDescription(testInfo.annotations, "TMS");
-  if (tmsDescription) {
-    await addTmsLink(tmsDescription.split(", "));
   }
 }
 
