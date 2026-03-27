@@ -2,7 +2,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "customConditions": [],
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "tronweb": ["./types/tronweb/index.d.ts"]
+    },
+    "ignoreDeprecations": "6.0"
   },
   "exclude": [
     "src/api/subscan.ts",
