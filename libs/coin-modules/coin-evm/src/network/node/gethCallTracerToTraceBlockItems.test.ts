@@ -1,3 +1,4 @@
+import flareBlock0x36ffc39CallTracerTrace from "./fixtures/flare-0x36ffc39-debug-trace-block-call-tracer.json";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
 import type { TraceBlockItem } from "./types";
 import { isTraceBlockItem } from "./types";
@@ -185,5 +186,61 @@ describe("gethCallTracerToTraceBlockItems", () => {
       },
     ]);
     expect(isTraceBlockItem(items[0])).toBe(true);
+  });
+
+  it("works on a real-life trace", () => {
+    /**
+     * Live capture from https://rpc.au.cc/flare ([flare public RPC](https://rpc.au.cc/flare)).
+     *
+     * 1) Current head (hex block height):
+     * ```bash
+     * curl -sS -X POST https://rpc.au.cc/flare -H 'Content-Type: application/json' \
+     *   -d '{"jsonrpc":"2.0","id":1,"method":"eth_blockNumber","params":[]}'
+     * ```
+     *
+     * 2) `debug_traceBlockByHeight` is not implemented on this node (JSON-RPC -32601). The Geth-style
+     * equivalent is `debug_traceBlockByNumber` with the same height as hex:
+     * ```bash
+     * curl -sS -X POST https://rpc.au.cc/flare -H 'Content-Type: application/json' \
+     *   -d '{"jsonrpc":"2.0","id":2,"method":"debug_traceBlockByNumber","params":["0x36ffc39",{"tracer":"callTracer"}]}'
+     * ```
+     *
+     * Fixture: `./fixtures/flare-0x36ffc39-debug-trace-block-call-tracer.json` — `result` array from
+     * the response above (Flare block 0x36ffc39 / 57670713).
+     */
+    const blockNumber = 0x36ffc39;
+    const debugTraceResults = flareBlock0x36ffc39CallTracerTrace.result;
+
+    const items = gethCallTracerToTraceBlockItems(blockNumber, debugTraceResults);
+
+    const txPositions = [
+      ...new Set(items.map(i => i.transactionPosition).filter((p): p is number => p !== null)),
+    ].sort((a, b) => a - b);
+
+    expect({
+      blockNumber,
+      topLevelTxs: debugTraceResults.length,
+      flattenedFrames: items.length,
+      txPositions,
+      firstRoot: {
+        transactionHash: items[0]?.transactionHash,
+        traceAddress: items[0]?.traceAddress,
+        type: items[0]?.type,
+        blockNumber: items[0]?.blockNumber,
+      },
+      allTraceBlockItems: items.every(i => isTraceBlockItem(i)),
+    }).toEqual({
+      blockNumber: 0x36ffc39,
+      topLevelTxs: 2,
+      flattenedFrames: 57,
+      txPositions: [0, 1],
+      firstRoot: {
+        transactionHash: "0x2dc92b22902757ca658523cb0c58c2c0db3abf40f2270ec0f4f7facad87c6073",
+        traceAddress: [],
+        type: "call",
+        blockNumber: 0x36ffc39,
+      },
+      allTraceBlockItems: true,
+    });
   });
 });
