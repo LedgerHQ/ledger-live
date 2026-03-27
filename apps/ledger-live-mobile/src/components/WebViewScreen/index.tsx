@@ -8,6 +8,13 @@ import { Track } from "~/analytics";
 import WebViewNoConnectionError from "./NoConnectionError";
 import WebViewLoading from "./Loading";
 import { SafeAreaView } from "react-native";
+import Config from "react-native-config";
+import {
+  E2E_WEBVIEW_CONSOLE_LOG_TYPE,
+  E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT,
+  E2E_WEBVIEW_NETWORK_LOG_TYPE,
+} from "~/e2e/webviewNetworkLogCapture";
+import { webviewLogStore } from "~/e2e/webviewLogStore";
 
 const SafeContainer = styled(SafeAreaView)`
   flex: 1;
@@ -75,6 +82,44 @@ const WebViewScreen = ({
     [screenName],
   );
 
+  const handleMessage = useCallback(
+    (e: WebViewMessageEvent) => {
+      if (Config.DETOX && e.nativeEvent?.data) {
+        try {
+          const msg = JSON.parse(e.nativeEvent.data);
+          if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+            webviewLogStore.addNetworkLog(msg.payload);
+            return;
+          }
+          if (msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+            webviewLogStore.addConsoleLog(msg.payload);
+            return;
+          }
+        } catch {
+          // not our message
+        }
+      }
+      onMessage?.(e);
+    },
+    [onMessage],
+  );
+
+  const handleError = useCallback(
+    (event?: { nativeEvent?: { description?: string; code?: number } }) => {
+      if (Config.DETOX) {
+        const desc = event?.nativeEvent?.description;
+        const code = event?.nativeEvent?.code;
+        webviewLogStore.addLoadError({
+          timestamp: new Date().toISOString(),
+          source: "WebViewScreen",
+          message: desc ?? "WebView onError fired",
+          details: `uri=${uri} screenName=${screenName}${code != null ? ` code=${code}` : ""}`,
+        });
+      }
+    },
+    [uri, screenName],
+  );
+
   return (
     <SafeContainer>
       {renderHeader && renderHeader()}
@@ -87,13 +132,17 @@ const WebViewScreen = ({
               ref={ref}
               source={{ uri }}
               style={{ backgroundColor: "transparent" }}
-              onMessage={onMessage}
+              onMessage={handleMessage}
               onLoadEnd={handleOnLoad}
+              onError={handleError}
               renderError={renderError || defaultRenderError}
               startInLoadingState
               javaScriptCanOpenWindowsAutomatically
               allowsBackForwardNavigationGestures
               mediaPlaybackRequiresUserAction
+              injectedJavaScriptBeforeContentLoaded={
+                Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
+              }
               onNavigationStateChange={(navState: { canGoBack: boolean }) => {
                 setCanGoBack(!navState.canGoBack);
               }}

@@ -26,7 +26,7 @@ import { useTranslation } from "~/context/Locale";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { InfiniteLoader } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { useAssetConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { balanceItem } from "../../components/Balance";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
@@ -35,7 +35,6 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import Config from "react-native-config";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -162,7 +161,7 @@ const AssetSelection = ({
         }}
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={loadNext ? <InfiniteLoader mock={!!Config.DETOX} size={20} /> : null}
+        ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
         testID="modular-drawer-select-crypto-scrollView"
       />
     );
