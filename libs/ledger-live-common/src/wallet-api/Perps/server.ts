@@ -7,7 +7,6 @@ import { getAccountIdFromWalletAccountId } from "../converters";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
-import { AppResult } from "../../hw/actions/app";
 import { Device } from "../../hw/actions/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
@@ -19,15 +18,10 @@ type AppOption = {
   skipAppInstallIfNotFound: boolean;
 };
 export type PerpsUiHooks = {
-  "device.select": (params: {
+  "signing.execute": (params: {
     appName: string | undefined;
     appOptions?: AppOption;
-    onSuccess: (result: Pick<AppResult, "device">) => void;
-    onCancel: () => void;
-  }) => void;
-  "signing.execute": (params: {
-    device: Device;
-    sign: () => Promise<PerpsSignResult>;
+    signFactory: (device: Device) => Promise<PerpsSignResult>;
     onSuccess: (result: PerpsSignResult) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
@@ -53,7 +47,7 @@ const PERPS_APP_NAME = "Hyperliquid";
 
 export const handlers = ({
   accounts,
-  uiHooks: { "device.select": uiDeviceSelect, "signing.execute": uiSigningExecute },
+  uiHooks: { "signing.execute": uiSigningExecute },
 }: {
   accounts: AccountLike[];
   uiHooks: PerpsUiHooks;
@@ -81,24 +75,11 @@ export const handlers = ({
         );
       }
 
-      // Step 1: Ask user to select a device via the UI
-      const device = await new Promise<Device>((resolve, reject) => {
-        uiDeviceSelect({
-          appName: PERPS_APP_NAME,
-          appOptions: params.options,
-          onSuccess: ({ device }) => resolve(device),
-          onCancel: () => reject(new Error("User cancelled device selection")),
-        });
-      });
-
-      // CALL Cal Service
-      const certificate = await calService.getCertificate(device.modelId, "perps_data");
-
-      // Step 2: Sign via the UI — keeps a modal open while the device waits for confirmation
       return new Promise<PerpsSignResult>((resolve, reject) => {
         uiSigningExecute({
-          device,
-          sign: () =>
+          appName: PERPS_APP_NAME,
+          appOptions: params.options,
+          signFactory: (device: Device) =>
             firstValueFrom(
               withDevice(
                 device.deviceId,
@@ -111,6 +92,10 @@ export const handlers = ({
                     }
                     const { dmk, sessionId } = transport;
 
+                    const certificate = await calService.getCertificate(
+                      device.modelId,
+                      "perps_data",
+                    );
                     const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
                     const signatures = await hyperliquidSigner.signActions(
                       derivationPath,

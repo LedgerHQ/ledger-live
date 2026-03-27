@@ -321,9 +321,18 @@ export type BaseNavigatorStackParamList = {
     onClose: () => void;
   };
   [ScreenName.PerpsSign]: {
-    device: import("@ledgerhq/live-common/hw/actions/types").Device;
-    sign: () => Promise<import("@ledgerhq/live-common/wallet-api/Perps/server").PerpsSignResult>;
-    onSuccess: (result: import("@ledgerhq/live-common/wallet-api/Perps/server").PerpsSignResult) => void;
+    appName: string | undefined;
+    appOptions?: {
+      requireLatestFirmware: boolean;
+      allowPartialDependencies: boolean;
+      skipAppInstallIfNotFound: boolean;
+    };
+    signFactory: (
+      device: import("@ledgerhq/live-common/hw/actions/types").Device,
+    ) => Promise<import("@ledgerhq/live-common/wallet-api/Perps/server").PerpsSignResult>;
+    onSuccess: (
+      result: import("@ledgerhq/live-common/wallet-api/Perps/server").PerpsSignResult,
+    ) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
   };
