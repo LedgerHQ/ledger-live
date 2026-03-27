@@ -66,11 +66,11 @@ runs:
         TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | wc -w)
 
         if [ "${{ inputs.event_name }}" = "schedule" ]; then
-          SHARD_COUNT_IOS=12
-          SHARD_COUNT_ANDROID=12
+          SHARD_COUNT_IOS=$(( TEST_COUNT < 12 ? TEST_COUNT : 12 ))
+          SHARD_COUNT_ANDROID=$(( TEST_COUNT < 12 ? TEST_COUNT : 12 ))
         elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
-          SHARD_COUNT_IOS=6
-          SHARD_COUNT_ANDROID=12
+          SHARD_COUNT_IOS=$(( TEST_COUNT < 6 ? TEST_COUNT : 6 ))
+          SHARD_COUNT_ANDROID=$(( TEST_COUNT < 12 ? TEST_COUNT : 12 ))
         else
           SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
           SHARD_COUNT_IOS=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
