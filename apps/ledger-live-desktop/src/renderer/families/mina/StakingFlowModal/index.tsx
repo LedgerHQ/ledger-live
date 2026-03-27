@@ -14,10 +14,13 @@ const INITIAL_STATE: State = {
 
 export type Props = {
   account: Account;
+  mode?: "undelegate";
 };
 
-const StakingModal: React.FC<Props> = ({ account }) => {
-  const [stepId, setStepId] = useState<StepId>(INITIAL_STATE.stepId);
+const StakingModal: React.FC<Props> = ({ account, mode }) => {
+  const [stepId, setStepId] = useState<StepId>(
+    mode === "undelegate" ? "connectDevice" : INITIAL_STATE.stepId,
+  );
 
   const handleReset = () => setStepId(INITIAL_STATE.stepId);
 
@@ -37,7 +40,7 @@ const StakingModal: React.FC<Props> = ({ account }) => {
           stepId={stepId}
           onClose={onClose}
           onChangeStepId={handleStepChange}
-          params={{ account }}
+          params={{ account, mode }}
         />
       )}
     />
