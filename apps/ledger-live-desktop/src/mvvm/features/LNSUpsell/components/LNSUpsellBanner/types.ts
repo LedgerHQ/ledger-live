@@ -5,6 +5,8 @@ export type LNSBannerModel = {
   discount?: number;
   tracking: "opted_in" | "opted_out";
   handleCTAClick: () => void;
+  imageUrl: string;
+  shouldUseLumenMediaBanner: boolean;
 };
 
 export type LNSBannerVariant =
