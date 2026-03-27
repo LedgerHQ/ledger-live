@@ -61,8 +61,7 @@ function parseDebugTraceBlockEntry(
   entry: unknown,
   index: number,
 ): { txHash: string; root: Record<string, unknown> } | null {
-  if (entry === null || entry === undefined) return null;
-  if (typeof entry !== "object" || entry === null) return null;
+  if (typeof entry !== "object" || entry === null || entry === undefined) return null;
   const o = entry as Record<string, unknown>;
   const txHash = extractTxHash(o);
 
