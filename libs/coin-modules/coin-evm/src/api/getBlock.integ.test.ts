@@ -137,7 +137,8 @@ describe("getBlock ERC20 transfers", () => {
     });
   });
 
-  describe("External RPC Node (zkSync)", () => {
+  // this test is skipped until a RPC provider supporting trace_block is setup for zksync
+  describe.skip("External RPC Node (zkSync)", () => {
     let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
     beforeAll(() => {

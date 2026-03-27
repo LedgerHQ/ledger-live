@@ -27,7 +27,8 @@ describe("EVM Optimism Network", () => {
     module = createApi(config as EvmConfig, "optimism");
   });
 
-  describe("getBlock", () => {
+  // this test is skipped until a RPC provider supporting trace_block is setup for optimism
+  describe.skip("getBlock", () => {
     it("returns block with more than 10 transactions for height 144931340", async () => {
       const result = await module.getBlock(144931340);
 
