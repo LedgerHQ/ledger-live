@@ -4,6 +4,7 @@
 //   node shard-tests.mjs [testFilter] [platform] [testRootDir] [shardIndex] [shardTotal]
 import fs from "fs";
 import path from "path";
+import { distributeFilesRoundRobinNoTiming } from "./shard-utils.mjs";
 
 const baseDir = path.resolve(path.dirname(new URL(import.meta.url).pathname));
 
@@ -97,13 +98,7 @@ function loadTimingData(platform, testRootDir) {
 
 function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
   if (!timingData.testResults || Object.keys(timingData.testResults).length === 0) {
-    // No timing data available, distribute evenly using floor + remainder to avoid empty last shards.
-    // Math.ceil would over-allocate slots (e.g. ceil(33/12)=3 → 36 slots for 33 files → shard 12 empty).
-    const baseCount = Math.floor(files.length / shardTotal);
-    const remainder = files.length % shardTotal;
-    const startIndex = (shardIndex - 1) * baseCount + Math.min(shardIndex - 1, remainder);
-    const count = baseCount + (shardIndex <= remainder ? 1 : 0);
-    return files.slice(startIndex, startIndex + count);
+    return distributeFilesRoundRobinNoTiming(files, shardIndex, shardTotal);
   }
 
   // Sort files by estimated duration (from timing data)
