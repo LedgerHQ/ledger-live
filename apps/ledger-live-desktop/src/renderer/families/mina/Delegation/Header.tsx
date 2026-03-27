@@ -1,0 +1,36 @@
+import React from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import Box from "~/renderer/components/Box/Box";
+import { HeaderWrapper } from "~/renderer/components/TableContainer";
+
+export const TableLine = styled(Box).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "neutral.c70",
+  horizontal: true,
+  alignItems: "center",
+  justifyContent: "flex-start",
+  fontSize: 3,
+  flex: 1.125,
+  pr: 2,
+}))`
+  box-sizing: border-box;
+  &:last-child {
+    justify-content: flex-end;
+    flex: 0.5;
+    text-align: right;
+    white-space: nowrap;
+  }
+`;
+
+export const Header = () => (
+  <HeaderWrapper>
+    <TableLine>
+      <Trans i18nKey="delegation.validator" />
+    </TableLine>
+    <TableLine>
+      <Trans i18nKey="mina.delegation.amount" />
+    </TableLine>
+    <TableLine />
+  </HeaderWrapper>
+);
