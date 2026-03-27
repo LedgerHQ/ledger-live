@@ -15,7 +15,7 @@
       "LLD/*": ["./src/mvvm/*"]
     },
     "outDir": "dist",
-    "typeRoots": ["index-types.d.ts", "./node_modules/@types", "./node_modules/@testing-library"]
+    "typeRoots": ["./node_modules/@types", "./node_modules/@testing-library"]
   },
   "exclude": ["**/node_modules/*"],
   "include": [
@@ -28,6 +28,7 @@
     "tests",
     "tests/handlers/**/*.json",
     "index-types.d.ts",
+    "jest-runtime-globals.d.ts",
     "tests/jestSetup.ts",
     "tailwind.config.ts",
     "tools"

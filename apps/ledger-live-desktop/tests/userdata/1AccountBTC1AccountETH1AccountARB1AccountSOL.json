@@ -21440,6 +21440,30 @@
         "version": 1
       }
     ],
-    "countervalues": {}
+    "countervalues": {},
+    "recentAddresses": {
+      "ethereum": [
+        {
+          "address": "0x000000000000000000000000000000000000dEaD",
+          "lastUsed": 1710000000000
+        },
+        {
+          "address": "0x1111111111111111111111111111111111111111",
+          "lastUsed": 1709900000000
+        }
+      ],
+      "arbitrum": [
+        {
+          "address": "0x000000000000000000000000000000000000dEaD",
+          "lastUsed": 1710000000000
+        }
+      ],
+      "bitcoin": [
+        {
+          "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+          "lastUsed": 1710000000000
+        }
+      ]
+    }
   }
 }

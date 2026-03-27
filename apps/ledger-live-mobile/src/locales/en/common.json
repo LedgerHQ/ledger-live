@@ -2753,7 +2753,8 @@
     "cryptoAddresses": {
       "title": "Crypto accounts",
       "count_one": "{{count}} account",
-      "count_other": "{{count}} accounts"
+      "count_other": "{{count}} accounts",
+      "noAccountsYet": "No accounts yet"
     },
     "seeAllAccounts": "See all accounts",
     "assetSection": {
@@ -3575,8 +3576,10 @@
         "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
         "addSampleBanner": "Add sample banner",
         "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
-        "addSampleActionCarousel": "Add sample action carousel",
-        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "addSampleActionCarouselIcon": "Add action carousel (icon)",
+        "addSampleActionCarouselIconDesc": "ContentBanner with Spot icons — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselImageBackground": "Add action carousel (image)",
+        "addSampleActionCarouselImageBackgroundDesc": "MediaBanner with image_background — Buy, Swap, Stake. Requires Braze placement flag.",
         "dismissAll": "Dismiss all local cards",
         "dismissAllDesc": "Remove all locally generated content cards."
       }

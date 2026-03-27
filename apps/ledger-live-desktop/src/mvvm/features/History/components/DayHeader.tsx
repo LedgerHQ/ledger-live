@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { TableGroupHeaderRow } from "@ledgerhq/lumen-ui-react";
-import { useCalendarFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useLongCalendarFormatted } from "~/renderer/hooks/useDateFormatter";
 
 type DayHeaderProps = {
   readonly day: Date;
@@ -8,7 +8,9 @@ type DayHeaderProps = {
 };
 
 function DayHeader({ day, columnCount }: DayHeaderProps) {
-  const label = useCalendarFormatted(day);
+  const label = useLongCalendarFormatted(day, undefined, {
+    showToday: true,
+  });
   return <TableGroupHeaderRow colSpan={columnCount}>{label}</TableGroupHeaderRow>;
 }
 

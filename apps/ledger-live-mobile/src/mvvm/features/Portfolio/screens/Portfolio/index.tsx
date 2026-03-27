@@ -138,6 +138,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {
+      const isAssetSectionLast =
+        !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
       sections.push(
         <PortfolioAssetsSection
           key="assets"
@@ -145,6 +147,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           hideEmptyTokenAccount={hideEmptyTokenAccount}
           openAddModal={openAddModal}
           onHeightChange={handleHeightChange}
+          shouldAddBottomPadding={isAssetSectionLast}
         />,
       );
     }

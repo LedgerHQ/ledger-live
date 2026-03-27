@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "tests/testSetup";
 import React from "react";
 import * as reduxHooks from "LLD/hooks/redux";
 import {
@@ -10,6 +10,7 @@ import {
   getDatesAround,
   useDateFormatter,
   useCalendarFormatter,
+  useLongCalendarFormatter,
   useTechnicalDateTimeFn,
   useTechnicalDateFn,
   relativeTime,
@@ -186,7 +187,7 @@ describe("useDateFormatter", () => {
   });
 });
 
-describe("useCalendarFormatter", () => {
+describe("calendar formatters", () => {
   beforeAll(() => {
     jest.useFakeTimers();
   });
@@ -196,37 +197,95 @@ describe("useCalendarFormatter", () => {
     jest.useRealTimers();
   });
 
-  // Needed to wrap hook in a Redux Store
   const HookWrapper = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-
   const spy = jest.spyOn(reduxHooks, "useSelector");
 
-  let f: ReturnType<typeof useDateFormatter>;
-
-  const setLocale_Mock = (
-    locale: string,
-    opts?: {
-      intlOpts?: Intl.DateTimeFormatOptions;
-    },
-  ) => {
+  const renderCalendarHook = (locale: string, intlOpts?: Intl.DateTimeFormatOptions) => {
     spy.mockReturnValue(locale);
-    const { result } = renderHook(() => useCalendarFormatter(opts?.intlOpts), {
+    const { result } = renderHook(() => useCalendarFormatter(intlOpts), {
       wrapper: HookWrapper,
     });
-    f = result.current;
+    return result.current;
   };
 
-  test("calendar", () => {
-    const yesterday = new Date("January 31, 2000 10:00:00");
-    const today = new Date("February 1, 2000 10:00:00");
-    const tomorrow = new Date("February 2, 2000 10:00:00");
-    jest.setSystemTime(today);
+  const renderLongCalendarHook = (
+    locale: string,
+    relativeLabels?: { showToday?: boolean; showYesterday?: boolean; showTomorrow?: boolean },
+  ) => {
+    spy.mockReturnValue(locale);
+    const { result } = renderHook(() => useLongCalendarFormatter(undefined, relativeLabels), {
+      wrapper: HookWrapper,
+    });
+    return result.current;
+  };
 
-    setLocale_Mock("en");
+  describe("useCalendarFormatter", () => {
+    test("prefixes relative dates with formatted date", () => {
+      const yesterday = new Date("January 31, 2000 10:00:00");
+      const today = new Date("February 1, 2000 10:00:00");
+      const tomorrow = new Date("February 2, 2000 10:00:00");
+      jest.setSystemTime(today);
 
-    expect(f(yesterday)).toEqual("1/31/2000 – calendar.yesterday");
-    expect(f(today)).toEqual("2/1/2000 – calendar.today");
-    expect(f(tomorrow)).toEqual("2/2/2000 – calendar.tomorrow");
+      const f = renderCalendarHook("en");
+
+      expect(f(yesterday)).toEqual("1/31/2000 – Yesterday");
+      expect(f(today)).toEqual("2/1/2000 – Today");
+      expect(f(tomorrow)).toEqual("2/2/2000 – Tomorrow");
+    });
+  });
+
+  describe("useLongCalendarFormatter", () => {
+    test("returns long-formatted date by default for all dates including today", () => {
+      const yesterday = new Date("January 31, 2000 10:00:00");
+      const today = new Date("February 1, 2000 10:00:00");
+      const tomorrow = new Date("February 2, 2000 10:00:00");
+      jest.setSystemTime(today);
+
+      const f = renderLongCalendarHook("en");
+
+      expect(f(yesterday)).toEqual("January 31, 2000");
+      expect(f(today)).toEqual("February 1, 2000");
+      expect(f(tomorrow)).toEqual("February 2, 2000");
+    });
+
+    test("returns long-formatted date for non-relative dates", () => {
+      const today = new Date("February 1, 2000 10:00:00");
+      jest.setSystemTime(today);
+
+      const f = renderLongCalendarHook("en");
+
+      const otherDate = new Date("March 15, 2000 10:00:00");
+      expect(f(otherDate)).toEqual("March 15, 2000");
+    });
+
+    test("enabling showToday returns label for today", () => {
+      const today = new Date("February 1, 2000 10:00:00");
+      jest.setSystemTime(today);
+
+      const f = renderLongCalendarHook("en", { showToday: true });
+
+      expect(f(today)).toEqual("Today");
+    });
+
+    test("enabling showYesterday returns label for yesterday", () => {
+      const today = new Date("February 1, 2000 10:00:00");
+      const yesterday = new Date("January 31, 2000 10:00:00");
+      jest.setSystemTime(today);
+
+      const f = renderLongCalendarHook("en", { showYesterday: true });
+
+      expect(f(yesterday)).toEqual("Yesterday");
+    });
+
+    test("enabling showTomorrow returns label for tomorrow", () => {
+      const today = new Date("February 1, 2000 10:00:00");
+      const tomorrow = new Date("February 2, 2000 10:00:00");
+      jest.setSystemTime(today);
+
+      const f = renderLongCalendarHook("en", { showTomorrow: true });
+
+      expect(f(tomorrow)).toEqual("Tomorrow");
+    });
   });
 });
 
