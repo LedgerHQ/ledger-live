@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Clock } from "@ledgerhq/lumen-ui-react/symbols";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 
 export const useHistory = (): {
   handleHistory: () => void;
@@ -18,6 +19,10 @@ export const useHistory = (): {
     const url = "/history";
     if (location.pathname !== url) {
       setTrackingSource("topbar");
+      track("button_clicked", {
+        entry: "operation_list",
+        page: location.pathname,
+      });
       navigate(url);
     }
   }, [navigate, location.pathname]);
