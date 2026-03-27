@@ -26,3 +26,4 @@ libs/ui/packages/react/rsbuild.config.js.map
 
 .nx/cache
 .nx/workspace-data
+rsdoctor/

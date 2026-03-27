@@ -211,7 +211,8 @@
     },
     "ledger-live-desktop#build": {
       "dependsOn": ["^build"],
-      "cache": false
+      "cache": false,
+      "env": ["RSDOCTOR"]
     },
     "@ledgerhq/live-dmk-desktop#build": {
       "dependsOn": ["^build"],

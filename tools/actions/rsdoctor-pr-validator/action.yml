@@ -1,0 +1,119 @@
+name: rsdoctor-pr-validator
+description: >
+  Download optional desktop and mobile Rsdoctor workflow artifacts, merge under rsdoctor/,
+  and run web-infra-dev/rsdoctor-action once. Intended as the single PR entry point for Rsdoctor;
+  extend here for custom analysis and GitHub Check Runs (X of V).
+  Callers that post Check Runs should grant permissions.checks: write on GITHUB_TOKEN.
+author: ledger-live
+
+inputs:
+  github_token:
+    description: Token for rsdoctor-action and future check runs (use secrets.GITHUB_TOKEN or PAT).
+    required: true
+  target_branch:
+    description: Base branch for Rsdoctor diff (e.g. PR base ref).
+    required: true
+  desktop_artifact_name:
+    description: Workflow artifact name for desktop Rsdoctor data; empty skips desktop download.
+    required: false
+    default: ""
+  mobile_artifact_name:
+    description: Workflow artifact name for mobile Rsdoctor data; empty skips mobile download.
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Prepare rsdoctor directory
+      shell: bash
+      run: |
+        rm -rf rsdoctor .rsdoctor-merge
+        mkdir -p rsdoctor .rsdoctor-merge
+
+    - name: Download desktop Rsdoctor artifact
+      id: dl-desktop
+      if: ${{ inputs.desktop_artifact_name != '' }}
+      uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      with:
+        name: ${{ inputs.desktop_artifact_name }}
+        path: .rsdoctor-merge/desktop-in
+
+    - name: Download mobile Rsdoctor artifact
+      id: dl-mobile
+      if: ${{ inputs.mobile_artifact_name != '' }}
+      continue-on-error: true
+      uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      with:
+        name: ${{ inputs.mobile_artifact_name }}
+        path: .rsdoctor-merge/mobile-in
+
+    - name: Merge artifacts into rsdoctor/
+      id: rsdoctor_data
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -n "${{ inputs.desktop_artifact_name }}" ]; then
+          if [ ! -d .rsdoctor-merge/desktop-in ]; then
+            echo "::error::Desktop Rsdoctor artifact '${{ inputs.desktop_artifact_name }}' was expected but download failed or was empty."
+            exit 1
+          fi
+          shopt -s nullglob dotglob
+          for item in .rsdoctor-merge/desktop-in/*; do
+            [ -e "$item" ] || continue
+            mv "$item" rsdoctor/
+          done
+          shopt -u nullglob dotglob
+        fi
+
+        if [ -n "${{ inputs.mobile_artifact_name }}" ]; then
+          if [ -d .rsdoctor-merge/mobile-in ]; then
+            mkdir -p rsdoctor/mobile
+            shopt -s nullglob dotglob
+            for item in .rsdoctor-merge/mobile-in/*; do
+              [ -e "$item" ] || continue
+              mv "$item" rsdoctor/mobile/
+            done
+            shopt -u nullglob dotglob
+            if [ ! -f rsdoctor/mobile/rsdoctor-data.json ] && [ -f .rsdoctor-merge/mobile-in/rsdoctor-data.json ]; then
+              mv .rsdoctor-merge/mobile-in/rsdoctor-data.json rsdoctor/mobile/
+            fi
+          else
+            echo "::warning::Mobile Rsdoctor artifact '${{ inputs.mobile_artifact_name }}' was not downloaded (e.g. iOS JS build skipped cache path). Skipping mobile Rsdoctor."
+          fi
+        fi
+
+        if [ -n "${{ inputs.desktop_artifact_name }}" ]; then
+          shopt -s nullglob
+          desktop_files=(rsdoctor/desktop-*/rsdoctor-data.json)
+          shopt -u nullglob
+          if [ ${#desktop_files[@]} -eq 0 ]; then
+            echo "::error::Desktop artifact was expected but no rsdoctor/desktop-*/rsdoctor-data.json found after merge."
+            exit 1
+          fi
+        fi
+
+        found=false
+        shopt -s nullglob
+        for f in rsdoctor/*/rsdoctor-data.json; do
+          if [ -f "$f" ]; then found=true; break; fi
+        done
+        shopt -u nullglob
+        if [ -f rsdoctor/mobile/rsdoctor-data.json ]; then
+          found=true
+        fi
+        echo "found=$found" >> "$GITHUB_OUTPUT"
+        echo "Rsdoctor JSON present: $found"
+        ls -la rsdoctor 2>/dev/null || true
+
+    - name: Bundle analysis (Rsdoctor PR comment)
+      if: ${{ steps.rsdoctor_data.outputs.found == 'true' }}
+      uses: web-infra-dev/rsdoctor-action@d3a7ae073bc63dcc4a16fba339414cbf4f9c476c # main 2026-03-24
+      with:
+        github_token: ${{ inputs.github_token }}
+        file_path: rsdoctor/*/rsdoctor-data.json
+        target_branch: ${{ inputs.target_branch }}
+
+    - name: Future — GitHub Check Runs (X of V)
+      shell: bash
+      run: |
+        echo "Extend tools/actions/rsdoctor-pr-validator with Check Runs when ready; add permissions.checks: write on the workflow job."

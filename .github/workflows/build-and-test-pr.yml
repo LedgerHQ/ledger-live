@@ -13,6 +13,7 @@ permissions:
   contents: read
   pull-requests: write
   actions: write
+  issues: read
 
 jobs:
   pre_job:
@@ -51,7 +52,7 @@ jobs:
   build-desktop:
     name: "Build Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    if: ${{ !github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit
 
@@ -72,7 +73,7 @@ jobs:
   build-test-mobile:
     name: "Build & Test Mobile"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    if: ${{ !github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
     with:
@@ -134,6 +135,25 @@ jobs:
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
 
+  rsdoctor-pr-validator:
+    name: "Rsdoctor PR validator"
+    needs:
+      - determine-affected
+      - build-desktop
+      - build-test-mobile
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    if: ${{ always() && !cancelled() && (github.event_name == 'pull_request' || github.event_name == 'merge_group') && needs.determine-affected.result == 'success' && ((contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && needs.build-desktop.result == 'success') || (contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && needs.build-test-mobile.result == 'success')) }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - uses: ./tools/actions/rsdoctor-pr-validator
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          target_branch: ${{ github.event.merge_group.base_ref || github.event.pull_request.base.ref || 'develop' }}
+          desktop_artifact_name: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && needs.build-desktop.result == 'success' && 'rsdoctor-desktop' || '' }}
+          mobile_artifact_name: ${{ contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && needs.build-test-mobile.result == 'success' && 'rsdoctor-mobile' || '' }}
+
   scan-sonar:
     name: "Sonar Cloud"
     needs:
@@ -166,6 +186,7 @@ jobs:
       - test-cli
       - test-additional
       - determine-affected
+      - rsdoctor-pr-validator
     runs-on: ubuntu-22.04
     if: always() && !cancelled() && needs.determine-affected.result == 'success'
     steps:
