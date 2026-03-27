@@ -56,47 +56,30 @@ export default function WebviewErrorDrawer(error?: Error) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   let titleKey = "swap2.webviewErrorDrawer.title";
   let descriptionKey = "swap2.webviewErrorDrawer.description";
-  let errorCodeSection = null;
   const { t } = useTranslation();
 
+  // Error code section
   const swapCode = get(error, "cause.swapCode");
+  const correlationId = get(error, "cause.correlationId");
+
   const messageKey =
     get(error, "cause.response.data.error.messageKey") || get(error, "cause.messageKey");
-
-  if (swapCode) {
-    if (swapCode === "swap010") {
-      errorCodeSection = <Trans i18nKey="errors.PayinExtraIdError.message" />;
-    } else {
-      errorCodeSection = (
-        <Trans
-          mr={2}
-          i18nKey="swap2.webviewErrorDrawer.code"
-          values={{
-            errorCode: swapCode,
-          }}
-        />
-      );
-    }
-  }
 
   if (messageKey) {
     switch (messageKey) {
       case "WRONG_OR_EXPIRED_RATE_ID":
         titleKey = "errors.SwapRateExpiredError.title";
         descriptionKey = "errors.SwapRateExpiredError.description";
-        errorCodeSection = null;
         break;
       case "TRANSACTION_CANNOT_BE_CREATED":
         titleKey = "errors.TransactionCannotBeCreated.title";
         descriptionKey = t("errors.TransactionCannotBeCreated.description", {
           randomCode: generateRandomString(),
         });
-        errorCodeSection = null;
         break;
       case "SWAP_QUOTE_LOW_LIQUIDITY":
         titleKey = "errors.SwapQuoteLowLiquidity.title";
         descriptionKey = "errors.SwapQuoteLowLiquidity.description";
-        errorCodeSection = null;
         break;
     }
   }
@@ -120,9 +103,45 @@ export default function WebviewErrorDrawer(error?: Error) {
         </ErrorTitle>
         <ErrorDescription>
           <Trans i18nKey={descriptionKey} />
-          <div>{errorCodeSection} </div>
+          {swapCode && <ErrorCodeSection swapCode={swapCode} correlationId={correlationId} />}
         </ErrorDescription>
       </Box>
     </ContentBox>
+  );
+}
+
+function ErrorCodeSection({
+  swapCode,
+  correlationId,
+}: {
+  swapCode: string | undefined;
+  correlationId: string | undefined;
+}) {
+  return (
+    <div className="flex flex-col rounded-md bg-surface gap-8 p-8 mt-20">
+      <ErrorBlock dictionaryKey="swap2.webviewErrorDrawer.code" value={swapCode} />
+      <ErrorBlock dictionaryKey="swap2.webviewErrorDrawer.correlationId" value={correlationId} />
+    </div>
+  );
+}
+
+function ErrorBlock({
+  dictionaryKey,
+  value,
+}: {
+  dictionaryKey: string;
+  value: string | undefined;
+}) {
+  if (!value) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-row justify-between">
+      <span className="text-sm text-muted basis-1/3 text-left">
+        <Trans i18nKey={dictionaryKey} />
+      </span>
+      <span className="text-sm text-base basis-2/3 text-right">{value}</span>
+    </div>
   );
 }

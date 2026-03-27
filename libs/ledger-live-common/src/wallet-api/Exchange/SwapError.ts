@@ -10,17 +10,19 @@
 export class SwapError extends Error {
   cause: {
     swapCode: string;
+    correlationId?: string;
     [key: string]: string | Error | unknown | undefined;
   };
   message: string;
 
-  constructor(code = "swap000", nestedError?: Error) {
+  constructor(code = "swap000", nestedError?: Error, correlationId?: string) {
     super();
     this.name = "SwapError";
 
     // Preserve nested error information
     this.cause = {
       swapCode: code,
+      ...(correlationId && { correlationId }),
       ...(nestedError?.constructor !== Object && nestedError?.constructor !== Array
         ? { message: `${nestedError}` }
         : {}),
@@ -36,8 +38,8 @@ export class SwapError extends Error {
  * Typically occurs when calling startSwap()
  */
 export class NonceStepError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap001", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap001", nestedError, correlationId);
     this.name = "NonceStepError";
   }
 }
@@ -47,8 +49,8 @@ export class NonceStepError extends SwapError {
  * Occurs when communicating with backend to get transaction payload
  */
 export class PayloadStepError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap002", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap002", nestedError, correlationId);
     this.name = "PayloadStepError";
   }
 }
@@ -58,8 +60,8 @@ export class PayloadStepError extends SwapError {
  * Occurs when user rejects or device fails during completeSwap()
  */
 export class SignatureStepError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap003", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap003", nestedError, correlationId);
     this.name = "SignatureStepError";
   }
 }
@@ -69,8 +71,8 @@ export class SignatureStepError extends SwapError {
  * Used for expected user cancellations
  */
 export class IgnoredSignatureStepError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap003Ignored", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap003Ignored", nestedError, correlationId);
     this.name = "SignatureStepError";
   }
 }
@@ -80,8 +82,8 @@ export class IgnoredSignatureStepError extends SwapError {
  * Thrown during balance validation
  */
 export class NotEnoughFunds extends SwapError {
-  constructor() {
-    super("swap004");
+  constructor(_?: Error, correlationId?: string) {
+    super("swap004", undefined, correlationId);
     this.name = "NotEnoughFunds";
   }
 }
@@ -91,8 +93,8 @@ export class NotEnoughFunds extends SwapError {
  * Occurs during account lookup phase
  */
 export class ListAccountError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap005", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap005", nestedError, correlationId);
     this.name = "ListAccountError";
   }
 }
@@ -102,8 +104,8 @@ export class ListAccountError extends SwapError {
  * Occurs during currency lookup phase
  */
 export class ListCurrencyError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap006", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap006", nestedError, correlationId);
     this.name = "ListCurrencyError";
   }
 }
@@ -113,8 +115,8 @@ export class ListCurrencyError extends SwapError {
  * Thrown when fromAccountId or toAccountId is invalid
  */
 export class UnknownAccountError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap007", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap007", nestedError, correlationId);
     this.name = "UnknownAccountError";
   }
 }
@@ -124,8 +126,8 @@ export class UnknownAccountError extends SwapError {
  * Some chains require payinExtraId (e.g., XLM memo, XRP tag)
  */
 export class PayinExtraIdError extends SwapError {
-  constructor(nestedError?: Error) {
-    super("swap010", nestedError);
+  constructor(nestedError?: Error, correlationId?: string) {
+    super("swap010", nestedError, correlationId);
     this.name = "PayinExtraIdError";
   }
 }

@@ -8509,6 +8509,10 @@
       "title": "Rate Expired",
       "description": "Exchange rate expired. Please refresh and try again."
     },
+    "details": {
+      "code": "Error code",
+      "correlationId": "Reference ID"
+    },
     "default": {
       "title": "Something went wrong",
       "description": "Please retry or contact Ledger Support if in doubt"

@@ -45,6 +45,7 @@ export type ExchangeSwapParams = ExchangeStartSwapParams & {
   swapAppVersion?: string;
   sponsored?: boolean;
   isEmbedded?: boolean;
+  correlationId?: string;
 };
 
 export type ExchangeStartResult = {

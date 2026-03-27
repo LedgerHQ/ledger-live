@@ -112,7 +112,7 @@ function markErrorAsHandled<T>(error: T): T {
  * @param options - Configuration options
  * @throws Enhanced error with `handled` flag if applicable
  */
-export function handleErrors(error: unknown, options: ErrorHandlerOptions = {}): Promise<void> {
+export function handleErrors(error: unknown, options: ErrorHandlerOptions = {}): void {
   const { onDisplayError, ignoredErrorNames = [], ignoredMessages = [] } = options;
 
   // Merge default and custom ignored values
@@ -135,7 +135,7 @@ export function handleErrors(error: unknown, options: ErrorHandlerOptions = {}):
   if (error instanceof SwapError && onDisplayError) {
     // Skip displaying "swap003Ignored" errors
     if (cause?.swapCode !== "swap003Ignored") {
-      return onDisplayError(error);
+      void onDisplayError(error);
     }
   }
 

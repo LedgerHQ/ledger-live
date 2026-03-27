@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Trans, useTranslation } from "~/context/Locale";
+import { useTranslation } from "~/context/Locale";
 import type { TFunction } from "i18next";
 import { useHeaderHeight } from "@react-navigation/elements";
 import get from "lodash/get";
@@ -24,7 +24,6 @@ const generateRandomString = (numberOfChars: number = 4): string => {
 type SwapErrorCopy = {
   title: string;
   description: string;
-  swapCode: string | null;
 };
 
 const DEFAULT_ERROR_KEY = "swapErrors.default";
@@ -34,10 +33,9 @@ const translateOrNull = (t: TFunction, key: string): string | null => {
   return translation === key ? null : translation;
 };
 
-const getDefaultCopy = (t: TFunction, swapCode: string | null): SwapErrorCopy => ({
+const getDefaultCopy = (t: TFunction): SwapErrorCopy => ({
   title: t(`${DEFAULT_ERROR_KEY}.title`),
   description: t(`${DEFAULT_ERROR_KEY}.description`),
-  swapCode,
 });
 
 const resolveMessageKeyCopy = (
@@ -51,7 +49,6 @@ const resolveMessageKeyCopy = (
       return {
         title: t("swapErrors.swapRateExpiredError.title"),
         description: t("swapErrors.swapRateExpiredError.description"),
-        swapCode: null,
       };
     case "TRANSACTION_CANNOT_BE_CREATED":
       return {
@@ -59,7 +56,6 @@ const resolveMessageKeyCopy = (
         description: t("swapErrors.transactionCannotBeCreated.description", {
           randomCode: generateRandomString(),
         }),
-        swapCode: null,
       };
     case "SWAP_QUOTE_LOW_LIQUIDITY":
       return {
@@ -67,18 +63,13 @@ const resolveMessageKeyCopy = (
         description: t("swapErrors.swapQuoteLowLiquidity.description", {
           randomCode: generateRandomString(),
         }),
-        swapCode: null,
       };
     default:
       return null;
   }
 };
 
-const resolveErrorKeyCopy = (
-  errorKey: string | undefined,
-  t: TFunction,
-  swapCode: string | null,
-): SwapErrorCopy | null => {
+const resolveErrorKeyCopy = (errorKey: string | undefined, t: TFunction): SwapErrorCopy | null => {
   if (!errorKey) return null;
 
   const title = translateOrNull(t, `swapErrors.${errorKey}.title`);
@@ -89,25 +80,39 @@ const resolveErrorKeyCopy = (
   return {
     title: title ?? t("swapErrors.default.title"),
     description: description ?? t("swapErrors.default.description"),
-    swapCode,
   };
 };
 
 const resolveFallbackCopy = (
   error: SwapCustomErrorProps["route"]["params"]["error"],
   t: TFunction,
-  swapCode: string | null,
 ): SwapErrorCopy => {
   if (error && "message" in error && typeof error.message === "string") {
     return {
       title: error.message,
       description: t("swapErrors.default.description"),
-      swapCode,
     };
   }
 
-  return getDefaultCopy(t, swapCode);
+  return getDefaultCopy(t);
 };
+
+function ErrorBlock({ dictionaryKey, value }: { dictionaryKey: string; value: string | null }) {
+  const { t } = useTranslation();
+
+  if (!value) {
+    return null;
+  }
+
+  return (
+    <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
+      <Text variant="body" color="neutral.c70">
+        {t(dictionaryKey)}
+      </Text>
+      <Text variant="body">{value}</Text>
+    </Flex>
+  );
+}
 
 export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
@@ -119,16 +124,17 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const onExport = useExportLogs();
   const headerHeight = useHeaderHeight();
 
-  const messageKey = get(error, "cause.messageKey");
+  const messageKey =
+    get(error, "cause.response.data.error.messageKey") ?? get(error, "cause.messageKey");
+  const correlationId = get(error, "cause.correlationId") ?? null;
+  const swapCode = get(error, "cause.swapCode") ?? null;
 
-  const { title, description, swapCode } = useMemo(() => {
-    const swapCodeValue = get(error, "cause.swapCode") ?? null;
+  const { title, description } = useMemo(() => {
     const errorKey = titleKey || nameKey;
-
     return (
       resolveMessageKeyCopy(messageKey, t) ??
-      resolveErrorKeyCopy(errorKey, t, swapCodeValue) ??
-      resolveFallbackCopy(error, t, swapCodeValue)
+      resolveErrorKeyCopy(errorKey, t) ??
+      resolveFallbackCopy(error, t)
     );
   }, [error, messageKey, nameKey, t, titleKey]);
 
@@ -142,11 +148,13 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
         </Text>
         <Text variant="body" textAlign={"center"} testID="error-description-deviceAction" mt={16}>
           {description}
-
-          {swapCode && (
-            <Trans i18nKey="errors.CustomError.errorCode" values={{ errorCode: swapCode }} />
-          )}
         </Text>
+        {swapCode || correlationId ? (
+          <Flex bg="neutral.c20" borderRadius={8} alignSelf="stretch" p={4} mt={6} rowGap={6}>
+            <ErrorBlock dictionaryKey="swapErrors.details.code" value={swapCode} />
+            <ErrorBlock dictionaryKey="swapErrors.details.correlationId" value={correlationId} />
+          </Flex>
+        ) : null}
         <Button
           type="main"
           size="medium"

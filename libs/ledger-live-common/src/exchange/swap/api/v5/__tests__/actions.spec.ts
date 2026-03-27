@@ -68,4 +68,37 @@ describe("retrieveSwapPayload", () => {
       undefined,
     );
   });
+
+  it("sends x-correlation-id header when correlationId is provided", async () => {
+    await retrieveSwapPayload({ ...payloadData, correlationId: "corr-123" });
+
+    expect(post).toHaveBeenCalledWith(
+      "https://swap.ledger.com/v5/swap",
+      expect.any(Object),
+      expect.objectContaining({
+        headers: {
+          "x-correlation-id": "corr-123",
+        },
+      }),
+    );
+  });
+
+  it("sends both x-correlation-id and x-ledger-client-v4-ux when both are set", async () => {
+    await retrieveSwapPayload({
+      ...payloadData,
+      correlationId: "corr-456",
+      flags: { wallet40Ux: true },
+    });
+
+    expect(post).toHaveBeenCalledWith(
+      "https://swap.ledger.com/v5/swap",
+      expect.any(Object),
+      expect.objectContaining({
+        headers: {
+          "x-correlation-id": "corr-456",
+          "x-ledger-client-v4-ux": "true",
+        },
+      }),
+    );
+  });
 });
