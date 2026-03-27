@@ -1,5 +1,11 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#15690](https://github.com/LedgerHQ/ledger-live/pull/15690) [`b037edf`](https://github.com/LedgerHQ/ledger-live/commit/b037edf31c35b6caa0fe18b39b65b2dde960f045) Thanks [@ishaba](https://github.com/ishaba)! - feat: add mobile send E2E test for Sui
+
 ## 0.18.0
 
 ### Minor Changes

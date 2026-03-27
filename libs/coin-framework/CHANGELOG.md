@@ -1,5 +1,20 @@
 # @ledgerhq/coin-framework
 
+## 7.1.0-next.0
+
+### Minor Changes
+
+- [#15541](https://github.com/LedgerHQ/ledger-live/pull/15541) [`4af828d`](https://github.com/LedgerHQ/ledger-live/commit/4af828d0790bb3568dd095f89dd9f239f7565e84) Thanks [@cted-ledger](https://github.com/cted-ledger)! - coin-solana: Implement getStakes into alpaca api
+  coin-framework: Add helper method isStakingTransactionIntent
+
+- [#13358](https://github.com/LedgerHQ/ledger-live/pull/13358) [`41d172e`](https://github.com/LedgerHQ/ledger-live/commit/41d172e74bc074995b7290c4bb6d129276a484ff) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add type comment assetOwner
+
+### Patch Changes
+
+- Updated dependencies [[`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20)]:
+  - @ledgerhq/live-env@2.31.0-next.0
+  - @ledgerhq/live-currency-format@0.7.1-next.0
+
 ## 7.0.0
 
 ### Major Changes

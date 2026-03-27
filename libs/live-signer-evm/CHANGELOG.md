@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-evm
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#15531](https://github.com/LedgerHQ/ledger-live/pull/15531) [`cdb41ce`](https://github.com/LedgerHQ/ledger-live/commit/cdb41cea3623aabcf1ae2148920b23627222d41a) Thanks [@benruseau](https://github.com/benruseau)! - Fix DmkSignerEth getAddress chainId value on parsing error
+
+### Patch Changes
+
+- Updated dependencies [[`72d1b81`](https://github.com/LedgerHQ/ledger-live/commit/72d1b81187121e44624ebc976e8d3309bd9dd8a1), [`69bb48c`](https://github.com/LedgerHQ/ledger-live/commit/69bb48c0dc5b76ddf0d2c96a18ebb35b82927afc), [`4527739`](https://github.com/LedgerHQ/ledger-live/commit/45277399251db055e9e1df98687730af7dabf058), [`0431655`](https://github.com/LedgerHQ/ledger-live/commit/043165591a3bd650b43a220b23bd952ff82d56a0), [`2176f11`](https://github.com/LedgerHQ/ledger-live/commit/2176f11b3a4eaffb8c2f5e1b8a2c074492d02762), [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc), [`9af2737`](https://github.com/LedgerHQ/ledger-live/commit/9af27370f39378b088b7ca0cb17382edb0d84077)]:
+  - @ledgerhq/coin-evm@3.2.0-next.0
+  - @ledgerhq/hw-app-eth@7.6.2-next.0
+
 ## 0.14.2
 
 ### Patch Changes

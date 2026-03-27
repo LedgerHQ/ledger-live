@@ -1,5 +1,18 @@
 # @ledgerhq/coin-xrp
 
+## 7.21.0-next.0
+
+### Minor Changes
+
+- [#15589](https://github.com/LedgerHQ/ledger-live/pull/15589) [`945f74f`](https://github.com/LedgerHQ/ledger-live/commit/945f74fe0b8e99e7cb475fb529898ab763c9c5b1) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix missing fees payer on XRP FEES operations.
+
+### Patch Changes
+
+- Updated dependencies [[`4af828d`](https://github.com/LedgerHQ/ledger-live/commit/4af828d0790bb3568dd095f89dd9f239f7565e84), [`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20), [`deec161`](https://github.com/LedgerHQ/ledger-live/commit/deec16153656d444336f067970dcda5fff016d95), [`41d172e`](https://github.com/LedgerHQ/ledger-live/commit/41d172e74bc074995b7290c4bb6d129276a484ff)]:
+  - @ledgerhq/coin-framework@7.1.0-next.0
+  - @ledgerhq/cryptoassets@13.44.0-next.0
+  - @ledgerhq/live-network@2.4.3-next.0
+
 ## 7.20.0
 
 ### Minor Changes

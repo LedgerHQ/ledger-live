@@ -1,5 +1,46 @@
 # @ledgerhq/coin-aleo
 
+## 1.8.0-next.0
+
+### Minor Changes
+
+- [#15809](https://github.com/LedgerHQ/ledger-live/pull/15809) [`d3f2070`](https://github.com/LedgerHQ/ledger-live/commit/d3f20708585c3a9c2a6b3a9d7861e26bb9a94f2d) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - add “sponsored by provable” text if fee sponsorship is enabled in the coin config
+
+- [#15758](https://github.com/LedgerHQ/ledger-live/pull/15758) [`66c4add`](https://github.com/LedgerHQ/ledger-live/commit/66c4add957a7e3a3d042d5babe9663dfde52b1cf) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - add aleo getTransactionStatus for private
+
+- [#15525](https://github.com/LedgerHQ/ledger-live/pull/15525) [`3a896bf`](https://github.com/LedgerHQ/ledger-live/commit/3a896bf20639a8090e266a7d05c604b8fe796b15) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add aleo private craft transaction
+
+- [#15617](https://github.com/LedgerHQ/ledger-live/pull/15617) [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: update aleo derivation path
+
+- [#15597](https://github.com/LedgerHQ/ledger-live/pull/15597) [`6ed2cc3`](https://github.com/LedgerHQ/ledger-live/commit/6ed2cc3e388df915015f6e4083917015ef800804) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo encrypted prove integration in broadcast
+
+- [#15640](https://github.com/LedgerHQ/ledger-live/pull/15640) [`08aba09`](https://github.com/LedgerHQ/ledger-live/commit/08aba094d4ce594fdde2167f9120b7d9c45b21ba) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: integrate with development version of aleo signer kit
+  feat: aleo sign operation
+
+- [#15518](https://github.com/LedgerHQ/ledger-live/pull/15518) [`91517d9`](https://github.com/LedgerHQ/ledger-live/commit/91517d95480cc44ffa9195adbf572b9817360efa) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: add "last synced: recently" to aleo public balance selector
+  fix: empty extra.functionId in aleo optimistic operation
+  fix: ensure multiple pending aleo operations are visible
+  fix: broken "close modal" in aleo self transfer
+  fix: return zero fees when fee sponsorship is enabled
+
+- [#15568](https://github.com/LedgerHQ/ledger-live/pull/15568) [`2bd3190`](https://github.com/LedgerHQ/ledger-live/commit/2bd3190658bd9baeb616251273eba48d1f677be9) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add estimateMaxSpendable for private in aleo module
+
+- [#15696](https://github.com/LedgerHQ/ledger-live/pull/15696) [`633b6ee`](https://github.com/LedgerHQ/ledger-live/commit/633b6eef8a38e1d8bd9219a69c75c9ca35ccf066) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - add aleo prepareTransaction for private
+
+- [#15639](https://github.com/LedgerHQ/ledger-live/pull/15639) [`43b1de5`](https://github.com/LedgerHQ/ledger-live/commit/43b1de5d23a5760cbe1801a18d3691b393184920) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: exclude already spent records from aleo private balance
+
+- [#15647](https://github.com/LedgerHQ/ledger-live/pull/15647) [`332b7b9`](https://github.com/LedgerHQ/ledger-live/commit/332b7b9c0f44b5dff3dd06e5da029d6add8825d8) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - aleo private sync with rxjs
+
+### Patch Changes
+
+- Updated dependencies [[`4af828d`](https://github.com/LedgerHQ/ledger-live/commit/4af828d0790bb3568dd095f89dd9f239f7565e84), [`1bf4e7e`](https://github.com/LedgerHQ/ledger-live/commit/1bf4e7efa2fbb310f9c3db8f5d72e68294f0f3fe), [`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20), [`deec161`](https://github.com/LedgerHQ/ledger-live/commit/deec16153656d444336f067970dcda5fff016d95), [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc), [`41d172e`](https://github.com/LedgerHQ/ledger-live/commit/41d172e74bc074995b7290c4bb6d129276a484ff), [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc)]:
+  - @ledgerhq/coin-framework@7.1.0-next.0
+  - @ledgerhq/types-live@6.103.0-next.0
+  - @ledgerhq/cryptoassets@13.44.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.1.0-next.0
+  - @ledgerhq/live-env@2.31.0-next.0
+  - @ledgerhq/live-network@2.4.3-next.0
+
 ## 1.7.0
 
 ### Minor Changes
