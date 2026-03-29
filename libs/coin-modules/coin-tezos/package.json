@@ -34,7 +34,6 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
       ]
