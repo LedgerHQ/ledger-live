@@ -24,7 +24,7 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: SeedPathStatus) => 
 
   const confirmRecoverOnboardingStatus = useCallback(async () => {
     const id = userId.exportUserIdForRecover();
-    const status = getStoreValue(
+    const status = await getStoreValue(
       `${ONBOARDED_VIA_RECOVER_RESTORE_USER_PREFIX}${id}`,
       recoverStoreId,
     );
