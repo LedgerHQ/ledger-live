@@ -9,7 +9,6 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
 import { liveDataCommand, liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import type { Application } from "tests/page";
 
 const EARN_LOCAL_MANIFEST: LiveAppManifest = earnLocalManifestJson as LiveAppManifest;
@@ -109,22 +108,19 @@ test.describe("Earn [v2]", () => {
   const activePositionCurrencies = [
     {
       account: Account.SOL_2,
-      hotStartXrayTicket: "B2CQA-4641",
-      positionXrayTicket: "B2CQA-4646",
+      xrayTickets: ["B2CQA-4641", "B2CQA-4646"],
     },
     {
       account: Account.NEAR_1,
-      hotStartXrayTicket: "B2CQA-4720",
-      positionXrayTicket: "B2CQA-4725",
+      xrayTickets: ["B2CQA-4720", "B2CQA-4725"],
     },
     {
       account: Account.ATOM_1,
-      hotStartXrayTicket: "B2CQA-4721",
-      positionXrayTicket: "B2CQA-4726",
+      xrayTickets: ["B2CQA-4721", "B2CQA-4726"],
     },
   ];
 
-  for (const { account, hotStartXrayTicket, positionXrayTicket } of activePositionCurrencies) {
+  for (const { account, xrayTickets } of activePositionCurrencies) {
     test.describe(`Hot start & Position - ${account.currency.ticker}`, () => {
       test.use({
         userdata: "skip-onboarding",
@@ -134,28 +130,16 @@ test.describe("Earn [v2]", () => {
       });
 
       test(
-        `Earn v2 hot start page shows ${account.currency.ticker} with rewards`,
+        `Earn v2 hot start page shows ${account.currency.ticker} with rewards and navigates to account`,
         {
           tag: getTags(account),
-          annotation: { type: "TMS", description: hotStartXrayTicket },
+          annotation: { type: "TMS", description: xrayTickets.join(", ") },
         },
         async ({ app }) => {
           await navigateToEarn(app);
           await app.earnV2Dashboard.verifyHotStartPage();
           await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
           await app.earnV2Dashboard.verifyRewardsSummaryBoxes();
-        },
-      );
-
-      test(
-        `Earn v2 position row navigates to account page for ${account.currency.ticker}`,
-        {
-          tag: getTags(account),
-          annotation: { type: "TMS", description: positionXrayTicket },
-        },
-        async ({ app }) => {
-          await navigateToEarn(app);
-          await app.earnV2Dashboard.verifyHotStartPage();
           await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);
           await app.account.waitForAccountHeaderName(account.accountName);
         },
@@ -184,14 +168,8 @@ test.describe("Earn [v2]", () => {
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.clickIceColdStartEarnCTA();
-
-        const assetSelector = await getModularSelector(app, "ASSET");
-        expect(assetSelector).not.toBeNull();
-        await assetSelector!.selectAsset(account.currency);
-
-        const accountSelector = await getModularSelector(app, "ACCOUNT");
-        expect(accountSelector).not.toBeNull();
-        await accountSelector.clickOnAddAndExistingAccount();
+        await app.earnV2Dashboard.selectAssetInModularSelector(app, account.currency);
+        await app.earnV2Dashboard.addExistingAccountViaModularSelector(app);
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
 
@@ -224,34 +202,7 @@ test.describe("Earn [v2]", () => {
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-        await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
         await app.earnV2Dashboard.verifyModalContainerVisible();
-      },
-    );
-  });
-
-  test.describe("CTA → Partner dapp (ETH)", () => {
-    const account = Account.ETH_1;
-
-    test.use({
-      userdata: "skip-onboarding",
-      speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
-      cliCommands: [liveDataWithAddressCommand(account)],
-    });
-
-    const xrayTicket = "B2CQA-4644";
-    test(
-      "Earn v2 CTA → Partner dapp (ETH)",
-      {
-        tag: getTags(account),
-        annotation: { type: "TMS", description: xrayTicket },
-      },
-      async ({ app }) => {
-        await navigateToEarn(app);
-        await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-        await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
-        await app.earnV2Dashboard.verifyProviderVisible();
       },
     );
   });
@@ -276,7 +227,6 @@ test.describe("Earn [v2]", () => {
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
-        await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
         await app.earnV2Dashboard.verifyDepositFlowVisible();
       },
     );
@@ -285,12 +235,12 @@ test.describe("Earn [v2]", () => {
   // --- Navigation: ETH Provider Staking Flows ---
 
   const ethProviders = [
-    { provider: Provider.LIDO, xrayTicket: "B2CQA-4722" },
-    { provider: Provider.STADER_LABS, xrayTicket: "B2CQA-4723" },
-    { provider: Provider.KILN, xrayTicket: "B2CQA-4724" },
+    { provider: Provider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
+    { provider: Provider.STADER_LABS, xrayTickets: ["B2CQA-4723"] },
+    { provider: Provider.KILN, xrayTickets: ["B2CQA-4724"] },
   ];
 
-  for (const { provider, xrayTicket } of ethProviders) {
+  for (const { provider, xrayTickets } of ethProviders) {
     test.describe(`ETH staking flow - ${provider.name}`, () => {
       const account = Account.ETH_1;
 
@@ -305,7 +255,7 @@ test.describe("Earn [v2]", () => {
         `Earn v2 ETH staking flow - ${provider.name}`,
         {
           tag: getTags(account),
-          annotation: { type: "TMS", description: xrayTicket },
+          annotation: { type: "TMS", description: xrayTickets.join(", ") },
         },
         async ({ app, page }) => {
           await navigateToEarn(app);

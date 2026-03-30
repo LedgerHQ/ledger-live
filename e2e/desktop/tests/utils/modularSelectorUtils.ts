@@ -38,18 +38,7 @@ export async function getModularSelector(
 }
 
 /**
- * Returns a combined locator that matches either the modular dialog or drawer for a given type.
- * Useful for fluent assertions like `await expect(getModularLocator(page, "ACCOUNT")).toBeHidden()`.
- */
-export function getModularLocator(page: Page, type: "ASSET" | "ACCOUNT") {
-  return page
-    .getByTestId(`modular-dialog-screen-${type}_SELECTION`)
-    .or(page.getByTestId(`modular-drawer-screen-${type}_SELECTION`));
-}
-
-/**
- * Returns the visible modular selector (Dialog or Drawer), or null if legacy UI.
- * Priority: dialog > drawer > null (legacy)
+ * Returns the visible modular selector (Dialog), or null if legacy UI.
  *
  * This variant accepts Page and ModularDialog instance directly,
  * useful when called from page objects that already have this instance.
@@ -58,8 +47,7 @@ export function getModularLocator(page: Page, type: "ASSET" | "ACCOUNT") {
  * ```ts
  * const selector = await getModularSelectorFromInstance(
  *   this.page,
- *   this.modularDrawer,
- *   this.modularDialog,
+ *   this.modularDialog
  * );
  * if (selector) {
  *   await selector.validateItems();

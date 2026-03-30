@@ -2,7 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { EarnBasePage } from "./earn.base.page";
-import { getModularSelector, getModularLocator } from "tests/utils/modularSelectorUtils";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import type { Application } from "./index";
 
 export class EarnV2Page extends EarnBasePage {
@@ -79,7 +79,7 @@ export class EarnV2Page extends EarnBasePage {
   @step("Expect modular selector to be visible and validate items: $0")
   async expectModularSelectorToBeVisible(app: Application, type: "ASSET" | "ACCOUNT") {
     const selector = await getModularSelector(app, type);
-    expect(selector).not.toBeNull();
+    expect(selector, `Expected ${type} modular selector to be visible`).not.toBeNull();
     await selector!.validateItems();
   }
 
@@ -108,12 +108,17 @@ export class EarnV2Page extends EarnBasePage {
     await expect(webview).toHaveURL(/\/redeem|intent=withdraw/);
   }
 
-  @step("Select account in modular selector: $0")
-  async selectAccountInModularSelector(app: Application, account: Account) {
+  @step("Select asset in modular selector: $0")
+  async selectAssetInModularSelector(app: Application, currency: Account["currency"]) {
+    const selector = await getModularSelector(app, "ASSET");
+    expect(selector, "Expected ASSET modular selector to be visible").not.toBeNull();
+    await selector!.selectAsset(currency);
+  }
+
+  @step("Add existing account via modular selector")
+  async addExistingAccountViaModularSelector(app: Application) {
     const selector = await getModularSelector(app, "ACCOUNT");
-    if (selector) {
-      await selector.selectAccount(account);
-      await expect(getModularLocator(this.page, "ACCOUNT")).toBeHidden();
-    }
+    expect(selector, "Expected ACCOUNT modular selector to be visible").not.toBeNull();
+    await selector!.clickOnAddAndExistingAccount();
   }
 }
