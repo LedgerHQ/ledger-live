@@ -45,10 +45,10 @@ export const unichain_sepolia = currency({
   },
   explorerViews: [
     {
-      tx: "https://sepolia.uniscan.xyz//tx/$hash",
-      address: "https://sepolia.uniscan.xyz//address/$address",
+      tx: "https://sepolia.uniscan.xyz/tx/$hash",
+      address: "https://sepolia.uniscan.xyz/address/$address",
       token:
-        "https://sepolia.uniscan.xyz//address/$address?tab=token_transfer&token=$contractAddress",
+        "https://sepolia.uniscan.xyz/address/$address?tab=token_transfer&token=$contractAddress",
     },
   ],
 });
