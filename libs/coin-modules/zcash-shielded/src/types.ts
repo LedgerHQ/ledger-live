@@ -29,7 +29,7 @@ export type ShieldedTransaction = {
   blockHeight: number;
   blockHash: string;
   timestamp: number;
-  fee: BigNumber;
+  fee: BigNumber; // zatoshis
   decryptedData?: DecryptedTransaction;
 };
 
@@ -59,7 +59,7 @@ export type ShieldedTransactionRaw = {
   blockHeight: number;
   blockHash: string;
   timestamp: number;
-  fee: string;
+  fee: string; // zatoshis
   decryptedData?: {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
