@@ -5,12 +5,12 @@ import { CoinControlFooter } from "./CoinControlFooter";
 import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
 import { UtxoSelector } from "./UtxoSelector";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 
 type CoinControlScreenViewProps = Readonly<{
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly StrategyOptionWithLabel[];
   changeToReturnFormatted: string;
   onSelectStrategy: (value: string) => void;
