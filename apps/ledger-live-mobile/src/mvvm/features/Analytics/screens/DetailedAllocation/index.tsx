@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from "react";
+import React, { useCallback, memo, useMemo } from "react";
 import { FlatList } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
@@ -10,11 +10,28 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
 import DistributionCard, { DistributionItem } from "./components/DistributionCard";
 import RingChart from "./components/RingChart";
+import { useSelector } from "~/context/hooks";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 const size = normalize(200);
 
-function DetailedAllocation() {
+function useAllocationDistribution() {
   const distribution = useDistribution({ showEmptyAccounts: true });
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
+
+  return useMemo(
+    () =>
+      distribution.list.filter(
+        ({ currency }) =>
+          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
+      ),
+    [distribution.list, blacklistedTokenIdsSet],
+  );
+}
+
+function DetailedAllocation() {
+  const list = useAllocationDistribution();
   const { t } = useTranslation();
 
   const styles = useStyleSheet(
@@ -34,18 +51,18 @@ function DetailedAllocation() {
     <SafeAreaView isFlex edges={["bottom"]}>
       <Box lx={Container}>
         <Box lx={BoxContainer}>
-          <RingChart size={size} data={distribution.list} />
+          <RingChart size={size} data={list} />
           <Box lx={RingChartContainer} pointerEvents="none">
             <Text typography="heading1" lx={Heading}>
-              {distribution.list.length}
+              {list.length}
             </Text>
             <Text typography="body1" lx={Body}>
-              {t("distribution.assets", { count: distribution.list.length })}
+              {t("distribution.assets", { count: list.length })}
             </Text>
           </Box>
         </Box>
         <FlatList
-          data={distribution.list}
+          data={list}
           renderItem={renderItem}
           keyExtractor={item => item.currency.id}
           style={styles.flatList}
