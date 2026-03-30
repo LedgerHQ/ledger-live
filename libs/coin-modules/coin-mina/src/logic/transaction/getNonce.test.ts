@@ -54,7 +54,7 @@ describe("getNonce", () => {
     expect(result).toBe(42);
   });
 
-  it("should fetch nonce from rosetta when transaction is valid", async () => {
+  it("should fetch nonce from rosetta with transfer txKind for a payment transaction", async () => {
     mockFetchTransactionMetadata.mockResolvedValue({
       metadata: { nonce: "99" },
       suggested_fee: [{ value: "50000000" }],
@@ -65,10 +65,47 @@ describe("getNonce", () => {
       nonce: 42,
       amount: new BigNumber(1000),
       fees: { fee: new BigNumber(10) },
+      txType: "send",
     } as Transaction;
 
     const result = await getNonce(txn, "B62qtest");
 
     expect(result).toBe(99);
+    expect(mockFetchTransactionMetadata).toHaveBeenCalledWith(
+      "B62qtest",
+      validAddress,
+      10,
+      1000,
+      "transfer",
+    );
   });
+
+  it.each(["send", "stake", "unstake"] as const)(
+    "should fetch nonce from rosetta with delegation txKind for %s transaction",
+    async (txType: "send" | "stake" | "unstake") => {
+      mockFetchTransactionMetadata.mockResolvedValue({
+        metadata: { nonce: "99" },
+        suggested_fee: [{ value: "50000000" }],
+      });
+
+      const txn = {
+        recipient: validAddress,
+        nonce: 42,
+        amount: new BigNumber(1000),
+        fees: { fee: new BigNumber(10) },
+        txType,
+      } as Transaction;
+
+      const result = await getNonce(txn, "B62qtest");
+
+      expect(result).toBe(99);
+      expect(mockFetchTransactionMetadata).toHaveBeenCalledWith(
+        "B62qtest",
+        validAddress,
+        10,
+        1000,
+        txType === "send" ? "transfer" : "delegation",
+      );
+    },
+  );
 });
