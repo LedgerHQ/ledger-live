@@ -593,7 +593,7 @@ export async function exhaustEndpoint(
   fetchOperations: FetchOperations,
   params: FetchOperationsParams,
 ): Promise<EndpointResult> {
-  const { limit, currency } = params;
+  const { limit } = params;
   const fetchPage = (
     page: number,
     limitOverride: number | undefined = limit,
@@ -609,13 +609,9 @@ export async function exhaustEndpoint(
     return fetchPage(1);
   }
 
-  const configuredMaxLimit = getConfiguredMaxLimit(currency);
-  const probeLimit =
-    configuredMaxLimit === undefined ? limit + 1 : Math.min(limit + 1, configuredMaxLimit);
-
   let currentPageNumber = 1;
   // call first page with a limit + 1 to check if we need to fetch a 2nd page
-  const firstPage = await fetchPage(currentPageNumber, probeLimit);
+  const firstPage = await fetchPage(currentPageNumber, limit + 1);
   // if the page is not full there is nothing to exhaust and the limit input is honored
   if (!firstPage.isPageFull) {
     // this is a bit hacky but we need to recompute isPageFull
@@ -644,8 +640,8 @@ export async function exhaustEndpoint(
 
   do {
     currentPageNumber++;
-    // keep the same probe size while paging
-    nextPage = await fetchPage(currentPageNumber, probeLimit);
+    // here we call with limit + 1 so that endpoint pagination doesn't break
+    nextPage = await fetchPage(currentPageNumber, limit + 1);
 
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
     allOperations.push(...boundaryOps);
