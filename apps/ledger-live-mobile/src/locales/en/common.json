@@ -2754,7 +2754,8 @@
       "title": "Crypto accounts",
       "count_one": "{{count}} account",
       "count_other": "{{count}} accounts",
-      "noAccountsYet": "No accounts yet"
+      "noAccountsYet": "No accounts yet",
+      "add": "Add"
     },
     "seeAllAccounts": "See all accounts",
     "assetSection": {

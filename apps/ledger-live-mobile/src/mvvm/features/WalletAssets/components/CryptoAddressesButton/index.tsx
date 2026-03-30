@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Button,
   Card,
   CardHeader,
   CardLeading,
@@ -7,6 +8,7 @@ import {
   CardContentTitle,
   CardContentDescription,
   CardContentRow,
+  CardTrailing,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -52,6 +54,13 @@ export const CryptoAddressesButton: React.FC = () => {
               </CardContentRow>
             </CardContent>
           </CardLeading>
+          {!hasAccounts && (
+            <CardTrailing>
+              <Button appearance="base" size="sm" onPress={onPress} testID="add-account-cta">
+                {t("portfolio.cryptoAddresses.add")}
+              </Button>
+            </CardTrailing>
+          )}
         </CardHeader>
       </Card>
       {!hasAccounts && (
