@@ -12,7 +12,7 @@ export const toShieldedTransaction = (
   blockHash: tx.blockhash,
   blockHeight: tx.height,
   timestamp: tx.time,
-  fee: new BigNumber(tx.orchard.valueBalance),
+  fee: new BigNumber(tx.orchard.valueBalanceZat),
   decryptedData: {
     orchard_outputs: decryptedTx.orchard_outputs.map(output => ({
       ...output,
