@@ -8753,6 +8753,7 @@
     "bottomSheet": {
       "title": "Some account data couldn’t load",
       "description": "Your assets are safe. This is a temporary sync issue.\nAffected accounts: {{accounts}}",
+      "tryToRefresh": "Try to refresh",
       "close": "Close"
     }
   },
