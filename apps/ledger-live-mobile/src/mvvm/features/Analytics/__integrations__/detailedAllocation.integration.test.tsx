@@ -4,10 +4,10 @@ import DetailedAllocation from "../screens/DetailedAllocation";
 import { State } from "~/reducers/types";
 import {
   createMockAccount,
-  createMockEthAccountWithUSDC,
   mockBitcoinCurrency,
   mockEthereumCurrency,
   mockCardanoCurrency,
+  mockEthAccountWithUSDC,
   usdcToken,
 } from "./shared";
 import { track } from "~/analytics";
@@ -112,22 +112,26 @@ describe("DetailedAllocation Integration Tests", () => {
   });
 
   describe("blacklisted tokens", () => {
-    const mockStateWithBlacklistedToken = (state: State): State => {
-      const ethAccountWithUSDC = createMockEthAccountWithUSDC();
+    const mockStateWithBlacklistedToken = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+      settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
+    });
 
-      return {
-        ...state,
-        accounts: {
-          ...state.accounts,
-          active: [ethAccountWithUSDC],
-        },
-        settings: {
-          ...state.settings,
-          counterValue: "USD",
-          blacklistedTokenIds: [usdcToken.id],
-        },
-      };
-    };
+    const mockStateWithNonBlacklistedToken = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+      settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
+    });
+
+    it("should display a token that is not blacklisted", () => {
+      render(<DetailedAllocation />, {
+        overrideInitialState: mockStateWithNonBlacklistedToken,
+      });
+
+      expect(screen.getByText(usdcToken.name)).toBeVisible();
+    });
+
     it("should not display a blacklisted token in the distribution list", () => {
       render(<DetailedAllocation />, {
         overrideInitialState: mockStateWithBlacklistedToken,

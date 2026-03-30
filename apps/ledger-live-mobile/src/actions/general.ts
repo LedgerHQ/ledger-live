@@ -16,6 +16,7 @@ import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
 import {
+  blacklistedTokenIdsSelector,
   counterValueCurrencySelector,
   orderAccountsSelector,
   selectedTimeRangeSelector,
@@ -159,5 +160,20 @@ export function useTrackingPairs(): TrackingPair[] {
   return useMemo(
     () => extraSessionTrackingPairs.concat(trPairs),
     [extraSessionTrackingPairs, trPairs],
+  );
+}
+
+export function useNonBlacklistedDistribution() {
+  const distribution = useDistribution({ showEmptyAccounts: true });
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
+
+  return useMemo(
+    () =>
+      distribution.list.filter(
+        ({ currency }) =>
+          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
+      ),
+    [distribution.list, blacklistedTokenIdsSet],
   );
 }

@@ -1,17 +1,15 @@
-import React, { useCallback, memo, useMemo } from "react";
+import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import RingChart from "./RingChart";
-import { useDistribution } from "~/actions/general";
+import { useNonBlacklistedDistribution } from "~/actions/general";
 import DistributionCard, { DistributionItem } from "./DistributionCard";
 import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useSelector } from "~/context/hooks";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 type ContainerProps = {
   flex?: number;
@@ -35,23 +33,8 @@ const AssetWrapperContainer = styled(Flex).attrs({
 
 const size = normalize(200);
 
-function useAllocationDistribution() {
-  const distribution = useDistribution({ showEmptyAccounts: true });
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
-  return useMemo(
-    () =>
-      distribution.list.filter(
-        ({ currency }) =>
-          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-      ),
-    [distribution.list, blacklistedTokenIdsSet],
-  );
-}
-
 function Allocation() {
-  const list = useAllocationDistribution();
+  const list = useNonBlacklistedDistribution();
   const { colors } = useTheme();
   const { t } = useTranslation();
 

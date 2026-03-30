@@ -1,37 +1,20 @@
-import React, { useCallback, memo, useMemo } from "react";
+import React, { useCallback, memo } from "react";
 import { FlatList } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LumenTextStyle, LumenViewStyle, useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import { useDistribution } from "~/actions/general";
+import { useDetailedAllocationViewModel } from "./hooks/useDetailedAllocationViewModel";
 import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { normalize } from "~/helpers/normalizeSize";
 import DistributionCard, { DistributionItem } from "./components/DistributionCard";
 import RingChart from "./components/RingChart";
-import { useSelector } from "~/context/hooks";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 const size = normalize(200);
 
-function useAllocationDistribution() {
-  const distribution = useDistribution({ showEmptyAccounts: true });
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
-  return useMemo(
-    () =>
-      distribution.list.filter(
-        ({ currency }) =>
-          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-      ),
-    [distribution.list, blacklistedTokenIdsSet],
-  );
-}
-
 function DetailedAllocation() {
-  const list = useAllocationDistribution();
+  const { list } = useDetailedAllocationViewModel();
   const { t } = useTranslation();
 
   const styles = useStyleSheet(
