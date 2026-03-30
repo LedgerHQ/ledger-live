@@ -35,6 +35,18 @@ async function getDeviceTransactionConfig({
   });
 
   fields.push({
+    type: "address",
+    label: "From",
+    address: mainAccount.freshAddress,
+  });
+
+  fields.push({
+    type: "address",
+    label: "To",
+    address: transaction.recipient,
+  });
+
+  fields.push({
     type: "amount",
     label: "Amount",
   });
@@ -43,7 +55,7 @@ async function getDeviceTransactionConfig({
     fields.push({
       type: "text",
       label: "Fees",
-      value: "Sponsored by Provable",
+      value: "aleo.shared.sponsoredByProvable",
     });
   } else if (!status.estimatedFees.isZero()) {
     fields.push({
