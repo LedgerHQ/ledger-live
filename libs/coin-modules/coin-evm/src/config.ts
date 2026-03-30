@@ -19,6 +19,8 @@ export type EvmConfig = {
     | {
         type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
         noCache?: boolean | undefined;
+        /** Optional cap applied to requested operation limit. */
+        maxLimit?: number | undefined;
         uri: string;
       }
     | {

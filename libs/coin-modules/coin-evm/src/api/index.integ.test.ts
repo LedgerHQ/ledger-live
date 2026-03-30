@@ -924,6 +924,7 @@ describe("EVM Api (Zero Gravity)", () => {
       explorer: {
         type: "etherscan",
         uri: "https://chainscan.0g.ai/open/api",
+        maxLimit: 99,
       },
     };
     module = createApi(config as EvmConfig, "zero_gravity");

@@ -2498,6 +2498,81 @@ describe("EVM Family", () => {
       );
     };
 
+    it("uses configured maxLimit as probe limit", async () => {
+      mockGetConfig.mockImplementationOnce((): any => ({
+        info: {
+          explorer: {
+            type: "etherscan",
+            uri: "mock",
+            maxLimit: 99,
+          },
+        },
+      }));
+
+      const mockFetch = jest
+        .fn<Promise<ETHERSCAN_API.EndpointResult>, [ETHERSCAN_API.FetchOperationsParams]>()
+        .mockResolvedValue({
+          operations: createOps(Array.from({ length: 98 }, (_, i) => i + 1)),
+          isDone: true,
+          boundBlock: 98,
+          isPageFull: false,
+        });
+
+      await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        limit: 200,
+        sort: "desc",
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch.mock.calls[0]?.[0]).toEqual(
+        expect.objectContaining({
+          page: 1,
+          limit: 99,
+        }),
+      );
+    });
+
+    it("uses limit + 1 probe when maxLimit is not configured", async () => {
+      mockGetConfig.mockImplementationOnce((): any => ({
+        info: {
+          explorer: {
+            type: "etherscan",
+            uri: "mock",
+          },
+        },
+      }));
+
+      const mockFetch = jest
+        .fn<Promise<ETHERSCAN_API.EndpointResult>, [ETHERSCAN_API.FetchOperationsParams]>()
+        .mockResolvedValue({
+          operations: createOps(Array.from({ length: 100 }, (_, i) => i + 1)),
+          isDone: true,
+          boundBlock: 100,
+          isPageFull: false,
+        });
+
+      await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        limit: 100,
+        sort: "desc",
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch.mock.calls[0]?.[0]).toEqual(
+        expect.objectContaining({
+          page: 1,
+          limit: 101,
+        }),
+      );
+    });
+
     it.each([
       {
         ops: [1, 2, 3, 4, 5, 6],

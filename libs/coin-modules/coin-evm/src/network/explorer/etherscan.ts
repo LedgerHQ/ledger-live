@@ -31,7 +31,15 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
-export const MAX_ETHERSCAN_OFFSET = 100; // some explorers limit offset to 100
+
+function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) return undefined;
+  const cap = explorer.maxLimit;
+  if (cap === undefined) return undefined;
+  return cap > 0 ? Math.floor(cap) : undefined;
+}
 
 /**
  * Common parameters for fetching operations from an endpoint
@@ -585,7 +593,7 @@ export async function exhaustEndpoint(
   fetchOperations: FetchOperations,
   params: FetchOperationsParams,
 ): Promise<EndpointResult> {
-  const { limit } = params;
+  const { limit, currency } = params;
   const fetchPage = (
     page: number,
     limitOverride: number | undefined = limit,
@@ -601,18 +609,19 @@ export async function exhaustEndpoint(
     return fetchPage(1);
   }
 
-  // some etherscan compatible explorers cap the offset parameter, and we are fetching one extra item to detect next page
-  const effectiveLimit = Math.min(limit, MAX_ETHERSCAN_OFFSET - 1);
+  const configuredMaxLimit = getConfiguredMaxLimit(currency);
+  const probeLimit =
+    configuredMaxLimit === undefined ? limit + 1 : Math.min(limit + 1, configuredMaxLimit);
 
   let currentPageNumber = 1;
   // call first page with a limit + 1 to check if we need to fetch a 2nd page
-  const firstPage = await fetchPage(currentPageNumber, effectiveLimit + 1);
+  const firstPage = await fetchPage(currentPageNumber, probeLimit);
   // if the page is not full there is nothing to exhaust and the limit input is honored
   if (!firstPage.isPageFull) {
     // this is a bit hacky but we need to recompute isPageFull
     // because the first page has been fetched with a limit + 1
-    // in case we have ops.length == effective limit, then isPageFull should be true
-    return { ...firstPage, isPageFull: isPageFull(effectiveLimit, firstPage.operations.length) };
+    // in case we have ops.length == limit, then isPageFull should be true
+    return { ...firstPage, isPageFull: isPageFull(limit, firstPage.operations.length) };
   }
 
   // this is an optimization to avoid fetching the next page if the last 2 ops are not at the same block height (most likely case)
@@ -635,8 +644,8 @@ export async function exhaustEndpoint(
 
   do {
     currentPageNumber++;
-    // here we call with limit + 1 so that endpoint pagination doesn't break
-    nextPage = await fetchPage(currentPageNumber, effectiveLimit + 1);
+    // keep the same probe size while paging
+    nextPage = await fetchPage(currentPageNumber, probeLimit);
 
     boundaryOps = nextPage.operations.filter(op => (op.blockHeight ?? 0) === firstPage.boundBlock);
     allOperations.push(...boundaryOps);
@@ -692,6 +701,12 @@ export const getOperations = makeLRUCache<
 >(
   async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
+      const configuredMaxLimit = getConfiguredMaxLimit(currency);
+      const effectiveLimit =
+        limit !== undefined && configuredMaxLimit !== undefined
+          ? Math.min(limit, configuredMaxLimit)
+          : limit;
+
       const pagingState = deserializePagingToken(pagingToken);
       const paginationBlock = pagingState?.boundBlock;
 
@@ -703,7 +718,7 @@ export const getOperations = makeLRUCache<
         accountId,
         fromBlock,
         ...(toBlock !== undefined && { toBlock }),
-        ...(limit !== undefined && { limit }),
+        ...(effectiveLimit !== undefined && { limit: effectiveLimit }),
         sort: order,
       };
 
@@ -728,7 +743,12 @@ export const getOperations = makeLRUCache<
           ...(effectiveToBlock !== undefined && { toBlock: effectiveToBlock }),
         };
         const result = await exhaustEndpoint(endpoint, params);
-        const effectiveBoundBlock = computeEffectiveBoundBlock(limit, boundBlock, result, cmp);
+        const effectiveBoundBlock = computeEffectiveBoundBlock(
+          effectiveLimit,
+          boundBlock,
+          result,
+          cmp,
+        );
         return { result: result, effectiveBoundBlock: effectiveBoundBlock };
       }
 
