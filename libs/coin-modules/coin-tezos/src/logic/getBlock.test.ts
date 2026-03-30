@@ -915,9 +915,7 @@ describe("delegation operations", () => {
     const result = await getBlock(5_000_000);
 
     // Then - no operations (tx was failed), but fees still accumulated
-    expect(result.transactions).toMatchObject([
-      { failed: true, operations: [], fees: 1000n },
-    ]);
+    expect(result.transactions).toMatchObject([{ failed: true, operations: [], fees: 1000n }]);
   });
 
   it("includes both transactions and delegations in the same block", async () => {
