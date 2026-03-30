@@ -6,16 +6,9 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib-es",
-    "baseUrl": ".",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "types": ["node", "jest"]
   },
-  "include": ["src"],
-  "exclude": []
+  "include": ["src"]
 }

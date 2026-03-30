@@ -106,7 +106,7 @@ describe("WsProxyTransport", () => {
   });
 
   const loadTransportModule = async () =>
-    import("./WsProxyTransport") as Promise<typeof import("./WsProxyTransport")>;
+    import("./WsProxyTransport.js") as Promise<typeof import("./WsProxyTransport.js")>;
 
   it("switches URL by closing previous socket and opening a new one", async () => {
     const { wsProxyTransportFactory, setWsProxyUrl } = await loadTransportModule();

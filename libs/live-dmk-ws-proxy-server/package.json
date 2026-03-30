@@ -17,6 +17,20 @@
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-dmk-ws-proxy-server",
   "main": "./lib-es/index.js",
   "types": "./lib-es/index.d.ts",
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib-es/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib-es/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "clean": "rimraf lib-es",
     "build": "tsc --project tsconfig.build.json",
@@ -24,7 +38,7 @@
     "watch:es": "pnpm watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch --passWithNoTests",
     "test:coverage": "jest --coverage --passWithNoTests"
