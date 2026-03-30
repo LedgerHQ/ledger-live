@@ -492,6 +492,14 @@ export function getSpeculosAddress(): string {
   return speculosAddress || "http://127.0.0.1";
 }
 
+const _capturedSpeculosScreenshots = new Map<number, Buffer[]>();
+
+export function drainSpeculosScreenshots(port: number): Buffer[] {
+  const screenshots = _capturedSpeculosScreenshots.get(port) ?? [];
+  _capturedSpeculosScreenshots.delete(port);
+  return screenshots;
+}
+
 export async function retryAxiosRequest<T>(
   requestFn: () => Promise<AxiosResponse<T>>,
   maxRetries: number = 5,
@@ -596,16 +604,26 @@ export const pressUntilTextFound = withDeviceController(
       const maxAttempts = 18;
       const speculosApiPort = getEnv("SPECULOS_API_PORT");
       const buttons = getButtonsController();
+      const seenScreens = new Set<string>();
+      const portScreenshots = _capturedSpeculosScreenshots.get(speculosApiPort) ?? [];
+      _capturedSpeculosScreenshots.set(speculosApiPort, portScreenshots);
 
       for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const texts = await fetchCurrentScreenTexts(speculosApiPort);
-        if (
-          strictMatch
-            ? texts === targetText
-            : texts.toLowerCase().includes(targetText.toLowerCase())
-        ) {
+        const isMatch = strictMatch
+          ? texts === targetText
+          : texts.toLowerCase().includes(targetText.toLowerCase());
+
+        if (!seenScreens.has(texts)) {
+          seenScreens.add(texts);
+          const screenshot = await takeScreenshot(speculosApiPort);
+          if (screenshot) portScreenshots.push(screenshot);
+        }
+
+        if (isMatch) {
           return await fetchAllEvents(speculosApiPort);
         }
+
         if (isTouchDevice()) {
           await swipeRight();
         } else {
@@ -614,8 +632,9 @@ export const pressUntilTextFound = withDeviceController(
         await waitForTimeOut(200);
       }
 
+      const screensLog = [...seenScreens].map((s, i) => `[${i + 1}] "${s}"`).join(" → ");
       throw new Error(
-        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen. Screens observed during navigation (${seenScreens.size} unique): ${screensLog}`,
       );
     },
 );
