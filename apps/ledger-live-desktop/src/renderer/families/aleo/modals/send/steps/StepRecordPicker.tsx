@@ -4,10 +4,11 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { rgba } from "@ledgerhq/react-ui/styles/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type {
   AleoAccount,
   AleoUnspentRecord,
-  TransactionPrivate,
+  Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
 import { isPublicTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { useSelector } from "LLD/hooks/redux";
@@ -20,9 +21,10 @@ import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
 
-interface Props extends Omit<StepProps, "account" | "transaction"> {
+interface Props {
   account: AleoAccount;
-  transaction: TransactionPrivate;
+  transaction: AleoTransaction;
+  updateTransaction: StepProps["updateTransaction"];
 }
 
 interface ButtonState {
@@ -93,7 +95,7 @@ const RecordsLimitDescription = styled.p`
 
 const MAX_RECORDS_DISPLAYED = 10;
 
-export const StepRecordPicker = ({ account, transaction, updateTransaction }: Props) => {
+const AleoStepRecordPicker = ({ account, transaction, updateTransaction }: Props) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
@@ -187,3 +189,19 @@ export const StepRecordPicker = ({ account, transaction, updateTransaction }: Pr
     </Box>
   );
 };
+
+const isAleoAccount = (acc: AccountLike): acc is AleoAccount => "aleoResources" in acc;
+
+const StepRecordPicker = ({ account, transaction, updateTransaction }: StepProps) => {
+  if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
+
+  return (
+    <AleoStepRecordPicker
+      account={account}
+      transaction={transaction}
+      updateTransaction={updateTransaction}
+    />
+  );
+};
+
+export default StepRecordPicker;
