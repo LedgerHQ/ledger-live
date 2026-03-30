@@ -4,9 +4,11 @@ import DetailedAllocation from "../screens/DetailedAllocation";
 import { State } from "~/reducers/types";
 import {
   createMockAccount,
+  createMockEthAccountWithUSDC,
   mockBitcoinCurrency,
   mockEthereumCurrency,
   mockCardanoCurrency,
+  usdcToken,
 } from "./shared";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -107,6 +109,32 @@ describe("DetailedAllocation Integration Tests", () => {
     const percentagePattern = /\d+%/;
     const percentages = screen.getAllByText(percentagePattern);
     expect(percentages.length).toBeGreaterThan(0);
+  });
+
+  describe("blacklisted tokens", () => {
+    const mockStateWithBlacklistedToken = (state: State): State => {
+      const ethAccountWithUSDC = createMockEthAccountWithUSDC();
+
+      return {
+        ...state,
+        accounts: {
+          ...state.accounts,
+          active: [ethAccountWithUSDC],
+        },
+        settings: {
+          ...state.settings,
+          counterValue: "USD",
+          blacklistedTokenIds: [usdcToken.id],
+        },
+      };
+    };
+    it("should not display a blacklisted token in the distribution list", () => {
+      render(<DetailedAllocation />, {
+        overrideInitialState: mockStateWithBlacklistedToken,
+      });
+
+      expect(screen.queryByText(usdcToken.name)).toBeNull();
+    });
   });
 
   it("should track and navigate when distribution card is pressed", async () => {
