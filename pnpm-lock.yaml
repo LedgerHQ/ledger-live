@@ -595,6 +595,12 @@ importers:
       nyc:
         specifier: 15.1.0
         version: 15.1.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
