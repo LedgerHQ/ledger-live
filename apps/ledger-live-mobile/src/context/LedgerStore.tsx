@@ -172,7 +172,13 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       } else if (settingsData) {
         // One-time migration from legacy settings fields. Write the new featureFlags key directly
         // so DBSave does not need saveAtStart and avoids a spurious write on every subsequent boot.
-        const rawOverrides = settingsData.overriddenFeatureFlags;
+        // The legacy fields have been removed from SettingsState but may still exist in old persisted payloads.
+        const rawOverrides =
+          "overriddenFeatureFlags" in settingsData &&
+          typeof settingsData["overriddenFeatureFlags"] === "object" &&
+          settingsData["overriddenFeatureFlags"] !== null
+            ? (settingsData["overriddenFeatureFlags"] as Record<string, unknown>)
+            : undefined;
         const filteredOverrides: Parameters<typeof setAllOverrides>[0] = rawOverrides
           ? Object.fromEntries(Object.entries(rawOverrides).filter(([, v]) => v !== undefined))
           : {};
@@ -182,7 +188,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         }
 
         const legacyBannerVisible =
-          settingsData.featureFlagsBannerVisible ??
+          ("featureFlagsBannerVisible" in settingsData &&
+          typeof settingsData["featureFlagsBannerVisible"] === "boolean"
+            ? settingsData["featureFlagsBannerVisible"]
+            : undefined) ??
           ("featureFlagsButtonVisible" in settingsData &&
           typeof settingsData["featureFlagsButtonVisible"] === "boolean"
             ? settingsData["featureFlagsButtonVisible"]

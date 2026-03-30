@@ -46,9 +46,6 @@ import type {
   SettingsShowTokenPayload,
   SettingsUpdateCurrencyPayload,
   SettingsSetDismissedDynamicCardsPayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
@@ -152,8 +149,6 @@ export const INITIAL_STATE: SettingsState = {
   },
   neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
-  overriddenFeatureFlags: {},
-  featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: true, // will be set to false at the end of an onboarding, not false by default to avoid upsell for existing users
@@ -211,10 +206,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
     const filteredPayload = filterValidSettings(payload);
-    const wallet40FF = getFeature({
-      key: LWM_WALLET_40,
-      localOverrides: filteredPayload.overriddenFeatureFlags,
-    });
+    const wallet40FF = getFeature({ key: LWM_WALLET_40 });
     const isWallet40Enabled = wallet40FF?.enabled === true;
     const isWallet40GraphReworkEnabled =
       wallet40FF?.params?.graphRework === true && isWallet40Enabled;
@@ -561,28 +553,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
-    const { id, value } = (action as Action<SettingsSetOverriddenFeatureFlagPlayload>).payload;
-    return {
-      ...state,
-      overriddenFeatureFlags: {
-        ...state.overriddenFeatureFlags,
-        [id]: value,
-      },
-    };
-  },
-
-  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => ({
-    ...state,
-    overriddenFeatureFlags: (action as Action<SettingsSetOverriddenFeatureFlagsPlayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => ({
-    ...state,
-    featureFlagsBannerVisible: (action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>)
-      .payload,
-  }),
-
   [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => ({
     ...state,
     debugAppLevelDrawerOpened: (action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>)
@@ -910,8 +880,6 @@ export const notificationsSelector = (state: State) => state.settings.notificati
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
-export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
-export const featureFlagsBannerVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
 /* NB: Protect is the former codename for Ledger Recover */

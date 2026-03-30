@@ -1,12 +1,11 @@
 import type { RefObject } from "react";
 import type { LayoutChangeEvent } from "react-native";
 
-import { act, renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { SeedOriginType } from "@ledgerhq/types-live";
 
 import { COMPANION_STATE, SEED_STATE } from "~/screens/SyncOnboarding/TwoStepStepper/types";
 import { useSecondStepSyncOnboardingViewModel } from "./useSecondStepSyncOnboardingViewModel";
-import type { State } from "~/reducers/types";
 
 const mockWithTiming = jest.fn((toValue: unknown, _config?: unknown) => toValue);
 
@@ -48,15 +47,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
       },
     );
 
@@ -73,18 +64,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: {
-                enabled: false,
-                params: { apps: ["Bitcoin"] },
-              },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: false, params: { apps: ["Bitcoin"] } } }),
       },
     );
 
@@ -102,15 +82,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: analyticsSeed,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
       },
     );
 
@@ -131,15 +103,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: analyticsSeed,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
       },
     );
 
@@ -166,15 +130,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
       },
     );
 
@@ -194,15 +150,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: { enabled: false, params: {} },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: false, params: {} } }),
       },
     );
 
@@ -219,15 +167,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
 
   it("should animate opacity to 0 on setup/exit and to 100 otherwise", () => {
     const commonOptions = {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: {
-            deviceInitialApps: { enabled: false, params: {} },
-          },
-        },
-      }),
+      overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: false, params: {} } }),
     };
 
     renderHook(
@@ -275,15 +215,7 @@ describe("useSecondStepSyncOnboardingViewModel", () => {
           analyticsSeedConfiguration: mockAnalyticsSeedConfiguration,
         }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ deviceInitialApps: { enabled: true, params: { apps: ["Bitcoin", "Ethereum"] } } }),
       },
     );
 

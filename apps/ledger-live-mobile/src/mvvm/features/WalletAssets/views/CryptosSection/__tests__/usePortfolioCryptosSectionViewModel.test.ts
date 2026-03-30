@@ -1,8 +1,7 @@
 import { act } from "@testing-library/react-native";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { State } from "~/reducers/types";
 import usePortfolioCryptosSectionViewModel from "../usePortfolioCryptosSectionViewModel";
 import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { bitcoin, ethereum, createCryptoAsset } from "./shared";
@@ -140,15 +139,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
   describe("onPressShowAll", () => {
     it("should navigate to Crypto screen when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { assetSection: true } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection: true } } }),
       });
 
       act(() => {
@@ -166,15 +157,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
 
     it("should navigate to legacy Assets screen when assetSection is disabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            overriddenFeatureFlags: {
-              lwmWallet40: { enabled: true, params: { assetSection: false } },
-            },
-          },
-        }),
+        overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true, params: { assetSection: false } } }),
       });
 
       act(() => {

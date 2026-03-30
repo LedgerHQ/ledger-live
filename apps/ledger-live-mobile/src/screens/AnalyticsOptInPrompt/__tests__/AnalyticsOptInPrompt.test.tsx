@@ -1,9 +1,8 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { useNavigation } from "@react-navigation/native";
 import AnalyticsOptInPromptMain from "~/screens/AnalyticsOptInPrompt/variantA/Main";
 import { NavigatorName, ScreenName } from "~/const";
-import { State } from "~/reducers/types";
 
 jest.mock("@react-navigation/native", () => {
   const actual = jest.requireActual("@react-navigation/native");
@@ -31,18 +30,11 @@ const renderAnalyticsOptInMain = ({
       navigation={{ addListener: mockAddListener } as never}
     />,
     {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          overriddenFeatureFlags: {
-            ...state.settings.overriddenFeatureFlags,
-            lwmWallet40: {
-              enabled: wallet40Enabled,
-              params: {
-                lazyOnboarding,
-              },
-            },
+      overrideInitialState: withFlagOverrides({
+        lwmWallet40: {
+          enabled: wallet40Enabled,
+          params: {
+            lazyOnboarding,
           },
         },
       }),

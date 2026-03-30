@@ -52,8 +52,6 @@
         "KYC": {}
       },
       "starredMarketCoins": [],
-      "overriddenFeatureFlags": {},
-      "featureFlagsButtonVisible": false,
       "vaultSigner": {
         "enabled": false,
         "host": "",
@@ -8990,6 +8988,10 @@
           "oldestDateRequested": "2022-05-20T12:44:20.000Z"
         }
       }
+    },
+    "featureFlags": {
+      "overrides": {},
+      "bannerVisible": false
     }
   }
 }

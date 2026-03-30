@@ -30,7 +30,10 @@ describe("useOnboardScreenViewModel", () => {
     settings: {
       ...INITIAL_STATE,
       ...state.settings,
-      overriddenFeatureFlags: {
+    },
+    featureFlags: {
+      ...state.featureFlags,
+      overrides: {
         cantonSkipPreapprovalStep: { enabled: false },
       },
     },

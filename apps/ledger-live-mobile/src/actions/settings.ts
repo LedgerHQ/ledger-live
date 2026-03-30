@@ -37,9 +37,6 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetFeatureFlagsBannerVisiblePayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsLastSeenDeviceLanguagePayload,
@@ -221,16 +218,6 @@ export const setWalletTabNavigatorLastVisitedTab =
 export const setDateFormat = createAction<SettingsSetDateFormatPayload>(
   SettingsActionTypes.SETTINGS_SET_DATE_FORMAT,
 );
-export const setOverriddenFeatureFlag = createAction<SettingsSetOverriddenFeatureFlagPlayload>(
-  SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG,
-);
-export const setOverriddenFeatureFlags = createAction<SettingsSetOverriddenFeatureFlagsPlayload>(
-  SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS,
-);
-export const setFeatureFlagsBannerVisible =
-  createAction<SettingsSetFeatureFlagsBannerVisiblePayload>(
-    SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE,
-  );
 export const setDebugAppLevelDrawerOpened =
   createAction<SettingsSetDebugAppLevelDrawerOpenedPayload>(
     SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED,

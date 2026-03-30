@@ -1,7 +1,6 @@
 import useNftsEntryPointViewModel from "../useNftsEntryPointViewModel";
 import { AnalyticsPage, Entry } from "../types";
-import { renderHook } from "@tests/test-renderer";
-import { State } from "~/reducers/types";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { INITIAL_STATE } from "~/reducers/settings";
 
 describe("useNftsEntryPointViewModel", () => {
@@ -10,17 +9,15 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...INITIAL_STATE,
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: false,
-              },
+        overrideInitialState: withFlagOverrides(
+          { llNftEntryPoint: { enabled: false } },
+          state => ({
+            ...state,
+            settings: {
+              ...INITIAL_STATE,
             },
-          },
-        }),
+          }),
+        ),
       },
     );
 
@@ -32,21 +29,23 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...INITIAL_STATE,
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: true,
-                params: {
-                  [Entry.magiceden]: true,
-                  [Entry.opensea]: true,
-                },
+        overrideInitialState: withFlagOverrides(
+          {
+            llNftEntryPoint: {
+              enabled: true,
+              params: {
+                [Entry.magiceden]: true,
+                [Entry.opensea]: true,
               },
             },
           },
-        }),
+          state => ({
+            ...state,
+            settings: {
+              ...INITIAL_STATE,
+            },
+          }),
+        ),
       },
     );
 
@@ -58,21 +57,23 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...INITIAL_STATE,
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: true,
-                params: {
-                  [Entry.magiceden]: true,
-                  [Entry.opensea]: true,
-                },
+        overrideInitialState: withFlagOverrides(
+          {
+            llNftEntryPoint: {
+              enabled: true,
+              params: {
+                [Entry.magiceden]: true,
+                [Entry.opensea]: true,
               },
             },
           },
-        }),
+          state => ({
+            ...state,
+            settings: {
+              ...INITIAL_STATE,
+            },
+          }),
+        ),
       },
     );
     const magicedenEntry = result.current.entryPoints[Entry.magiceden];
@@ -86,21 +87,23 @@ describe("useNftsEntryPointViewModel", () => {
       () =>
         useNftsEntryPointViewModel({ accountId: "testAccountId", currencyId: "testCurrencyId" }),
       {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...INITIAL_STATE,
-            overriddenFeatureFlags: {
-              llNftEntryPoint: {
-                enabled: true,
-                params: {
-                  [Entry.magiceden]: true,
-                  [Entry.opensea]: true,
-                },
+        overrideInitialState: withFlagOverrides(
+          {
+            llNftEntryPoint: {
+              enabled: true,
+              params: {
+                [Entry.magiceden]: true,
+                [Entry.opensea]: true,
               },
             },
           },
-        }),
+          state => ({
+            ...state,
+            settings: {
+              ...INITIAL_STATE,
+            },
+          }),
+        ),
       },
     );
     const openseaEntry = result.current.entryPoints[Entry.opensea];

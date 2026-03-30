@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Account } from "@ledgerhq/types-live";
@@ -31,23 +31,22 @@ function stateWith({
   featureFlagOff = false,
 }: StateWithParams = {}) {
   return {
-    overrideInitialState: (state: State) => ({
-      ...state,
-      accounts: { active: accounts },
-      postOnboarding: {
-        ...state.postOnboarding,
-        deviceModelId,
-        walletEntryPointEligibleForPortfolio: eligibility,
+    overrideInitialState: withFlagOverrides(
+      {
+        lwmWallet40: featureFlagOff
+          ? { enabled: false }
+          : { enabled: true, params: { onboardingWidget: true } },
       },
-      settings: {
-        ...state.settings,
-        overriddenFeatureFlags: {
-          lwmWallet40: featureFlagOff
-            ? { enabled: false }
-            : { enabled: true, params: { onboardingWidget: true } },
+      state => ({
+        ...state,
+        accounts: { active: accounts },
+        postOnboarding: {
+          ...state.postOnboarding,
+          deviceModelId,
+          walletEntryPointEligibleForPortfolio: eligibility,
         },
-      },
-    }),
+      }),
+    ),
   };
 }
 

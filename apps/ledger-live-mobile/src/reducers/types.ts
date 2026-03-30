@@ -274,8 +274,6 @@ export type SettingsState = {
   /** True if user never clicked on the AllowNotifications button in the notifications settings */
   neverClickedOnAllowNotificationsButton: boolean;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
-  overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
-  featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   /* NB: Protect is the former codename for Ledger Recover */

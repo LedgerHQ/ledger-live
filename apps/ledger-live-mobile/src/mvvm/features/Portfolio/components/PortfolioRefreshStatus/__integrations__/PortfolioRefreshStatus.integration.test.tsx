@@ -30,7 +30,7 @@ jest.mock("react-native-reanimated", () => {
 });
 
 import React from "react";
-import { render, screen, act } from "@tests/test-renderer";
+import { render, screen, act, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { REFRESH_STATUS_VISIBLE_DURATION_MS } from "../usePortfolioRefreshStatusViewModel";
 import { PortfolioRefreshStatus } from "../index";
@@ -46,16 +46,7 @@ const makeAccount = (lastSyncDate: Date) => ({
   lastSyncDate,
 });
 
-const withBalanceRefreshRework = (state: State): State => ({
-  ...state,
-  settings: {
-    ...state.settings,
-    overriddenFeatureFlags: {
-      ...state.settings.overriddenFeatureFlags,
-      lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } },
-    },
-  },
-});
+const withBalanceRefreshRework = withFlagOverrides({ lwmWallet40: { enabled: true, params: { balanceRefreshRework: true } } });
 
 const withRefreshing = (): ((state: State) => State) => state => ({
   ...state,
