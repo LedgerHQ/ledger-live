@@ -46,6 +46,11 @@ describe("getAccountNumFromPath", () => {
     const account = getAccountNumFromPath("44'/12586'/4'/0/0");
     expect(account).toBe(4);
   });
+
+  it("should return undefined for negative account number", () => {
+    const account = getAccountNumFromPath("44'/12586'/-1'/0/0");
+    expect(account).toBe(undefined);
+  });
 });
 
 describe("testingAddress", () => {

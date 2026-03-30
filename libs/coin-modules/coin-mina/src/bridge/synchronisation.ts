@@ -1,6 +1,9 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import {
+  type GetAccountShape,
+  makeSync,
+  mergeOps,
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -176,7 +179,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
       ? graphqlDelegateAddress
       : lastDelegationOp?.type === "UNDELEGATE"
         ? address
-        : (lastDelegationOp?.recipients[0] ?? address);
+        : lastDelegationOp?.recipients[0] ?? address;
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
