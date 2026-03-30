@@ -694,6 +694,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@shared/schema-primitives':
+        specifier: workspace:^
+        version: link:../../shared/schema-primitives
       '@zondax/ledger-live-icp':
         specifier: 1.4.1
         version: 1.4.1
@@ -766,6 +769,9 @@ importers:
       ws:
         specifier: 'catalog:'
         version: 8.18.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@pnpm/exportable-manifest':
         specifier: 1000.0.7

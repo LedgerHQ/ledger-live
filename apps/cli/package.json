@@ -76,7 +76,9 @@
     "usb": "*",
     "winston": "3.13.0",
     "ws": "catalog:",
-    "@zondax/ledger-live-icp": "1.4.1"
+    "@shared/schema-primitives": "workspace:^",
+    "@zondax/ledger-live-icp": "1.4.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@pnpm/exportable-manifest": "1000.0.7",

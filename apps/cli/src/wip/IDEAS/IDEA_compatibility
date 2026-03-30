@@ -1,0 +1,831 @@
+// THIS FILE IS JUST INSPIRATION OF WHERE WE COULD GO. PLEASE CREATE compatibility.ts with subset needed here.
+
+
+/**
+ * Compatibility layer: infer account, bridge sync, split into slices, reconstruct.
+ * Converts between legacy Account (types-live) and v4 slices (AccountV4, etc.).
+ * Balance history is derived from operations + balance (see README: future dedicated API).
+ */
+import { BigNumber } from "bignumber.js";
+import { lastValueFrom } from "rxjs";
+import { reduce } from "rxjs/operators";
+import {
+  encodeAccountId,
+  decodeAccountId,
+  emptyHistoryCache,
+} from "@ledgerhq/live-common/account/index";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+  asDerivationMode,
+} from "@ledgerhq/coin-framework/derivation";
+import { generateHistoryFromOperations } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
+import type { Account, TokenAccount, DerivationMode } from "@ledgerhq/types-live";
+import type { AccountV4, TokenAccountV4 } from "../data-layer/accounts/schema";
+import type { AccountCoinResources } from "../data-layer/accountCoinResources/schema";
+import type { StoredOperation } from "../data-layer/operationHistory/schema";
+import { storedOperationToLive } from "../data-layer/operationHistory/storedToLive";
+
+const localCache: Record<string, unknown> = {};
+export const bridgeCache = makeBridgeCacheSystem({
+  saveData(c, d) {
+    localCache[c.id] = d;
+    return Promise.resolve();
+  },
+  getData(c) {
+    return Promise.resolve(localCache[c.id]);
+  },
+});
+
+/** Normalize/validate account id (same idea as sync.tsx inferAccountId). */
+export function inferAccountId(id: string): string {
+  try {
+    decodeAccountId(id);
+    return id;
+  } catch {
+    const splitted = id.split(":");
+    const findAndEat = (predicate: (str: string) => unknown) => {
+      const res = splitted.find(predicate);
+      if (typeof res === "string") {
+        splitted.splice(splitted.indexOf(res), 1);
+        return res;
+      }
+    };
+    const currencyId = findAndEat(s => findCryptoCurrencyById(s));
+    if (!currencyId) throw new Error("invalid id: missing currency part");
+    const type = "js";
+    findAndEat(s => s === "js");
+    const version = findAndEat(s => s.match(/^\d+$/)) || "2";
+    const derivationMode = asDerivationMode(
+      findAndEat(s => {
+        try {
+          return asDerivationMode(s);
+        } catch {
+          return undefined;
+        }
+      }) ?? "",
+    );
+    if (splitted.length === 0) throw new Error("invalid id: missing xpub or address part");
+    if (splitted.length > 1)
+      throw new Error("invalid id: couldn't understand xpub/address part: " + splitted.join(" | "));
+    const xpubOrAddress = splitted[0];
+    return encodeAccountId({ type, version, currencyId, xpubOrAddress, derivationMode });
+  }
+}
+
+/** Build a minimal Account for bridge.sync (same idea as sync.tsx inferAccount). */
+export function inferAccount(id: string): Account {
+  const { derivationMode, xpubOrAddress, currencyId } = decodeAccountId(id);
+  const currency = getCryptoCurrencyById(currencyId);
+  const scheme = getDerivationScheme({
+    derivationMode: derivationMode as DerivationMode,
+    currency,
+  });
+  const index = 0;
+  const freshAddressPath = runDerivationScheme(scheme, currency, {
+    account: index,
+    node: 0,
+    address: 0,
+  });
+  return {
+    type: "Account",
+    id,
+    xpub: xpubOrAddress,
+    seedIdentifier: xpubOrAddress,
+    used: true,
+    swapHistory: [],
+    derivationMode,
+    currency,
+    index,
+    freshAddress: xpubOrAddress,
+    freshAddressPath,
+    creationDate: new Date(),
+    lastSyncDate: new Date(0),
+    blockHeight: 0,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    balanceHistoryCache: emptyHistoryCache,
+  };
+}
+
+/** Full sync via bridge; returns the full Account. */
+export async function syncAccountViaBridge(id: string): Promise<Account> {
+  const account = inferAccount(id);
+  const bridge = getAccountBridge(account);
+  await bridgeCache.prepareCurrency(account.currency);
+  const syncConfig = { paginationConfig: {}, blacklistedTokenIds: [] as string[] };
+  const observable = bridge.sync(account, syncConfig);
+  const synced = await lastValueFrom(observable.pipe(reduce((a, f) => f(a), account)));
+  return synced;
+}
+
+/** Known coin-specific keys on Account (for extraction / reconstruction). */
+const COIN_RESOURCE_KEYS = new Set([
+  "bitcoinResources",
+  "tezosResources",
+  "suiResources",
+  "solanaResources",
+  "cosmosResources",
+  "concordiumResources",
+  "celoResources",
+  "tronResources",
+  "polkadotResources",
+  "nearResources",
+  "multiversxResources",
+  "iconResources",
+  "cardanoResources",
+  "aptosResources",
+  "algorandResources",
+  "kaspaResources",
+  "hederaResources",
+  "cantonResources",
+  "aleoResources",
+]);
+const OTHER_ACCOUNT_EXTRA_KEYS = new Set(["nfts"]);
+
+function accountToAccountV4(account: Account): AccountV4 {
+  const subAccounts: TokenAccountV4[] | undefined = account.subAccounts?.map(ta => ({
+    type: "TokenAccount" as const,
+    id: ta.id,
+    parentId: ta.parentId,
+    tokenId: ta.token.id,
+    balance: ta.balance.toString(),
+    spendableBalance: ta.spendableBalance.toString(),
+    creationDate:
+      ta.creationDate instanceof Date ? ta.creationDate.getTime() : Number(ta.creationDate),
+    operationsCount: ta.operationsCount,
+  }));
+  const lastSyncTs =
+    account.lastSyncDate instanceof Date
+      ? account.lastSyncDate.getTime()
+      : typeof account.lastSyncDate === "number"
+        ? account.lastSyncDate
+        : new Date(account.lastSyncDate).getTime();
+  return {
+    type: "Account",
+    id: account.id,
+    derivationMode: account.derivationMode,
+    index: account.index,
+    freshAddress: account.freshAddress,
+    freshAddressPath: account.freshAddressPath,
+    currencyId: account.currency.id,
+    balance: account.balance.toString(),
+    blockHeight: account.blockHeight,
+    spendableBalance: account.spendableBalance.toString(),
+    feesCurrencyId: account.feesCurrency?.id,
+    subAccounts,
+    used: account.used,
+    creationDate:
+      account.creationDate instanceof Date
+        ? account.creationDate.getTime()
+        : Number(account.creationDate),
+    operationsCount: account.operationsCount,
+    seedIdentifier: account.seedIdentifier,
+    xpub: account.xpub,
+    lastSyncDate: lastSyncTs,
+    syncHash: account.syncHash,
+  };
+}
+
+/** Extract coin-specific and other extras from Account into accountCoinResources (all families, including bitcoin). */
+function extractAccountCoinResources(account: Account): AccountCoinResources {
+  const resources: AccountCoinResources = {};
+  for (const key of Array.from(COIN_RESOURCE_KEYS)) {
+    if (key in account && (account as Record<string, unknown>)[key] !== undefined) {
+      resources[key] = (account as Record<string, unknown>)[key];
+    }
+  }
+  for (const key of Array.from(OTHER_ACCOUNT_EXTRA_KEYS)) {
+    if (key in account && (account as Record<string, unknown>)[key] !== undefined) {
+      resources[key] = (account as Record<string, unknown>)[key];
+    }
+  }
+  return resources;
+}
+
+export interface SliceUpdates {
+  accountV4: AccountV4;
+  operations: Account["operations"];
+  pendingOperations: Account["pendingOperations"];
+  balanceHistory: Account["balanceHistoryCache"];
+  accountCoinResources: AccountCoinResources;
+  tokenAccountIds: string[];
+}
+
+/**
+ * Split a full Account into per-slice updates (for dispatch).
+ * operationHistory is flat: main account ops + each token account ops
+ * are stored by their accountId in the same byAccountId map.
+ */
+export function splitAccountIntoSliceUpdates(account: Account): SliceUpdates {
+  const accountV4 = accountToAccountV4(account);
+  const accountCoinResources = extractAccountCoinResources(account);
+  const tokenAccountIds = (account.subAccounts || []).map(ta => ta.id);
+  return {
+    accountV4,
+    operations: account.operations || [],
+    pendingOperations: account.pendingOperations || [],
+    balanceHistory: account.balanceHistoryCache,
+    accountCoinResources,
+    tokenAccountIds,
+  };
+}
+
+/**
+ * Bundle of slice data for reconstruction (sync selector output).
+ * All coin-specific data (including bitcoin) lives in accountCoinResources.
+ */
+export interface AccountReconstructionInput {
+  accountV4: AccountV4;
+  operations: StoredOperation[];
+  pendingOperations: StoredOperation[];
+  balanceHistory: Account["balanceHistoryCache"];
+  accountCoinResources: AccountCoinResources;
+}
+
+/** Resolve feesCurrencyId to CryptoCurrency or TokenCurrency (try currency first, then token). */
+async function resolveFeesCurrency(
+  feesCurrencyId: string | undefined,
+): Promise<Account["feesCurrency"]> {
+  if (!feesCurrencyId) return undefined;
+  try {
+    return getCryptoCurrencyById(feesCurrencyId);
+  } catch {
+    return getCryptoAssetsStore().findTokenById(feesCurrencyId) ?? undefined;
+  }
+}
+
+/**
+ * Reconstruct full Account from sync selector output (StoredOperation[] → Operation[] inside).
+ * Use this when you have selectAccountReconstructionInput(state, accountId).
+ */
+export async function reconstructAccountFromReconstructionInput(
+  input: AccountReconstructionInput,
+): Promise<Account> {
+  return reconstructAccountFromSlices(
+    input.accountV4,
+    input.operations.map(storedOperationToLive),
+    input.pendingOperations.map(storedOperationToLive),
+    input.balanceHistory,
+    input.accountCoinResources,
+  );
+}
+
+/** Reconstruct full Account from slices (for bridge when needed). Lookup currency/token by id. */
+export async function reconstructAccountFromSlices(
+  accountV4: AccountV4,
+  operations: Account["operations"],
+  pendingOperations: Account["pendingOperations"],
+  balanceHistory: Account["balanceHistoryCache"],
+  accountCoinResources: AccountCoinResources,
+): Promise<Account> {
+  const currency = getCryptoCurrencyById(accountV4.currencyId);
+  const feesCurrency = await resolveFeesCurrency(accountV4.feesCurrencyId);
+  const tokenStore = getCryptoAssetsStore();
+  const subAccounts: TokenAccount[] | undefined = accountV4.subAccounts
+    ? await Promise.all(
+        accountV4.subAccounts.map(async ta => {
+          const token = await tokenStore.findTokenById(ta.tokenId);
+          if (!token)
+            throw new Error(
+              `reconstructAccountFromSlices: token not found for tokenId ${ta.tokenId}`,
+            );
+          return {
+            type: "TokenAccount" as const,
+            id: ta.id,
+            parentId: ta.parentId,
+            token,
+            balance: new BigNumber(ta.balance),
+            spendableBalance: new BigNumber(ta.spendableBalance),
+            creationDate: new Date(ta.creationDate as number),
+            operationsCount: ta.operationsCount,
+            operations: [] as Account["operations"],
+            pendingOperations: [] as Account["pendingOperations"],
+            balanceHistoryCache: emptyHistoryCache,
+            swapHistory: [],
+          };
+        }),
+      )
+    : undefined;
+  const account: Account = {
+    type: "Account",
+    id: accountV4.id,
+    seedIdentifier: accountV4.seedIdentifier,
+    xpub: accountV4.xpub,
+    derivationMode: accountV4.derivationMode as DerivationMode,
+    index: accountV4.index,
+    freshAddress: accountV4.freshAddress,
+    freshAddressPath: accountV4.freshAddressPath,
+    used: accountV4.used,
+    balance: new BigNumber(accountV4.balance),
+    spendableBalance: new BigNumber(accountV4.spendableBalance),
+    creationDate: new Date(accountV4.creationDate as number),
+    blockHeight: accountV4.blockHeight,
+    currency,
+    feesCurrency,
+    operationsCount: accountV4.operationsCount,
+    operations,
+    pendingOperations: pendingOperations || [],
+    lastSyncDate: new Date(accountV4.lastSyncDate as number),
+    subAccounts,
+    balanceHistoryCache: balanceHistory,
+    swapHistory: [],
+    syncHash: accountV4.syncHash,
+  };
+  for (const key of Object.keys(accountCoinResources)) {
+    (account as Record<string, unknown>)[key] = accountCoinResources[key];
+  }
+  return account;
+}
+
+/**
+ * Derive balance history from operations + balance (placeholder; see README).
+ * In the future this will be a dedicated balance history API.
+ */
+export function deriveBalanceHistoryFromOperations(
+  balance: Account["balance"],
+  operations: Account["operations"],
+  _accountId: string,
+): Account["balanceHistoryCache"] {
+  const accountLike = {
+    balance,
+    operations: operations || [],
+    pendingOperations: [] as Account["pendingOperations"],
+    balanceHistoryCache: emptyHistoryCache,
+  };
+  return generateHistoryFromOperations(accountLike as unknown as Account);
+}
+
+
+import { decodeAccountId } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
+// @ts-expect-error subpath may not resolve in web-tools tsconfig
+import { getAlpacaApi } from "@ledgerhq/live-common/bridge/generic-alpaca/alpaca";
+import { extractBalance } from "@ledgerhq/live-common/bridge/generic-alpaca/utils";
+import { buildSubAccounts } from "@ledgerhq/live-common/bridge/generic-alpaca/buildSubAccounts";
+import type { AccountV4, TokenAccountV4 } from "./schema";
+import type { AccountCoinResources } from "../accountCoinResources/schema";
+import { inferAccount } from "../../shared/compatibility";
+
+export interface AlpacaAccountDataResult {
+  accountV4: AccountV4;
+  accountCoinResources: AccountCoinResources;
+}
+
+/**
+ * Fetch account data only (balance + lastBlock + token balances). No listOperations.
+ * Returns payload; no dispatch. Used by accounts/actions fetchAccountDataUpdates.
+ */
+export async function fetchAccountDataViaAlpaca(
+  accountId: string,
+): Promise<AlpacaAccountDataResult> {
+  const { currencyId, xpubOrAddress: address, derivationMode } = decodeAccountId(accountId);
+  const currency = getCryptoCurrencyById(currencyId);
+  const alpacaApi = getAlpacaApi(currency.id, "local");
+
+  const id = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+
+  const [blockInfo, balanceRes] = await Promise.all([
+    alpacaApi.lastBlock(),
+    alpacaApi.getBalance(address),
+  ]);
+
+  const nativeAsset = extractBalance(balanceRes, "native");
+  const allTokenAssetsBalances = balanceRes.filter(
+    (b: { asset: { type: string } }) => b.asset.type !== "native",
+  );
+  const nativeBalance = BigInt(nativeAsset?.value ?? "0");
+  const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
+
+  const syncConfig = { blacklistedTokenIds: [] as string[], paginationConfig: {} };
+  const subAccounts = await buildSubAccounts({
+    accountId: id,
+    allTokenAssetsBalances,
+    syncConfig,
+    operations: [],
+    getTokenFromAsset: alpacaApi.getTokenFromAsset,
+  });
+
+  const initialAccount = inferAccount(accountId);
+  const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+  const accountV4: AccountV4 = {
+    type: "Account",
+    id,
+    derivationMode: initialAccount.derivationMode,
+    index: initialAccount.index,
+    freshAddress: address,
+    freshAddressPath: initialAccount.freshAddressPath,
+    currencyId: currency.id,
+    balance: nativeBalance.toString(),
+    blockHeight: blockInfo?.height ?? 0,
+    spendableBalance: spendableBalance.toString(),
+    feesCurrencyId: initialAccount.feesCurrency?.id,
+    subAccounts: subAccounts.map(
+      (ta): TokenAccountV4 => ({
+        type: "TokenAccount",
+        id: ta.id,
+        parentId: ta.parentId,
+        tokenId: ta.token.id,
+        balance: ta.balance.toString(),
+        spendableBalance: ta.spendableBalance.toString(),
+        creationDate:
+          ta.creationDate instanceof Date ? ta.creationDate.getTime() : Number(ta.creationDate),
+        operationsCount: ta.operationsCount,
+      }),
+    ),
+    used: true,
+    creationDate:
+      initialAccount.creationDate instanceof Date
+        ? initialAccount.creationDate.getTime()
+        : Date.now(),
+    operationsCount: 0,
+    seedIdentifier: address,
+    xpub: address,
+    lastSyncDate: Date.now(),
+    syncHash,
+  };
+
+  return {
+    accountV4,
+    accountCoinResources: {},
+  };
+}
+
+
+import { decodeAccountId } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
+// @ts-expect-error subpath may not resolve in web-tools tsconfig
+import { getAlpacaApi } from "@ledgerhq/live-common/bridge/generic-alpaca/alpaca";
+import { extractBalance } from "@ledgerhq/live-common/bridge/generic-alpaca/utils";
+import { buildSubAccounts } from "@ledgerhq/live-common/bridge/generic-alpaca/buildSubAccounts";
+import type { AccountV4, TokenAccountV4 } from "./schema";
+import type { AccountCoinResources } from "../accountCoinResources/schema";
+import { inferAccount } from "../../shared/compatibility";
+
+export interface AlpacaAccountDataResult {
+  accountV4: AccountV4;
+  accountCoinResources: AccountCoinResources;
+}
+
+/**
+ * Fetch account data only (balance + lastBlock + token balances). No listOperations.
+ * Returns payload; no dispatch. Used by accounts/actions fetchAccountDataUpdates.
+ */
+export async function fetchAccountDataViaAlpaca(
+  accountId: string,
+): Promise<AlpacaAccountDataResult> {
+  const { currencyId, xpubOrAddress: address, derivationMode } = decodeAccountId(accountId);
+  const currency = getCryptoCurrencyById(currencyId);
+  const alpacaApi = getAlpacaApi(currency.id, "local");
+
+  const id = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+
+  const [blockInfo, balanceRes] = await Promise.all([
+    alpacaApi.lastBlock(),
+    alpacaApi.getBalance(address),
+  ]);
+
+  const nativeAsset = extractBalance(balanceRes, "native");
+  const allTokenAssetsBalances = balanceRes.filter(
+    (b: { asset: { type: string } }) => b.asset.type !== "native",
+  );
+  const nativeBalance = BigInt(nativeAsset?.value ?? "0");
+  const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
+
+  const syncConfig = { blacklistedTokenIds: [] as string[], paginationConfig: {} };
+  const subAccounts = await buildSubAccounts({
+    accountId: id,
+    allTokenAssetsBalances,
+    syncConfig,
+    operations: [],
+    getTokenFromAsset: alpacaApi.getTokenFromAsset,
+  });
+
+  const initialAccount = inferAccount(accountId);
+  const syncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+  const accountV4: AccountV4 = {
+    type: "Account",
+    id,
+    derivationMode: initialAccount.derivationMode,
+    index: initialAccount.index,
+    freshAddress: address,
+    freshAddressPath: initialAccount.freshAddressPath,
+    currencyId: currency.id,
+    balance: nativeBalance.toString(),
+    blockHeight: blockInfo?.height ?? 0,
+    spendableBalance: spendableBalance.toString(),
+    feesCurrencyId: initialAccount.feesCurrency?.id,
+    subAccounts: subAccounts.map(
+      (ta): TokenAccountV4 => ({
+        type: "TokenAccount",
+        id: ta.id,
+        parentId: ta.parentId,
+        tokenId: ta.token.id,
+        balance: ta.balance.toString(),
+        spendableBalance: ta.spendableBalance.toString(),
+        creationDate:
+          ta.creationDate instanceof Date ? ta.creationDate.getTime() : Number(ta.creationDate),
+        operationsCount: ta.operationsCount,
+      }),
+    ),
+    used: true,
+    creationDate:
+      initialAccount.creationDate instanceof Date
+        ? initialAccount.creationDate.getTime()
+        : Date.now(),
+    operationsCount: 0,
+    seedIdentifier: address,
+    xpub: address,
+    lastSyncDate: Date.now(),
+    syncHash,
+  };
+
+  return {
+    accountV4,
+    accountCoinResources: {},
+  };
+}
+
+
+/** Serialize Operation (value/fee BigNumber, date Date) to StoredOperation (value/fee string, date timestamp). */
+export function operationToStored(op: Operation): StoredOperation {
+  const date =
+    op.date instanceof Date ? op.date.getTime() : typeof op.date === "number" ? op.date : 0;
+  return {
+    ...op,
+    value: op.value.toString(),
+    fee: op.fee.toString(),
+    transactionSequenceNumber: op.transactionSequenceNumber?.toString(),
+    date,
+  } as StoredOperation;
+}
+
+function isNftCoreOp(operation: CoreOperation): boolean {
+  return (
+    typeof operation.details?.ledgerOpType === "string" &&
+    ["NFT_IN", "NFT_OUT"].includes(operation.details?.ledgerOpType)
+  );
+}
+
+function isIncomingCoreOp(operation: CoreOperation): boolean {
+  const type =
+    typeof operation.details?.ledgerOpType === "string"
+      ? operation.details.ledgerOpType
+      : operation.type;
+  return type === "IN";
+}
+
+function isInternalLiveOp(operation: Operation): boolean {
+  return !!(operation.extra as Record<string, unknown>)?.internal;
+}
+
+export interface AlpacaOperationsResult {
+  accountId: string;
+  operations: Account["operations"];
+  pendingOperations: Account["pendingOperations"];
+  nextPagingToken?: string;
+  hasMore: boolean;
+  tokenAccountOperations: {
+    accountId: string;
+    operations: Operation[];
+    pendingOperations: Operation[];
+  }[];
+}
+
+/** Fetch operations via Alpaca API only (no bridge). Returns payload; no dispatch. */
+async function fetchOperationsViaAlpaca(
+  accountId: string,
+  options?: LoadOperationsOptions,
+): Promise<AlpacaOperationsResult> {
+  const { currencyId, xpubOrAddress: address, derivationMode } = decodeAccountId(accountId);
+  const currency = getCryptoCurrencyById(currencyId);
+  const alpacaApi = getAlpacaApi(currency.id, "local");
+
+  const id = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+
+  const pagination: { minHeight: number; order: "desc"; limit?: number; lastPagingToken?: string } =
+    {
+      minHeight: 0,
+      order: "desc",
+    };
+  if (options?.limit != null) pagination.limit = options.limit;
+  if (options?.pagingToken) pagination.lastPagingToken = options.pagingToken;
+
+  const [balanceRes, [newCoreOps, nextPagingToken]] = await Promise.all([
+    alpacaApi.getBalance(address),
+    alpacaApi.listOperations(address, pagination),
+  ]);
+  const hasMore = Boolean(nextPagingToken && nextPagingToken !== "");
+
+  const allTokenAssetsBalances = balanceRes.filter(
+    (b: { asset: { type: string } }) => b.asset.type !== "native",
+  );
+
+  const newOps: Operation[] = newCoreOps
+    .filter((op: CoreOperation) => !isNftCoreOp(op) && (!isIncomingCoreOp(op) || !op.tx.failed))
+    .map((op: CoreOperation) => adaptCoreOperationToLiveOperation(id, op))
+    .filter((op: Operation) => !isInternalLiveOp(op));
+
+  const flattenedOperations = [...newOps].sort((a, b) => {
+    const ta = a.date instanceof Date ? a.date.getTime() : new Date(a.date).getTime();
+    const tb = b.date instanceof Date ? b.date.getTime() : new Date(b.date).getTime();
+    return tb - ta;
+  });
+
+  /** Map (assetReference, assetOwner) -> tokenId so we can tag ops with tokenId for correct unit in UI. */
+  const assetRefToTokenId = new Map<string, string>();
+  const tokenAccountOperations: AlpacaOperationsResult["tokenAccountOperations"] = [];
+  for (const balance of allTokenAssetsBalances) {
+    const asset = balance.asset as { assetReference?: string; assetOwner?: string } | undefined;
+    const token = await alpacaApi.getTokenFromAsset?.(balance.asset);
+    if (!token) continue;
+    const tokenAccountId = encodeTokenAccountId(id, token);
+    const assetKey = `${asset?.assetReference ?? ""}\0${asset?.assetOwner ?? ""}`;
+    assetRefToTokenId.set(assetKey, token.id);
+    const ops = newOps.filter(
+      op =>
+        (op.extra as Record<string, unknown>)?.assetReference === asset?.assetReference &&
+        (op.extra as Record<string, unknown>)?.assetOwner === asset?.assetOwner,
+    );
+    if (ops.length === 0) continue;
+    tokenAccountOperations.push({
+      accountId: tokenAccountId,
+      operations: ops.map(op => ({
+        ...op,
+        accountId: tokenAccountId,
+        id: `${tokenAccountId}-${op.hash}-${op.type}`,
+        tokenId: token.id,
+      })),
+      pendingOperations: [],
+    });
+  }
+
+  /** Tag each op with tokenId when it's a token op so UI can use the token's unit for formatting. */
+  const flattenedWithTokenId = flattenedOperations.map(op => {
+    const extra = op.extra as Record<string, unknown>;
+    const assetRef = extra?.assetReference;
+    const assetOwner = extra?.assetOwner;
+    const assetKey =
+      typeof assetRef === "string" || typeof assetOwner === "string"
+        ? `${String(assetRef ?? "")}\0${String(assetOwner ?? "")}`
+        : null;
+    const tokenId = assetKey != null ? assetRefToTokenId.get(assetKey) : undefined;
+    if (!tokenId) return op;
+    return { ...op, extra: { ...extra, tokenId } };
+  });
+
+  return {
+    accountId: id,
+    operations: flattenedWithTokenId,
+    pendingOperations: [],
+    nextPagingToken: hasMore ? nextPagingToken : undefined,
+    hasMore,
+    tokenAccountOperations,
+  };
+}
+
+function toMainAccountId(accountId: string): string {
+  if (accountId.includes("+")) {
+    return decodeTokenAccountIdSync(accountId).accountId;
+  }
+  return accountId;
+}
+
+const DEFAULT_PAGE_SIZE = 20;
+
+/**
+ * Fetch operation history. Returns payload for reducers + result (hasMore, nextPagingToken).
+ * No dispatch – thunk calls this and slice applies via extraReducers.
+ */
+export async function fetchOperationHistoryUpdates(
+  accountId: string,
+  options?: LoadOperationsOptions,
+): Promise<FetchOperationHistoryResult> {
+  const mainAccountId = toMainAccountId(accountId);
+  const isAlpaca = isAlpacaForAccountId(mainAccountId);
+
+  if (isAlpaca) {
+    return fetchOperationHistoryViaAlpaca(mainAccountId, options);
+  }
+  return fetchOperationHistoryViaBridge(mainAccountId);
+}
+
+async function fetchOperationHistoryViaAlpaca(
+  accountId: string,
+  options?: LoadOperationsOptions,
+): Promise<FetchOperationHistoryResult> {
+  const raw = await fetchOperationsViaAlpaca(accountId, {
+    limit: options?.limit ?? (options?.pagingToken ? DEFAULT_PAGE_SIZE : undefined),
+    pagingToken: options?.pagingToken,
+  });
+
+  const isAppend = Boolean(options?.pagingToken);
+  if (isAppend) {
+    return {
+      updates: {
+        mode: "append",
+        accountId: raw.accountId,
+        operations: raw.operations.map(operationToStored),
+        nextPagingToken: raw.nextPagingToken,
+      },
+      result: { nextPagingToken: raw.nextPagingToken, hasMore: raw.hasMore },
+    };
+  }
+  return {
+    updates: {
+      mode: "replace",
+      mainAccountId: raw.accountId,
+      operations: raw.operations.map(operationToStored),
+      pendingOperations: raw.pendingOperations.map(operationToStored),
+      nextPagingToken: raw.nextPagingToken,
+      tokenAccountUpdates: raw.tokenAccountOperations.map(ta => ({
+        accountId: ta.accountId,
+        operations: ta.operations.map(operationToStored),
+        pendingOperations: ta.pendingOperations.map(operationToStored),
+      })),
+    },
+    result: { nextPagingToken: raw.nextPagingToken, hasMore: raw.hasMore },
+  };
+}
+
+async function fetchOperationHistoryViaBridge(
+  accountId: string,
+): Promise<FetchOperationHistoryResult> {
+  const account = await syncAccountViaBridge(accountId);
+  const updates = splitAccountIntoSliceUpdates(account);
+
+  const tokenAccountUpdates = (account.subAccounts ?? [])
+    .filter(ta => updates.tokenAccountIds.includes(ta.id))
+    .map(ta => {
+      const tokenId = ta.token.id;
+      const toStored = (op: Account["operations"][0]) => operationToStored({ ...op, tokenId });
+      return {
+        accountId: ta.id,
+        operations: (ta.operations || []).map(toStored),
+        pendingOperations: (ta.pendingOperations || []).map(toStored),
+      };
+    });
+
+  return {
+    updates: {
+      mode: "replace",
+      mainAccountId: account.id,
+      operations: updates.operations.map(operationToStored),
+      pendingOperations: updates.pendingOperations.map(operationToStored),
+      tokenAccountUpdates,
+    },
+    result: { hasMore: false },
+  };
+}
+
+export const loadOperationHistory = createAsyncThunk(
+  "operationHistory/load",
+  (
+    { accountId, options }: { accountId: string; options?: LoadOperationsOptions },
+    { rejectWithValue },
+  ) =>
+    fetchOperationHistoryUpdates(accountId, options).catch(e =>
+      rejectWithValue(e instanceof Error ? e.message : String(e)),
+    ),
+);
+
+/** Legacy entry: dispatch thunk and return result (e.g. for balanceHistory orchestration). */
+export async function loadOperationHistoryForAccountId(
+  accountId: string,
+  dispatch: AppDispatch,
+  options?: LoadOperationsOptions,
+): Promise<LoadOperationsResult> {
+  const out = await dispatch(loadOperationHistory({ accountId, options })).unwrap();
+  return out.result;
+}
+

@@ -1,0 +1,48 @@
+import type { Account as LegacyAccount, Operation as LegacyOperation, TokenAccount as LegacyTokenAccount } from "@ledgerhq/types-live";
+import type { Currency as LegacyCurrency } from "@ledgerhq/types-cryptoassets";
+import { accountDescriptorSchema } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
+import type { AccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
+import { z } from "zod";
+import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge/impl";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
+import { CurrencyId, BigNumberStr } from "@shared/schema-primitives";
+
+// NB: this file eventually meant to be converged into the architecture rework of models (things that progressively land in /shared and /domain/*), we're inlining here some of the types that will land on the other end.
+
+export type Balance = {
+  currencyId: CurrencyId;
+  balance: BigNumberStr;
+};
+
+/**
+ * this would be the adaptor to express the ideal wallet interface we need from CLI
+ * when it comes to wallet/accounts interfaces
+ * notably to put in front of V0 cli wallet needs:
+ *
+ */
+
+export class WalletInterface {
+  constructor(
+    // what external dep do we need here?
+  ) {}
+
+  discoverAccounts(
+    currencyId: CurrencyId,
+    // how to externalize the "dmk"/way to do thing with the device, as a callback function maybe? like derivate(location)=>descriptor or something.
+  ): Promise<AccountDescriptor[]> {
+    const currencyBridge = getCurrencyBridge(getCryptoCurrencyById(currencyId));
+    // TODO implement it with bridge for now.
+    // future idea to keep in a FUTURE comment in this impl: we need an efficient predicate to know "the account exists" and we could parallelize more efficiently
+  }
+
+  getAccountBalances(accountDescriptor: AccountDescriptor): Promise<Balance[]> {
+    // TODO implement with the account bridge; do full sync for now
+    // if possible we can branch to efficient alpaca ways possible with compatibility layer
+  }
+
+  getAccountOperations(accountDescriptor: AccountDescriptor/* page attributes.. */): Promise<Operation[]> {
+    // TODO implement on top of full sync for now
+    // if possible we can branch to efficient alpaca ways possible with compatibility layer
+  }
+}
+
