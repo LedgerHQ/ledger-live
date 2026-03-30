@@ -16,7 +16,6 @@ import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { getProductName } from "LLD/utils/getProductName";
 import useTheme from "~/renderer/hooks/useTheme";
 import Text from "~/renderer/components/Text";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 
 export type Data = {
   appName: string | undefined;
@@ -60,7 +59,6 @@ function SigningPhase({
 }) {
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const [error, setError] = useState<Error | null>(null);
   const productName = getProductName(device.modelId);
 
   useEffect(() => {
@@ -85,9 +83,7 @@ function SigningPhase({
   }, []);
 
   const handleClose = () => {
-    if (!error) {
-      onCancel();
-    }
+    onCancel();
     onClose?.();
   };
 
@@ -96,23 +92,15 @@ function SigningPhase({
       onClose={handleClose}
       render={() => (
         <Box alignItems="center" py={20} px={20}>
-          {error ? (
-            <Flex flexDirection="column" alignItems="center" py={20}>
-              <ErrorDisplay error={error} />
-            </Flex>
-          ) : (
-            <>
-              <DeviceBlocker />
-              <AnimationWrapper>
-                <Animation animation={getDeviceAnimation(device.modelId, theme, "sign")} />
-              </AnimationWrapper>
-              {device.deviceName ? <DeviceNameTag>{device.deviceName}</DeviceNameTag> : null}
-              <Flex flexDirection="column" alignItems="center" rowGap={8} mt={4}>
-                <Title>{t("SignMessageConfirm.title", { wording: productName })}</Title>
-                <SubTitle>{t("SignMessageConfirm.description")}</SubTitle>
-              </Flex>
-            </>
-          )}
+          <DeviceBlocker />
+          <AnimationWrapper>
+            <Animation animation={getDeviceAnimation(device.modelId, theme, "sign")} />
+          </AnimationWrapper>
+          {device.deviceName ? <DeviceNameTag>{device.deviceName}</DeviceNameTag> : null}
+          <Flex flexDirection="column" alignItems="center" rowGap={8} mt={4}>
+            <Title>{t("SignMessageConfirm.title", { wording: productName })}</Title>
+            <SubTitle>{t("SignMessageConfirm.description")}</SubTitle>
+          </Flex>
         </Box>
       )}
     />

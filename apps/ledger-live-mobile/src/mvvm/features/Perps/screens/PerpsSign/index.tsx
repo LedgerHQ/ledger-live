@@ -150,6 +150,7 @@ export default function PerpsSign({ navigation, route }: NavigationProps) {
                 <Box lx={{ flexDirection: "row", marginBottom: showInfo ? "s16" : "s0" }}>
                   <DeviceAction
                     action={
+                      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
                       action as unknown as Action<
                         typeof request,
                         PartialNullable<Record<string, unknown>>,
