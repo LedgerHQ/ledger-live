@@ -252,6 +252,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-4284",
   },
+  {
+    transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
+    xrayTicket: "B2CQA-4742",
+  },
 ];
 
 const LNS_UNSUPPORTED_CURRENCIES = new Set([Currency.SUI.id, Currency.VET.id, Currency.HBAR.id]);
