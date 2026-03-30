@@ -50,8 +50,10 @@ const StepMandatoryPrivateSync = ({ transitionTo, account }: StepProps) => {
         .subscribe({
           next: updater => {
             if (cancelled) return;
-            dispatch(updateAccountWithUpdater(acc.id, updater));
-            const updatedAccount = updater(acc);
+            const currentAcc = accountRef.current;
+            if (!currentAcc || currentAcc.type !== "Account" || !isAleoAccount(currentAcc)) return;
+            dispatch(updateAccountWithUpdater(currentAcc.id, updater));
+            const updatedAccount = updater(currentAcc);
             if (!isAleoAccount(updatedAccount)) return;
             latestPercentage =
               updatedAccount.aleoResources?.provableApi?.scannerStatus?.percentage ?? 0;
@@ -78,7 +80,7 @@ const StepMandatoryPrivateSync = ({ transitionTo, account }: StepProps) => {
       currentSubscription?.unsubscribe();
       currentSubscription = null;
     };
-  }, [dispatch]);
+  }, [dispatch, account?.id]);
 
   useEffect(() => {
     if (progress < 100) return;
