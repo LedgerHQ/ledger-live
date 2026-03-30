@@ -218,4 +218,12 @@ export class Currency {
     AppInfos.INTERNET_COMPUTER,
     [Network.INTERNET_COMPUTER],
   );
+
+  static readonly CCD_TESTNET = new Currency(
+    "Concordium Testnet",
+    "CCD",
+    "concordium_testnet",
+    AppInfos.CONCORDIUM,
+    [Network.CONCORDIUM],
+  );
 }

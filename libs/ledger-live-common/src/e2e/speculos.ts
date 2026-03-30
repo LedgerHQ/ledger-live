@@ -42,6 +42,7 @@ import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
+import { sendConcordium } from "./families/concordium";
 import { getAppVersionFromCatalog, getSpeculosModel, isTouchDevice } from "./speculosAppVersion";
 import {
   pressAndRelease,
@@ -380,6 +381,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "InternetComputer",
+    },
+    dependencies: [],
+  },
+  Concordium: {
+    currency: getCryptoCurrencyById("concordium"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Concordium",
     },
     dependencies: [],
   },
@@ -906,6 +915,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.ICP.id:
       await sendInternetComputer(tx);
+      break;
+    case Currency.CCD_TESTNET.id:
+      await sendConcordium();
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);

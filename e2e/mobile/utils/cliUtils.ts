@@ -272,6 +272,11 @@ export const CLI = {
       return account.address;
     }
 
+    if (account.currency.id === Currency.CCD_TESTNET.id) {
+      invariant(account.address, "concordium: account address must be pre-set");
+      return account.address;
+    }
+
     const addressInfo = await CLI.getAddress({
       currency: account.currency.speculosApp.name,
       path: account.accountPath,

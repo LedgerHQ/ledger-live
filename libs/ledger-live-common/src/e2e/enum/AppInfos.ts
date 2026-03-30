@@ -74,4 +74,6 @@ export class AppInfos {
   static readonly ALEO = new AppInfos("Aleo");
 
   static readonly INTERNET_COMPUTER = new AppInfos("Internet Computer");
+
+  static readonly CONCORDIUM = new AppInfos("Concordium");
 }
