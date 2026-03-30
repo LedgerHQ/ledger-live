@@ -1,4 +1,4 @@
-import { MakeModalsType, GlobalModalData, ModalData } from "./types";
+import { MakeModalsType, GlobalModalData, ModalData, LumenDialogData } from "./types";
 import { coinModals } from "../families/generated";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
@@ -21,7 +21,7 @@ import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
-import MODAL_PERPS_SIGNING from "./PerpsSign";
+
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
 import MODAL_CREATE_LOCAL_APP from "./CreateLocalManifest";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
@@ -64,8 +64,6 @@ const globalModals: GlobalModals = {
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
-  MODAL_PERPS_SIGNING,
-
   // Vault,
   MODAL_VAULT_SIGNER,
 
@@ -77,7 +75,7 @@ const globalModals: GlobalModals = {
   MODAL_ERROR,
 };
 
-export type Modals = MakeModalsType<ModalData>;
+export type Modals = MakeModalsType<Omit<ModalData, keyof LumenDialogData>>;
 
 const modals: Modals = {
   ...globalModals,

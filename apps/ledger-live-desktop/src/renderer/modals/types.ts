@@ -1,6 +1,7 @@
 import React from "react";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { PerpsSignData } from "LLD/features/Perps/screens/PerpsSign/PerpsSignModal";
 
 import { Data as SendData } from "./Send/Body";
 import { Data as ReceiveData } from "./Receive/Body";
@@ -9,7 +10,6 @@ import { DataProp as ExchangeCryptoDeviceDataProp } from "./ExchangeDeviceConfir
 import { Data as PlatformExchangeStartData } from "./Platform/Exchange/StartExchange/index";
 import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/CompleteExchange/Body";
 import { Data as ConnectDeviceData } from "./ConnectDevice/index";
-import { Data as PerpsSignData } from "./PerpsSign";
 import { Params as SignTransactionData } from "./SignTransaction/Body";
 import { Params as SignRawTransactionData } from "./SignRawTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
@@ -76,7 +76,6 @@ export type GlobalModalData = {
   MODAL_PLATFORM_EXCHANGE_START: PlatformExchangeStartData;
   MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_CONNECT_DEVICE: ConnectDeviceData;
-  MODAL_PERPS_SIGNING: PerpsSignData;
   MODAL_EXCHANGE_CRYPTO_DEVICE: ExchangeCryptoDeviceDataProp;
 
   MODAL_WEBSOCKET_BRIDGE: {
@@ -89,7 +88,15 @@ export type GlobalModalData = {
 };
 
 /**
+ * Dialogs rendered by the MVVM GlobalDialogs layer (Lumen Dialog) instead of ModalsLayer.
+ * They still use the openModal/closeModal Redux actions for state management.
+ */
+export type LumenDialogData = {
+  MODAL_PERPS_SIGNING: PerpsSignData;
+};
+
+/**
  * finally, we make a union with the coin modals data and we obtain the complete modal data type.
  */
-export type ModalData = GlobalModalData & CoinModalsData;
+export type ModalData = GlobalModalData & CoinModalsData & LumenDialogData;
 export type AllModalNames = keyof ModalData;
