@@ -36,9 +36,10 @@ import {
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
-import { exportCountervalues } from "@ledgerhq/live-countervalues/logic";
-import type { CounterValuesStateRaw, TrackingPair } from "@ledgerhq/live-countervalues/types";
-import { shouldPersistCountervaluesExport } from "./countervaluesDbSaveStats";
+import {
+  exportCountervalues,
+  hasNewCountervaluesToExport,
+} from "@ledgerhq/live-countervalues/logic";
 
 type MaybeState = Maybe<State>;
 
@@ -61,7 +62,6 @@ function useDBSaveEffect<D, S>({
   saveAtStart = false,
 }: Props<D, S>) {
   const store = useStore();
-  // Subscribe only to the slice we care about to avoid "selector identity returned root state" warning
   const selectedSlice = useSelector(stateSelector);
   const forceSave = useRef(saveAtStart);
   const lastSavedState = useRef<MaybeState>(undefined);
@@ -70,7 +70,6 @@ function useDBSaveEffect<D, S>({
     lense,
     save,
     getChangesStats,
-    store,
   });
   const checkForSave = useMemo(
     () =>
@@ -78,7 +77,7 @@ function useDBSaveEffect<D, S>({
       // nb it does not prevent race condition here. save must be idempotent and atomic
       throttleFn(async (): Promise<void> => {
         if (isSaving.current) return checkForSave(); // if we are already saving, we re-schedule
-        const { lense, save, getChangesStats, store } = latestProps.current;
+        const { lense, save, getChangesStats } = latestProps.current;
         const state = store.getState() as State;
         const prev = lastSavedState.current;
         if (prev !== undefined && prev !== null) {
@@ -103,14 +102,13 @@ function useDBSaveEffect<D, S>({
       lense,
       save,
       getChangesStats,
-      store,
     };
     const state = store.getState() as State;
     if (lastSavedState.current === undefined) {
       lastSavedState.current = state;
     }
     checkForSave();
-  }, [lense, save, store, checkForSave, getChangesStats, selectedSlice]);
+  }, [lense, save, checkForSave, getChangesStats, selectedSlice]);
 }
 const flushes: Array<() => void> = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));
@@ -144,23 +142,16 @@ const getAccountsChanged = (
     }
   | null
   | undefined => {
-  const walletChanged = oldState.wallet !== newState.wallet;
   if (oldState.accounts !== newState.accounts) {
     const oldById = new Map(oldState.accounts.active.map(a => [a.id, a] as const));
-    const changed = newState.accounts.active
-      .filter(a => {
-        const old = oldById.get(a.id);
-        return !old || accountPersistedStateChanged(old, a);
-      })
-      .map(a => a.id);
-    // exportSelector merges wallet user data into encoded accounts; persist all when wallet moves
-    if (walletChanged) {
-      return { changed: newState.accounts.active.map(a => a.id) };
-    }
-    return { changed };
-  }
-  if (walletChanged) {
-    return { changed: newState.accounts.active.map(a => a.id) };
+    return {
+      changed: newState.accounts.active
+        .filter(a => {
+          const old = oldById.get(a.id);
+          return !old || accountPersistedStateChanged(old, a);
+        })
+        .map(a => a.id),
+    };
   }
   return null;
 };
@@ -196,44 +187,25 @@ const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identitie
 const extractIdentitiesForPersistence = (state: State) =>
   exportIdentitiesForPersistence(state.identities);
 
+const countervaluesChangesStats = (oldState: State, newState: State) =>
+  hasNewCountervaluesToExport(
+    countervaluesStateSelector(oldState),
+    countervaluesStateSelector(newState),
+  );
+
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
-  const lastPersistedTrackingPairsRef = useRef<TrackingPair[] | undefined>(undefined);
-
-  const getCountervaluesChangesStats = useCallback(
-    (oldState: State, newState: State) => {
-      const shouldSave = shouldPersistCountervaluesExport({
-        oldCvState: countervaluesStateSelector(oldState),
-        newCvState: countervaluesStateSelector(newState),
-        currentTrackingPairs: trackingPairs,
-        lastPersistedTrackingPairs: lastPersistedTrackingPairsRef.current,
-      });
-      if (!shouldSave && lastPersistedTrackingPairsRef.current === undefined) {
-        lastPersistedTrackingPairsRef.current = trackingPairs;
-      }
-      return shouldSave;
-    },
-    [trackingPairs],
-  );
-
-  const saveCountervaluesAndBaselinePairs = useCallback(
-    async (data: CounterValuesStateRaw, _changedStats: boolean) => {
-      await saveCountervalues(data);
-      lastPersistedTrackingPairsRef.current = trackingPairs;
-    },
-    [trackingPairs],
-  );
 
   useDBSaveEffect({
     stateSelector: countervaluesStateSelector,
     throttle: 2000,
-    getChangesStats: getCountervaluesChangesStats,
+    getChangesStats: countervaluesChangesStats,
     lense: useCallback(
       (state: State) => exportCountervalues(countervaluesStateSelector(state), trackingPairs),
       [trackingPairs],
     ),
-    save: saveCountervaluesAndBaselinePairs,
+    save: saveCountervalues,
   });
   useDBSaveEffect({
     stateSelector: (state: State) => state.settings,
@@ -314,6 +286,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
+    stateSelector: (state: State) => state.featureFlags,
     save: saveFeatureFlagsState,
     throttle: 400,
     getChangesStats: featureFlagsNotEquals,
