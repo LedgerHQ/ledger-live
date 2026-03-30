@@ -1,3 +1,4 @@
+import * as currencies from "./currencies";
 import { CRYPTO_CURRENCIES_REGISTRY, CRYPTO_CURRENCIES_IDS } from "./registry";
 
 describe("CRYPTO_CURRENCIES_REGISTRY", () => {
@@ -5,10 +6,15 @@ describe("CRYPTO_CURRENCIES_REGISTRY", () => {
     expect(Object.keys(CRYPTO_CURRENCIES_REGISTRY).length).toBeGreaterThan(0);
   });
 
-  it("has no duplicate ids", () => {
-    const ids = Object.keys(CRYPTO_CURRENCIES_REGISTRY);
-    const unique = new Set(ids);
-    expect(ids.length).toBe(unique.size);
+  it("has no duplicate ids across currency files", () => {
+    // Check at the source level — Object.fromEntries in the registry already
+    // collapses duplicates, so checking registry keys cannot detect collisions.
+    const seen = new Map<string, string>();
+    for (const [varName, currency] of Object.entries(currencies)) {
+      const existing = seen.get(currency.id);
+      expect(existing).toBeUndefined(); // fail with conflicting var name if duplicate
+      seen.set(currency.id, varName);
+    }
   });
 
   it("every entry is keyed by its own id", () => {
