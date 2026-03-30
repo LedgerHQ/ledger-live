@@ -850,7 +850,7 @@ describe("delegation operations", () => {
     expect(result.transactions[0].hash).toBe("opDelegation2");
   });
 
-  it("skips delegations without a sender address", async () => {
+  it("creates delegation with empty operations when sender is missing", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ sender: null })]);
@@ -863,20 +863,61 @@ describe("delegation operations", () => {
     expect(result.transactions[0].operations).toEqual([]);
   });
 
-  it("does not duplicate a delegation if a transaction with the same hash exists", async () => {
-    // Given - transaction and delegation with same hash (unlikely but defensive)
+  it("merges delegation into existing transaction when they share the same hash", async () => {
+    // Given - transaction and delegation batched together (same hash)
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTransactions.mockResolvedValue([
-      makeTx({ hash: "opSharedHash", amount: 1_000_000 }),
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, bakerFee: 500 }),
     ]);
-    mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ hash: "opSharedHash" })]);
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: "opSharedHash", bakerFee: 300 }),
+    ]);
 
     // When
     const result = await getBlock(5_000_000);
 
-    // Then - only the transaction is included (delegation is skipped due to hash conflict)
+    // Then - single BlockTransaction with both transfer and delegation operations, combined fees
     expect(result.transactions).toHaveLength(1);
-    expect(result.transactions[0].operations.some(op => op.type === "transfer")).toBe(true);
+    const tx = result.transactions[0];
+    expect(tx.operations.some(op => op.type === "transfer")).toBe(true);
+    expect(tx.operations.some(op => op.type === "other")).toBe(true);
+    expect(tx.fees).toBe(800n); // 500 + 300
+  });
+
+  it("marks merged transaction as failed if delegation failed", async () => {
+    // Given - transaction succeeded but delegation in same batch failed
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, status: "applied" }),
+    ]);
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: "opSharedHash", status: "failed" }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then - the whole batch is marked as failed
+    expect(result.transactions).toMatchObject([{ failed: true }]);
+  });
+
+  it("does not add delegation operations to failed transaction", async () => {
+    // Given - transaction failed, delegation would be backtracked anyway
+    mockGetBlockByLevel.mockResolvedValue(makeBlock());
+    mockFetchBlockTransactions.mockResolvedValue([
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, status: "failed" }),
+    ]);
+    mockFetchBlockDelegations.mockResolvedValue([
+      makeDelegation({ hash: "opSharedHash", status: "applied" }),
+    ]);
+
+    // When
+    const result = await getBlock(5_000_000);
+
+    // Then - no operations (tx was failed), but fees still accumulated
+    expect(result.transactions).toMatchObject([
+      { failed: true, operations: [], fees: 1000n },
+    ]);
   });
 
   it("includes both transactions and delegations in the same block", async () => {
@@ -908,7 +949,7 @@ describe("delegation operations", () => {
     expect(result.transactions[0].operations).toHaveLength(1);
   });
 
-  it("uses empty string as feesPayer when sender is missing", async () => {
+  it("omits feesPayer when sender is missing", async () => {
     // Given
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockDelegations.mockResolvedValue([makeDelegation({ sender: null })]);
@@ -917,7 +958,7 @@ describe("delegation operations", () => {
     const result = await getBlock(5_000_000);
 
     // Then
-    expect(result.transactions[0].feesPayer).toBe("");
+    expect(result.transactions[0].feesPayer).toBeUndefined();
   });
 
   it("omits delegate field from details when neither newDelegate nor prevDelegate is present", async () => {

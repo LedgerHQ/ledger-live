@@ -147,13 +147,13 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
 function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransaction | null {
   if (!op.hash) return null;
 
-  const feesPayer = op.sender?.address ?? "";
+  const feesPayer = op.sender?.address;
   const succeeded = !op.status || op.status === "applied";
   return {
     hash: op.hash,
     failed: !succeeded,
     fees: computeDelegationFees(op),
-    feesPayer,
+    ...(feesPayer && { feesPayer }),
     operations: succeeded ? buildDelegationOperations(op) : [],
   };
 }
@@ -309,9 +309,21 @@ function groupAndMapTransactions(
   }
 
   for (const delegation of delegations) {
-    const blockTx = buildBlockTransactionFromDelegation(delegation);
-    if (blockTx && !blockTxByHash.has(blockTx.hash)) {
-      blockTxByHash.set(blockTx.hash, blockTx);
+    const delegationTx = buildBlockTransactionFromDelegation(delegation);
+    if (!delegationTx) continue;
+
+    const existing = blockTxByHash.get(delegationTx.hash);
+    if (!existing) {
+      blockTxByHash.set(delegationTx.hash, delegationTx);
+      continue;
+    }
+
+    if (!existing.failed && delegationTx.operations.length > 0) {
+      existing.operations.push(...delegationTx.operations);
+    }
+    existing.fees += delegationTx.fees;
+    if (delegationTx.failed) {
+      existing.failed = true;
     }
   }
 
