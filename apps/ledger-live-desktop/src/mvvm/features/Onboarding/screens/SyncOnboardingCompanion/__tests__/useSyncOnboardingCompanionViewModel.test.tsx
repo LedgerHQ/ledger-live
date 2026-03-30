@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { act, renderHook } from "tests/testSetup";
+import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import useSyncOnboardingCompanionViewModel from "../useSyncOnboardingCompanionViewModel";
@@ -43,15 +43,11 @@ const mockOnboardingState = {
 
 const hookState = {
   minimal: false,
-  initialState: {
-    settings: {
-      overriddenFeatureFlags: {
-        lldSyncOnboardingIncr1: {
-          enabled: true,
-        },
-      },
+  initialState: withFlagOverrides({
+    lldSyncOnboardingIncr1: {
+      enabled: true,
     },
-  },
+  }),
 };
 
 const getMockSteps = (isTwoStep: boolean, hasSync: boolean): Step[] => {

@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useCryptoAddressesBannerViewModel } from "../useCryptoAddressesBannerViewModel";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
@@ -77,13 +77,7 @@ describe("useCryptoAddressesBannerViewModel", () => {
 
   it("should navigate to /cryptos when onGoToAccounts is invoked and asset section is on", () => {
     const { result } = renderHook(() => useCryptoAddressesBannerViewModel(), {
-      initialState: {
-        settings: {
-          overriddenFeatureFlags: {
-            lwdWallet40: { enabled: true, params: { assetSection: true } },
-          },
-        },
-      },
+      initialState: withFlagOverrides({ lwdWallet40: { enabled: true, params: { assetSection: true } } }),
     });
 
     act(() => {

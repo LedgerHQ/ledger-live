@@ -1,5 +1,5 @@
 import { Tools } from "@ledgerhq/lumen-ui-react/symbols";
-import { renderHook, act } from "tests/testSetup";
+import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useFeatureFlags } from "../useFeatureFlags";
 import { useNavigate, useLocation } from "react-router";
 
@@ -40,23 +40,19 @@ describe("useFeatureFlags", () => {
 
   it("returns isVisible false when button is not visible and no overridden flags", () => {
     const { result } = renderHook(() => useFeatureFlags(), {
-      initialState: {
-        settings: {
-          featureFlagsButtonVisible: false,
-          overriddenFeatureFlags: {},
-        },
-      },
+      initialState: withFlagOverrides({}),
     });
 
     expect(result.current.isVisible).toBe(false);
   });
 
-  it("returns isVisible true when featureFlagsButtonVisible is true", () => {
+  it("returns isVisible true when bannerVisible is true", () => {
+    const flagOverrides = withFlagOverrides({});
     const { result } = renderHook(() => useFeatureFlags(), {
       initialState: {
-        settings: {
-          featureFlagsButtonVisible: true,
-          overriddenFeatureFlags: {},
+        featureFlags: {
+          ...flagOverrides.featureFlags,
+          bannerVisible: true,
         },
       },
     });
@@ -65,11 +61,12 @@ describe("useFeatureFlags", () => {
   });
 
   it("returns isVisible true when overridden feature flags exist", () => {
+    const flagOverrides = withFlagOverrides({ currencyAvalancheCChain: { enabled: true } });
     const { result } = renderHook(() => useFeatureFlags(), {
       initialState: {
-        settings: {
-          featureFlagsButtonVisible: false,
-          overriddenFeatureFlags: { currencyAvalancheCChain: { enabled: true } },
+        featureFlags: {
+          ...flagOverrides.featureFlags,
+          bannerVisible: false,
         },
       },
     });

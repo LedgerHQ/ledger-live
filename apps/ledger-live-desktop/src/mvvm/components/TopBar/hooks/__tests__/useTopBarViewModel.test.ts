@@ -1,7 +1,7 @@
 import { Clock, Eye, Experiment, Refresh, Settings, Tools } from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import useTopBarViewModel from "../useTopBarViewModel";
 import { useActivityIndicator } from "../useActivityIndicator";
 import { useDiscreetMode } from "../useDiscreetMode";
@@ -80,13 +80,7 @@ const setup = ({
   jest.mocked(useHistory).mockReturnValue(defaults.history);
 
   const initialState = operationsList
-    ? {
-        settings: {
-          overriddenFeatureFlags: {
-            lwdWallet40: { enabled: true, params: { operationsList: true } },
-          },
-        },
-      }
+    ? withFlagOverrides({ lwdWallet40: { enabled: true, params: { operationsList: true } } })
     : undefined;
 
   const routeWrapper = route

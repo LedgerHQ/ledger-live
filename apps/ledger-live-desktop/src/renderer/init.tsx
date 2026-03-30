@@ -214,19 +214,36 @@ async function init() {
   if (persistedFeatureFlags) {
     store.dispatch(setAllOverrides(persistedFeatureFlags.overrides));
     store.dispatch(setBannerVisible(persistedFeatureFlags.bannerVisible));
-  } else if (
-    initialSettings?.overriddenFeatureFlags &&
-    Object.keys(initialSettings.overriddenFeatureFlags).length > 0
-  ) {
-    const filteredOverrides = Object.fromEntries(
-      Object.entries(initialSettings.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
-    );
-    store.dispatch(
-      setAllOverrides(
-        filteredOverrides as Parameters<typeof setAllOverrides>[0],
-      ),
-    );
-    store.dispatch(setBannerVisible(initialSettings.featureFlagsButtonVisible ?? false));
+  } else if (initialSettings) {
+    // One-time migration from legacy settings fields.
+    // These fields have been removed from SettingsState but may still exist in old persisted payloads.
+    const rawOverrides =
+      "overriddenFeatureFlags" in initialSettings &&
+      typeof initialSettings["overriddenFeatureFlags"] === "object" &&
+      initialSettings["overriddenFeatureFlags"] !== null
+        ? (initialSettings["overriddenFeatureFlags"] as Record<string, unknown>)
+        : undefined;
+
+    if (rawOverrides && Object.keys(rawOverrides).length > 0) {
+      const filteredOverrides: Parameters<typeof setAllOverrides>[0] = Object.fromEntries(
+        Object.entries(rawOverrides).filter(
+          ([, v]) =>
+            v !== undefined &&
+            typeof v === "object" &&
+            v !== null &&
+            "enabled" in v &&
+            typeof (v as Record<string, unknown>)["enabled"] === "boolean",
+        ),
+      );
+      store.dispatch(setAllOverrides(filteredOverrides));
+    }
+
+    if (
+      "featureFlagsButtonVisible" in initialSettings &&
+      typeof initialSettings["featureFlagsButtonVisible"] === "boolean"
+    ) {
+      store.dispatch(setBannerVisible(initialSettings["featureFlagsButtonVisible"]));
+    }
   }
 
   const initialCountervalues = await getKey("app", "countervalues");

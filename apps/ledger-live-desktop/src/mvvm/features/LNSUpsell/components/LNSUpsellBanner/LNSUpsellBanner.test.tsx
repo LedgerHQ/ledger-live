@@ -5,7 +5,7 @@
 import { t } from "i18next";
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { render, screen, fireEvent } from "tests/testSetup";
+import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import { LNSUpsellBanner } from ".";
@@ -125,22 +125,16 @@ describe("LNSUpsellBanner", () => {
 
       render(<LNSUpsellBanner location={location} />, {
         initialState: {
+          ...withFlagOverrides({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams as any },
+            ...(brazePlacement ? { lwdWallet40: { enabled: true, params: { brazePlacement: true } } } : {}),
+          }),
           settings: {
             shareAnalytics: true,
             sharePersonalizedRecommandations: isOptIn,
             devicesModelList,
             anonymousUserNotifications: {},
-            overriddenFeatureFlags: {
-              lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
-              ...(brazePlacement
-                ? {
-                    lwdWallet40: {
-                      enabled: true,
-                      params: { brazePlacement: true },
-                    },
-                  }
-                : {}),
-            },
           },
           dynamicContent: {
             desktopCards: [

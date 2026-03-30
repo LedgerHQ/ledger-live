@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
@@ -8,8 +8,7 @@ import { usePortfolioViewModel } from "../usePortfolioViewModel";
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
-const wallet40AndExchangeFlags = {
-  ...INITIAL_STATE.overriddenFeatureFlags,
+const wallet40AndExchangeFeatureFlags = withFlagOverrides({
   portfolioExchangeBanner: { enabled: true },
   lwdWallet40: {
     enabled: true,
@@ -19,19 +18,17 @@ const wallet40AndExchangeFlags = {
       quickActionCtas: true,
     },
   },
-};
+});
 const wallet40AndExchangeSettings = {
   ...INITIAL_STATE,
-  overriddenFeatureFlags: wallet40AndExchangeFlags,
 };
 
-const addressPoisoningFlags = {
-  ...INITIAL_STATE.overriddenFeatureFlags,
+const addressPoisoningFlags = withFlagOverrides({
   addressPoisoningOperationsFilter: {
     enabled: true,
     params: { families: ["evm"] },
   },
-};
+});
 
 function createPoisonedTokenAccount() {
   const parentAccount = genAccount("eth-poison-parent", {
@@ -60,6 +57,7 @@ describe("usePortfolioViewModel", () => {
           filterTokenOperationsZeroAmount: true,
           showClearCacheBanner: true,
         },
+        ...wallet40AndExchangeFeatureFlags,
       },
     });
 
@@ -72,6 +70,7 @@ describe("usePortfolioViewModel", () => {
     const { result } = renderHook(() => usePortfolioViewModel(), {
       initialState: {
         settings: wallet40AndExchangeSettings,
+        ...wallet40AndExchangeFeatureFlags,
       },
     });
 
@@ -104,8 +103,8 @@ describe("usePortfolioViewModel", () => {
         settings: {
           ...INITIAL_STATE,
           filterTokenOperationsZeroAmount: true,
-          overriddenFeatureFlags: addressPoisoningFlags,
         },
+        ...addressPoisoningFlags,
       },
     });
 

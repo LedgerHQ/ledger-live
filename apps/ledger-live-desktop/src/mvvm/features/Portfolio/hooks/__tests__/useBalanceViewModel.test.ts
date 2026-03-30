@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useBalanceViewModel } from "../useBalanceViewModel";
 import * as usePortfolioBalanceModule from "LLD/hooks/usePortfolioBalance";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
@@ -12,13 +12,12 @@ jest.mock("LLD/hooks/usePortfolioBalance");
 
 const mockUsePortfolioBalance = jest.mocked(usePortfolioBalanceModule.usePortfolioBalance);
 
-const wallet40WithBalanceRefreshRework = {
-  ...INITIAL_STATE.overriddenFeatureFlags,
+const wallet40WithBalanceRefreshRework = withFlagOverrides({
   lwdWallet40: {
     enabled: true,
     params: { balanceRefreshRework: true },
   },
-};
+});
 
 const portfolioWithBalance = {
   ...defaultPortfolio,
@@ -32,8 +31,8 @@ const initialState = {
     counterValue: "USD",
     counterValueCurrency: mockCounterValue,
     selectedTimeRange: "week" as const,
-    overriddenFeatureFlags: wallet40WithBalanceRefreshRework,
   },
+  ...wallet40WithBalanceRefreshRework,
 };
 
 describe("useBalanceViewModel", () => {
@@ -234,11 +233,10 @@ describe("useBalanceViewModel", () => {
       initialState: {
         settings: {
           ...initialState.settings,
-          overriddenFeatureFlags: {
-            ...wallet40WithBalanceRefreshRework,
-            lwdWallet40: { enabled: true, params: { balanceRefreshRework: false } },
-          },
         },
+        ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { balanceRefreshRework: false } },
+        }),
       },
     });
 

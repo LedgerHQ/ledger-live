@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import { useEntryPoint } from "./useEntryPoint";
 import { EntryPoint } from "../types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -10,14 +10,7 @@ describe("useEntryPoint", () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
       initialState: {
         ...INITIAL_STATE,
-        settings: {
-          ...INITIAL_STATE.settings,
-          overriddenFeatureFlags: {
-            lldWalletSync: {
-              enabled: false,
-            },
-          },
-        },
+        ...withFlagOverrides({ lldWalletSync: { enabled: false } }),
       },
     });
 
@@ -28,14 +21,7 @@ describe("useEntryPoint", () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.accounts), {
       initialState: {
         ...INITIAL_STATE,
-        settings: {
-          ...INITIAL_STATE.settings,
-          overriddenFeatureFlags: {
-            lldLedgerSyncEntryPoints: {
-              enabled: false,
-            },
-          },
-        },
+        ...withFlagOverrides({ lldLedgerSyncEntryPoints: { enabled: false } }),
       },
     });
 
@@ -54,21 +40,12 @@ describe("useEntryPoint", () => {
     const { result } = renderHook(() => useEntryPoint(EntryPoint.manager), {
       initialState: {
         ...INITIAL_STATE,
-        settings: {
-          ...INITIAL_STATE.settings,
-          overriddenFeatureFlags: {
-            lldLedgerSyncEntryPoints: {
-              enabled: true,
-              params: {
-                onboarding: true,
-                manager: false,
-                accounts: true,
-                settings: true,
-                postOnboarding: true,
-              },
-            },
+        ...withFlagOverrides({
+          lldLedgerSyncEntryPoints: {
+            enabled: true,
+            params: { onboarding: true, manager: false, accounts: true, settings: true, postOnboarding: true },
           },
-        },
+        }),
       },
     });
 

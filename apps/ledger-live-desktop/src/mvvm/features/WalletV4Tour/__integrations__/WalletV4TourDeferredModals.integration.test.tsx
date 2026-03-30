@@ -6,7 +6,7 @@
  * Minimal layout to avoid Default’s asset-aggregation and families chain.
  */
 import React from "react";
-import { act, render, screen, waitFor } from "tests/testSetup";
+import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import IsTermOfUseUpdated from "~/renderer/components/IsTermOfUseUpdated";
 import ModalsLayer from "~/renderer/ModalsLayer";
@@ -24,31 +24,25 @@ const baseSettings = {
 };
 
 const tourEnabledState = {
+  ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { tour: true } } }),
   settings: {
     ...baseSettings,
-    overriddenFeatureFlags: {
-      lwdWallet40: { enabled: true, params: { tour: true } },
-    },
   },
 };
 
 const tourDisabledState = {
+  ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { tour: false } } }),
   settings: {
     ...baseSettings,
-    overriddenFeatureFlags: {
-      lwdWallet40: { enabled: true, params: { tour: false } },
-    },
   },
 };
 
 /** Tour enabled but user had already seen it at app mount → deferred modals are shown */
 const tourEnabledAlreadySeenState = {
+  ...withFlagOverrides({ lwdWallet40: { enabled: true, params: { tour: true } } }),
   settings: {
     ...baseSettings,
     hasSeenWalletV4Tour: true,
-    overriddenFeatureFlags: {
-      lwdWallet40: { enabled: true, params: { tour: true } },
-    },
   },
 };
 
