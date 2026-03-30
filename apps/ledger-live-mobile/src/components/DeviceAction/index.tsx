@@ -234,7 +234,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     completeExchangeResult,
     completeExchangeError,
     installingApp,
-    currentAppOp,
     progress,
     listingApps,
     transactionChecksOptInTriggered,
@@ -466,7 +465,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if (installingApp) {
-    const appName = requestOpenApp ?? currentAppOp?.name;
+    const appName = requestOpenApp;
     const props = {
       t,
       description: t("DeviceAction.installApp", {
