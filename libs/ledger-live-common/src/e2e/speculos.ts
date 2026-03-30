@@ -842,7 +842,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.DOGE.id:
     case Currency.BCH.id:
     case Currency.ZEC.id:
-      await sendBTCBasedCoin(tx);
+      await sendBTCBasedCoin(tx, currencyId);
       break;
     case Currency.DOT.id:
       await sendPolkadot(tx);
