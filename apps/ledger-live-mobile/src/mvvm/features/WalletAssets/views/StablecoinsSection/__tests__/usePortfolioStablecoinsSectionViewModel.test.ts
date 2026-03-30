@@ -95,15 +95,15 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(result.current.hasMore).toBe(false);
     });
 
-    it("should always report hasMore false in isEmptyState or isReadOnly mode", () => {
+    it("should always report hasMore false in emptyState or readOnly variant", () => {
       const seven = Array.from({ length: 7 }, (_, i) => createAsset(bitcoin, 10000 * (7 - i)));
       mockPortfolioWithStablecoins(seven);
 
       const { result: emptyResult } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "emptyState" }),
       );
       const { result: readOnlyResult } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isReadOnly: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "readOnly" }),
       );
 
       expect(emptyResult.current.hasMore).toBe(false);
@@ -162,7 +162,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       mockAssetsData.mockReturnValue({ data: undefined, isLoading: true, isError: false });
 
       const { result } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "emptyState" }),
       );
 
       expect(result.current.isLoading).toBe(true);
@@ -173,7 +173,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       mockAssetsData.mockReturnValue({ data: undefined, isLoading: false, isError: true });
 
       const { result } = renderHook(() =>
-        usePortfolioStablecoinsSectionViewModel({ isEmptyState: true }),
+        usePortfolioStablecoinsSectionViewModel({ variant: "emptyState" }),
       );
 
       expect(result.current.isError).toBe(true);

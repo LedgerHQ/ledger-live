@@ -5,8 +5,10 @@ import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
+import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 export const MAX_ASSETS_TO_DISPLAY = 6;
 export const EMPTY_STATE_MAX_ASSETS = 4;
@@ -23,15 +25,19 @@ export interface PortfolioCryptosSectionViewModelResult {
 }
 
 interface UsePortfolioCryptosSectionViewModelOptions {
-  isEmptyState?: boolean;
-  isReadOnly?: boolean;
+  variant?: WalletAssetsVariant;
 }
 
 const usePortfolioCryptosSectionViewModel = ({
-  isEmptyState = false,
-  isReadOnly = false,
+  variant = "normal",
 }: UsePortfolioCryptosSectionViewModelOptions = {}): PortfolioCryptosSectionViewModelResult => {
+  const isEmptyState = variant === "emptyState";
+  const isReadOnly = variant === "readOnly";
   const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly);
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
+
+  const isLimitedView = isEmptyState || (isReadOnly && shouldDisplayAssetSection);
+  const isLegacyReadOnly = isReadOnly && !shouldDisplayAssetSection;
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -49,11 +55,11 @@ const usePortfolioCryptosSectionViewModel = ({
     [categorizedAssets.cryptos, blacklistedTokenIdsSet],
   );
 
-  const needsDefaultAssets = isEmptyState || filteredAssets.length < EMPTY_STATE_MAX_ASSETS;
+  const needsDefaultAssets = isLimitedView || filteredAssets.length < EMPTY_STATE_MAX_ASSETS;
   const {
     cryptos: defaultAssets,
-    isLoading,
-    isError,
+    isLoading: isDefaultLoading,
+    isError: isDefaultError,
   } = useDefaultAssetsByCategory(needsDefaultAssets, stablecoinTickers, EMPTY_STATE_MAX_ASSETS, 0);
 
   const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: READ_ONLY_MAX_ASSETS });
@@ -65,24 +71,27 @@ const usePortfolioCryptosSectionViewModel = ({
     [sortedCryptoCurrencies, stablecoinTickers],
   );
 
+  const isLoading = isLegacyReadOnly ? false : isDefaultLoading;
+  const isError = isLegacyReadOnly ? false : isDefaultError;
+
   const assets = useMemo<Asset[]>(() => {
-    if (isEmptyState) return defaultAssets;
-    if (isReadOnly) return readOnlyAssets;
+    if (isLimitedView) return defaultAssets;
+    if (isLegacyReadOnly) return readOnlyAssets;
     return padAssetsWithDefaults(filteredAssets, defaultAssets, EMPTY_STATE_MAX_ASSETS);
-  }, [isEmptyState, isReadOnly, defaultAssets, readOnlyAssets, filteredAssets]);
+  }, [isLimitedView, isLegacyReadOnly, defaultAssets, readOnlyAssets, filteredAssets]);
 
   const assetsCount = assets.length;
 
   const assetsToDisplay = useMemo(
-    () => assets.slice(0, isEmptyState ? EMPTY_STATE_MAX_ASSETS : MAX_ASSETS_TO_DISPLAY),
-    [assets, isEmptyState],
+    () => assets.slice(0, isLimitedView ? EMPTY_STATE_MAX_ASSETS : MAX_ASSETS_TO_DISPLAY),
+    [assets, isLimitedView],
   );
 
   const hasMore = useMemo(() => {
-    if (isEmptyState) return false;
-    if (isReadOnly) return true;
+    if (isLimitedView) return false;
+    if (isLegacyReadOnly) return true;
     return assetsCount > MAX_ASSETS_TO_DISPLAY;
-  }, [isEmptyState, isReadOnly, assetsCount]);
+  }, [isLimitedView, isLegacyReadOnly, assetsCount]);
 
   return {
     assetsCount,
