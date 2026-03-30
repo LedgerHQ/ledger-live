@@ -2,4 +2,4 @@
 "@ledgerhq/coin-evm": minor
 ---
 
-fix(evm): gracefully handle etherscan like explorers not returning array results
+fix(evm): add config setting to cap `limit` on some chains
