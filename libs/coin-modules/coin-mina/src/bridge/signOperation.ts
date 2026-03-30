@@ -83,11 +83,7 @@ async function signTransactionWithDevice(
     signature: encodedSignature,
   };
 
-  const operation = buildOptimisticOperation(
-    account,
-    transaction,
-    transaction.fees.fee ?? new BigNumber(0),
-  );
+  const operation = buildOptimisticOperation(account, transaction, transaction.fees.fee);
   const signedSerializedTx = JSON.stringify(signedTransaction);
 
   return { operation, signedSerializedTx };

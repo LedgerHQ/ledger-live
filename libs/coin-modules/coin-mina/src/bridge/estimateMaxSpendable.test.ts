@@ -2,8 +2,10 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 jest.mock("./createTransaction");
 jest.mock("./getEstimatedFees");
 
+import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
+import { MinaAccount, Transaction } from "../types";
 import { createTransaction } from "./createTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import getEstimatedFees from "./getEstimatedFees";
@@ -17,7 +19,7 @@ describe("estimateMaxSpendable", () => {
     jest.clearAllMocks();
   });
 
-  const mockAccount = {
+  const mockAccount: DeepPartial<MinaAccount> = {
     id: "mock_account",
     freshAddress: "B62qtest",
     spendableBalance: new BigNumber(10000),
@@ -26,7 +28,7 @@ describe("estimateMaxSpendable", () => {
   };
 
   beforeEach(() => {
-    mockGetMainAccount.mockReturnValue(mockAccount as any);
+    mockGetMainAccount.mockReturnValue(mockAccount as MinaAccount);
     mockCreateTransaction.mockReturnValue({
       family: "mina",
       amount: new BigNumber(0),
@@ -44,7 +46,7 @@ describe("estimateMaxSpendable", () => {
     });
 
     const result = await estimateMaxSpendable({
-      account: mockAccount as any,
+      account: mockAccount as MinaAccount,
       parentAccount: undefined,
       transaction: undefined,
     });
@@ -59,7 +61,7 @@ describe("estimateMaxSpendable", () => {
     });
 
     const result = await estimateMaxSpendable({
-      account: mockAccount as any,
+      account: mockAccount as MinaAccount,
       parentAccount: undefined,
       transaction: undefined,
     });
@@ -73,11 +75,11 @@ describe("estimateMaxSpendable", () => {
       accountCreationFee: new BigNumber(0),
     });
 
-    const customTxn = { recipient: "B62qrecipient", memo: "test" };
+    const customTxn: DeepPartial<Transaction> = { recipient: "B62qrecipient", memo: "test" };
     await estimateMaxSpendable({
-      account: mockAccount as any,
+      account: mockAccount as MinaAccount,
       parentAccount: undefined,
-      transaction: customTxn as any,
+      transaction: customTxn as Transaction,
     });
 
     expect(mockGetEstimatedFees).toHaveBeenCalledWith(

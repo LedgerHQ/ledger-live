@@ -1,10 +1,11 @@
 jest.mock("../../api");
 
+import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
 import { fetchAccountTransactions } from "../../api";
 import { getTransactions } from "./getTransactions";
 
 const mockFetchAccountTransactions = fetchAccountTransactions as jest.MockedFunction<
-  typeof fetchAccountTransactions
+  DeepPartialReturn<typeof fetchAccountTransactions>
 >;
 
 describe("getTransactions", () => {
@@ -17,7 +18,7 @@ describe("getTransactions", () => {
       { timestamp: 100 },
       { timestamp: 300 },
       { timestamp: 200 },
-    ] as any);
+    ]);
 
     const result = await getTransactions("B62qtest");
 
