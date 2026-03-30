@@ -14,11 +14,13 @@ export const getFees = async (
     return { fee: txn.fees.fee, accountCreationFee: new BigNumber(0) };
   }
 
+  const txKind = txn.txType === "stake" || txn.txType === "unstake" ? "delegation" : "transfer";
   const data = await fetchTransactionMetadata(
     address,
     txn.recipient,
     txn.fees.fee.toNumber(),
     txn.amount.toNumber(),
+    txKind,
   );
 
   const accountCreationFee = data.metadata.account_creation_fee
