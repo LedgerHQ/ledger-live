@@ -14,14 +14,8 @@ import { useBannersVisibility } from "../hooks/useBannersVisibility";
  * Used in PortfolioView (above MarketBanner) and in BannerSection (legacy dashboard).
  */
 export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
-  const {
-    isPostOnboardingBannerVisible,
-    isActionCardsVisible,
-    isLNSUpsellBannerVisible,
-    hasAnyContentBannerVisible,
-  } = useBannersVisibility();
-
-  if (!hasAnyContentBannerVisible) return null;
+  const { isPostOnboardingBannerVisible, isActionCardsVisible, isLNSUpsellBannerVisible } =
+    useBannersVisibility();
 
   return (
     <Box>
