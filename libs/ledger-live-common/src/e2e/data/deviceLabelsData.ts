@@ -70,11 +70,13 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     receiveVerify: {
       [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ADDRESS,
       [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
+      [AppInfos.ZCASH.name]: DeviceLabels.VERIFY_ADDRESS,
       default: DeviceLabels.ADDRESS,
     },
     receiveConfirm: {
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
+      [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
@@ -128,6 +130,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
       [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
+      [AppInfos.ZCASH.name]: DeviceLabels.VERIFY_ADDRESS,
       default: DeviceLabels.ADDRESS,
     },
     receiveConfirm: {
@@ -138,6 +141,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
       [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
+      [AppInfos.ZCASH.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
