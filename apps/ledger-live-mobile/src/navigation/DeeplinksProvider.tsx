@@ -353,7 +353,7 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
-  const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav } =
+  const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav, shouldDisplayAssetSection } =
     useWalletFeaturesConfig("mobile");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
@@ -528,6 +528,14 @@ export const DeeplinksProvider = ({
                            * ie: "ledgerlive://asset/bitcoin" will open the Bitcoin Asset screen.
                            */
                           [ScreenName.Asset]: "asset/:currencyId",
+                          /**
+                           * if shouldDisplayWallet40MainNav and shouldDisplayAssetSection are enabled
+                           * @params ?sourceScreenName: string
+                           * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
+                           */
+                          ...(shouldDisplayWallet40MainNav && shouldDisplayAssetSection && {
+                            [ScreenName.CryptoAddresses]: "crypto-addresses",
+                          }),
                         },
                       },
                     },
@@ -833,6 +841,7 @@ export const DeeplinksProvider = ({
     dispatch,
     shouldDisplayMarketBanner,
     shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
     liveAppProviderInitialized,
     manifests,
   ]);

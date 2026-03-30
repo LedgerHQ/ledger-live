@@ -2751,7 +2751,7 @@
     },
     "seeAllAssets": "See all assets",
     "cryptoAddresses": {
-      "title": "Crypto accounts",
+      "title": "Accounts",
       "count_one": "{{count}} account",
       "count_other": "{{count}} accounts",
       "noAccountsYet": "No accounts yet",
@@ -3201,6 +3201,12 @@
   },
   "assets": {
     "title": "Assets"
+  },
+  "cryptoAddresses": {
+    "title": "Accounts",
+    "addAccount": "Add account",
+    "emptyState": "No accounts yet",
+    "errorState": "An error occurred while loading your accounts"
   },
   "accounts": {
     "title": "Accounts",

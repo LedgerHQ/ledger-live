@@ -47,11 +47,9 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
       });
 
       navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.AccountsList,
+        screen: ScreenName.CryptoAddresses,
         params: {
           sourceScreenName: ScreenName.Portfolio,
-          showHeader: true,
-          isSyncEnabled: true,
         },
       });
     } else {

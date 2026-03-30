@@ -14,6 +14,7 @@ export enum ScreenName {
   Assets = "Assets",
   AccountsList = "AccountsList",
   AssetsList = "AssetsList",
+  CryptoAddresses = "CryptoAddresses",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
   CantonEditMemo = "CantonEditMemo",
