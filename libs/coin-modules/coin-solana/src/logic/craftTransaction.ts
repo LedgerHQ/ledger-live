@@ -4,10 +4,7 @@ import type {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
-import {
-  isSendTransactionIntent,
-  isStakingTransactionIntent,
-} from "@ledgerhq/coin-framework/utils";
+import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { trace } from "@ledgerhq/logs";
 import {
   PublicKey,
@@ -18,7 +15,7 @@ import {
 } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { bpsToPercent, calculateToken2022TransferFees } from "../helpers/token";
-import { isValidBase58Address } from "../logic";
+import { isValidBase58Address, isSolanaStakingTransactionIntent } from "../logic";
 import type { ChainAPI } from "../network";
 import type {
   TransferFeeConfigExt,
@@ -76,8 +73,8 @@ export async function craftTransaction(
     return craftWithdrawTransaction(api, intent, customFees);
   }
 
-  if (isStakingTransactionIntent(intent)) {
-    return craftStakingTransaction(api, intent, customFees);
+  if (isSolanaStakingTransactionIntent(intent)) {
+    return craftStakingTransaction(api, intent as StakingTransactionIntent, customFees);
   }
 
   if (!isSendTransactionIntent(intent)) {
