@@ -85,7 +85,7 @@ describe("gateway (devnet)", () => {
       expect(response.party).toHaveProperty("party_id");
       expect(response.party).toHaveProperty("public_key");
       expect(response.party.public_key).toBe(keyPair.publicKeyHex);
-    }, 30000);
+    }, 90000);
 
     const testIfPrepared = prepareResponse ? it.skip : it;
     testIfPrepared(
