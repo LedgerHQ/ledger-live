@@ -66,7 +66,8 @@ export function usePerpsSignViewModel(
 
     let cancelled = false;
 
-    data.signFactory(device)
+    data
+      .signFactory(device)
       .then(result => {
         if (cancelled) return;
         completedRef.current = true;
@@ -84,7 +85,7 @@ export function usePerpsSignViewModel(
     return () => {
       cancelled = true;
     };
-  }, [device]);
+  }, [device, data, onClose]);
 
   useEffect(() => {
     return () => {
@@ -92,7 +93,7 @@ export function usePerpsSignViewModel(
         data.onCancel();
       }
     };
-  }, []);
+  }, [data]);
 
   const handleDeviceResult = (result: AppResult) => {
     setDevice(result.device);

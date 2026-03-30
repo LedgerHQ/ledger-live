@@ -1,4 +1,7 @@
-import { handlers as perpsHandlers, PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import {
+  handlers as perpsHandlers,
+  PerpsSignResult,
+} from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { AccountLike } from "@ledgerhq/types-live";

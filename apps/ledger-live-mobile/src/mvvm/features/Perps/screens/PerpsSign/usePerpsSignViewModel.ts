@@ -120,7 +120,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
     return () => {
       cancelled = true;
     };
-  }, [connectedDevice]);
+  }, [connectedDevice, signFactory, onSuccess, onError]);
 
   return {
     t,
