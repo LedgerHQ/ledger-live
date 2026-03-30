@@ -208,7 +208,6 @@ export type APITokenBalance = {
     };
   };
   balance: string;
-  balanceValue: string | null;
   transfersCount: number;
   firstLevel: number;
   firstTime: string;

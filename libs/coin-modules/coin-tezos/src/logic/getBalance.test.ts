@@ -1,9 +1,10 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import coinConfig, { TezosCoinConfig } from "../config";
+import type { APITokenBalance } from "../network/types";
 import { getBalance } from "./getBalance";
 
-const mockTokensBalancesWithAllInfo = [
+const mockTokensBalancesWithAllInfo: APITokenBalance[] = [
   {
     id: 2398642347442177,
     account: { address: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8" },
@@ -12,13 +13,10 @@ const mockTokensBalancesWithAllInfo = [
       contract: { alias: "BTCtz", address: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh" },
       tokenId: "0",
       standard: "fa2",
-      totalSupply: "100262584",
       metadata: {
         name: "BTCtez",
         symbol: "BTCtz",
         decimals: "8",
-        thumbnailUri: "ipfs://QmfAJX4A534cpp2XjDGSM8b8PrqnSt8b7ytuteY8MXkBPD",
-        shouldPreferSymbol: true,
       },
     },
     balance: "2000",
@@ -30,7 +28,7 @@ const mockTokensBalancesWithAllInfo = [
   },
 ];
 
-const mockTokensBalancesWithMissingInfo = [
+const mockTokensBalancesWithMissingInfo: APITokenBalance[] = [
   {
     id: 2398642347442177,
     account: { address: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM" },
@@ -39,7 +37,6 @@ const mockTokensBalancesWithMissingInfo = [
       contract: { alias: "BTCtz", address: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh" },
       tokenId: "0",
       standard: "fa2",
-      totalSupply: "100262584",
     },
     balance: "2000",
     transfersCount: 2,
@@ -143,6 +140,11 @@ describe("getBalance", () => {
           assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh",
           assetOwner: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
           name: "BTCtz",
+          unit: {
+            code: "BTCtz",
+            magnitude: 0,
+            name: "BTCtz",
+          },
         },
       },
     ]);

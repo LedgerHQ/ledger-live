@@ -122,7 +122,8 @@ const api = {
   },
 
   /**
-   * Fetches FA token balances for a given account.
+   * Fetches FA2 token balances (tokenId = 0 only) for a given account.
+   * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
    * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
    */
   async getTokensBalances(address: string): Promise<APITokenBalance[]> {

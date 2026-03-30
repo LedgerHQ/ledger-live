@@ -7,11 +7,18 @@ import api from "../network/tzkt";
  * followed by any token balances associated with the address.
  */
 export async function getBalance(address: string): Promise<Balance[]> {
-  const [apiAccount, tokensBalancesRaw] = await Promise.all([
+  const [apiAccountResult, tokensBalancesResult] = await Promise.allSettled([
     api.getAccountByAddress(address),
     api.getTokensBalances(address),
   ]);
 
+  if (apiAccountResult.status !== "fulfilled") {
+    throw apiAccountResult.reason;
+  }
+
+  const apiAccount = apiAccountResult.value;
+  const tokensBalancesRaw =
+    tokensBalancesResult.status === "fulfilled" ? tokensBalancesResult.value : [];
   const normalized = apiAccount.type === "user" ? BigInt(apiAccount.balance) : 0n;
 
   const stake: Stake | undefined =
@@ -31,7 +38,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
     const name = token.metadata?.name ?? token.contract.alias ?? "";
     const symbol = token.metadata?.symbol ?? token.contract.alias ?? "";
     const unit =
-      magnitude && name && symbol
+      Number.isFinite(magnitude) && name && symbol
         ? {
             magnitude,
             name,
