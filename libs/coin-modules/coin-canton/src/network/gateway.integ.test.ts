@@ -167,14 +167,13 @@ describe("gateway (devnet)", () => {
   });
 
   describe("getPartyById", () => {
-    // TODO: fix later looks like gateway latency
-    it.skip("should return party info", async () => {
+    it("should return party info", async () => {
       const { partyId } = getOnboardedAccount();
       const party = await getPartyById(mockCurrency, partyId);
 
       expect(party).not.toBeUndefined();
       expect(party.party_id).toBe(partyId);
-    }, 30000);
+    }, 60000);
   });
 
   describe("getPartyByPubKey", () => {
