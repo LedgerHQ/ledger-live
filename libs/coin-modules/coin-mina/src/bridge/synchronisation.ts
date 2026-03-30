@@ -96,7 +96,7 @@ export const mapRosettaTxnToOperation = async (
       senders: [fromAccount],
       recipients: [toAccount],
       date,
-      transactionSequenceNumber: nonce !== undefined ? new BigNumber(nonce) : undefined,
+      transactionSequenceNumber: nonce === undefined ? undefined : new BigNumber(nonce),
       extra: {
         memo,
         accountCreationFee: accountCreationFee.toString(),
@@ -174,12 +174,16 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   const lastDelegationOp = operations.find(
     op => op.type === "REDELEGATE" || op.type === "DELEGATE" || op.type === "UNDELEGATE",
   );
-  const delegateAddress =
-    graphqlDelegateAddress !== address
-      ? graphqlDelegateAddress
-      : lastDelegationOp?.type === "UNDELEGATE"
-        ? address
-        : lastDelegationOp?.recipients[0] ?? address;
+  let delegateAddress: string;
+  if (graphqlDelegateAddress === address) {
+    if (lastDelegationOp?.type === "UNDELEGATE") {
+      delegateAddress = address;
+    } else {
+      delegateAddress = lastDelegationOp?.recipients[0] ?? address;
+    }
+  } else {
+    delegateAddress = graphqlDelegateAddress;
+  }
 
   const shape: Partial<MinaAccount> = {
     id: accountId,

@@ -1,3 +1,4 @@
+import { MINA_TOKEN_ID } from "../../consts";
 import type {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
@@ -74,7 +75,7 @@ export function makeRosettaTransaction(overrides?: {
   const status = overrides?.status ?? "Success";
   const fee = overrides?.feeValue ?? "-10000000";
   const value = overrides?.paymentValue ?? "100000000";
-  const tokenId = "wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf";
+  const tokenId = MINA_TOKEN_ID;
 
   return {
     block_identifier: {
@@ -107,14 +108,14 @@ export function makeRosettaTransaction(overrides?: {
           related_operations: [{ index: 1 }],
         },
       ],
-      ...(overrides?.memo !== undefined || overrides?.nonce !== undefined
-        ? {
+      ...(overrides?.memo === undefined && overrides?.nonce === undefined
+        ? {}
+        : {
             metadata: {
-              ...(overrides?.memo !== undefined ? { memo: overrides.memo } : {}),
-              ...(overrides?.nonce !== undefined ? { nonce: overrides.nonce } : {}),
+              ...(overrides?.memo === undefined ? {} : { memo: overrides.memo }),
+              ...(overrides?.nonce === undefined ? {} : { nonce: overrides.nonce }),
             },
-          }
-        : {}),
+          }),
     },
     timestamp: overrides?.timestamp ?? 1700000000000,
   };
@@ -127,7 +128,7 @@ export function makeTransactionsResponse(
   return {
     transactions: txns,
     total_count: txns.length,
-    ...(nextOffset !== undefined ? { next_offset: nextOffset } : {}),
+    ...(nextOffset === undefined ? {} : { next_offset: nextOffset }),
   };
 }
 
@@ -157,7 +158,7 @@ export function makePreprocessResponse(
   return {
     options: {
       sender,
-      token_id: "wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf",
+      token_id: MINA_TOKEN_ID,
       receiver,
     },
   };
@@ -175,11 +176,11 @@ export function makeMetadataResponse(overrides?: {
     metadata: {
       sender: overrides?.sender ?? "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
       nonce: overrides?.nonce ?? "42",
-      token_id: "wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf",
+      token_id: MINA_TOKEN_ID,
       receiver: overrides?.receiver ?? "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314",
-      ...(overrides?.accountCreationFee !== undefined
-        ? { account_creation_fee: overrides.accountCreationFee }
-        : {}),
+      ...(overrides?.accountCreationFee === undefined
+        ? {}
+        : { account_creation_fee: overrides.accountCreationFee }),
     },
     suggested_fee: [
       {
@@ -242,7 +243,7 @@ export function makeValidatorFromAPI(
     nextEpochStake: 1_000_000_000,
     nextEpochDelegationsCount: 50,
     stakePercent: 1.5,
-    networkShare: 2.0,
+    networkShare: 2,
     canonicalBlocksCount: 500,
     allBlocksCount: 600,
     isVerified: true,
