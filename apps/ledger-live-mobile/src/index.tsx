@@ -54,7 +54,7 @@ import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
-import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
+import { DeeplinksProvider } from "~/navigation/deeplinks/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
 import {
