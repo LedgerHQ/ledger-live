@@ -1,4 +1,3 @@
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { MissingCoinConfig } from "./errors";
 import type { FeatureConfig } from "./features/types";
 
@@ -13,7 +12,7 @@ type ConfigStatus =
     }
   | {
       type: "migration";
-      chain: CryptoCurrencyId;
+      chain: string;
       from: string;
       to: string;
       link: string;
@@ -55,7 +54,7 @@ export type CurrencyConfig = {
   [key: string]: unknown;
 };
 
-export type CoinConfig<T extends CurrencyConfig> = (currency?: CryptoCurrency) => T;
+export type CoinConfig<T extends CurrencyConfig> = (currencyId?: string) => T;
 
 function buildCoinConfig<T extends CurrencyConfig>() {
   let coinConfig: CoinConfig<T> | undefined;
@@ -64,12 +63,12 @@ function buildCoinConfig<T extends CurrencyConfig>() {
     coinConfig = config;
   };
 
-  const getCoinConfig = (currency?: CryptoCurrency): T => {
+  const getCoinConfig = (currencyId?: string): T => {
     if (!coinConfig) {
       throw new MissingCoinConfig();
     }
 
-    return coinConfig(currency);
+    return coinConfig(currencyId);
   };
 
   return {

@@ -53,8 +53,8 @@ export function createApi(
     validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
   } {
   configs[currencyId] = config;
-  setCoinConfig(c => {
-    const evmConfig = configs[c.id];
+  setCoinConfig(id => {
+    const evmConfig = configs[id];
     return typeof evmConfig === "function"
       ? evmConfig()
       : { info: { ...evmConfig, status: { type: "active" } } };

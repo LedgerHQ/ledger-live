@@ -5,7 +5,7 @@ import { getLedgerEnd } from "../../network/gateway";
 import { getLedgerEnd as nodeGetLedgerEnd } from "../../network/node";
 
 const useGateway = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).useGateway === true;
+  coinConfig.getCoinConfig(currency.id).useGateway === true;
 
 export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
   return {

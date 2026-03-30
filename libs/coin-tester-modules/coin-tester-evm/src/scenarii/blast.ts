@@ -125,7 +125,7 @@ export const scenarioBlast: Scenario<GenericTransaction, Account> = {
         },
       },
     });
-    initMswHandlers(getCoinConfig(blast).info);
+    initMswHandlers(getCoinConfig(blast.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

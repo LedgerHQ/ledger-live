@@ -102,7 +102,6 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",

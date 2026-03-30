@@ -16,18 +16,13 @@ describe("getCurrencyConfiguration", () => {
         id: "cosmos",
       } as CryptoCurrency;
       getValueByKeySpy.mockReturnValueOnce(cosmosCurrencyMock);
-      const config = getCurrencyConfiguration(cosmosCurrencyMock);
+      const config = getCurrencyConfiguration(cosmosCurrencyMock.id);
       expect(config).toEqual(cosmosCurrencyMock);
     });
   });
 
   it("should return an error if currency config is null", async () => {
     getValueByKeySpy.mockReturnValueOnce(null);
-    expect(() =>
-      getCurrencyConfiguration({
-        id: "idontexistasacurrency",
-        family: "ihavenofamily",
-      } as unknown as CryptoCurrency),
-    ).toThrow(Error);
+    expect(() => getCurrencyConfiguration("idontexistasacurrency")).toThrow(Error);
   });
 });

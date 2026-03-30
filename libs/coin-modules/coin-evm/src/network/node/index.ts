@@ -19,7 +19,7 @@ function cacheKey(currencyId: string, node: { type: string; [key: string]: unkno
 }
 
 export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const node = config?.node;
   const type = node?.type;
 

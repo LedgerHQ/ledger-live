@@ -228,7 +228,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const nonvotingLockedBalance = await lockedGold.getAccountNonvotingLockedGold(address);
 
   const configEvm = {
-    ...getCoinConfig(currency).info,
+    ...getCoinConfig(currency.id).info,
   } as const;
   const blacklistedTokenIds = config.blacklistedTokenIds || [];
   const syncHash = await getSyncHash(currency, blacklistedTokenIds);

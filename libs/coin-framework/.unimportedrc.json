@@ -27,7 +27,6 @@
   "ignoreUnused": [
     "@ledgerhq/errors",
     "@ledgerhq/live-env",
-    "@ledgerhq/types-cryptoassets",
     "expect"
   ]
 }

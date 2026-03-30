@@ -23,7 +23,7 @@ function internalTransactionsFetcher(
   nodeApi: NodeApi,
   currency: CryptoCurrency,
 ): (height: number) => Promise<Map<string, BlockOperation[]>> {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
 
   async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {

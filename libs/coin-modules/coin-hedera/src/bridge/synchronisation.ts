@@ -143,7 +143,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const evmAddress = await toEVMAddress(address);
   invariant(evmAddress, `hedera: evm address is missing for ${address}`);
 
-  const coinConfig = hederaCoinConfig.getCoinConfig(currency);
+  const coinConfig = hederaCoinConfig.getCoinConfig(currency.id);
   const liveAccountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -317,7 +317,7 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
 // TODO: remove once migration to new API is complete
 // it might be necessary to remove pending operations after ERC20 patching done by `integrateERC20Operations`
 export const postSync = (_initial: Account, synced: Account): Account => {
-  const coinConfig = hederaCoinConfig.getCoinConfig(synced.currency);
+  const coinConfig = hederaCoinConfig.getCoinConfig(synced.currency.id);
 
   if (coinConfig.useHgraphForErc20) {
     return synced;

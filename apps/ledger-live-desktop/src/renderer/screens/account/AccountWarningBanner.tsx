@@ -18,7 +18,7 @@ export const AccountWarningCustomBanner = ({ currency }: Props) => {
   let currencyConfig: CurrencyConfig | undefined = undefined;
 
   try {
-    currencyConfig = getCurrencyConfiguration(currency);
+    currencyConfig = getCurrencyConfiguration(currency.id);
   } catch (err) {
     console.warn(err);
   }
@@ -53,7 +53,7 @@ export const AccountWarningBanner = ({ currency }: Props) => {
   let currencyConfig: CurrencyConfig | undefined = undefined;
 
   try {
-    currencyConfig = getCurrencyConfiguration(currency);
+    currencyConfig = getCurrencyConfiguration(currency.id);
   } catch (err) {
     console.warn(err);
   }

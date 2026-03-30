@@ -13,7 +13,6 @@ import {
   encodeAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import aleoConfig from "../config";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
 import type {
@@ -45,7 +44,7 @@ export function parseMicrocredits(microcreditsU64: string): string {
 }
 
 export function getNetworkConfig(currency: CryptoCurrency) {
-  const config = aleoConfig.getCoinConfig(currency);
+  const config = aleoConfig.getCoinConfig(currency.id);
 
   return {
     nodeUrl: config.apiUrls.node,
@@ -221,8 +220,7 @@ export const generateUniqueUsername = (address: string): string => {
 
 export function resolveConfig(configOrCurrencyId: AleoCoinConfig | string): AleoCoinConfig {
   if (typeof configOrCurrencyId === "string") {
-    const currency = getCryptoCurrencyById(configOrCurrencyId);
-    const config = aleoConfig.getCoinConfig(currency);
+    const config = aleoConfig.getCoinConfig(configOrCurrencyId);
     return config;
   }
 

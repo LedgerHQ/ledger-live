@@ -100,7 +100,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   let currencyConfig: CurrencyConfig | undefined = undefined;
   if (currency && isCryptoCurrency(currency)) {
     try {
-      currencyConfig = getCurrencyConfiguration(currency);
+      currencyConfig = getCurrencyConfiguration(currency.id);
     } catch (e) {
       console.warn(e);
     }

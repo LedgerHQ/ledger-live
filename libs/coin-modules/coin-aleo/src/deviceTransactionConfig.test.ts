@@ -156,6 +156,6 @@ describe("getDeviceTransactionConfig", () => {
     });
 
     expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledTimes(1);
-    expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockAccount.currency);
+    expect(mockAleoConfig.getCoinConfig).toHaveBeenCalledWith(mockAccount.currency.id);
   });
 });

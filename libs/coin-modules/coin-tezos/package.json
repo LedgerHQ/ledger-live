@@ -93,7 +93,6 @@
     "@types/node": "catalog:",
     "@faker-js/faker": "^8.4.1",
     "@taquito/local-forging": "^23.0.0-RC.0",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.17.4",

@@ -1,5 +1,5 @@
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import { LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 
 export type EvmConfig = {
   node:
@@ -55,7 +55,7 @@ export type EvmCoinConfig = {
   info: EvmConfigInfo;
 };
 
-export type CoinConfig = (currency: CryptoCurrency) => EvmCoinConfig;
+export type CoinConfig = (currencyId: string) => EvmCoinConfig;
 
 let coinConfig: CoinConfig | undefined;
 
@@ -63,10 +63,10 @@ export const setCoinConfig = (config: CoinConfig): void => {
   coinConfig = config;
 };
 
-export const getCoinConfig = (currency: CryptoCurrency): EvmCoinConfig => {
+export const getCoinConfig = (currencyId: string): EvmCoinConfig => {
   if (!coinConfig) {
     throw new Error("EVM module config not set");
   }
 
-  return coinConfig(currency);
+  return coinConfig(currencyId);
 };

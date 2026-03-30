@@ -334,16 +334,17 @@ export const SEPARATOR = "____";
 
 export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
 
-const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
+const getGatewayUrl = (currency: CryptoCurrency) =>
+  coinConfig.getCoinConfig(currency.id).gatewayUrl;
 const getNodeId = (currency: CryptoCurrency) => {
   const overrideNodeId = getEnv("CANTON_NODE_ID_OVERRIDE");
   if (overrideNodeId) {
     return overrideNodeId;
   }
-  return coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
+  return coinConfig.getCoinConfig(currency.id).nodeId || "ledger-live-devnet";
 };
 export const getNetworkType = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).networkType;
+  coinConfig.getCoinConfig(currency.id).networkType;
 
 export const isPartyNotFound = (error: unknown): boolean => {
   if (error instanceof Error) {

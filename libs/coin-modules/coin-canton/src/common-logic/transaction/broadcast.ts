@@ -3,7 +3,7 @@ import coinConfig from "../../config";
 import { submit } from "../../network/gateway";
 
 const useGateway = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).useGateway === true;
+  coinConfig.getCoinConfig(currency.id).useGateway === true;
 
 export async function broadcast(currency: CryptoCurrency, signedTx: string): Promise<string> {
   const parsed: { serialized: string; signature: string } = JSON.parse(signedTx);

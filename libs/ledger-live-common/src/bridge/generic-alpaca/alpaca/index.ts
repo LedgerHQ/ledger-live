@@ -21,27 +21,27 @@ export function getAlpacaApi(network: string, kind: string): AlpacaApi<any> & Br
     const currency = findCryptoCurrencyByNetwork(network);
     switch (currency?.family) {
       case "xrp":
-        return createXrpApi(getCurrencyConfiguration<XrpCoinConfig>(currency)) as AlpacaApi<any> &
+        return createXrpApi(getCurrencyConfiguration<XrpCoinConfig>(currency.id)) as AlpacaApi<any> &
           BridgeApi; // FIXME: createXrpApi returns a strongly typed Api<XrpSender>, fix AlpacaApi<any> & BridgeApi to allow it
       case "stellar":
         return createStellarApi(
-          getCurrencyConfiguration<StellarCoinConfig>(currency),
+          getCurrencyConfiguration<StellarCoinConfig>(currency.id),
         ) as AlpacaApi<any> & BridgeApi;
       case "canton":
         return createCantonApi(
-          getCurrencyConfiguration<CantonCoinConfig>(currency),
+          getCurrencyConfiguration<CantonCoinConfig>(currency.id),
         ) as AlpacaApi<any> & BridgeApi;
       case "tron":
-        return createTronApi(getCurrencyConfiguration<TronCoinConfig>(currency)) as AlpacaApi<any> &
+        return createTronApi(getCurrencyConfiguration<TronCoinConfig>(currency.id)) as AlpacaApi<any> &
           BridgeApi;
       case "evm":
         return createEvmApi(
-          getCurrencyConfiguration<EvmConfigInfo>(currency),
+          getCurrencyConfiguration<EvmConfigInfo>(currency.id),
           currency.id,
         ) as AlpacaApi<any> & BridgeApi;
       case "tezos":
         return createTezosApi(
-          getCurrencyConfiguration<TezosCoinConfig>(currency),
+          getCurrencyConfiguration<TezosCoinConfig>(currency.id),
         ) as AlpacaApi<any> & BridgeApi;
     }
   }

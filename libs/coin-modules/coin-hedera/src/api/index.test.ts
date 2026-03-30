@@ -51,7 +51,7 @@ describe("createApi", () => {
     const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
 
     createApi(mockConfig, mockCurrency.id);
-    const config = coinConfig.getCoinConfig(mockCurrency);
+    const config = coinConfig.getCoinConfig(mockCurrency.id);
 
     expect(mockSetCoinConfig).toHaveBeenCalled();
     expect(config).toMatchObject({

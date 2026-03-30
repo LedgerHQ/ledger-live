@@ -10,9 +10,9 @@ export type CantonBalance = Balance & {
 };
 
 const useGateway = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).useGateway === true;
+  coinConfig.getCoinConfig(currency.id).useGateway === true;
 const getNativeId = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).nativeInstrumentId;
+  coinConfig.getCoinConfig(currency.id).nativeInstrumentId;
 
 function adaptInstrument(currency: CryptoCurrency, instrument: InstrumentBalance): CantonBalance {
   return {

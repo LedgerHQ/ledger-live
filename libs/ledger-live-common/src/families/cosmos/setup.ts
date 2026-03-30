@@ -13,7 +13,6 @@ import {
 import { CosmosSigner } from "@ledgerhq/coin-cosmos/types/signer";
 import Cosmos from "@ledgerhq/hw-app-cosmos";
 import Transport from "@ledgerhq/hw-transport";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Bridge } from "@ledgerhq/types-live";
 import { CosmosApp } from "@zondax/ledger-cosmos-js";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
@@ -30,11 +29,11 @@ const createSigner: CreateSigner<CosmosSigner> = (transport: Transport) => {
   };
 };
 
-const getCurrencyConfig = (currency?: CryptoCurrency) => {
-  if (!currency) {
+const getCurrencyConfig = (currencyId?: string) => {
+  if (!currencyId) {
     throw new Error("No currency provided");
   }
-  return getCurrencyConfiguration<CosmosCoinConfig>(currency);
+  return getCurrencyConfiguration<CosmosCoinConfig>(currencyId);
 };
 
 const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> =

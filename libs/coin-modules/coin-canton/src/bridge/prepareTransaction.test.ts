@@ -36,7 +36,7 @@ describe("prepareTransaction", () => {
     getNextSequenceSpy.mockResolvedValue(42);
     const oldTx = { fee: new BigNumber(0) };
     estimateFeesSpy.mockResolvedValue(BigInt(1));
-    const newTx = await prepareTransaction({} as Account, oldTx as Transaction);
+    const newTx = await prepareTransaction({ currency: {} } as Account, oldTx as Transaction);
     expect(newTx.fee).toEqual(new BigNumber(1));
   });
 });

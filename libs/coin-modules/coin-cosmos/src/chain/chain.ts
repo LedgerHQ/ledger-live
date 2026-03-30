@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import cosmosCoinConfig from "../config";
 import Axelar from "./Axelar";
 import Babylon from "./Babylon";
@@ -91,7 +90,7 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         throw new Error(`${currencyId} is not supported`);
     }
 
-    const coinConfig = cosmosCoinConfig.getCoinConfig(getCryptoCurrencyById(currencyId));
+    const coinConfig = cosmosCoinConfig.getCoinConfig(currencyId);
     if (coinConfig) {
       cosmosChainParams[currencyId] = { ...cosmosChainParams[currencyId], ...coinConfig };
     }
