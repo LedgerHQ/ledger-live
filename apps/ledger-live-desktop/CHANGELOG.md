@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.0.0-next.2
+
+### Minor Changes
+
+- [#15880](https://github.com/LedgerHQ/ledger-live/pull/15880) [`ea8d8d0`](https://github.com/LedgerHQ/ledger-live/commit/ea8d8d0fdcfaeda8fa8c756f7149bd928ed08882) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix: show recover banner
+
 ## 4.0.0-next.1
 
 ### Minor Changes
