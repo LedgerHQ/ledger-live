@@ -38,7 +38,8 @@ function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
   if (!isEtherscanLikeExplorerConfig(explorer)) return undefined;
   const cap = explorer.maxLimit;
   if (cap === undefined) return undefined;
-  return cap > 0 ? Math.floor(cap) : undefined;
+  const flooredCap = Math.floor(cap);
+  return flooredCap >= 1 ? flooredCap : undefined;
 }
 
 /**
