@@ -16,7 +16,6 @@ import {
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
-import MarketBanner from "LLM/features/MarketBanner";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
@@ -145,10 +144,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       )}
 
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
-
-      <MarketBanner />
-
-      {isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
       {shouldDisplayMarketBanner && __DEV__ && (
         <Box my={24}>

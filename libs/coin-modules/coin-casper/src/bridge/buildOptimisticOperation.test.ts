@@ -1,14 +1,14 @@
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { getAddress } from "./bridgeHelpers/addresses";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { createMockAccount, createMockTransaction, TEST_TRANSFER_IDS } from "../test/fixtures";
+import { getAddress } from "./bridgeHelpers/addresses";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 // Mock dependencies
 jest.mock("./bridgeHelpers/addresses", () => ({
   getAddress: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   encodeOperationId: jest.fn(),
 }));
 

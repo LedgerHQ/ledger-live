@@ -38,7 +38,6 @@ import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
-import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
@@ -69,7 +68,12 @@ import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCh
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
-import backgroundImg from "~/renderer/images/background.png";
+import {
+  getPageBackground,
+  BACKGROUND_SIZE,
+  preloadBackgrounds,
+} from "LLD/components/Page/backgrounds";
+import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
@@ -99,7 +103,10 @@ const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshoot
 const Asset = lazy(() => import("~/renderer/screens/asset"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
+const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
+const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
+const History = lazy(() => import("LLD/features/History"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -212,9 +219,11 @@ const RecoverPlayerWithFeatureToggle = () => {
 const MainAppContent = ({
   shouldDisplayMarketBanner,
   shouldDisplayWallet40MainNav,
+  shouldDisplayAssetSection,
 }: {
   shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
+  shouldDisplayAssetSection: boolean;
 }) => (
   <>
     <Routes>
@@ -225,14 +234,34 @@ const MainAppContent = ({
 
     <Page>
       <TopBannerContainer>
+        {shouldDisplayWallet40MainNav ? null : <FirmwareUpdateBanner />}
         {!shouldDisplayWallet40MainNav && <UpdateBanner />}
-        <FirmwareUpdateBanner />
         <VaultSignerBanner />
       </TopBannerContainer>
       <Routes>
         <Route path="/" element={withSuspense(Dashboard)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
+        <Route
+          path="/cryptos"
+          element={
+            shouldDisplayAssetSection ? (
+              withSuspense(CryptoAddresses)({})
+            ) : (
+              <Navigate to="/accounts" replace />
+            )
+          }
+        />
+        <Route
+          path="/assets"
+          element={
+            shouldDisplayAssetSection ? (
+              withSuspense(CryptoAssets)({})
+            ) : (
+              <Navigate to="/accounts" replace />
+            )
+          }
+        />
         <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
         <Route path="/card/:appId?" element={withSuspense(Card)({})} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
@@ -253,6 +282,7 @@ const MainAppContent = ({
         />
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
+        <Route path="/history" element={withSuspense(History)({})} />
       </Routes>
     </Page>
     <Drawer />
@@ -268,16 +298,19 @@ export const MainAppLayout = () => {
     shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
-  //TODO: Remove this once testing is done
-  const walletFeatureFlag = useFeature("lwdWallet40");
-  const walletParams = walletFeatureFlag?.params;
-  const shouldDisplayBackground =
-    isWallet40Enabled && theme === "dark" && Boolean(walletParams?.background);
+  const backgroundImage = shouldDisplayWallet40MainNav
+    ? getPageBackground(pathname, theme)
+    : undefined;
 
   const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+
+  useEffect(() => {
+    if (shouldDisplayWallet40MainNav) preloadBackgrounds();
+  }, [shouldDisplayWallet40MainNav]);
 
   return (
     <>
@@ -292,16 +325,17 @@ export const MainAppLayout = () => {
 
       {useWallet40Layout ? (
         <div
-          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat"
+          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat transition-[background-image] duration-200"
           style={
-            shouldDisplayBackground
-              ? { backgroundImage: `url(${backgroundImg})`, backgroundSize: "45% 70%" }
+            backgroundImage
+              ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: BACKGROUND_SIZE }
               : undefined
           }
         >
           <MainAppContent
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+            shouldDisplayAssetSection={shouldDisplayAssetSection}
           />
         </div>
       ) : (
@@ -318,6 +352,7 @@ export const MainAppLayout = () => {
           <MainAppContent
             shouldDisplayMarketBanner={shouldDisplayMarketBanner}
             shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+            shouldDisplayAssetSection={shouldDisplayAssetSection}
           />
         </Box>
       )}

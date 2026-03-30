@@ -1,19 +1,36 @@
 import { log } from "@ledgerhq/logs";
-import { decrypt_tx, DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
+import { decrypt_tx } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
-import { toShieldedTransaction, ShieldedTransaction } from "./shieldedTransaction";
-import { LOG_TYPE } from "./constants";
+import { toShieldedTransaction } from "./shieldedTransaction";
+import { Observable, Subscriber, TeardownLogic } from "rxjs";
+import type { RawTransaction, ShieldedTransaction } from "./types";
+import { ZCASH_LOG_TYPE } from "./constants";
 
 /**
  * ZCash API
  */
+
+export { ZCASH_JSON_RPC_SERVER_MAINNET, ZCASH_JSON_RPC_SERVER_TESTNET } from "./constants";
 
 export type SyncEstimatedTime = {
   hours: number;
   minutes: number;
 };
 
-export default class ZCash {
+export type ShieldedSyncResult = {
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessedBlock?: number;
+  transactions: ShieldedTransaction[];
+};
+
+type SyncShieldedArgs = {
+  startBlockHeight: number;
+  viewingKey: string;
+  maxBatchSize: number;
+};
+
+export class ZCash {
   jsonRpcClient: JsonRpcClient;
 
   constructor(args: { nodeUrl: string }) {
@@ -78,10 +95,10 @@ export default class ZCash {
 
         // 3. call decryptTransaction for each tx hash containing orchard actions
         if (tx?.orchard.actions.length) {
-          const decryptedTx = await this.decryptTransaction(tx?.hex, viewingKey);
+          const decryptedTx = await this.decryptTransaction(tx, viewingKey);
 
           if (decryptedTx) {
-            decryptedTransactions.push(toShieldedTransaction(tx, decryptedTx));
+            decryptedTransactions.push(decryptedTx);
           }
         }
       }
@@ -94,18 +111,19 @@ export default class ZCash {
   /**
    * Decrypts a ZCash shielded - i.e., encrypted - transaction.
    *
-   * @param {string} rawHexTransaction, raw string representing an encrypted transaction.
+   * @param {RawTransaction} rawTransaction, raw data representing an encrypted transaction.
    * @param {string} viewingKey the UFVK - unified full viewing key.
-   * @return {Promise<DecryptedOutput>} the decrypted transaction
+   * @return {Promise<ShieldedTransaction | undefined>} the decrypted shielded transaction.
    */
   async decryptTransaction(
-    rawHexTransaction: string,
+    rawTransaction: RawTransaction,
     viewingKey: string,
-  ): Promise<DecryptedTransaction | undefined> {
+  ): Promise<ShieldedTransaction | undefined> {
     try {
-      return decrypt_tx(rawHexTransaction, viewingKey);
+      const decryptedTx = decrypt_tx(rawTransaction.hex, viewingKey);
+      return toShieldedTransaction(rawTransaction, decryptedTx);
     } catch (error) {
-      log(LOG_TYPE, "error: failed to decrypt transaction", error);
+      log(ZCASH_LOG_TYPE, "error: failed to decrypt transaction", error);
     }
   }
 
@@ -113,18 +131,18 @@ export default class ZCash {
    * Finds the lowest block height correspondent to a given timestamp.
    *
    * @param {number} timestamp
-   * @return {Promise<number>} a block height
+   * @returns {Promise<number>} a block height
    */
   async findBlockHeight(timestamp: number): Promise<number | undefined> {
     if (timestamp < 0 || !Number.isFinite(timestamp)) {
-      log(LOG_TYPE, `error: findBlockHeight invalid timestamp: ${timestamp}`);
+      log(ZCASH_LOG_TYPE, `error: findBlockHeight invalid timestamp: ${timestamp}`);
       return undefined;
     }
 
     const maxHeight = await this.jsonRpcClient.getBlockCount();
     if (maxHeight === undefined) {
       log(
-        LOG_TYPE,
+        ZCASH_LOG_TYPE,
         "error: findBlockHeight failed to fetch block count from RPC node (getBlockCount returned undefined).",
       );
       return;
@@ -140,10 +158,10 @@ export default class ZCash {
 
     while (low <= high) {
       const mid = Math.floor((low + high) / 2);
-      const block = await this.jsonRpcClient.getBlockByHeight(mid);
+      const block = await this.jsonRpcClient.getBlock(mid.toString());
 
       if (!block) {
-        log(LOG_TYPE, `Block ${mid} not found.`);
+        log(ZCASH_LOG_TYPE, `Block ${mid} not found.`);
         return;
       }
 
@@ -156,5 +174,104 @@ export default class ZCash {
     }
 
     return candidate;
+  }
+
+  /**
+   * Parses the blocks in the provided range and, after each iteration,
+   * it returns a synced shielded context including aggregate information
+   * like the shielded transactions and processing progress.
+   *
+   * ### Stop the iterator
+   * The sync operation can be gracefully stopped by calling unsubscribe on the
+   * observable subscription.
+   *
+   * @param {{
+   *    startBlockHeight: number
+   *    viewingKey: string
+   *    maxBatchSize: number
+   * }} args, Block, the UFVK - unified full viewing key, and max batch size.
+   * @returns {Observable<ShieldedSyncResult>} the current synced shielded context.
+   */
+  syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
+    return new Observable((subscriber): TeardownLogic => {
+      this._syncShieldedObsFunc(args)(subscriber).then(
+        () => subscriber.complete(),
+        error => subscriber.error(error),
+      );
+    });
+  }
+
+  _syncShieldedObsFunc(args: SyncShieldedArgs) {
+    return async (subscriber: Subscriber<ShieldedSyncResult>) => {
+      const { startBlockHeight, viewingKey, maxBatchSize } = args;
+      const syncedShielded: ShieldedSyncResult = {
+        processedBlocks: 0,
+        remainingBlocks: 0,
+        transactions: [],
+      };
+
+      // 0. validate args
+      if (startBlockHeight < 0) {
+        log(ZCASH_LOG_TYPE, "error: invalid negative arg startBlockHeight");
+        subscriber.error("error: invalid negative arg startBlockHeight");
+        return;
+      }
+
+      if (maxBatchSize <= 0) {
+        log(ZCASH_LOG_TYPE, "error: invalid negative or zero arg maxBatchSize");
+        subscriber.error("error: invalid negative or zero arg maxBatchSize");
+        return;
+      }
+
+      // 1. get end block height before the start of the cycle
+      let endBlockHeight = await this.jsonRpcClient.getBlockCount();
+      if (endBlockHeight === undefined) {
+        log(ZCASH_LOG_TYPE, "error: could not retrieve the last block");
+        subscriber.error("error: could not retrieve the last block");
+        return;
+      }
+
+      for (let blockHeight = startBlockHeight; blockHeight <= endBlockHeight; blockHeight++) {
+        if (subscriber.closed) {
+          break;
+        }
+
+        // 2. on the last iteration, update the end block height and process until the end
+        if (blockHeight === endBlockHeight) {
+          endBlockHeight = await this.jsonRpcClient.getBlockCount();
+          if (endBlockHeight === undefined) {
+            log(ZCASH_LOG_TYPE, "error: could not retrieve the last block");
+            subscriber.error("error: could not retrieve the last block");
+            break;
+          }
+        }
+
+        // 3. get current block
+        const block = await this.jsonRpcClient.getBlock(blockHeight.toString());
+        if (!block) {
+          log(ZCASH_LOG_TYPE, `error: invalid block height ${blockHeight}`);
+          break;
+        }
+
+        // 4. find shielded tx in block
+        const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
+
+        // 5. update syncedShielded's context: list of shielded transactions and counters
+        syncedShielded.transactions.push(...shieldedTxs);
+        syncedShielded.processedBlocks++;
+        syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
+        syncedShielded.lastProcessedBlock = block.height;
+
+        if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
+          subscriber.next({
+            ...syncedShielded,
+            transactions: [...syncedShielded.transactions],
+          });
+        }
+      }
+
+      subscriber.complete();
+      return;
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -7,6 +7,7 @@ import {
   etherscanERC721EventToOperations,
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
+  internalTxsToOperationsByHash,
   safeBigNumber,
   deserializePagingToken,
   serializePagingToken,
@@ -63,9 +64,9 @@ describe("EVM Family", () => {
             accountId,
             blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
             blockHeight: 14923692,
-            recipients: [""],
+            recipients: ["0x4969D9fD2542e71e6b3EA87bE54EA9a736bcC4E9"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date("2022-06-08T00:02:50.000Z"),
             transactionSequenceNumber: new BigNumber(7),
@@ -123,7 +124,7 @@ describe("EVM Family", () => {
             blockHeight: 14923692,
             recipients: ["0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date("2022-06-08T00:02:50.000Z"),
             transactionSequenceNumber: new BigNumber(7),
@@ -180,7 +181,7 @@ describe("EVM Family", () => {
             blockHeight: 13807766,
             recipients: ["0x26E3fd2dEc89bF645BA7b41c4DdFad8454Ee6245"],
             senders: ["0x829BD824B016326A401d083B33D092293333A830"],
-            value: new BigNumber("143141441418750645").plus("1435640675553000"),
+            value: new BigNumber("143141441418750645"),
             fee: new BigNumber("1435640675553000"),
             date: new Date("2021-12-15T05:08:46.000Z"),
             transactionSequenceNumber: new BigNumber(11898499),
@@ -371,7 +372,7 @@ describe("EVM Family", () => {
               blockHeight: 14923692,
               recipients: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
               senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-              value: new BigNumber("7175807958763144"),
+              value: new BigNumber("1000"),
               fee: new BigNumber("7175807958762144"),
               date: new Date("2022-06-08T00:02:50.000Z"),
               transactionSequenceNumber: new BigNumber(7),
@@ -422,17 +423,15 @@ describe("EVM Family", () => {
             functionName: "transfer(address _to, uint256 _value)",
           };
 
-          // Successful Op
+          // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
           expect(etherscanOperationToOperations(accountId, etherscanOpFees)[0].value).toEqual(
-            new BigNumber(etherscanOpFees.value).plus(
-              new BigNumber(etherscanOpFees.gasPrice).times(etherscanOpFees.gasUsed),
-            ),
+            new BigNumber(etherscanOpFees.value),
           );
-          // Failing Op
+          // Failing Op (value = tx value, same as success)
           expect(
             etherscanOperationToOperations(accountId, { ...etherscanOpFees, isError: "1" })[0]
               .value,
-          ).toEqual(new BigNumber(etherscanOpFees.gasPrice).times(etherscanOpFees.gasUsed));
+          ).toEqual(new BigNumber(etherscanOpFees.value));
 
           const etherscanOpOut: EtherscanOperation = {
             blockNumber: "13807766",
@@ -457,16 +456,14 @@ describe("EVM Family", () => {
             functionName: "",
           };
 
-          // Successful Op
+          // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
           expect(etherscanOperationToOperations(accountId, etherscanOpOut)[0].value).toEqual(
-            new BigNumber(etherscanOpOut.value).plus(
-              new BigNumber(etherscanOpOut.gasPrice).times(etherscanOpOut.gasUsed),
-            ),
+            new BigNumber(etherscanOpOut.value),
           );
-          // Failing Op
+          // Failing Op (value = tx value, same as success)
           expect(
             etherscanOperationToOperations(accountId, { ...etherscanOpOut, isError: "1" })[0].value,
-          ).toEqual(new BigNumber(etherscanOpOut.gasPrice).times(etherscanOpOut.gasUsed));
+          ).toEqual(new BigNumber(etherscanOpOut.value));
 
           const etherscanOpIn: EtherscanOperation = {
             blockNumber: "13807766",
@@ -1516,7 +1513,7 @@ describe("EVM Family", () => {
             blockHeight: 12345678,
             recipients: ["0x0000000000000000000000000000000000001005"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date(1694851200 * 1000), // timestamp in ms
             transactionSequenceNumber: new BigNumber(7),
@@ -1574,7 +1571,7 @@ describe("EVM Family", () => {
             blockHeight: 12345678,
             recipients: ["0x0000000000000000000000000000000000001005"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date(1694851200 * 1000), // timestamp in ms
             transactionSequenceNumber: new BigNumber(7),
@@ -1630,7 +1627,7 @@ describe("EVM Family", () => {
             blockHeight: 12345678,
             recipients: ["0x0000000000000000000000000000000000001005"],
             senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
-            value: new BigNumber("7175807958762144"),
+            value: new BigNumber("0"),
             fee: new BigNumber("7175807958762144"),
             date: new Date(1694851200 * 1000), // timestamp in ms
             transactionSequenceNumber: new BigNumber(7),
@@ -1668,6 +1665,65 @@ describe("EVM Family", () => {
         });
         it("should handle hex values", () => {
           expect(safeBigNumber("0x10")).toEqual(new BigNumber(16));
+        });
+      });
+
+      describe("internalTxsToOperationsByHash", () => {
+        const baseInternalTx = {
+          blockNumber: "100",
+          timeStamp: "1635100060",
+          hash: "0xtx1",
+          from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+          to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+          value: "1000000000000000000",
+          contractAddress: "",
+          input: "",
+          type: "call",
+          gas: "21000",
+          gasUsed: "21000",
+          traceId: "0",
+          isError: "0",
+          errCode: "",
+        };
+
+        it("groups internal txs by hash and converts to native transfer operations", () => {
+          const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", value: "1000000000000000000" }];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(1);
+          const ops = byHash.get("0xtx1")!;
+          expect(ops).toHaveLength(2); // sender + receiver
+          expect(ops.map(o => o.amount).sort()).toEqual([
+            -1000000000000000000n,
+            1000000000000000000n,
+          ]);
+          expect(ops.every(o => o.type === "transfer" && o.asset.type === "native")).toBe(true);
+        });
+
+        it("skips internal txs with isError === '1'", () => {
+          const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", isError: "1", value: "1000" }];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(0);
+        });
+
+        it("skips internal txs with value === '0'", () => {
+          const internalTxs = [{ ...baseInternalTx, hash: "0xtx1", value: "0" }];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(0);
+        });
+
+        it("returns empty map for empty internal txs array", () => {
+          const byHash = internalTxsToOperationsByHash([]);
+          expect(byHash.size).toBe(0);
+        });
+
+        it("accumulates multiple internal txs for the same tx hash", () => {
+          const internalTxs = [
+            { ...baseInternalTx, hash: "0xtx1", value: "1000", from: "0xa", to: "0xb" },
+            { ...baseInternalTx, hash: "0xtx1", value: "2000", from: "0xc", to: "0xd" },
+          ];
+          const byHash = internalTxsToOperationsByHash(internalTxs);
+          expect(byHash.size).toBe(1);
+          expect(byHash.get("0xtx1")!.length).toBe(4); // 2 internal txs × 2 ops each
         });
       });
     });

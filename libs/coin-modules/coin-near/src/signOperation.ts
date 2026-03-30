@@ -1,13 +1,13 @@
-import * as nearAPI from "near-api-js";
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import * as nearAPI from "near-api-js";
+import { Observable } from "rxjs";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
-import type { Transaction } from "./types";
 import { NearSigner } from "./signer";
+import type { Transaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware

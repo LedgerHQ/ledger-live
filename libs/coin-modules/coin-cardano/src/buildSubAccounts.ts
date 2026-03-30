@@ -1,20 +1,20 @@
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
   encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
-import keyBy from "lodash/keyBy";
-import groupBy from "lodash/groupBy";
-import BigNumber from "bignumber.js";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } from "./types";
-import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
 import { APITransaction } from "./api/api-types";
+import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
+import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } from "./types";
 
 export const getTokenAssetId = ({
   policyId,

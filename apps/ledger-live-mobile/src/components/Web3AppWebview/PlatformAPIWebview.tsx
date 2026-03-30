@@ -36,6 +36,7 @@ import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
@@ -46,12 +47,20 @@ import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { NetworkError } from "./NetworkError";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import { WebViewOpenWindowEvent } from "react-native-webview/lib/WebViewTypes";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
+import Config from "react-native-config";
+import {
+  E2E_WEBVIEW_CONSOLE_LOG_TYPE,
+  E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT,
+  E2E_WEBVIEW_NETWORK_LOG_TYPE,
+} from "~/e2e/webviewNetworkLogCapture";
+import { webviewLogStore } from "~/e2e/webviewLogStore";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -78,14 +87,18 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       [],
     );
 
-    const { webviewProps, webviewRef } = useWebviewState(
-      {
-        manifest,
-        inputs,
-      },
-      ref,
-      onStateChange,
-    );
+    const manifestDomainCheckEnabled = useFeature("llmWebviewManifestDomainCheck")?.enabled;
+
+    const { webviewProps, webviewRef, onShouldStartLoadWithRequest, isBlockedByDomainCheck } =
+      useWebviewState(
+        {
+          manifest,
+          inputs,
+          manifestDomainCheckEnabled,
+        },
+        ref,
+        onStateChange,
+      );
 
     const walletState = useSelector(walletSelector);
 
@@ -152,7 +165,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             source:
               currentRouteNameRef.current === "Platform Catalog"
                 ? "Discover"
-                : currentRouteNameRef.current ?? "Unknown",
+                : (currentRouteNameRef.current ?? "Unknown"),
           });
         }),
       [tracking, manifest, deactivatedCurrencyIds, walletState, openModularDrawer],
@@ -450,18 +463,45 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [receive] = useJSONRPCServer(handlers, handleSend);
     const handleMessage = useCallback(
       (e: WebViewMessageEvent) => {
-        // FIXME: event isn't the same on desktop & mobile
-        // if (e.isTrusted && e.origin === manifest.url.origin && e.data) {
-        if (e.nativeEvent?.data) {
-          receive(JSON.parse(e.nativeEvent.data));
+        const data = e.nativeEvent?.data;
+        if (!data) return;
+
+        try {
+          const msg = JSON.parse(data);
+          if (Config.DETOX) {
+            if (msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+              webviewLogStore.addNetworkLog(msg.payload);
+              return;
+            }
+            if (msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+              webviewLogStore.addConsoleLog(msg.payload);
+              return;
+            }
+          }
+          void receive(msg);
+        } catch {
+          void receive(data);           // let JSON-RPC handle / error-respond
         }
       },
       [receive],
     );
 
-    const handleError = useCallback(() => {
-      tracking.platformLoadFail(manifest);
-    }, [manifest, tracking]);
+    const handleError = useCallback(
+      (event?: { nativeEvent?: { description?: string; code?: number } }) => {
+        if (Config.DETOX) {
+          const desc = event?.nativeEvent?.description;
+          const code = event?.nativeEvent?.code;
+          webviewLogStore.addLoadError({
+            timestamp: new Date().toISOString(),
+            source: "PlatformAPIWebview",
+            message: desc ?? "WebView onError fired",
+            details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
+          });
+        }
+        tracking.platformLoadFail(manifest);
+      },
+      [manifest, tracking],
+    );
 
     const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
       const { targetUrl } = event.nativeEvent;
@@ -478,6 +518,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
 
+    if (isBlockedByDomainCheck) {
+      return <NetworkError handleTryAgain={() => {}} />;
+    }
+
     return (
       <RNWebView
         ref={webviewRef}
@@ -488,7 +532,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
-        originWhitelist={manifest.domains}
+        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+        onShouldStartLoadWithRequest={
+          manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
+        }
         allowsInlineMediaPlayback
         onMessage={handleMessage}
         onError={handleError}
@@ -502,6 +549,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         webviewDebuggingEnabled={__DEV__}
         applicationNameForUserAgent={APPLICATION_NAME}
+        injectedJavaScriptBeforeContentLoaded={
+          Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
+        }
         {...webviewProps}
       />
     );

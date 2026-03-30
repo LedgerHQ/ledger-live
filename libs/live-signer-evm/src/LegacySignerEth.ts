@@ -1,7 +1,7 @@
-import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/lib/types/signer";
+import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
 import Eth from "@ledgerhq/hw-app-eth";
 import { EIP712Message } from "@ledgerhq/types-live";
-import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/services/types";
 import { Observable, map, catchError, from, startWith, throwError } from "rxjs";
 
 export class LegacySignerEth implements EvmSigner {

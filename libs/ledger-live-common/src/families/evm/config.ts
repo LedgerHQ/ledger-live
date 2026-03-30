@@ -621,6 +621,42 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_mantle: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.mantle.xyz",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.mantle.xyz/api",
+      },
+      showNfts: false,
+    },
+  },
+  config_currency_mantle_sepolia: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.sepolia.mantle.xyz",
+      },
+      explorer: {
+        type: "blockscout",
+        uri: "https://explorer.sepolia.mantle.xyz/api",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_boba: {
     type: "object",
     default: {
@@ -918,6 +954,19 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_polygon_amoy: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [{ id: "blockchain_txs", status: "active" }],
+      },
+      node: { type: "ledger", explorerId: "matic_amoy" },
+      explorer: { type: "ledger", explorerId: "matic_amoy" },
+      gasTracker: { type: "ledger", explorerId: "matic_amoy" },
+      showNfts: false,
+    },
+  },
   config_currency_arbitrum_sepolia: {
     type: "object",
     default: {
@@ -1134,7 +1183,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://somnia-rpc.publicnode.com",
       },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://explorer.somnia.network/api",
       },
       showNfts: false,
     },
@@ -1169,7 +1219,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://explorer.adifoundation.ai/api",
+        uri: "https://explorer-bls.adifoundation.ai/api",
       },
       showNfts: false,
     },

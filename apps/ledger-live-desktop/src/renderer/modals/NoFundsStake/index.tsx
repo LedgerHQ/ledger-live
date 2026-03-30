@@ -15,7 +15,7 @@ import { trackPage, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -78,6 +78,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
         account: isTokenAccount(account) ? parentAccount?.id : account.id,
         currency: currency.id,
         mode: "buy",
+        returnTo: location.pathname,
       },
     });
   }, [location, dispatch, navigate, account, parentAccount?.id, currency.id]);

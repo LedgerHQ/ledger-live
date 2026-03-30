@@ -30,6 +30,7 @@ jest.mock("../logic", () => ({
 
 describe("listOperations", () => {
   const api = createApi({ node: "https://localhost" });
+  type NonPaymentTransactionType = "OfferCreate" | "AccountDelete";
 
   afterEach(() => {
     mockGetServerInfos.mockClear();
@@ -123,6 +124,104 @@ describe("listOperations", () => {
     ];
   }
 
+  function givenNonPaymentTx(
+    fee: bigint,
+    sender: string,
+    transactionType: NonPaymentTransactionType = "OfferCreate",
+    destination?: string,
+  ): unknown {
+    return {
+      ledger_hash: "HASH_VALUE_BLOCK",
+      hash: "NON_PAYMENT_HASH",
+      close_time_iso: "2000-01-01T00:00:01Z",
+      meta: { TransactionResult: "tesSUCCESS" },
+      tx_json: {
+        TransactionType: transactionType,
+        Fee: fee.toString(),
+        ledger_index: 1,
+        date: 1000,
+        Account: sender,
+        Destination: destination,
+        Sequence: 42,
+        SigningPubKey: "PUBKEY",
+      },
+    };
+  }
+
+  it("should return a FEES operation for a non-Payment tx sent by the queried address", async () => {
+    const fee = BigInt(10);
+    const address = "sender_address";
+    mockGetTransactions.mockResolvedValue(
+      mockNetworkTxs([givenNonPaymentTx(fee, address)], undefined),
+    );
+
+    const { items: results } = await api.listOperations(address, { minHeight: 0, order: "asc" });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject<Partial<Operation>>({
+      id: "NON_PAYMENT_HASH",
+      type: "FEES",
+      value: BigInt(0),
+      senders: [address],
+      recipients: [],
+      tx: expect.objectContaining({
+        hash: "NON_PAYMENT_HASH",
+        fees: fee,
+        failed: false,
+      }),
+      details: {
+        xrpTxType: "OfferCreate",
+        sequence: 42,
+        signingPubKey: "PUBKEY",
+      },
+    });
+  });
+
+  it("should not return FEES operation for non-Payment tx sent by another address", async () => {
+    const fee = BigInt(10);
+    mockGetTransactions.mockResolvedValue(
+      mockNetworkTxs([givenNonPaymentTx(fee, "other_address")], undefined),
+    );
+
+    const { items: results } = await api.listOperations("queried_address", {
+      minHeight: 0,
+      order: "asc",
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
+  it("should return non-Payment tx when queried address is recipient", async () => {
+    const fee = BigInt(10);
+    const address = "recipient_address";
+    const sender = "sender_address";
+    mockGetTransactions.mockResolvedValue(
+      mockNetworkTxs([givenNonPaymentTx(fee, sender, "AccountDelete", address)], undefined),
+    );
+
+    const { items: results } = await api.listOperations(address, { minHeight: 0, order: "asc" });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]).toMatchObject<Partial<Operation>>({
+      id: "NON_PAYMENT_HASH",
+      type: "IN",
+      value: BigInt(0),
+      senders: [sender],
+      recipients: [address],
+      tx: expect.objectContaining({
+        hash: "NON_PAYMENT_HASH",
+        fees: fee,
+        feesPayer: sender,
+        failed: false,
+      }),
+      details: {
+        xrpTxType: "AccountDelete",
+        sequence: 42,
+        signingPubKey: "PUBKEY",
+      },
+    });
+  });
+
   it("should kill the loop after 10 iterations", async () => {
     const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
@@ -157,7 +256,8 @@ describe("listOperations", () => {
       forward: true,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(1, "src", baseOptions);
-    await api.listOperations("src", { minHeight: 0, cursor: token, order: "asc" });
+    expect(token).toEqual(expect.any(String));
+    await api.listOperations("src", { minHeight: 0, cursor: token as string, order: "asc" });
     const optionsWithToken = {
       ...baseOptions,
       marker: defaultMarker,
@@ -208,6 +308,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
+            feesPayer: opSender,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             failed: false,
             block: {
@@ -237,6 +338,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
+            feesPayer: opSender,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             failed: true,
             block: {
@@ -261,6 +363,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
+            feesPayer: opSender,
             date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             failed: false,
             block: {

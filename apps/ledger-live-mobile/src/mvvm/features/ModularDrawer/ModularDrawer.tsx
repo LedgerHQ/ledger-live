@@ -41,8 +41,10 @@ export type ModularDrawerProps = {
   /** Callback fired when an account is selected */
   readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
 
-  /** The use case identifier for the drawer */
+  /** The use case identifier for the drawer (sent to API as transaction param) */
   readonly useCase?: string;
+  /** UI-only use case identifier for conditional rendering (e.g. perpetuals banner) */
+  readonly uiUseCase?: string;
   /** Whether the currencies are filtered */
   readonly areCurrenciesFiltered?: boolean;
 };
@@ -59,6 +61,7 @@ export function ModularDrawer({
   networksConfiguration,
   onAccountSelected,
   useCase,
+  uiUseCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
   const { isEnabled } = useWalletFeaturesConfig("mobile");
@@ -102,6 +105,7 @@ export function ModularDrawer({
   });
 
   const flowManagerProps = {
+    useLumenBottomSheet: isEnabled,
     assetsViewModel: {
       availableAssets: sortedCryptoCurrencies,
       onAssetSelected: handleAsset,
@@ -122,6 +126,7 @@ export function ModularDrawer({
       onAddNewAccount,
       asset: accountCurrency,
       onAccountSelected,
+      uiUseCase,
     },
   };
 

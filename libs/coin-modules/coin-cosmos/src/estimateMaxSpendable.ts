@@ -1,5 +1,5 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { createTransaction } from "./createTransaction";
 import getTransactionStatus from "./getTransactionStatus";

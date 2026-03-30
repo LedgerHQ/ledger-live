@@ -1,5 +1,5 @@
 import { firstValueFrom, toArray } from "rxjs";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ConcordiumSigner } from "../types";
 import { VALID_ADDRESS, PUBLIC_KEY } from "../test/fixtures";
 import { buildReceive } from "./receive";
@@ -22,14 +22,14 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount();
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
       expect(events).toHaveLength(1);
       expect(events[0]).toEqual({
         address: VALID_ADDRESS,
-        path: "m/1105'/0'/0'/0'/0'/0'",
+        path: "44'/919'/404'/404'/0'",
         publicKey: PUBLIC_KEY,
       });
     });
@@ -42,7 +42,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount({ freshAddress: customAddress });
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -53,11 +53,11 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const customPath = "m/1105'/0'/1'/2'/3'/4'";
+      const customPath = "44'/919'/404'/404'/5'";
       const account = createFixtureConcordiumAccount({ freshAddressPath: customPath });
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -68,10 +68,11 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const account = createFixtureConcordiumAccount({ concordiumResources: undefined });
+      const account = createFixtureConcordiumAccount();
+      delete (account as { concordiumResources?: unknown }).concordiumResources;
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -90,7 +91,7 @@ describe("receive", () => {
       });
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -104,7 +105,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount();
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       let completed = false;
       await new Promise<void>((resolve, reject) => {
         observable.subscribe({
@@ -127,7 +128,7 @@ describe("receive", () => {
       const account = createFixtureConcordiumAccount();
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -143,12 +144,12 @@ describe("receive", () => {
         get freshAddress(): string {
           throw new Error(errorMessage);
         },
-        freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
+        freshAddressPath: "44'/919'/404'/404'/0'",
         concordiumResources: { publicKey: "abc" },
       } as any;
 
       // WHEN
-      const observable = receive(account);
+      const observable = receive(account, { deviceId: "test-device" });
 
       // THEN
       await expect(firstValueFrom(observable)).rejects.toThrow(errorMessage);

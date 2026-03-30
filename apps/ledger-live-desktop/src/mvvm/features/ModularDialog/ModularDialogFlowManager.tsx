@@ -7,12 +7,13 @@ import { AccountSelector } from "./screens/AccountSelector";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
 import {
-  resetModularDrawerState,
-  modularDrawerFlowSelector,
+  resetModularDialogState,
+  modularDialogFlowSelector,
   modularDialogIsOpenSelector,
   modularDialogConfigurationSelector,
   modularDialogOnAccountSelectedSelector,
-} from "~/renderer/reducers/modularDrawer";
+  modularDialogUiUseCaseSelector,
+} from "~/renderer/reducers/modularDialog";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { track } from "~/renderer/analytics/segment";
@@ -26,10 +27,11 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep, setCurrentStep } =
     useModularDialogNavigation();
-  const flow = useSelector(modularDrawerFlowSelector);
+  const flow = useSelector(modularDialogFlowSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
   const onAccountSelected = useSelector(modularDialogOnAccountSelectedSelector);
   const dialogConfiguration = useSelector(modularDialogConfigurationSelector);
+  const uiUseCase = useSelector(modularDialogUiUseCaseSelector);
 
   const handleClose = () => {
     track("button_clicked", {
@@ -45,7 +47,7 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
       setCurrentStep(MODULAR_DIALOG_STEP.ASSET_SELECTION);
 
       return () => {
-        dispatch(resetModularDrawerState());
+        dispatch(resetModularDialogState());
       };
     }
   }, [dispatch, isOpen, setCurrentStep]);
@@ -101,7 +103,13 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
         );
       case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
+          return (
+            <AccountSelector
+              asset={selectedAsset}
+              onAccountSelected={onAccountSelected}
+              uiUseCase={uiUseCase}
+            />
+          );
         }
         return null;
       default:

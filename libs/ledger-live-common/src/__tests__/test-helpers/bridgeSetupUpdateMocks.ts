@@ -33,7 +33,7 @@ const onObserverEntry: PerformanceObserverCallback = (items, _observer) => {
   const entries = items.getEntries();
   for (const entry of entries) {
     if (entry.entryType === "http" || entry.entryType === "http2") {
-      const httpEntry: HttpPerformanceEntry = entry as HttpPerformanceEntry;
+      const httpEntry: HttpPerformanceEntry = entry as unknown as HttpPerformanceEntry;
       const req = httpEntry.detail?.req;
       const res = httpEntry.detail?.res;
       if (res != null && req != null) {

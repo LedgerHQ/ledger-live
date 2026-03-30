@@ -3,7 +3,7 @@ import { useModularDialogAnalytics } from "LLD/features/ModularDialog/analytics/
 import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
-import { modularDrawerSearchedSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSearchedSelector, setSearchedValue } from "~/renderer/reducers/modularDialog";
 
 export type SearchResult = {
   handleSearch: (queryOrEvent: string | ChangeEvent<HTMLInputElement>) => void;
@@ -14,7 +14,7 @@ export type SearchResult = {
 export const useSearch = (): SearchResult => {
   const dispatch = useDispatch();
 
-  const searchedValue = useSelector(modularDrawerSearchedSelector);
+  const searchedValue = useSelector(modularDialogSearchedSelector);
 
   const { trackModularDialogEvent } = useModularDialogAnalytics();
 

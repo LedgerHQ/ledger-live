@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/client-ids",
-  "version": "0.5.2",
+  "version": "0.8.0",
   "description": "Ledger Live client IDs management library",
   "keywords": [
     "Ledger"
@@ -22,13 +22,13 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "node scripts/check-export-rules.mjs && eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"
   },
@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/uuid": "^9.0.0",
     "jest": "catalog:",
@@ -68,16 +68,19 @@
   },
   "exports": {
     "./ids": {
+      "@ledgerhq/source": "./src/ids/index.ts",
       "types": "./lib/ids/index.d.ts",
       "require": "./lib/ids/index.js",
       "default": "./lib-es/ids/index.js"
     },
     "./store": {
+      "@ledgerhq/source": "./src/store/index.ts",
       "types": "./lib/store/index.d.ts",
       "require": "./lib/store/index.js",
       "default": "./lib-es/store/index.js"
     },
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "types": "./lib/api/index.d.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"

@@ -1,8 +1,11 @@
-import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
+import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
   const mockCurrency = {

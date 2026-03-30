@@ -56,8 +56,8 @@ export default function StakingSummary({ navigation, route }: Props) {
     return validators[0];
   }, [validators, validator]);
 
-  const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const tx = route.params.transaction;
 
       if (!tx) {
@@ -73,17 +73,13 @@ export default function StakingSummary({ navigation, route }: Props) {
       }
 
       return { account, transaction: tx };
-    });
+    },
+  );
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "near", "transaction near");
 
   useEffect(() => {
-    const tmpTransaction = route.params.transaction;
-    if (tmpTransaction) {
-      updateTransaction(_ => tmpTransaction);
-    }
-
     if (chosenValidator.validatorAddress !== transaction.recipient) {
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -91,15 +87,7 @@ export default function StakingSummary({ navigation, route }: Props) {
         }),
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    route.params,
-    bridge,
-    setTransaction,
-    chosenValidator,
-    updateTransaction,
-    route.params.transaction,
-  ]);
+  }, [bridge, setTransaction, chosenValidator, transaction]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {

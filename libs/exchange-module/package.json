@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-exchange-module",
-  "version": "0.22.0",
+  "version": "0.25.0",
   "description": "Wallet-API Exchange Module for Ledger Live",
   "license": "Apache-2.0",
   "keywords": [
@@ -26,19 +26,36 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es && node scripts/createModulePackage.mjs",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es && node scripts/createModulePackage.mjs",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-client": "^1.13.1",
-    "@ledgerhq/wallet-api-core": "^1.29.0",
+    "@ledgerhq/wallet-api-client": "^1.14.0",
+    "@ledgerhq/wallet-api-core": "^1.30.0",
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {
-    "@types/node": "^22.10.10"
+    "@types/node": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

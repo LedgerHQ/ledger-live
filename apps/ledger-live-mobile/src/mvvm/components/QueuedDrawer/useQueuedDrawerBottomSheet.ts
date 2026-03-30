@@ -16,6 +16,8 @@ interface UseQueuedDrawerBottomSheetProps {
   preventBackdropClick?: boolean;
 }
 
+type DrawerState = "idle" | "open" | "dismissing";
+
 const useQueuedDrawerBottomSheet = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
@@ -33,7 +35,10 @@ const useQueuedDrawerBottomSheet = ({
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
-  const isClosedRef = useRef(true);
+  const onModalHideRef = useRef(onModalHide);
+  onModalHideRef.current = onModalHide;
+
+  const stateRef = useRef<DrawerState>("idle");
 
   const cleanupQueue = useCallback(() => {
     if (drawerInQueueRef.current) {
@@ -43,20 +48,26 @@ const useQueuedDrawerBottomSheet = ({
   }, []);
 
   const handleOpen = useCallback(() => {
-    if (!isClosedRef.current) return;
+    if (stateRef.current !== "idle") return;
 
     logDrawer("Opening drawer");
-    isClosedRef.current = false;
+    stateRef.current = "open";
     bottomSheetRef.current?.present();
   }, [bottomSheetRef]);
 
   const handleClose = useCallback(() => {
-    if (isClosedRef.current) return;
+    const state = stateRef.current;
+
+    if (state === "idle") {
+      cleanupQueue();
+      return;
+    }
+
+    if (state === "dismissing") return;
 
     logDrawer("Closing drawer");
-    isClosedRef.current = true;
+    stateRef.current = "dismissing";
     bottomSheetRef.current?.dismiss();
-    cleanupQueue();
     onCloseRef.current?.();
   }, [bottomSheetRef, cleanupQueue]);
 
@@ -72,9 +83,14 @@ const useQueuedDrawerBottomSheet = ({
       Keyboard.dismiss();
     }
 
-    handleClose();
-    onModalHide?.();
-  }, [handleClose, onModalHide]);
+    if (stateRef.current === "open") {
+      onCloseRef.current?.();
+    }
+
+    stateRef.current = "idle";
+    cleanupQueue();
+    onModalHideRef.current?.();
+  }, [cleanupQueue]);
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {

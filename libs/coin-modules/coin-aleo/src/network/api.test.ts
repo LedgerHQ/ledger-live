@@ -1,13 +1,16 @@
 import network from "@ledgerhq/live-network";
 import { getNetworkConfig } from "../logic/utils";
 import type { AleoLatestBlockResponse } from "../types/api";
-import { testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
+  testnetPrivateRecord,
   getMockedTransactionDetails,
   getMockedSimpleTransactionDetails,
   getMockedAccountPublicTransactions,
-} from "../__tests__/fixtures/transaction.fixture";
+  getMockedAuthorization,
+  getMockedFeeAuthorization,
+  getMockedDelegatedProvingResponse,
+} from "../__tests__/fixtures/api.fixture";
+import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { apiClient } from "./api";
 
 jest.mock("@ledgerhq/live-network");
@@ -15,9 +18,15 @@ jest.mock("../logic/utils");
 
 describe("apiClient", () => {
   const mockCurrency = getMockedCurrency();
-  const mockNetworkConfig = {
+  const mockNetworkConfig: ReturnType<typeof getNetworkConfig> = {
     nodeUrl: "https://api.aleo.network",
+    sdkUrl: "https://sdk.aleo.network",
     networkType: "mainnet",
+  };
+  const testnetConfig: ReturnType<typeof getNetworkConfig> = {
+    nodeUrl: "https://api.testnet.aleo.network",
+    sdkUrl: "https://sdk.testnet.aleo.network",
+    networkType: "testnet",
   };
 
   beforeEach(() => {
@@ -38,7 +47,7 @@ describe("apiClient", () => {
         },
       };
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getLatestBlock(mockCurrency);
 
@@ -47,7 +56,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://api.aleo.network/v2/mainnet/blocks/latest",
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/blocks/latest`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -59,10 +68,6 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
 
       const mockResponse: AleoLatestBlockResponse = {
@@ -76,7 +81,7 @@ describe("apiClient", () => {
         },
       };
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getLatestBlock(mockCurrency);
 
@@ -84,7 +89,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://api.testnet.aleo.network/v2/testnet/blocks/latest",
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/blocks/latest`,
       });
     });
   });
@@ -94,7 +99,7 @@ describe("apiClient", () => {
       const mockTransactionId = "at1abc123def456";
       const mockResponse = getMockedTransactionDetails(mockTransactionId);
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getTransactionById(mockCurrency, mockTransactionId);
 
@@ -103,7 +108,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/${mockTransactionId}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/${mockTransactionId}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -117,19 +122,15 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
 
       const mockTransactionId = "at1testnet123";
       const mockResponse = getMockedSimpleTransactionDetails(mockTransactionId, {
         block_height: 100,
-        block_timestamp: "2024-01-01T00:00:00Z",
+        block_timestamp: "1704067200",
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getTransactionById(mockCurrency, mockTransactionId);
 
@@ -137,7 +138,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.testnet.aleo.network/v2/testnet/transactions/${mockTransactionId}`,
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/transactions/${mockTransactionId}`,
       });
     });
   });
@@ -148,7 +149,7 @@ describe("apiClient", () => {
     it("should fetch account transactions with default parameters", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress);
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -160,7 +161,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=next`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
       });
       expect(result).toEqual(mockResponse);
       expect(result.transactions).toHaveLength(2);
@@ -170,10 +171,9 @@ describe("apiClient", () => {
       const customLimit = 10;
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -185,17 +185,16 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=10&sort=asc&direction=next`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=10&sort=asc&direction=next`,
       });
     });
 
     it("should fetch transactions with descending order", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -207,7 +206,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=desc&direction=next`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=desc&direction=next`,
       });
     });
 
@@ -225,7 +224,7 @@ describe("apiClient", () => {
         },
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -237,17 +236,16 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next&cursor_block_number=${cursor}`,
       });
     });
 
     it("should fetch previous page with direction=prev", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -259,7 +257,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=prev`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=prev`,
       });
     });
 
@@ -270,20 +268,21 @@ describe("apiClient", () => {
           {
             transaction_id: "at1custom",
             transition_id: "au1custom",
-            transaction_status: "accepted",
+            transaction_status: "Accepted",
             block_number: 999999,
-            block_timestamp: "2024-03-01T12:00:00Z",
+            block_hash: "ab1blockcustom",
+            block_timestamp: "1709294400",
             function_id: "transfer_public",
             amount: 75000000,
+            fee: 5000000,
             sender_address: mockAddress,
             recipient_address: "aleo1recipient789",
             program_id: "credits.aleo",
           },
         ],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -298,7 +297,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/transactions/address/${mockAddress}?limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=20&sort=desc&direction=prev&cursor_block_number=${cursor}`,
       });
       expect(result).toEqual(mockResponse);
     });
@@ -317,10 +316,9 @@ describe("apiClient", () => {
     it("should handle empty transaction list", async () => {
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -331,18 +329,13 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
 
       const mockResponse = getMockedAccountPublicTransactions(mockAddress, {
         transactions: [],
-        next_cursor: undefined,
       });
 
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       await apiClient.getAccountPublicTransactions({
         currency: mockCurrency,
@@ -353,7 +346,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.testnet.aleo.network/v2/testnet/transactions/address/${mockAddress}?limit=50&sort=asc&direction=next`,
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/transactions/address/${mockAddress}?metadata=true&limit=50&sort=asc&direction=next`,
       });
     });
   });
@@ -363,7 +356,7 @@ describe("apiClient", () => {
 
     it("should fetch the account balance successfully", async () => {
       const mockBalance = "1000000u64";
-      jest.mocked(network).mockResolvedValue({ data: mockBalance });
+      jest.mocked(network).mockResolvedValue({ data: mockBalance, status: 200 });
 
       const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
 
@@ -372,13 +365,13 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.aleo.network/v2/mainnet/program/credits.aleo/mapping/account/${mockAddress}`,
+        url: `${mockNetworkConfig.nodeUrl}/v2/${mockNetworkConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
       });
       expect(result).toEqual(mockBalance);
     });
 
     it("should return null when account has no balance", async () => {
-      jest.mocked(network).mockResolvedValue({ data: null });
+      jest.mocked(network).mockResolvedValue({ data: null, status: 200 });
 
       const result = await apiClient.getAccountBalance(mockCurrency, mockAddress);
 
@@ -395,19 +388,15 @@ describe("apiClient", () => {
     });
 
     it("should use correct network configuration for testnet", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: "500000u64" });
+      jest.mocked(network).mockResolvedValue({ data: "500000u64", status: 200 });
 
       await apiClient.getAccountBalance(mockCurrency, mockAddress);
 
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `https://api.testnet.aleo.network/v2/testnet/program/credits.aleo/mapping/account/${mockAddress}`,
+        url: `${testnetConfig.nodeUrl}/v2/${testnetConfig.networkType}/program/credits.aleo/mapping/account/${mockAddress}`,
       });
     });
   });
@@ -422,7 +411,7 @@ describe("apiClient", () => {
         id: "account-uuid-456",
         key: "api-key-789",
       };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.registerNewAccount(mockCurrency, mockUsername);
 
@@ -431,7 +420,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://api.aleo.network/consumers",
+        url: `${mockNetworkConfig.nodeUrl}/consumers`,
         data: { username: mockUsername },
       });
       expect(result).toEqual(mockResponse);
@@ -458,6 +447,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({
         data: { exp: mockExp },
         headers: { authorization: mockToken },
+        status: 200,
       });
 
       const result = await apiClient.getAccountJWT(mockCurrency, mockApiKey, mockConsumerId);
@@ -465,7 +455,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: `https://api.provable.com/jwts/${mockConsumerId}`,
+        url: `${mockNetworkConfig.nodeUrl}/jwts/${mockConsumerId}`,
         headers: { "X-Provable-API-Key": mockApiKey },
       });
       expect(result).toEqual({ token: mockToken, exp: mockExp });
@@ -475,6 +465,7 @@ describe("apiClient", () => {
       jest.mocked(network).mockResolvedValue({
         data: { exp: 1700100000 },
         headers: {},
+        status: 200,
       });
 
       const result = await apiClient.getAccountJWT(mockCurrency, mockApiKey, mockConsumerId);
@@ -485,6 +476,7 @@ describe("apiClient", () => {
     it("should return empty token when headers are absent", async () => {
       jest.mocked(network).mockResolvedValue({
         data: { exp: 1700100000 },
+        status: 200,
       });
 
       const result = await apiClient.getAccountJWT(mockCurrency, mockApiKey, mockConsumerId);
@@ -502,42 +494,40 @@ describe("apiClient", () => {
     });
   });
 
-  describe("getPublicKey", () => {
+  describe("getScannerPublicKey", () => {
     const mockJwt = "Bearer eyJhbGciOiJIUzI1NiJ9.test";
 
-    it("should fetch the public key successfully", async () => {
+    it("should fetch the scanner public key successfully", async () => {
       const mockResponse = {
         key_id: "key-id-123",
         public_key: "pubkey-abc-456",
       };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
-      const result = await apiClient.getPublicKey(mockCurrency, mockJwt);
+      const result = await apiClient.getScannerPublicKey(mockCurrency, mockJwt);
 
       expect(getNetworkConfig).toHaveBeenCalledTimes(1);
       expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://api.provable.com/scanner/mainnet/pubkey",
+        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/pubkey`,
         headers: { Authorization: mockJwt },
       });
       expect(result).toEqual(mockResponse);
     });
 
     it("should use the correct network type in the URL", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" } });
+      jest
+        .mocked(network)
+        .mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" }, status: 200 });
 
-      await apiClient.getPublicKey(mockCurrency, mockJwt);
+      await apiClient.getScannerPublicKey(mockCurrency, mockJwt);
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://api.provable.com/scanner/testnet/pubkey",
+        url: `${testnetConfig.nodeUrl}/scanner/testnet/pubkey`,
         headers: { Authorization: mockJwt },
       });
     });
@@ -546,7 +536,9 @@ describe("apiClient", () => {
       const mockError = new Error("Forbidden");
       jest.mocked(network).mockRejectedValue(mockError);
 
-      await expect(apiClient.getPublicKey(mockCurrency, mockJwt)).rejects.toThrow("Forbidden");
+      await expect(apiClient.getScannerPublicKey(mockCurrency, mockJwt)).rejects.toThrow(
+        "Forbidden",
+      );
     });
   });
 
@@ -557,7 +549,7 @@ describe("apiClient", () => {
 
     it("should register for encrypted record scanning successfully", async () => {
       const mockResponse = { uuid: "scan-uuid-789" };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.registerForScanningAccountRecordsEncrypted({
         currency: mockCurrency,
@@ -571,7 +563,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://api.aleo.network/scanner/mainnet/register/encrypted",
+        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/register/encrypted`,
         headers: { Authorization: mockJwt },
         data: { key_id: mockKeyId, ciphertext: mockEncryptedData },
       });
@@ -579,12 +571,8 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: { uuid: "scan-uuid-testnet" } });
+      jest.mocked(network).mockResolvedValue({ data: { uuid: "scan-uuid-testnet" }, status: 200 });
 
       await apiClient.registerForScanningAccountRecordsEncrypted({
         currency: mockCurrency,
@@ -596,7 +584,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://api.testnet.aleo.network/scanner/testnet/register/encrypted",
+        url: `${testnetConfig.nodeUrl}/scanner/${testnetConfig.networkType}/register/encrypted`,
         headers: { Authorization: mockJwt },
         data: { key_id: mockKeyId, ciphertext: mockEncryptedData },
       });
@@ -623,7 +611,7 @@ describe("apiClient", () => {
 
     it("should fetch the record scanner status successfully", async () => {
       const mockResponse = { synced: true, percentage: 100 };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(
         mockCurrency,
@@ -636,7 +624,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://api.aleo.network/scanner/mainnet/status",
+        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/status`,
         headers: { Authorization: mockAccessToken, "Content-Type": "application/json" },
         data: `"${mockUuid}"`,
       });
@@ -645,7 +633,7 @@ describe("apiClient", () => {
 
     it("should return partial sync status", async () => {
       const mockResponse = { synced: false, percentage: 42 };
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getRecordScannerStatus(
         mockCurrency,
@@ -658,19 +646,17 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: { synced: true, percentage: 100 } });
+      jest
+        .mocked(network)
+        .mockResolvedValue({ data: { synced: true, percentage: 100 }, status: 200 });
 
       await apiClient.getRecordScannerStatus(mockCurrency, mockAccessToken, mockUuid);
 
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://api.testnet.aleo.network/scanner/testnet/status",
+        url: `${testnetConfig.nodeUrl}/scanner/${testnetConfig.networkType}/status`,
         headers: { Authorization: mockAccessToken, "Content-Type": "application/json" },
         data: `"${mockUuid}"`,
       });
@@ -693,7 +679,7 @@ describe("apiClient", () => {
 
     it("should fetch owned records successfully", async () => {
       const mockResponse = [testnetPrivateRecord];
-      jest.mocked(network).mockResolvedValue({ data: mockResponse });
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
 
       const result = await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -707,7 +693,7 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledTimes(1);
       expect(network).toHaveBeenCalledWith({
         method: "POST",
-        url: "https://api.aleo.network/scanner/mainnet/records/owned",
+        url: `${mockNetworkConfig.nodeUrl}/scanner/${mockNetworkConfig.networkType}/records/owned`,
         headers: {
           Authorization: mockJwtToken,
           "X-Provable-API-Key": mockApiKey,
@@ -718,7 +704,7 @@ describe("apiClient", () => {
     });
 
     it("should include `unspent: true` in the request body when unspent is true", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -737,7 +723,7 @@ describe("apiClient", () => {
     });
 
     it("should include `unspent: false` in the request body when unspent is false", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -756,7 +742,7 @@ describe("apiClient", () => {
     });
 
     it("should omit `unspent` from the request body when not provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -771,7 +757,7 @@ describe("apiClient", () => {
 
     it("should include `filter.start` in the request body when start is provided", async () => {
       const mockStart = 14192648;
-      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -790,7 +776,7 @@ describe("apiClient", () => {
     });
 
     it("should omit `filter` from the request body when start is not provided", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -805,7 +791,7 @@ describe("apiClient", () => {
 
     it("should include both `unspent` and `filter.start` when both are provided", async () => {
       const mockStart = 14192648;
-      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord] });
+      jest.mocked(network).mockResolvedValue({ data: [testnetPrivateRecord], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -825,7 +811,7 @@ describe("apiClient", () => {
     });
 
     it("should return an empty array when no records are found", async () => {
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       const result = await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -852,12 +838,8 @@ describe("apiClient", () => {
     });
 
     it("should use the correct network type in the URL for testnet", async () => {
-      const testnetConfig = {
-        nodeUrl: "https://api.testnet.aleo.network",
-        networkType: "testnet",
-      };
       jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
-      jest.mocked(network).mockResolvedValue({ data: [] });
+      jest.mocked(network).mockResolvedValue({ data: [], status: 200 });
 
       await apiClient.getAccountOwnedRecords({
         currency: mockCurrency,
@@ -870,9 +852,236 @@ describe("apiClient", () => {
       expect(network).toHaveBeenCalledWith(
         expect.objectContaining({
           method: "POST",
-          url: "https://api.testnet.aleo.network/scanner/testnet/records/owned",
+          url: `${testnetConfig.nodeUrl}/scanner/${testnetConfig.networkType}/records/owned`,
         }),
       );
+    });
+  });
+
+  describe("getProvePublicKey", () => {
+    const mockJwt = "Bearer eyJhbGciOiJIUzI1NiJ9.test";
+
+    it("should fetch the prove public key successfully", async () => {
+      const mockResponse = {
+        key_id: "key-id-123",
+        public_key: "pubkey-abc-456",
+      };
+      jest.mocked(network).mockResolvedValue({ data: mockResponse, status: 200 });
+
+      const result = await apiClient.getProvePublicKey({ currency: mockCurrency, jwt: mockJwt });
+
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/pubkey`,
+        headers: { Authorization: mockJwt },
+      });
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should use the correct network type in the URL", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest
+        .mocked(network)
+        .mockResolvedValue({ data: { key_id: "k1", public_key: "pk1" }, status: 200 });
+
+      await apiClient.getProvePublicKey({ currency: mockCurrency, jwt: mockJwt });
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "GET",
+        url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/pubkey`,
+        headers: { Authorization: mockJwt },
+      });
+    });
+
+    it("should throw an error when network request fails", async () => {
+      const mockError = new Error("Forbidden");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        apiClient.getProvePublicKey({ currency: mockCurrency, jwt: mockJwt }),
+      ).rejects.toThrow("Forbidden");
+    });
+  });
+
+  describe("submitDelegatedProvingRequest", () => {
+    const mockAuthorization = getMockedAuthorization();
+    const mockFeeAuthorization = getMockedFeeAuthorization();
+    const mockDelegatedProvingResponse = getMockedDelegatedProvingResponse();
+
+    it("should submit delegated proving request successfully", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      const result = await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: true,
+        jwt: "jwt_token",
+      });
+
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/prove`,
+        headers: {
+          Authorization: "jwt_token",
+        },
+        data: {
+          authorization: mockAuthorization,
+          fee_authorization: mockFeeAuthorization,
+          broadcast: true,
+        },
+      });
+      expect(result).toEqual(mockDelegatedProvingResponse);
+    });
+
+    it("should use correct network URL for testnet", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: true,
+        jwt: "jwt_token",
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/prove`,
+        }),
+      );
+    });
+
+    it("should throw error when network request fails", async () => {
+      const mockError = new Error("Proving request failed");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        apiClient.submitDelegatedProvingRequest({
+          currency: mockCurrency,
+          authorization: mockAuthorization,
+          feeAuthorization: mockFeeAuthorization,
+          broadcast: true,
+          jwt: "jwt_token",
+        }),
+      ).rejects.toThrow("Proving request failed");
+    });
+
+    it("should submit without broadcast when broadcast is false", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        feeAuthorization: mockFeeAuthorization,
+        broadcast: false,
+        jwt: "jwt_token",
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            broadcast: false,
+          }),
+        }),
+      );
+    });
+
+    it("should not send fee_authorization when feeAuthorization is not provided", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      await apiClient.submitDelegatedProvingRequest({
+        currency: mockCurrency,
+        authorization: mockAuthorization,
+        broadcast: true,
+        jwt: "jwt_token",
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            authorization: mockAuthorization,
+            broadcast: true,
+          },
+        }),
+      );
+    });
+  });
+
+  describe("submitEncryptedDelegatedProvingRequest", () => {
+    const mockJwt = "jwt_token";
+    const mockKeyId = "key-id-123";
+    const mockEncryptedData = "encrypted-ciphertext-xyz";
+    const mockDelegatedProvingResponse = getMockedDelegatedProvingResponse();
+
+    it("should submit encrypted delegated proving request successfully", async () => {
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      const result = await apiClient.submitEncryptedDelegatedProvingRequest({
+        currency: mockCurrency,
+        jwt: mockJwt,
+        keyId: mockKeyId,
+        encryptedData: mockEncryptedData,
+      });
+
+      expect(getNetworkConfig).toHaveBeenCalledTimes(1);
+      expect(getNetworkConfig).toHaveBeenCalledWith(mockCurrency);
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith({
+        method: "POST",
+        url: `${mockNetworkConfig.nodeUrl}/prove/${mockNetworkConfig.networkType}/prove/encrypted`,
+        headers: {
+          Authorization: mockJwt,
+        },
+        data: {
+          key_id: mockKeyId,
+          ciphertext: mockEncryptedData,
+        },
+      });
+      expect(result).toEqual(mockDelegatedProvingResponse);
+    });
+
+    it("should use correct network URL for testnet", async () => {
+      jest.mocked(getNetworkConfig).mockReturnValue(testnetConfig);
+      jest.mocked(network).mockResolvedValue({ data: mockDelegatedProvingResponse, status: 200 });
+
+      await apiClient.submitEncryptedDelegatedProvingRequest({
+        currency: mockCurrency,
+        jwt: mockJwt,
+        keyId: mockKeyId,
+        encryptedData: mockEncryptedData,
+      });
+
+      expect(network).toHaveBeenCalledTimes(1);
+      expect(network).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: `${testnetConfig.nodeUrl}/prove/${testnetConfig.networkType}/prove/encrypted`,
+        }),
+      );
+    });
+
+    it("should throw error when network request fails", async () => {
+      const mockError = new Error("Proving request failed");
+      jest.mocked(network).mockRejectedValue(mockError);
+
+      await expect(
+        apiClient.submitEncryptedDelegatedProvingRequest({
+          currency: mockCurrency,
+          jwt: mockJwt,
+          keyId: mockKeyId,
+          encryptedData: mockEncryptedData,
+        }),
+      ).rejects.toThrow("Proving request failed");
     });
   });
 });

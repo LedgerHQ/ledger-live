@@ -16,12 +16,17 @@ import { PendingOperationParamList } from "../types";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigation/navigateBackToSwapTab";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
+  const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
   const { swapId, provider, toCurrency, fromCurrency } = route.params.swapOperation;
+  const { isEmbeddedSwap, sponsored } = route.params;
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const syncAccounts = useSyncAllAccounts();
+  const supportsSwapTabRoute = hasSwapTabRoute(navigation.getState());
 
   const navigateToSwapForm = useCallback(() => {
     track("button_clicked", {
@@ -30,13 +35,11 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
       swapVersion: SWAP_VERSION,
     });
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: ScreenName.SwapTab }],
-      }),
-    );
-  }, [navigation]);
+    navigateBackToSwapTab({
+      navigation,
+      shouldDisplayWallet40MainNav,
+    });
+  }, [navigation, shouldDisplayWallet40MainNav]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -51,13 +54,24 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, []);
 
   const onComplete = useCallback(() => {
+    if (!supportsSwapTabRoute) {
+      // In SwapSubScreensNavigator, keep navigation local to avoid resetting with unknown routes.
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: ScreenName.SwapHistory }],
+        }),
+      );
+      return;
+    }
+
     navigation.dispatch(
       CommonActions.reset({
         index: 1,
         routes: [{ name: ScreenName.SwapTab }, { name: ScreenName.SwapHistory }],
       }),
     );
-  }, [navigation]);
+  }, [navigation, supportsSwapTabRoute]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -67,6 +81,8 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         providerName={provider}
         targetCurrency={toCurrency?.id}
         sourceCurrency={fromCurrency?.id}
+        isEmbeddedSwap={isEmbeddedSwap !== undefined ? String(isEmbeddedSwap) : undefined}
+        sponsored={sponsored !== undefined ? String(sponsored) : undefined}
         avoidDuplicates={true}
       />
       <View style={styles.wrapper}>

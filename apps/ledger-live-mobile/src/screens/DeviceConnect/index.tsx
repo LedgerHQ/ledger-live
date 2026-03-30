@@ -36,12 +36,21 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const { t } = useTranslation();
   const [device, setDevice] = useState<Device | null | undefined>();
   const hasHandledSuccessRef = useRef(false);
-  const { appName = "BOLOS", onSuccess } = route.params;
+  const {
+    appName = "BOLOS",
+    requireLatestFirmware,
+    allowPartialDependencies,
+    skipAppInstallIfNotFound,
+    onSuccess,
+  } = route.params;
   const request = useMemo(
     () => ({
       appName,
+      requireLatestFirmware,
+      allowPartialDependencies,
+      skipAppInstallIfNotFound,
     }),
-    [appName],
+    [appName, requireLatestFirmware, allowPartialDependencies, skipAppInstallIfNotFound],
   );
   const action = useAppDeviceAction();
 

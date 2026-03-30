@@ -1,5 +1,4 @@
-import type { ConcordiumCoinConfig } from "../types";
-import { VALID_ADDRESS } from "../test/fixtures";
+import { TESTNET_COIN_CONFIG, VALID_ADDRESS } from "../test/fixtures";
 import { createApi } from ".";
 
 jest.mock("../logic", () => ({
@@ -9,7 +8,6 @@ jest.mock("../logic", () => ({
   craftRawTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
-  getBlock: jest.fn(),
   getBlockInfo: jest.fn(),
   getNextValidSequence: jest.fn(),
   lastBlock: jest.fn(),
@@ -19,19 +17,10 @@ jest.mock("../logic", () => ({
 const {
   broadcast: broadcastMock,
   getBalance: getBalanceMock,
-  getBlock: getBlockMock,
   getBlockInfo: getBlockInfoMock,
   lastBlock: lastBlockMock,
   listOperations: listOperationsMock,
 } = jest.requireMock("../logic");
-
-const mockConfig: ConcordiumCoinConfig = {
-  networkType: "testnet",
-  grpcUrl: "https://grpc.testnet.concordium.com",
-  grpcPort: 20000,
-  proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-  minReserve: 0,
-};
 
 describe("api/index", () => {
   beforeEach(() => {
@@ -39,7 +28,7 @@ describe("api/index", () => {
   });
 
   it("should return every api methods", () => {
-    expect(createApi(mockConfig)).toEqual({
+    expect(createApi(TESTNET_COIN_CONFIG, "concordium_testnet")).toEqual({
       broadcast: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
@@ -49,62 +38,78 @@ describe("api/index", () => {
       getBlock: expect.any(Function),
       getBlockInfo: expect.any(Function),
       getRewards: expect.any(Function),
+      getNextSequence: expect.any(Function),
       getStakes: expect.any(Function),
       getValidators: expect.any(Function),
       lastBlock: expect.any(Function),
       listOperations: expect.any(Function),
+      validateAddress: expect.any(Function),
+      validateIntent: expect.any(Function),
     });
   });
 
   describe("broadcast", () => {
     it("should call broadcast with transaction and currency", async () => {
-      const api = createApi(mockConfig);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       broadcastMock.mockResolvedValue("tx-hash-123");
 
       const result = await api.broadcast("signed-tx-data");
 
-      expect(broadcastMock).toHaveBeenCalledWith(
-        "signed-tx-data",
-        expect.objectContaining({ id: "concordium" }),
-      );
+      expect(broadcastMock).toHaveBeenCalledWith("signed-tx-data", "concordium_testnet");
       expect(result).toBe("tx-hash-123");
     });
   });
 
   describe("getBalance", () => {
     it("should call getBalance with address and currency", async () => {
-      const api = createApi(mockConfig);
-      getBalanceMock.mockResolvedValue(BigInt(5000000));
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+      const mockBalances = [{ asset: { type: "native" }, value: BigInt(5000000) }];
+      getBalanceMock.mockResolvedValue(mockBalances);
 
       const result = await api.getBalance(VALID_ADDRESS);
 
-      expect(getBalanceMock).toHaveBeenCalledWith(
-        VALID_ADDRESS,
-        expect.objectContaining({ id: "concordium" }),
-      );
-      expect(result).toBe(BigInt(5000000));
+      expect(getBalanceMock).toHaveBeenCalledWith(VALID_ADDRESS, "concordium_testnet");
+      expect(result).toEqual(mockBalances);
     });
   });
 
   describe("lastBlock", () => {
     it("should call lastBlock with currency", async () => {
-      const api = createApi(mockConfig);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockBlockInfo = { height: 1000, hash: "block-hash", time: new Date() };
       lastBlockMock.mockResolvedValue(mockBlockInfo);
 
       const result = await api.lastBlock();
 
-      expect(lastBlockMock).toHaveBeenCalledWith(expect.objectContaining({ id: "concordium" }));
+      expect(lastBlockMock).toHaveBeenCalledWith("concordium_testnet");
       expect(result).toEqual(mockBlockInfo);
     });
   });
 
   describe("listOperations", () => {
     it("should call listOperations with address, pagination and currency", async () => {
-      const api = createApi(mockConfig);
-      const mockOperations = [{ id: "op1" }, { id: "op2" }];
-      const mockCursor = "";
-      listOperationsMock.mockResolvedValue([mockOperations, mockCursor]);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+      const mockRawPage = {
+        items: [
+          {
+            hash: "aa".repeat(32),
+            type: "OUT",
+            sender: VALID_ADDRESS,
+            recipient: "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G",
+            amount: "1000000",
+            fee: "500",
+            value: "1000500",
+            memo: undefined,
+            date: new Date("2024-06-01T00:00:00Z"),
+            blockHash: "bbcc",
+            blockHeight: 500,
+            failed: false,
+            id: 42,
+          },
+        ],
+        next: undefined,
+      };
+      listOperationsMock.mockResolvedValue(mockRawPage);
       const pagination = { minHeight: 100 };
 
       const result = await api.listOperations(VALID_ADDRESS, pagination);
@@ -112,54 +117,47 @@ describe("api/index", () => {
       expect(listOperationsMock).toHaveBeenCalledWith(
         VALID_ADDRESS,
         pagination,
-        expect.objectContaining({ id: "concordium" }),
+        "concordium_testnet",
       );
-      expect(result).toEqual([mockOperations, mockCursor]);
-    });
-  });
-
-  describe("getBlock", () => {
-    it("should call getBlock with height and currency", async () => {
-      const api = createApi(mockConfig);
-      const mockBlock = { height: 500, hash: "block-500", transactions: [] };
-      getBlockMock.mockResolvedValue(mockBlock);
-
-      const result = await api.getBlock(500);
-
-      expect(getBlockMock).toHaveBeenCalledWith(500, expect.objectContaining({ id: "concordium" }));
-      expect(result).toEqual(mockBlock);
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].type).toBe("OUT");
+      expect(result.items[0].value).toBe(BigInt(1000500));
+      expect(result.items[0].tx.fees).toBe(BigInt(500));
+      expect(result.next).toBeUndefined();
     });
   });
 
   describe("getBlockInfo", () => {
     it("should call getBlockInfo with height and currency", async () => {
-      const api = createApi(mockConfig);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       const mockBlockInfo = { height: 600, hash: "block-600", time: new Date() };
       getBlockInfoMock.mockResolvedValue(mockBlockInfo);
 
       const result = await api.getBlockInfo(600);
 
-      expect(getBlockInfoMock).toHaveBeenCalledWith(
-        600,
-        expect.objectContaining({ id: "concordium" }),
-      );
+      expect(getBlockInfoMock).toHaveBeenCalledWith(600, "concordium_testnet");
       expect(result).toEqual(mockBlockInfo);
     });
   });
 
   describe("unsupported methods", () => {
+    it("should throw error for getBlock", () => {
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+      expect(() => api.getBlock(500)).toThrow("getBlock is not supported");
+    });
+
     it("should throw error for getStakes", () => {
-      const api = createApi(mockConfig);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getStakes("address")).toThrow("getStakes is not supported");
     });
 
     it("should throw error for getRewards", () => {
-      const api = createApi(mockConfig);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getRewards("address")).toThrow("getRewards is not supported");
     });
 
     it("should throw error for getValidators", () => {
-      const api = createApi(mockConfig);
+      const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       expect(() => api.getValidators()).toThrow("getValidators is not supported");
     });
   });

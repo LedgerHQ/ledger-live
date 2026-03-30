@@ -1,4 +1,4 @@
-import { getMainAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount, isTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { Account, AccountBridge, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";

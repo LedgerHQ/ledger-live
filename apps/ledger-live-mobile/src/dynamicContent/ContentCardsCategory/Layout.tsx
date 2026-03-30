@@ -1,15 +1,18 @@
 import React from "react";
 import { Linking } from "react-native";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import HorizontalCard from "../../contentCards/cards/horizontal";
+import { ContentBannerActionCard } from "../../contentCards/cards/contentBannerAction";
 import {
   AnyContentCard,
   BrazeContentCard,
   CategoryContentCard,
+  ContentCardLocation,
   ContentCardsLayout,
   ContentCardsType,
 } from "../types";
 import { Flex } from "@ledgerhq/native-ui";
-import { ContentCardMetadata } from "~/contentCards/cards/types";
+import { ContentCardMetadata, ContentCardProps } from "~/contentCards/cards/types";
 import { contentCardItem } from "~/contentCards/cards/utils";
 import {
   compareCards,
@@ -67,11 +70,23 @@ type LayoutProps = {
   cards: BrazeContentCard[];
 };
 
+type LayoutCardItemProps = ContentCardProps & { widthFactor?: number };
+
 const Layout = ({ category, cards }: LayoutProps) => {
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
+  const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
+  const isContentBannerVariant =
+    shouldDisplayBrazePlacement &&
+    category.location === ContentCardLocation.TopWallet &&
+    category.cardsType === ContentCardsType.action;
 
-  const onCardCick = (card: AnyContentCard, displayedPosition?: number) => {
-    trackContentCardEvent("contentcard_clicked", {
+  const contentCardsType = contentCardsTypes[category.cardsType];
+  const contentCardComponent = isContentBannerVariant
+    ? ContentBannerActionCard
+    : contentCardsType.contentCardComponent;
+
+  const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
+    await trackContentCardEvent("contentcard_clicked", {
       ...card.extras,
       page: card.location,
       campaign: card.id,
@@ -83,7 +98,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
     logClickCard(card.id);
     if (card.link) {
-      Linking.canOpenURL(card.link).then(() => Linking.openURL(card.link as string));
+      const canOpenLink = await Linking.canOpenURL(card.link);
+      if (canOpenLink) {
+        await Linking.openURL(card.link as string);
+      }
     }
   };
 
@@ -100,7 +118,6 @@ const Layout = ({ category, cards }: LayoutProps) => {
     dismissCard(card.id);
   };
 
-  const contentCardsType = contentCardsTypes[category.cardsType];
   const cardsMapped = cards
     .map(card => contentCardsType.mappingFunction(card))
     .filter(card => card);
@@ -108,8 +125,9 @@ const Layout = ({ category, cards }: LayoutProps) => {
   const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
 
   const items = cardsSorted.map((card, index) =>
-    contentCardItem(contentCardsType.contentCardComponent, {
+    contentCardItem(contentCardComponent, {
       ...card,
+      type: category.cardsType,
       widthFactor:
         category.cardsLayout === ContentCardsLayout.carousel
           ? card.carouselWidthFactor
@@ -120,11 +138,11 @@ const Layout = ({ category, cards }: LayoutProps) => {
         displayedPosition: index,
 
         actions: {
-          onClick: card.link ? () => onCardCick(card, index) : undefined,
+          onClick: card.link ? () => onCardClick(card, index) : undefined,
           onDismiss: category.isDismissable ? () => onCardDismiss(card, index) : undefined,
         },
       },
-    }),
+    } as LayoutCardItemProps),
   );
 
   switch (category.cardsLayout) {

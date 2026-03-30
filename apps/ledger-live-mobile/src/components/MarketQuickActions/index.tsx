@@ -34,7 +34,11 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
           Icon: quickActionsItem.icon,
           children: t(prop.name),
           onPress: () => {
-            track("button_clicked", { button: prop.analytics, page: router.name });
+            track("button_clicked", {
+              button: prop.analytics,
+              page: router.name,
+              currency: quickActionsProps.currency?.ticker,
+            });
             if (quickActionsItem.customHandler) {
               quickActionsItem.customHandler();
             } else if (quickActionsItem.route) {
@@ -44,7 +48,14 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
           disabled: quickActionsItem.disabled,
         };
       }),
-    [quickActionsList, hideQuickActions, t, router.name, navigation],
+    [
+      quickActionsList,
+      hideQuickActions,
+      t,
+      router.name,
+      navigation,
+      quickActionsProps.currency?.ticker,
+    ],
   );
 
   if (quickActionsData.length === 0) return null;
@@ -54,7 +65,7 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
       <QuickActionList
         data={quickActionsData}
         key={quickActionsData.length}
-        numColumns={quickActionsData.length}
+        numColumns={3}
         id="asset_five_columns"
         testID="market-quick-action-button"
       />

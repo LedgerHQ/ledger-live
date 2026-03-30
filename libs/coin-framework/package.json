@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "6.17.0",
+  "version": "7.0.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -43,39 +43,13 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./account": {
-      "require": "./lib/account/index.js",
-      "default": "./lib-es/account/index.js"
-    },
-    "./batcher/*": {
-      "require": "./lib/batcher/*.js",
-      "default": "./lib-es/batcher/*.js"
-    },
-    "./bot": {
-      "require": "./lib/bot/index.js",
-      "default": "./lib-es/bot/index.js"
-    },
-    "./bridge": {
-      "require": "./lib/bridge/index.js",
-      "default": "./lib-es/bridge/index.js"
-    },
     "./currencies": {
+      "@ledgerhq/source": "./src/currencies/index.ts",
       "require": "./lib/currencies/index.js",
       "default": "./lib-es/currencies/index.js"
     },
-    "./nft/*": {
-      "require": "./lib/nft/*.js",
-      "default": "./lib-es/nft/*.js"
-    },
-    "./serialization": {
-      "require": "./lib/serialization/index.js",
-      "default": "./lib-es/serialization/index.js"
-    },
-    "./transaction/*": {
-      "require": "./lib/transaction/*.js",
-      "default": "./lib-es/transaction/*.js"
-    },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -83,49 +57,28 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-currency-format": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
-    "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "bip32-path": "^0.4.2",
-    "imurmurhash": "^0.1.4",
-    "eip55": "^2.1.0",
-    "expect": "catalog:",
-    "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
-    "prando": "^6.0.1",
-    "rxjs": "catalog:",
-    "uuid": "11.1.0"
+    "expect": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "@types/imurmurhash": "^0.1.4",
-    "@ledgerhq/live-dmk-speculos": "workspace:^",
-    "@types/invariant": "^2.2.2",
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
-    "@types/lodash": "^4.14.191",
-    "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",
     "jest": "catalog:",
-    "timemachine": "^0.3.2",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"
   },
   "scripts": {
     "clean": "rm -rf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

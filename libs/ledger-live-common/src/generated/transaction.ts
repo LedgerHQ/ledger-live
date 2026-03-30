@@ -1,3 +1,5 @@
+import stellar from "../families/stellar/transaction";
+import xrp from "../families/xrp/transaction";
 import aleo from "@ledgerhq/coin-aleo/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import aptos from "@ledgerhq/coin-aptos/transaction";
@@ -19,16 +21,16 @@ import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
 import solana from "@ledgerhq/coin-solana/transaction";
 import stacks from "@ledgerhq/coin-stacks/transaction";
-import stellar from "@ledgerhq/coin-stellar/transaction";
 import tezos from "@ledgerhq/coin-tezos/transaction";
 import ton from "@ledgerhq/coin-ton/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import vechain from "@ledgerhq/coin-vechain/transaction";
-import xrp from "@ledgerhq/coin-xrp/transaction";
 import sui from "@ledgerhq/coin-sui/transaction";
 import mina from "@ledgerhq/coin-mina/transaction";
 
 export default {
+  stellar,
+  xrp,
   aleo,
   algorand,
   aptos,
@@ -50,12 +52,10 @@ export default {
   polkadot,
   solana,
   stacks,
-  stellar,
   tezos,
   ton,
   tron,
   vechain,
-  xrp,
   sui,
   mina,
 };

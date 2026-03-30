@@ -16,11 +16,13 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { useRoute } from "@react-navigation/core";
 
-const notificationsMapping = {
+const notificationsMapping: Record<keyof State["settings"]["notifications"], string> = {
   areNotificationsAllowed: "allowed",
   announcementsCategory: "announcements",
   largeMoverCategory: "largeMover",
   transactionsAlertsCategory: "transactionsAlerts",
+  totalMarketCap: "totalMarketCap",
+  topGainersLosers: "topGainersLosers",
 };
 
 type NotificationRowProps = {
@@ -189,6 +191,18 @@ function NotificationsSettings() {
           hiddenNotificationCategories.includes("transactionsAlertsCategory") ? null : (
             <NotificationSettingsRow
               notificationKey={"transactionsAlertsCategory"}
+              disabled={disableSubSettings}
+            />
+          )}
+          {hiddenNotificationCategories.includes("totalMarketCap") ? null : (
+            <NotificationSettingsRow
+              notificationKey={"totalMarketCap"}
+              disabled={disableSubSettings}
+            />
+          )}
+          {hiddenNotificationCategories.includes("topGainersLosers") ? null : (
+            <NotificationSettingsRow
+              notificationKey={"topGainersLosers"}
               disabled={disableSubSettings}
             />
           )}

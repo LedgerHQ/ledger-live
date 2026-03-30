@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/ledger-libs",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "scripts": {},
   "dependencies": {
     "axios": "catalog:",
@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "eslint-plugin-react": "^7.33.2",
     "jest": "catalog:",
     "@swc/jest": "catalog:",

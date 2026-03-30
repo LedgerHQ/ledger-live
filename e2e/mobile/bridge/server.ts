@@ -13,6 +13,7 @@ import {
 import { FeatureId } from "@ledgerhq/types-live";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { v4 as uuid } from "uuid";
 
 const RESPONSE_TIMEOUT = 10000;
 
@@ -42,9 +43,7 @@ export async function findFreePort(): Promise<number> {
 }
 
 function uniqueId(): string {
-  const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
-  const randomString = Math.random().toString(36).slice(2, 7); // Generate random string
-  return timestamp + randomString; // Concatenate timestamp and random string
+  return uuid();
 }
 
 function isFeatureId(
@@ -185,16 +184,16 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
   });
 }
 
-export async function addKnownSpeculos(proxyAddress: string) {
+export async function addKnownSpeculos(address: string) {
   postMessage({
     type: "addKnownSpeculos",
     id: uniqueId(),
-    payload: JSON.stringify({ address: proxyAddress, model: getSpeculosModel() }),
+    payload: JSON.stringify({ address, model: getSpeculosModel() }),
   });
 }
 
-export async function removeKnownSpeculos(id: string) {
-  postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
+export async function removeKnownSpeculos(address: string) {
+  postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: address });
 }
 
 function onMessage(messageStr: string) {

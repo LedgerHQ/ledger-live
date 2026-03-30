@@ -1,5 +1,5 @@
 import "./live-common-setup-network";
-import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -69,6 +69,8 @@ setSupportedCurrencies([
   "optimism_sepolia",
   "linea",
   "linea_sepolia",
+  "mantle",
+  "mantle_sepolia",
   "mantra",
   "xion",
   "zenrock",
@@ -82,6 +84,7 @@ setSupportedCurrencies([
   "avalanche_c_chain_fuji",
   "bitlayer",
   "klaytn_baobab",
+  "polygon_amoy",
   "shape",
   "story",
 ]);

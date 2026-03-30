@@ -16,7 +16,6 @@ export const InvalidExplorerResponse = createCustomErrorClass("InvalidExplorerRe
 // Node
 export const UnknownNode = createCustomErrorClass("UnknownNode");
 export const LedgerNodeUsedIncorrectly = createCustomErrorClass("LedgerNodeUsedIncorrectly");
-export const ExternalNodeUsedIncorrectly = createCustomErrorClass("ExternalNodeUsedIncorrectly");
 export const UnsupportedRpcMethodError = createCustomErrorClass<{
   method: string;
   rawError: unknown;
@@ -35,4 +34,3 @@ export const InsufficientFunds = createCustomErrorClass("InsufficientFunds");
 // Nfts
 export const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 export const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
-export const QuantityNeedsToBePositive = createCustomErrorClass("QuantityNeedsToBePositive");

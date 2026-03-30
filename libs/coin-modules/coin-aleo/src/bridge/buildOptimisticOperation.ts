@@ -1,7 +1,11 @@
 import type { Account, OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AleoOperation, Transaction } from "../types";
-import { getOperationTransactionType } from "../logic/utils";
+import {
+  getFunctionNameFromTransactionType,
+  getNextSequenceNumber,
+  getOperationTransactionType,
+} from "../logic/utils";
 
 export function buildOptimisticOperation({
   account,
@@ -26,9 +30,10 @@ export function buildOptimisticOperation({
     recipients: [transaction.recipient],
     accountId: account.id,
     date: new Date(),
+    transactionSequenceNumber: getNextSequenceNumber(account),
     extra: {
-      functionId: "",
-      transactionType: getOperationTransactionType(transaction.type),
+      functionId: getFunctionNameFromTransactionType(transaction.mode),
+      transactionType: getOperationTransactionType(transaction.mode),
     },
   };
 

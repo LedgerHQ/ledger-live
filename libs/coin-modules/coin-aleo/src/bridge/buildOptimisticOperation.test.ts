@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { getMockedTransaction } from "../__tests__/fixtures/transaction.fixture";
@@ -13,7 +13,7 @@ describe("buildOptimisticOperation", () => {
       amount: new BigNumber(5_000_000),
       fees: new BigNumber(34_060),
       recipient: "aleo1recipient123",
-      type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     });
 
     const operation = buildOptimisticOperation({ account, transaction });
@@ -30,8 +30,9 @@ describe("buildOptimisticOperation", () => {
       recipients: [transaction.recipient],
       accountId: account.id,
       date: expect.any(Date),
+      transactionSequenceNumber: expect.any(BigNumber),
       extra: {
-        functionId: "",
+        functionId: "transfer_public",
         transactionType: "public",
       },
     });

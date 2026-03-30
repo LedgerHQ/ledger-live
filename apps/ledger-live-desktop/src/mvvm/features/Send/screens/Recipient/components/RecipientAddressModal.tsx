@@ -21,13 +21,7 @@ export function RecipientAddressModal({
   onAddressSelected,
   recipientSupportsDomain = false,
 }: RecipientAddressModalProps) {
-  const {
-    handleRecentAddressSelect,
-    handleAccountSelect,
-    handleAddressSelect,
-    handleRemoveAddress,
-    ...viewModel
-  } = useRecipientAddressModalViewModel({
+  const { handleAddressSelect, ...viewModel } = useRecipientAddressModalViewModel({
     account,
     parentAccount,
     currency,
@@ -35,14 +29,5 @@ export function RecipientAddressModal({
     recipientSupportsDomain,
   });
 
-  return (
-    <RecipientAddressModalView
-      {...viewModel}
-      currency={currency}
-      onRecentAddressSelect={handleRecentAddressSelect}
-      onAccountSelect={handleAccountSelect}
-      onAddressSelect={handleAddressSelect}
-      onRemoveAddress={handleRemoveAddress}
-    />
-  );
+  return <RecipientAddressModalView {...viewModel} onAddressSelect={handleAddressSelect} />;
 }

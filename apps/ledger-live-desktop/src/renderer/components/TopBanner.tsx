@@ -14,6 +14,7 @@ const IconContainer = styled.div`
   margin-right: 12px;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 const Container = styled(Box).attrs<{
@@ -36,6 +37,7 @@ const Container = styled(Box).attrs<{
 
 const RightContainer = styled.div`
   margin-left: auto;
+  flex-shrink: 0;
 `;
 
 export const FakeLink = styled.span<{

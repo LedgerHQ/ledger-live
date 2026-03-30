@@ -1,15 +1,16 @@
 import { useMemo } from "react";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector } from "~/context/hooks";
-import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 import { useToggleDiscreetMode } from "~/hooks/useToggleDiscreetMode";
 import { counterValueCurrencySelector } from "~/reducers/settings";
+import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { usePersistedPortfolioBalance } from "./usePersistedPortfolioBalance";
 import {
   PortfolioBalanceState,
   PortfolioBalanceSectionProps,
   UsePortfolioBalanceSectionViewModelResult,
 } from "./types";
-
-const DEFAULT_RANGE = "day";
 
 export const usePortfolioBalanceSectionViewModel = ({
   showAssets,
@@ -17,12 +18,33 @@ export const usePortfolioBalanceSectionViewModel = ({
 }: PortfolioBalanceSectionProps): UsePortfolioBalanceSectionViewModelResult => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { toggleDiscreetMode } = useToggleDiscreetMode();
-  const portfolio = usePortfolioAllAccounts({ range: DEFAULT_RANGE });
+  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
-  const { countervalueChange, balanceHistory, balanceAvailable } = portfolio;
+  const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
+
+  const { countervalueChange, balanceHistory } = portfolio;
   const lastItem = balanceHistory[balanceHistory.length - 1];
-  const balance = lastItem?.value ?? 0;
+  const latestBalance = lastItem?.value ?? 0;
   const unit = counterValueCurrency.units[0];
+
+  const effectiveLatestBalance = usePersistedPortfolioBalance(
+    latestBalance,
+    syncPhase,
+    counterValueCurrency.ticker,
+  );
+
+  // If MMKV has a cached balance from a previous session, treat it as available
+  // immediately so the cached value is shown at cold start instead of a skeleton.
+  const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
+
+  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
+    rawBalanceAvailable: effectiveRawBalanceAvailable,
+    syncPhase,
+    latestBalance: effectiveLatestBalance,
+    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+  });
+
+  const effectiveIsLoading = syncPhase === "syncing";
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {
@@ -34,12 +56,19 @@ export const usePortfolioBalanceSectionViewModel = ({
     return "normal";
   }, [isReadOnlyMode, showAssets]);
 
+  const isAnalyticPillVisible =
+    state === "normal" &&
+    (balanceAvailable || (shouldDisplayBalanceRefreshRework && effectiveIsLoading));
+
   return {
     state,
-    balance,
+    balance: displayedBalance,
     countervalueChange,
     unit,
     isBalanceAvailable: balanceAvailable,
+    isAnalyticPillVisible,
+    isLoading: effectiveIsLoading,
+    shouldDisplayBalanceRefreshRework,
     onToggleDiscreetMode: toggleDiscreetMode,
   };
 };

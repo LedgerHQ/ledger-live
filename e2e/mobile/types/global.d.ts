@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/triple-slash-reference */
 /* eslint-disable no-var */
 /// <reference path=".//global.d.ts" />
-import type { Subject, Subscription } from "rxjs";
+import type { Subject } from "rxjs";
 import type { Server, WebSocket } from "ws";
 import type { Application } from "../page";
 import type { MessageData, ServerData } from "../bridge/types";
@@ -27,7 +27,8 @@ import { CLI as CLIType } from "../utils/cliUtils";
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<string, number>;
-  var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
+  var speculosStartupErrorMessage: string | undefined;
+  var speculosFailureStderr: string | undefined;
   var webSocket: {
     wss: Server | undefined;
     ws: WebSocket | undefined;
@@ -58,11 +59,13 @@ declare global {
   var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
+  var getElementByIdWithDescendantTexts: typeof NativeElementHelpers.getElementByIdWithDescendantTexts;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
   var getElementsById: typeof NativeElementHelpers.getElementsById;
   var getIdByRegexp: typeof NativeElementHelpers.getIdByRegexp;
   var getIdOfElement: typeof NativeElementHelpers.getIdOfElement;
   var getTextOfElement: typeof NativeElementHelpers.getTextOfElement;
+  var IsIdPresent: typeof NativeElementHelpers.isIdPresent;
   var IsIdVisible: typeof NativeElementHelpers.isIdVisible;
   var scrollToId: typeof NativeElementHelpers.scrollToId;
   var scrollToText: typeof NativeElementHelpers.scrollToText;
@@ -93,5 +96,6 @@ declare global {
   var waitForCurrentWebviewUrlToContain: typeof WebElementHelpers.waitForCurrentWebviewUrlToContain;
   var waitForWebElementToBeEnabled: typeof WebElementHelpers.waitForWebElementToBeEnabled;
   var waitForWebElementToMatchRegex: typeof WebElementHelpers.waitForWebElementToMatchRegex;
+  var waitWebElement: typeof WebElementHelpers.waitWebElement;
   var waitWebElementByTestId: typeof WebElementHelpers.waitWebElementByTestId;
 }

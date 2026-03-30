@@ -1,25 +1,25 @@
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
   updateTransaction,
   makeScanAccounts,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { NearAccount, Transaction, TransactionStatus } from "../types";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import { preload, hydrate, getPreloadStrategy } from "../preload";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { sync, getAccountShape } from "../synchronisation";
-import { prepareTransaction } from "../prepareTransaction";
+import { broadcast } from "../broadcast";
 import { NearCoinConfig, setCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
-import { broadcast } from "../broadcast";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { preload, hydrate, getPreloadStrategy } from "../preload";
+import { prepareTransaction } from "../prepareTransaction";
+import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
+import { buildSignOperation } from "../signOperation";
 import { NearSigner } from "../signer";
+import { sync, getAccountShape } from "../synchronisation";
+import type { NearAccount, Transaction, TransactionStatus } from "../types";
 import { validateAddress } from "../validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {

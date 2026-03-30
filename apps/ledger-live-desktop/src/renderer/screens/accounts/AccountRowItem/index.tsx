@@ -8,7 +8,7 @@ import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContext
 import Text from "~/renderer/components/Text";
 import TokenRow from "~/renderer/components/TokenRow";
 import AngleDown from "~/renderer/icons/AngleDown";
-import { matchesSearch } from "../AccountList";
+import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import Balance from "./Balance";
 import Countervalue from "./Countervalue";
@@ -174,9 +174,9 @@ const AccountRowItem = (props: Props) => {
     tokens = listSubAccounts(account).filter(
       subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
     );
-    disabled = !matchesSearch(walletState, search, account);
+    disabled = !accountMatchesSearch(walletState, search, account);
     isToken = (currency.tokenTypes || []).length > 0;
-    if (tokens) tokens = tokens.filter(t => matchesSearch(walletState, search, t));
+    if (tokens) tokens = tokens.filter(t => accountMatchesSearch(walletState, search, t));
   }
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;

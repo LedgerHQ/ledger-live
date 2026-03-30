@@ -20,7 +20,7 @@ import {
 import {
   getSerializedAddressParameters,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
@@ -108,18 +108,30 @@ const prepareTransaction = async (
   transaction: Transaction,
 ): Promise<Transaction> => {
   // TODO it needs to set the fee if not in t as well
-  if (!transaction.networkInfo) {
+  let nextTx = transaction;
+
+  if (!nextTx.networkInfo) {
     const feeItems = await getFeeItems(account.currency);
-    return {
-      ...transaction,
+    nextTx = {
+      ...nextTx,
       networkInfo: {
         family: "bitcoin",
-        feeItems: feeItems,
+        feeItems,
       },
     };
   }
 
-  return transaction;
+  const { feesStrategy } = nextTx;
+  if (feesStrategy && feesStrategy !== "custom") {
+    const feeItems = nextTx.networkInfo?.feeItems;
+    const match = feeItems?.items.find(i => i.speed === feesStrategy);
+    const feePerByte = match?.feePerByte ?? feeItems?.defaultFeePerByte;
+    if (feePerByte && feePerByte.gt(0)) {
+      nextTx = { ...nextTx, feePerByte };
+    }
+  }
+
+  return nextTx;
 };
 
 const accountBridge: AccountBridge<Transaction> = {

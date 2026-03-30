@@ -42,6 +42,7 @@ const defaultInitialState = {
   },
   dynamicContent: {
     portfolioCards: [],
+    bottomPortfolioCards: [],
   },
 };
 
@@ -160,6 +161,7 @@ describe("useBannersVisibility", () => {
       initialState: {
         ...defaultInitialState,
         dynamicContent: {
+          ...defaultInitialState.dynamicContent,
           portfolioCards: [
             { id: "card-1", title: "Test", location: LocationContentCard.Portfolio },
           ],

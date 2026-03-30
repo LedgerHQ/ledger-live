@@ -1,6 +1,6 @@
 import { TransportStatusError } from "@ledgerhq/errors";
 import { getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
-import { ErrorStatus } from "@ledgerhq/hw-app-exchange/lib/ReturnCode";
+import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import get from "lodash/get";
 
 type ErrorCauseDetails = {

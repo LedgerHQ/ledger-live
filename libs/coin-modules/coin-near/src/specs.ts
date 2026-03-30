@@ -1,13 +1,13 @@
-import invariant from "invariant";
-import expect from "expect";
-import { BigNumber } from "bignumber.js";
-import type { Transaction, NearAccount } from "./types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { botTest, pickSiblings } from "@ledgerhq/ledger-wallet-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
+import { BigNumber } from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
 import { acceptTransaction } from "./speculos-deviceActions";
+import type { Transaction, NearAccount } from "./types";
 
 const currency = getCryptoCurrencyById("near");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.00001");

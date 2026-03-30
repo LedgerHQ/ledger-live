@@ -26,12 +26,12 @@ export default class SwapLiveAppPage {
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
-  liveAppTitle = "live-app-title";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
+    await waitWebElementByTestId(this.fromSelector);
     await detoxExpect(getWebElementByTestId(this.fromSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.toSelector)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
@@ -80,6 +80,7 @@ export default class SwapLiveAppPage {
   @Step("Wait for quotes")
   async waitForQuotes() {
     await waitWebElementByTestId(this.numberOfQuotes);
+    await this.waitForQuotesStable();
   }
 
   @Step("verify quotes are displayed")
@@ -99,13 +100,12 @@ export default class SwapLiveAppPage {
     });
     for (const providerName of providersWithoutKYC) {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
-      if (provider && provider.isNative) {
+      if (provider?.isNative) {
         await waitWebElementByTestId(this.specificQuoteCardProviderName(provider.name));
         const selectedProvider = getWebElementsByIdAndText(
           this.specificQuoteCardProviderName(provider.name),
           provider.uiName,
         );
-        await this.waitForQuotesStable();
         await tapWebElementByElement(selectedProvider);
 
         return provider;
@@ -144,11 +144,14 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.executeSwapButtonStepApproval);
     await waitForWebElementToBeEnabled(this.executeSwapButtonStepApproval);
     await tapWebElementByTestId(this.executeSwapButtonStepApproval);
+    await waitForElement(app.send.summaryRecipient());
   }
 
   @Step("Get minimum amount for swap")
-  async getMinimumAmount(fromAccount: Account, toAccount: Account) {
-    return (await getMinimumSwapAmount(fromAccount, toAccount))?.toString() ?? "";
+  async getMinimumAmount(fromAccount: Account, toAccount: Account, providersWhitelist?: string[]) {
+    return (
+      (await getMinimumSwapAmount(fromAccount, toAccount, providersWhitelist))?.toString() ?? ""
+    );
   }
 
   @Step("Get provider list")
@@ -174,7 +177,6 @@ export default class SwapLiveAppPage {
     const provider: string = Provider.getNameByUiName(providerList[0]);
     const baseProviderLocator = `quote-container-${provider}-`;
     await waitWebElementByTestId(baseProviderLocator + "amount-label");
-    await this.waitForQuotesStable();
     await tapWebElementByTestId(baseProviderLocator + "amount-label");
 
     await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
@@ -259,10 +261,12 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Verify swap CTA banner displayed")
-  async checkCtaBanner() {
-    await waitWebElementByTestId(this.showDetailslink);
-    const showDetailsLink = getWebElementByTestId(this.showDetailslink);
-    await showDetailsLink.runScript(el => el.click());
+  async checkCtaBanner(quotesVisible: boolean) {
+    const showDetailsLink = quotesVisible
+      ? getWebElementByCssSelector(`.fixed [data-testid="${this.showDetailslink}"]`)
+      : getWebElementByTestId(this.showDetailslink);
+    await waitWebElement(showDetailsLink);
+    await tapWebElementByElement(showDetailsLink);
     await waitWebElementByTestId(this.quotesContainerErrorIcon);
     await detoxExpect(getWebElementByTestId(this.insufficientFundsBuyButton)).toExist();
   }
@@ -317,7 +321,6 @@ export default class SwapLiveAppPage {
     const providerName = Provider.getNameByUiName(provider);
     const providerTestId = this.specificQuoteCardProviderName(providerName);
     await waitWebElementByTestId(providerTestId);
-    await this.waitForQuotesStable();
     await tapWebElementByTestId(providerTestId);
   }
 
@@ -333,14 +336,5 @@ export default class SwapLiveAppPage {
       await waitForElement(summaryContinueButton);
       await tapByElement(summaryContinueButton);
     }
-  }
-
-  @Step("Verify live app title contains $0")
-  async verifyLiveAppTitle(provider: string) {
-    await waitForElementById(this.liveAppTitle, undefined, {
-      errorElementId: app.common.errorPage.genericErrorModalId,
-    });
-    const liveApp = await getTextOfElement(this.liveAppTitle);
-    jestExpect(liveApp?.toLowerCase()).toContain(provider);
   }
 }

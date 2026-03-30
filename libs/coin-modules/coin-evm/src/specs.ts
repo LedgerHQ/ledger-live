@@ -1,17 +1,21 @@
 /* istanbul ignore file: don't test the test. */
 
-import { findSubAccountById } from "@ledgerhq/coin-framework/account";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import {
   AppSpec,
   MutationSpec,
   TransactionDestinationTestInput,
   TransactionRes,
-} from "@ledgerhq/coin-framework/bot/types";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { DeviceModelId } from "@ledgerhq/devices";
+} from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import expect from "expect";
@@ -41,6 +45,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   bitlayer: 0.0001,
   bsc: 0.005,
   polygon: 0.005,
+  polygon_amoy: 0.005,
   ethereum: 0.001,
   ethereum_sepolia: 0.001,
   ethereum_hoodi: 0.001,

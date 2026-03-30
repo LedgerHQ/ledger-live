@@ -30,9 +30,9 @@ jobs:
             // Build prefix from labels
             // If 'common' OR both 'desktop' + 'mobile' are present, use only LWDM
             let prefixes = [];
-            const hasDesktop = labels.includes('desktop');
-            const hasMobile = labels.includes('mobile');
-            const hasCommon = labels.includes('common');
+            const hasDesktop = labels.includes('desktop') || labels.includes('desktop-lib');
+            const hasMobile = labels.includes('mobile') || labels.includes('mobile-lib');
+            const hasCommon = labels.includes('common') || labels.includes('shared-lib');
             const hasCoinModules = labels.includes('coin-modules');
             
             if (hasCommon || (hasDesktop && hasMobile) || hasCoinModules) {

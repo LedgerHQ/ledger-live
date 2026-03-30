@@ -6,5 +6,6 @@ export type Asset = {
   accounts: AccountLike[];
   distribution?: number;
   amount: number;
-  countervalue?: number;
+  isPlaceholder?: boolean;
+  marketId?: string;
 };

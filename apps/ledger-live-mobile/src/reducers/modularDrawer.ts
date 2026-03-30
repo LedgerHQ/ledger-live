@@ -13,6 +13,7 @@ export interface ModularDrawerState {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   useCase?: string;
+  uiUseCase?: string;
   areCurrenciesFiltered?: boolean;
   searchValue: string;
   step: ModularDrawerStep;
@@ -34,6 +35,7 @@ export const INITIAL_STATE: ModularDrawerState = {
     rightElement: "balance",
   },
   useCase: undefined,
+  uiUseCase: undefined,
   areCurrenciesFiltered: undefined,
   searchValue: "",
   step: ModularDrawerStep.Asset,
@@ -64,6 +66,7 @@ const modularDrawerSlice = createSlice({
         assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
         networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
         useCase?: string;
+        uiUseCase?: string;
         areCurrenciesFiltered?: boolean;
         step?: ModularDrawerStep;
       }>,
@@ -79,6 +82,7 @@ const modularDrawerSlice = createSlice({
         assetsConfiguration,
         networksConfiguration,
         useCase,
+        uiUseCase,
         areCurrenciesFiltered,
         step,
       } = action.payload;
@@ -107,6 +111,9 @@ const modularDrawerSlice = createSlice({
       if (useCase !== undefined) {
         state.useCase = useCase;
       }
+      if (uiUseCase !== undefined) {
+        state.uiUseCase = uiUseCase;
+      }
       if (areCurrenciesFiltered !== undefined) {
         state.areCurrenciesFiltered = areCurrenciesFiltered;
       }
@@ -124,6 +131,7 @@ const modularDrawerSlice = createSlice({
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
       state.networksConfiguration = INITIAL_STATE.networksConfiguration;
       state.useCase = undefined;
+      state.uiUseCase = undefined;
       state.areCurrenciesFiltered = undefined;
       state.searchValue = "";
       state.step = ModularDrawerStep.Asset;

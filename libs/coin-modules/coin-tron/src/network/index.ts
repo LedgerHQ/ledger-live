@@ -1,4 +1,5 @@
 import { stringify } from "querystring";
+import { InvalidTransactionError } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
@@ -38,9 +39,11 @@ import {
 import {
   AccountTronAPI,
   Block,
+  BlockWithTransactionsAPI,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
+  TransactionInfoByBlockNumAPI,
   TransactionResponseTronAPI,
   TransactionTronAPI,
   Trc20API,
@@ -288,30 +291,31 @@ async function extendExpiration(
   preparedTransaction: any,
   expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
+  const extension = expiration ?? DEFAULT_EXPIRATION;
+  const nodeExpiration: number = preparedTransaction.raw_data.expiration;
+  const minFinalExpiration = Date.now() + 3000;
+
+  // Tron nodes may not be properly synced, returning an expiration date in the past.
+  // We throw an error that encourages users to drop their transaction and re-create a new one.
+  // https://github.com/tronprotocol/tronweb/blob/9f8b559377d9215a4f5360e8526c6e7197bf5a5b/src/lib/TransactionBuilder/TransactionBuilder.ts#L2449-L2450
+  if (nodeExpiration + extension * 1000 <= minFinalExpiration) {
+    log("tron/extendExpiration", "Invalid extension provided", {
+      preparedTransaction,
+      extensionInS: extension,
+      extensionInMs: extension * 1000,
+      minFinalExpiration,
+    });
+
+    throw new InvalidTransactionError();
+  }
+
   const HttpProvider = providers.HttpProvider;
   const fullNode = new HttpProvider(getBaseApiUrl());
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
-  const extension = expiration ?? DEFAULT_EXPIRATION;
-  try {
-    return (await tronWeb.transactionBuilder.extendExpiration(
-      preparedTransaction,
-      extension,
-    )) as unknown as Promise<SendTransactionDataSuccess>;
-  } catch (err) {
-    const message = err instanceof Error ? err.message : typeof err === "string" ? err : "";
-    if (message === "Invalid extension provided") {
-      // https://github.com/tronprotocol/tronweb/blob/2da130f4a295b9e9bd45361c15b5ca9d689cfa65/src/lib/transactionBuilder.js#L2929
-      log("tron/extendExpiration", message, {
-        preparedTransaction,
-        extensionInS: extension,
-        extensionInMs: extension * 1000,
-        minFinalExpiration: Date.now() + 3000,
-      });
-    }
-    throw err;
-  }
+
+  return tronWeb.transactionBuilder.extendExpiration(preparedTransaction, extension);
 }
 
 type BroadcastSuccessResponseTronAPI = { result: true; txid: string };
@@ -387,16 +391,20 @@ export async function getLastBlock(): Promise<Block> {
 }
 
 export async function getBlock(blockNumber: number): Promise<Block> {
-  const data = await fetch(`/wallet/getblock?id_or_num=${encodeURIComponent(blockNumber)}`);
-  const ret = toBlock(data);
-  if (!ret.height) {
-    ret.height = blockNumber;
-  }
-  return ret;
+  const data: BlockWithTransactionsAPI = await post(`/wallet/getblock`, {
+    id_or_num: String(blockNumber),
+    detail: false,
+  });
+  return toBlock(data);
 }
 
-function toBlock(data: any): Block {
-  // some old blocks doesn't have a timestamp
+export async function getBlockWithTransactions(
+  blockNumber: number,
+): Promise<BlockWithTransactionsAPI> {
+  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true });
+}
+
+function toBlock(data: BlockWithTransactionsAPI): Block {
   const timestamp = data.block_header.raw_data.timestamp;
   const ret: Block = {
     height: data.block_header.raw_data.number,
@@ -408,8 +416,6 @@ function toBlock(data: any): Block {
   return ret;
 }
 
-// For the moment, fetching transaction info is the only way to get fees from a transaction
-// Export for test purpose only
 export async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
   const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
     `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
@@ -420,6 +426,15 @@ export async function fetchTronTxDetail(txId: string): Promise<TronTransactionIn
     withdraw_amount,
     unfreeze_amount,
   };
+}
+
+export async function getTransactionInfoByBlockNum(
+  blockNum: number,
+): Promise<TransactionInfoByBlockNumAPI[]> {
+  return post<{ num: number }, TransactionInfoByBlockNumAPI[]>(
+    `/wallet/gettransactioninfobyblocknum`,
+    { num: blockNum },
+  );
 }
 
 async function getAllTransactions<T>(

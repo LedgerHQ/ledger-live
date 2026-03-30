@@ -3,7 +3,7 @@ import {
   getMainAccount,
   getParentAccount,
   makeEmptyTokenAccount,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -33,7 +33,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "../../bridge";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
-import { ExchangeSwap } from "../../exchange/swap/types";
+import { ExchangeSwap, FeatureFlags } from "../../exchange/swap/types";
 import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../generated/types";
 import {
@@ -87,6 +87,7 @@ export type CompleteExchangeUiRequest = {
   refundAddress?: string;
   payoutAddress?: string;
   sponsored?: boolean;
+  isEmbeddedSwap?: boolean;
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
@@ -146,6 +147,7 @@ export const handlers = ({
   accounts,
   tracking,
   manifest,
+  flags,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -157,6 +159,7 @@ export const handlers = ({
   accounts: AccountLike[];
   tracking: TrackingAPI;
   manifest: AppManifest;
+  flags?: FeatureFlags;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -496,6 +499,7 @@ export const handlers = ({
           amountInAtomicUnit: fromAmountAtomic,
           quoteId,
           toNewTokenId,
+          flags,
         }).catch((error: Error) => {
           const wrappedError = createStepError({
             error: get(error, "response.data.error", error),
@@ -604,6 +608,7 @@ export const handlers = ({
               refundAddress,
               payoutAddress,
               sponsored,
+              isEmbeddedSwap: isEmbedded,
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
               tracking.completeExchangeSuccess({
@@ -621,6 +626,7 @@ export const handlers = ({
                 fromAccountAddress,
                 toAccountAddress,
                 fromAmount,
+                flags,
               });
 
               resolve({ operationHash, swapId });
@@ -661,6 +667,7 @@ export const handlers = ({
                 data: (transaction as EvmTransaction).data
                   ? `0x${padHexString((transaction as EvmTransaction).data?.toString("hex") || "")}`
                   : "0x",
+                flags,
               });
 
               reject(completeExchangeError);

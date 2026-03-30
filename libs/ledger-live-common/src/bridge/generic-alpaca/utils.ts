@@ -1,8 +1,8 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import {
+import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
@@ -10,8 +10,8 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
   FeeData,
   FeeDataRaw,
   GasOptions,
@@ -20,7 +20,7 @@ import {
   GenericTransactionRaw,
   OperationCommon,
 } from "./types";
-import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
+import type { StellarMemo } from "@ledgerhq/coin-stellar/types/model";
 
 type BigNumberToBigIntDeep<T> = T extends BigNumber
   ? bigint
@@ -127,6 +127,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     ledgerOpType?: string | undefined;
     memo?: string | undefined;
     internal?: boolean;
+    feePayer?: string;
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {
@@ -164,6 +165,10 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 
   if (op.details?.internal === true) {
     extra.internal = op.details?.internal;
+  }
+
+  if (typeof op.tx.feesPayer === "string") {
+    extra.feePayer = op.tx.feesPayer;
   }
 
   const bnFees = new BigNumber(op.tx.fees.toString());
@@ -383,10 +388,6 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
 
   if ("mode" in transaction) {
     raw.mode = transaction.mode;
-  }
-
-  if ("feeCustomUnit" in transaction) {
-    raw.feeCustomUnit = transaction.feeCustomUnit;
   }
 
   if ("data" in transaction) {

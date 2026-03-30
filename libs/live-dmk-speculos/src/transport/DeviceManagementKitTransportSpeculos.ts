@@ -144,6 +144,15 @@ export default class SpeculosHttpTransport extends Transport {
     }
   }
 
+  static async disconnectAll(): Promise<void> {
+    for (const [, entry] of this.byBase) {
+      if (entry.sessionId) {
+        await entry.dmk.disconnect({ sessionId: entry.sessionId }).catch(() => {});
+      }
+    }
+    this.byBase.clear();
+  }
+
   static isSupported = async () => true;
   static list = async () => [];
   static listen = (_observer: any) => ({ unsubscribe: () => {} });

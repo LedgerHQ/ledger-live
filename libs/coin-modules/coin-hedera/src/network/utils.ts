@@ -1,8 +1,11 @@
-import BigNumber from "bignumber.js";
 import { AccountId } from "@hashgraph/sdk";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getEnv } from "@ledgerhq/live-env";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { apiClient } from "./api";
+import BigNumber from "bignumber.js";
+import { SUPPORTED_ERC20_TOKENS } from "../constants";
+import { nanosToSeconds, toEntityId } from "../logic/utils";
 import type {
   HederaMirrorTokenTransfer,
   HederaMirrorCoinTransfer,
@@ -10,9 +13,11 @@ import type {
   HederaThirdwebDecodedTransferParams,
   OperationERC20,
   HederaERC20TokenBalance,
+  ERC20TokenTransfer,
+  EnrichedERC20Transfer,
 } from "../types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SUPPORTED_ERC20_TOKENS } from "../constants";
+import { apiClient } from "./api";
+import { hgraphClient } from "./hgraph";
 
 function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
   if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
@@ -33,23 +38,35 @@ function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
 export function parseTransfers(
   mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
   address: string,
+  stakingReward = new BigNumber(0),
 ): Pick<Operation, "type" | "value" | "senders" | "recipients"> {
   let value = new BigNumber(0);
   let type: OperationType = "NONE";
 
   const senders: string[] = [];
   const recipients: string[] = [];
+  const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
   for (const transfer of mirrorTransfers) {
     const amount = new BigNumber(transfer.amount);
     const accountId = AccountId.fromString(transfer.account);
 
+    // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
+    const amountWithoutReward = transfer.account === address ? amount.minus(stakingReward) : amount;
+
     if (transfer.account === address) {
-      value = amount.abs();
-      type = amount.isNegative() ? "OUT" : "IN";
+      value = amountWithoutReward.abs();
+      type = amountWithoutReward.isNegative() ? "OUT" : "IN";
     }
 
-    if (amount.isNegative()) {
+    if (amountWithoutReward.isNegative()) {
+      // exclude reward payer from senders list, because rewards are shown as separate operations
+      const shouldIgnoreAddress = transfer.account === rewardPayerAddress && stakingReward.gt(0);
+
+      if (shouldIgnoreAddress) {
+        continue;
+      }
+
       senders.push(transfer.account);
     } else if (isValidRecipient(accountId, recipients)) {
       recipients.push(transfer.account);
@@ -68,6 +85,7 @@ export function parseTransfers(
   };
 }
 
+// TODO: remove once migration to new API is complete
 export async function getERC20BalancesForAccount(
   evmAccountId: string,
   supportedTokenIds = SUPPORTED_ERC20_TOKENS.map(token => token.id),
@@ -96,6 +114,40 @@ export async function getERC20BalancesForAccount(
   return balances;
 }
 
+export async function getERC20BalancesForAccountV2(
+  address: string,
+): Promise<HederaERC20TokenBalance[]> {
+  const balances: HederaERC20TokenBalance[] = [];
+
+  const rawBalances = await hgraphClient.getERC20Balances({ address });
+
+  for (const rawBalance of rawBalances) {
+    const rawBalanceTokenId = toEntityId({ num: rawBalance.token_id });
+
+    const supportedToken = SUPPORTED_ERC20_TOKENS.find(token => {
+      return token.tokenId === rawBalanceTokenId;
+    });
+
+    if (!supportedToken) {
+      continue;
+    }
+
+    const calToken = await getCryptoAssetsStore().findTokenById(supportedToken.id);
+
+    if (!calToken) {
+      continue;
+    }
+
+    balances.push({
+      token: calToken,
+      balance: new BigNumber(rawBalance.balance),
+    });
+  }
+
+  return balances;
+}
+
+// TODO: remove once migration to new API is complete
 export const getERC20Operations = async (
   latestERC20Transactions: HederaThirdwebTransaction[],
 ): Promise<OperationERC20[]> => {
@@ -127,6 +179,7 @@ export const getERC20Operations = async (
   return latestERC20Operations;
 };
 
+// TODO: remove once migration to new API is complete
 export function parseThirdwebTransactionParams(
   transaction: HederaThirdwebTransaction,
 ): HederaThirdwebDecodedTransferParams | null {
@@ -138,3 +191,54 @@ export function parseThirdwebTransactionParams(
 
   return { from, to, value };
 }
+
+/**
+ * Enriches raw ERC20 transfers from Hgraph with additional data needed for operations:
+ * - fetches contract call result containing gas metrics and block hash
+ * - finds the corresponding Mirror Node transaction by consensus timestamp
+ *
+ * @param erc20Transfers - Raw ERC20 transfers from Hgraph API
+ * @returns Array of enriched transfers with complete operation data, filtered to supported tokens only
+ */
+export const enrichERC20Transfers = async (erc20Transfers: ERC20TokenTransfer[]) => {
+  const enrichedTransfers: EnrichedERC20Transfer[] = [];
+
+  // with hgraph we can get two different transfers with the same transaction hash
+  const groupedByTxHash = new Map<string, [ERC20TokenTransfer, ...ERC20TokenTransfer[]]>();
+  for (const transfer of erc20Transfers) {
+    const group = groupedByTxHash.get(transfer.transaction_hash);
+
+    if (!group) {
+      groupedByTxHash.set(transfer.transaction_hash, [transfer]);
+      continue;
+    }
+
+    group.push(transfer);
+  }
+
+  for (const [txHash, transfers] of groupedByTxHash.entries()) {
+    const payerAddress = toEntityId({ num: transfers[0].payer_account_id });
+    const inaccurateConsensusTimestampNs = new BigNumber(transfers[0].consensus_timestamp);
+    const inaccurateConsensusTimestamp = nanosToSeconds(inaccurateConsensusTimestampNs).toFixed(9);
+
+    const [contractCallResult, mirrorTransaction] = await Promise.all([
+      apiClient.getContractCallResult(txHash),
+      apiClient.findTransactionByContractCallV2({
+        payerAddress,
+        timestamp: inaccurateConsensusTimestamp,
+      }),
+    ]);
+
+    if (!mirrorTransaction) {
+      continue;
+    }
+
+    enrichedTransfers.push({
+      transfers,
+      contractCallResult,
+      mirrorTransaction,
+    });
+  }
+
+  return enrichedTransfers;
+};

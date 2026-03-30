@@ -18,7 +18,6 @@ import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
-import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { i18n } from "~/context/Locale";
 import reducers from "~/reducers";
@@ -45,6 +44,9 @@ import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/wallet
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
 import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
+import { INITIAL_STATE as PORTFOLIO_REFRESH_INITIAL_STATE } from "~/reducers/portfolioRefresh";
+import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/deeplinkInstallApp";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
@@ -57,6 +59,7 @@ const INITIAL_STATE: State = {
   countervalues: COUNTERVALUES_INITIAL_STATE,
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
+  featureFlags: FEATURE_FLAGS_INITIAL_STATE,
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
@@ -77,6 +80,8 @@ const INITIAL_STATE: State = {
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
   sendFlow: SEND_FLOW_INITIAL_STATE,
+  portfolioRefresh: PORTFOLIO_REFRESH_INITIAL_STATE,
+  deeplinkInstallApp: DEEPLINK_INSTALL_APP_INITIAL_STATE,
   ...llmRtkApiInitialStates,
 };
 
@@ -95,18 +100,42 @@ type CountervaluesChildren = React.ComponentProps<typeof CountervaluesProvider>[
 type WrapperProps = { children?: NavigationChildren };
 
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
+  const state = overrideInitialState(INITIAL_STATE);
+
+  // Bridge: mirror legacy settings overrides into the new featureFlags slice
+  // so tests that set state.settings.overriddenFeatureFlags still work with
+  // the selector proxies that now read from state.featureFlags.overrides.
+  const legacyOverrides = state.settings.overriddenFeatureFlags;
+  if (legacyOverrides) {
+    const filteredOverrides = Object.fromEntries(
+      Object.entries(legacyOverrides).filter(([, value]) => value !== undefined),
+    );
+    if (Object.keys(filteredOverrides).length > 0) {
+      state.featureFlags = { ...state.featureFlags, overrides: filteredOverrides };
+    }
+  }
+
   return configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       applyLlmRTKApiMiddlewares(
         getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
       ),
-    preloadedState: overrideInitialState(INITIAL_STATE),
+    preloadedState: state,
     devTools: false,
   });
 }
 
 export type ReduxStore = ReturnType<typeof createStore>;
+
+export { createStore };
+
+export function withReadOnlyDisabled(state: State): State {
+  return {
+    ...state,
+    settings: { ...state.settings, readOnlyModeEnabled: false },
+  };
+}
 
 function CountervaluesProviders({
   children,
@@ -126,6 +155,7 @@ function CountervaluesProviders({
       setState: () => {},
       setStateError: () => {},
       setStatePending: () => {},
+      useMarketcapIds: () => [],
       usePollingIsPolling: () => false,
       usePollingTriggerLoad: () => false,
       useState: () => state.countervalues.countervalues.state,
@@ -136,11 +166,7 @@ function CountervaluesProviders({
     };
   }, [store]);
 
-  return (
-    <CountervaluesMarketcapBridgedProvider>
-      <CountervaluesProvider bridge={bridge}>{children}</CountervaluesProvider>
-    </CountervaluesMarketcapBridgedProvider>
-  );
+  return <CountervaluesProvider bridge={bridge}>{children}</CountervaluesProvider>;
 }
 
 /**

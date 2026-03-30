@@ -1,10 +1,13 @@
-import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import {
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { getEnv } from "@ledgerhq/live-env";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { parseTransfers } from "../network/utils";
@@ -17,6 +20,8 @@ import type {
 import {
   analyzeStakingOperation,
   base64ToUrlSafeBase64,
+  createStakingRewardOperationHash,
+  extractFeesPayer,
   getMemoFromBase64,
   getSyntheticBlock,
 } from "./utils";
@@ -40,10 +45,12 @@ function getCommonOperationData(
   const hasFailed = rawTx.result !== "SUCCESS";
   const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
+  const feesPayer = extractFeesPayer(rawTx);
   const extra: HederaOperationExtra = {
     pagingToken: rawTx.consensus_timestamp,
     consensusTimestamp: rawTx.consensus_timestamp,
     transactionId: rawTx.transaction_id,
+    feesPayer,
     ...(memo && { memo }),
   };
 
@@ -194,7 +201,7 @@ function processTransfers({
 
   // add REWARD operation representing staking reward transfers
   if (stakingReward.gt(0)) {
-    const stakingRewardHash = `${hash}-staking-reward`;
+    const stakingRewardHash = createStakingRewardOperationHash(hash);
     const stakingRewardType: OperationType = "REWARD";
     // offset timestamp by +1ms to ensure it appears just before the operation that triggered it
     const stakingRewardTimestamp = new Date(timestamp.getTime() + 1);

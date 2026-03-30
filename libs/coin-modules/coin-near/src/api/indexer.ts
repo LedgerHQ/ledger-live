@@ -1,9 +1,9 @@
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import liveNetwork from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import liveNetwork from "@ledgerhq/live-network";
-import { NearTransaction } from "./sdk.types";
 import { getCoinConfig } from "../config";
+import { NearTransaction } from "./sdk.types";
 
 const fetchTransactions = async (address: string): Promise<NearTransaction[]> => {
   const currencyConfig = getCoinConfig();

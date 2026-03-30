@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.57.0",
+  "version": "0.60.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -24,12 +24,30 @@
     }
   },
   "exports": {
-    ".": "./lib/index.js",
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "default": "./lib/index.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib/*/": "./lib/*/index.js",
-    "./pre-ldls": "./lib/pre-ldls/index.js",
-    "./*": "./lib/*.js",
-    "./*/": "./lib/*/index.js",
+    "./pre-ldls": {
+      "@ledgerhq/source": "./src/pre-ldls/index.ts",
+      "default": "./lib/pre-ldls/index.js"
+    },
+    "./*": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
+      "default": "./lib/*.js"
+    },
+    "./*/": {
+      "@ledgerhq/source": [
+        "./src/*/index.ts",
+        "./src/*/index.tsx"
+      ],
+      "default": "./lib/*/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -39,7 +57,7 @@
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
     "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
-    "build:storybook": "NODE_PATH=./node_modules storybook build -c .storybook-web -o web-build",
+    "build:storybook": "NODE_PATH=./node_modules storybook build -c .storybook-web",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
     "eject": "expo eject",
@@ -50,7 +68,7 @@
     "release": "yarn publish ./lib --access public",
     "expo-start": "expo start",
     "storybook": "NODE_PATH=./node_modules storybook dev  -c .storybook-web -p 6006",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json  --customConditions node",
     "test": "exit 0",
     "web": "expo start --web",
     "unimported": "pnpm knip --directory ../../../.. -W libs/ui/packages/native",
@@ -61,7 +79,6 @@
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",
-    "rn-range-slider": "2.1.1",
     "styled-system": "catalog:",
     "stylis": "catalog:"
   },
@@ -119,7 +136,7 @@
     "@types/color": "^3.0.3",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "4.17.18",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/prop-types": "^15.7.5",
     "@types/react": "catalog:",
     "@types/styled-system": "^5.1.13",

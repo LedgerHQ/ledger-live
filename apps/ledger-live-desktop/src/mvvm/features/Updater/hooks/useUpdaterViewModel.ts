@@ -12,12 +12,12 @@ type StatusConfig = {
 const STATUS_MAP: Partial<Record<UpdateStatus, StatusConfig>> = {
   "update-available": {
     labelKey: "updater.newUpdateAvailable",
-    appearance: "base",
+    appearance: "transparent",
     isLoading: false,
   },
   "download-progress": {
     labelKey: "updater.downloadProgress",
-    appearance: "base",
+    appearance: "transparent",
     isLoading: true,
   },
   error: {
@@ -27,7 +27,7 @@ const STATUS_MAP: Partial<Record<UpdateStatus, StatusConfig>> = {
   },
   "check-success": {
     labelKey: "updater.installAndRelaunch",
-    appearance: "base",
+    appearance: "transparent",
     isLoading: false,
   },
 };

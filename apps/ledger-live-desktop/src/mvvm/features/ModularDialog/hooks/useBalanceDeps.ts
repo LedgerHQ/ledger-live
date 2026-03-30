@@ -1,4 +1,4 @@
-import { flattenAccounts } from "@ledgerhq/coin-framework/account/helpers";
+import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";

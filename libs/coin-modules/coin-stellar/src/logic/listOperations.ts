@@ -1,11 +1,10 @@
-import { ListOperationsOptions, Operation } from "@ledgerhq/coin-framework/api/types";
+import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-framework/api/types";
 import { fetchOperations } from "../network";
-import type { StellarOperation } from "../types/bridge";
 
 export async function listOperations(
   address: string,
   { limit, cursor, order, minHeight }: ListOperationsOptions,
-): Promise<[Operation[], string]> {
+): Promise<Page<Operation>> {
   // Fake accountId
   const accountId = "";
   const [operations, nextCursor] = await fetchOperations({
@@ -17,42 +16,27 @@ export async function listOperations(
     cursor: cursor,
   });
 
-  return [operations.map(op => convertToCoreOperation(op)), nextCursor];
+  const mappedOperations = operations.map(op => convertToLegacyOperation(op));
+
+  return { items: mappedOperations, next: nextCursor };
 }
 
-const convertToCoreOperation = (operation: StellarOperation): Operation => {
+function convertToLegacyOperation(operation: Operation): Operation {
+  const details = operation.details;
+
   return {
-    id: `${operation.hash}-${operation.extra.index}`,
-    asset:
-      operation.extra?.assetCode && operation.extra?.assetIssuer
-        ? {
-            type: "token",
-            assetReference: operation.extra.assetCode,
-            assetOwner: operation.extra.assetIssuer,
-          }
-        : { type: "native" },
-    tx: {
-      hash: operation.hash,
-      block: {
-        hash: operation.blockHash!,
-        time: operation.extra.blockTime,
-        height: operation.blockHeight!,
-      },
-      fees: BigInt(operation.fee.toString()),
-      date: operation.date,
-      failed: operation.hasFailed ?? false,
-    },
+    id: `${operation.tx.hash}-${details?.index ?? ""}`,
+    asset: operation.asset,
+    tx: operation.tx,
     details: {
-      sequence: operation.transactionSequenceNumber?.toString(),
-      ledgerOpType: operation.extra.ledgerOpType,
-      assetAmount: operation.extra.assetAmount
-        ? operation.extra.assetAmount
-        : operation.value.toString(),
-      memo: operation.extra.memo,
+      sequence: details?.sequence,
+      ledgerOpType: details?.ledgerOpType,
+      assetAmount: details?.assetAmount ?? operation.value.toString(),
+      memo: details?.memo,
     },
     type: operation.type,
-    value: BigInt(operation.value.toString()),
+    value: operation.value,
     senders: operation.senders,
     recipients: operation.recipients,
   };
-};
+}

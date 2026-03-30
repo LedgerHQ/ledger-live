@@ -1,5 +1,4 @@
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { AddressValidationCurrencyParameters } from "@ledgerhq/types-live";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
 import * as bech32 from "bech32";
 import cryptoFactory from "./chain/chain";
 
@@ -7,7 +6,7 @@ export async function validateAddress(
   address: string,
   parameters: Partial<AddressValidationCurrencyParameters>,
 ): Promise<boolean> {
-  if (!parameters.currency) {
+  if (!parameters.currencyId) {
     throw new Error("Missing currency parameter on address validation for Cosmos");
   }
 
@@ -17,11 +16,7 @@ export async function validateAddress(
   } catch {
     isValid = false;
   }
-  const currency = findCryptoCurrencyById(parameters.currency.name.toLowerCase());
-  let prefix = "";
-  if (currency) {
-    prefix = cryptoFactory(currency.id).prefix;
-  }
+  const prefix = cryptoFactory(parameters.currencyId).prefix;
 
   return isValid && address.startsWith(prefix);
 }

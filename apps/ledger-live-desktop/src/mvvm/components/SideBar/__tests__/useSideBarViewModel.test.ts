@@ -2,6 +2,7 @@ import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useSideBarViewModel } from "../useSideBarViewModel";
 import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_VALUE_TO_TRACK_ENTRY } from "../utils/constants";
+import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
 import * as segment from "~/renderer/analytics/segment";
 import type { SideBarViewModel } from "../types";
 import { defaultInitialState, withFeatureFlags } from "./testUtils";
@@ -35,7 +36,6 @@ const NAV_HANDLER_CASES: ReadonlyArray<{
   path: string;
   trackEntry: string;
 }> = [
-  { handler: "handleClickAccounts", path: SIDEBAR_VALUE_TO_PATH.accounts, trackEntry: "accounts" },
   { handler: "handleClickSwap", path: SIDEBAR_VALUE_TO_PATH.swap, trackEntry: "swap" },
   { handler: "handleClickEarn", path: SIDEBAR_VALUE_TO_PATH.earn, trackEntry: "earn" },
   { handler: "handleClickCatalog", path: SIDEBAR_VALUE_TO_PATH.discover, trackEntry: "platform" },
@@ -49,7 +49,7 @@ const NAV_HANDLER_CASES: ReadonlyArray<{
 
 const ACTIVE_CHANGE_NAV_CASES = Object.keys(SIDEBAR_VALUE_TO_PATH)
   .filter(isSideBarNavValue)
-  .filter(value => value !== "home")
+  .filter(value => value !== "home" && value !== "accounts")
   .map(value => ({
     value,
     path: SIDEBAR_VALUE_TO_PATH[value],
@@ -93,6 +93,46 @@ describe("useSideBarViewModel", () => {
   });
 
   describe("navigation handlers", () => {
+    it("should navigate to /accounts via handleClickAccounts when asset section is off", () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel();
+
+      act(() => {
+        result.current.handleClickAccounts();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.accounts);
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
+    it("should navigate to /cryptos via handleClickAccounts when asset section is on", () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel(
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
+
+      act(() => {
+        result.current.handleClickAccounts();
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
     it.each(NAV_HANDLER_CASES)(
       "should navigate to $path and track '$trackEntry' via $handler",
       ({ handler, path, trackEntry }) => {
@@ -183,6 +223,42 @@ describe("useSideBarViewModel", () => {
   });
 
   describe("handleActiveChange", () => {
+    it('should navigate to /accounts for value "accounts" when asset section is off', () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel();
+
+      act(() => result.current.handleActiveChange("accounts"));
+
+      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.accounts);
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
+    it('should navigate to /cryptos for value "accounts" when asset section is on', () => {
+      const trackSpy = jest.spyOn(segment, "track");
+      const { result } = renderViewModel(
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
+
+      act(() => result.current.handleActiveChange("accounts"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
+        entry: "accounts",
+        page: "/",
+        flagged: false,
+      });
+
+      trackSpy.mockRestore();
+    });
+
     it.each(ACTIVE_CHANGE_NAV_CASES)(
       'should navigate to $path and track "$trackEntry" for value "$value"',
       ({ value, path, trackEntry }) => {
@@ -236,6 +312,24 @@ describe("useSideBarViewModel", () => {
       act(() => result.current.handleActiveChange("unknown-value"));
 
       expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it("should dispatch SCROLL_TO_TOP_EVENT when clicking Home while already on home and Wallet 4.0 main nav is enabled", () => {
+      const dispatchEventSpy = jest.spyOn(window, "dispatchEvent");
+      const { result } = renderViewModel(
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { mainNavigation: true } },
+        }),
+      );
+
+      act(() => result.current.handleActiveChange("home"));
+
+      expect(dispatchEventSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: SCROLL_TO_TOP_EVENT,
+        }),
+      );
+      dispatchEventSpy.mockRestore();
     });
   });
 });

@@ -6,6 +6,15 @@ import { NavigatorName, ScreenName } from "~/const";
 import CardNavigator from "../Navigator";
 import { CARD_LANDING_TEST_IDS } from "../testIds";
 
+jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
+  useNavigationBarHeights: () => ({
+    top: 0,
+    bottom: 0,
+    bottomBarHeight: 0,
+    topBarHeight: 48,
+  }),
+}));
+
 const Stack = createNativeStackNavigator();
 
 function MockCardLiveApp() {

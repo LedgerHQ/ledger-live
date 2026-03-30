@@ -5,7 +5,9 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "outDir": "lib"
+    "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node"]
   },
   "include": ["src/**/*"]
 }

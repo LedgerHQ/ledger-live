@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
-import { TokenType } from "@ledgerhq/live-common/lib/e2e/enum/TokenType";
+import { TokenType } from "@ledgerhq/live-common/e2e/enum/TokenType";
 import { ReceiveFundsOptionsType } from "@ledgerhq/live-common/e2e/enum/ReceiveFundsOptions";
 
 export default class ReceivePage {
@@ -106,6 +106,7 @@ export default class ReceivePage {
     await waitForElementById(titleID);
     await detoxExpect(getElementById(titleID)).toBeVisible();
     await detoxExpect(getElementById(accountNameID)).toBeVisible();
+    await scrollToId(qrCodeContainerID, this.receivePageScrollViewId);
     await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
   }
 

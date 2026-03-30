@@ -1,15 +1,15 @@
-import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../types";
-import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/serialization/transaction";
+} from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "../types";
 
 export const formatTransaction = (
   { amount, recipient, fee, useAllAmount }: Transaction,

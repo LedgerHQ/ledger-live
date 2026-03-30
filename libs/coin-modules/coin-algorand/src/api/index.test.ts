@@ -40,11 +40,12 @@ describe("Algorand API", () => {
         getBlock: expect.any(Function),
         getBlockInfo: expect.any(Function),
         getRewards: expect.any(Function),
-        getSequence: expect.any(Function),
+        getNextSequence: expect.any(Function),
         getStakes: expect.any(Function),
         getValidators: expect.any(Function),
         lastBlock: logic.lastBlock,
         listOperations: expect.any(Function),
+        validateAddress: expect.any(Function),
         validateIntent: expect.any(Function),
       });
     });
@@ -190,9 +191,9 @@ describe("Algorand API", () => {
       expect(() => api.getBlock(100)).toThrow("getBlock is not supported for Algorand");
     });
 
-    it("getSequence should throw not applicable error", () => {
-      expect(() => api.getSequence("ADDRESS")).toThrow(
-        "getSequence is not applicable for Algorand",
+    it("getNextSequence should throw not applicable error", () => {
+      expect(() => api.getNextSequence("ADDRESS")).toThrow(
+        "getNextSequence is not applicable for Algorand",
       );
     });
 

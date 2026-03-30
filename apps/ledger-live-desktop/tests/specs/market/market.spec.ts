@@ -7,7 +7,14 @@ import { MarketCoinPage } from "../../page/market.coin.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
-test.use({ userdata: "skip-onboarding", featureFlags: { lwdWallet40: { enabled: false } } });
+test.use({
+  userdata: "skip-onboarding",
+  featureFlags: {
+    lwdWallet40: { enabled: false },
+    referralProgramDesktopSidebar: { enabled: true },
+    protectServicesDesktop: { enabled: true },
+  },
+});
 
 let testServerIsRunning = false;
 
@@ -58,6 +65,9 @@ test("Market", async ({ page, electronApp }) => {
   const maskEverythingExceptBitcoin = {
     mask: [...createBaseMask(page), page.getByRole("row").nth(1), page.getByRole("row").nth(2)],
   };
+  const buyPageMask = {
+    mask: [page.locator("webview"), page.locator("#fw-update-banner")],
+  };
 
   await test.step("go to market", async () => {
     await layout.goToMarket();
@@ -68,7 +78,7 @@ test("Market", async ({ page, electronApp }) => {
   });
 
   await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/fiat`, async route => {
-    route.fulfill({
+    await route.fulfill({
       headers: { teststatus: "mocked" },
       body: JSON.stringify([
         "AED",
@@ -177,15 +187,13 @@ test("Market", async ({ page, electronApp }) => {
   });
 
   await test.step("swap available to bitcoin", async () => {
-    await marketPage.swapButton("btc").isVisible();
+    await expect(marketPage.swapButton("btc")).toBeVisible();
   });
 
   await test.step("buy bitcoin from market page", async () => {
     await marketPage.openBuyPage("btc");
-    await page.locator("webview").waitFor({ state: "attached" });
-    await expect
-      .soft(page)
-      .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
+    await page.locator("webview").waitFor({ state: "visible" });
+    await expect.soft(page).toHaveScreenshot("market-btc-buy-page.png", buyPageMask);
     await liveAppWebview.waitForText("theme: dark");
     await liveAppWebview.waitForText("currency: bitcoin");
     await liveAppWebview.waitForText("mode: buy");
@@ -211,10 +219,8 @@ test("Market", async ({ page, electronApp }) => {
 
   await test.step("buy bitcoin from coin page", async () => {
     await marketCoinPage.openBuyPage();
-    await page.locator("webview").waitFor({ state: "attached" });
-    await expect
-      .soft(page)
-      .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
+    await page.locator("webview").waitFor({ state: "visible" });
+    await expect.soft(page).toHaveScreenshot("market-btc-buy-page.png", buyPageMask);
     await liveAppWebview.waitForText("theme: dark");
     await liveAppWebview.waitForText("currency: bitcoin");
     await liveAppWebview.waitForText("mode: buy");

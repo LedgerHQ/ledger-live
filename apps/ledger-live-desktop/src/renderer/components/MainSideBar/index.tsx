@@ -8,9 +8,9 @@ import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { Infinite } from "@ledgerhq/lumen-ui-react/symbols";
 import {
-  featureFlagsButtonVisibleSelector,
-  overriddenFeatureFlagsSelector,
-} from "~/renderer/reducers/settings";
+  featureFlagsBannerVisibleSelector,
+  featureFlagsOverridesSelector,
+} from "@shared/feature-flags";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken } from "~/renderer/styles/helpers";
@@ -27,11 +27,11 @@ import { useSideBarViewModel } from "LLD/components/SideBar/useSideBarViewModel"
 
 const MAIN_SIDEBAR_WIDTH = 230;
 
-const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
+const TagText = styled.div.attrs<{ $collapsed?: boolean }>(p => ({
   style: {
-    opacity: p.collapsed ? 1 : 0,
+    opacity: p.$collapsed ? 1 : 0,
   },
-}))<{ collapsed?: boolean }>`
+}))<{ $collapsed?: boolean }>`
   margin-left: ${p => p.theme.space[3]}px;
   transition: opacity 0.2s;
 `;
@@ -57,6 +57,9 @@ const Tag = styled(Link)`
     background-color: ${p => darken(p.theme.colors.opacityDefault.c10, 0.05)};
     border-color: ${p => p.theme.colors.wallet};
   }
+  & > * {
+    flex-shrink: 0;
+  }
 `;
 
 const CustomTag = styled(TagComponent)`
@@ -71,11 +74,11 @@ const Collapser = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
 }))<{
-  collapsed?: boolean;
+  $collapsed?: boolean;
 }>`
   position: absolute;
   top: ${48 - collapserSize / 2}px;
-  left: ${p => (p.collapsed ? collapsedWidth : MAIN_SIDEBAR_WIDTH) - collapserSize / 2}px;
+  left: ${p => (p.$collapsed ? collapsedWidth : MAIN_SIDEBAR_WIDTH) - collapserSize / 2}px;
 
   width: ${collapserSize}px;
   height: ${collapserSize}px;
@@ -101,8 +104,8 @@ const Collapser = styled(Box).attrs(() => ({
   }
 
   & > * {
-    transform: ${p => (p.collapsed ? "" : "rotate(180deg)")};
-    margin-left: ${p => (p.collapsed ? "" : "-2px")};
+    transform: ${p => (p.$collapsed ? "" : "rotate(180deg)")};
+    margin-left: ${p => (p.$collapsed ? "" : "-2px")};
     transition: transform 0.5s;
   }
 `;
@@ -141,7 +144,7 @@ const SideBar = styled(Box).attrs(() => ({
     ${p => p.theme.colors.background.default};
   transition: flex ${sideBarTransitionSpeed}ms;
   will-change: flex;
-  transform: translate3d(0, 0, 10);
+  z-index: 10;
 
   & > ${Collapser} {
     opacity: 0;
@@ -178,22 +181,22 @@ const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
       onClick={() => setTrackingSource("sidebar")}
     >
       <Icons.Experiment size="S" color="primary.c80" />
-      <TagText collapsed={collapsed}>{t("common.experimentalFeature")}</TagText>
+      <TagText $collapsed={collapsed}>{t("common.experimentalFeature")}</TagText>
     </Tag>
   ) : null;
 };
 const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
-  const isFeatureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
-  const overriddenFeatureFlags = useSelector(overriddenFeatureFlagsSelector);
+  const isFeatureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
+  const overriddenFeatureFlags = useSelector(featureFlagsOverridesSelector);
   const { t } = useTranslation();
-  return isFeatureFlagsButtonVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
+  return isFeatureFlagsBannerVisible || Object.keys(overriddenFeatureFlags).length !== 0 ? (
     <Tag
       data-testid="drawer-feature-flags-button"
       to="/settings/developer"
       onClick={() => setTrackingSource("sidebar")}
     >
       <Icons.Switch2 size="S" color="primary.c80" />
-      <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
+      <TagText $collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
 };
@@ -251,7 +254,7 @@ const MainSideBar = () => {
         return (
           <SideBar ref={nodeRef} style={sideBarTransitionStyles[state]}>
             <Collapser
-              collapsed={collapsed}
+              $collapsed={collapsed}
               onClick={handleCollapse}
               data-testid="drawer-collapse-button"
             >
@@ -288,7 +291,9 @@ const MainSideBar = () => {
                   label={t("sidebar.accounts")}
                   icon={Icons.Wallet}
                   iconActiveColor="wallet"
-                  isActive={locationPathname.startsWith("/account")}
+                  isActive={
+                    locationPathname.startsWith("/account") || locationPathname === "/cryptos"
+                  }
                   onClick={handleClickAccounts}
                   disabled={noAccounts}
                   collapsed={secondAnim}
@@ -381,7 +386,7 @@ const MainSideBar = () => {
                     onClick={handleClickRefer}
                     isActive={Boolean(
                       referralProgramConfig?.params?.path &&
-                        locationPathname.startsWith(referralProgramConfig.params.path),
+                      locationPathname.startsWith(referralProgramConfig.params.path),
                     )}
                     collapsed={secondAnim}
                     NotifComponent={

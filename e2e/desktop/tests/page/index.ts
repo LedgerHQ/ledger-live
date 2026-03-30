@@ -15,7 +15,6 @@ import { LiveApp } from "./liveApp.page";
 import { LockscreenPage } from "./lockscreen.page";
 import { MarketPage } from "./market.page";
 import { Modal } from "tests/component/modal.component";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { OnboardingPage } from "./onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { PageHolder } from "./abstractClasses";
@@ -34,6 +33,7 @@ import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer
 import { ModularDialog } from "./dialog/modular.dialog";
 import { MarketBannerPage } from "./marketBanner.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
+import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { MainNavigationPage } from "./mainNavigation.page";
 
@@ -55,7 +55,6 @@ export class Application extends PageHolder {
   public LockscreenPage = new LockscreenPage(this.page);
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
-  public modularDrawer = new ModularDrawer(this.page);
   public modularDialog = new ModularDialog(this.page);
   public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public onboarding = new OnboardingPage(this.page);
@@ -66,11 +65,12 @@ export class Application extends PageHolder {
   public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
   public send = new SendModal(this.page);
+  public newSendFlow = new NewSendModal(this.page);
   public sendDrawer = new SendDrawer(this.page);
   public settings = new SettingsPage(this.page);
   public settingsModal = new SettingsModal(this.page);
   public speculos = new SpeculosPage(this.page);
-  public swap = new SwapPage(this.page);
+  public swap = new SwapPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);

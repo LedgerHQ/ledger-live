@@ -1,14 +1,15 @@
 import BigNumber from "bignumber.js";
-import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
+import { formatTransactionStatus } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/serialization";
+} from "@ledgerhq/ledger-wallet-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { TRANSACTION_TYPE } from "../constants";
 import type { Transaction, TransactionRaw } from "../types";
 
 export function formatTransaction(transaction: Transaction, account: Account): string {
@@ -21,24 +22,54 @@ export function formatTransaction(transaction: Transaction, account: Account): s
 }
 
 export function fromTransactionRaw(tr: TransactionRaw): Transaction {
-  const common = fromTransactionCommonRaw(tr);
+  const commonGeneric = fromTransactionCommonRaw(tr);
+  const commonAleo = {
+    family: tr.family,
+    fees: new BigNumber(tr.fees),
+  };
+
+  if (
+    tr.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    tr.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      mode: tr.mode,
+      properties: tr.properties,
+    };
+  }
 
   return {
-    ...common,
-    family: tr.family,
-    type: tr.type,
-    fees: new BigNumber(tr.fees),
+    ...commonGeneric,
+    ...commonAleo,
+    mode: tr.mode,
   };
 }
 
 export function toTransactionRaw(t: Transaction): TransactionRaw {
-  const common = toTransactionCommonRaw(t);
+  const commonGeneric = toTransactionCommonRaw(t);
+  const commonAleo = {
+    family: t.family,
+    fees: t.fees.toString(),
+  };
+
+  if (
+    t.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    t.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+  ) {
+    return {
+      ...commonGeneric,
+      ...commonAleo,
+      mode: t.mode,
+      properties: t.properties,
+    };
+  }
 
   return {
-    ...common,
-    family: t.family,
-    type: t.type,
-    fees: t.fees.toString(),
+    ...commonGeneric,
+    ...commonAleo,
+    mode: t.mode,
   };
 }
 

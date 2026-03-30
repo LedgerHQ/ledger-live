@@ -4,7 +4,7 @@ import { DerivationType, LedgerSigner } from "@taquito/ledger-signer";
 import type { TezosSigner } from "@ledgerhq/coin-tezos/types/index";
 import makeCliTools from "@ledgerhq/coin-tezos/test/cli";
 import type { CliTools } from "@ledgerhq/coin-tezos/test/cli";
-import tezosResolver from "@ledgerhq/coin-tezos/signer/index";
+import tezosResolver from "./getAddress";
 import Xtz, { Curve } from "@ledgerhq/hw-app-tezos";
 import Transport from "@ledgerhq/hw-transport";
 import { createResolver, CreateSigner } from "../../bridge/setup";

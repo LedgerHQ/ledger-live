@@ -1,6 +1,6 @@
 import { cryptoAssetsApi, createRtkCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { StoreType } from "../context/store";
+import type { StoreType } from "~/state-manager/configureStore";
 
 export function setupCryptoAssetsStore(store: StoreType) {
   const cryptoAssetsStore = createRtkCryptoAssetsStore(cryptoAssetsApi, async <T>(action: T) => {

@@ -13,13 +13,13 @@ export enum ItemState {
 
 type Props = {
   appName: string;
-  itemProgress?: number;
+  progress?: number;
   productName: string;
   state: ItemState;
   i: number;
 };
 
-const Item = ({ appName, state, itemProgress, productName, i }: Props) => {
+const Item = ({ appName, state, progress, productName, i }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -28,8 +28,8 @@ const Item = ({ appName, state, itemProgress, productName, i }: Props) => {
       <Circle size={40} bg={colors.neutral.c30}>
         {state === ItemState.Active ? (
           <ProgressLoader
-            progress={itemProgress}
-            infinite={!itemProgress || itemProgress === 1}
+            progress={progress}
+            infinite={!progress || progress === 1}
             radius={10}
             strokeWidth={2}
           />

@@ -52,6 +52,7 @@ export default function MarketCoinScreen() {
     availableOnBuy,
     availableOnStake,
     availableOnSwap,
+    availableOnSell,
     color,
     dataChart,
     isLoadingDataChart,
@@ -64,6 +65,7 @@ export default function MarketCoinScreen() {
     onSwap,
     onBuy,
     onStake,
+    onSell,
     toggleStar,
     changeCounterCurrency,
   } = useMarketCoin();
@@ -115,6 +117,16 @@ export default function MarketCoinScreen() {
               {availableOnBuy && (
                 <Button data-testid="market-coin-buy-button" variant="color" mr={1} onClick={onBuy}>
                   {t("accounts.contextMenu.buy")}
+                </Button>
+              )}
+              {availableOnSell && (
+                <Button
+                  data-testid="market-coin-sell-button"
+                  variant="color"
+                  mr={1}
+                  onClick={onSell}
+                >
+                  {t("accounts.contextMenu.sell")}
                 </Button>
               )}
               {availableOnSwap && (

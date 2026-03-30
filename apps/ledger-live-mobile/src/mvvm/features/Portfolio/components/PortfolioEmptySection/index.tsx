@@ -8,25 +8,16 @@ interface PortfolioEmptySectionProps {
 }
 
 export const PortfolioEmptySection = ({ isLNSUpsellBannerShown }: PortfolioEmptySectionProps) => {
-  const { hasAccounts, assets, isAddModalOpened, goToAssets, openAddModal, closeAddModal } =
-    usePortfolioEmptySectionViewModel();
+  const { hasAccounts } = usePortfolioEmptySectionViewModel();
 
   if (!hasAccounts) {
-    return (
-      <PortfolioNoAccountsContent
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        openAddModal={openAddModal}
-        closeAddModal={closeAddModal}
-        isAddModalOpened={isAddModalOpened}
-      />
-    );
+    return <PortfolioNoAccountsContent isLNSUpsellBannerShown={isLNSUpsellBannerShown} />;
   }
 
   return (
     <PortfolioNoSignerContent
-      assets={assets}
-      goToAssets={goToAssets}
       isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+      variant="emptyState"
     />
   );
 };

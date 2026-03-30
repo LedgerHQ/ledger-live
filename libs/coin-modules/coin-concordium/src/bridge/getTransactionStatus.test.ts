@@ -8,10 +8,10 @@ import {
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { MAX_MEMO_LENGTH } from "@ledgerhq/concordium-core";
-import coinConfig from "../config";
 import {
   createFixtureAccount,
   createFixtureTransaction,
+  setupTestnetCoinConfig,
   VALID_ADDRESS,
   VALID_ADDRESS_2,
 } from "../test/fixtures";
@@ -20,15 +20,7 @@ import { getTransactionStatus } from "./getTransactionStatus";
 
 describe("getTransactionStatus", () => {
   beforeEach(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: { type: "active" },
-      networkType: "testnet",
-      grpcUrl: "https://grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 0,
-      currency: createFixtureAccount().currency,
-    }));
+    setupTestnetCoinConfig({ minReserve: 0, currency: createFixtureAccount().currency });
   });
 
   describe("fee validation", () => {
@@ -124,15 +116,7 @@ describe("getTransactionStatus", () => {
 
     it("should return ConcordiumInsufficientFunds when totalSpent exceeds balance minus reserve but not balance", async () => {
       // GIVEN - balance (500000) >= totalSpent (500000) > balance (500000) - reserve (100000) = 400000
-      coinConfig.setCoinConfig(() => ({
-        status: { type: "active" },
-        networkType: "testnet",
-        grpcUrl: "https://grpc.testnet.concordium.com",
-        grpcPort: 20000,
-        proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-        minReserve: 100000,
-        currency: createFixtureAccount().currency,
-      }));
+      setupTestnetCoinConfig({ minReserve: 100000, currency: createFixtureAccount().currency });
       const account = createFixtureAccount({ balance: new BigNumber(500000) });
       const transaction = createFixtureTransaction({
         amount: new BigNumber(400000),
@@ -149,15 +133,7 @@ describe("getTransactionStatus", () => {
 
     it("should not error when amount is below reserve but totalSpent is within limits", async () => {
       // GIVEN - amount (50000) < reserve (100000), but totalSpent (51000) < balance (1000000) - reserve (100000)
-      coinConfig.setCoinConfig(() => ({
-        status: { type: "active" },
-        networkType: "testnet",
-        grpcUrl: "https://grpc.testnet.concordium.com",
-        grpcPort: 20000,
-        proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-        minReserve: 100000,
-        currency: createFixtureAccount().currency,
-      }));
+      setupTestnetCoinConfig({ minReserve: 100000, currency: createFixtureAccount().currency });
       const account = createFixtureAccount({ balance: new BigNumber(1000000) });
       const transaction = createFixtureTransaction({
         amount: new BigNumber(50000),
@@ -174,15 +150,7 @@ describe("getTransactionStatus", () => {
 
     it("should not error when amount equals reserve", async () => {
       // GIVEN
-      coinConfig.setCoinConfig(() => ({
-        status: { type: "active" },
-        networkType: "testnet",
-        grpcUrl: "https://grpc.testnet.concordium.com",
-        grpcPort: 20000,
-        proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-        minReserve: 100000,
-        currency: createFixtureAccount().currency,
-      }));
+      setupTestnetCoinConfig({ minReserve: 100000, currency: createFixtureAccount().currency });
       const account = createFixtureAccount({ balance: new BigNumber(1000000) });
       const transaction = createFixtureTransaction({
         amount: new BigNumber(100000),

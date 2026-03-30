@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/concordium-core",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Shared Concordium protocol types, serialization, and utilities",
   "main": "lib/index.js",
   "module": "lib-es/index.js",
@@ -11,8 +11,8 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "typecheck": "tsc --noEmit",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts --cache",
@@ -26,14 +26,22 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1"
   },
   "exports": {
     ".": {
+      "@ledgerhq/source": "./src/index.ts",
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },

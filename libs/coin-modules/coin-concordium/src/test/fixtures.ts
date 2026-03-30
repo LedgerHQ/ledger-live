@@ -8,7 +8,8 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Transaction } from "../types";
+import type { ConcordiumCoinConfig, ConcordiumConfig, Transaction } from "../types";
+import coinConfig from "../config";
 
 // Valid Concordium addresses for testing
 export const VALID_ADDRESS = "3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w";
@@ -20,14 +21,28 @@ export const PUBLIC_KEY = "aa".repeat(32);
 // 96 hex characters (48 bytes) - standard credential ID length
 export const CRED_ID = "cc".repeat(48);
 
+export const TESTNET_COIN_CONFIG: ConcordiumConfig = {
+  networkType: "testnet",
+  proxyUrl: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com",
+  minReserve: 100000,
+};
+
+export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>): void {
+  coinConfig.setCoinConfig(() => ({
+    status: { type: "active" },
+    ...TESTNET_COIN_CONFIG,
+    ...overrides,
+  }));
+}
+
 export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "concordium",
+    id: "concordium_testnet",
     name: "Concordium",
     family: "concordium",
     ticker: "CCD",
-    scheme: "concordium",
+    scheme: "concordium_testnet",
     color: "#000000",
     units: [{ name: "CCD", code: "CCD", magnitude: 6 }],
     managerAppName: "Concordium",
@@ -38,14 +53,14 @@ export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): Cryp
 export function createFixtureAccount(overrides?: Partial<Account>): Account {
   return {
     type: "Account",
-    id: "js:2:concordium:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
+    id: "js:2:concordium_testnet:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
     seedIdentifier: PUBLIC_KEY,
     xpub: PUBLIC_KEY,
     derivationMode: "",
     index: 0,
     currency: createFixtureCurrency(),
     freshAddress: VALID_ADDRESS,
-    freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
+    freshAddressPath: "44'/919'/404'/404'/0'",
     balance: new BigNumber(10000000),
     spendableBalance: new BigNumber(9900000),
     blockHeight: 1000,
@@ -79,7 +94,7 @@ export function createFixtureTransaction(overrides?: Partial<Transaction>): Tran
 
 export function createFixtureOperation(overrides?: Partial<Operation>): Operation {
   return {
-    id: "js:2:concordium:addr:tx-1",
+    id: "js:2:concordium_testnet:addr:tx-1",
     hash: "tx-hash-1",
     type: "OUT",
     value: new BigNumber(1000000),
@@ -88,7 +103,7 @@ export function createFixtureOperation(overrides?: Partial<Operation>): Operatio
     recipients: [VALID_ADDRESS_2],
     blockHeight: 1000,
     blockHash: "block-hash-1",
-    accountId: "js:2:concordium:addr:",
+    accountId: "js:2:concordium_testnet:addr:",
     date: new Date("2024-01-01"),
     extra: {},
     transactionSequenceNumber: new BigNumber(1),

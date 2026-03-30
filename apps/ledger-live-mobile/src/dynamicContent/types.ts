@@ -133,6 +133,8 @@ type HorizontalContentCard = ContentCardCommonProperties & {
   link?: string;
   description?: string;
   image?: string;
+  image_background?: string;
+  icon?: string;
   gridWidthFactor?: WidthFactor;
 };
 

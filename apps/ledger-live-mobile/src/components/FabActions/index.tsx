@@ -10,10 +10,12 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InfoModal from "../InfoModal";
 import { useAnalytics } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
+import { setOriginFlow } from "~/analytics/originFlow";
 import { NavigatorName } from "~/const";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "~/context/hooks";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -100,6 +102,7 @@ export const FabButtonBarProvider = ({
     useNavigation<NativeStackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const { navigateToRebornFlow } = useRebornFlow();
 
@@ -149,7 +152,9 @@ export const FabButtonBarProvider = ({
         customHandler,
       } = data;
 
-      if (readOnlyModeEnabled && !hasOrderedNano) {
+      const shouldUseLegacyRebornFlow = readOnlyModeEnabled && !shouldUseLazyOnboarding;
+      if (shouldUseLegacyRebornFlow && !hasOrderedNano) {
+        setOriginFlow(id || "FabActions");
         navigateToRebornFlow();
         return;
       }
@@ -187,6 +192,7 @@ export const FabButtonBarProvider = ({
       router.name,
       globalEventProperties,
       onNavigate,
+      shouldUseLazyOnboarding,
     ],
   );
 

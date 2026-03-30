@@ -34,4 +34,4 @@ export type FearAndGreedStatus = z.infer<typeof FearAndGreedStatusSchema>;
 export type FearAndGreedResponse = z.infer<typeof FearAndGreedResponseSchema>;
 export type FearAndGreedIndex = z.infer<typeof FearAndGreedIndexSchema>;
 
-export type FearAndGreedLevel = "extremeFear" | "fear" | "neutral" | "greed" | "extremeGreed";
+export type FearAndGreedLevel = "fear" | "cautious" | "neutral" | "optimistic" | "greedy";

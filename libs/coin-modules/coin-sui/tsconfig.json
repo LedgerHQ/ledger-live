@@ -5,22 +5,12 @@
     "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2022", "dom"],
+    "types": ["node", "jest"],
     "rootDir": "./src",
     "exactOptionalPropertyTypes": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "typeRoots": [
-      "./node_modules/@types",
-      "index.d.ts"
-    ]
+    "typeRoots": ["./node_modules/@types", "index.d.ts"],
+    "outDir": "./lib"
   },
-  "include": [
-    "src/**/*",
-    "index.d.ts"
-  ]
+  "include": ["src/**/*", "index.d.ts"]
 }

@@ -25,11 +25,11 @@ import {
   getParentAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   decodeTokenAccountIdSync,
   decodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { createCustomErrorClass } from "@ledgerhq/errors";
@@ -39,8 +39,18 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
+import { makeSetEarnInfoBottomSheetAction } from "~/actions/earn";
+import {
+  MAX_LABEL_LENGTH,
+  MAX_MESSAGE_LENGTH,
+  MAX_TITLE_LENGTH,
+  sanitizeString,
+  validateUrl,
+} from "~/navigation/deeplinks/validation";
+import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");
@@ -69,6 +79,8 @@ export function useCustomExchangeHandlers({
   const deviceRef = useRef<Device | undefined>(undefined);
   const syncAccountById = useSyncAccountById();
   const dispatch = useDispatch();
+  const { isEnabled } = useWalletFeaturesConfig("mobile");
+  const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -284,6 +296,7 @@ export function useCustomExchangeHandlers({
 
         return results;
       },
+      "custom.bottomSheet.info": createOpenInfoBottomSheetHandler(dispatch),
     };
 
     return {
@@ -291,6 +304,7 @@ export function useCustomExchangeHandlers({
         accounts,
         tracking,
         manifest,
+        flags,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -357,10 +371,16 @@ export function useCustomExchangeHandlers({
 
                   if (result.error) {
                     onCancel(result.error);
-
-                    navigation.navigate(ScreenName.SwapCustomError, {
-                      error: result.error,
-                    });
+                    if (onCompleteError) {
+                      onCompleteError(result.error);
+                    } else {
+                      navigation.navigate(NavigatorName.SwapSubScreens, {
+                        screen: ScreenName.SwapCustomError,
+                        params: {
+                          error: result.error,
+                        },
+                      });
+                    }
                   }
 
                   if (result.operation) {
@@ -380,9 +400,16 @@ export function useCustomExchangeHandlers({
               navigation.pop();
             }
 
-            navigation.navigate(ScreenName.SwapCustomError, {
-              error: error ?? unknownSwapError,
-            });
+            if (onCompleteError) {
+              onCompleteError(error ?? unknownSwapError);
+            } else {
+              navigation.navigate(NavigatorName.SwapSubScreens, {
+                screen: ScreenName.SwapCustomError,
+                params: {
+                  error: error ?? unknownSwapError,
+                },
+              });
+            }
           },
           "custom.isReady": async () => {
             if (Config.DETOX) {
@@ -469,6 +496,7 @@ export function useCustomExchangeHandlers({
     onCompleteError,
     onCompleteResult,
     handleLoaderDrawer,
+    flags,
     sendAppReady,
     syncAccountById,
     tracking,
@@ -482,4 +510,70 @@ export function useCustomExchangeHandlers({
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   return useCustomExchangeHandlers({ manifest, accounts, sendAppReady: sendEarnLiveAppReady });
+}
+
+export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
+  return async (request: {
+    params?: {
+      title: unknown;
+      message: unknown;
+      linkText?: unknown;
+      linkHref?: unknown;
+    };
+  }) => {
+    const { params } = request;
+    if (!params) {
+      throw new Error("Missing params for custom.bottomSheet.info");
+    }
+
+    const { title, message, linkText, linkHref } = params;
+
+    if (typeof title !== "string" || typeof message !== "string") {
+      throw new TypeError(
+        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    const sanitizedTitle = sanitizeString(title, MAX_TITLE_LENGTH);
+    const sanitizedMessage = sanitizeString(message, MAX_MESSAGE_LENGTH);
+    if (!sanitizedTitle || !sanitizedMessage) {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    if (linkText != null && typeof linkText !== "string") {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: 'linkText' must be a string when provided.",
+      );
+    }
+    if (linkHref != null && typeof linkHref !== "string") {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: 'linkHref' must be a string when provided.",
+      );
+    }
+
+    const sanitizedLinkText = linkText
+      ? sanitizeString(linkText, MAX_LABEL_LENGTH) || undefined
+      : undefined;
+
+    let validatedLinkHref: string | undefined;
+    if (linkHref != null) {
+      validatedLinkHref = validateUrl(linkHref);
+      if (validatedLinkHref === "") {
+        throw new Error(
+          "Invalid params for custom.bottomSheet.info: 'linkHref' is not an allowed URL.",
+        );
+      }
+    }
+
+    dispatch(
+      makeSetEarnInfoBottomSheetAction({
+        title: sanitizedTitle,
+        message: sanitizedMessage,
+        linkText: sanitizedLinkText,
+        linkHref: validatedLinkHref,
+      }),
+    );
+  };
 }

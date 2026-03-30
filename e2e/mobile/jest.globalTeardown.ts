@@ -1,6 +1,7 @@
 import { register } from "tsconfig-paths";
 
 // Register path mappings explicitly with the correct tsconfig
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- JSON config load
 const tsConfig = require("./tsconfig.json");
 register({
   baseUrl: __dirname,
@@ -40,7 +41,7 @@ async function withTimeout<T>(
   timeoutMs: number,
   operationName: string,
 ): Promise<T | undefined> {
-  let timeoutId: NodeJS.Timeout;
+  let timeoutId: ReturnType<typeof setTimeout>;
   const timeoutPromise = new Promise<undefined>(resolve => {
     timeoutId = setTimeout(() => {
       log.warn(`${operationName} timed out after ${timeoutMs}ms, continuing...`);
@@ -64,7 +65,7 @@ export default async () => {
       await initDetox();
       await launchApp();
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-      await NativeElementHelpers.waitForElementById("settings-icon", 120_000);
+      await NativeElementHelpers.waitForElementById("topbar-settings", 120_000);
 
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));

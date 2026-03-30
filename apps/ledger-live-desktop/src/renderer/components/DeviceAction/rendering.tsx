@@ -49,6 +49,10 @@ import {
   isInvalidGetFirmwareMetadataResponseError,
   isDisconnectedWhileSendingApduError,
 } from "@ledgerhq/live-dmk-desktop";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 import { urls } from "~/config/urls";
 import { closeAllModal } from "~/renderer/actions/modals";
@@ -94,6 +98,7 @@ export const AnimationWrapper = styled.div`
   overflow: hidden;
   padding-bottom: 12px;
   align-self: center;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -806,6 +811,7 @@ export const renderError = ({
   learnMoreTextKey,
   Icon,
   stretch,
+  currencyName = "",
 }: {
   error: Error | ErrorConstructor | DmkError;
   t: TFunction;
@@ -827,6 +833,7 @@ export const renderError = ({
   withDescription?: boolean;
   stretch?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => React.JSX.Element;
+  currencyName?: string;
 }) => {
   let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -844,6 +851,14 @@ export const renderError = ({
     if (tmpError.title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
+  } else if (isDmkError(error) && error._tag === "DeviceDeprecationError") {
+    return (
+      <DeviceDeprecationScreen
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        screenName={DeviceDeprecationScreens.errorScreen}
+        coinName={currencyName}
+      />
+    );
   } else if (tmpError instanceof NoSuchAppOnProvider) {
     return (
       <NoSuchAppOnProviderErrorComponent
@@ -943,6 +958,7 @@ export const renderInWrongAppForAccount = ({
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
+  passWarning?: () => void;
 }) =>
   renderError({
     t,
@@ -952,40 +968,42 @@ export const renderInWrongAppForAccount = ({
     stretch: true,
   });
 
-export const renderConnectYourDevice = ({
+export const ConnectYourDevice = ({
   modelId,
   type,
   onRepairModal,
-  device,
+  device = null,
   unresponsive,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
   onRepairModal?: ((open: boolean) => void) | null;
-  device: Device;
+  device?: Device | null;
   unresponsive?: boolean | null;
-}) => (
-  <Wrapper>
-    <Header />
-    <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
-    </AnimationWrapper>
-    <Footer>
-      <Title>
-        <Trans
-          i18nKey={
-            unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
-          }
-        />
-      </Title>
-      {!device && onRepairModal ? (
-        <TroubleshootingWrapper>
-          <ConnectTroubleshooting onRepair={onRepairModal} />
-        </TroubleshootingWrapper>
-      ) : null}
-    </Footer>
-  </Wrapper>
-);
+}) => {
+  return (
+    <Wrapper>
+      <Header />
+      <AnimationWrapper>
+        <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
+      </AnimationWrapper>
+      <Footer>
+        <Title>
+          <Trans
+            i18nKey={
+              unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
+            }
+          />
+        </Title>
+        {!device && onRepairModal ? (
+          <TroubleshootingWrapper>
+            <ConnectTroubleshooting onRepair={onRepairModal} />
+          </TroubleshootingWrapper>
+        ) : null}
+      </Footer>
+    </Wrapper>
+  );
+};
 
 const OpenSwapBtn = () => {
   const { setDrawer } = useContext(context);

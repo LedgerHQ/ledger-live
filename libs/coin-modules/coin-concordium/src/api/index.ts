@@ -1,56 +1,60 @@
-import {
+import type {
   AlpacaApi,
+  Balance,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
+  ListOperationsOptions,
+  Operation,
   Page,
   Reward,
   Stake,
   TransactionIntent,
+  TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import {
-  encodeMemoToCbor,
   serializeTransfer,
   serializeTransferWithMemo,
   TransactionType,
 } from "@ledgerhq/concordium-core";
 import {
-  broadcast as broadcastLogic,
+  broadcast,
   combine,
   craftTransaction as craftTransactionLogic,
-  craftRawTransaction as craftRawTransactionLogic,
+  craftRawTransaction,
   estimateFees as estimateFeesLogic,
   getBalance,
-  getBlock as getBlockLogic,
-  getBlockInfo as getBlockInfoLogic,
+  getBlockInfo,
   getNextValidSequence,
   lastBlock,
-  listOperations,
+  listOperations as listOperationsLogic,
 } from "../logic";
 import coinConfig from "../config";
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
+import { validateAddress } from "../bridge/validateAddress";
+import { mapRawOperationToApiOperation } from "./utils";
 
-export function createApi(config: ConcordiumConfig): AlpacaApi<ConcordiumMemo> {
+export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-  const currency = getCryptoCurrencyById("concordium");
 
   return {
-    broadcast: (tx: string) => broadcastLogic(tx, currency),
+    broadcast: (tx: string) => broadcast(tx, currencyId),
     combine,
     craftTransaction: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
-      craftTransaction(transactionIntent, currency),
+      craftTransaction(transactionIntent, currencyId),
     craftRawTransaction,
     estimateFees: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
-      estimateFees(transactionIntent, currency),
-    getBalance: (address: string) => getBalance(address, currency),
-    lastBlock: () => lastBlock(currency),
-    listOperations: (address: string, options) => listOperations(address, options, currency),
-    getBlock: (height: number) => getBlockLogic(height, currency),
-    getBlockInfo: (height: number) => getBlockInfoLogic(height, currency),
+      estimateFees(transactionIntent, currencyId),
+    getBalance: (address: string) => getBalance(address, currencyId),
+    lastBlock: () => lastBlock(currencyId),
+    listOperations: (address: string, options: ListOperationsOptions) =>
+      listOperations(address, options, currencyId),
+    getBlock: (_height: number) => {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo: (height: number) => getBlockInfo(height, currencyId),
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
@@ -60,14 +64,25 @@ export function createApi(config: ConcordiumConfig): AlpacaApi<ConcordiumMemo> {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }
 
 async function craftTransaction(
   transactionIntent: TransactionIntent<ConcordiumMemo>,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currency);
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender, currencyId);
   const memo =
     "memo" in transactionIntent && transactionIntent.memo?.type === "string"
       ? transactionIntent.memo.value
@@ -87,35 +102,29 @@ async function craftTransaction(
   return { transaction: serialized.toString("hex") };
 }
 
-async function craftRawTransaction(
-  transaction: string,
-  sender: string,
-  publicKey: string,
-  sequence: bigint,
-): Promise<CraftedTransaction> {
-  const { serializedTransaction } = await craftRawTransactionLogic(
-    transaction,
-    sender,
-    publicKey,
-    sequence,
-  );
-  return { transaction: serializedTransaction };
-}
-
 async function estimateFees(
   transactionIntent: TransactionIntent<ConcordiumMemo>,
-  currency: CryptoCurrency,
+  currencyId: string,
 ): Promise<FeeEstimation> {
   const memo =
     "memo" in transactionIntent && transactionIntent.memo?.type === "string"
       ? transactionIntent.memo.value
       : undefined;
 
-  const transactionType = memo ? TransactionType.TransferWithMemo : TransactionType.Transfer;
-
-  const memoSize = memo ? encodeMemoToCbor(memo).length : undefined;
-
-  const estimation = await estimateFeesLogic(currency, transactionType, memoSize);
+  const estimation = await estimateFeesLogic(currencyId, memo);
 
   return { value: estimation.cost };
+}
+
+async function listOperations(
+  address: string,
+  options: ListOperationsOptions,
+  currencyId: string,
+): Promise<Page<Operation>> {
+  const { items, next } = await listOperationsLogic(address, options, currencyId);
+
+  return {
+    items: items.map(mapRawOperationToApiOperation),
+    next,
+  };
 }

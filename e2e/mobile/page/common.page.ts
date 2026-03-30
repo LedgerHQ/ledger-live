@@ -118,10 +118,12 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    const proxyUrl = process.env.DEVICE_PROXY_URL;
-    const elementId = proxyUrl ? this.deviceItem(`httpdebug|${proxyUrl}`) : this.deviceItemRegex;
+    const speculosAddress = process.env.DEVICE_PROXY_URL;
+    const elementId = speculosAddress
+      ? this.deviceItem(`speculos|${speculosAddress}`)
+      : this.deviceItemRegex;
     await waitForElementById(elementId);
-    await tapById(elementId, proxyUrl ? undefined : index);
+    await tapById(elementId, speculosAddress ? undefined : index);
   }
 
   @Step("Tap proceed button")

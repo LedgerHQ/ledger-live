@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
-import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
+import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";

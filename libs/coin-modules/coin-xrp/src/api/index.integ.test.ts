@@ -1,8 +1,7 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { decode } from "ripple-binary-codec";
+import { decode, encodeForSigning } from "ripple-binary-codec";
+import { deriveKeypair, generateSeed, sign } from "ripple-keypairs";
 import { createApi } from ".";
-//import { decode, encodeForSigning } from "ripple-binary-codec";
-//import { sign } from "ripple-keypairs";
 
 describe("Xrp Api (testnet)", () => {
   const SENDER = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
@@ -49,6 +48,7 @@ describe("Xrp Api (testnet)", () => {
         expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
         expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
         expect(operation.tx.fees).toBeGreaterThan(0);
+        expect(operation.tx.feesPayer).toBe(SENDER);
         expect(operation.tx.date).toBeInstanceOf(Date);
       });
     });
@@ -214,10 +214,37 @@ describe("Xrp Api (testnet)", () => {
       });
     });
   });
+
+  describe("combine", () => {
+    it("returns a signed raw transaction", async () => {
+      // Given
+      const { privateKey, publicKey } = deriveKeypair(generateSeed());
+      const rawTx =
+        "120000228000000024001BCDA6201B001F018161400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98";
+      const signedTx = sign(
+        encodeForSigning({
+          ...decode(rawTx),
+          SigningPubKey: publicKey,
+        }),
+        privateKey,
+      );
+
+      // When
+      const result = await api.combine(rawTx, signedTx, publicKey);
+      const decoded = decode(result);
+
+      // Then
+      expect(decoded).toMatchObject({
+        SigningPubKey: publicKey,
+        TxnSignature: signedTx,
+      });
+    });
+  });
 });
 
 describe("Xrp Api (mainnet)", () => {
   const SENDER = "rn5BQvhksnPfbo277LtFks4iyYStPKGrnJ";
+  const SENDER_WITH_FEES = "r4aYLkMk2yzULLpLfXtJyznFPnHKZozKip";
   const api = createApi({ node: "https://xrp.coin.ledger.com" });
 
   describe("estimateFees", () => {
@@ -258,9 +285,12 @@ describe("Xrp Api (mainnet)", () => {
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);
       ops.forEach(operation => {
-        const isSenderOrReceipt =
-          operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
-        expect(isSenderOrReceipt).toBe(true);
+        if (operation.type === "IN") {
+          expect(operation.recipients).toContain(SENDER);
+        } else if (operation.type === "OUT") {
+          expect(operation.senders).toContain(SENDER);
+        }
+        expect(operation.tx.feesPayer).toBe(operation.senders[0]);
         expect(operation.value).toBeGreaterThanOrEqual(0);
         expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
         expect(operation.tx.block.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
@@ -287,6 +317,7 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.senders).toContain(inTx.sender);
       expect(op.type).toEqual(inTx.type);
       expect(op.tx.fees).toEqual(BigInt(inTx.fees * 1e6));
+      expect(op.tx.feesPayer).toBe(inTx.sender);
     });
 
     it("returns OUT operation", async () => {
@@ -306,6 +337,63 @@ describe("Xrp Api (mainnet)", () => {
       expect(op.senders).toContain(outTx.sender);
       expect(op.type).toEqual(outTx.type);
       expect(op.tx.fees).toEqual(BigInt(outTx.fees * 1e6));
+      expect(op.tx.feesPayer).toBe(SENDER);
+    });
+
+    it("returns FEES operation", async () => {
+      const resp = await api.listOperations(SENDER_WITH_FEES, { minHeight: 0 });
+      const feesOps = resp.items;
+
+      // https://xrpscan.com/tx/BEA8B9E4D2A8351417E862D41C8BE1F0013DEFBF6A8893771FE6991E6B20E19C
+      const outTx = {
+        hash: "BEA8B9E4D2A8351417E862D41C8BE1F0013DEFBF6A8893771FE6991E6B20E19C",
+        amount: 0,
+        recipient: [],
+        sender: SENDER_WITH_FEES,
+        type: "FEES",
+        fees: 0.00001,
+      };
+      const op = feesOps.find(o => o.tx.hash === outTx.hash) as Operation;
+
+      expect(op.tx.hash).toEqual(outTx.hash);
+      expect(op.value).toEqual(BigInt(outTx.amount * 1e6));
+      expect(op.recipients).toEqual([]);
+      expect(op.senders).toContain(outTx.sender);
+      expect(op.type).toEqual(outTx.type);
+      expect(op.tx.fees).toEqual(BigInt(outTx.fees * 1e6));
+    });
+
+    it("returns IN operation on account delete", async () => {
+      //https://xrpscan.com/tx/EE823A89E7EC7EE9AD3AFD7FFE6CCF46653B325F898EE44BE8FA69CEC37FBF69
+      const accountDeleteResponse = await api.listOperations("rKAnkysinEbryTHdBh6nseDSU2ULhaFSs6", {
+        minHeight: 0,
+      });
+      const opsAccountDelete = accountDeleteResponse.items;
+      const inTx = {
+        hash: "EE823A89E7EC7EE9AD3AFD7FFE6CCF46653B325F898EE44BE8FA69CEC37FBF69",
+        amount: 8.0,
+        recipient: "rKAnkysinEbryTHdBh6nseDSU2ULhaFSs6",
+        sender: "rD3UstYio1Ggd5aWf11gXtbakiiWDPUmV",
+        type: "IN",
+        fees: 2.0,
+      };
+      const op = opsAccountDelete.find(o => o.tx.hash === inTx.hash) as Operation;
+      expect(op).toMatchObject({
+        id: inTx.hash,
+        tx: {
+          hash: inTx.hash,
+          fees: BigInt(inTx.fees * 1e6),
+          feesPayer: inTx.sender,
+          failed: false,
+        },
+        type: inTx.type,
+        value: BigInt(inTx.amount * 1e6),
+        senders: [inTx.sender],
+        recipients: [inTx.recipient],
+        details: {
+          xrpTxType: "AccountDelete",
+        },
+      });
     });
   });
 
@@ -397,32 +485,3 @@ describe("Xrp Api (mainnet)", () => {
     });
   });
 });
-
-// To enable this test, you need to fill an `.env` file at the root of this package. Example can be found in `.env.integ.test.example`.
-// The value hardcoded here depends on the value filled in the `.env` file.
-/*describe.skip("combine", () => {
-  //const xrpPubKey = process.env["PUB_KEY"]!;
-  //const xrpSecretKey = process.env["SECRET_KEY"]!;
-    it("returns a signed raw transaction", async () => {
-      // Given
-      const rawTx =
-        "120000228000000024001BCDA6201B001F018161400000000000000A6840000000000000018114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98";
-      const signedTx = sign(
-        encodeForSigning({
-          ...decode(rawTx),
-          SigningPubKey: xrpPubKey,
-        }),
-        xrpSecretKey,
-      );
-
-      // When
-      const result = await module.combine(rawTx, signedTx);
-
-      // Then
-      expect(result).toEqual(
-        "120000228000000024001BCDA6201B001F018161400000000000000A68400000000000000174473045022100D3B9B37F40961A8DBDE48535F9EF333E87F9D98BE90F7141E133541874826BDB0220065E9CA4D218F16087656BC30D66672F6103B03717A59FFC04C837A2157CE47C8114CF30F590D7A9067B2604D80D46090FBF342EBE988314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
-      );
-    });
-  });
-});
-  */

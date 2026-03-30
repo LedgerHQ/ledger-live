@@ -33,8 +33,16 @@ export default function SelectDeviceScreen({
   ScreenName.SelectDevice
 >) {
   const { currency } = route.params;
-  const { onResult, device, action, isFocused, onClose, selectDevice, registerDeviceSelection } =
-    useSelectDeviceViewModel(route);
+  const {
+    onResult,
+    device,
+    action,
+    isFocused,
+    onClose,
+    selectDevice,
+    registerDeviceSelection,
+    readOnlyModeEnabled,
+  } = useSelectDeviceViewModel(route);
   const { colors } = useTheme();
   const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
   const onHeaderCloseButton = useCallback(() => {
@@ -64,6 +72,8 @@ export default function SelectDeviceScreen({
 
   /** Parameter used to prevent auto selection and force the user to manually select a device */
   const forceSelectDevice = "forceSelectDevice" in route.params && route.params.forceSelectDevice;
+
+  if (readOnlyModeEnabled) return null;
 
   return (
     <SafeAreaView

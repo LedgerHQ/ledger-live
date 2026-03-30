@@ -1,6 +1,6 @@
 import { useSelector } from "~/context/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import type { LlmNanoSUpsellBannersConfig } from "@ledgerhq/types-live/lib/lnsUpsell";
+import type { LlmNanoSUpsellBannersConfig } from "@ledgerhq/types-live/lnsUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import {
   knownDeviceModelIdsSelector,

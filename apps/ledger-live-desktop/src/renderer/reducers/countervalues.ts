@@ -12,12 +12,6 @@ export type CountervaluesState = {
     pending: boolean;
     error: Error | null;
   };
-  marketcap: {
-    ids: string[];
-    lastUpdated: number;
-    isLoading: boolean;
-    error: string | null;
-  };
   polling: {
     isPolling: boolean;
     triggerLoad: boolean;
@@ -29,12 +23,6 @@ const INITIAL_STATE: CountervaluesState = {
   countervalues: {
     state: initialState,
     pending: false,
-    error: null,
-  },
-  marketcap: {
-    ids: [],
-    lastUpdated: 0,
-    isLoading: false,
     error: null,
   },
   polling: {
@@ -54,9 +42,6 @@ const INITIAL_STATE: CountervaluesState = {
 
 export type RootState = { countervalues: CountervaluesState };
 
-export const countervaluesMarketcapIdsSelector = (s: RootState) => s.countervalues.marketcap.ids;
-export const countervaluesMarketcapLastUpdatedSelector = (s: RootState) =>
-  s.countervalues.marketcap.lastUpdated;
 export const countervaluesPollingIsPollingSelector = (s: RootState) =>
   s.countervalues.polling.isPolling;
 export const countervaluesPollingTriggerLoadSelector = (s: RootState) =>
@@ -70,9 +55,6 @@ export const countervaluesUserSettingsSelector = (s: RootState) => s.countervalu
 
 // Hooks
 
-export const useCountervaluesMarketcapIds = () => useSelector(countervaluesMarketcapIdsSelector);
-export const useCountervaluesMarketcapLastUpdated = () =>
-  useSelector(countervaluesMarketcapLastUpdatedSelector);
 export const useCountervaluesPollingIsPolling = () =>
   useSelector(countervaluesPollingIsPollingSelector);
 export const useCountervaluesPollingTriggerLoad = () =>
@@ -91,40 +73,6 @@ type CountervaluesHandlers<PreciseKey = true> = Handlers<
 >;
 
 const handlers: CountervaluesHandlers = {
-  COUNTERVALUES_MARKETCAP_SET_IDS: (
-    state: CountervaluesState,
-    { payload }: { payload: string[] },
-  ) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      ids: payload,
-      lastUpdated: Date.now(),
-      isLoading: false,
-      error: null,
-    },
-  }),
-  COUNTERVALUES_MARKETCAP_SET_LOADING: (
-    state: CountervaluesState,
-    { payload }: { payload: boolean },
-  ) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      isLoading: payload,
-    },
-  }),
-  COUNTERVALUES_MARKETCAP_SET_ERROR: (
-    state: CountervaluesState,
-    { payload }: { payload: string },
-  ) => ({
-    ...state,
-    marketcap: {
-      ...state.marketcap,
-      error: payload,
-      isLoading: false,
-    },
-  }),
   COUNTERVALUES_POLLING_SET_IS_POLLING: (
     state: CountervaluesState,
     { payload }: { payload: boolean },

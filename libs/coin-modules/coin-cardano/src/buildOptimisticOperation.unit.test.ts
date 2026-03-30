@@ -1,9 +1,9 @@
-import BigNumber from "bignumber.js";
 import {
   types as TyphonTypes,
   Transaction as TyphonTransaction,
   address as TyphonAddress,
 } from "@stricahq/typhonjs";
+import BigNumber from "bignumber.js";
 
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
@@ -105,10 +105,13 @@ describe("buildOptimisticOperation", () => {
 
       const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-      expect(operation).toBeDefined();
-      expect(operation.type).toBe("DELEGATE");
-      expect(operation.value.toString()).toBe((3e6).toString()); // fee + deposit spent
-      expect(operation.extra.deposit).toMatch(/^2\s*ADA$/);
+      expect(operation).toMatchObject({
+        type: "DELEGATE",
+        value: new BigNumber(3e6),
+        extra: {
+          deposit: expect.stringMatching(/^2\s*ADA$/),
+        },
+      });
     });
 
     it("should correctly identify deregistration with withdrawals", () => {
@@ -166,11 +169,14 @@ describe("buildOptimisticOperation", () => {
 
       const operation = buildOptimisticOperation(account, mockUnsignedTx, transaction);
 
-      expect(operation).toBeDefined();
-      expect(operation.type).toBe("UNDELEGATE");
-      expect(operation.value.toString()).toBe((1e6).toString()); // only fee is spent
-      expect(operation.extra.refund).toMatch(/^2\s*ADA$/);
-      expect(operation.extra.rewards).toMatch(/^3\s*ADA$/);
+      expect(operation).toMatchObject({
+        type: "UNDELEGATE",
+        value: new BigNumber(1e6),
+        extra: {
+          refund: expect.stringMatching(/^2\s*ADA$/),
+          rewards: expect.stringMatching(/^3\s*ADA$/),
+        },
+      });
     });
   });
 });

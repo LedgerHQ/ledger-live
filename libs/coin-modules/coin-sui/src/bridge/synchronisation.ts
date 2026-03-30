@@ -1,14 +1,14 @@
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   encodeAccountId,
   encodeTokenAccountId,
   emptyHistoryCache,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
   makeSync,
   mergeOps,
   type GetAccountShape,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { type Operation } from "@ledgerhq/types-live";
@@ -41,10 +41,10 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   });
 
   let operations: Operation[] = [];
-  const stakes = await getStakesRaw(address);
+  const stakes = await getStakesRaw(address, currency.id);
 
   let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
-  const newOperations = await getOperations(accountId, address, syncHash);
+  const newOperations = await getOperations(accountId, address, syncHash, undefined, currency.id);
   operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 
@@ -52,7 +52,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     ({ extra }) => (extra as SuiOperationExtra).coinType === DEFAULT_COIN_TYPE,
   );
 
-  const accountBalances = await getAccountBalances(address);
+  const accountBalances = await getAccountBalances(address, currency.id);
   const balance =
     accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ?? BigNumber(0);
 

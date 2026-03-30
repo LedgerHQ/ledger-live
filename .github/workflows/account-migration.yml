@@ -34,12 +34,13 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: install dependencies and build
         run: |
           pnpm i --filter="!./apps/**"
-          pnpm build:llc
+          pnpm turbo build --filter=./libs/ledger-live-common
 
       - name: Generate target output filename
         id: target-output-file
@@ -66,7 +67,7 @@ jobs:
       - name: install dependencies and build
         run: |
           pnpm i --filter="!./apps/**"
-          pnpm build:llc
+          pnpm turbo build --filter=./libs/ledger-live-common
 
       - name: run synchronisation on current branch
         run: |

@@ -1,5 +1,5 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { LedgerSigner } from "@mysten/signers/ledger";
 import type { SuiClient } from "@mysten/sui/client";
@@ -53,7 +53,7 @@ export const buildSignOperation = (
               suiClient,
             );
             return ledgerSigner.signTransaction(unsigned, objects, resolution);
-          }),
+          }, account.currency.id),
         );
 
         subscriber.next({

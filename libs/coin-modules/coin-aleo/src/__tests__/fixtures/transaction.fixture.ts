@@ -1,149 +1,7 @@
 import BigNumber from "bignumber.js";
 import { TRANSACTION_TYPE } from "../../constants";
-import type {
-  Transaction,
-  TransactionRaw,
-  AleoPublicTransaction,
-  AleoPublicTransactionDetailsResponse,
-  AleoPublicTransactionsResponse,
-} from "../../types";
-
-export const getMockedTransactionDetails = (
-  transactionId?: string,
-  overrides?: Partial<AleoPublicTransactionDetailsResponse>,
-): AleoPublicTransactionDetailsResponse => ({
-  type: "execute",
-  id: transactionId || "at1abc123def456",
-  execution: {
-    transitions: [
-      {
-        id: "au1xyz789",
-        scm: "cm1abc",
-        tcm: "cm1def",
-        tpk: "tpk1ghi",
-        inputs: [
-          {
-            id: "input1",
-            type: "public",
-            value: "100000000u64",
-          },
-        ],
-        outputs: [
-          {
-            id: "output1",
-            type: "future",
-            value: "future_value",
-          },
-        ],
-        program: "credits.aleo",
-        function: "transfer_public",
-      },
-    ],
-  },
-  global_state_root: "sr1global123",
-  proof: "proof1xyz",
-  fee: {
-    transition: {
-      id: "au1fee789",
-      scm: "cm1fee",
-      tcm: "cm1fee2",
-      tpk: "tpk1fee",
-      inputs: [],
-      outputs: [],
-      program: "credits.aleo",
-      function: "fee_public",
-    },
-  },
-  fee_value: 5000000,
-  block_height: 123456,
-  block_hash: "ab1block123",
-  block_timestamp: "2024-01-01T12:00:00Z",
-  status: "accepted",
-  ...overrides,
-});
-
-export const getMockedSimpleTransactionDetails = (
-  transactionId: string,
-  overrides?: Partial<AleoPublicTransactionDetailsResponse>,
-): AleoPublicTransactionDetailsResponse => ({
-  type: "execute",
-  id: transactionId,
-  execution: { transitions: [] },
-  global_state_root: "sr1",
-  proof: "proof1",
-  fee: {
-    transition: {
-      id: "au1fee",
-      scm: "cm1",
-      tcm: "cm2",
-      tpk: "tpk1",
-      inputs: [],
-      outputs: [],
-      program: "credits.aleo",
-      function: "fee_public",
-    },
-  },
-  fee_value: 1000000,
-  block_height: 789,
-  block_hash: "ab1",
-  block_timestamp: "2024-02-01T12:00:00Z",
-  status: "accepted",
-  ...overrides,
-});
-
-export const getMockedPublicTransaction = (
-  overrides?: Partial<AleoPublicTransaction>,
-): AleoPublicTransaction => ({
-  transaction_id: "at1tx1",
-  transition_id: "au1trans1",
-  transaction_status: "accepted",
-  block_number: 123456,
-  block_timestamp: "2024-01-01T12:00:00Z",
-  function_id: "transfer_public",
-  amount: 100000000,
-  sender_address: "aleo1test123address456",
-  recipient_address: "aleo1recipient123",
-  program_id: "credits.aleo",
-  ...overrides,
-});
-
-export const getMockedAccountPublicTransactions = (
-  address: string,
-  overrides?: Partial<AleoPublicTransactionsResponse>,
-): AleoPublicTransactionsResponse => ({
-  address,
-  transactions: [
-    {
-      transaction_id: "at1tx1",
-      transition_id: "au1trans1",
-      transaction_status: "accepted",
-      block_number: 123456,
-      block_timestamp: "2024-01-01T12:00:00Z",
-      function_id: "transfer_public",
-      amount: 100000000,
-      sender_address: address,
-      recipient_address: "aleo1recipient123",
-      program_id: "credits.aleo",
-    },
-    {
-      transaction_id: "at1tx2",
-      transition_id: "au1trans2",
-      transaction_status: "accepted",
-      block_number: 123457,
-      block_timestamp: "2024-01-01T13:00:00Z",
-      function_id: "transfer_public",
-      amount: 50000000,
-      sender_address: "aleo1sender456",
-      recipient_address: address,
-      program_id: "credits.aleo",
-    },
-  ],
-  next_cursor: {
-    block_number: 123457,
-    transition_id: "au1trans2",
-  },
-  ...overrides,
-});
+import type { AleoTransactionIntent, Transaction, TransactionRaw } from "../../types";
+import { mockUnspentRecord1, mockUnspentRecord2 } from "./account.fixture";
 
 export const getMockedTransaction = (overrides?: Partial<Transaction>): Transaction => {
   return {
@@ -152,9 +10,9 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
     recipient: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
     fees: new BigNumber(0),
     useAllAmount: false,
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     ...overrides,
-  };
+  } as Transaction;
 };
 
 export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): TransactionRaw => {
@@ -164,7 +22,71 @@ export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): Tr
     recipient: "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr",
     fees: "0",
     useAllAmount: false,
-    type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
     ...overrides,
-  };
+  } as TransactionRaw;
+};
+
+const baseTxIntentFields = {
+  intentType: "transaction",
+  asset: { type: "native" },
+  sender: "aleo1sender",
+  recipient: "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f",
+} as const satisfies Partial<AleoTransactionIntent>;
+
+export const mockTxIntentTransferPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 100n,
+  type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+};
+
+export const mockTxIntentTransferPrivate: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 200n,
+  type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+    record: mockUnspentRecord1.decryptedData,
+  },
+};
+
+export const mockTxIntentSelfTransferToPrivate: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 300n,
+  type: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+};
+
+export const mockTxIntentSelfTransferToPublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 400n,
+  type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+    record: mockUnspentRecord1.decryptedData,
+  },
+};
+
+export const mockTxIntentFeePublic: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 500n,
+  type: "fee_public",
+  data: {
+    type: "fee_public",
+    executionId:
+      "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
+    priorityFee: 5000n,
+  },
+};
+
+export const mockTxIntentFeePrivate: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 600n,
+  type: "fee_private",
+  data: {
+    type: "fee_private",
+    executionId:
+      "7287422539927885800585937944314327552710698933416219800491628782750554575326field",
+    priorityFee: 6000n,
+    record: mockUnspentRecord2.decryptedData,
+  },
 };

@@ -1,11 +1,54 @@
-import type { Block, BlockInfo, BlockTransaction } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Block,
+  BlockInfo,
+  BlockOperation,
+  BlockTransaction,
+} from "@ledgerhq/coin-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
+import {
+  rpcTransactionToBlockOperations,
+  traceBlockItemsToOperationsByHash,
+} from "../adapters/blockOperations";
+import { internalTxsToOperationsByHash } from "../adapters/etherscan";
+import { getCoinConfig } from "../config";
 import { UnsupportedRpcMethodError } from "../errors";
+import { getInternalTransactionsByBlock } from "../network/explorer/etherscan";
+import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
-import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
+import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
+
+function internalTransactionsFetcher(
+  nodeApi: NodeApi,
+  currency: CryptoCurrency,
+): (height: number) => Promise<Map<string, BlockOperation[]>> {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || {};
+
+  async function nodeFallback(height: number): Promise<Map<string, BlockOperation[]>> {
+    if (nodeApi.traceBlock === undefined) {
+      // no support for traceBlock, return empty map,
+      // this could be buggy but we can't just throw an error, that would break consumer app
+      log("coin-evm", "error: no internal transactions support for this currency", {
+        currencyId: currency.id,
+        blockHeight: height,
+      });
+      return new Map();
+    } else {
+      return nodeApi.traceBlock(currency, height).then(traceBlockItemsToOperationsByHash);
+    }
+  }
+
+  if (isEtherscanLikeExplorerConfig(explorer)) {
+    return (height: number) =>
+      getInternalTransactionsByBlock(currency, height)
+        .then(internalTxsToOperationsByHash)
+        .catch(async _error => nodeFallback(height));
+  } else {
+    return nodeFallback;
+  }
+}
 
 export async function getBlock(currency: CryptoCurrency, height: number): Promise<Block> {
   // Note: to use RPC calls efficiently, the strategy here is:
@@ -13,8 +56,13 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
   //  - fetch transaction receipts in one call using eth_getBlockReceipts
   //  - if the RPC does not support prefetchTxs or eth_getBlockReceipts, fall back to fetching the transaction+receipts
   //    one by one
+  //  - in parallel, fetch internal transactions from explorer (etherscan/blockscout) and merge into block transactions
   const nodeApi = getNodeApi(currency);
-  const result = await nodeApi.getBlockByHeight(currency, height, true);
+  const fetchInternalTxs = internalTransactionsFetcher(nodeApi, currency);
+  const [result, internalTxs] = await Promise.all([
+    nodeApi.getBlockByHeight(currency, height, true),
+    fetchInternalTxs(height),
+  ]);
 
   const info: BlockInfo = {
     height: result.height,
@@ -37,10 +85,31 @@ export async function getBlock(currency: CryptoCurrency, height: number): Promis
     result.transactions,
   );
 
+  const mergedTransactions = mergeInternalTransactions(transactions, internalTxs);
+
   return {
     info,
-    transactions,
+    transactions: mergedTransactions,
   };
+}
+
+/**
+ * Merges internal transaction operations into block transactions by matching tx hash.
+ */
+function mergeInternalTransactions(
+  transactions: BlockTransaction[],
+  internalTxs: Map<string, BlockOperation[]>,
+): BlockTransaction[] {
+  if (internalTxs.size === 0) return transactions;
+
+  return transactions.map(tx => {
+    const extraOps = internalTxs.get(tx.hash);
+    if (!extraOps || extraOps.length === 0) return tx;
+    return {
+      ...tx,
+      operations: [...tx.operations, ...extraOps],
+    };
+  });
 }
 
 async function getTransactionsFromNode(

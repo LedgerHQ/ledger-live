@@ -2,7 +2,7 @@ import React from "react";
 import { getEnv } from "@ledgerhq/live-env";
 import { server, HttpResponse, http } from "tests/server";
 import { waitFor, render, screen, cleanup } from "tests/testSetup";
-import createStore from "~/renderer/createStore";
+import createStore from "~/state-manager/configureStore";
 import { AppGeoBlocker } from "../index";
 
 jest.mock("~/renderer/linking", () => ({

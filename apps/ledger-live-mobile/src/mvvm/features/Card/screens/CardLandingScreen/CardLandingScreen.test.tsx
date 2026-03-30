@@ -8,6 +8,15 @@ import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();
 
+jest.mock("LLM/hooks/useNavigationBarHeights", () => ({
+  useNavigationBarHeights: () => ({
+    top: 0,
+    bottom: 0,
+    bottomBarHeight: 0,
+    topBarHeight: 48,
+  }),
+}));
+
 jest.mock("@react-navigation/core", () => {
   const actual = jest.requireActual("@react-navigation/core");
   return {
@@ -39,7 +48,7 @@ describe("CardLandingScreen", () => {
 
     expect(getByTestId(CARD_LANDING_TEST_IDS.title).props.children).toBe("Spend your\ncrypto");
     expect(getByTestId(CARD_LANDING_TEST_IDS.subtitle).props.children).toBe(
-      "Pay online or in store with a crypto card",
+      "Pay online or in stores with a crypto card.",
     );
     expect(getByText(/Explore cards/i)).toBeVisible();
     expect(getByText(/I have a card/i)).toBeVisible();

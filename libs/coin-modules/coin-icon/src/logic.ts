@@ -1,11 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { BigNumber } from "bignumber.js";
-import IconService from "icon-sdk-js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import type { IconAccount, Transaction } from "./types";
-const { IconAmount } = IconService;
+import { BigNumber } from "bignumber.js";
+import IconService from "icon-sdk-js";
 import { BERLIN_TESTNET_NID, MAINNET_NID } from "./constants";
+import type { IconAccount, Transaction } from "./types";
+
+const { IconAmount } = IconService;
 
 /**
  * @param {string|number|BigNumber} value value as loop

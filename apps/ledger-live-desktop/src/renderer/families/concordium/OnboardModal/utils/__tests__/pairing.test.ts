@@ -1,4 +1,5 @@
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
+import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
 import {
   getConfirmationCode,
   shouldRetryPairing,
@@ -34,8 +35,8 @@ describe("pairing utils", () => {
   });
 
   describe("shouldRetryPairing", () => {
-    it("returns true for expired error under retry limit", () => {
-      const error = new Error("Session expired");
+    it("returns true for ConcordiumPairingExpiredError under retry limit", () => {
+      const error = new ConcordiumPairingExpiredError();
 
       expect(shouldRetryPairing(error, 0)).toBe(true);
       expect(shouldRetryPairing(error, 1)).toBe(true);
@@ -43,23 +44,18 @@ describe("pairing utils", () => {
     });
 
     it("returns false when retry limit reached", () => {
-      const error = new Error("Session expired");
+      const error = new ConcordiumPairingExpiredError();
 
       expect(shouldRetryPairing(error, MAX_EXPIRED_RETRIES)).toBe(false);
     });
 
-    it("returns false for non-expired errors", () => {
+    it("returns false for non-pairing-expired errors", () => {
       const error = new Error("Connection failed");
 
       expect(shouldRetryPairing(error, 0)).toBe(false);
     });
 
-    it("handles string errors", () => {
-      expect(shouldRetryPairing("expired", 0)).toBe(true);
-      expect(shouldRetryPairing("other error", 0)).toBe(false);
-    });
-
-    it("handles null/undefined errors", () => {
+    it("returns false for null/undefined errors", () => {
       expect(shouldRetryPairing(null, 0)).toBe(false);
       expect(shouldRetryPairing(undefined, 0)).toBe(false);
     });

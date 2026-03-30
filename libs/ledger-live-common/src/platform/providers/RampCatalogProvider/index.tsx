@@ -52,18 +52,22 @@ export function RampCatalogProvider({
       error: null,
     }));
 
-    try {
-      const value = await api.fetchRampCatalog();
-      setState(() => ({
-        isLoading: false,
-        value,
-        error: null,
-      }));
-    } catch (error) {
+    const result = await api.fetchRampCatalog().then(
+      (value): { value: RampCatalog; fetchError: null } => ({ value, fetchError: null }),
+      (e): { value: null; fetchError: unknown } => ({ value: null, fetchError: e }),
+    );
+
+    if (result.fetchError !== null) {
       setState(currentState => ({
         ...currentState,
         isLoading: false,
-        error,
+        error: result.fetchError,
+      }));
+    } else {
+      setState(() => ({
+        isLoading: false,
+        value: result.value,
+        error: null,
       }));
     }
   }, []);

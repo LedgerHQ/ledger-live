@@ -1,5 +1,5 @@
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
-import { getDefaultAccountName } from "./accountName";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getDefaultAccountName, normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "./accountName";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const mockAccount = genAccount("mockAccount", {
@@ -21,9 +21,29 @@ describe(getDefaultAccountName.name, () => {
       if (tokenAccount) {
         expect(getDefaultAccountName(tokenAccount)).toEqual("USD Coin");
       } else {
-        // Skip test if no subAccounts generated
         expect(true).toBe(true);
       }
     });
+  });
+});
+
+describe(normalizeName.name, () => {
+  it.each([
+    ["  hello  ", "hello"],
+    ["hello   world", "hello world"],
+    ["hello\t\tworld", "hello world"],
+    ["hello \t world", "hello world"],
+    ["   ", ""],
+    ["", ""],
+    ["Ethereum 1", "Ethereum 1"],
+  ])("normalizeName(%j) → %j", (input, expected) => {
+    expect(normalizeName(input)).toBe(expected);
+  });
+
+  it("should truncate to MAX_ACCOUNT_NAME_LENGTH characters", () => {
+    const longName = "  " + "a".repeat(MAX_ACCOUNT_NAME_LENGTH + 10) + "  ";
+    const result = normalizeName(longName);
+    expect(result).toHaveLength(MAX_ACCOUNT_NAME_LENGTH);
+    expect(result).not.toMatch(/^\s/);
   });
 });

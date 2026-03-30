@@ -10,6 +10,7 @@ import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { track } from "~/analytics";
+import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 import {
   flattenAccountsSelector,
   hasNonTokenAccountsSelector,
@@ -33,11 +34,16 @@ interface UsePortfolioViewModelResult {
   isAccountListUIEnabled: boolean;
   shouldDisplayQuickActionCtas: boolean;
   shouldDisplayWallet40MainNav: boolean;
+  shouldDisplayAssetSection: boolean;
+  shouldDisplayMarketBanner: boolean;
+  shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
   shouldDisplayGraphRework: boolean;
   backgroundColor: string;
+  isSyncError: boolean;
+  shouldAddBottomPaddingForLegacyAssets: boolean;
   openAddModal: () => void;
   closeAddModal: () => void;
   handleHeightChange: (newHeight: number) => void;
@@ -53,8 +59,14 @@ const usePortfolioViewModel = (navigation: {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
-  const { shouldDisplayGraphRework, shouldDisplayQuickActionCtas, shouldDisplayWallet40MainNav } =
-    useWalletFeaturesConfig("mobile");
+  const {
+    shouldDisplayGraphRework,
+    shouldDisplayQuickActionCtas,
+    shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
+    shouldDisplayOperationsList,
+  } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
@@ -132,17 +144,28 @@ const usePortfolioViewModel = (navigation: {
     navigation.navigate(ScreenName.AnalyticsAllocation);
   }, [navigation]);
 
+  const { syncPhase } = usePortfolioBalance();
+  const isSyncError = syncPhase === "failed";
+
+  const shouldAddBottomPaddingForLegacyAssets =
+    !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
+
   return {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
+    shouldDisplayOperationsList,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
     shouldDisplayGraphRework,
     backgroundColor,
+    isSyncError,
+    shouldAddBottomPaddingForLegacyAssets,
     openAddModal,
     closeAddModal,
     handleHeightChange,

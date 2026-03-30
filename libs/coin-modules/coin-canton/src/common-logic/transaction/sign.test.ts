@@ -8,7 +8,7 @@ import {
 import { signTransaction } from "./sign";
 
 class MockCantonSigner implements CantonSigner {
-  async getAddress(path: string, display?: boolean) {
+  async getAddress(path: string) {
     return {
       publicKey: "mock-public-key",
       address: "mock-address",
@@ -17,7 +17,7 @@ class MockCantonSigner implements CantonSigner {
   }
 
   async signTransaction(
-    path: string,
+    _path: string,
     data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
   ): Promise<CantonSignature> {
     if (typeof data === "string") {
@@ -112,17 +112,17 @@ describe("signTransaction", () => {
       transactions: {
         namespace_transaction: {
           serialized: "namespace-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 1, mapping: {} },
           hash: "namespace-hash",
         },
         party_to_key_transaction: {
           serialized: "party-to-key-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 2, mapping: {} },
           hash: "party-to-key-hash",
         },
         party_to_participant_transaction: {
           serialized: "party-to-participant-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 3, mapping: {} },
           hash: "party-to-participant-hash",
         },
         combined_hash: "combined-hash",
@@ -300,17 +300,17 @@ describe("signTransaction", () => {
       transactions: {
         namespace_transaction: {
           serialized: "namespace-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 1, mapping: {} },
           hash: "namespace-hash",
         },
         party_to_key_transaction: {
           serialized: "party-to-key-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 2, mapping: {} },
           hash: "party-to-key-hash",
         },
         party_to_participant_transaction: {
           serialized: "party-to-participant-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 3, mapping: {} },
           hash: "party-to-participant-hash",
         },
         combined_hash: "combined-hash",
@@ -349,17 +349,17 @@ describe("signTransaction", () => {
       transactions: {
         namespace_transaction: {
           serialized: "namespace-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 1, mapping: {} },
           hash: "namespace-hash",
         },
         party_to_key_transaction: {
           serialized: "party-to-key-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 2, mapping: {} },
           hash: "party-to-key-hash",
         },
         party_to_participant_transaction: {
           serialized: "party-to-participant-transaction-data",
-          json: {},
+          transaction: { operation: "op", serial: 3, mapping: {} },
           hash: "party-to-participant-hash",
         },
         combined_hash: "combined-hash",

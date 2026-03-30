@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
-import { LOG_TYPE } from "./constants";
+import { ZCASH_LOG_TYPE } from "./constants";
 
 type JsonRpcRequestArgs = {
   method: string;
@@ -25,43 +25,43 @@ type JsonRpcResponseError = JsonRpcResponse & {
 
 export type Block = {
   hash: string;
-  confirmations: number;
-  size: number;
+  confirmations?: number;
+  size?: number;
   height: number;
-  version: number;
-  merkleroot: string;
-  blockcommitments: string;
-  finalsaplingroot: string;
-  finalorchardroot: string;
+  version?: number;
+  merkleroot?: string;
+  blockcommitments?: string;
+  finalsaplingroot?: string;
+  finalorchardroot?: string;
   tx: string[];
   time: number;
-  nonce: string;
-  solution: string;
-  bits: string;
-  difficulty: number;
-  chainSupply: {
+  nonce?: string;
+  solution?: string;
+  bits?: string;
+  difficulty?: number;
+  chainSupply?: {
     chainValue: number;
     chainValueZat: number;
     monitored: true;
   };
-  valuePools: object[];
-  trees: { sapling: object; orchard: object };
-  previousblockhash: string;
-  nextblockhash: string;
+  valuePools?: object[];
+  trees?: { sapling: object; orchard: object };
+  previousblockhash?: string;
+  nextblockhash?: string;
 };
 
 export type RawTransaction = {
-  in_active_chain: boolean;
+  in_active_chain?: boolean;
   hex: string;
   height: number;
-  confirmations: number;
-  vin: [
+  confirmations?: number;
+  vin?: [
     {
       coinbase: string;
       sequence: number;
     },
   ];
-  vout: [
+  vout?: [
     {
       value: number;
       valueZat: number;
@@ -87,28 +87,30 @@ export type RawTransaction = {
       };
     },
   ];
-  vShieldedSpend: [];
-  vShieldedOutput: [];
-  vjoinsplit: [];
+  vShieldedSpend?: [];
+  vShieldedOutput?: [];
+  vjoinsplit?: [];
   orchard: {
     actions: [];
     valueBalance: number;
     valueBalanceZat: number;
   };
-  valueBalance: number;
-  valueBalanceZat: number;
-  size: number;
+  valueBalance?: number;
+  valueBalanceZat?: number;
+  size?: number;
   time: number;
   txid: string;
-  authdigest: string;
-  overwintered: true;
-  version: number;
-  versiongroupid: string;
-  locktime: number;
-  expiryheight: number;
+  authdigest?: string;
+  overwintered?: true;
+  version?: number;
+  versiongroupid?: string;
+  locktime?: number;
+  expiryheight?: number;
   blockhash: string;
-  blocktime: number;
+  blocktime?: number;
 };
+
+type JsonRpcResponseData<T> = JsonRpcResponseOk<T> | JsonRpcResponseError;
 
 export class JsonRpcClient {
   serverUrl: string;
@@ -117,59 +119,65 @@ export class JsonRpcClient {
     this.serverUrl = serverUrl;
   }
 
-  private async jsonRpcRequest<ResponseResult>(
+  async _jsonRpcRequest<ResponseResult>(
     args: JsonRpcRequestArgs,
   ): Promise<ResponseResult | undefined> {
-    const { data } = await network<JsonRpcResponseOk<ResponseResult> & JsonRpcResponseError>({
-      url: this.serverUrl,
-      method: "POST",
-      data: {
-        jsonrpc: "2.0",
-        ...args,
-        id: 1,
-      },
-    });
+    let data: JsonRpcResponseData<ResponseResult>;
 
-    if (data.error) {
+    try {
+      const response = await network<JsonRpcResponseData<ResponseResult>>({
+        url: this.serverUrl,
+        method: "POST",
+        data: {
+          jsonrpc: "2.0",
+          ...args,
+          id: 1,
+        },
+      });
+
+      data = response.data;
+    } catch (err) {
+      log(ZCASH_LOG_TYPE, "error: Network error");
+      throw err;
+    }
+
+    if ("error" in data) {
       const message = data.error.message ?? "unknown error";
-      log(LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
-      return undefined;
+      log(ZCASH_LOG_TYPE, `error: Zcash RPC ${args.method} failed - ${message}`);
+    } else if (data.result === undefined || data.result === null) {
+      log(ZCASH_LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
+    } else {
+      return data.result;
     }
-    if (data.result === undefined || data.result === null) {
-      log(LOG_TYPE, `error: Zcash RPC ${args.method} returned no result`);
-      return undefined;
-    }
-    return data.result;
   }
 
-  getBlock(blockHash: string) {
-    return this.jsonRpcRequest<Block>({
+  getBlock(blockHashOrHeight: string) {
+    return this._jsonRpcRequest<Block>({
       method: "getblock",
-      params: [blockHash, 1],
-    });
-  }
-
-  getBlockByHeight(blockHeight: number) {
-    return this.jsonRpcRequest<Block>({
-      method: "getblock",
-      params: [blockHeight.toString()],
+      params: [blockHashOrHeight, 1],
     });
   }
 
   async getBlockCount(): Promise<number | undefined> {
-    const result = await this.jsonRpcRequest<number>({
+    const result = await this._jsonRpcRequest<number>({
       method: "getblockcount",
       params: [],
     });
-    if (typeof result !== "number") {
-      log(LOG_TYPE, `error: Zcash RPC getblockcount returned unexpected type: ${typeof result}`);
+
+    if (result === undefined) {
       return undefined;
     }
+
+    if (typeof result !== "number") {
+      log(ZCASH_LOG_TYPE, "error: Zcash RPC getblockcount returned non-numeric result");
+      return undefined;
+    }
+
     return result;
   }
 
   getRawTransaction(txId: string) {
-    return this.jsonRpcRequest<RawTransaction>({
+    return this._jsonRpcRequest<RawTransaction>({
       method: "getrawtransaction",
       params: [txId, 1],
     });

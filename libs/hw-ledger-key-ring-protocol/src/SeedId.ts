@@ -220,7 +220,7 @@ export class Challenge {
   }
 
   toBytes(): Uint8Array {
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
 
     buffer = TLV.pushTLV(buffer, 0x01, 1, new Uint8Array([this.payloadType]));
     buffer = TLV.pushTLV(buffer, 0x02, 1, new Uint8Array([this.version]));
@@ -243,7 +243,7 @@ export class Challenge {
   }
 
   getUnsignedTLV(): Uint8Array {
-    let buffer = new Uint8Array();
+    let buffer: Uint8Array<ArrayBufferLike> = new Uint8Array();
     buffer = TLV.pushTLV(buffer, 0x01, 1, new Uint8Array([this.payloadType]));
     buffer = TLV.pushTLV(buffer, 0x02, 1, new Uint8Array([this.version]));
     buffer = TLV.pushTLV(buffer, 0x12, this.challengeData.length, this.challengeData);

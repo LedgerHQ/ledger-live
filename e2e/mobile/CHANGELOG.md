@@ -1,5 +1,93 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.18.0
+
+### Minor Changes
+
+- [#15392](https://github.com/LedgerHQ/ledger-live/pull/15392) [`703907c`](https://github.com/LedgerHQ/ledger-live/commit/703907cacf6c37d5530b12e443dc1279d1a7ab04) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update e2e test currencies: replace Sepolia ETH with mainnet ETH and BTC Legacy with BTC Native SegWit
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+- [#14907](https://github.com/LedgerHQ/ledger-live/pull/14907) [`dd98891`](https://github.com/LedgerHQ/ledger-live/commit/dd98891e9c2e1bd4795b8adcb64b3c8c45b9eb75) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace usages of Math.random() for id generation by uuid()
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#15392](https://github.com/LedgerHQ/ledger-live/pull/15392) [`703907c`](https://github.com/LedgerHQ/ledger-live/commit/703907cacf6c37d5530b12e443dc1279d1a7ab04) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update e2e test currencies: replace Sepolia ETH with mainnet ETH and BTC Legacy with BTC Native SegWit
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+- [#14907](https://github.com/LedgerHQ/ledger-live/pull/14907) [`dd98891`](https://github.com/LedgerHQ/ledger-live/commit/dd98891e9c2e1bd4795b8adcb64b3c8c45b9eb75) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace usages of Math.random() for id generation by uuid()
+
+## 0.17.0
+
+### Minor Changes
+
+- [#15038](https://github.com/LedgerHQ/ledger-live/pull/15038) [`20a2915`](https://github.com/LedgerHQ/ledger-live/commit/20a2915559e589c838600366b26394fad669a712) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Adapt mobile E2E tests to support Wallet 4.0 feature flag toggle via CI checkbox or env var
+
+- [#15151](https://github.com/LedgerHQ/ledger-live/pull/15151) [`868bd15`](https://github.com/LedgerHQ/ledger-live/commit/868bd158de9a5242c5edd3f1ffabe6cc0f1a5c22) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#15038](https://github.com/LedgerHQ/ledger-live/pull/15038) [`20a2915`](https://github.com/LedgerHQ/ledger-live/commit/20a2915559e589c838600366b26394fad669a712) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Adapt mobile E2E tests to support Wallet 4.0 feature flag toggle via CI checkbox or env var
+
+- [#15151](https://github.com/LedgerHQ/ledger-live/pull/15151) [`868bd15`](https://github.com/LedgerHQ/ledger-live/commit/868bd158de9a5242c5edd3f1ffabe6cc0f1a5c22) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0-next.0
+
+## 0.16.0
+
+### Minor Changes
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+- [#15201](https://github.com/LedgerHQ/ledger-live/pull/15201) [`96415c0`](https://github.com/LedgerHQ/ledger-live/commit/96415c06aaf69381811987eb13cd00d1b59b4c4d) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/logs@6.15.0
+
+## 0.16.0-next.1
+
+### Minor Changes
+
+- [#15201](https://github.com/LedgerHQ/ledger-live/pull/15201) [`96415c0`](https://github.com/LedgerHQ/ledger-live/commit/96415c06aaf69381811987eb13cd00d1b59b4c4d) Thanks [@martijnhjk](https://github.com/martijnhjk)! - Update speculos-x-other-account E2E test userdata with current blockchain state
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/logs@6.15.0-next.0
+
+## 0.15.0
+
+### Minor Changes
+
+- [#14666](https://github.com/LedgerHQ/ledger-live/pull/14666) [`e239c48`](https://github.com/LedgerHQ/ledger-live/commit/e239c4866a194cc4db90247eee7d84389ac2333f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen for mobile and desktop + fix e2e marketbanner
+
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#14666](https://github.com/LedgerHQ/ledger-live/pull/14666) [`e239c48`](https://github.com/LedgerHQ/ledger-live/commit/e239c4866a194cc4db90247eee7d84389ac2333f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump lumen for mobile and desktop + fix e2e marketbanner
+
 ## 0.14.0
 
 ### Minor Changes

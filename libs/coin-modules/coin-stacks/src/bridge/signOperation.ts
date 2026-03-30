@@ -1,5 +1,5 @@
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { FeeNotLoaded, InvalidAddress, InvalidNonce } from "@ledgerhq/errors";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { Observable } from "rxjs";

@@ -12,12 +12,14 @@ const DEFAULT_TAB_BAR_HEIGHT = 0;
 type CollapsibleHeaderFlatListProps<T> = AnimatedProps<FlatListProps<T>> & {
   /** When false, skip SafeAreaView (e.g. when parent nav already handles safe area). Default true. */
   useSafeArea?: boolean;
+  onFlatListRef?: (ref: FlatList | null) => void;
 };
 
 function CollapsibleHeaderFlatList<T>({
   children,
   contentContainerStyle,
   useSafeArea = true,
+  onFlatListRef,
   ...otherProps
 }: CollapsibleHeaderFlatListProps<T>) {
   const context = useContext(WalletTabNavigatorScrollContext);
@@ -45,11 +47,12 @@ function CollapsibleHeaderFlatList<T>({
 
   const handleRef = useCallback(
     (ref: FlatList) => {
+      onFlatListRef?.(ref);
       if (onGetRef) {
         onGetRef({ key: route.name, value: ref });
       }
     },
-    [onGetRef, route.name],
+    [onGetRef, onFlatListRef, route.name],
   );
 
   const list = (

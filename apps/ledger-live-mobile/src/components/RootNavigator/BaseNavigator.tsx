@@ -30,6 +30,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
+import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
@@ -73,6 +74,7 @@ import {
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
+import BitcoinEditTransactionNavigator from "~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
@@ -81,6 +83,7 @@ import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCu
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
+import { DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection } from "LLM/features/DeeplinkInstallApp";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -90,6 +93,7 @@ import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
+import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
@@ -97,6 +101,65 @@ import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { AppState } from "react-native";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
+
+type OperationDetailsRouteProp = RouteProp<
+  BaseNavigatorStackParamList,
+  ScreenName.OperationDetails
+>;
+
+const renderNullHeader = () => null;
+
+function ScanRecipientHeaderRight() {
+  const { colors } = useTheme();
+
+  return (
+    <NavigationHeaderCloseButtonAdvanced
+      color={colors.constant.white}
+      preferDismiss={false}
+      rounded
+    />
+  );
+}
+
+function FlowHeaderCloseButton() {
+  return <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />;
+}
+
+function OperationDetailsHeaderLeft() {
+  return <NavigationHeaderBackButton />;
+}
+
+function OperationDetailsHeaderTitle() {
+  const { t } = useTranslation();
+  const route = useRoute<OperationDetailsRouteProp>();
+  const operationType = route.params?.operation?.type;
+
+  return (
+    <StepHeader
+      subtitle={t("operationDetails.title")}
+      title={operationType ? t(`operations.types.${operationType}`) : ""}
+      testID="operationDetails-title"
+    />
+  );
+}
+
+function OperationDetailsHeaderRight() {
+  const route = useRoute<OperationDetailsRouteProp>();
+
+  return route.params?.isSubOperation ? <NavigationHeaderCloseButton /> : null;
+}
+
+function FirmwareUpdateHeaderTitle() {
+  return null;
+}
+
+function FirmwareUpdateHeaderLeft() {
+  return null;
+}
+
+function FirmwareUpdateHeaderRight() {
+  return <NavigationHeaderCloseButton />;
+}
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -289,6 +352,13 @@ export default function BaseNavigator() {
           component={SwapNavigator}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name={NavigatorName.SwapSubScreens}
+          component={SwapSubScreensNavigator}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
           name={NavigatorName.Perps}
           component={PerpsNavigator}
@@ -339,7 +409,6 @@ export default function BaseNavigator() {
           name={NavigatorName.Card}
           component={CardLiveAppNavigator}
           options={{ headerShown: false }}
-          {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
@@ -362,24 +431,11 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.OperationDetails}
           component={OperationDetails}
-          options={({ route }) => {
-            return {
-              headerTitle: () => (
-                <StepHeader
-                  subtitle={t("operationDetails.title")}
-                  title={
-                    route.params?.operation?.type
-                      ? t(`operations.types.${route.params.operation.type}`)
-                      : ""
-                  }
-                  testID="operationDetails-title"
-                />
-              ),
-              headerLeft: () => <NavigationHeaderBackButton />,
-              headerRight: () =>
-                route.params?.isSubOperation ? <NavigationHeaderCloseButton /> : null,
-              animation: "slide_from_bottom",
-            };
+          options={{
+            headerTitle: OperationDetailsHeaderTitle,
+            headerLeft: OperationDetailsHeaderLeft,
+            headerRight: OperationDetailsHeaderRight,
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
@@ -452,14 +508,8 @@ export default function BaseNavigator() {
           options={{
             ...TransparentHeaderNavigationOptions,
             title: t("send.scan.title"),
-            headerRight: () => (
-              <NavigationHeaderCloseButtonAdvanced
-                color={colors.constant.white}
-                preferDismiss={false}
-                rounded
-              />
-            ),
-            headerLeft: () => null,
+            headerRight: ScanRecipientHeaderRight,
+            headerLeft: renderNullHeader,
           }}
         />
         <Stack.Screen
@@ -548,8 +598,8 @@ export default function BaseNavigator() {
           component={NoFundsFlowNavigator}
           options={{
             ...TransparentHeaderNavigationOptions,
-            headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
-            headerLeft: () => null,
+            headerRight: FlowHeaderCloseButton,
+            headerLeft: renderNullHeader,
           }}
         />
         <Stack.Screen
@@ -557,14 +607,19 @@ export default function BaseNavigator() {
           component={StakeFlowNavigator}
           options={{
             ...TransparentHeaderNavigationOptions,
-            headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
-            headerLeft: () => null,
+            headerRight: FlowHeaderCloseButton,
+            headerLeft: renderNullHeader,
           }}
         />
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.BitcoinEditTransaction}
+          options={{ headerShown: false }}
+          component={BitcoinEditTransactionNavigator}
         />
         <Stack.Screen
           name={NavigatorName.AnalyticsOptInPrompt}
@@ -581,10 +636,10 @@ export default function BaseNavigator() {
           component={FirmwareUpdateScreen}
           options={{
             gestureEnabled: false,
-            headerTitle: () => null,
+            headerTitle: FirmwareUpdateHeaderTitle,
             title: "",
-            headerLeft: () => null,
-            headerRight: () => <NavigationHeaderCloseButton />,
+            headerLeft: FirmwareUpdateHeaderLeft,
+            headerRight: FirmwareUpdateHeaderRight,
           }}
         />
         <Stack.Screen
@@ -599,6 +654,12 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
 
+        <Stack.Screen
+          name={ScreenName.DeeplinkInstallAppDeviceSelection}
+          component={DeeplinkInstallAppDeviceSelection}
+          options={{ headerShown: false }}
+        />
+
         {llmAccountListUI?.enabled && (
           <Stack.Screen
             name={NavigatorName.Assets}
@@ -610,6 +671,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Analytics}
           component={AnalyticsNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={NavigatorName.OperationsHistory}
+          component={OperationsHistoryNavigator}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -1,6 +1,9 @@
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeEmptyTokenAccount, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import {
+  makeEmptyTokenAccount,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 
 // Helper function to get the correct account to return based on originalCurrency
 export const getAccountToReturn = (

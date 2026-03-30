@@ -26,7 +26,7 @@ import {
   releaseSpeculosDevice,
   findAppCandidate,
 } from "../load/speculos";
-import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
+import type { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { formatReportForConsole, formatTime, formatAppCandidate, formatError } from "./formatters";
 import type {
   AppSpec,
@@ -50,7 +50,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../generated/types";
-import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
+import { botTest } from "@ledgerhq/ledger-wallet-framework/bot/bot-test-context";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
 let appCandidates;

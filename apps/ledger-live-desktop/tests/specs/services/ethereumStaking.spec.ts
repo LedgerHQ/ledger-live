@@ -195,6 +195,10 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
+    await page
+      .locator('[data-testid="market-eth-stake-button"]:visible')
+      .first()
+      .waitFor({ state: "visible", timeout: 15000 });
     await expect
       .soft(page)
       .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
@@ -216,7 +220,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await marketCoinPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
-    await drawer.selectAccount("Ethereum", 0);
+    await drawer.selectAccount("Ethereum", 1);
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked2",
       properties: {

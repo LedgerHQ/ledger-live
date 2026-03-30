@@ -13,7 +13,7 @@ export const PortfolioCarouselSection = ({ backgroundColor }: PortfolioCarouselS
   const { t } = useTranslation();
 
   return (
-    <Box background={backgroundColor} key="CarouselTitle">
+    <Box backgroundColor={backgroundColor} key="CarouselTitle">
       <SectionContainer px={0} minHeight={240} isFirst>
         <SectionTitle title={t("portfolio.carousel.title")} containerProps={{ mb: 7, mx: 6 }} />
         <Carousel />

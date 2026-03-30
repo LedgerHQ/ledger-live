@@ -1,5 +1,4 @@
 import type {
-  Api,
   Block,
   BlockInfo,
   Cursor,
@@ -12,14 +11,19 @@ import type {
   FeeEstimation,
   TransactionIntent,
   TransactionValidation,
-  ListOperationsOptions,
+  MemoNotSupported,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig, { type AleoCoinConfig, type AleoConfig } from "../config";
-import { estimateFees, getBalance, lastBlock, listOperations } from "../logic";
+import coinConfig from "../config";
+import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
+import type { AleoTransactionIntentData, AleoCoinConfig, AleoConfig } from "../types";
 
-export function createApi(config: AleoConfig, currencyId: string): Api {
+export function createApi(
+  config: AleoConfig,
+  currencyId: string,
+): AlpacaApi<MemoNotSupported, AleoTransactionIntentData> {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
   coinConfig.setCoinConfig(() => aleoCoinConfig);
   const currency = getCryptoCurrencyById(currencyId);
@@ -32,8 +36,8 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
       throw new Error("combine is not supported");
     },
     craftTransaction: async (
-      _account: unknown,
-      _transaction: unknown,
+      _txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>,
+      _customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftTransaction is not supported");
     },
@@ -87,8 +91,9 @@ export function createApi(config: AleoConfig, currencyId: string): Api {
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getSequence: async (_address: string) => {
-      throw new Error("getSequence is not supported");
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
     },
+    validateAddress,
   };
 }

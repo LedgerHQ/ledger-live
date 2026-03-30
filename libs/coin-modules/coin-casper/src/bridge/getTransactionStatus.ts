@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { AccountBridge } from "@ledgerhq/types-live";
 import {
   AmountRequired,
   InvalidAddress,
@@ -7,15 +5,17 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
-import { CasperAccount, Transaction, TransactionStatus } from "../types";
-import { CasperInvalidTransferId } from "../errors";
+import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   MayBlockAccountError,
   InvalidMinimumAmountError,
 } from "../consts";
+import { CasperInvalidTransferId } from "../errors";
 import { CASPER_MAX_TRANSFER_ID, validateMemo } from "../logic/validateMemo";
+import { CasperAccount, Transaction, TransactionStatus } from "../types";
+import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

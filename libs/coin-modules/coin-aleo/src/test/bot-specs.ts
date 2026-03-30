@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import type { AppSpec } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import type { Transaction } from "../types";
 import { acceptTransaction } from "./speculos-deviceActions";
 

@@ -1,5 +1,6 @@
-import { Api, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
@@ -25,7 +26,7 @@ describe("getBlock ERC20 transfers", () => {
     // - From: 0x534eeF6Db44FBeB71047EE3eb4CB16E572862aF6
     // - To: 0x970402B253733A1f6F4f3cd1d07420006be2882D
 
-    let module: Api<MemoNotSupported, BufferTxData>;
+    let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
     beforeAll(() => {
       const velasEvmConfig: EvmConfig = {
@@ -37,6 +38,7 @@ describe("getBlock ERC20 transfers", () => {
           type: "blockscout",
           uri: "https://evmexplorer.velas.com/api",
         },
+        showNfts: true,
       };
       module = createApi(velasEvmConfig, "velas_evm");
     });
@@ -66,6 +68,7 @@ describe("getBlock ERC20 transfers", () => {
         op =>
           op.type === "transfer" &&
           op.asset.type === expectedAsset.type &&
+          "assetReference" in op.asset &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
       // there are two transfer operations for the expected token,
@@ -82,7 +85,7 @@ describe("getBlock ERC20 transfers", () => {
     // - Address: 0xcc4461636684868AaB71037b29a11cC643E64500
     // - Token: 0xF68C9Df95a18B2A5a5fa1124d79EEEffBaD0B6Fa
 
-    let module: Api<MemoNotSupported, BufferTxData>;
+    let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
     beforeAll(() => {
       const bscConfig: EvmConfig = {
@@ -94,6 +97,7 @@ describe("getBlock ERC20 transfers", () => {
           type: "ledger",
           explorerId: "bnb",
         },
+        showNfts: true,
       };
       module = createApi(bscConfig, "bsc");
     });
@@ -123,12 +127,47 @@ describe("getBlock ERC20 transfers", () => {
         op =>
           op.type === "transfer" &&
           op.asset.type === expectedAsset.type &&
+          "assetReference" in op.asset &&
           op.asset.assetReference === expectedAsset.assetReference,
       );
       // there are two transfer operations for the expected token,
       // one positive and one negative depending on the direction of the transfer
       expect(tokenOps).toHaveLength(2);
       expect(tokenOps.map(op => op.amount).sort()).toEqual([-expectedAmount, expectedAmount]);
+    });
+  });
+
+  // this test is skipped until a RPC provider supporting trace_block is setup for zksync
+  describe.skip("External RPC Node (zkSync)", () => {
+    let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+    beforeAll(() => {
+      const zkSyncConfig: EvmConfig = {
+        node: {
+          type: "external",
+          uri: "https://mainnet.era.zksync.io",
+        },
+        explorer: {
+          type: "none",
+        },
+        showNfts: true,
+      };
+      module = createApi(zkSyncConfig, "zksync");
+    });
+
+    it("should return block 69174056 without failing on unsigned typed transactions", async () => {
+      const block = await module.getBlock(69174056);
+
+      expect(block.info.height).toBe(69174056);
+      expect(block.info.hash).toBe(
+        "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
+      );
+      expect(block.transactions.length).toBeGreaterThan(0);
+      expect(
+        block.transactions.some(
+          tx => tx.hash === "0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e",
+        ),
+      ).toBe(true);
     });
   });
 });

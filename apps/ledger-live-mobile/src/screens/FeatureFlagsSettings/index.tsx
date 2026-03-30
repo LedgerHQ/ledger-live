@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
 import {
   DEFAULT_FEATURES,
@@ -23,14 +23,14 @@ import includes from "lodash/includes";
 import lowerCase from "lodash/lowerCase";
 import trim from "lodash/trim";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Keyboard } from "react-native";
+import { Platform } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import NavigationScrollView from "~/components/NavigationScrollView";
+import KeyboardView from "~/components/KeyboardView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
-import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
-import { setFeatureFlagsBannerVisible } from "~/actions/settings";
+import { featureFlagsBannerVisibleSelector, setBannerVisible } from "@shared/feature-flags";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 const addFlagHint = `\
@@ -120,97 +120,85 @@ export default function DebugFeatureFlags() {
   const project =
     params !== null && typeof params === "object" && "project" in params ? params.project : "";
 
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-  useEffect(() => {
-    const listenerShow = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
-    const listenerHide = Keyboard.addListener("keyboardDidHide", () => setKeyboardVisible(false));
-    return () => {
-      listenerShow.remove();
-      listenerHide.remove();
-    };
-  }, []);
-
   const additionalInfo = <Alert title={addFlagHint} type="hint" noIcon />;
+  const keyboardBehavior = Platform.OS === "ios" ? "padding" : "height";
 
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
   const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
     (newVal: boolean) => {
-      dispatch(setFeatureFlagsBannerVisible(newVal));
+      dispatch(setBannerVisible(newVal));
     },
     [dispatch],
   );
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-      <NavigationScrollView keyboardShouldPersistTaps="handled">
-        <Flex px={16}>
-          <Alert type="primary" noIcon>
-            {t("settings.debug.featureFlagsTitle")}
-          </Alert>
-          <Flex flexDirection="row" mt={4}>
-            <Text>Legend: </Text>
-            <TagEnabled mx={2}>enabled flag</TagEnabled>
-            <TagDisabled mx={2}>disabled flag</TagDisabled>
+      <KeyboardView behavior={keyboardBehavior}>
+        <NavigationScrollView keyboardShouldPersistTaps="handled">
+          <Flex px={16}>
+            <Alert type="primary" noIcon>
+              {t("settings.debug.featureFlagsTitle")}
+            </Alert>
+            <Flex flexDirection="row" mt={4}>
+              <Text>Legend: </Text>
+              <TagEnabled mx={2}>enabled flag</TagEnabled>
+              <TagDisabled mx={2}>disabled flag</TagDisabled>
+            </Flex>
+            <Text my={3}>{t("settings.debug.firebaseProject")}</Text>
+            <Tag uppercase={false} type="color" alignSelf={"flex-start"}>
+              {project}
+            </Tag>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Text flexShrink={1} mt={3}>
+                {t("settings.debug.showBannerDesc")}
+              </Text>
+              <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
+            </Flex>
+            <Divider />
+            <ChipTabs
+              labels={[
+                t("settings.debug.featureFlagsTabAll"),
+                t("settings.debug.featureFlagsTabGroups"),
+              ]}
+              activeIndex={activeTab}
+              onChange={setActiveTab}
+            />
+            <Flex mt={3} />
+            <SearchInput
+              value={searchInput}
+              placeholder="Search flag"
+              onChange={handleSearch}
+              autoCapitalize="none"
+            />
+            <Button
+              mt={3}
+              size="small"
+              type="main"
+              outline
+              onPress={resetFeatures}
+              disabled={!hasLocallyOverriddenFlags}
+            >
+              {t("settings.debug.featureFlagsRestoreAll")}
+            </Button>
+            <Divider />
+            {activeTab === 0 ? (
+              <>
+                {filteredFlags.length === 0 ? (
+                  <>
+                    <Text>{`No flag matching "${searchInput}"`}</Text>
+                    {additionalInfo}
+                  </>
+                ) : null}
+                {flagsList}
+              </>
+            ) : (
+              <>{groupsList}</>
+            )}
           </Flex>
-          <Text my={3}>{t("settings.debug.firebaseProject")}</Text>
-          <Tag uppercase={false} type="color" alignSelf={"flex-start"}>
-            {project}
-          </Tag>
-          <Flex flexDirection="row" justifyContent="space-between">
-            <Text flexShrink={1} mt={3}>
-              {t("settings.debug.showBannerDesc")}
-            </Text>
-            <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
-          </Flex>
-          <Divider />
-          <ChipTabs
-            labels={[
-              t("settings.debug.featureFlagsTabAll"),
-              t("settings.debug.featureFlagsTabGroups"),
-            ]}
-            activeIndex={activeTab}
-            onChange={setActiveTab}
-          />
-          <Flex mt={3} />
-          <SearchInput
-            value={searchInput}
-            placeholder="Search flag"
-            onChange={handleSearch}
-            autoCapitalize="none"
-          />
-          <Button
-            mt={3}
-            size="small"
-            type="main"
-            outline
-            onPress={resetFeatures}
-            disabled={!hasLocallyOverriddenFlags}
-          >
-            {t("settings.debug.featureFlagsRestoreAll")}
-          </Button>
-          <Divider />
-          {activeTab === 0 ? (
-            <>
-              {filteredFlags.length === 0 ? (
-                <>
-                  <Text>{`No flag matching "${searchInput}"`}</Text>
-                  {keyboardVisible ? additionalInfo : null}
-                </>
-              ) : null}
-              {flagsList}
-            </>
-          ) : (
-            <>{groupsList}</>
-          )}
-        </Flex>
-      </NavigationScrollView>
-      {keyboardVisible ? null : (
-        <Flex px={16} mt={3}>
-          {additionalInfo}
-        </Flex>
-      )}
+        </NavigationScrollView>
+      </KeyboardView>
     </SafeAreaView>
   );
 }

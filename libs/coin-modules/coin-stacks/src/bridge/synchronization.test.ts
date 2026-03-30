@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
+import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import * as accountIndex from "@ledgerhq/ledger-wallet-framework/account/index";
+import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { buildTokenAccounts, createTokenAccount } from "./synchronization";
 import { TransactionResponse } from "../network";
 import { TokenPrefix } from "../types";
-import { log } from "@ledgerhq/logs";
-import * as accountIndex from "@ledgerhq/coin-framework/account/index";
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import { buildTokenAccounts, createTokenAccount } from "./synchronization";
 
 jest.mock("@ledgerhq/cryptoassets/state");
 jest.mock("@ledgerhq/logs");
-jest.mock("@ledgerhq/coin-framework/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/coin-framework/account/index"),
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index"),
   encodeTokenAccountId: jest.fn(),
 }));
 

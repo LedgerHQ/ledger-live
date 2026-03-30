@@ -2,7 +2,17 @@ import URL from "url";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
-import { APIAccount, APIBlock, APIOperation, AccountsGetOperationsOptions } from "./types";
+import {
+  APIAccount,
+  APIBlock,
+  APIOperation,
+  APITokenTransfer,
+  APITransactionType,
+  AccountsGetOperationsOptions,
+} from "./types";
+
+/** TzKT hard-caps `limit` at 10 000; we use a safer page size to stay well under that. */
+const BLOCK_PAGE_SIZE = 1000;
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
@@ -50,6 +60,49 @@ const api = {
     });
     return data;
   },
+
+  // https://api.tzkt.io/#operation/Blocks_GetByLevel
+  async getBlockByLevel(level: number): Promise<APIBlock> {
+    const { data } = await network<APIBlock>({
+      url: `${getExplorerUrl()}/v1/blocks/${level}`,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches a single page of `transaction` operations at the given block level.
+   * Internal — used by `fetchBlockTransactions` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetTransactions
+   */
+  async getBlockTransactionsPage(level: number, cursor?: number): Promise<APITransactionType[]> {
+    // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
+    // Without an explicit sort the API default may be descending, which would cause the
+    // cursor to go backwards and produce duplicates or an infinite loop.
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APITransactionType[]>({
+      url: `${getExplorerUrl()}/v1/operations/transactions`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches a single page of FA token transfers at the given block level.
+   * Internal — used by `fetchBlockTokenTransfers` which handles pagination.
+   * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
+   */
+  async getBlockTokenTransfersPage(level: number, cursor?: number): Promise<APITokenTransfer[]> {
+    // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
+    // offset.cr cursor advancing forward regardless of the API's default ordering.
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APITokenTransfer[]>({
+      url: `${getExplorerUrl()}/v1/tokens/transfers`,
+      params,
+    });
+    return data;
+  },
 };
 
 // TODO this has same purpose as api/listOperations
@@ -76,6 +129,62 @@ export const fetchAllTransactions = async (
     }
   } while (--maxIteration);
   return ops;
+};
+
+/**
+ * Fetches ALL `transaction` operations for a given block level, paginating through
+ * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ *
+ * TzKT hard-caps a single request at 10 000 items. This function issues multiple
+ * requests when needed and is therefore safe for dense blocks.
+ * A safety cap (`maxTxQuery`) prevents infinite loops on pathological responses.
+ */
+export const fetchBlockTransactions = async (level: number): Promise<APITransactionType[]> => {
+  const txs: APITransactionType[] = [];
+  let cursor: number | undefined;
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
+  do {
+    const page = await api.getBlockTransactionsPage(level, cursor);
+    if (page.length === 0) break;
+    txs.push(...page);
+    if (page.length < BLOCK_PAGE_SIZE) break; // last page: no need for another round-trip
+    cursor = page.at(-1)!.id;
+  } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockTransactions: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
+  return txs;
+};
+
+/**
+ * Fetches ALL FA token transfers for a given block level, paginating through
+ * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ *
+ * TzKT hard-caps a single request at 10 000 items. This function issues multiple
+ * requests when needed and is therefore safe for airdrop / DeFi-heavy blocks.
+ * A safety cap (`maxTxQuery`) prevents infinite loops on pathological responses.
+ */
+export const fetchBlockTokenTransfers = async (level: number): Promise<APITokenTransfer[]> => {
+  const transfers: APITokenTransfer[] = [];
+  let cursor: number | undefined;
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
+  do {
+    const page = await api.getBlockTokenTransfersPage(level, cursor);
+    if (page.length === 0) break;
+    transfers.push(...page);
+    if (page.length < BLOCK_PAGE_SIZE) break; // last page
+    cursor = page.at(-1)!.id;
+  } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockTokenTransfers: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
+  return transfers;
 };
 
 export default api;

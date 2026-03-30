@@ -1,18 +1,15 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2022", "dom"],
+    "types": ["node", "jest"],
     "exactOptionalPropertyTypes": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "outDir": "./lib",
+    "rootDir": "src"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

@@ -1,6 +1,6 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AppDispatch } from "~/renderer/createStore";
+import type { AppDispatch } from "~/state-manager/configureStore";
 
 export type NavigateFn = (
   pathname: string,
@@ -37,6 +37,8 @@ export interface DeeplinkHandlerContext {
   postOnboardingDeeplinkHandler: PostOnboardingDeeplinkHandlerFn;
   tryRedirectToPostOnboardingOrRecover: TryRedirectToPostOnboardingOrRecoverFn;
   currentPathname: string;
+  /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
+  recoverAppId?: string;
 }
 
 export interface ParsedDeeplink {

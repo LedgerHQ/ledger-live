@@ -7,6 +7,7 @@ import { PortfolioScreen as Portfolio } from "../screens/Portfolio";
 import ReadOnlyPortfolio from "../screens/ReadOnly";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { State } from "~/reducers/types";
+import { Account } from "@ledgerhq/types-live";
 
 type TestStackParamList = WalletTabNavigatorStackParamList;
 
@@ -24,8 +25,11 @@ export const ReadOnlyPortfolioTest = () => (
   </Stack.Navigator>
 );
 
+export const btcCurrency = getCryptoCurrencyById("bitcoin");
+export const ethCurrency = getCryptoCurrencyById("ethereum");
+
 const mockAccount = {
-  ...genAccount("perpsAccount", { currency: getCryptoCurrencyById("bitcoin") }),
+  ...genAccount("perpsAccount", { currency: btcCurrency }),
   index: 0,
 };
 
@@ -60,7 +64,24 @@ export const overrideInitialStateWithGraphReworkAndReadOnly = (state: State): St
   },
 });
 
-export const overrideInitialStateWithPerpsEntryPointEnabled = (state: State): State => ({
+export const overrideInitialStateWithPerpsEntryPoint =
+  (enabled: boolean) =>
+  (state: State): State => ({
+    ...state,
+    accounts: {
+      active: [mockAccount],
+    },
+    settings: {
+      ...state.settings,
+      overriddenFeatureFlags: {
+        ...state.settings.overriddenFeatureFlags,
+        lwmWallet40: { enabled: true },
+        ptxPerpsLiveAppMobile: { enabled },
+      },
+    },
+  });
+
+export const overrideInitialStateWithPerpsAndAssetSection = (state: State): State => ({
   ...state,
   accounts: {
     active: [mockAccount],
@@ -69,23 +90,29 @@ export const overrideInitialStateWithPerpsEntryPointEnabled = (state: State): St
     ...state.settings,
     overriddenFeatureFlags: {
       ...state.settings.overriddenFeatureFlags,
-      lwmWallet40: { enabled: true },
+      lwmWallet40: { enabled: true, params: { assetSection: true } },
       ptxPerpsLiveAppMobile: { enabled: true },
     },
   },
 });
 
-export const overrideInitialStateWithPerpsEntryPointDisabled = (state: State): State => ({
-  ...state,
-  accounts: {
-    active: [mockAccount],
-  },
-  settings: {
-    ...state.settings,
-    overriddenFeatureFlags: {
-      ...state.settings.overriddenFeatureFlags,
-      lwmWallet40: { enabled: true },
-      ptxPerpsLiveAppMobile: { enabled: false },
+export const overrideInitialStateWithAssetSection =
+  (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
+  (state: State): State => ({
+    ...state,
+    accounts: {
+      active: accounts,
     },
-  },
-});
+    settings: {
+      ...state.settings,
+      overriddenFeatureFlags: {
+        ...state.settings.overriddenFeatureFlags,
+        lwmWallet40: { enabled: true, params: { assetSection } },
+      },
+    },
+  });
+
+export const overrideInitialStateWithNoAccountsAndAssetSection =
+  (assetSection: boolean) =>
+  (state: State): State =>
+    overrideInitialStateWithAssetSection(assetSection, [])(state);

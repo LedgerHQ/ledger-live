@@ -4,7 +4,7 @@ import { SIDEBAR_VALUE_TO_PATH } from "../constants";
 describe("pathnameToActive", () => {
   it.each([
     { pathname: SIDEBAR_VALUE_TO_PATH.home, expected: "home" },
-    { pathname: "/asset/bitcoin", expected: "home" },
+    { pathname: "/asset/bitcoin", expected: "" },
     { pathname: SIDEBAR_VALUE_TO_PATH.accounts, expected: "accounts" },
     { pathname: "/account/abc-123", expected: "accounts" },
     { pathname: SIDEBAR_VALUE_TO_PATH.swap, expected: "swap" },
@@ -17,6 +17,14 @@ describe("pathnameToActive", () => {
     { pathname: "/card/something", expected: "card" },
   ])('should return "$expected" for pathname "$pathname"', ({ pathname, expected }) => {
     expect(pathnameToActive(pathname, undefined)).toBe(expected);
+  });
+
+  it('should return "accounts" for /cryptos when asset section is enabled', () => {
+    expect(pathnameToActive("/cryptos", undefined, true)).toBe("accounts");
+  });
+
+  it("should return empty string for /cryptos when asset section is disabled", () => {
+    expect(pathnameToActive("/cryptos", undefined, false)).toBe("");
   });
 
   it.each([

@@ -1,12 +1,16 @@
 // TODO Remove dependency to `"@ledgerhq/types-live"` once
 // the legacy bridge is deleted
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import type { BlockOperation, TransferBlockOperation } from "@ledgerhq/coin-framework/api/index";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
-} from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+} from "@ledgerhq/ledger-wallet-framework/nft/nftOperationId";
+import {
+  encodeOperationId,
+  encodeSubOperationId,
+} from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
@@ -45,7 +49,7 @@ export const etherscanOperationToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
-  const to = safeEncodeEIP55(etherscanOp.to);
+  const to = safeEncodeEIP55(etherscanOp.to) || safeEncodeEIP55(etherscanOp.contractAddress);
   const value = safeBigNumber(etherscanOp.value);
   const fee = safeBigNumber(etherscanOp.gasUsed).times(safeBigNumber(etherscanOp.gasPrice));
   const hasFailed = etherscanOp.isError === "1";
@@ -63,37 +67,29 @@ export const etherscanOperationToOperations = (
     types.push("NONE");
   }
 
-  const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
-
-  return types.map(type => {
-    let operationValue: BigNumber = value;
-
-    if (valueIncludesFees.includes(type) && hasFailed) {
-      operationValue = fee;
-    } else if (valueIncludesFees.includes(type)) {
-      operationValue = value.plus(fee);
-    }
-
-    return {
-      id: encodeOperationId(accountId, etherscanOp.hash, type),
-      hash: etherscanOp.hash,
-      type,
-      value: operationValue,
-      fee,
-      senders: [from],
-      recipients: [to],
-      blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
-      blockHash: etherscanOp.blockHash,
-      transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
-      accountId: accountId,
-      date: new Date(Number.parseInt(etherscanOp.timeStamp, 10) * 1000),
-      subOperations: [],
-      nftOperations: [],
-      internalOperations: [],
-      hasFailed,
-      extra: {},
-    } as Operation;
-  });
+  // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
+  return types.map(
+    type =>
+      ({
+        id: encodeOperationId(accountId, etherscanOp.hash, type),
+        hash: etherscanOp.hash,
+        type,
+        value,
+        fee,
+        senders: [from],
+        recipients: [to],
+        blockHeight: Number.parseInt(etherscanOp.blockNumber, 10),
+        blockHash: etherscanOp.blockHash,
+        transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
+        accountId: accountId,
+        date: new Date(Number.parseInt(etherscanOp.timeStamp, 10) * 1000),
+        subOperations: [],
+        nftOperations: [],
+        internalOperations: [],
+        hasFailed,
+        extra: {},
+      }) as Operation,
+  );
 };
 
 /**
@@ -294,6 +290,61 @@ export const etherscanInternalTransactionToOperations = (
       }) as Operation,
   );
 };
+
+const NATIVE_ASSET = { type: "native" } as const;
+
+function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
+  return it.isError === "0" && BigInt(it.value) > 0n && !!it.from && !!it.to;
+}
+
+/**
+ * Converts valid internal transactions to BlockOperations grouped by transaction hash.
+ * Skips internal txs with isError === "1" or value === "0".
+ */
+export function internalTxsToOperationsByHash(
+  internalTxs: EtherscanInternalTransaction[],
+): Map<string, BlockOperation[]> {
+  const byHash = new Map<string, BlockOperation[]>();
+
+  for (const it of internalTxs) {
+    if (!isInternalTransactionValid(it)) continue;
+
+    const { from, to, value, hash } = it;
+    const encodedFrom = safeEncodeEIP55(from);
+    const encodedTo = safeEncodeEIP55(to);
+    const amount = BigInt(value);
+
+    const ops: BlockOperation[] = [];
+    const fromOp: TransferBlockOperation = {
+      type: "transfer",
+      address: encodedFrom,
+      ...(encodedTo ? { peer: encodedTo } : {}),
+      asset: NATIVE_ASSET,
+      amount: -amount,
+    };
+    const toOp: TransferBlockOperation = {
+      ...fromOp,
+      address: encodedTo,
+      ...(encodedFrom ? { peer: encodedFrom } : {}),
+      amount: amount,
+    };
+    if (encodedFrom) {
+      ops.push(fromOp);
+    }
+    if (encodedTo) {
+      ops.push(toOp);
+    }
+
+    let arr = byHash.get(hash);
+    if (arr === undefined) {
+      arr = [];
+      byHash.set(hash, arr);
+    }
+    arr.push(...ops);
+  }
+
+  return byHash;
+}
 
 export type PagingState = {
   // Pagination cursor boundary block (boundary between ).

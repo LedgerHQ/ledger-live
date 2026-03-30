@@ -3,10 +3,11 @@ import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
-import { ModularDrawer } from "./drawer/modular.drawer";
 import { ModularDialog } from "./dialog/modular.dialog";
 
 export class EarnPage extends WebViewAppPage {
+  protected readonly webviewIdentifier = "earn";
+
   private earnMoreRewardTabButton = "tab-earn-more";
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
   private potentialRewardsBalanceCard = "Rewards you could earn-balance-card";
@@ -18,10 +19,10 @@ export class EarnPage extends WebViewAppPage {
   private totalRewardsBalanceCard = "Total rewards-balance-card";
   private depositedAssetsText = "Deposited assets";
   private tabAssetsButton = "tab-assets";
+  private loadingSkeleton = "loading-skeleton";
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
-  private modularDrawer = new ModularDrawer(this.page);
   private modularDialog = new ModularDialog(this.page);
 
   @step("Go and wait for Earn app to be ready")
@@ -36,6 +37,9 @@ export class EarnPage extends WebViewAppPage {
 
     await earnFunction();
     await appReadyPromise;
+
+    const webview = await this.getWebView();
+    await webview.getByTestId(this.loadingSkeleton).first().waitFor({ state: "hidden" });
   }
 
   @step("Go to assets tab")
@@ -49,16 +53,17 @@ export class EarnPage extends WebViewAppPage {
   async goToEarnMoreTab() {
     const webview = await this.getWebView();
     const buttonLocator = webview.locator(`[data-test-id="${this.earnMoreRewardTabButton}"]`);
-    if (await buttonLocator.isVisible()) {
-      await buttonLocator.click();
-    }
+    await buttonLocator.click();
   }
 
-  @step("Click on stake button for $1")
-  async clickStakeCurrencyButton(account: string) {
+  @step("Click on stake button")
+  async clickStakeCurrencyButton(account: Account) {
     const webview = await this.getWebView();
-    const row = webview.locator("tr", { hasText: `${account}` });
-    await row.getByRole("button", { name: "Earn" }).first().click();
+    const row = webview.getByRole("row", {
+      // include ticker in case tokens also exist on the account (eg Ethereum with USDC)
+      name: `${account.currency.ticker} ${account.accountName}`,
+    });
+    await row.getByRole("button", { name: "Earn" }).click();
   }
 
   @step("Verify rewards potential is visible")
@@ -109,12 +114,8 @@ export class EarnPage extends WebViewAppPage {
     }
   }
 
-  /**
-   * Returns the visible modular selector (Dialog or Drawer), or null if legacy UI.
-   */
   private async getModularSelector() {
     if (await this.modularDialog.isVisible()) return this.modularDialog;
-    if (await this.modularDrawer.isVisible()) return this.modularDrawer;
     return null;
   }
 
@@ -139,7 +140,12 @@ export class EarnPage extends WebViewAppPage {
         break;
       }
       case "Kiln staking Pool": {
-        await this.expectUrlToContainAll(url, [account.currency.id, "kiln.fi%2F%3Ffocus%3Dpooled"]);
+        await this.expectUrlToContainAll(url, [
+          account.currency.id,
+          "ledger-staking.widget.kiln.fi/earn",
+          "focus=pooled",
+          account.address!,
+        ]);
         break;
       }
       default:

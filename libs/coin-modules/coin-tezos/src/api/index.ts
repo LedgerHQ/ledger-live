@@ -1,7 +1,5 @@
 import {
   type Balance,
-  Block,
-  BlockInfo,
   Cursor,
   ListOperationsOptions,
   Page,
@@ -12,7 +10,11 @@ import {
   Stake,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { getRevealFee } from "@taquito/taquito";
@@ -24,6 +26,8 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   lastBlock,
   listOperations,
   rawEncode,
@@ -32,6 +36,7 @@ import {
 } from "../logic";
 import { CoreAccountInfo, CoreTransactionInfo, EstimatedFees } from "../logic/estimateFees";
 import { getTezosToolkit } from "../logic/tezosToolkit";
+import { validateAddress } from "../logic/validateAddress";
 import api from "../network/tzkt";
 import {
   DUST_MARGIN_MUTEZ,
@@ -39,9 +44,9 @@ import {
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
-import type { TezosApi, TezosFeeEstimation } from "./types";
+import type { TezosFeeEstimation } from "./types";
 
-export function createApi(config: TezosConfig): TezosApi {
+export function createApi(config: TezosConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -62,23 +67,19 @@ export function createApi(config: TezosConfig): TezosApi {
     listOperations: operations,
     getStakes,
     validateIntent,
-    // required by signer to compute next valid sequence/counter
-    getSequence: async (address: string) => {
+    getNextSequence: async (address: string) => {
       const accountInfo = await api.getAccountByAddress(address);
       return accountInfo.type === "user" ? BigInt(accountInfo.counter + 1) : 0n;
     },
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateAddress,
   };
 }
 

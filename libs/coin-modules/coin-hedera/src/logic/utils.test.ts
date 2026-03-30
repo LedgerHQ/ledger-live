@@ -1,15 +1,16 @@
-import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
 import { Transaction as SDKTransaction, TransactionId } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
 import {
   HEDERA_OPERATION_TYPES,
   HEDERA_TRANSACTION_MODES,
   SYNTHETIC_BLOCK_WINDOW_SECONDS,
   OP_TYPES_EXCLUDING_FEES,
+  STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
 import { HederaRecipientInvalidChecksum } from "../errors";
 import { apiClient } from "../network/api";
@@ -24,13 +25,17 @@ jest.mock("../preload-data", () => ({
 import * as preloadData from "../preload-data";
 
 const mockGetCurrentHederaPreloadData = preloadData.getCurrentHederaPreloadData as jest.Mock;
-import { getMockedOperation } from "../test/fixtures/operation.fixture";
+import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import { getMockedEnrichedERC20Transfer } from "../test/fixtures/common.fixture";
 import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
-import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
-import { getMockedMirrorAccount } from "../test/fixtures/mirror.fixture";
+import {
+  getMockedMirrorAccount,
+  getMockedMirrorTransaction,
+} from "../test/fixtures/mirror.fixture";
+import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import type {
   HederaAccount,
   HederaMemo,
@@ -45,6 +50,8 @@ import {
   deserializeSignature,
   serializeTransaction,
   deserializeTransaction,
+  extractInitiator,
+  extractFeesPayer,
   getOperationValue,
   getMemoFromBase64,
   sendRecipientCanNext,
@@ -75,6 +82,12 @@ import {
   calculateAPY,
   analyzeStakingOperation,
   calculateUncommittedBalanceChange,
+  toEntityId,
+  mergeTransactionsFromDifferentSources,
+  millisToSeconds,
+  nanosToSeconds,
+  secondsToNanos,
+  createStakingRewardOperationHash,
 } from "./utils";
 
 jest.mock("../network/api");
@@ -287,6 +300,58 @@ describe("logic utils", () => {
       expect(getMemoFromBase64(null as unknown as string)).toBeNull();
       expect(getMemoFromBase64({} as unknown as string)).toBeNull();
       expect(getMemoFromBase64(10 as unknown as string)).toBeNull();
+    });
+  });
+
+  describe("extractInitiator", () => {
+    it("returns Hedera account ID from valid transaction_id", () => {
+      expect(extractInitiator("0.0.12345-1625097600-000")).toBe("0.0.12345");
+    });
+  });
+
+  describe("extractFeesPayer", () => {
+    it("returns transfer account that paid exactly charged fee", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.10067173-1761755118-730000493",
+          charged_tx_fee: 40743,
+          transfers: [
+            { account: "0.0.23", amount: -40743 },
+            { account: "0.0.801", amount: 40743 },
+          ],
+        }),
+      ).toBe("0.0.23");
+    });
+
+    it("falls back to transaction initiator when that account is debited", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.8835924-1760510872-123456789",
+          charged_tx_fee: 1176695,
+          transfers: [
+            { account: "0.0.15", amount: 55631 },
+            { account: "0.0.801", amount: 1121064 },
+            { account: "0.0.8835924", amount: -3176695 },
+            { account: "0.0.9124531", amount: 1000000 },
+            { account: "0.0.9169746", amount: 1000000 },
+          ],
+        }),
+      ).toBe("0.0.8835924");
+    });
+
+    it("falls back to transaction initiator when no other transfer can be used to identify the fee payer", () => {
+      expect(
+        extractFeesPayer({
+          transaction_id: "0.0.10067173-1761755118-029000738",
+          charged_tx_fee: 42782,
+          transfers: [
+            { account: "0.0.34", amount: 2039 },
+            { account: "0.0.801", amount: 40743 },
+            { account: "0.0.10067174", amount: -50000 },
+            { account: "0.0.10067175", amount: 7218 },
+          ],
+        }),
+      ).toBe("0.0.10067173");
     });
   });
 
@@ -1255,6 +1320,470 @@ describe("logic utils", () => {
       const result = await analyzeStakingOperation(mockAddress, mockTx);
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("toEntityId", () => {
+    it("should format entity ID with default shard and realm", () => {
+      expect(toEntityId({ num: 12345 })).toBe("0.0.12345");
+    });
+
+    it("should format entity ID with custom shard and realm", () => {
+      expect(toEntityId({ num: 12345, shard: 1, realm: 2 })).toBe("1.2.12345");
+    });
+
+    it("should throw error for negative values", () => {
+      expect(() => toEntityId({ num: -1 })).toThrow("invalid account num: -1");
+      expect(() => toEntityId({ num: 123, shard: -1 })).toThrow("invalid account shard: -1");
+      expect(() => toEntityId({ num: 123, realm: -1 })).toThrow("invalid account realm: -1");
+    });
+
+    it("should throw error for non-integers", () => {
+      expect(() => toEntityId({ num: 1.5 })).toThrow("invalid account num: 1.5");
+      expect(() => toEntityId({ num: 123, shard: 1.5 })).toThrow("invalid account shard: 1.5");
+      expect(() => toEntityId({ num: 123, realm: 1.5 })).toThrow("invalid account realm: 1.5");
+    });
+  });
+
+  describe("mergeTransactionsFromDifferentSources", () => {
+    it("should merge mirror transactions and erc20 transfers", () => {
+      const mockMirrorTx = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx],
+        enrichedERC20Transfers: [mockEnrichedERC20Transfer],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("3000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.merged.map(tx => tx.type)).toEqual(["erc20", "mirror"]);
+    });
+    it("should handle multiple ERC20 transfers with deduplication correctly", () => {
+      const sharedHash1 = "hash-1";
+      const sharedHash2 = "hash-2";
+
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: sharedHash1,
+        name: "CONTRACTCALL",
+      });
+
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: "2000.000000000",
+        transaction_hash: sharedHash2,
+        name: "CONTRACTCALL",
+      });
+
+      const mockMirrorTx3 = getMockedMirrorTransaction({
+        consensus_timestamp: "3000.000000000",
+        transaction_hash: "unique-hash",
+        name: "CONTRACTCALL",
+      });
+
+      const mockERC20_1 = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: "1000.000000000",
+          transaction_hash: sharedHash1,
+        }),
+      });
+
+      const mockERC20_2 = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: "2000.000000000",
+          transaction_hash: sharedHash2,
+        }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
+        enrichedERC20Transfers: [mockERC20_1, mockERC20_2],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("4000.000000000")),
+        fetchAllPages: false,
+      });
+
+      // Should have: 2 ERC20 transfers + 1 unique CONTRACT_CALL = 3 total
+      expect(result.merged).toHaveLength(3);
+      expect(result.merged.filter(tx => tx.type === "erc20")).toHaveLength(2);
+      expect(result.merged.filter(tx => tx.type === "mirror")).toHaveLength(1);
+    });
+
+    it("should sort transactions in descending order by consensus timestamp", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2],
+        enrichedERC20Transfers: [mockEnrichedERC20Transfer],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("3000.000000000")),
+        fetchAllPages: false,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([
+        mockMirrorTx2.consensus_timestamp,
+        mockEnrichedERC20Transfer.mirrorTransaction.consensus_timestamp,
+        mockMirrorTx1.consensus_timestamp,
+      ]);
+    });
+
+    it("should sort transactions in ascending order by consensus timestamp", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2],
+        enrichedERC20Transfers: [mockEnrichedERC20Transfer],
+        order: "asc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("3000.000000000")),
+        fetchAllPages: false,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([
+        mockMirrorTx2.consensus_timestamp,
+        mockEnrichedERC20Transfer.mirrorTransaction.consensus_timestamp,
+        mockMirrorTx1.consensus_timestamp,
+      ]);
+    });
+
+    it("should maintain nanosecond precision when sorting", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000001" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000003" });
+      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000002" });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
+        enrichedERC20Transfers: [],
+        order: "asc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([
+        mockMirrorTx1.consensus_timestamp,
+        mockMirrorTx3.consensus_timestamp,
+        mockMirrorTx2.consensus_timestamp,
+      ]);
+    });
+
+    it("should filter transactions when CONTRACT_CALL timestamp exceeds hgraph indexed timestamp", () => {
+      const mirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        name: "CRYPTOTRANSFER",
+      });
+      const mirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: `3000.000000000`,
+        name: "CONTRACTCALL",
+      });
+
+      // hgraph is stuck on 1000, but mirror node returned 3000 already
+      const latestHgraphIndexedTimestampNs = secondsToNanos(
+        new BigNumber(mirrorTx1.consensus_timestamp),
+      );
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mirrorTx1, mirrorTx2],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs,
+        fetchAllPages: false,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([mirrorTx1.consensus_timestamp]);
+    });
+
+    it("should filter out child mirror transactions (parent_consensus_timestamp !== null) when they have a corresponding ERC20 transfer", () => {
+      const rootTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: "hash-root",
+        name: "CONTRACTCALL",
+        nonce: 0,
+        parent_consensus_timestamp: null,
+      });
+      const childTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+        transaction_hash: "hash-child-1",
+        name: "CONTRACTCALL",
+        nonce: 1,
+        parent_consensus_timestamp: rootTx.consensus_timestamp,
+      });
+
+      const erc20ForChild1 = getMockedEnrichedERC20Transfer({
+        mirrorTransaction: getMockedMirrorTransaction({
+          consensus_timestamp: childTx1.consensus_timestamp,
+          transaction_hash: childTx1.transaction_hash,
+        }),
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [rootTx, childTx1],
+        enrichedERC20Transfers: [erc20ForChild1],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.merged).toEqual([
+        { type: "erc20", data: erc20ForChild1 },
+        { type: "mirror", data: rootTx },
+      ]);
+    });
+
+    it("should keep child mirror transactions when there is no corresponding ERC20 transfer", () => {
+      const rootTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000000",
+        transaction_hash: "hash-root",
+        name: "CONTRACTCALL",
+        parent_consensus_timestamp: null,
+      });
+      const childTx = getMockedMirrorTransaction({
+        consensus_timestamp: "1000.000000001",
+        transaction_hash: "hash-child",
+        name: "CRYPTOTRANSFER",
+        parent_consensus_timestamp: rootTx.consensus_timestamp,
+      });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [rootTx, childTx],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("2000.000000000")),
+        fetchAllPages: false,
+      });
+
+      // without ERC20 data, child transactions are not filtered
+      expect(result.merged).toEqual([
+        { type: "mirror", data: childTx },
+        { type: "mirror", data: rootTx },
+      ]);
+    });
+
+    it("should not trigger delay detection for non-CONTRACTCALL transactions", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({
+        consensus_timestamp: `1000.000000000`,
+        name: "CRYPTOTRANSFER",
+      });
+      const mockMirrorTx2 = getMockedMirrorTransaction({
+        consensus_timestamp: `3000.000000000`,
+        name: "CRYPTOTRANSFER",
+      });
+
+      // hgraph is stuck on 1000, but mirror node returned 3000 already
+      const latestHgraphIndexedTimestampNs = secondsToNanos(
+        new BigNumber(mockMirrorTx1.consensus_timestamp),
+      );
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs,
+        fetchAllPages: false,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([
+        mockMirrorTx2.consensus_timestamp,
+        mockMirrorTx1.consensus_timestamp,
+      ]);
+    });
+
+    it("should apply limit when fetchAllPages is false", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
+      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockMirrorTx4 = getMockedMirrorTransaction({ consensus_timestamp: "4000.000000000" });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3, mockMirrorTx4],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 2,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
+        fetchAllPages: false,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([
+        mockMirrorTx4.consensus_timestamp,
+        mockMirrorTx3.consensus_timestamp,
+      ]);
+    });
+
+    it("should not apply limit when fetchAllPages is true", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
+      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 2,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
+        fetchAllPages: true,
+      });
+
+      const timestamps = result.merged.map(tx => {
+        const mirrorTx = tx.type === "mirror" ? tx.data : tx.data.mirrorTransaction;
+        return mirrorTx.consensus_timestamp;
+      });
+
+      expect(timestamps).toEqual([
+        mockMirrorTx3.consensus_timestamp,
+        mockMirrorTx2.consensus_timestamp,
+        mockMirrorTx1.consensus_timestamp,
+      ]);
+    });
+
+    it("should set nextCursor to last transaction timestamp in desc order", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
+      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.nextCursor).toBe(mockMirrorTx3.consensus_timestamp);
+    });
+
+    it("should set nextCursor to last transaction timestamp in asc order", () => {
+      const mockMirrorTx1 = getMockedMirrorTransaction({ consensus_timestamp: "1000.000000000" });
+      const mockMirrorTx2 = getMockedMirrorTransaction({ consensus_timestamp: "2000.000000000" });
+      const mockMirrorTx3 = getMockedMirrorTransaction({ consensus_timestamp: "3000.000000000" });
+
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [mockMirrorTx1, mockMirrorTx2, mockMirrorTx3],
+        enrichedERC20Transfers: [],
+        order: "asc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.nextCursor).toBe(mockMirrorTx3.consensus_timestamp);
+    });
+
+    it("should return null nextCursor when no transactions", () => {
+      const result = mergeTransactionsFromDifferentSources({
+        mirrorTransactions: [],
+        enrichedERC20Transfers: [],
+        order: "desc",
+        limit: 10,
+        latestHgraphIndexedTimestampNs: secondsToNanos(new BigNumber("5000.000000000")),
+        fetchAllPages: false,
+      });
+
+      expect(result.nextCursor).toBeNull();
+      expect(result.merged).toEqual([]);
+    });
+  });
+
+  describe("millisToSeconds", () => {
+    it("converts milliseconds to seconds", () => {
+      expect(millisToSeconds(1_000)).toEqual(new BigNumber(1));
+      expect(millisToSeconds(1_500)).toEqual(new BigNumber(1.5));
+      expect(millisToSeconds(0)).toEqual(new BigNumber(0));
+    });
+
+    it("accepts BigNumber input", () => {
+      expect(millisToSeconds(new BigNumber(2_000))).toEqual(new BigNumber(2));
+    });
+
+    it("preserves sub-second precision", () => {
+      expect(millisToSeconds(1_001)).toEqual(new BigNumber(1.001));
+    });
+  });
+
+  describe("secondsToNanos", () => {
+    it("converts seconds to nanoseconds", () => {
+      expect(secondsToNanos(1)).toEqual(new BigNumber(1_000_000_000));
+      expect(secondsToNanos(0)).toEqual(new BigNumber(0));
+    });
+
+    it("accepts BigNumber input", () => {
+      expect(secondsToNanos(new BigNumber(2))).toEqual(new BigNumber(2_000_000_000));
+    });
+
+    it("preserves sub-second precision", () => {
+      expect(secondsToNanos(1.5)).toEqual(new BigNumber(1_500_000_000));
+    });
+  });
+
+  describe("nanosToSeconds", () => {
+    it("converts nanoseconds to seconds", () => {
+      expect(nanosToSeconds(1_000_000_000)).toEqual(new BigNumber(1));
+      expect(nanosToSeconds(0)).toEqual(new BigNumber(0));
+    });
+
+    it("accepts BigNumber input", () => {
+      expect(nanosToSeconds(new BigNumber(1_500_000_000))).toEqual(new BigNumber(1.5));
+    });
+
+    it("preserves nanosecond precision", () => {
+      expect(nanosToSeconds(1_000_000_001)).toEqual(new BigNumber(1.000000001));
+    });
+  });
+
+  describe("createStakingRewardOperationHash", () => {
+    it("appends the staking reward suffix to the given hash", () => {
+      const hash = "0.0.12345-1234567890-123456789";
+      const result = createStakingRewardOperationHash(hash);
+
+      expect(result).toBe(`${hash}${STAKING_REWARD_HASH_SUFFIX}`);
     });
   });
 });

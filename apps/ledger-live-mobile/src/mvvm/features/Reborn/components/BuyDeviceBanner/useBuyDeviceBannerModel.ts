@@ -8,6 +8,8 @@ import {
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ImageSourcePropType, ImageStyle, StyleProp } from "react-native";
 import { NavigatorName, ScreenName } from "~/const";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { track } from "~/analytics";
 import { WrappedButtonProps } from "~/components/wrappedUi/Button";
 import { Props as ThemeProps } from "~/components/theme/ForceTheme";
@@ -65,6 +67,7 @@ const useBuyDeviceBannerModel = ({
   })();
 
   const handleOnPress = useCallback(() => {
+    setOriginFlow(HOOKS_TRACKING_LOCATIONS.buyBanner);
     navigateToRebornFlow();
   }, [navigateToRebornFlow]);
 

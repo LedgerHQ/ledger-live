@@ -5,6 +5,7 @@ import { act, render, screen, userEvent } from "tests/testSetup";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { ARB_ACCOUNT, BTC_ACCOUNT, HEDERA_ACCOUNT } from "../../__mocks__/accounts.mock";
 import {
   arbitrumCurrency,
@@ -154,11 +155,12 @@ jest.mock("~/renderer/analytics/segment", () => ({
 
 const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
   const initialState = {
+    settings: AFTER_ONBOARDING_STATE,
     ...state,
-    modularDrawer: {
+    modularDialog: {
       source: "MADSource",
       flow: "Add account",
-      ...state?.modularDrawer,
+      ...state?.modularDialog,
     },
   };
 

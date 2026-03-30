@@ -1,5 +1,5 @@
-import {
-  type Api,
+import type {
+  BroadcastConfig,
   Balance,
   Block,
   BlockInfo,
@@ -14,13 +14,13 @@ import {
   Stake,
   Reward,
   TransactionValidation,
-  AssetInfo,
   CraftedTransaction,
   BufferTxData,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
+import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,
@@ -30,15 +30,15 @@ import {
   lastBlock,
   listOperations,
   getBalance,
-  getSequence,
+  getNextSequence,
   validateIntent,
-  getTokenFromAsset,
-  getAssetFromToken,
   computeIntentType,
   refreshOperations,
   getBlock,
   getBlockInfo,
+  validateTransaction,
 } from "../logic/index";
+import { validateAddress } from "../logic/validateAddress";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
@@ -48,7 +48,10 @@ const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): Api<MemoNotSupported, BufferTxData> {
+): AlpacaApi<MemoNotSupported, BufferTxData> &
+  BridgeApi & {
+    validateTransaction: (signature: string) => Promise<{ error: Error | undefined }>;
+  } {
   configs[currencyId] = config;
   setCoinConfig(c => {
     const evmConfig = configs[c.id];
@@ -95,16 +98,13 @@ export function createApi(
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    getSequence: (address: string): Promise<bigint> => getSequence(currency, address),
+    getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
+    validateAddress,
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],
       customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
-    getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
-      getTokenFromAsset(currency, asset),
-    getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
-      getAssetFromToken(currency, token, owner),
     computeIntentType,
     /**
      * Only expose this method if the chain has no explorer (the only chain that passes a function
@@ -118,5 +118,7 @@ export function createApi(
             refreshOperations(currency, operations),
         }
       : {}),
+    validateTransaction: (signature: string): Promise<{ error: Error | undefined }> =>
+      validateTransaction(currency, { signature }),
   };
 }

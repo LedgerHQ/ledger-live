@@ -1,4 +1,4 @@
-import type { Balance } from "@ledgerhq/coin-framework/lib/api/types";
+import type { Balance } from "@ledgerhq/coin-framework/api/types";
 import { APTOS_ASSET_ID, TOKEN_TYPE } from "../constants";
 import type { AptosAPI } from "../network";
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
-import { http, HttpResponse, bypass } from "msw";
+import { http, HttpResponse } from "msw";
 import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
@@ -709,6 +709,23 @@ export const indexBlocks = async (chainId: number) => {
   console.log(`Indexing completed ✓`);
 };
 
+const getEtherscanOpsMap = (action: string) => {
+  switch (action) {
+    case "txlist":
+      return explorerEtherscanOperationByAddress;
+    case "tokentx":
+      return explorerEtherscanERC20EventsByAddress;
+    case "tokennfttx":
+      return explorerEtherscanERC721EventsByAddress;
+    case "token1155tx":
+      return explorerEtherscanERC1155EventsByAddress;
+    case "txlistinternal":
+      return explorerEtherscanInternalByAddress;
+    default:
+      return {};
+  }
+};
+
 let server: SetupServerApi;
 export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
   const handlers = [
@@ -925,13 +942,11 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
 
   if (currencyConfig.explorer.type === "ledger") {
     handlers.push(
-      http.get("*.ledger.com/blockchain/v4/*/address/*/txs", async ({ request, params }) => {
+      http.get("*.ledger.com/blockchain/v4/*/address/*/txs", async ({ params }) => {
         const address = params["2"] as string;
-        const response = await fetch(bypass(request)).then(res => res.json());
         const opsMap = explorerLedgerOperationByAddress[address || ""] || new Map();
-        response.data.push(...opsMap.values());
 
-        return HttpResponse.json(response);
+        return HttpResponse.json({ data: [...opsMap.values()], token: null });
       }),
     );
   } else if (currencyConfig.explorer.type !== "none") {
@@ -940,40 +955,11 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         const uri = new URL(request.url).searchParams;
         const address = uri.get("address");
         const action = uri.get("action");
-        const response = await fetch(bypass(request)).then(res => res.json());
 
-        switch (action) {
-          case "txlist": {
-            const opsMap = explorerEtherscanOperationByAddress[address || ""] || new Map();
-            response.result.push(...opsMap.values());
-            break;
-          }
-          case "tokentx": {
-            const erc20EventsMap =
-              explorerEtherscanERC20EventsByAddress[address || ""] || new Map();
-            response.result.push(...erc20EventsMap.values());
-            break;
-          }
-          case "tokennfttx": {
-            const erc721EventsMap =
-              explorerEtherscanERC721EventsByAddress[address || ""] || new Map();
-            response.result.push(...erc721EventsMap.values());
-            break;
-          }
-          case "token1155tx": {
-            const erc1155EventsMap =
-              explorerEtherscanERC1155EventsByAddress[address || ""] || new Map();
-            response.result.push(...erc1155EventsMap.values());
-            break;
-          }
-          case "txlistinternal": {
-            const internalMap = explorerEtherscanInternalByAddress[address || ""] || new Map();
-            response.result.push(...internalMap.values());
-            break;
-          }
-        }
+        const result =
+          address && action ? [...(getEtherscanOpsMap(action)[address] ?? new Map()).values()] : [];
 
-        return HttpResponse.json(response);
+        return HttpResponse.json({ result, status: "0" });
       }),
     );
   }

@@ -48,14 +48,14 @@ describe("Updater", () => {
   it("should render error button when status is error", () => {
     renderWithContext({ status: "error" });
 
-    const button = screen.getByRole("button", { name: /error during update, try again/i });
+    const button = screen.getByRole("button", { name: /error during update. try again/i });
     expect(button).toBeVisible();
   });
 
-  it("should render 'Install update and relaunch' when check-success", () => {
+  it("should render 'New update. Install and relaunch' when check-success", () => {
     renderWithContext({ status: "check-success" });
 
-    const button = screen.getByRole("button", { name: /install update and relaunch/i });
+    const button = screen.getByRole("button", { name: /new update. install and relaunch/i });
     expect(button).toBeVisible();
   });
 
@@ -63,7 +63,7 @@ describe("Updater", () => {
     const quitAndInstall = jest.fn();
     const { user } = renderWithContext({ status: "check-success", quitAndInstall });
 
-    const button = screen.getByRole("button", { name: /install update and relaunch/i });
+    const button = screen.getByRole("button", { name: /new update. install and relaunch/i });
     await user.click(button);
     expect(quitAndInstall).toHaveBeenCalledTimes(1);
   });
@@ -71,7 +71,7 @@ describe("Updater", () => {
   it("should open re-download url when clicking error button", async () => {
     const { user } = renderWithContext({ status: "error" });
 
-    const button = screen.getByRole("button", { name: /error during update, try again/i });
+    const button = screen.getByRole("button", { name: /error during update. try again/i });
     await user.click(button);
     expect(openURL).toHaveBeenCalledWith(urls.liveHome);
   });

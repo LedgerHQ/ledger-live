@@ -6,7 +6,7 @@ import { useSelector } from "~/context/hooks";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
-import { useLifeCycle } from "./walletSync.hooks";
+import { useLifeCycle } from "./useLifeCycle";
 import { useEffect } from "react";
 import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 

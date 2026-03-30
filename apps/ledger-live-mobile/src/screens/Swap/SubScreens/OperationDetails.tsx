@@ -60,8 +60,13 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     color: colors[statusColorKey as keyof typeof colors],
   };
 
+  const fromCryptoCurrency =
+    fromCurrency?.type === "TokenCurrency" ? fromCurrency.parentCurrency : fromCurrency;
+
   const getProviderExplorerUrl = () => {
     switch (provider.toLowerCase()) {
+      case "swapsxyz":
+        return `https://scan.swaps.xyz/transactions/${swapId}`;
       case "okx":
         if (fromCurrency?.id) {
           return `https://web3.okx.com/fi/explorer/${fromCurrency.id}/tx/${operation.hash}`;
@@ -69,8 +74,8 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
       // fallthrough to default if fromCurrency or fromCurrency.id is undefined
       default:
         return (
-          fromCurrency?.type === "CryptoCurrency" &&
-          getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash)
+          fromCryptoCurrency &&
+          getTransactionExplorer(getDefaultExplorerView(fromCryptoCurrency), operation.hash)
         );
     }
   };

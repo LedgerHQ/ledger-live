@@ -14,11 +14,11 @@ function transformFearAndGreedResponse(response: unknown): FearAndGreedIndex {
 
   if (!result.success) {
     log("cmc-client", "Invalid response schema:", {
-      errors: result.error.errors,
+      errors: result.error.issues,
       received: response,
     });
     throw new Error(
-      `[CMC API] Schema validation failed: ${result.error.errors
+      `[CMC API] Schema validation failed: ${result.error.issues
         .map(e => `${e.path.join(".")}: ${e.message}`)
         .join(", ")}`,
     );

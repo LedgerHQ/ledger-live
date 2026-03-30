@@ -1,5 +1,17 @@
 # ui
 
+## 0.6.0
+
+### Minor Changes
+
+- [#14757](https://github.com/LedgerHQ/ledger-live/pull/14757) [`6007263`](https://github.com/LedgerHQ/ledger-live/commit/60072633c05d0d4d40fdd58ea1be624b78df9d3e) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(ui): removed examples folder containing rspack
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#14757](https://github.com/LedgerHQ/ledger-live/pull/14757) [`6007263`](https://github.com/LedgerHQ/ledger-live/commit/60072633c05d0d4d40fdd58ea1be624b78df9d3e) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore(ui): removed examples folder containing rspack
+
 ## 0.5.0
 
 ### Minor Changes

@@ -1,5 +1,5 @@
-import { AleoCoinConfig } from "../../config";
 import { TRANSACTION_TYPE } from "../../constants";
+import type { AleoCoinConfig } from "../../types";
 
 export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinConfig => {
   return {
@@ -15,6 +15,8 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
       [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC]: 18494,
     },
     feeSafetyMultiplier: 1,
+    isFeeSponsored: true,
+    useEncryptedProve: false,
     status: { type: "active" },
   };
 };

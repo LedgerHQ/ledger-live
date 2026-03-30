@@ -1,3 +1,5 @@
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type {
   HederaAccount,
@@ -5,8 +7,6 @@ import type {
   HederaResources,
   HederaResourcesRaw,
 } from "../../types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TokenAccount } from "@ledgerhq/types-live";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "./currency.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
@@ -135,10 +135,12 @@ export const MAINNET_TEST_ACCOUNTS = {
   },
   withTokens: {
     accountId: "0.0.8835924",
+    accountIdWithErc20: "0.0.4351292",
     publicKey: "34e26415574250721e8869bd33ea2678c2bbccff5fc70bd8b0ec9239295fd2cf",
     associatedTokenWithBalance: "0.0.456858",
     associatedTokenWithoutBalance: "0.0.7243470",
     notAssociatedToken: "0.0.3176721",
+    erc20Token: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
   },
   withQuickBalanceChanges: {
     accountId: "0.0.10176637",
@@ -150,5 +152,8 @@ export const MAINNET_TEST_ACCOUNTS = {
   inactiveStaking: {
     accountId: "0.0.9806001",
     publicKey: "0283ef0997da7161c9a3aec45c57f4e074cb67916c97c1e5339d9f988e702e0450",
+  },
+  withStakingHistory: {
+    accountId: "0.0.10083165",
   },
 };

@@ -8,8 +8,11 @@ import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
 import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
+import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
+import { webviewLogStore } from "~/e2e/webviewLogStore";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -27,10 +30,14 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
+    const manifestDomainCheckEnabled = useFeature("llmWebviewManifestDomainCheck")?.enabled;
+
     const {
       onMessage,
       onLoadError,
       onOpenWindow,
+      onShouldStartLoadWithRequest,
+      isBlockedByDomainCheck,
       webviewProps,
       webviewRef,
       webviewCacheOptions,
@@ -41,6 +48,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         inputs,
         customHandlers,
         currentAccountHistDb,
+        manifestDomainCheckEnabled,
       },
       ref,
       onStateChange,
@@ -61,6 +69,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
     }
 
+    if (isBlockedByDomainCheck) {
+      return <NetworkError handleTryAgain={() => {}} />;
+    }
+
     return (
       <RNWebView
         ref={webviewRef}
@@ -71,10 +83,23 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
         showsVerticalScrollIndicator={false}
         renderLoading={Loader}
-        originWhitelist={manifest.domains}
+        originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+        onShouldStartLoadWithRequest={
+          manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
+        }
         allowsInlineMediaPlayback
         onMessage={onMessage}
-        onError={() => {
+        onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
+          if (Config.DETOX) {
+            const desc = event?.nativeEvent?.description;
+            const code = event?.nativeEvent?.code;
+            webviewLogStore.addLoadError({
+              timestamp: new Date().toISOString(),
+              source: "WalletAPIWebview",
+              message: desc ?? "WebView onError fired",
+              details: `manifestId=${manifest.id} url=${manifest.url}${code != null ? ` code=${code}` : ""}`,
+            });
+          }
           onLoadError();
           setError(true);
         }}
@@ -92,6 +117,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
+        injectedJavaScript={
+          Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
+        }
         {...webviewProps}
         {...webviewCacheOptions}
       />

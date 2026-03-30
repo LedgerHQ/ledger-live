@@ -9,11 +9,10 @@
     "jsx": "react",
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["jest", "@testing-library/jest-dom"],
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "skipLibCheck": true
   },
   "include": ["src"]

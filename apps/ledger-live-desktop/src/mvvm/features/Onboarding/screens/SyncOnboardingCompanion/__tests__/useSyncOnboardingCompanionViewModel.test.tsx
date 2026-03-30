@@ -106,14 +106,6 @@ const getMockSteps = (isTwoStep: boolean, hasSync: boolean): Step[] => {
 };
 
 describe("useSyncOnboardingCompanionViewModel", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it("should return correct amount of steps when single timeline version", () => {
     jest.spyOn(UseOnboardingStatePolling, "useOnboardingStatePolling").mockReturnValue({
       onboardingState: mockOnboardingState,
@@ -633,47 +625,54 @@ describe("useSyncOnboardingCompanionViewModel", () => {
       });
 
       it("should redirect to App step when on success step", async () => {
-        jest.spyOn(UseOnboardingStatePolling, "useOnboardingStatePolling").mockReturnValue({
-          onboardingState: {
-            ...mockOnboardingState,
-            isOnboarded: true,
-            currentOnboardingStep: OnboardingStep.Ready,
-          },
-          allowedError: null,
-          lockedDevice: false,
-          fatalError: null,
-          resetStates: jest.fn(),
-        });
+        jest.useFakeTimers();
 
-        const defaultSteps = getMockSteps(true, true);
-        jest.mocked(useCompanionSteps).mockReturnValue({
-          defaultSteps,
-          hasSyncStep: false,
-          installStep: <Flex />,
-          handleAppStepComplete: jest.fn(),
-          isLedgerSyncActive: false,
-        });
+        try {
+          jest.spyOn(UseOnboardingStatePolling, "useOnboardingStatePolling").mockReturnValue({
+            onboardingState: {
+              ...mockOnboardingState,
+              isOnboarded: true,
+              currentOnboardingStep: OnboardingStep.Ready,
+            },
+            allowedError: null,
+            lockedDevice: false,
+            fatalError: null,
+            resetStates: jest.fn(),
+          });
 
-        const { result } = renderHook(
-          () =>
-            useSyncOnboardingCompanionViewModel({
-              device: mockDevice,
-              onLostDevice: jest.fn(),
-              notifySyncOnboardingShouldReset: jest.fn(),
-              parentRef: createRef(),
-              setCompanionStep: jest.fn(),
-            }),
-          hookState,
-        );
+          const defaultSteps = getMockSteps(true, true);
 
-        await act(async () => {
-          jest.runOnlyPendingTimers();
-        });
+          jest.mocked(useCompanionSteps).mockReturnValue({
+            defaultSteps,
+            hasSyncStep: false,
+            installStep: <Flex />,
+            handleAppStepComplete: jest.fn(),
+            isLedgerSyncActive: false,
+          });
 
-        expect(result.current.stepKey).toBe(StepKey.Apps);
-        expect(result.current.isNewSeed).toBe(false);
-        expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
-        expect(result.current.steps.findIndex(step => step.status === "active")).toBe(-1);
+          const { result } = renderHook(
+            () =>
+              useSyncOnboardingCompanionViewModel({
+                device: mockDevice,
+                onLostDevice: jest.fn(),
+                notifySyncOnboardingShouldReset: jest.fn(),
+                parentRef: createRef(),
+                setCompanionStep: jest.fn(),
+              }),
+            hookState,
+          );
+
+          act(() => {
+            jest.runOnlyPendingTimers();
+          });
+
+          expect(result.current.stepKey).toBe(StepKey.Apps);
+          expect(result.current.isNewSeed).toBe(false);
+          expect(result.current.analyticsSeedConfiguration.current).toBeUndefined();
+          expect(result.current.steps.findIndex(step => step.status === "active")).toBe(-1);
+        } finally {
+          jest.useRealTimers();
+        }
       });
     });
   });

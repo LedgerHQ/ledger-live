@@ -1,20 +1,24 @@
 export type AleoTransactionType = "public" | "private";
 
-interface AleoTransition {
+export type AleoTransitionValue =
+  | {
+      id: string;
+      type: "public" | "private" | "future";
+      value: string;
+    }
+  | {
+      id: string;
+      type: "record";
+      tag: string;
+    };
+
+export interface AleoTransition {
   id: string;
   scm: string;
   tcm: string;
   tpk: string;
-  inputs: Array<{
-    id: string;
-    type: AleoTransactionType;
-    value: string;
-  }>;
-  outputs: Array<{
-    id: string;
-    type: string;
-    value: string;
-  }>;
+  inputs: AleoTransitionValue[];
+  outputs: AleoTransitionValue[];
   program: string;
   function: string;
 }
@@ -35,12 +39,14 @@ export interface AleoPublicTransaction {
   transition_id: string;
   transaction_status: string;
   block_number: number;
+  block_hash: string;
   block_timestamp: string;
   function_id: string;
   amount: number;
   sender_address: string;
   recipient_address: string;
   program_id: string;
+  fee: number;
 }
 
 export interface AleoPublicTransactionDetailsResponse {
@@ -51,7 +57,9 @@ export interface AleoPublicTransactionDetailsResponse {
   };
   global_state_root: string;
   proof: string;
-  fee: { transition: AleoTransition };
+  fee: {
+    transition: AleoTransition;
+  };
   fee_value: number;
   block_height: number;
   block_hash: string;
@@ -92,7 +100,12 @@ export interface AleoRegisterForRecordsResponse {
   uuid: string;
 }
 
-export interface AleoGetPublicKeyResponse {
+export interface AleoGetScannerPublicKeyResponse {
+  key_id: string;
+  public_key: string;
+}
+
+export interface AleoGetProvePublicKeyResponse {
   key_id: string;
   public_key: string;
 }
@@ -123,4 +136,39 @@ export interface AleoPrivateRecord {
 
 export interface AleoDecryptedCiphertextResponse {
   plaintext: string;
+}
+
+interface DelegatedProvingTransitionResponse {
+  id: string;
+  program: string;
+  function: string;
+  inputs: {
+    type: string;
+    id: string;
+    value: string;
+  }[];
+  outputs: {
+    type: string;
+    id: string;
+    value: string;
+  }[];
+  tpk: string;
+  tcm: string;
+  scm: string;
+}
+
+export interface DelegatedProvingResponse {
+  transaction: {
+    type: string;
+    id: string;
+    execution: {
+      transitions: DelegatedProvingTransitionResponse[];
+      global_state_root: string;
+      proof: string;
+      fee: {
+        transition: DelegatedProvingTransitionResponse;
+      };
+      broadcast_result: string;
+    };
+  };
 }

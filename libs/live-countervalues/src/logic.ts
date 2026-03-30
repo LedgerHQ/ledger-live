@@ -3,7 +3,7 @@ import {
   flattenAccounts,
   getAccountCurrency,
   isAccountEmpty,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type {
   CounterValuesState,
@@ -28,10 +28,9 @@ import {
   datapointLimits,
   datapointRetention,
 } from "./helpers";
-import type { Account, PortfolioRange } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
-import { portfolioRangeToDays } from "./helpers";
 
 /**
  * Heuristic to avoid calling exportCountervalues when the persisted export would be unchanged.
@@ -63,19 +62,11 @@ export function hasNewCountervaluesToExport(
 export function exportCountervalues(
   { data, status }: CounterValuesState,
   trackingPair: TrackingPair[],
-  selectedTimeRange?: PortfolioRange,
 ): CounterValuesStateRaw {
-  const out = { status } as CounterValuesStateRaw;
   const hourlyLimit = formatCounterValueDay(new Date(Date.now() - datapointRetention.hourly));
   const pairIds = new Set(trackingPairIds(trackingPair));
 
-  const dailyRetentionDays = selectedTimeRange
-    ? portfolioRangeToDays(selectedTimeRange)
-    : undefined;
-  const shouldFilterDaily = dailyRetentionDays !== undefined;
-  const dailyLimit = shouldFilterDaily
-    ? formatCounterValueDay(new Date(Date.now() - dailyRetentionDays * 24 * 60 * 60 * 1000))
-    : null;
+  const out = { status: { ...status } } as CounterValuesStateRaw;
 
   for (const path in data) {
     if (!(data[path] instanceof Map)) continue; // Skip entries that are not maps
@@ -87,12 +78,13 @@ export function exportCountervalues(
     for (const [k, v] of data[path]) {
       if (k === "latest") continue; // Don't persist latest; export only changes when history changes
       if (k.length === 13 && k.slice(0, 10) < hourlyLimit) continue; // Skip old hourly data
-      if (shouldFilterDaily && k.length === 10 && dailyLimit && k < dailyLimit) continue; // Skip old daily data only if filtering is enabled
       size++;
       obj[k] = v;
     }
 
-    if (size > 0) out[path] = obj;
+    if (size > 0) {
+      out[path] = obj;
+    }
   }
 
   return out;

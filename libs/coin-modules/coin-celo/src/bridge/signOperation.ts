@@ -1,17 +1,17 @@
+import { CeloTx } from "@celo/connect";
+import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
+import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
-import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import type { Transaction, CeloAccount } from "../types/types";
-import buildTransaction from "./buildTransaction";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
 import { determineFees } from "../network/sdk";
 import { CeloSigner } from "../signer";
-import { CeloTx } from "@celo/connect";
+import type { Transaction, CeloAccount } from "../types/types";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import buildTransaction from "./buildTransaction";
 
 /**
  * Sign Transaction with Ledger hardware

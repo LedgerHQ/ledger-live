@@ -42,24 +42,53 @@ describe("Sui Api", () => {
     async function testListOperations(order: "asc" | "desc" | undefined) {
       const { items: operations1, next: token1 } = await module.listOperations(binance, {
         minHeight: 0,
-        order,
+        ...(order ? { order } : {}),
       });
 
       expect(operations1.length).toBeGreaterThan(2);
-      expect(token1.length).toBeGreaterThan(0);
+      expect(token1).toEqual(expect.any(String));
+      expect(token1!.length).toBeGreaterThan(0);
 
-      const { items: operations2 } = await module.listOperations(binance, {
-        minHeight: 0,
-        cursor: token1,
-        order,
-      });
+      const { items: operations2 } = await module.listOperations(
+        binance,
+        token1
+          ? {
+              minHeight: 0,
+              cursor: token1,
+              ...(order ? { order } : {}),
+            }
+          : {
+              minHeight: 0,
+              ...(order ? { order } : {}),
+            },
+      );
       expect(operations2.length).toBeGreaterThan(2);
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
 
       // check that none of the operations in operations2 are in operations1
-      expect(operations2.every(op2 => !operations1.some(op1 => op1.tx.hash === op2.tx.hash))).toBe(
-        true,
-      );
+      const hashes1 = new Set(operations1.map(op => op.tx.hash));
+      const overlapping = operations2.filter(op => hashes1.has(op.tx.hash));
+      if (overlapping.length > 0) {
+        const cursorTs = token1!.split(":")[0];
+        console.error(
+          `[DIAG] order=${order} cursor=${token1} p1=${operations1.length}ops p2=${operations2.length}ops overlap=${overlapping.length}`,
+        );
+        console.error(
+          `[DIAG] p1: first=${operations1[0].tx.hash}(${operations1[0].tx.date.toISOString()}) last=${operations1.at(-1)!.tx.hash}(${operations1.at(-1)!.tx.date.toISOString()})`,
+        );
+        console.error(
+          `[DIAG] p2: first=${operations2[0].tx.hash}(${operations2[0].tx.date.toISOString()}) last=${operations2.at(-1)!.tx.hash}(${operations2.at(-1)!.tx.date.toISOString()})`,
+        );
+        for (const op of overlapping) {
+          const p1 = operations1.find(o => o.tx.hash === op.tx.hash)!;
+          console.error(
+            `[DIAG] overlap: hash=${op.tx.hash} p1_date=${p1.tx.date.toISOString()} p2_date=${op.tx.date.toISOString()} p1_block=${p1.tx.block.height} p2_block=${op.tx.block.height}`,
+          );
+        }
+        const sameTs = operations1.filter(op => op.tx.date.getTime().toString() === cursorTs);
+        console.error(`[DIAG] same-ts cluster at cursor: ${sameTs.length} ops on page1`);
+      }
+      expect(overlapping).toEqual([]);
     }
 
     it("should fetch operations successfully in desc order", async () => {
@@ -84,6 +113,53 @@ describe("Sui Api", () => {
       expect(operations.length).toBeGreaterThan(0);
 
       expect(cursor).toBeUndefined();
+    });
+
+    it("should return asc results equal to reversed desc results", async () => {
+      const address = "0x766ff1061aaad7241d1a8ebeadced7b3f7bd3c5f12dfd7a0e49bb1684855eb11";
+      const maxPages = 20;
+
+      const fetchAllHashes = async (order: "asc" | "desc"): Promise<string[]> => {
+        const hashes: string[] = [];
+        let cursor: string | undefined;
+        let pageCount = 0;
+
+        for (let page = 0; page < maxPages; page++) {
+          const { items, next } = await module.listOperations(address, {
+            minHeight: 0,
+            order,
+            ...(cursor ? { cursor } : {}),
+          });
+
+          pageCount += 1;
+          hashes.push(...items.map(operation => operation.tx.hash));
+          if (!next) {
+            if (pageCount === 1) {
+              throw new Error(
+                `Fetched only one page for ${order} operations on ${address}. ` +
+                  "This account is too small for this test, setup a bigger one to cover pagination.",
+              );
+            }
+            return hashes;
+          }
+          cursor = next;
+        }
+
+        throw new Error(
+          `Exceeded max pages (${maxPages}) while fetching ${order} operations for ${address}. ` +
+            "This account is too big for this test, setup a smaller one to keep test fast.",
+        );
+      };
+
+      const [ascHashes, descHashes] = await Promise.all([
+        fetchAllHashes("asc"),
+        fetchAllHashes("desc"),
+      ]);
+
+      expect(ascHashes.length).toBeGreaterThanOrEqual(54);
+      expect(new Set(ascHashes).size).toBe(ascHashes.length);
+      expect(new Set(descHashes).size).toBe(descHashes.length);
+      expect(ascHashes).toEqual([...descHashes].reverse());
     });
   });
 
@@ -127,14 +203,18 @@ describe("Sui Api", () => {
       expect(checkSet.size).toBeLessThanOrEqual(txs.length);
     });
 
-    it("at least operation should be IN", async () => {
+    it("at least one operation should be IN", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
       expect(txs.some(t => t.type === "IN")).toBe(true);
     });
 
-    it("at least operation should be OUT", async () => {
+    it("at least one operation should be OUT", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(10);
-      expect(txs.some(t => t.type === "OUT")).toBe(true);
+      const outTxs = txs.filter(t => t.type === "OUT");
+      expect(outTxs.length).toBeGreaterThanOrEqual(1);
+      expect(outTxs.every(t => t.tx.feesPayer !== undefined)).toBe(true);
+      // this expectation holds unless all txs are "sponsored"
+      expect(outTxs.some(t => t.tx.feesPayer === SENDER)).toBe(true);
     });
 
     it("uses the minHeight to filter", async () => {
@@ -270,9 +350,9 @@ describe("Sui Api", () => {
   });
 
   describe("getStakes", () => {
-    test("Account 0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d", async () => {
+    test("Account 0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73", async () => {
       const stakes = await module.getStakes(
-        "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
+        "0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73",
       );
       expect(stakes.items.length).toBeGreaterThan(0);
       stakes.items.forEach(stake => {

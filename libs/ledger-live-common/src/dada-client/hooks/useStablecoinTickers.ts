@@ -4,14 +4,18 @@ import { AssetCategory } from "../state-manager/types";
 
 const emptySet = new Set<string>();
 
-export function useStablecoinTickers(product: "llm" | "lld") {
-  const { data, isLoading } = useGetAssetsByCategoryQuery({
-    category: AssetCategory.Stablecoin,
-    product,
-  });
+export function useStablecoinTickers(product: "llm" | "lld", version: string, skip?: boolean) {
+  const { data, isLoading, isError } = useGetAssetsByCategoryQuery(
+    {
+      category: AssetCategory.Stablecoins,
+      product,
+      version,
+    },
+    { skip },
+  );
   const tickers = useMemo(
     () => (data ? new Set(data.map(t => t.toUpperCase())) : emptySet),
     [data],
   );
-  return { tickers, isLoading };
+  return { tickers, isLoading, isError };
 }

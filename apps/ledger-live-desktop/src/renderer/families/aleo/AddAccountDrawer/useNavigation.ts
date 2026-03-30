@@ -1,5 +1,5 @@
-import { useGenericNavigation } from "LLD/features/ModularDrawer/hooks/useModularDrawerNavigation";
-import { NAVIGATION_DIRECTION } from "LLD/features/ModularDrawer/types";
+import { useGenericNavigation } from "LLD/features/AddAccountDrawer/hooks/useGenericNavigation";
+import { NAVIGATION_DIRECTION } from "LLD/features/AddAccountDrawer/components/AnimatedScreenWrapper";
 import { ALEO_ADD_ACCOUNT_STEP_ORDER, ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP } from "./domain";
 
 export function useNavigation() {

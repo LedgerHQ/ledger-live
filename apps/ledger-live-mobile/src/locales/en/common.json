@@ -176,6 +176,21 @@
       "title": "The rewards are smaller than the estimated fees to claim them.",
       "description": ""
     },
+    "ConcordiumInsufficientFunds": {
+      "title": "Sorry, insufficient funds"
+    },
+    "ConcordiumMemoTooLong": {
+      "title": "Memo exceeds maximum length",
+      "description": "Your memo is {{memoLength}} bytes, but the maximum allowed is {{maxLength}} bytes. Please reduce the memo size."
+    },
+    "ConcordiumPairingExpiredError": {
+      "title": "Pairing expired",
+      "description": "The connection to Concordium ID App has timed out. Please try again."
+    },
+    "ConcordiumSessionExpiredError": {
+      "title": "Session expired",
+      "description": "The Concordium ID App session is no longer active. Please pair again."
+    },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
@@ -938,6 +953,9 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaRecipientAccountNotFunded": {
+      "title": "Amount too low. Send at least {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken": {
       "title": "This associated token account holds another token"
     },
@@ -1599,6 +1617,25 @@
     "cta": "Setup my Ledger",
     "bannerTitle": "Received your Ledger?",
     "bannerCta": "Begin setup",
+    "continue": "Continue"
+  },
+  "deviceDeprecation": {
+    "warning": {
+      "title": "{{device}}™ can not Clear Sign this transaction",
+      "subtitle": "Use any other Ledger device to verify this transaction’s details before signing. Without Clear Signing, you risk losing all your assets.",
+      "continue": "Proceed at your own risk"
+    },
+    "info": {
+      "title": "As of {{date}}, {{coinName}} support on {{device}}™ via Ledger Live™ will end",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all Ledger Live service providers and optimal customer support",
+      "reminder": "Do not remind me again"
+    },
+    "error": {
+      "title": "{{device}}™ does not support this feature",
+      "subtitle": "Upgrade to a more recent Ledger device today to ensure access to all the latest Ledger Live features."
+    },
+    "update": "Discover your Upgrade Program",
+    "learnMore": "Learn more",
     "continue": "Continue"
   },
   "purchaseDevice": {
@@ -2709,11 +2746,20 @@
     },
     "walletBalance": "Wallet balance",
     "balance": {
-      "noSigner": "The most secure\nwallet",
-      "noAccounts": "Secure your\ncrypto"
+      "noSigner": "Your secure\ncrypto wallet",
+      "noAccounts": "Start by funding\nyour wallet"
     },
     "seeAllAssets": "See all assets",
+    "cryptoAddresses": {
+      "title": "Crypto accounts",
+      "count_one": "{{count}} account",
+      "count_other": "{{count}} accounts",
+      "noAccountsYet": "No accounts yet"
+    },
     "seeAllAccounts": "See all accounts",
+    "assetSection": {
+      "connectionFailed": "Connection failed"
+    },
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
@@ -2739,12 +2785,14 @@
       "buy": "Buy",
       "connect": "Connect",
       "buyLedger": "Buy a Ledger",
+      "receive": "Receive",
+      "send": "Send",
       "transferDrawer": {
         "title": "Transfer",
-        "receiveCrypto": "Receive crypto",
+        "receiveCrypto": "Receive via crypto address",
         "sendCrypto": "Send crypto",
-        "bankTransfer": "Bank transfer",
-        "bankTransferDescription": "Receive stablecoin by sending cash"
+        "bankTransfer": "Receive via bank transfer",
+        "bankTransferDescription": "Receive stablecoins by simply sending cash."
       }
     },
     "recoverBanner": {
@@ -2757,6 +2805,12 @@
       "connectDevice": {
         "title": "Access to your wallet is not backed up yet"
       }
+    },
+    "refreshStatus": {
+      "refreshing": "Refreshing...",
+      "upToDate": "Portfolio up to date",
+      "syncError": "Some account data couldn’t load",
+      "offline": "You’re offline. Please check your connection"
     }
   },
   "addAccountsModal": {
@@ -3383,6 +3437,14 @@
         "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
+      "totalMarketCap":{
+        "title": "Total Market Cap",
+        "desc": "Get notified when the total crypto market cap makes a significant move"
+      },
+      "topGainersLosers":{
+        "title": "Top Gainers and Losers",
+        "desc": "Get a weekly recap of the top gaining and losing tokens on the market"
+      },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
@@ -3525,8 +3587,10 @@
         "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
         "addSampleBanner": "Add sample banner",
         "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
-        "addSampleActionCarousel": "Add sample action carousel",
-        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "addSampleActionCarouselIcon": "Add action carousel (icon)",
+        "addSampleActionCarouselIconDesc": "ContentBanner with Spot icons — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselImageBackground": "Add action carousel (image)",
+        "addSampleActionCarouselImageBackgroundDesc": "MediaBanner with image_background — Buy, Swap, Stake. Requires Braze placement flag.",
         "dismissAll": "Dismiss all local cards",
         "dismissAllDesc": "Remove all locally generated content cards."
       }
@@ -3599,7 +3663,8 @@
         },
         "fiat": {
           "title": "Via bank transfer",
-          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "description": "Receive stablecoin by simply sending cash.",
+          "description_legacy": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         }
       },
       "memoTag": {
@@ -4266,7 +4331,21 @@
         "maxFeeBelowPriorityFee": "Max fee must be greater than or equal to max priority fee"
       },
       "coinControl": {
-        "title": "Coin control"
+        "title": "Coin control",
+        "strategy": "Strategy",
+        "learnMore": "Learn more",
+        "coinToSend": "Coin to send",
+        "changeToReturn": "Change to return",
+        "enterAmount": "Enter amount",
+        "amountToSendInCurrency": "Amount to send in {{ticker}}",
+        "amountInputLabel": "Amount to send",
+        "bitcoin": {
+          "pickingStrategyLabels": {
+            "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
+            "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
+            "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+          }
+        }
       }
     },
     "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
@@ -4428,7 +4507,7 @@
     },
     "cancel": {
       "title": "Cancel",
-      "description": "Sending 0 {{ticker}} to your own address."
+      "description": "Sending 0 {{ticker}} to your own address. Cancellation is not guaranteed. If the network processes your original transaction before this cancellation request, the funds will still be sent to the recipient."
     },
     "error": {
       "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
@@ -4437,6 +4516,10 @@
       "TransactionHasBeenValidatedError": {
         "title": "Can't be sped up or canceled",
         "description": "This transaction has already been validated"
+      },
+      "InvalidTransactionError": {
+        "title": "Invalid transaction",
+        "description": "The transaction doesn't match the blockchain state anymore. Please start the flow again."
       }
     }
   },
@@ -5039,6 +5122,14 @@
   },
   "FirmwareUpdate": {
     "banner": {
+      "wallet40": {
+        "title": {
+          "default": "OS update available",
+          "manager": "Ledger OS update available"
+        },
+        "version": "Version {{firmwareVersion}}",
+        "cta": "Update"
+      },
       "title": "OS update available",
       "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
       "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
@@ -7700,6 +7791,10 @@
       "description": "Secure your assets and go further.",
       "buttonLabel": "See what's next"
     },
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "actions": {
       "deviceOnboarded": {
         "titleCompleted": "Setup your Ledger device"
@@ -7733,6 +7828,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
+      "stablecoins": "Stablecoin",
       "market": "Market"
     },
     "referralProgram": "$20"
@@ -8264,7 +8360,7 @@
     }
   },
   "marketBanner": {
-    "title": "Explore market",
+    "title": "Explore the market",
     "viewAll": "View all",
     "viewAllAccessibilityHint": "Double tap to view all market assets",
     "connectionFailed": "Connection failed",
@@ -8333,6 +8429,7 @@
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
+    "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",
@@ -8534,15 +8631,69 @@
       }
     }
   },
+  "concordium": {
+    "receive": {
+      "messageIfSkipped": "It is not possible to verify your Concordium Address at the moment. Please make sure to double-check by pasting your address in the Concordium explorer.",
+      "verifyLink": "Verify"
+    },
+    "onboard": {
+      "title": "Concordium Onboarding",
+      "acknowledge": {
+        "title": "Acknowledgement",
+        "description": "Concordium requires external identity verification. Please read these important security warnings:",
+        "list": {
+          "1": {
+            "title": "No address verification",
+            "description": "Your Ledger cannot verify Concordium receive addresses. Manually verify addresses before receiving funds."
+          },
+          "2": {
+            "title": "Concordium ID App uses a separate seed",
+            "description": "You'll create NEW 24 words in Concordium app. NEVER use your Ledger seed."
+          },
+          "3": {
+            "title": "You'll be redirected outside Ledger Live",
+            "description": "Identity verification happens in the external Concordium Wallet app. This is required by Concordium's blockchain protocol."
+          },
+          "4": {
+            "title": "Transaction signing stays secure",
+            "description": "Only your Ledger device can sign transactions and create accounts."
+          }
+        },
+        "guide": "Please read the guide before proceeding:",
+        "allow": "Agree"
+      },
+      "pair": {
+        "title": "Connect to Concordium ID App",
+        "connecting": "Connecting...",
+        "scanQRCodeOrDownload": "Scan the QR code with another device, or download the Concordium ID App to continue.",
+        "openIdApp": "Open Concordium ID App",
+        "success": "Successfully connected to Concordium ID App.",
+        "continue": "Continue",
+        "error": "Failed to connect to Concordium ID App. Please try again."
+      },
+      "create": {
+        "title": "Add Concordium Account",
+        "prepare": {
+          "title": "To create an account, match the code below in the Concordium ID App",
+          "resendButton": "Resend confirmation",
+          "resendDescription": "Resend available in {{count}}s"
+        },
+        "submitting": "Creating your account...",
+        "keepDeviceNearby": "Approve the transaction on your Ledger device. Keep your Ledger nearby.",
+        "success": "Your Concordium account has been created successfully.",
+        "error": "Failed to create account. Please try again."
+      }
+    }
+  },
   "fearAndGreed": {
     "title": "Mood index",
-    "description": "The mood index indicates the emotional state of the market. It ranges from 0 to 100, where a lower value indicates extreme fear, and a higher value indicates extreme greed.",
+    "description": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
     "levels": {
-      "extremeFear": "Fear+",
       "fear": "Fear",
+      "cautious": "Cautious",
       "neutral": "Neutral",
-      "greed": "Greed",
-      "extremeGreed": "Greed+"
+      "optimistic": "Optimistic",
+      "greedy": "Greedy"
     },
     "tileTitle": "Mood"
   },
@@ -8559,7 +8710,7 @@
   },
   "cardLanding": {
     "title": "Spend your\ncrypto",
-    "subtitle": "Pay online or in store with a crypto card",
+    "subtitle": "Pay online or in stores with a crypto card.",
     "ctas": {
       "exploreCards": "Explore cards",
       "iHaveACard": "I have a card"
@@ -8590,6 +8741,45 @@
     "home": "Home",
     "swap": "Swap",
     "earn": "Earn",
+    "yield": "Yield",
     "card": "Card"
+  },
+  "syncIndicator": {
+    "accessibilityLabel": {
+      "error": "Sync error",
+      "syncing": "Syncing",
+      "default": "Synchronize"
+    },
+    "bottomSheet": {
+      "title": "Some account data couldn’t load",
+      "description": "Your assets are safe. This is a temporary sync issue.\nAffected accounts: {{accounts}}",
+      "close": "Close"
+    }
+  },
+  "deeplinkInstallApp": {
+    "confirmation": {
+      "title": "Install {{appName}}?",
+      "genericDescription": "The {{appName}} app will be installed on your Ledger device.",
+      "recoveryKeyDescription": "You will be able to update directly on your Ledger Stax with the Recovery Key Updater app.",
+      "installCTA": "Install {{appName}}"
+    },
+    "deviceSelection": {
+      "title": "Choose a Ledger"
+    },
+    "installing": {
+      "title": "Installing {{appName}}...",
+      "description": "Please keep your {{productName}} connected",
+      "resolving": "Preparing installation...",
+      "connecting": "Connecting to device..."
+    },
+    "success": {
+      "title": "{{appName}} successfully installed",
+      "genericDescription": "You can now use the {{appName}} app on your Ledger device.",
+      "recoveryKeyDescription": "Launch the app on your Ledger device to check for Ledger Recovery Key Updates."
+    },
+    "error": {
+      "title": "Failed to install {{appName}}",
+      "description": "Something went wrong during installation. Please try again."
+    }
   }
 }

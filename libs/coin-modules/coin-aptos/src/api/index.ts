@@ -9,12 +9,18 @@ import {
   Validator,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
-import type { Balance, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type {
+  Balance,
+  FeeEstimation,
+  TransactionIntent,
+  TransactionValidation,
+} from "@ledgerhq/coin-framework/api/types";
 import type { AptosConfig as AptosConfigApi } from "../config";
 import coinConfig from "../config";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { getBalances } from "../logic/getBalances";
+import { validateAddress } from "../logic/validateAddress";
 import { AptosAPI } from "../network";
 
 export function createApi(config: AptosConfigApi): AlpacaApi {
@@ -54,5 +60,16 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateIntent: async (
+      _transactionIntent: TransactionIntent,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence: async (_address: string) => {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress,
   };
 }

@@ -1,11 +1,12 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
+import { getBridgeApi } from "./bridge";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { GenericTransaction } from "./types";
+import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { GenericTransaction } from "./types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
@@ -43,16 +44,19 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
 }
 
 export function genericPrepareTransaction(
-  _network: string,
+  network: string,
   kind: string,
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
-    const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
+    const { computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
       account.currency.id,
       kind,
     );
-    const { assetReference, assetOwner } = getAssetFromToken
-      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+
+    const bridgeApi = getBridgeApi(account.currency, network);
+    const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
+    const { assetReference, assetOwner } = getAssetFromTokenForCurrency
+      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromTokenForCurrency)
       : assetInfosFallback(transaction);
     const customParametersFees = transaction.customFees?.parameters?.fees;
 
@@ -112,8 +116,9 @@ export function genericPrepareTransaction(
       const fieldsToPropagate = [
         "type",
         "storageLimit",
-        "gasLimit",
         "gasPrice",
+        // gas limit must not change in case it is custom
+        ...(transaction.customGasLimit ? [] : ["gasLimit"]),
         "maxFeePerGas",
         "maxPriorityFeePerGas",
         "additionalFees",
@@ -136,7 +141,7 @@ export function genericPrepareTransaction(
             },
             computeIntentType,
           ),
-          extractBalances(account, getAssetFromToken),
+          extractBalances(account, getAssetFromTokenForCurrency),
         );
         next.amount = new BigNumber(amount.toString());
       }

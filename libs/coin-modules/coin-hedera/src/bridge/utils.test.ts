@@ -1,7 +1,7 @@
-import BigNumber from "bignumber.js";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import BigNumber from "bignumber.js";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockERC20Fields, getMockERC20Operation } from "../test/fixtures/common.fixture";
 import {

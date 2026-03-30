@@ -52,6 +52,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "111900",
+            fee_account: "address",
             ledger_attr: 42,
             ledger: () => ({
               hash: "block_hash1",
@@ -72,6 +73,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "11100",
+            fee_account: "address",
             ledger_attr: 42,
             ledger: () => ({
               hash: "block_hash1",
@@ -92,6 +94,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "111",
+            fee_account: "sender",
             ledger_attr: 42,
             ledger: () => ({
               hash: "block_hash1",
@@ -102,8 +105,8 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual([
-      [
+    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual({
+      items: [
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
@@ -119,6 +122,7 @@ describe("listOperations", () => {
             block: { hash: "block_hash1", height: 42, time: new Date("2025-01-01") },
             date: new Date("2025-01-01"),
             fees: 111900n,
+            feesPayer: "address",
             hash: "transaction_hash1",
             failed: false,
           },
@@ -140,6 +144,7 @@ describe("listOperations", () => {
             block: { hash: "block_hash1", height: 42, time: new Date("2025-01-01") },
             date: new Date("2025-01-01"),
             fees: 11100n,
+            feesPayer: "address",
             hash: "transaction_hash1",
             failed: true,
           },
@@ -161,6 +166,7 @@ describe("listOperations", () => {
             block: { hash: "block_hash1", height: 42, time: new Date("2025-01-01") },
             date: new Date("2025-01-01"),
             fees: 111n,
+            feesPayer: "sender",
             hash: "transaction_hash2",
             failed: false,
           },
@@ -168,8 +174,8 @@ describe("listOperations", () => {
           value: 505000000n,
         },
       ],
-      "token3",
-    ]);
+      next: "token3",
+    });
   });
 
   it("stops at minHeight", async () => {
@@ -188,6 +194,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "111900",
+            fee_account: "address",
             ledger_attr: 42,
             ledger: () => ({
               hash: "block_hash1",
@@ -208,6 +215,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "11100",
+            fee_account: "address",
             ledger_attr: 41,
             ledger: () => ({
               hash: "block_hash1",
@@ -228,6 +236,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "111",
+            fee_account: "sender",
             ledger_attr: 40,
             ledger: () => ({
               hash: "block_hash1",
@@ -238,8 +247,8 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    expect(await listOperations("address", { order: "asc", minHeight: 41 })).toEqual([
-      [
+    expect(await listOperations("address", { order: "asc", minHeight: 41 })).toEqual({
+      items: [
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
@@ -255,6 +264,7 @@ describe("listOperations", () => {
             block: { hash: "block_hash1", height: 42, time: new Date("2025-01-01") },
             date: new Date("2025-01-01"),
             fees: 111900n,
+            feesPayer: "address",
             hash: "transaction_hash1",
             failed: false,
           },
@@ -276,6 +286,7 @@ describe("listOperations", () => {
             block: { hash: "block_hash1", height: 41, time: new Date("2025-01-01") },
             date: new Date("2025-01-01"),
             fees: 11100n,
+            feesPayer: "address",
             hash: "transaction_hash1",
             failed: true,
           },
@@ -283,8 +294,8 @@ describe("listOperations", () => {
           value: 11100n,
         },
       ],
-      "",
-    ]);
+      next: "",
+    });
   });
 
   it("should return memo if set", async () => {
@@ -303,6 +314,7 @@ describe("listOperations", () => {
           created_at: "2025-01-01",
           transaction: () => ({
             fee_charged: "111900",
+            fee_account: "address",
             ledger_attr: 42,
             memo_type: "text",
             memo: "momo",
@@ -315,8 +327,8 @@ describe("listOperations", () => {
       ],
     } as any);
 
-    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual([
-      [
+    expect(await listOperations("address", { order: "asc", minHeight: 0 })).toEqual({
+      items: [
         {
           id: "transaction_hash1-operation_id1",
           asset: { type: "native" },
@@ -326,6 +338,7 @@ describe("listOperations", () => {
             block: { hash: "block_hash1", height: 42, time: new Date("2025-01-01") },
             date: new Date("2025-01-01"),
             fees: 111900n,
+            feesPayer: "address",
             hash: "transaction_hash1",
             failed: false,
           },
@@ -342,7 +355,47 @@ describe("listOperations", () => {
           },
         },
       ],
-      "token1",
-    ]);
+      next: "token1",
+    });
+  });
+
+  it("uses fee_account as feesPayer for fee bump transactions when fee_account differs from source_account", async () => {
+    mockCall.mockResolvedValueOnce({
+      records: [
+        {
+          id: "operation_id1",
+          transaction_hash: "transaction_hash1",
+          paging_token: "token1",
+          source_account: "address",
+          from: "address",
+          to: "receiver1",
+          amount: "10.0000000",
+          type: Horizon.HorizonApi.OperationResponseType.payment,
+          transaction_successful: true,
+          created_at: "2025-01-01",
+          transaction: () => ({
+            fee_charged: "500",
+            fee_account: "sponsor_address",
+            source_account: "address",
+            ledger_attr: 42,
+            ledger: () => ({
+              hash: "block_hash1",
+              closed_at: "2025-01-01",
+            }),
+          }),
+        },
+      ],
+    } as any);
+
+    const { items: operations } = await listOperations("address", { order: "asc", minHeight: 0 });
+    expect(operations).toHaveLength(1);
+    expect(operations[0]).toMatchObject({
+      tx: {
+        fees: 500n,
+        feesPayer: "sponsor_address",
+      },
+      senders: ["address"],
+      recipients: ["receiver1"],
+    });
   });
 });

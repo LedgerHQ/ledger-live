@@ -1,4 +1,4 @@
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   calculate,
   importCountervalues,
@@ -23,9 +23,6 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { useMarketcapIds } from "./CountervaluesMarketcapProvider";
-
-export { CountervaluesMarketcapProvider, useMarketcapIds } from "./CountervaluesMarketcapProvider";
 
 export interface PollingState {
   isPolling: boolean;
@@ -42,6 +39,7 @@ export interface CountervaluesBridge {
   setState(state: CounterValuesState): void;
   setStateError(error: Error): void;
   setStatePending(pending: boolean): void;
+  useMarketcapIds(): string[];
   usePollingIsPolling(): boolean;
   usePollingTriggerLoad(): boolean;
   useStateError(): Error | null;
@@ -117,7 +115,7 @@ function Effect({
   const { refreshRate, marketCapBatchingAfterRank } = userSettings;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
 
-  const marketcapIds = useMarketcapIds();
+  const marketcapIds = bridge.useMarketcapIds();
 
   const batchStrategySolver = useMemo(
     () => ({

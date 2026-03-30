@@ -27,13 +27,22 @@ const currencies = [
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
+  { currency: Currency.ALEO, xrayTicket: "B2CQA-4450, B2CQA-4451, B2CQA-4452" },
 ];
 
 for (const currency of currencies) {
   test.describe("Add Accounts", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
+      // TODO: this can be removed once Aleo is released on production
+      ...(currency.currency === Currency.ALEO && {
+        featureFlags: {
+          currencyAleo: {
+            enabled: true,
+          },
+        },
+      }),
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
@@ -42,12 +51,10 @@ for (const currency of currencies) {
       `[${currency.currency.name}] Add account`,
       {
         tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
+          // TODO: this can be removed once Aleo app is released on all devices (still in development, available only on NanoSP and Flex for now)
+          ...(currency.currency === Currency.ALEO
+            ? ["@NanoSP", "@Flex"]
+            : ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"]),
           `@${currency.currency.id}`,
           ...(family ? [`@family-${family}`] : []),
           ...(currency.currency === Currency.ETH ? ["@smoke"] : []),
@@ -61,14 +68,24 @@ for (const currency of currencies) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         const firstAccountName = `${currency.currency.name} 1`;
 
-        await app.portfolio.openAddAccountModal();
+        await app.portfolio.clickAddAccountButton();
 
         const selector = await getModularSelector(app, "ASSET");
         if (selector) {
           await selector.validateItems();
           await selector.selectAssetByTicker(currency.currency);
           await selector.selectNetwork(currency.currency);
-          await app.scanAccountsDrawer.selectFirstAccount();
+
+          if (currency.currency === Currency.ALEO) {
+            await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
+            await app.scanAccountsDrawer.clickAllowButton();
+            await app.scanAccountsDrawer.selectFirstAccountAndGoToViewKeyConfirmation();
+            await app.speculos.shareViewKey();
+            await app.scanAccountsDrawer.expectSuccessStepVisibility();
+          } else {
+            await app.scanAccountsDrawer.selectFirstAccount();
+          }
+
           await app.scanAccountsDrawer.clickCloseButton();
         } else {
           await app.addAccount.expectModalVisibility();
@@ -81,7 +98,7 @@ for (const currency of currencies) {
         await app.portfolio.checkOperationHistory();
         await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(firstAccountName);
         await app.account.expectAccountVisibility(firstAccountName);
         await app.account.expectAccountBalance();

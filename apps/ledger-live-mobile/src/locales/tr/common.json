@@ -1575,12 +1575,49 @@
     "bannerButtonTitle2" : "Ledger satın alın",
     "setupCta" : "Zaten bir Ledger cihazım var, onu kuralım"
   },
+  "rebornBuyDevice" : {
+    "title" : "Bir Ledger cihazı bağlayın",
+    "desc" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
+    "0" : {
+      "title" : "Tam mülkiyet",
+      "desc" : "Özel anahtarlarınız asla cihazdan ayrılmaz."
+    },
+    "1" : {
+      "title" : "Güvenle alıp satın",
+      "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
+    },
+    "2" : {
+      "title" : "En güçlü cüzdana erişin",
+      "desc" : "Binlerce varlığı tek bir yerden yönetin."
+    },
+    "cta" : "Bağlan",
+    "buyCta" : "Ledger cihazınızı satın alın"
+  },
   "postBuyDeviceSetupNanoWall" : {
     "title" : "Ledger cihazınız elinize ulaştı mı?",
     "desc" : "Ledger cihazınız elinize ulaştığında Ledger Wallet uygulamasının tüm özelliklerinin kilidini açmak için cihazınızın kurulumunu yapın.",
     "cta" : "Ledger'ımı kur",
     "bannerTitle" : "Ledger cihazınız elinize ulaştı mı?",
     "bannerCta" : "Kurulumu başlatın",
+    "continue" : "Devam"
+  },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
     "continue" : "Devam"
   },
   "purchaseDevice" : {
@@ -2692,7 +2729,7 @@
     "walletBalance" : "Cüzdan bakiyesi",
     "balance" : {
       "noSigner" : "En güvenli\ncüzdan",
-      "noFund" : "Kriptolarınızı\ngüvende tutun"
+      "noAccounts" : "Kriptolarınızı\ngüvende tutun"
     },
     "seeAllAssets" : "Tüm varlıkları gör",
     "seeAllAccounts" : "Tüm hesapları gör",
@@ -2739,6 +2776,11 @@
       "connectDevice" : {
         "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       }
+    },
+    "refreshStatus" : {
+      "refreshing" : "Yenileniyor...",
+      "upToDate" : "Güncelsiniz",
+      "syncError" : "Bazı hesaplar senkronize edilemedi"
     }
   },
   "addAccountsModal" : {
@@ -4163,7 +4205,9 @@
       "placeholderNoENS" : "Adresi girin",
       "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
       "recent" : "Son kullanılanlar",
+      "recentDetail" : "Son işlem ayrıntıları",
       "myAccounts" : "Hesaplarım",
+      "account" : "Hesap",
       "sendTo" : "{{address}} adresine gönder",
       "addressMatched" : "Adres eşleşti",
       "addressNotFound" : "Adres bulunamadı",
@@ -4229,6 +4273,23 @@
       "gasOptionsSync" : {
         "warningTitle" : "Ağ ücretleri yenilenemiyor",
         "warningDescription" : "Önceden belirlenmiş ücretler eski olabilir."
+      },
+      "customFees" : {
+        "title" : "Özel ücretler",
+        "confirm" : "Onayla",
+        "maxFee" : "Ücret Üst Limiti ({{unit}})",
+        "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
+        "gasLimit" : "Gas limiti ({{unit}})",
+        "feePerByte" : "Ücret tutarı ({{unit}})",
+        "suggested" : "Önerilen",
+        "nextBlock" : "Sonraki blok",
+        "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+        "invalidValue" : "Geçerli bir sayı girin.",
+        "belowMinimum" : "Minimum değer: {{min}}",
+        "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır."
+      },
+      "coinControl" : {
+        "title" : "Coin yönetimi"
       }
     },
     "pendingTxWarning" : "Beklemede olan gelen işlemleriniz var. Bekleyen işlemlerin geri alınabileceğini lütfen unutmayın.",
@@ -4283,7 +4344,8 @@
       "useMax" : "Tümünü kullan",
       "loadingNetwork" : "Ağ ücretleri yükleniyor...",
       "noRateProvider" : "Mevcut değil",
-      "quantityAvailable" : "Mevcut miktar"
+      "quantityAvailable" : "Mevcut miktar",
+      "toggleCurrency" : "Para birimini değiştir"
     },
     "summary" : {
       "solanaRawTransaction" : {
@@ -4343,6 +4405,12 @@
       "required" : "Ücretler zorunludur",
       "chooseGas" : "Bir gas fiyatı seçin",
       "higherFaster" : "Yüksek gas fiyatı, daha hızlı işlem onayı anlamına gelir.",
+      "medium" : "Orta",
+      "fast" : "Hızlı",
+      "slow" : "Yavaş",
+      "custom" : "Özel",
+      "customFees" : "Özel ücretler",
+      "coinControl" : "Coin yönetimi",
       "edit" : {
         "title" : "Birim seçin"
       },
@@ -4383,7 +4451,7 @@
     },
     "cancel" : {
       "title" : "İptal et",
-      "description" : "Kendi adresinize 0 {{ticker}} gönderiliyor."
+      "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal garanti edilmez. Eğer ağ, orijinal işleminizi bu iptal talebinden önce işleme koyarsa, fonlar yine de alıcıya gönderilir."
     },
     "error" : {
       "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
@@ -4392,6 +4460,10 @@
       "TransactionHasBeenValidatedError" : {
         "title" : "Hızlandırılamaz ve iptal edilemez",
         "description" : "Bu işlem zaten doğrulanmış"
+      },
+      "InvalidTransactionError" : {
+        "title" : "Geçersiz işlem",
+        "description" : "İşlem artık blok zinciri durumuyla eşleşmiyor. Lütfen akışı yeniden başlatın."
       }
     }
   },
@@ -4996,6 +5068,14 @@
   },
   "FirmwareUpdate" : {
     "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "İşletim sistemi güncellemesi mevcut",
+          "manager" : "Ledger OS güncellemesi mevcut"
+        },
+        "version" : "Sürüm {{firmwareVersion}}",
+        "cta" : "Güncelle"
+      },
       "title" : "İşletim sistemi güncellemesi mevcut",
       "descriptionDeviceName" : "\"{{deviceName}}\" cihazını {{firmwareVersion}} işletim sistemi sürümüne güncellemek için dokunun.",
       "descriptionProductName" : "{{productName}} cihazınızı {{firmwareVersion}} işletim sistemi sürümüne güncellemek için dokunun."
@@ -7241,7 +7321,8 @@
         "website" : "Web sitesi"
       },
       "back" : {
-        "card" : "tüm kartlar"
+        "card" : "tüm kartlar",
+        "cardTab" : "Kart"
       }
     }
   },
@@ -7647,6 +7728,10 @@
       "title" : "{{productName}} cihazınız için sırada ne var?",
       "description" : "Yalnızca varlıklarınızı güvenceye almakla kalmayın.",
       "buttonLabel" : "Sırada ne var?"
+    },
+    "widget" : {
+      "title" : "Şimdi, cüzdan kurulumunu tamamlayın",
+      "subtitle" : "Cüzdanınıza fon aktararak başlayın."
     },
     "actions" : {
       "deviceOnboarded" : {
@@ -8281,6 +8366,7 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
+    "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir.",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
@@ -8482,6 +8568,40 @@
       }
     }
   },
+  "concordium" : {
+    "receive" : {
+      "messageIfSkipped" : "Concordium Adresiniz şu an doğrulanamıyor. Adresinizi Concordium tarayıcısına yapıştırarak mutlaka iki kez kontrol edin.",
+      "verifyLink" : "Doğrula"
+    },
+    "onboard" : {
+      "title" : "Concordium'a Katılım",
+      "acknowledge" : {
+        "title" : "Bilgilendirme",
+        "description" : "Concordium, haricî kimlik doğrulaması gerektirir. Lütfen şu önemli güvenlik uyarılarını okuyun:",
+        "list" : {
+          "1" : "Adres doğrulaması yoktur - Ledger cihazınız, Concordium alıcı adreslerini doğrulayamaz. Fonları almadan önce adresleri manuel olarak doğrulayın.",
+          "2" : "Concordium ID Uygulaması ayrı bir kurtarma ifadesi kullanır - Concordium uygulamasında YENİ 24 kelime oluşturacaksınız. Ledger kurtarma ifadenizi ASLA kullanmayın.",
+          "3" : "Ledger Wallet’ın dışına yönlendirileceksiniz - Kimlik doğrulama işlemi, haricî Concordium Wallet uygulamasında gerçekleşir. Concordium’un blok zinciri protokolü bunu gerekli kılar.",
+          "4" : "İşlemleri imzalamak hâlâ güvenlidir – Sadece Ledger cihazınız işlemleri imzalayabilir ve hesaplar oluşturabilir."
+        },
+        "allow" : "Kabul Ediyorum"
+      },
+      "pair" : {
+        "title" : "Concordium ID Uygulamasına bağlan",
+        "connecting" : "Bağlanıyor...",
+        "scanQRCodeOrDownload" : "Karekodu başka bir cihazla tarayın veya devam etmek için Concordium ID Uygulamasını indirin.",
+        "openIdApp" : "Concordium ID Uygulamasını aç",
+        "success" : "Concordium ID Uygulaması ile başarıyla eşleştirildi.",
+        "error" : "Concordium ID Uygulaması ile eşleme başarısız oldu."
+      },
+      "create" : {
+        "title" : "Hesap Oluşturun",
+        "prepare" : {
+          "title" : "Hesap oluşturmak için aşağıdaki kodu Concordium ID Uygulamasında eşleştirin"
+        }
+      }
+    }
+  },
   "fearAndGreed" : {
     "title" : "Duygu endeksi",
     "description" : "Duygu endeksi, piyasanın duygusal durumunu gösterir. En düşük değerlerin aşırı korku ve en yüksek değerlerin ise aşırı coşku anlamına geldiği 0 ila 100 aralığında bir derecelendirmedir.",
@@ -8517,21 +8637,21 @@
     "title" : "Yeni portföyünüzü keşfedin",
     "slides" : {
       "portfolio" : {
-        "title" : "Portföy sayfanız yeniden tasarlandı",
-        "description" : "Ana ekranınızı daha sade bir hâle getirdik. Grafiğinizi bulamadınız mı? Bakiyenizin altındaki kısma dokunun."
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
       },
       "navigation" : {
-        "title" : "Her şey olması gereken yerde",
-        "description" : "My Ledger ve Keşfet sekmeleri artık en üstte. Takas ve Kart, daha hızlı erişim için alt kısma taşındı."
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Takas, Transfer ve Satın Al işlevlerine anında erişin. Kazan bölümünü ve Kartınızı alt gezinti menüsünde bulabilirsiniz."
       },
       "actions" : {
-        "title" : "Piyasa hızında eylemler",
-        "description" : "Yeni banner ile piyasa trendlerini görün ve anında alım satım yapın."
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
       }
     },
     "cta" : {
-      "continue" : "Devam",
-      "explore" : "Yeni portföyünüzü keşfedin"
+      "continue" : "Sonraki",
+      "explore" : "Yeni portföyü keşfet"
     }
   },
   "mainNavigation" : {
@@ -8539,5 +8659,43 @@
     "swap" : "Takas et",
     "earn" : "Kazan",
     "card" : "Kart"
+  },
+  "syncIndicator" : {
+    "accessibilityLabel" : {
+      "error" : "Senkronizasyon hatası",
+      "syncing" : "Senkronize ediliyor",
+      "default" : "Senkronize et"
+    },
+    "bottomSheet" : {
+      "title" : "Bazı hesaplar senkronize edilemedi",
+      "description" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Etkilenen hesapların listesi: {{accounts}}.",
+      "close" : "Kapat"
+    }
+  },
+  "deeplinkInstallApp" : {
+    "confirmation" : {
+      "title" : "{{appName}} yüklensin mi?",
+      "genericDescription" : "{{appName}} uygulaması Ledger cihazınıza yüklenecek.",
+      "recoveryKeyDescription" : "Recovery Key Updater uygulamasını kullanarak onu doğrudan Ledger Stax uygulamasından güncelleyebilirsiniz.",
+      "installCTA" : "{{appName}} yükle"
+    },
+    "deviceSelection" : {
+      "title" : "Bir Ledger seçin"
+    },
+    "installing" : {
+      "title" : "{{appName}} yükleniyor...",
+      "description" : "Lütfen {{productName}} cihazınızı bağlı tutun",
+      "resolving" : "Kurulum hazırlanıyor...",
+      "connecting" : "Cihaza bağlanılıyor..."
+    },
+    "success" : {
+      "title" : "{{appName}} başarıyla yüklendi",
+      "genericDescription" : "Artık Ledger cihazınızda {{appName}} uygulamasını kullanabilirsiniz.",
+      "recoveryKeyDescription" : "Ledger Recovery Key güncellemelerini kontrol etmek için Ledger cihazınızda uygulamayı başlatın."
+    },
+    "error" : {
+      "title" : "{{appName}} yüklenemedi",
+      "description" : "Kurulum sırasında bir hata oluştu. Lütfen tekrar deneyin."
+    }
   }
 }

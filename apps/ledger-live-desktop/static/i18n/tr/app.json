@@ -209,7 +209,11 @@
       "BURN" : "Yakıldı",
       "ASSOCIATE_TOKEN" : "Token'ı ilişkilendirin",
       "CONTRACT_CALL" : "Sözleşme çağrısı",
-      "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
+      "UPDATE_ACCOUNT" : "Güncellenmiş hesap",
+      "SHIELDED_TX_SAPLING_IN" : "Alındı",
+      "SHIELDED_TX_SAPLING_OUT" : "Gönderildi",
+      "SHIELDED_TX_ORCHARD_IN" : "Alındı",
+      "SHIELDED_TX_ORCHARD_OUT" : "Gönderildi"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -233,7 +237,7 @@
       },
       "cancel" : {
         "title" : "İptal et",
-        "description" : "Kendi adresinize 0 {{ticker}} gönderiliyor."
+        "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal garanti edilmez. Eğer ağ, orijinal işleminizi bu iptal talebinden önce işleme koyarsa, fonlar yine de alıcıya gönderilir."
       },
       "steps" : {
         "method" : {
@@ -268,6 +272,8 @@
     "minute" : "Dakika",
     "minute_other" : "Dakika",
     "minute_short" : "dk.",
+    "second" : "Saniye",
+    "second_other" : "Saniye",
     "second_short" : "sn.",
     "hour" : "Saat",
     "hour_other" : "Saat",
@@ -302,6 +308,7 @@
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
     "perps" : "Süresiz vadeli sözleşmeler",
+    "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
@@ -1492,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "{{device}}™, bu işlemde Şeffaf İmzalama gerçekleştiremez",
+      "subtitle" : "İmzalamadan önce bu işlemin ayrıntılarını doğrulamak için başka herhangi bir Ledger cihazı kullanın. Şeffaf İmzalama olmadan tüm varlıklarınızı kaybetme riskini alırsınız.",
+      "continue" : "İşleme devam ettiğiniz takdirde sorumluluk size aittir"
+    },
+    "info" : {
+      "title" : "{{date}} tarihinden itibaren, {{device}}™ cihazında Ledger Live™ üzerinden sağlanan {{coinName}} desteği sona erecektir",
+      "subtitle" : "Tüm Ledger Live sağlayıcılarına ve optimum müşteri desteğine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin",
+      "reminder" : "Tekrar hatırlatma"
+    },
+    "error" : {
+      "title" : "{{device}}™ bu özelliği desteklemiyor",
+      "subtitle" : "En yeni Ledger Live özelliklerinin hepsine erişebilmek için hemen daha yeni bir Ledger cihazına model yükseltin."
+    },
+    "update" : "Model Yükseltme Programınızı keşfedin",
+    "learnMore" : "Daha fazla bilgi",
+    "continue" : "Devam"
+  },
   "currentAddress" : {
     "title" : "Geçerli adres",
     "for" : "<1><0>{{name}}</0></1> için adres",
@@ -1745,7 +1771,8 @@
       "previousStakingNodeId" : "Önceki düğüm kimliği",
       "gasConsumed" : "Harcanan gas",
       "gasUsed" : "Kullanılan gas",
-      "gasLimit" : "Gas limiti"
+      "gasLimit" : "Gas limiti",
+      "functionId" : "İşlev Kimliği"
     }
   },
   "operationList" : {
@@ -1933,6 +1960,13 @@
       "updateBtn" : "Donanım yazılımını güncelle",
       "installUpdate" : "Güncellemeyi yükle",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "İşletim sistemi güncellemesi mevcut",
+            "manager" : "Ledger OS güncellemesi mevcut"
+          },
+          "cta" : "Güncelle"
+        },
         "warning" : "İşletim sistemi güncellemesi mevcut",
         "version" : "Sürüm {{latestFirmware}}",
         "cta" : "My Ledger'a Git",
@@ -2138,6 +2172,24 @@
         "description" : "İşleminiz onaylanmak üzere ağa gönderildi. Lütfen işleminizin onaylanmasını ve sağlayıcı tarafından işleme alınmasını bekleyin."
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "Bir Ledger cihazı bağlayın",
+    "subtitle" : "Ledger Wallet uygulamasının tam potansiyeline erişmek için bir Ledger cihazı bağlayın.",
+    "0" : {
+      "title" : "Tam mülkiyet",
+      "desc" : "Özel anahtarlarınız asla cihazdan ayrılmaz."
+    },
+    "1" : {
+      "title" : "Güvenle alıp satın",
+      "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
+    },
+    "2" : {
+      "title" : "En güçlü cüzdana erişin",
+      "desc" : "Binlerce varlığı tek bir yerden yönetin."
+    },
+    "connectCTA" : "Bağlan",
+    "buyCTA" : "Ledger cihazınızı satın alın"
   },
   "fund" : {
     "title" : "Fon ekleyin",
@@ -2356,6 +2408,24 @@
     "addressNotFound" : "Adres bulunamadı",
     "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
     "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+    "securityInfo" : {
+      "title" : "Güvenli bir şekilde nasıl gönderilir?",
+      "items" : {
+        "compatibility" : "Alıcı adresinin seçili ağ ile uyumlu olduğundan emin olun",
+        "review" : "Ledger cihazınızın güvenli ekranında işlem bilgilerinizi gözden geçirin.",
+        "smallAmount" : "Emin değilseniz, önce küçük bir tutar gönderin."
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "Bu adres, son işlemler geçmişinizde bulunmuyor. Emin değilseniz önce küçük bir tutar gönderin."
+      },
+      "dialog" : {
+        "title" : "Son gönderim işlemleri geçmişi",
+        "description" : "Son işlemler geçmişiniz, belirli bir adrese gönderim yapıp yapmadığınızı hemen görmenize izin verir. Bu, potansiyel kopyala/yapıştır hatalarını veya hack'leme girişimlerini önleyebilir. Geçmişiniz, Ledger Wallet kullanarak kripto gönderdiğiniz son 12 adresi içerir.",
+        "cta" : "Anladım"
+      }
+    },
     "relativeDate" : {
       "justNow" : "Yalnızca şimdilik",
       "minutesAgo_one" : "1 dk. önce",
@@ -2419,11 +2489,38 @@
     "gasOptionsSync" : {
       "warningTitle" : "Ağ ücretleri yenilenemiyor",
       "warningDescription" : "Önceden belirlenmiş ücretler eski olabilir."
+    },
+    "customFees" : {
+      "title" : "Özel ücretler",
+      "confirm" : "Onayla",
+      "maxFee" : "Ücret Üst Limiti ({{unit}})",
+      "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
+      "feePerByte" : "Ücret tutarı ({{unit}})",
+      "suggested" : "Önerilen",
+      "nextBlock" : "Sonraki blok",
+      "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
+      "invalidValue" : "Geçerli bir sayı girin.",
+      "belowMinimum" : "Minimum değer: {{min}}",
+      "maxFeeBelowPriorityFee" : "Ücret üst limiti, öncelik ücreti üst limitine eşit ya da daha büyük olmalıdır.",
+      "feeAsset" : "Ücret ödeme varlığı",
+      "feesAmount" : "Ücret tutarı ({{unit}})",
+      "payFeesIn" : "Bu varlıkla öde:"
+    },
+    "coinControl" : {
+      "title" : "Coin yönetimi",
+      "strategy" : "Strateji,",
+      "learnMore" : "Daha fazla bilgi",
+      "coinToSend" : "Gönderilecek coin",
+      "changeToReturn" : "Dönecek para üstü",
+      "enterAmount" : "Tutar girin",
+      "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
+      "amountInputLabel" : "Gönderilecek tutar"
     }
   },
   "releaseNotes" : {
-    "title" : "Sürüm notları",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "title" : "Sürüm notu",
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Anladım"
   },
   "troubleshootNetwork" : {
     "title" : "Ağ sorunlarını giderin",
@@ -4992,7 +5089,7 @@
     }
   },
   "theme" : {
-    "system" : "Sistem temasını seçin",
+    "system" : "Sistem",
     "light" : "Açık",
     "dusk" : "Loş",
     "dark" : "Koyu"
@@ -5950,6 +6047,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Concordium Hesabı Ekleyin",
+        "acknowledge" : {
+          "title" : "Bilgilendirme",
+          "description" : "Concordium, haricî kimlik doğrulaması gerektirir. Lütfen şu önemli güvenlik uyarılarını okuyun:",
+          "list" : {
+            "1" : "<0>Adres doğrulaması yoktur</0> - Ledger cihazınız, Concordium alıcı adreslerini doğrulayamaz. Fonları almadan önce adresleri manuel olarak doğrulayın.",
+            "2" : "<0>Concordium ID Uygulaması ayrı bir anahtar cümle kullanır</0> - Concordium uygulamasında YENİ 24 kelime oluşturacaksınız. Ledger anahtar cümlenizi ASLA kullanmayın.",
+            "3" : "<0>Ledger Wallet’ın dışına yönlendirileceksiniz</0> - Kimlik doğrulama işlemi, haricî Concordium Wallet uygulamasında gerçekleşir. Concordium’un blok zinciri protokolü bunu gerekli kılar.",
+            "4" : "<0>İşlemleri imzalamak hâlâ güvenlidir</0> – Sadece Ledger cihazınız işlemleri imzalayabilir ve hesaplar oluşturabilir."
+          },
+          "allow" : "Kabul Ediyorum"
+        },
+        "identity" : {
+          "title" : "Bağlan",
+          "account" : "Hesap",
+          "newAccount" : "Yeni Hesap",
+          "init" : "İzin Ver seçeneğine tıklamanız, hesabınızı doğrulamak için gereken KYC kimlik kontrolüne devam etmeye hazır olduğunuz anlamına gelir.",
+          "scanQRCode" : "Concordium ID Uygulamanızı bağlamak için mobil cihazınızla karekodu tarayın. <0>Daha fazla bilgi edinin</0>",
+          "ledgerSeedWarning" : "Ledger Kurtarma Kelimelerinizi Concordium ID Uygulaması için <0>KULLANMAYIN</0>.",
+          "downloadApp" : "Concordium ID Uygulamasını indirin",
+          "connecting" : "Concordium ID Uygulamasına bağlanılıyor...",
+          "onboarded" : "Kurulumu yapılmış hesaplar",
+          "success" : "Concordium ID Uygulamasına başarıyla bağlanıldı.",
+          "error" : "Yeni hesabın kurulumu yapılamadı. Lütfen tekrar deneyin.",
+          "status" : {
+            "prepare" : "Hesap kurulumuna hazırlanılıyor...",
+            "submit" : "Hesabın kurulumu yapılıyor...",
+            "default" : "İşleniyor..."
+          }
+        },
+        "create" : {
+          "title" : "Hesap Oluşturun",
+          "init" : {
+            "title" : "Concordium ID Uygulamasına başarıyla bağlanıldı"
+          },
+          "prepare" : {
+            "title" : "Hesap oluşturmak için aşağıdaki kodu Concordium ID Uygulamasında eşleştirin",
+            "resendButton" : "Onayı tekrar gönder",
+            "resendDescription" : "Onay <0>{{count}}</0> {{unit}} sonra yeniden gönderilebilir"
+          },
+          "success" : "Concordium hesabınız başarıyla oluşturuldu.",
+          "error" : "Hesap oluşturulamadı. Lütfen tekrar deneyin.",
+          "error429" : "Çok fazla talep gönderildi. Lütfen bekleyin ve daha sonra tekrar deneyin.",
+          "button" : "Oluştur",
+          "processing" : "İşleniyor...",
+          "status" : {
+            "prepare" : "Hesap oluşturmaya hazırlanılıyor...",
+            "submit" : "Hesap oluşturuluyor...",
+            "default" : "İşleniyor..."
+          }
+        },
+        "finish" : {
+          "title" : "Onaylayın"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "Concordium Adresiniz şu an doğrulanamıyor. Adresinizi Concordium tarayıcısına yapıştırarak mutlaka iki kez kontrol edin.",
+        "verifyLink" : "Doğrula"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6535,6 +6694,10 @@
       "title" : "Hızlandırılamaz ve iptal edilemez",
       "description" : "Bu işlem zaten doğrulanmış"
     },
+    "InvalidTransactionError" : {
+      "title" : "Geçersiz işlem",
+      "description" : "İşlem artık blok zinciri durumuyla eşleşmiyor. Lütfen akışı yeniden başlatın."
+    },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
@@ -6846,6 +7009,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "Geçersiz memo boyutu, en fazla 64 karaktere izin verilir",
       "description" : "Cardano memo’sunun boyutu için bir üst sınır vardır. Memo’nun boyutunu lütfen azaltın"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "Memo, azami uzunluğu aşıyor",
+      "description" : "Memo’nuz {{memoLength}} bayt, ancak izin verilen maksimum boyut {{maxLength}} bayttır. Memo boyutunu lütfen küçültün."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz"
     },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
@@ -7435,7 +7605,8 @@
     },
     "selectAccount" : {
       "title" : "hesap seçin",
-      "addAccount" : "Yeni veya mevcut bir hesabı ekle"
+      "addAccount" : "Yeni veya mevcut bir hesabı ekle",
+      "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir."
     }
   },
   "customImage" : {
@@ -7596,7 +7767,16 @@
     }
   },
   "analytics" : {
-    "title" : "Analiz"
+    "title" : "Analiz",
+    "allocation" : {
+      "title" : "Varlık dağılımı",
+      "columns" : {
+        "name" : "İsim",
+        "balance" : "Bakiye",
+        "value" : "Değer",
+        "allocation" : "Dağılım"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -7898,6 +8078,8 @@
     "title" : "Piyasayı keşfedin",
     "genericError" : "Bağlantı başarısız oldu",
     "cta" : "Tümünü gör",
+    "scrollLeft" : "Sola kaydır",
+    "scrollRight" : "Sağa kaydır",
     "fearAndGreed" : {
       "title" : "Duygu"
     }
@@ -7924,6 +8106,23 @@
     "connect" : "Bağlan",
     "buyALedger" : "Ledger satın alın"
   },
+  "assets" : {
+    "cryptos" : "Kriptolar",
+    "stablecoins" : "Stabil coin'ler",
+    "cryptoAccounts" : "Kripto hesapları",
+    "accountsCount_one" : "{{count}} hesap",
+    "accountsCount_other" : "{{count}} hesap",
+    "noCryptoAccounts" : "Henüz hesap yok",
+    "add" : "Ekle",
+    "columns" : {
+      "name" : "İsim",
+      "price" : "Fiyat",
+      "balance" : "Bakiye",
+      "value" : "Değer",
+      "trend" : "1G Trendi",
+      "trendTooltip" : "24 sa. bakiye değişikliği"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
     "entry" : {
@@ -7933,15 +8132,10 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Etkilenen hesapların listesi: {{accounts}}. Tekrar denemek için dokunun.",
-      "emptyErrorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir. Tekrar denemek için dokunun.",
+      "errorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir.\n Etkilenen hesapların listesi: {{accounts}}. Tekrar denemek için dokunun.",
+      "emptyErrorToolTip" : "Geçici bir ağ sorunu yaşandı. Varlıklarınız güvendedir.\n Tekrar denemek için dokunun.",
       "upToDate" : "Güncelsiniz",
-      "minutesAgo_one" : "Son senkronizasyon: {{count}} dk. önce. Yenilemek için dokunun",
-      "minutesAgo_other" : "Son senkronizasyon: {{count}} dk. önce. Yenilemek için dokunun",
-      "hoursAgo_one" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
-      "hoursAgo_other" : "Son senkronizasyon: {{count}} saat önce. Yenilemek için dokunun",
-      "daysAgo_one" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun",
-      "daysAgo_other" : "Son senkronizasyon: {{count}} gün önce. Yenilemek için dokunun"
+      "lastSync" : "Son senkronizasyon: {{timeAgo}}. Yenilemek için dokunun"
     },
     "notificationIndicator" : {
       "tooltip" : "Bildirimler"
@@ -7976,8 +8170,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Bakiyeyi göster",
-        "pausedAt" : "Duraklatıldı: ",
+        "startSync" : "Senkronizasyonu başlat",
+        "stopSync" : "Senkronizasyonu durdur",
+        "lastProcessedBlock" : "Son işlenen blok: {{block}}. {{missing}} blok eksik.",
         "lastSync" : "Son senkronizasyon: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Doğum günü yüksekliği",
+        "tooltip" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8216,13 @@
             }
           }
         }
-      },
-      "startSync" : "Senkronizasyonu başlat",
-      "datepicker" : {
-        "label" : "Doğum günü yüksekliği",
-        "tooltip" : "Doğum günü yüksekliği, blok zincirinde cüzdanınızın fonlarınızı taramaya başladığı noktadır."
       }
+    },
+    "operationDetails" : {
+      "txType" : "İşlem türü",
+      "transparentTx" : "Şeffaf",
+      "shieldedSaplingTx" : "🛡 Özel (Sapling)",
+      "shieldedOrchardTx" : "🛡 Özel (Orchard)"
     }
   },
   "aleo" : {
@@ -8054,6 +8255,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "Kendine transfer",
+      "headerActionTooltip" : "Kendinize transfer edebileceğiniz fonunuz bulunmuyor",
+      "modal" : {
+        "title" : "Kendine transfer",
+        "stepRecipient" : {
+          "selectLabel" : "Transfer kaynağı"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "Gizli bakiye",
+        "public" : "Genel bakiye",
+        "lastUpdate" : "Son güncelleme",
+        "switchBalance" : "Bakiye kaynağını değiştirin"
+      }
+    },
     "account" : {
       "availableBalance" : "Mevcut bakiye",
       "availableBalanceTooltip" : "Transfer edilebilir bakiye",
@@ -8061,6 +8280,38 @@
       "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
       "privateBalance" : "Gizli bakiye",
       "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Açık",
+        "private" : "Özel"
+      }
+    }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Yeni güncelleme mevcut",
+    "downloadProgress" : "%{{progress}}",
+    "errorTryAgain" : "Güncelleme sırasında bir hata oluştu. Tekrar deneyin",
+    "installAndRelaunch" : "Yeni güncelleme. Yükleyip yeniden başlatın"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Portföyünüz şimdi daha net",
+        "description" : "Toplam bakiyenizi ilk bakışta görün ve detaylı bilgiler için \"Bugün\" seçeneğine dokunun."
+      },
+      "navigation" : {
+        "title" : "Temel eylemlere daha hızlı erişin",
+        "description" : "Transfer alma, gönderme, satın alma ve satma işlemlerine anında erişin."
+      },
+      "actions" : {
+        "title" : "Piyasa trendlerini anında görün",
+        "description" : "Revaçta olan varlıkları doğrudan portföyünüzde hemen görün ve içgörüleri eyleme dönüştürün."
+      }
+    },
+    "cta" : {
+      "continue" : "Devam",
+      "explore" : "Yeni portföyünüzü keşfedin"
     }
   }
 }

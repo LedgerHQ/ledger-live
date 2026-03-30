@@ -39,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   determine-affected:
-    name: "Turbo Affected"
+    name: "Affected"
     needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
@@ -87,6 +87,13 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
+  test-features:
+    name: "Test Features"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    secrets: inherit
+
   test-design-system:
     name: "Test UI Libs"
     needs: determine-affected
@@ -97,9 +104,13 @@ jobs:
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
+    if: ${{!github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
+    with:
+      build-web-tools: ${{ contains(needs.determine-affected.outputs.paths, 'apps/web-tools') }}
+      build-native-storybook: ${{ contains(needs.determine-affected.outputs.paths, 'libs/ui/packages/native') }}
+      build-react-storybook: ${{ contains(needs.determine-affected.outputs.paths, 'libs/ui/packages/react') }}
 
   test-cli:
     name: "Test CLI"
@@ -129,14 +140,16 @@ jobs:
       - test-desktop
       - test-mobile
       - test-libraries
+      - test-features
       - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
       should_download_mobile_coverage: ${{ needs.test-mobile.outputs.coverage_generated }}
       should_download_libs_coverage: ${{ needs.test-libraries.outputs.coverage_generated }}
+      should_download_features_coverage: ${{ needs.test-features.outputs.coverage_generated }}
 
   # Final Check required
   ok:
@@ -147,6 +160,7 @@ jobs:
       - test-mobile
       - build-test-mobile
       - test-libraries
+      - test-features
       - test-design-system
       - build-web-tools
       - test-cli

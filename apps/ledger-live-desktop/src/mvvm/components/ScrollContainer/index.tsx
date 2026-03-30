@@ -12,7 +12,7 @@ export const ScrollContainer = forwardRef<HTMLDivElement, ScrollContainerProps>(
       <div
         ref={ref}
         className={cn(
-          "min-h-0 w-full flex-1 overflow-auto [scrollbar-gutter:stable] [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-thumb]:rounded-[6px] [&::-webkit-scrollbar-thumb]:bg-muted-strong [&::-webkit-scrollbar-track]:rounded-[6px] [&::-webkit-scrollbar-track]:bg-muted",
+          "min-h-0 scrollbar-custom w-full flex-1 overflow-auto [scrollbar-gutter:stable]",
           className,
         )}
       >

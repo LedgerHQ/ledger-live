@@ -5,6 +5,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { PerpsWebView } from "LLM/features/Perps/components/PerpsWebView";
 import type { PerpsWebviewInputs } from "./usePerpsLiveAppViewModel";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 type PerpsLiveAppViewProps = {
   manifest: LiveAppManifest | undefined;
@@ -13,6 +14,7 @@ type PerpsLiveAppViewProps = {
   webviewRef: RefObject<WebviewAPI | null>;
   onWebviewStateChange: (state: WebviewState) => void;
   webviewInputs: PerpsWebviewInputs;
+  accounts: AccountLike[];
 };
 
 export function PerpsLiveAppView({
@@ -22,6 +24,7 @@ export function PerpsLiveAppView({
   webviewRef,
   onWebviewStateChange,
   webviewInputs,
+  accounts,
 }: PerpsLiveAppViewProps) {
   if (error) {
     return (
@@ -39,6 +42,7 @@ export function PerpsLiveAppView({
           manifest={manifest}
           setWebviewState={onWebviewStateChange}
           inputs={webviewInputs}
+          accounts={accounts}
         />
       )}
     </Flex>

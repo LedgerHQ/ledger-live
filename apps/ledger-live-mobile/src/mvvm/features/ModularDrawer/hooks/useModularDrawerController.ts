@@ -35,6 +35,7 @@ export const useModularDrawerController = () => {
     assetsConfiguration,
     networksConfiguration,
     useCase,
+    uiUseCase,
     areCurrenciesFiltered,
   } = useSelector(modularDrawerStateSelector);
 
@@ -92,6 +93,7 @@ export const useModularDrawerController = () => {
     assetsConfiguration,
     networksConfiguration,
     useCase,
+    uiUseCase,
     areCurrenciesFiltered,
     openDrawer,
     closeDrawer,

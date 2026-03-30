@@ -13,6 +13,8 @@ export const updateUserPreferences = (notificationsPreferences: NotificationsSet
     optInAnnouncements: notificationsPreferences.announcementsCategory,
     optInLargeMovers: notificationsPreferences.largeMoverCategory,
     optInTxAlerts: notificationsPreferences.transactionsAlertsCategory,
+    optInTotalMarketCap: notificationsPreferences.totalMarketCap,
+    optInTopGainersLosers: notificationsPreferences.topGainersLosers,
   };
   const notificationsBlacklisted = Object.entries(notificationsPreferences)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)

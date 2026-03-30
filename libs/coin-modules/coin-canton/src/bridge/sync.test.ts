@@ -1,15 +1,15 @@
-import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
-import { OperationInfo } from "../network/gateway";
-import * as gateway from "../network/gateway";
-import * as onboard from "./onboard";
-import * as config from "../config";
-import * as accountBalance from "../common-logic/account/getBalance";
-import resolver from "../signer";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CantonAccount } from "../types";
+import * as accountBalance from "../common-logic/account/getBalance";
+import * as config from "../config";
+import * as gateway from "../network/gateway";
+import { OperationInfo } from "../network/gateway";
+import resolver from "../signer";
 import { createMockCantonCurrency } from "../test/fixtures";
+import { CantonAccount } from "../types";
+import * as onboard from "./onboard";
+import { makeGetAccountShape, filterDisabledTokenAccounts } from "./sync";
 
 jest.mock("../network/gateway", () => ({
   ...jest.requireActual("../network/gateway"),
@@ -63,19 +63,6 @@ const createMockNativeBalance = (amount: string, locked = false): CantonBalance 
   utxoCount: 1,
   instrumentId: "Amulet",
   adminId: "native-admin",
-});
-
-const createMockTokenBalance = (
-  instrumentId: string,
-  amount: string,
-  locked = false,
-): CantonBalance => ({
-  value: BigInt(amount),
-  locked: locked ? BigInt(amount) : BigInt(0),
-  asset: { type: "token", assetReference: instrumentId },
-  utxoCount: 1,
-  instrumentId,
-  adminId: `admin-${instrumentId}`,
 });
 
 const createMockOperationView = (
@@ -154,12 +141,13 @@ const createMockCantonAccountShapeInfo = (
 describe("makeGetAccountShape", () => {
   const fakeSignerContext = {} as any;
 
-  const defaultInfo = {
+  const defaultInfo: AccountShapeInfo<CantonAccount> = {
     address: "addr1",
     currency: sampleCurrency,
     derivationMode: "",
     derivationPath: "44'/0'/0'/0/0",
     deviceId: "fakeDevice",
+    index: 0,
     initialAccount: undefined,
   };
 
@@ -202,7 +190,7 @@ describe("makeGetAccountShape", () => {
       ],
     });
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
@@ -222,26 +210,28 @@ describe("makeGetAccountShape", () => {
     ]);
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
-    expect(shape).toBeDefined();
-    expect(shape.balance).toEqual(BigNumber(1010));
-    expect(shape.spendableBalance).toEqual(BigNumber(10));
+    expect(shape).toMatchObject({
+      balance: BigNumber(1010),
+      spendableBalance: BigNumber(10),
+    });
   });
 
   it("should handle empty balances correctly", async () => {
     mockedGetBalance.mockResolvedValue([]);
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
-    expect(shape).toBeDefined();
-    expect(shape.balance).toEqual(BigNumber(0));
-    expect(shape.spendableBalance).toEqual(BigNumber(0));
+    expect(shape).toMatchObject({
+      balance: BigNumber(0),
+      spendableBalance: BigNumber(0),
+    });
   });
 
   it("should default to FEES operation type when transferValue is 0", async () => {
@@ -258,13 +248,18 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
-    expect(shape).toBeDefined();
-    expect(shape.operations[0].type).toBe("FEES");
-    // In this case, value should equal the fee
-    expect(shape.operations[0].value).toEqual(BigNumber(5)); // fee is 5 in createMockOperationView
+    expect(shape).toMatchObject({
+      operations: [
+        expect.objectContaining({
+          type: "FEES",
+          // In this case, value should equal the fee
+          value: BigNumber(5), // fee is 5 in createMockOperationView
+        }),
+      ],
+    });
   });
 
   it("should set operation type to TRANSFER_PROPOSAL when operationType is transfer-proposal", async () => {
@@ -282,12 +277,17 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
-    expect(shape).toBeDefined();
-    expect(shape.operations[0].type).toBe("TRANSFER_PROPOSAL");
-    expect(shape.operations[0].value).toEqual(BigNumber(200)); // transfer value only, fees not added for TRANSFER_PROPOSAL
+    expect(shape).toMatchObject({
+      operations: [
+        expect.objectContaining({
+          type: "TRANSFER_PROPOSAL",
+          value: BigNumber(200), // transfer value only, fees not added for TRANSFER_PROPOSAL
+        }),
+      ],
+    });
   });
 
   it("should set operation type to TRANSFER_REJECTED when operationType is transfer-rejected", async () => {
@@ -305,12 +305,17 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape: any = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
-    expect(shape).toBeDefined();
-    expect(shape.operations[0].type).toBe("TRANSFER_REJECTED");
-    expect(shape.operations[0].value).toEqual(BigNumber(150)); // transfer value only, fees not added for TRANSFER_REJECTED
+    expect(shape).toMatchObject({
+      operations: [
+        expect.objectContaining({
+          type: "TRANSFER_REJECTED",
+          value: BigNumber(150), // transfer value only, fees not added for TRANSFER_REJECTED
+        }),
+      ],
+    });
   });
 
   it("should set operation type to TRANSFER_WITHDRAWN when operationType is transfer-withdrawn", async () => {
@@ -328,12 +333,17 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
-    expect(shape).toBeDefined();
-    expect(shape.operations[0].type).toBe("TRANSFER_WITHDRAWN");
-    expect(shape.operations[0].value).toEqual(BigNumber(50)); // transfer value only, fees not added for TRANSFER_WITHDRAWN
+    expect(shape).toMatchObject({
+      operations: [
+        expect.objectContaining({
+          type: "TRANSFER_WITHDRAWN",
+          value: BigNumber(50), // transfer value only, fees not added for TRANSFER_WITHDRAWN
+        }),
+      ],
+    });
   });
 
   it("should filter out operations that match pending transfer proposals", async () => {
@@ -371,19 +381,18 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape: any = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
-    expect(shape).toBeDefined();
-    expect(shape.operations.length).toBe(1);
-    expect(shape.operations[0].hash).toBe("tx-completed");
-    expect(shape.operations[0].value).toEqual(BigNumber(200));
-
-    expect(shape.cantonResources.pendingTransferProposals.length).toBe(1);
-    expect(shape.cantonResources.pendingTransferProposals[0].contract_id).toBe(
-      "pending-proposal-uid",
-    );
+    expect(shape).toMatchObject({
+      operations: [expect.objectContaining({ hash: "tx-completed", value: BigNumber(200) })],
+      cantonResources: expect.objectContaining({
+        pendingTransferProposals: [
+          expect.objectContaining({ contract_id: "pending-proposal-uid" }),
+        ],
+      }),
+    });
   });
 
   it("should sync without device when account has xpub but no publicKey", async () => {
@@ -393,16 +402,15 @@ describe("makeGetAccountShape", () => {
     });
 
     const infoWithXpub = createMockCantonAccountShapeInfo({
-      deviceId: undefined, // No device
       initialAccount: {
         xpub: "test-party-id",
         cantonResources: {
-          publicKey: undefined, // Missing publicKey
           instrumentUtxoCounts: {},
           pendingTransferProposals: [],
         },
       } as unknown as CantonAccount,
     });
+    delete infoWithXpub.deviceId;
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
     const shape = await getAccountShape(infoWithXpub, { paginationConfig: {} });
@@ -420,7 +428,6 @@ describe("makeGetAccountShape", () => {
     });
 
     const infoWithPublicKey = createMockCantonAccountShapeInfo({
-      deviceId: undefined, // No device
       initialAccount: {
         xpub: "", // Missing xpub
         cantonResources: {
@@ -430,6 +437,7 @@ describe("makeGetAccountShape", () => {
         },
       } as unknown as CantonAccount,
     });
+    delete infoWithPublicKey.deviceId;
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
     const shape = await getAccountShape(infoWithPublicKey, { paginationConfig: {} });
@@ -446,7 +454,6 @@ describe("makeGetAccountShape", () => {
     });
 
     const infoWithBoth = createMockCantonAccountShapeInfo({
-      deviceId: undefined, // No device
       initialAccount: {
         xpub: "test-party-id",
         cantonResources: {
@@ -456,6 +463,7 @@ describe("makeGetAccountShape", () => {
         },
       } as unknown as CantonAccount,
     });
+    delete infoWithBoth.deviceId;
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
     const shape = await getAccountShape(infoWithBoth, { paginationConfig: {} });
@@ -537,18 +545,22 @@ describe("makeGetAccountShape", () => {
     });
 
     const getAccountShape = makeGetAccountShape(fakeSignerContext);
-    const shape = await getAccountShape(defaultInfo as AccountShapeInfo<Account>, {
+    const shape = await getAccountShape(defaultInfo, {
       paginationConfig: {},
     });
 
-    expect(shape).toBeDefined();
-    expect(shape.subAccounts).toHaveLength(1);
-
-    const tokenAccount = shape.subAccounts?.[0] as TokenAccount;
-    expect(tokenAccount).toBeDefined();
-    expect(tokenAccount.token.ticker).toBe("SBC"); // Should be SBC, not CUSD!
-    expect(tokenAccount.token.id).toBe("canton_network/cip56/sbc");
-    expect(tokenAccount.balance).toEqual(BigNumber("990000000000000000000000000000000"));
+    expect(shape).toMatchObject({
+      subAccounts: [
+        expect.objectContaining({
+          balance: BigNumber("990000000000000000000000000000000"),
+          type: "TokenAccount",
+          token: expect.objectContaining({
+            id: "canton_network/cip56/sbc",
+            ticker: "SBC", // Should be SBC, not CUSD!
+          }),
+        }),
+      ],
+    });
   });
 });
 

@@ -1,10 +1,13 @@
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
-import type { TokenAccount } from "@ledgerhq/types-live";
+import {
+  encodeTokenAccountId,
+  emptyHistoryCache,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import type { TokenAccount } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { type TransferProposal } from "../network/gateway";
 
 export type CantonTokenAccount = TokenAccount & {

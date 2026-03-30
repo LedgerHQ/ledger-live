@@ -30,7 +30,9 @@ const reloadRenderer = () => ipcRenderer.invoke("reloadRenderer");
 const params = new URLSearchParams(window.location.search);
 
 // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-const openWindow = (id: number) => ipcRenderer.send("webview-dom-ready", id);
+// When domains is provided (and non-empty), main process will enforce manifest domain whitelist on webview navigation
+const openWindow = (id: number, domains?: string[]) =>
+  ipcRenderer.send("webview-dom-ready", id, domains);
 
 // TODO in future, we should use contextBridge
 window.api = {

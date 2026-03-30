@@ -1,6 +1,6 @@
 import type { Cursor, Operation, Page } from "@ledgerhq/coin-framework/api/index";
-import { getOperations } from "../../network/gateway";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getOperations } from "../../network/gateway";
 
 /**
  * Returns list of operations associated to an account.

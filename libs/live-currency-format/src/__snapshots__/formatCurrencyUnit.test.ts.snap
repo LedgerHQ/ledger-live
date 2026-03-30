@@ -96,8 +96,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
@@ -218,7 +216,11 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
 
@@ -279,6 +281,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
@@ -344,11 +348,15 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sui (Testnet) unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
@@ -498,8 +506,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
@@ -620,7 +626,11 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
 
@@ -681,6 +691,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
@@ -746,11 +758,15 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sui (Testnet) unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
@@ -900,8 +916,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
@@ -1022,7 +1036,11 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
 
@@ -1083,6 +1101,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
@@ -1148,11 +1168,15 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sui (Testnet) unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
@@ -1302,8 +1326,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Coreum unit (Core) 1`] = `"12 345 678 900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12 345 678 900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cosmos unit (Atom) 1`] = `"12 345 678 900,000000- -ATOM"`;
@@ -1424,7 +1446,11 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format MIX Blockchain unit (MIX) 1`] = `"123 456 789,00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantra unit (Mantra) 1`] = `"12 345 678 900,000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
 
@@ -1485,6 +1511,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polkadot unit (DOT) 1`] = `"1 234 567,8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polkadot unit (DOT) 2`] = `"1 234 567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
@@ -1550,11 +1578,15 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Stride unit (Stride) 1`] = `"12 345 678 900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sui (Testnet) unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sui unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format TX unit (TX) 1`] = `"12 345 678 900,000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
@@ -1704,8 +1736,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
@@ -1826,7 +1856,11 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
 
@@ -1887,6 +1921,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
@@ -1952,11 +1988,15 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sui (Testnet) unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
@@ -2106,8 +2146,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
@@ -2228,7 +2266,11 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
 
@@ -2289,6 +2331,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
@@ -2354,11 +2398,15 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sui (Testnet) unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
@@ -2508,8 +2556,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
@@ -2630,7 +2676,11 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
 
@@ -2691,6 +2741,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
@@ -2756,11 +2808,15 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sui (Testnet) unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
@@ -2910,8 +2966,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Coreum unit (Core) 1`] = `"12 345 678 900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12 345 678 900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cosmos unit (Atom) 1`] = `"12 345 678 900,000000- -ATOM"`;
@@ -3032,7 +3086,11 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format MIX Blockchain unit (MIX) 1`] = `"123 456 789,00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantra unit (Mantra) 1`] = `"12 345 678 900,000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
 
@@ -3093,6 +3151,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polkadot unit (DOT) 1`] = `"1 234 567,8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polkadot unit (DOT) 2`] = `"1 234 567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
@@ -3158,11 +3218,15 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Stride unit (Stride) 1`] = `"12 345 678 900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sui (Testnet) unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sui unit (Sui) 1`] = `"12 345 678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TON unit (TON) 1`] = `"12 345 678,900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format TX unit (TX) 1`] = `"12 345 678 900,000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
@@ -3312,8 +3376,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Core unit (CORE) 1`] = `"0,012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Coreum unit (Core) 1`] = `"12.345.678.900,000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12.345.678.900,000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
@@ -3434,7 +3496,11 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantra unit (Mantra) 1`] = `"12.345.678.900,000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
 
@@ -3495,6 +3561,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polkadot unit (DOT) 2`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon Amoy unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Polygon unit (POL) 1`] = `"0,012345678900000000- -POL"`;
 
@@ -3560,11 +3628,15 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stride unit (Stride) 1`] = `"12.345.678.900,000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sui (Testnet) unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sui unit (Sui) 1`] = `"12.345.678,900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Syscoin unit (SYS) 1`] = `"0,012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TON unit (TON) 1`] = `"12.345.678,900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format TX unit (TX) 1`] = `"12.345.678.900,000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Telos unit (TLOS) 1`] = `"0,012345678900000000- -TLOS"`;
 
@@ -3714,8 +3786,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Core unit (CORE) 1`] = `"0.012345678900000000- -CORE"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Coreum unit (Core) 1`] = `"12,345,678,900.000000- -CORE"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900.000000- -MUON"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
@@ -3836,7 +3906,11 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900.000000- -OM"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
 
@@ -3897,6 +3971,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polkadot unit (DOT) 2`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon Amoy unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Polygon unit (POL) 1`] = `"0.012345678900000000- -POL"`;
 
@@ -3962,11 +4038,15 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stride unit (Stride) 1`] = `"12,345,678,900.000000- -STRD"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sui (Testnet) unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sui unit (Sui) 1`] = `"12,345,678.900000000- -SUI"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Syscoin unit (SYS) 1`] = `"0.012345678900000000- -SYS"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TON unit (TON) 1`] = `"12,345,678.900000000- -TON"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format TX unit (TX) 1`] = `"12,345,678,900.000000- -TX"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Telos unit (TLOS) 1`] = `"0.012345678900000000- -TLOS"`;
 
@@ -4116,8 +4196,6 @@ exports[`formatCurrencyUnit with default options should correctly format Concord
 
 exports[`formatCurrencyUnit with default options should correctly format Core unit (CORE) 1`] = `"0.0123456"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Coreum unit (Core) 1`] = `"12,345,678,900"`;
-
 exports[`formatCurrencyUnit with default options should correctly format Cosmos (Testnet) unit (Muon) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900"`;
@@ -4238,7 +4316,11 @@ exports[`formatCurrencyUnit with default options should correctly format Lukso u
 
 exports[`formatCurrencyUnit with default options should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Mantra unit (Mantra) 1`] = `"12,345,678,900"`;
+exports[`formatCurrencyUnit with default options should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Mantle unit (MNT) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Mantra unit (Mantra) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Metis unit (METIS) 1`] = `"0.0123456"`;
 
@@ -4299,6 +4381,8 @@ exports[`formatCurrencyUnit with default options should correctly format Pirl un
 exports[`formatCurrencyUnit with default options should correctly format Polkadot unit (DOT) 1`] = `"1,234,567"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Polkadot unit (DOT) 2`] = `"1,234,567"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Polygon Amoy unit (POL) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Polygon unit (POL) 1`] = `"0.0123456"`;
 
@@ -4364,11 +4448,15 @@ exports[`formatCurrencyUnit with default options should correctly format Stratis
 
 exports[`formatCurrencyUnit with default options should correctly format Stride unit (Stride) 1`] = `"12,345,678,900"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Sui (Testnet) unit (Sui) 1`] = `"12,345,678"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Sui unit (Sui) 1`] = `"12,345,678"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Syscoin unit (SYS) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format TON unit (TON) 1`] = `"12,345,678"`;
+
+exports[`formatCurrencyUnit with default options should correctly format TX unit (TX) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Telos unit (TLOS) 1`] = `"0.0123456"`;
 

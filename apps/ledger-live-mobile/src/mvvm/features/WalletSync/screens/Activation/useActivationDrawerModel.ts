@@ -12,8 +12,10 @@ import { useNavigation } from "@react-navigation/native";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletSyncNavigatorStackParamList } from "~/components/RootNavigator/types/WalletSyncNavigator";
 import { useCurrentStep } from "../../hooks/useCurrentStep";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
 
 type Props = {
   isOpen: boolean;
@@ -30,6 +32,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
   const { currentStep, setCurrentStep } = useCurrentStep();
 
   const dispatch = useDispatch();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   useEffect(() => {
     setCurrentStep(startingStep);
@@ -82,11 +85,16 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     handleClose();
   };
 
-  const onCreateKey = () => {
-    navigation.navigate(NavigatorName.WalletSync, {
-      screen: ScreenName.WalletSyncActivationProcess,
-    });
-  };
+  const onCreateKey = useCallback(() => {
+    if (readOnlyModeEnabled) {
+      handleClose();
+      dispatch(openRebornBuyDeviceDrawer());
+    } else {
+      navigation.navigate(NavigatorName.WalletSync, {
+        screen: ScreenName.WalletSyncActivationProcess,
+      });
+    }
+  }, [readOnlyModeEnabled, handleClose, dispatch, navigation]);
 
   const { url, error, isLoading, pinCode } = useQRCodeHost({
     currentOption,

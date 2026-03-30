@@ -1,12 +1,12 @@
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom, toArray } from "rxjs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
-import * as gateway from "../network/gateway";
 import * as signTransactionModule from "../common-logic/transaction/sign";
+import * as gateway from "../network/gateway";
 import { createMockAccount } from "../test/fixtures";
 import type { CantonSigner, CantonSignature } from "../types";
 import { OnboardStatus, CantonOnboardProgress, CantonOnboardResult } from "../types/onboard";
+import { buildOnboardAccount, isCantonCoinPreapproved } from "./onboard";
 
 jest.mock("../network/gateway");
 jest.mock("../common-logic/transaction/sign");
@@ -83,7 +83,7 @@ describe("onboard", () => {
     } as unknown as CantonSigner;
 
     const mockSignerContext: SignerContext<CantonSigner> = jest.fn(
-      async (deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
+      async (_deviceId: string, callback: (signer: CantonSigner) => Promise<CantonSignature>) => {
         return callback(mockSigner);
       },
     ) as unknown as SignerContext<CantonSigner>;
@@ -94,8 +94,12 @@ describe("onboard", () => {
 
     it("should skip submission when account is onboarded on network but has no local xpub", async () => {
       // GIVEN
-      const account = createMockAccount({ xpub: undefined });
-      mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: mockPartyId });
+      const account = createMockAccount();
+      delete account.xpub;
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: mockPartyId,
+        public_key: mockPublicKey,
+      });
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
       const values = await firstValueFrom(
@@ -104,9 +108,12 @@ describe("onboard", () => {
 
       // THEN
       const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
-      expect(result).toBeDefined();
-      expect(result?.partyId).toBe(mockPartyId);
-      expect(result?.account.xpub).toBe(mockPartyId);
+      expect(result).toMatchObject({
+        partyId: mockPartyId,
+        account: expect.objectContaining({
+          xpub: mockPartyId,
+        }),
+      });
 
       // Should NOT call prepareOnboarding or submitOnboarding
       expect(mockedGateway.prepareOnboarding).not.toHaveBeenCalled();
@@ -120,10 +127,15 @@ describe("onboard", () => {
       const account = createMockAccount({ xpub: existingPartyId });
       const newPartyId = "new-party-id";
 
-      mockedGateway.getPartyByPubKey.mockResolvedValue({ party_id: existingPartyId });
+      mockedGateway.getPartyByPubKey.mockResolvedValue({
+        party_id: existingPartyId,
+        public_key: mockPublicKey,
+      });
       mockedGateway.prepareOnboarding.mockResolvedValue({
         party_id: newPartyId,
-        transactions: {},
+        party_name: "test-party-name",
+        public_key_fingerprint: "test-fingerprint",
+        transactions: {} as any,
       });
       mockedGateway.submitOnboarding.mockResolvedValue({
         party: {
@@ -158,8 +170,9 @@ describe("onboard", () => {
       );
 
       const result = values.find((v): v is CantonOnboardResult => "partyId" in v);
-      expect(result).toBeDefined();
-      expect(result?.partyId).toBe(newPartyId);
+      expect(result).toMatchObject({
+        partyId: newPartyId,
+      });
     });
   });
 });

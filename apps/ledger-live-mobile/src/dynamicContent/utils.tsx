@@ -140,6 +140,8 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   title: card.extras.title,
   description: card.extras.description,
   image: card.extras.image,
+  image_background: card.extras.image_background,
+  icon: card.extras.icon,
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,

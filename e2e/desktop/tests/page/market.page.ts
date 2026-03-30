@@ -1,17 +1,27 @@
 import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
 import { expect } from "@playwright/test";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class MarketPage extends AppPage {
   private searchInput = this.page.getByTestId("market-search-input");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
-  private buyButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-buy-button`).first();
-  readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
-  private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
+
+  private buyButtonLegacy = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-buy-button"]:visible`).first();
+  private swapButtonLegacy = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-swap-button"]:visible`).first();
+  private stakeButtonLegacy = (ticker: string) =>
+    this.page.locator(`[data-testid="market-${ticker}-stake-button"]:visible`).first();
+
+  private buyButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-buy-button-icon`);
+  private swapButton = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-swap-button-icon`);
+  private stakeButton = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-stake-button-icon`);
 
   // Filter controls - using text selector because react-select doesn't forward data-testid
   private filterDropdown = this.page.getByText("Show").first();
@@ -38,12 +48,20 @@ export class MarketPage extends AppPage {
 
   @step("Open buy page for $0")
   async openBuyPage(ticker: string) {
-    await this.buyButton(ticker.toLowerCase()).click();
+    const button = (await isWallet40Enabled(this.page))
+      ? this.buyButton(ticker.toLowerCase())
+      : this.buyButtonLegacy(ticker.toLowerCase());
+
+    await button.click();
   }
 
   @step("Click on swap button for $0")
   async startSwapForSelectedTicker(ticker: string) {
-    await this.swapButton(ticker.toLowerCase()).click();
+    const button = (await isWallet40Enabled(this.page))
+      ? this.swapButton(ticker.toLowerCase())
+      : this.swapButtonLegacy(ticker.toLowerCase());
+
+    await button.click();
   }
 
   @step("Click on swap button on asset")
@@ -53,7 +71,11 @@ export class MarketPage extends AppPage {
 
   @step("Click on stake button for $0")
   async stakeButtonClick(ticker: string) {
-    await this.stakeButton(ticker.toLowerCase()).click();
+    const button = (await isWallet40Enabled(this.page))
+      ? this.stakeButton(ticker.toLowerCase())
+      : this.stakeButtonLegacy(ticker.toLowerCase());
+
+    await button.click();
   }
 
   @step("Expect filter dropdown to be visible")

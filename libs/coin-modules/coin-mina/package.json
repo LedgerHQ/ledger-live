@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
-  "version": "1.9.1",
+  "version": "1.12.0",
   "description": "Mina Coin integration",
   "keywords": [
     "Ledger",
@@ -59,38 +59,47 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
     "./deviceTransactionConfig": {
+      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
     },
     "./logic": {
+      "@ledgerhq/source": "./src/common-logic/index.ts",
       "require": "./lib/common-logic/index.js",
       "default": "./lib-es/common-logic/index.js"
     },
     "./signer": {
+      "@ledgerhq/source": "./src/signer/index.ts",
       "require": "./lib/signer/index.js",
       "default": "./lib-es/signer/index.js"
     },
     "./specs": {
+      "@ledgerhq/source": "./src/test/bot-specs.ts",
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
     },
     "./bridge": {
+      "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
       "default": "./lib-es/bridge/index.js"
     },
     "./transaction": {
+      "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -106,6 +115,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -119,6 +129,7 @@
   },
   "devDependencies": {
     "@types/bs58check": "catalog:",
+    "@types/node": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
@@ -130,16 +141,16 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
+    "watch": "tsc --watch --project tsconfig.build.json",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported"
   }
 }

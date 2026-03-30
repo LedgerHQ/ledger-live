@@ -46,21 +46,19 @@ describe("middleware", () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "");
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
     });
 
-    it("should not sync when userId is missing", () => {
+    it("should not sync when userId is dummy", () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve(""),
         getAnalyticsConsent: () => true,
       });
-
+      // Do not initFromScratch - userId remains dummy
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
     });
 
@@ -68,10 +66,9 @@ describe("middleware", () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => false,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
     });
 
@@ -79,32 +76,22 @@ describe("middleware", () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
-      // Initialize with empty deviceIds
-      store.dispatch(
-        identitiesSlice.actions.initFromPersisted({
-          deviceIds: [],
-          pushDevicesSyncState: "unsynced",
-          pushDevicesServiceUrl: null,
-        }),
-      );
-      store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
+      store.dispatch(identitiesSlice.actions.initFromScratch());
+      // deviceIds still empty; dispatch an action to trigger middleware (shouldSync returns false)
+      store.dispatch(identitiesSlice.actions.markSyncCompleted("https://api.example.com"));
     });
 
     it("should not sync when already synced with same URL", () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       store.dispatch(identitiesSlice.actions.markSyncCompleted("https://api.example.com"));
-      // Dispatch another action - should not sync again
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-2")));
     });
 
@@ -112,13 +99,11 @@ describe("middleware", () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api-new.example.com");
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       store.dispatch(identitiesSlice.actions.markSyncCompleted("https://api-old.example.com"));
-      // URL changed, should trigger sync
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-2")));
     });
   });
@@ -126,16 +111,14 @@ describe("middleware", () => {
   describe("sync execution", () => {
     it("should successfully sync and mark as completed", async () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
-      // RTK Query initiate returns a thunk that when dispatched returns a Promise
       const mockInitiate = jest.fn(() => () => Promise.resolve({ data: undefined }));
       pushDevicesApi.endpoints.pushDevices.initiate = mockInitiate as any;
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       await waitForAsync();
 
@@ -154,10 +137,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       await waitForAsync();
 
@@ -173,11 +155,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
-      // First sync
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       await waitForAsync();
       await waitForAsync(); // Extra wait to ensure first sync completes
@@ -196,38 +176,74 @@ describe("middleware", () => {
       expect(mockInitiate).toHaveBeenCalledTimes(2);
     });
 
-    it("should skip sync in attemptSync when userId is missing", async () => {
+    it("should skip sync in attemptSync when userId is dummy and getUserId is not provided", async () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
       const mockInitiate = jest.fn();
       pushDevicesApi.endpoints.pushDevices.initiate = mockInitiate as any;
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve(""),
         getAnalyticsConsent: () => true,
       });
+      // Do not initFromScratch - userId remains dummy; no getUserId
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       await waitForAsync();
       expect(mockInitiate).not.toHaveBeenCalled();
     });
 
-    it("should skip sync in attemptSync when pushDevicesServiceUrl is empty", async () => {
+    it("should sync using getUserId when userId is dummy and getUserId is provided (mobile fallback)", async () => {
+      setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
+      const mockInitiate = jest.fn(() => () => Promise.resolve({ data: undefined }));
+      pushDevicesApi.endpoints.pushDevices.initiate = mockInitiate as any;
+
+      const store = createStore({
+        getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
+        getAnalyticsConsent: () => true,
+        getUserId: () => Promise.resolve("mobile-legacy-user-id"),
+      });
+      // Do not initFromScratch - userId remains dummy
+      store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
+      await waitForAsync();
+
+      expect(mockInitiate).toHaveBeenCalledTimes(1);
+      expect(mockInitiate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          equipment_id: "mobile-legacy-user-id",
+          devices: ["device-1"],
+        }),
+      );
+      const state = store.getState();
+      expect(state.identities.pushDevicesSyncState).toBe("synced");
+    });
+
+    it("should skip sync when getUserId resolves to empty/whitespace and not record failure", async () => {
       setEnv("PUSH_DEVICES_SERVICE_URL", "https://api.example.com");
       const mockInitiate = jest.fn();
       pushDevicesApi.endpoints.pushDevices.initiate = mockInitiate as any;
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
+        getAnalyticsConsent: () => true,
+        getUserId: () => Promise.resolve("   "),
+      });
+      store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
+      await waitForAsync();
+
+      expect(mockInitiate).not.toHaveBeenCalled();
+      expect(rateLimitState.setLastFailureTime).not.toHaveBeenCalled();
+    });
+
+    it("should skip sync when PUSH_DEVICES_SERVICE_URL is empty at sync time", async () => {
+      const mockInitiate = jest.fn();
+      pushDevicesApi.endpoints.pushDevices.initiate = mockInitiate as any;
+
+      const store = createStore({
+        getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
         getAnalyticsConsent: () => true,
       });
-
-      // Dispatch action - shouldSync will see the URL and return true
+      store.dispatch(identitiesSlice.actions.initFromScratch());
+      setEnv("PUSH_DEVICES_SERVICE_URL", ""); // No URL so shouldSync returns false
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
-
-      // Clear URL before attemptSync is called (it's called asynchronously)
-      setEnv("PUSH_DEVICES_SERVICE_URL", "");
-
       await waitForAsync();
 
       expect(mockInitiate).not.toHaveBeenCalled();
@@ -265,10 +281,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
-
+      store.dispatch(identitiesSlice.actions.initFromScratch());
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
       await waitForAsync();
 
@@ -284,9 +299,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
+      store.dispatch(identitiesSlice.actions.initFromScratch());
 
       // First sync attempt - will fail
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
@@ -315,9 +330,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
+      store.dispatch(identitiesSlice.actions.initFromScratch());
 
       // First sync attempt - will fail (getLastFailureTime returns undefined initially)
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
@@ -362,9 +377,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
+      store.dispatch(identitiesSlice.actions.initFromScratch());
 
       // First sync attempt - will fail (getLastFailureTime returns undefined initially)
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));
@@ -415,9 +430,9 @@ describe("middleware", () => {
 
       const store = createStore({
         getIdentitiesState: state => (state as { identities: IdentitiesState }).identities,
-        getUserId: () => Promise.resolve("user-123"),
         getAnalyticsConsent: () => true,
       });
+      store.dispatch(identitiesSlice.actions.initFromScratch());
 
       // First sync attempt - will fail (getLastFailureTime returns undefined initially)
       store.dispatch(identitiesSlice.actions.addDeviceId(DeviceId.fromString("device-1")));

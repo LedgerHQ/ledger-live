@@ -1,5 +1,5 @@
 import type Transport from "@ledgerhq/hw-transport";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { GetViewKeyFn, GetViewKeyOptions } from "@ledgerhq/coin-aleo/signer/getViewKey";
 import type { CreateSigner } from "../../../../bridge/setup";
 import type { Resolver } from "./types";

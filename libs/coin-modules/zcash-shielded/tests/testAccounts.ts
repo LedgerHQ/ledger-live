@@ -1,3 +1,6 @@
+import BigNumber from "bignumber.js";
+
+export const LAST_BLOCK_COUNT = 3697079;
 export const testAccount1 = {
   viewingKey:
     "uviewtest1mqju2lk34ly4tt0xdtdsw0ngrzmx5prs4m09mzn0hq9deq5mcyngpxwzptakch8ays87pq58ny0exvzgns3v5lryxe7xj2fyearv8tujeqac0q3xc7pchmfn40lqwscvyqulqcgux4qlvep5utv5tg8kyhr9p0yxccvaxl6eklxprmga5a99ars3lnwkh04f3zumv9x2ulf5wpfawx2fxlp20kwckjgdp3t0sk4puxuh2t8jhrgtnaq4kue2qf429shywt5legg6kl8gcnmqura5f7dk3u00530wmufuumax5rp9907xde04cz8s3errjzlkywm229k33qhwhf7393mg5xkk4gejwdxxkv0mtjhmq3q0wztzdc7wtsnn4pvgf67q8xs6jv7x9rzr2f7qnv6teplzt052pa2nltfe6t7hm5r33wgplumhz57xgv0jwmlg9kqzrygxusg8efzx6xzw7xll2328kagq9sg0048p9hdpuqvgxu35",
@@ -36,7 +39,43 @@ export const blocks = [
   // edge case: block without tx
   {
     hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
-    height: 3697074,
+    height: 3000000,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697075,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697076,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697077,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697078,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697079,
+    time: 1764164743,
+  },
+  // edge case: block without tx
+  {
+    hash: "edgecase00000785eda2359facdb9c49ddfcd43e1858a23d8051937cbda43fa",
+    height: 3697080,
     time: 1764164743,
   },
 ];
@@ -162,7 +201,11 @@ export const transactions = [
 
 export const decryptedOrchardData = {
   orchard_outputs: [
-    { amount: 0.3, memo: "Thanks for using testnet.ZecFaucet.com", transfer_type: "incoming" },
+    {
+      amount: new BigNumber(30000000), // zatoshis
+      memo: "Thanks for using testnet.ZecFaucet.com",
+      transfer_type: "incoming",
+    },
   ],
   sapling_outputs: [],
 };
@@ -170,12 +213,12 @@ export const decryptedOrchardData = {
 export const decryptedSaplingData = {
   orchard_outputs: [
     {
-      amount: 0.1449,
+      amount: new BigNumber(14490000), // zatoshis
       memo: "",
       transfer_type: "internal",
     },
     {
-      amount: 0.1449,
+      amount: new BigNumber(14490000), // zatoshis
       memo: "",
       transfer_type: "internal",
     },

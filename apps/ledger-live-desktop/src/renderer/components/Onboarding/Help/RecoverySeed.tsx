@@ -83,6 +83,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
       </ScrollArea>
       <Button
         data-testid="v3-seed-drawer"
+        flexShrink={0}
         left="-258px"
         width="248px"
         mt="auto"

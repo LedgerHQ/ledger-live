@@ -5,12 +5,13 @@
     "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
     "lib": [
       "es2020",
       "dom"
     ],
+    "types": ["node", "jest"],
     "outDir": "lib",
+    "rootDir": "src",
     "typeRoots": [
       "./node_modules/@types"
     ]

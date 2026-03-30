@@ -32,6 +32,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const energyWeb = useFeature("currencyEnergyWeb");
   const astar = useFeature("currencyAstar");
   const metis = useFeature("currencyMetis");
+  const mantle = useFeature("currencyMantle");
+  const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
@@ -39,6 +41,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
+  const polygonAmoy = useFeature("currencyPolygonAmoy");
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
@@ -70,6 +73,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const sonic = useFeature("currencySonic");
   const sonicBlaze = useFeature("currencySonicBlaze");
   const sui = useFeature("currencySui");
+  const suiTestnet = useFeature("currencySuiTestnet");
   const mina = useFeature("currencyMina");
   const babylon = useFeature("currencyBabylon");
   const seiNetworkEvm = useFeature("currencySeiNetworkEvm");
@@ -121,6 +125,8 @@ export function useCurrenciesUnderFeatureFlag() {
       energy_web: energyWeb,
       astar,
       metis,
+      mantle,
+      mantle_sepolia: mantleSepolia,
       boba,
       moonriver,
       velas_evm: velasEvm,
@@ -131,6 +137,7 @@ export function useCurrenciesUnderFeatureFlag() {
       berachain: berachain,
       hyperevm: hyperevm,
       coreum,
+      polygon_amoy: polygonAmoy,
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
@@ -162,6 +169,7 @@ export function useCurrenciesUnderFeatureFlag() {
       sonic,
       sonic_blaze: sonicBlaze,
       sui,
+      sui_testnet: suiTestnet,
       mina,
       babylon,
       canton_network: canton,
@@ -209,6 +217,8 @@ export function useCurrenciesUnderFeatureFlag() {
       energyWeb,
       astar,
       metis,
+      mantle,
+      mantleSepolia,
       boba,
       moonriver,
       velasEvm,
@@ -219,6 +229,7 @@ export function useCurrenciesUnderFeatureFlag() {
       berachain,
       hyperevm,
       coreum,
+      polygonAmoy,
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
@@ -250,6 +261,7 @@ export function useCurrenciesUnderFeatureFlag() {
       sonic,
       sonicBlaze,
       sui,
+      suiTestnet,
       mina,
       babylon,
       canton,

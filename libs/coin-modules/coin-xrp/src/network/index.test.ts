@@ -247,6 +247,7 @@ describe("getLedgerInfoByIndex", () => {
     const mockLedgerHash = "10046BD9355CCDAE762C82D5FA59B5DC536E465119FCEFA941C2DD6E6BD155FD";
     const mockParentHash = "DAE7F19542D6F87678681E8E7A65D6EBDC522E4338F38932B0444752E6BBCC25";
     jest.mocked(network).mockResolvedValue({
+      status: 200,
       data: {
         result: {
           status: "success",

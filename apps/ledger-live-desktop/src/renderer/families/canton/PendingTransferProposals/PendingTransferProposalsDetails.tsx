@@ -1,110 +1,43 @@
-import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { Divider } from "@ledgerhq/react-ui/index";
 import { Account } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import IconCheck from "~/renderer/icons/Check";
-import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import Text from "~/renderer/components/Text";
 import {
+  GradientHover,
+  HashContainer,
+  OpDetailsData,
   OpDetailsSection,
   OpDetailsTitle,
-  OpDetailsData,
-  HashContainer,
-  GradientHover,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
-import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
-import type { TransferProposalAction } from "./types";
-import { Divider } from "@ledgerhq/react-ui/index";
-
-type PendingProposal = {
-  contract_id: string;
-  sender: string;
-  receiver: string;
-  amount: BigNumber;
-  memo: string;
-  expires_at_micros: number;
-  isExpired: boolean;
-};
+import IconCheck from "~/renderer/icons/Check";
+import IconCross from "~/renderer/icons/Cross";
+import type { ProcessedProposal, TransferProposalAction } from "./types";
+import {
+  usePendingTransferProposalsDetailsViewModel,
+  type PendingTransferProposalsDetailsViewModel,
+} from "./usePendingTransferProposalsDetailsViewModel";
 
 export type PendingTransferProposalsDetailsProps = {
   onClose?: () => void;
   account: Account;
-  parentAccount: Account;
-  contractId: string;
+  proposal: ProcessedProposal | null;
   onOpenModal: (contractId: string, action: TransferProposalAction) => void;
 };
 
-const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsProps> = ({
-  account,
-  contractId,
-  onClose,
-  parentAccount,
-  onOpenModal,
-}) => {
+export function View({
+  proposal,
+  unit,
+  dateFormatted,
+  timeRemaining,
+  handleAction,
+}: PendingTransferProposalsDetailsViewModel) {
   const { t } = useTranslation();
-  const unit = useAccountUnit(account);
-
-  const cantonAccount = account as CantonAccount;
-  const proposal = useMemo<PendingProposal | null>(() => {
-    const pendingTransferProposals = cantonAccount?.cantonResources?.pendingTransferProposals || [];
-    const found = pendingTransferProposals.find(p => p.contract_id === contractId);
-    if (!found) return null;
-
-    const now = Date.now();
-    const isExpired = now > found.expires_at_micros / 1000;
-    return {
-      ...found,
-      isExpired,
-      amount: new BigNumber(found.amount),
-    };
-  }, [cantonAccount, contractId]);
-
-  const handleAcceptOffer = useCallback(
-    (contractId: string) => {
-      onOpenModal(contractId, "accept");
-      // Close drawer after modal state is set
-      setTimeout(() => {
-        onClose?.();
-      }, 0);
-    },
-    [onClose, onOpenModal],
-  );
-
-  const handleRejectOffer = useCallback(
-    (contractId: string) => {
-      onOpenModal(contractId, "reject");
-      // Close drawer after modal state is set
-      setTimeout(() => {
-        onClose?.();
-      }, 0);
-    },
-    [onClose, onOpenModal],
-  );
-
-  const handleWithdrawOffer = useCallback(
-    (contractId: string) => {
-      onOpenModal(contractId, "withdraw");
-      // Close drawer after modal state is set
-      setTimeout(() => {
-        onClose?.();
-      }, 0);
-    },
-    [onClose, onOpenModal],
-  );
-
-  const formatDate = useDateFormatter(dayFormat);
-  const dateFormatted = useMemo(
-    () => formatDate(new Date((proposal?.expires_at_micros ?? 0) / 1000)),
-    [proposal?.expires_at_micros, formatDate],
-  );
-  const timeRemaining = useTimeRemaining(proposal?.expires_at_micros, proposal?.isExpired);
 
   if (!proposal) {
     return (
@@ -114,7 +47,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
     );
   }
 
-  const isIncoming = proposal.sender !== parentAccount.xpub;
+  const { isIncoming } = proposal;
 
   return (
     <Box flow={3} px={20} style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
@@ -201,10 +134,10 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
         </OpDetailsTitle>
         <OpDetailsData>
           <HashContainer>
-            <SplitAddress value={proposal.contract_id} />
+            <SplitAddress value={proposal.contractId} />
           </HashContainer>
           <GradientHover>
-            <CopyWithFeedback text={proposal.contract_id} />
+            <CopyWithFeedback text={proposal.contractId} />
           </GradientHover>
         </OpDetailsData>
       </OpDetailsSection>
@@ -218,11 +151,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
               <Button
                 fullWidth
                 disabled={proposal.isExpired}
-                onClick={() => {
-                  if (!proposal.isExpired) {
-                    handleAcceptOffer(proposal.contract_id);
-                  }
-                }}
+                onClick={() => handleAction("accept")}
               >
                 <Box horizontal alignItems="center" style={{ gap: "8px" }}>
                   {t("families.canton.pendingTransactions.accept")}
@@ -238,7 +167,7 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
                   borderWidth: 1,
                   backgroundColor: "transparent",
                 }}
-                onClick={() => handleRejectOffer(proposal.contract_id)}
+                onClick={() => handleAction("reject")}
               >
                 <Box horizontal alignItems="center" style={{ gap: "8px" }}>
                   {t("families.canton.pendingTransactions.reject")}
@@ -248,16 +177,29 @@ const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsP
           </>
         ) : (
           <Box flex={1}>
-            <Button fullWidth onClick={() => handleWithdrawOffer(proposal.contract_id)}>
+            <Button fullWidth onClick={() => handleAction("withdraw")}>
               <Box horizontal alignItems="center" style={{ gap: "8px" }}>
                 {t("common.cancel")}
-                <IconCheck size={16} />
+                <IconCross size={16} />
               </Box>
             </Button>
           </Box>
         )}
       </Box>
     </Box>
+  );
+}
+
+const PendingTransferProposalsDetails: React.FC<PendingTransferProposalsDetailsProps> = ({
+  account,
+  proposal,
+  onClose,
+  onOpenModal,
+}) => {
+  return (
+    <View
+      {...usePendingTransferProposalsDetailsViewModel({ account, proposal, onOpenModal, onClose })}
+    />
   );
 };
 

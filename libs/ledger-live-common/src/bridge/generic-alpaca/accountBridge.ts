@@ -5,8 +5,8 @@ import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
   updateTransaction,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { getSigner } from "./signer";
 import { genericPrepareTransaction } from "./prepareTransaction";
 import { genericGetTransactionStatus } from "./getTransactionStatus";
@@ -15,10 +15,9 @@ import { createTransaction } from "./createTransaction";
 import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 import { genericSignRawOperation } from "./signRawOperation";
-import type { AlpacaSigner } from "./signer/types";
 import { postSync } from "./postSync";
 import { getValidateAddress } from "./validateAddress";
-import { GenericTransaction } from "./types";
+import type { GenericTransaction, AlpacaSigner } from "./types";
 
 export function getAlpacaAccountBridge(
   network: string,

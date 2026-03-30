@@ -31,12 +31,12 @@ describe("useAnimationData", () => {
     });
   });
 
-  it("should default to dark when theme is not set", () => {
+  it("should follow OS theme when theme is not set (system mode)", () => {
     const { result } = renderHook(() => useAnimationData(), {
       initialState: { settings: { theme: null } },
     });
 
-    // userThemeSelector falls back to "dark" when theme is null (system mode)
-    expect(result.current.themeKey).toBe("dark");
+    // JSDOM matchMedia defaults to prefers-color-scheme: light
+    expect(result.current.themeKey).toBe("light");
   });
 });

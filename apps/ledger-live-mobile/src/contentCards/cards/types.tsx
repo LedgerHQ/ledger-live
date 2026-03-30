@@ -12,6 +12,7 @@ export type ContentCardProps = AnyContentCard & {
 
 export type ContentCardMetadata = {
   id: string;
+  displayedPosition?: number;
 
   actions?: {
     onView?: () => void;

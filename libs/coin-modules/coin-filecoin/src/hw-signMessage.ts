@@ -1,4 +1,4 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { getBufferFromString } from "./bridge/utils";

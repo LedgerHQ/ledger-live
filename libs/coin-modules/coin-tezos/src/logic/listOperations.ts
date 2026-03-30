@@ -83,12 +83,17 @@ function getLedgerOpType(
   return undefined;
 }
 
-// note that "initiator" of APITransactionType is never used in the conversion
 function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType | APIRevealType,
 ): Operation {
   const { hash, sender, id } = operation;
+
+  // For transactions, the initiator (if present) is the fee payer (internal/sub-operations triggered by contracts).
+  // Otherwise, the sender is the fee payer. For delegation/reveal there is no initiator; sender is the fee payer.
+  const feesPayer = isAPITransactionType(operation)
+    ? operation.initiator?.address ?? sender?.address
+    : sender?.address;
 
   let targetAddress = undefined;
   if (isAPITransactionType(operation)) {
@@ -149,6 +154,7 @@ function convertOperation(
       hash: hash ?? "",
       // storageFee for transaction is always present
       fees: BigInt(fee ?? 0),
+      ...(feesPayer ? { feesPayer } : {}),
       block: {
         hash: operation.block,
         height: operation.level,

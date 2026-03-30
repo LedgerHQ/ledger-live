@@ -41,7 +41,7 @@ import { Account } from "@ledgerhq/types-live";
 
 const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
-const StepRecipient = ({
+export const DefaultStepRecipient = ({
   t,
   account,
   parentAccount,
@@ -145,6 +145,20 @@ const StepRecipient = ({
       )}
     </Box>
   );
+};
+
+const StepRecipient = (props: StepProps) => {
+  const { account, parentAccount } = props;
+
+  if (!account) {
+    return null;
+  }
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const Component = specific?.SendStepRecipient ?? DefaultStepRecipient;
+
+  return <Component {...props} />;
 };
 
 export const StepRecipientFooter = ({

@@ -9,11 +9,6 @@ const createCountervaluesAction = <
 ): ActionFunctionAny<Action<CountervaluesHandlersPayloads[T]>> => createAction<P>(type);
 
 export const countervaluesActions = {
-  COUNTERVALUES_MARKETCAP_SET_ERROR: createCountervaluesAction("COUNTERVALUES_MARKETCAP_SET_ERROR"),
-  COUNTERVALUES_MARKETCAP_SET_IDS: createCountervaluesAction("COUNTERVALUES_MARKETCAP_SET_IDS"),
-  COUNTERVALUES_MARKETCAP_SET_LOADING: createCountervaluesAction(
-    "COUNTERVALUES_MARKETCAP_SET_LOADING",
-  ),
   COUNTERVALUES_POLLING_SET_IS_POLLING: createCountervaluesAction(
     "COUNTERVALUES_POLLING_SET_IS_POLLING",
   ),

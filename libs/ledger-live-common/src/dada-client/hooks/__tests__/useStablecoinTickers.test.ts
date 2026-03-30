@@ -11,6 +11,11 @@ jest.mock("../../state-manager/api", () => ({
   useGetAssetsByCategoryQuery: jest.fn(),
 }));
 
+const hookParams = {
+  product: "lld" as const,
+  version: "1.0.0" as const,
+};
+
 const mockUseGetAssetsByCategoryQuery = jest.mocked(useGetAssetsByCategoryQuery);
 
 const defaultMockValues = {
@@ -43,7 +48,9 @@ describe("useStablecoinTickers", () => {
       status: "pending" as const,
     });
 
-    const { result } = renderHook(() => useStablecoinTickers("lld"));
+    const { result } = renderHook(() =>
+      useStablecoinTickers(hookParams.product, hookParams.version),
+    );
 
     expect(result.current.tickers.size).toBe(0);
     expect(result.current.isLoading).toBe(true);
@@ -55,7 +62,9 @@ describe("useStablecoinTickers", () => {
       data: ["usdt", "usdc", "Dai"],
     });
 
-    const { result } = renderHook(() => useStablecoinTickers("lld"));
+    const { result } = renderHook(() =>
+      useStablecoinTickers(hookParams.product, hookParams.version),
+    );
 
     expect(result.current.tickers).toEqual(new Set(["USDT", "USDC", "DAI"]));
     expect(result.current.isLoading).toBe(false);
@@ -64,7 +73,9 @@ describe("useStablecoinTickers", () => {
   it("should return stable reference for empty set across renders", () => {
     mockUseGetAssetsByCategoryQuery.mockReturnValue(defaultMockValues);
 
-    const { result, rerender } = renderHook(() => useStablecoinTickers("lld"));
+    const { result, rerender } = renderHook(() =>
+      useStablecoinTickers(hookParams.product, hookParams.version),
+    );
     const firstRef = result.current.tickers;
 
     rerender();
@@ -72,14 +83,36 @@ describe("useStablecoinTickers", () => {
     expect(result.current.tickers).toBe(firstRef);
   });
 
-  it("should pass AssetCategory.Stablecoin to the query", () => {
+  it("should pass AssetCategory.Stablecoins to the query", () => {
     mockUseGetAssetsByCategoryQuery.mockReturnValue(defaultMockValues);
 
-    renderHook(() => useStablecoinTickers("lld"));
+    renderHook(() => useStablecoinTickers(hookParams.product, hookParams.version));
 
-    expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith({
-      category: AssetCategory.Stablecoin,
-      product: "lld",
+    expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith(
+      {
+        category: AssetCategory.Stablecoins,
+        product: hookParams.product,
+        version: hookParams.version,
+      },
+      { skip: undefined },
+    );
+  });
+
+  it("should skip the query when skip is true", () => {
+    mockUseGetAssetsByCategoryQuery.mockReturnValue({
+      ...defaultMockValues,
+      isUninitialized: true,
     });
+
+    renderHook(() => useStablecoinTickers(hookParams.product, hookParams.version, true));
+
+    expect(mockUseGetAssetsByCategoryQuery).toHaveBeenCalledWith(
+      {
+        category: AssetCategory.Stablecoins,
+        product: hookParams.product,
+        version: hookParams.version,
+      },
+      { skip: true },
+    );
   });
 });

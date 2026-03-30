@@ -4,8 +4,9 @@ import type {
   TransactionCommon,
   TransactionCommonRaw,
 } from "@ledgerhq/types-live";
+import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import BigNumber from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 type NetworkInfo = {
   fees: BigNumber;
@@ -48,7 +49,6 @@ export type GenericTransaction = TransactionCommon & {
   };
   tag?: number | null | undefined;
   nonce?: BigNumber | null | undefined;
-  feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
   data?: Buffer;
@@ -85,7 +85,6 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   };
   tag?: number | null | undefined;
   nonce?: string | null | undefined;
-  feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
   data?: string;
@@ -120,3 +119,19 @@ export interface OperationCommon extends Operation {
 export interface OperationCommonRaw extends OperationRaw {
   extra: Record<string, any>;
 }
+
+export type LegacySigner = {
+  signTransaction: (path: string, rawTxHex: string) => Promise<string>;
+};
+
+export type AlpacaSigner<S = unknown> = {
+  getAddress: GetAddressFn;
+  signMessage?: (message: string) => Promise<string>;
+  context: SignerContext<S>;
+};
+
+export type SignTransactionOptions = {
+  rawTxHex: string;
+  path: string;
+  transaction: Buffer;
+};

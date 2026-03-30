@@ -127,6 +127,7 @@ export const bitcoinPickingStrategy = {
   DEEP_OUTPUTS_FIRST: 0,
   OPTIMIZE_SIZE: 1,
   MERGE_OUTPUTS: 2,
+  CUSTOM: 3,
 };
 export type BitcoinPickingStrategy =
   (typeof bitcoinPickingStrategy)[keyof typeof bitcoinPickingStrategy];
@@ -148,6 +149,7 @@ export type Transaction = TransactionCommon & {
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
   psbt?: string;
+  replaceTxId?: string | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -158,6 +160,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   networkInfo: NetworkInfoRaw | null | undefined;
   opReturnData?: Buffer | undefined;
   changeAddress?: string | undefined;
+  replaceTxId?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon & {
@@ -189,3 +192,6 @@ export type BtcOperation = Operation<BtcOperationExtra>;
 export type ZcashAccount = BitcoinAccount & { privateInfo?: ZcashPrivateInfo };
 
 export type ZcashAccountRaw = BitcoinAccountRaw & { privateInfo?: ZcashPrivateInfoRaw };
+
+// Possible types of "replace by fee" (aka "edit transaction") operations:
+export type EditType = "cancel" | "speedup";

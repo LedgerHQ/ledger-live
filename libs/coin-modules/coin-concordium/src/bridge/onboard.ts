@@ -1,23 +1,29 @@
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
+import {
+  ConcordiumPairingExpiredError,
+  ConcordiumSessionExpiredError,
+  LockedDeviceError,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { CONCORDIUM_CHAIN_IDS, CONCORDIUM_ID_APP_MOBILE_HOST } from "../constants";
+import coinConfig from "../config";
 import {
-  getConcordiumNetwork,
   buildSubmitCredentialData,
   deserializeCredentialDeploymentTransaction,
 } from "../network/utils";
 import { getWalletConnect } from "../network/walletConnect";
 import { getPublicKey, signCredentialDeployment } from "../signer";
-import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
-import type {
-  ConcordiumSigner,
-  ConcordiumOnboardProgress,
-  ConcordiumOnboardResult,
-  ConcordiumPairingProgress,
+import {
+  type ConcordiumSigner,
+  type ConcordiumOnboardProgress,
+  type ConcordiumOnboardResult,
+  type ConcordiumPairingProgress,
+  AccountOnboardStatus,
+  ConcordiumPairingStatus,
 } from "../types";
 import { submitCredential } from "../network/proxyClient";
 
@@ -25,13 +31,13 @@ import { submitCredential } from "../network/proxyClient";
  * Wraps a promise with a 5-minute timeout that automatically cleans up when settled.
  * Prevents timer leaks and unhandled rejections when used in Promise.race().
  */
-const withTimeout = <T>(promise: Promise<T>, errorMessage: string): Promise<T> => {
+const withTimeout = <T>(promise: Promise<T>, error: Error): Promise<T> => {
   const REQUEST_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
   let timeoutId: NodeJS.Timeout;
 
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => {
-      reject(new Error(errorMessage));
+      reject(error);
     }, REQUEST_TIMEOUT_MS);
   });
 
@@ -43,7 +49,7 @@ const withTimeout = <T>(promise: Promise<T>, errorMessage: string): Promise<T> =
 export const buildOnboardAccount =
   (signerContext: SignerContext<ConcordiumSigner>) =>
   (
-    currency: CryptoCurrency,
+    currencyId: string,
     deviceId: string,
     account: Account,
   ): Observable<ConcordiumOnboardProgress | ConcordiumOnboardResult> =>
@@ -63,12 +69,12 @@ export const buildOnboardAccount =
 
           o.next({ status: AccountOnboardStatus.PREPARE });
 
-          const network = getConcordiumNetwork(currency);
+          const network = coinConfig.getCoinConfig(currencyId).networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const session = await walletConnect.getSession(network);
           if (!session) {
-            throw new Error(
+            throw new ConcordiumSessionExpiredError(
               `No active WalletConnect session for ${network}. Please pair with Concordium IDApp first.`,
             );
           }
@@ -123,7 +129,7 @@ export const buildOnboardAccount =
 
           const data = buildSubmitCredentialData(credentialDeploymentTransaction, signature);
 
-          await submitCredential(currency, data);
+          await submitCredential(currencyId, data);
 
           const onboardResult: ConcordiumOnboardResult = {
             account: {
@@ -171,7 +177,7 @@ export const buildOnboardAccount =
 
 export const buildPairWalletConnect =
   () =>
-  (currency: CryptoCurrency, _deviceId: string): Observable<ConcordiumPairingProgress> =>
+  (currencyId: string, _deviceId: string): Observable<ConcordiumPairingProgress> =>
     new Observable(o => {
       async function main() {
         o.next({ status: ConcordiumPairingStatus.INIT });
@@ -182,7 +188,7 @@ export const buildPairWalletConnect =
             throw new Error("WalletConnect context is not available");
           }
 
-          const network = getConcordiumNetwork(currency);
+          const network = coinConfig.getCoinConfig(currencyId).networkType;
           const chainId = CONCORDIUM_CHAIN_IDS[network];
 
           const { uri: encodedUri, approval } = await walletConnect.initiatePairing(
@@ -197,10 +203,7 @@ export const buildPairWalletConnect =
           const walletConnectUri = `${CONCORDIUM_ID_APP_MOBILE_HOST}wallet-connect?encodedUri=${encodedUri}`;
           o.next({ status: ConcordiumPairingStatus.PREPARE, walletConnectUri });
 
-          const session = await withTimeout(
-            approval(),
-            "Pairing approval is expired. Please try again.",
-          );
+          const session = await withTimeout(approval(), new ConcordiumPairingExpiredError());
 
           o.next({ status: ConcordiumPairingStatus.SUCCESS, sessionTopic: session.topic });
         } catch (error: unknown) {

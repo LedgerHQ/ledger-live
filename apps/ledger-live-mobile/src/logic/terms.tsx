@@ -6,7 +6,7 @@ import { urls } from "~/utils/urls";
 import { generalTermsVersionAcceptedSelector } from "~/reducers/settings";
 import { setGeneralTermsVersionAccepted } from "~/actions/settings";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { StoreType } from "~/context/store";
+import type { StoreType } from "~/state-manager/configureStore";
 
 const generalTermsVersionRequired = "2022-05-10";
 

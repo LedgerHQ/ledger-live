@@ -25,7 +25,7 @@ import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 
 // sticky top bar with extra width to cover card boxshadow underneath
@@ -109,7 +109,7 @@ const AppsList = ({
     const params = new URLSearchParams(search);
     const q = params.get("q");
     if (q) setQuery(q);
-    if (inputRef.current && inputRef.current && inputRef.current.focus) inputRef.current.focus();
+    if (inputRef.current?.focus) inputRef.current.focus();
   }, [search]);
   const { installed: installedApps, uninstallQueue } = state;
   const addAccount = useCallback(

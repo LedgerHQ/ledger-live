@@ -1,7 +1,6 @@
 {
   "name": "@ledgerhq/disable-network-setup",
-  "type": "module",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Disable network hook, util for tests",
   "keywords": [
@@ -12,12 +11,13 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "unimported": "unimported",
     "test": "jest --passWithNoTests",
     "coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
@@ -25,6 +25,23 @@
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "ts-node": "10.9.2",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "import": "./lib-es/*.js",
+      "require": "./lib/*.js",
+      "default": "./lib/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

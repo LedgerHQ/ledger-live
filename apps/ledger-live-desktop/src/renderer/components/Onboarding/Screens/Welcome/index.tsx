@@ -1,10 +1,9 @@
 import React from "react";
-import { WelcomeNew as WelcomeNewMVVM } from "LLD/features/Onboarding/screens/WelcomeNew";
-import { WelcomeOld } from "./WelcomeOld";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Welcome as WelcomeMVVM } from "LLD/features/Onboarding/screens/Welcome";
+import { useMarkWalletV4TourSeenAtOnboardingStart } from "LLD/features/WalletV4Tour/hooks/useMarkWalletV4TourSeenAtOnboardingStart";
 
 export function Welcome() {
-  const welcomeScreenVideoCarouselFeature = useFeature("welcomeScreenVideoCarousel");
+  useMarkWalletV4TourSeenAtOnboardingStart();
 
-  return welcomeScreenVideoCarouselFeature?.enabled ? <WelcomeNewMVVM /> : <WelcomeOld />;
+  return <WelcomeMVVM />;
 }

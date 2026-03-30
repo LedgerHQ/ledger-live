@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useRoute } from "@react-navigation/native";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -24,6 +25,7 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { useOpenSwap } from "LLM/features/Swap";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -41,6 +43,7 @@ const iconStake = IconsLegacy.CoinsMedium;
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
+  const route = useRoute();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
@@ -70,6 +73,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
+  const { handleOpenSwap } = useOpenSwap({
+    currency,
+    sourceScreenName: route.name,
+    defaultAccount,
+    defaultParentAccount: parentAccount,
+  });
 
   const { getCanStakeCurrency } = useStake();
   const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
@@ -110,6 +119,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               modalOnDisabledClick: {
                 component: PtxToast,
               },
+              eventProperties: { currency: currency?.ticker },
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -128,6 +138,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               id: "sell",
               label: t("exchange.sell.tabTitle"),
               Icon: iconSell,
+              eventProperties: { currency: currency?.ticker },
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -151,24 +162,16 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(availableOnSwap
               ? [
                   {
+                    id: "swap",
                     label: t("account.swap"),
                     Icon: iconSwap,
                     event: "button_clicked",
                     eventProperties: {
                       ...sharedSwapTracking,
                       button: "swap",
+                      currency: currency?.ticker,
                     },
-                    navigationParams: [
-                      NavigatorName.Swap,
-                      {
-                        screen: ScreenName.Swap,
-                        params: {
-                          defaultAccount,
-                          defaultCurrency: currency,
-                          defaultParentAccount: parentAccount,
-                        },
-                      },
-                    ] as const,
+                    customHandler: handleOpenSwap,
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
                       component: isPtxServiceCtaScreensDisabled
@@ -252,13 +255,13 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     readOnlyModeEnabled,
     availableOnSwap,
     defaultAccount,
-    parentAccount,
     canStakeCurrency,
     assetId,
     stakeLabel,
     accountCurrency?.ticker,
     handleOpenStakeDrawer,
     handleOpenReceiveDrawer,
+    handleOpenSwap,
     handleOpenAddAccountDrawer,
   ]);
 

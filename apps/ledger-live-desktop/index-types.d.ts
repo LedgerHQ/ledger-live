@@ -1,11 +1,20 @@
+/// <reference types="jest" />
+/// <reference types="jest-dom" />
+
 declare const INDEX_URL: string;
 declare const __SENTRY_URL__: string;
+declare const __DATADOG_APPLICATION_ID__: string | null;
+declare const __DATADOG_CLIENT_TOKEN__: string | null;
+declare const __DATADOG_SITE__: string | null;
+declare const __DATADOG_ENV__: string | null;
 declare const __APP_VERSION__: string;
 declare const __GIT_REVISION__: string;
 declare const __PRERELEASE__: string;
 declare const __CHANNEL__: string;
 declare const __static: string;
 declare const __DEV__: boolean;
+
+declare module "*.css";
 
 declare module "*.svg";
 declare module "*.png";
@@ -53,7 +62,7 @@ interface Window {
     appDirname: string;
     appLoaded: () => void;
     reloadRenderer: () => void;
-    openWindow: (id: number) => void;
+    openWindow: (id: number, domains?: string[]) => void;
   };
 
   // for debugging purposes
@@ -106,3 +115,10 @@ interface Window {
 // Add variables to the global scope (`declare const` does not seem to work here):
 
 declare var api: Window["api"] | undefined; // eslint-disable-line no-var
+
+// Allow custom properties on global/globalThis (tests, AppGeoBlocker, etc.)
+declare global {
+  interface GlobalThis {
+    [key: string]: any;
+  }
+}

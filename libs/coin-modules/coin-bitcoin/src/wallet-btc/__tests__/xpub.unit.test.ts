@@ -1,29 +1,31 @@
 import { BigNumber } from "bignumber.js";
-
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-
 import Xpub from "../xpub";
 import { Output } from "../storage/types";
 import { DerivationModes } from "../types";
-import BitcoinLikeExplorer from "../explorer";
 
 import { mockCrypto, mockStorage } from "./fixtures/common.fixtures";
+import { IExplorer } from "../explorer/types";
 
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
   computeDustAmount: jest.fn().mockReturnValue(50),
 }));
 
+const createMockExplorer = () => ({
+  getTxsSinceBlockheight: jest.fn().mockResolvedValue({ txs: [], nextPageToken: null }),
+  getTxHex: jest.fn(),
+});
+
 describe("Xpub", () => {
   let xpub: Xpub;
+  let mockExplorer: ReturnType<typeof createMockExplorer>;
   const DERIVATION_MODE = DerivationModes.TAPROOT;
-  const bitcoinCryptoCurrency = getCryptoCurrencyById("bitcoin");
-  const mockExplorer = new BitcoinLikeExplorer({ cryptoCurrency: bitcoinCryptoCurrency });
 
   beforeEach(() => {
+    mockExplorer = createMockExplorer();
     xpub = new Xpub({
       storage: mockStorage,
-      explorer: mockExplorer,
+      explorer: mockExplorer as unknown as IExplorer,
       crypto: mockCrypto,
       xpub: "test-xpub",
       derivationMode: DERIVATION_MODE,
@@ -135,8 +137,21 @@ describe("Xpub", () => {
 
   it("should build transaction correctly", async () => {
     mockCrypto.toOutputScript = jest.fn().mockReturnValue("outputScript");
-    mockExplorer.getTxHex = jest.fn().mockResolvedValue("txHex");
+    mockExplorer.getTxHex.mockResolvedValue("txHex");
     mockStorage.getTx = jest.fn().mockResolvedValue({ account: 0, index: 0 });
+    mockStorage.getUniquesAddresses.mockReturnValue([
+      { address: "address1", account: 0, index: 0 },
+    ]);
+    mockStorage.getAddressUnspentUtxos.mockReturnValue([
+      {
+        output_hash: "hash2",
+        output_index: 0,
+        value: "1500",
+        address: "address1",
+        block_height: 1,
+        rbf: false,
+      },
+    ]);
 
     const tx = await xpub.buildTx({
       destAddress: "destinationAddress",

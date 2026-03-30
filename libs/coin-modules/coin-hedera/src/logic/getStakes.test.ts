@@ -13,8 +13,10 @@ describe("getStakes", () => {
   it("should return empty stakes when account is not delegated to any node", async () => {
     mockGetAccount.mockResolvedValue({
       account: mockAddress,
-      balance: { balance: "1000000000" },
-      pending_reward: "0",
+      max_automatic_token_associations: 0,
+      evm_address: "",
+      balance: { balance: 1000000000, timestamp: "0", tokens: [] },
+      pending_reward: 0,
       staked_node_id: null,
     });
 
@@ -23,10 +25,15 @@ describe("getStakes", () => {
         {
           node_id: 1,
           node_account_id: "0.0.3",
-          stake: "100000000000",
-          max_stake: "500000000000",
+          description: "",
+          stake: 100000000000,
+          max_stake: 500000000000,
+          min_stake: 0,
+          stake_rewarded: 0,
+          reward_rate_start: 0,
         },
       ],
+      nextCursor: null,
     });
 
     const result = await getStakes(mockAddress);
@@ -39,13 +46,15 @@ describe("getStakes", () => {
   });
 
   it("should return inactive stake when delegated node is not found", async () => {
-    const balance = "1000000000";
-    const pendingReward = "100000000";
+    const balance = 1000000000;
+    const pendingReward = 100000000;
     const stakedNodeId = 999;
 
     mockGetAccount.mockResolvedValue({
       account: mockAddress,
-      balance: { balance },
+      max_automatic_token_associations: 0,
+      evm_address: "",
+      balance: { balance, timestamp: "0", tokens: [] },
       pending_reward: pendingReward,
       staked_node_id: stakedNodeId,
     });
@@ -55,10 +64,15 @@ describe("getStakes", () => {
         {
           node_id: 1,
           node_account_id: "0.0.3",
-          stake: "100000000000",
-          max_stake: "500000000000",
+          description: "",
+          stake: 100000000000,
+          max_stake: 500000000000,
+          min_stake: 0,
+          stake_rewarded: 0,
+          reward_rate_start: 0,
         },
       ],
+      nextCursor: null,
     });
 
     const result = await getStakes(mockAddress);
@@ -81,14 +95,16 @@ describe("getStakes", () => {
   });
 
   it("should return active stake for delegated account", async () => {
-    const balance = "5000000000";
-    const pendingReward = "100000000";
+    const balance = 5000000000;
+    const pendingReward = 100000000;
     const nodeId = 1;
     const nodeAccountId = "0.0.3";
 
     mockGetAccount.mockResolvedValue({
       account: mockAddress,
-      balance: { balance },
+      max_automatic_token_associations: 0,
+      evm_address: "",
+      balance: { balance, timestamp: "0", tokens: [] },
       pending_reward: pendingReward,
       staked_node_id: nodeId,
     });
@@ -98,10 +114,15 @@ describe("getStakes", () => {
         {
           node_id: nodeId,
           node_account_id: nodeAccountId,
-          stake: "100000000000",
-          max_stake: "500000000000",
+          description: "",
+          stake: 100000000000,
+          max_stake: 500000000000,
+          min_stake: 0,
+          stake_rewarded: 0,
+          reward_rate_start: 0,
         },
       ],
+      nextCursor: null,
     });
 
     const result = await getStakes(mockAddress);
@@ -129,8 +150,10 @@ describe("getStakes", () => {
 
     mockGetAccount.mockResolvedValue({
       account: mockAddress,
-      balance: { balance: "1000000000" },
-      pending_reward: "50000000",
+      max_automatic_token_associations: 0,
+      evm_address: "",
+      balance: { balance: 1000000000, timestamp: "0", tokens: [] },
+      pending_reward: 50000000,
       staked_node_id: nodeId,
     });
 
@@ -139,10 +162,15 @@ describe("getStakes", () => {
         {
           node_id: nodeId,
           node_account_id: "0.0.3",
-          stake: "500000000000",
-          max_stake: "500000000000",
+          description: "",
+          stake: 500000000000,
+          max_stake: 500000000000,
+          min_stake: 0,
+          stake_rewarded: 0,
+          reward_rate_start: 0,
         },
       ],
+      nextCursor: null,
     });
 
     const result = await getStakes(mockAddress);

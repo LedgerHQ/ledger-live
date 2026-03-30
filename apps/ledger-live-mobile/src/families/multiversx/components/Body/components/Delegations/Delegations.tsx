@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { View } from "react-native";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 

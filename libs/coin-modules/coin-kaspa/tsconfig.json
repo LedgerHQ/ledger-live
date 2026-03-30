@@ -5,16 +5,10 @@
     "noUnusedParameters": true,
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2022", "dom"],
+    "types": ["node", "jest"],
     "outDir": "lib",
-    "rootDir": "src",
-    "module": "NodeNext"
+    "rootDir": "src"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

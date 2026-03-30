@@ -35,7 +35,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-
       - name: generate token
         id: generate-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
@@ -59,7 +58,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: ruby/setup-ruby@v1
         with:
@@ -69,7 +69,7 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
       - name: build libs
-        run: pnpm run build:libs
+        run: pnpm turbo build --filter="./libs/**"
 
       - name: authenticate with npm
         uses: actions/setup-node@v4

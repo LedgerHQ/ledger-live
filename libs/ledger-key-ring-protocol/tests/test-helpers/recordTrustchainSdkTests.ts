@@ -39,13 +39,15 @@ export async function recordTestTrustchainSdk(
 
     // passthrough all success cases for the Ledger Sync coin app to accept all.
     const sub = device.transport.automationEvents.subscribe(event => {
-      const approveOnceIndex = approveOnceOnText.findIndex(t => event.text.trim() == t);
+      const text =
+        typeof event.text === "string" ? event.text.trim() : String(event.text ?? "").trim();
+      const approveOnceIndex = approveOnceOnText.findIndex(t => text == t);
       if (approveOnceIndex > -1) {
         approveOnceOnText.splice(approveOnceIndex, 1);
         buttonClicksPromises.push(device.transport.button("both"));
-      } else if (goNextOnText.some(t => event.text.trim() == t)) {
+      } else if (goNextOnText.some(t => text == t)) {
         buttonClicksPromises.push(device.transport.button("right"));
-      } else if (approveOnText.some(t => event.text.trim() == t)) {
+      } else if (approveOnText.some(t => text == t)) {
         buttonClicksPromises.push(device.transport.button("both"));
       }
     });

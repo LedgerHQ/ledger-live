@@ -65,7 +65,7 @@ import {
   setOnboardingSyncFlow,
 } from "~/renderer/reducers/onboarding";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/EnableSync";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -285,8 +285,10 @@ function useRedirectToPortfolio({
   useCase: OnboardingUseCase;
 }) {
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
+  const hasRedirected = useRef(false);
   useEffect(() => {
-    if (enabled) {
+    if (enabled && !hasRedirected.current) {
+      hasRedirected.current = true;
       /**
        * There is a lag if we call navigate("/") directly.
        * To improve the UX in that situation, we have to first commit a "loading"

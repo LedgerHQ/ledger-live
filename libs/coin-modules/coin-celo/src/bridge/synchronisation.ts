@@ -1,19 +1,25 @@
-import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "../network/sdk";
-import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { getEnv } from "@ledgerhq/live-env";
-import { CeloAccount } from "../types/types";
-import { celoKit } from "../network/sdk";
-import { BigNumber } from "bignumber.js";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
-import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
-import { getTokenFromAsset } from "@ledgerhq/coin-evm/logic/index";
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/coin-evm/logic";
-import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
+import {
+  encodeTokenAccountId,
+  emptyHistoryCache,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
+import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
-import type { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type {
+  GetAccountShape,
+  AccountShapeInfo,
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getEnv } from "@ledgerhq/live-env";
 import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { celoKit } from "../network/sdk";
+import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "../network/sdk";
+import { CeloAccount } from "../types/types";
+import { getTokenFromAsset } from "./getTokenFromAsset";
 
 const kit = celoKit();
 

@@ -2,8 +2,11 @@ import React, { useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { EvmGasOptionsSyncPlugin } from "./plugins/EvmGasOptionsSyncPlugin";
 
 type AmountPluginProps = Readonly<{

@@ -1,9 +1,9 @@
-import invariant from "invariant";
 import * as sdk from "@hashgraph/sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
-import { craftTransaction } from "./craftTransaction";
 import type { HederaMemo, HederaTxData } from "../types";
+import { craftTransaction } from "./craftTransaction";
 
 describe("craftTransaction", () => {
   it("should accept account id or long zero EVM address when crafting ERC20 token transfer transaction", async () => {
@@ -27,7 +27,10 @@ describe("craftTransaction", () => {
         type: "erc20",
         gasLimit: BigInt(100000),
       },
-    } satisfies Omit<TransactionIntent<HederaMemo, HederaTxData>, "recipient">;
+    } satisfies Omit<
+      TransactionIntent<HederaMemo, Extract<HederaTxData, { type: "erc20" }>>,
+      "recipient"
+    >;
 
     const txIntentAccountId = {
       ...txIntent,
@@ -77,7 +80,10 @@ describe("craftTransaction", () => {
         type: "erc20",
         gasLimit: BigInt(100000),
       },
-    } satisfies Omit<TransactionIntent<HederaMemo, HederaTxData>, "recipient">;
+    } satisfies Omit<
+      TransactionIntent<HederaMemo, Extract<HederaTxData, { type: "erc20" }>>,
+      "recipient"
+    >;
 
     const txIntentAccountId = {
       ...txIntent,

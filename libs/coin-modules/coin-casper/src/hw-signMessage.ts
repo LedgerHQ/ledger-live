@@ -1,8 +1,8 @@
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { CasperSigner } from "./types";
-import { getBufferFromString } from "./common-logic/utils";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
+import { getBufferFromString } from "./common-logic/utils";
+import { CasperSigner } from "./types";
 
 export const signMessage =
   (signerContext: SignerContext<CasperSigner>) =>

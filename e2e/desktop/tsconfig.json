@@ -1,9 +1,9 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["../../apps/ledger-live-desktop/src/*"],
+      "*": ["./*"],
+      "~/*": ["../../apps/ledger-live-desktop/src/*"]
     }
   },
   "include": ["./**/*.ts", "../../apps/ledger-live-desktop/index-types.d.ts"],

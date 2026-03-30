@@ -1,11 +1,14 @@
-import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  findSubAccountById,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
 
 /**
- * Return weather an operation is editable or not.
+ * Return whether an operation is editable or not.
  */
 export const isEditableOperation = (
   account: Account,
@@ -39,7 +42,7 @@ export const isEditableOperation = (
 };
 
 /**
- * Return weather an operation is considered stuck or not.
+ * Return whether an operation is considered stuck or not.
  */
 export const isStuckOperation = (operation: Operation): boolean => {
   /**

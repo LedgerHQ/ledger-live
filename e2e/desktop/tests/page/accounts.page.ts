@@ -2,28 +2,40 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class AccountsPage extends AppPage {
-  private accountsTitle = this.page.locator("#accounts-title");
+  private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
+  private accountsTitleLegacy = this.page.locator("#accounts-title");
+  private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
+
   private accountComponent = (accountName: string) =>
     this.page.getByTestId(`account-component-${accountName}`);
+
   private tokenRow = (parentName: string, childCurrency: Currency) =>
     this.accountComponent(parentName)
       .locator(`xpath=following::div`)
       .getByTestId(`token-row-${childCurrency.ticker}`);
+
   private tokenRowBalance = (parentName: string, childCurrency: Currency) =>
     this.tokenRow(parentName, childCurrency).getByText(`${childCurrency.ticker}`);
+
   private showTokensButton = (parentName: string) =>
     this.accountComponent(parentName).locator("xpath=following-sibling::button").first();
-  private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
+
   // Accounts context menu
   private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
+
   private syncAccountButton = (accountName: string) =>
     this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
 
   @step("Wait for Accounts title to be visible")
   async expectAccountsTitleVisibility() {
-    await expect(this.accountsTitle).toBeVisible();
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.accountsTitle
+      : this.accountsTitleLegacy;
+
+    await expect(selector).toBeVisible();
   }
 
   @step("Open Account $0")

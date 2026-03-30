@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";

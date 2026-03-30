@@ -10,14 +10,14 @@ import type {
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
-import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/formatters";
+import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/ledger-wallet-framework/formatters";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
-} from "@ledgerhq/coin-framework/serialization";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/serialization";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import {
@@ -60,6 +60,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     },
     feesStrategy: tr.feesStrategy,
     opReturnData: tr.opReturnData,
+    replaceTxId: tr.replaceTxId,
   };
 };
 
@@ -77,6 +78,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     },
     feesStrategy: t.feesStrategy,
     opReturnData: t.opReturnData,
+    replaceTxId: t.replaceTxId,
   };
 };
 

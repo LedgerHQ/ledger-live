@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { setSuiPreloadData } from "../network/preload-data";
 import { getValidators } from "../network/sdk";
 import type { SuiPreloadData } from "../types";
@@ -8,8 +9,8 @@ export const getPreloadStrategy = () => ({
   preloadMaxAge: PRELOAD_MAX_AGE,
 });
 
-export const preload = async (): Promise<SuiPreloadData> => {
-  const validators = await getValidators();
+export const preload = async (currency: CryptoCurrency): Promise<SuiPreloadData> => {
+  const validators = await getValidators(currency.id);
   return { validators, tokens: [] };
 };
 

@@ -23,7 +23,7 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
-import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 
 export type DAError =
   | GetAddressDAError
@@ -118,14 +118,24 @@ export class DmkSignerEth implements EvmSigner {
     path: string,
     boolDisplay?: boolean,
     boolChaincode?: boolean,
-    _chainId?: string,
+    chainId?: string,
   ): Promise<EvmAddress> {
+    let parsedChainId: number | undefined;
+    if (chainId !== undefined) {
+      const numericChainId = Number(chainId);
+      parsedChainId =
+        !Number.isFinite(numericChainId) || !Number.isInteger(numericChainId) || numericChainId <= 0
+          ? undefined
+          : numericChainId;
+    }
+
     const result = this._mapResult(
       await lastValueFrom(
         this.signer.getAddress(path, {
           checkOnDevice: boolDisplay,
           returnChainCode: boolChaincode,
           skipOpenApp: true,
+          chainId: parsedChainId,
         }).observable,
       ),
     );

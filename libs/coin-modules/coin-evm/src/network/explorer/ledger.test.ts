@@ -1,6 +1,6 @@
 import { AssertionError, fail } from "assert";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -270,9 +270,7 @@ describe("EVM Family", () => {
               senders: [eip55.encode(coinOperation1.from)],
               transactionSequenceNumber: new BigNumber(coinOperation1.nonce_value),
               type: "FEES",
-              value: new BigNumber(coinOperation1.value).plus(
-                new BigNumber(coinOperation1.gas_used).times(coinOperation1.gas_price),
-              ),
+              value: new BigNumber(coinOperation1.value),
             },
             {
               id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
@@ -291,9 +289,7 @@ describe("EVM Family", () => {
               senders: [eip55.encode(coinOperation2.from)],
               transactionSequenceNumber: new BigNumber(coinOperation2.nonce_value),
               type: "OUT",
-              value: new BigNumber(coinOperation2.value).plus(
-                new BigNumber(coinOperation2.gas_used).times(coinOperation2.gas_price),
-              ),
+              value: new BigNumber(coinOperation2.value),
             },
             {
               id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",

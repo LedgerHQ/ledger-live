@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
-import Config from "react-native-config";
 import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
@@ -27,17 +26,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import {
-  BoxedIcon,
-  Flex,
-  Icons,
-  IconsLegacy,
-  InfiniteLoader,
-  Link,
-  Log,
-  Tag,
-  Text,
-} from "@ledgerhq/native-ui";
+import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -63,6 +53,10 @@ import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { BleForgetDeviceIllustration } from "../BleDevicePairingFlow/BleDevicePairingContent/BleForgetDeviceIllustration";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import {
+  DeviceDeprecationScreen,
+  DeviceDeprecationScreens,
+} from "./Screen/DeviceDeprecationScreen";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -530,6 +524,7 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  currencyName = "",
   hasExportLogButton,
 }: RawProps & {
   navigation?: NativeStackNavigationProp<RootStackParamList>;
@@ -539,6 +534,7 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  currencyName?: string;
   hasExportLogButton?: boolean;
 }) {
   if (error instanceof LockedDeviceError) {
@@ -550,6 +546,14 @@ export function renderError({
       <Flex flex={1}>
         <BleForgetDeviceIllustration productName={productName} onRetry={() => onRetry?.()} />
       </Flex>
+    );
+  } else if (error.message === "device-deprecation") {
+    return (
+      <DeviceDeprecationScreen
+        coinName={currencyName}
+        productName={getDeviceModel(device!.modelId)?.productName}
+        screenName={DeviceDeprecationScreens.errorScreen}
+      />
     );
   } else {
     const renderErrorButtons = (error: Error, managerAppName?: string) => {
@@ -943,7 +947,7 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={!!Config.DETOX} testID="device-action-loading" />
+        <InfiniteLoader testID="device-action-loading" />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}

@@ -1,3 +1,4 @@
+import { isValidAddress } from "@celo/utils/lib/address";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -6,14 +7,13 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { BigNumber } from "bignumber.js";
+import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { isValidAddress } from "@celo/utils/lib/address";
-import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { CeloAccount, Transaction, TransactionStatus } from "../types";
+import { BigNumber } from "bignumber.js";
 import { CeloAllFundsWarning } from "../errors";
+import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoKit } from "../network/sdk";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { CeloAccount, Transaction, TransactionStatus } from "../types";
 
 const kit = celoKit();
 

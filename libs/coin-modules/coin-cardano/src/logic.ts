@@ -1,3 +1,17 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { OperationType } from "@ledgerhq/types-live";
+import { Bip32PublicKey } from "@stricahq/bip32ed25519";
+import {
+  utils as TyphonUtils,
+  types as TyphonTypes,
+  address as TyphonAddress,
+} from "@stricahq/typhonjs";
+import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
+import bech32 from "bech32";
+import BigNumber from "bignumber.js";
+import groupBy from "lodash/groupBy";
+import { APITransaction } from "./api/api-types";
 import {
   CARDANO_COIN_TYPE,
   CARDANO_PURPOSE,
@@ -5,13 +19,7 @@ import {
   STAKING_ADDRESS_INDEX,
   TTL_GAP,
 } from "./constants";
-
-import {
-  utils as TyphonUtils,
-  types as TyphonTypes,
-  address as TyphonAddress,
-} from "@stricahq/typhonjs";
-
+import { getNetworkParameters } from "./networks";
 import {
   CardanoAccount,
   BipPath,
@@ -22,16 +30,6 @@ import {
   Token,
   ProtocolParams,
 } from "./types";
-import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import BigNumber from "bignumber.js";
-import { getNetworkParameters } from "./networks";
-import groupBy from "lodash/groupBy";
-import { APITransaction } from "./api/api-types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
-import type { OperationType } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import bech32 from "bech32";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano

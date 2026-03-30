@@ -33,6 +33,7 @@ describe("getTransactionStatus", () => {
       xpub: "test-party-id",
     }),
     cantonResources: {
+      isOnboarded: true,
       pendingTransferProposals: [],
       publicKey: "test-public-key",
       instrumentUtxoCounts: {
@@ -119,7 +120,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: mockAccount.balance
-          .minus(new BigNumber(mockCoinConfig.getCoinConfig().minReserve))
+          .minus(new BigNumber(String(mockCoinConfig.getCoinConfig().minReserve ?? 0)))
           .plus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
@@ -134,7 +135,7 @@ describe("getTransactionStatus", () => {
     it("should return NotEnoughBalanceBecauseDestinationNotCreated error when amount is below reserve", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(mockCoinConfig.getCoinConfig().minReserve).minus(1),
+        amount: new BigNumber(String(mockCoinConfig.getCoinConfig().minReserve ?? 0)).minus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
@@ -310,8 +311,9 @@ describe("getTransactionStatus", () => {
 
       const result = await getTransactionStatus(accountWithTooManyUtxos, transaction);
 
-      expect(result.warnings.tooManyUtxos).toBeDefined();
-      expect(result.warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosCritical);
+      expect(result.warnings).toMatchObject({
+        tooManyUtxos: new TooManyUtxosCritical(),
+      });
     });
 
     it("should show warning when UTXO count exceeds TO_MANY_UTXOS_WARNING_COUNT", async () => {
@@ -335,11 +337,9 @@ describe("getTransactionStatus", () => {
 
       const result = await getTransactionStatus(accountWithManyUtxos, transaction);
 
-      expect(result.warnings.tooManyUtxos).toBeDefined();
-      expect(result.warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosWarning);
-      expect(result.warnings.tooManyUtxos?.message).toContain(
-        "families.canton.tooManyUtxos.warning",
-      );
+      expect(result.warnings).toMatchObject({
+        tooManyUtxos: new TooManyUtxosWarning("families.canton.tooManyUtxos.warning"),
+      });
     });
 
     it("should not show warning or error when UTXO count is less than TO_MANY_UTXOS_WARNING_COUNT", async () => {

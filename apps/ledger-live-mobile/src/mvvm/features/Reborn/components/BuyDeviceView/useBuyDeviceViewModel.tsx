@@ -1,8 +1,6 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
-import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
 import { setOnboardingHasDevice } from "~/actions/settings";
@@ -16,8 +14,8 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { ScreenName, NavigatorName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { urls } from "~/utils/urls";
 import { useRebornBuyDeviceDrawerController } from "../../hooks/useRebornBuyDeviceDrawerController";
+import useBuyDeviceAction from "../../hooks/useBuyDeviceAction";
 
 type NavigationProp = BaseNavigationComposite<
   | StackNavigatorNavigation<BuyDeviceNavigatorParamList, ScreenName.GetDevice>
@@ -41,10 +39,10 @@ const useBuyDeviceViewModel = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
-  const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const dispatch = useDispatch();
   const isInOnboarding = getIsBaseOnboarding(navigation);
+  const handleBuyDeviceAction = useBuyDeviceAction();
 
   const { closeDrawer } = useRebornBuyDeviceDrawerController();
 
@@ -67,15 +65,9 @@ const useBuyDeviceViewModel = () => {
   }, [isInOnboarding, dispatch, navigation, readOnlyModeEnabled, closeDrawer]);
 
   const buyLedger = useCallback(() => {
-    if (buyDeviceFromLive?.enabled) {
-      navigation.navigate(NavigatorName.BuyDevice, {
-        screen: ScreenName.PurchaseDevice,
-      });
-    } else {
-      Linking.openURL(urls.buyFlex);
-    }
+    handleBuyDeviceAction();
     closeDrawer();
-  }, [buyDeviceFromLive?.enabled, navigation, closeDrawer]);
+  }, [handleBuyDeviceAction, closeDrawer]);
 
   const videoMounted = !useIsAppInBackground();
 

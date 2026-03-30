@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Body, { StepId } from "./Body";
@@ -12,7 +12,8 @@ import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { closeModal } from "~/renderer/actions/modals";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ReceiveOptionsDialog } from "LLD/features/Receive";
 import { GlobalModalData } from "../types";
@@ -108,6 +109,10 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   );
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setOriginFlow(HOOKS_TRACKING_LOCATIONS.receiveModal);
+  }, []);
 
   const openAddAccounts = useCallback(() => {
     openAssetFlow();

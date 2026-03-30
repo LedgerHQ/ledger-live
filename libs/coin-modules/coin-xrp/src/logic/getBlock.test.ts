@@ -728,4 +728,50 @@ describe("getBlock", () => {
     expect(result.transactions[0].failed).toBe(false);
     expect(result.transactions[0].operations).toEqual([]);
   });
+
+  it("does not include feesPayer when tx Account is missing or empty", async () => {
+    // Given
+    mockGetLedgerByIndex.mockResolvedValue({
+      ledger_index: 12345,
+      ledger: {
+        ledger_hash: "HASH",
+        close_time_iso: "2024-06-01T12:34:56Z",
+        transactions: [
+          {
+            hash: "TX_ACCOUNT_MISSING",
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: "10",
+            },
+            meta: {
+              TransactionResult: "tesSUCCESS",
+              AffectedNodes: [],
+            },
+            validated: true,
+          },
+          {
+            hash: "TX_ACCOUNT_EMPTY",
+            tx_json: {
+              TransactionType: "Payment",
+              Account: "",
+              Fee: "10",
+            },
+            meta: {
+              TransactionResult: "tesSUCCESS",
+              AffectedNodes: [],
+            },
+            validated: true,
+          },
+        ],
+      },
+    });
+
+    // When
+    const result = await getBlock(12345);
+
+    // Then
+    expect(result.transactions).toHaveLength(2);
+    expect(result.transactions[0]).not.toHaveProperty("feesPayer");
+    expect(result.transactions[1]).not.toHaveProperty("feesPayer");
+  });
 });

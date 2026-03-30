@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { AddressInput, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   SEND_FLOW_STEP,
   type SendFlowBusinessContext,
@@ -53,7 +53,8 @@ export function SendHeader() {
     memoType: uiConfig.memoType,
     memoTypeOptions,
     onMemoChange: memo => {
-      transaction.setRecipient({ ...state.recipient, memo });
+      const address = state.recipient?.address ?? recipientSearch.value;
+      transaction.setRecipient({ ...state.recipient, address, memo });
     },
     onMemoSkip: () => {
       navigation.goToNextStep();
@@ -101,9 +102,10 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="-mt-12 mb-12 px-24"
+          className="mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
+          autoFocus
           value={addressInputValue}
           onChange={e => recipientSearch.setValue(e.target.value)}
           onClear={recipientSearch.clear}

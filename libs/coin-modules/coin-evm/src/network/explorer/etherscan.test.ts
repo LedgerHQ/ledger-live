@@ -17,7 +17,7 @@ import {
   PagingState,
 } from "../../adapters";
 import { getCoinConfig } from "../../config";
-import { EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
@@ -64,8 +64,8 @@ const createFetchWithLimit =
       address: account.freshAddress,
       accountId: account.id,
       fromBlock: 0,
-      limit,
       sort,
+      ...(limit !== undefined ? { limit } : {}),
     });
   };
 
@@ -194,6 +194,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -235,8 +236,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
-          endBlock: undefined,
+          startblock: 0,
+          endblock: undefined,
         },
       });
     });
@@ -272,8 +273,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: undefined,
+          startblock: 50,
+          endblock: undefined,
         },
       });
     });
@@ -310,8 +311,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -426,6 +427,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -469,8 +471,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
-          endBlock: undefined,
+          startblock: 0,
+          endblock: undefined,
         },
       });
     });
@@ -508,8 +510,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: undefined,
+          startblock: 50,
+          endblock: undefined,
         },
       });
     });
@@ -548,8 +550,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -664,6 +666,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -707,7 +710,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
+          startblock: 0,
         },
       });
     });
@@ -745,7 +748,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
+          startblock: 50,
         },
       });
     });
@@ -784,8 +787,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -900,6 +903,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -943,7 +947,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
+          startblock: 0,
         },
       });
     });
@@ -981,7 +985,7 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
+          startblock: 50,
         },
       });
     });
@@ -1020,8 +1024,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -1149,8 +1153,8 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
-          limit,
           sort,
+          ...(limit !== undefined ? { limit } : {}),
         });
       };
 
@@ -1269,6 +1273,7 @@ describe("EVM Family", () => {
           address: account.freshAddress,
           accountId: account.id,
           fromBlock: 0,
+          sort: "desc",
         });
         fail("Promise should have been rejected");
       } catch (e) {
@@ -1312,8 +1317,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 0,
-          endBlock: undefined,
+          startblock: 0,
+          endblock: undefined,
         },
       });
     });
@@ -1351,8 +1356,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: undefined,
+          startblock: 50,
+          endblock: undefined,
         },
       });
     });
@@ -1391,8 +1396,8 @@ describe("EVM Family", () => {
           tag: "latest",
           page: 1,
           sort: "desc",
-          startBlock: 50,
-          endBlock: 100,
+          startblock: 50,
+          endblock: 100,
         },
       });
     });
@@ -1497,6 +1502,214 @@ describe("EVM Family", () => {
     });
   });
 
+  describe("getInternalTransactionsByBlock", () => {
+    const blockHeight = 12345;
+    beforeEach(() => {
+      jest.mocked(axios.request).mockClear();
+    });
+    const internalTxResult = [
+      {
+        blockNumber: "12345",
+        timeStamp: "1635100060",
+        hash: "0xabc",
+        from: "0xfrom",
+        to: "0xto",
+        value: "1000",
+        contractAddress: "",
+        input: "",
+        type: "call",
+        gas: "21000",
+        gasUsed: "21000",
+        traceId: "0",
+        isError: "0",
+        errCode: "",
+      },
+    ];
+
+    it("calls etherscan API with correct URL and params for etherscan explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      const axiosSpy = jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "1", message: "OK", result: internalTxResult },
+      });
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].hash).toBe("0xabc");
+      expect(axiosSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://api.etherscan.io?module=account&action=txlistinternal",
+          params: expect.objectContaining({
+            startblock: blockHeight,
+            endblock: blockHeight,
+            page: 1,
+            offset: 10000,
+            sort: "asc",
+          }),
+        }),
+      );
+    });
+
+    it("calls API with correct params for blockscout explorer type", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "blockscout", uri: "https://blockscout.com/api" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      const axiosSpy = jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "1", message: "OK", result: internalTxResult },
+      });
+
+      await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(axiosSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: "https://blockscout.com/api?module=account&action=txlistinternal",
+          params: expect.objectContaining({
+            startblock: blockHeight,
+            endblock: blockHeight,
+            page: 1,
+            offset: 10000,
+            sort: "asc",
+          }),
+        }),
+      );
+    });
+
+    it.each([
+      ["ledger", { type: "ledger", explorerId: "eth" }],
+      ["none", { type: "none" }],
+    ] as const)("returns empty array for %s explorer type", async (_, explorer) => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer,
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toEqual([]);
+      expect(axios.request).not.toHaveBeenCalled();
+    });
+
+    it("returns empty array when API returns non-array result", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "1", message: "OK", result: "No transactions found" },
+      });
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toEqual([]);
+    });
+
+    it("throws when API returns blockscout-style no internal transactions response", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "blockscout", uri: "https://blockscout.com/api" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: {
+          status: "0",
+          message: "No internal transactions found",
+          result: [],
+        },
+      });
+
+      await expect(
+        ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight),
+      ).rejects.toThrow(EtherscanAPIError);
+    });
+
+    it("loops over pagination until all internal txs are drained", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+
+      const PAGE_SIZE = 10000;
+      const fullPage = Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        ...internalTxResult[0],
+        hash: `0x${i.toString(16).padStart(64, "0")}`,
+        traceId: String(i),
+      }));
+      const lastPage = [
+        { ...internalTxResult[0], hash: "0xlast1", traceId: "0" },
+        { ...internalTxResult[0], hash: "0xlast2", traceId: "1" },
+      ];
+
+      const axiosSpy = jest
+        .spyOn(axios, "request")
+        .mockResolvedValueOnce({
+          data: { status: "1", message: "OK", result: fullPage },
+        })
+        .mockResolvedValueOnce({
+          data: { status: "1", message: "OK", result: lastPage },
+        });
+
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+
+      expect(result).toHaveLength(PAGE_SIZE + lastPage.length);
+      expect(axiosSpy).toHaveBeenCalledTimes(2);
+      expect(axiosSpy).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 1, offset: PAGE_SIZE }),
+        }),
+      );
+      expect(axiosSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          params: expect.objectContaining({ page: 2, offset: PAGE_SIZE }),
+        }),
+      );
+      expect(result[0].hash).toBe(fullPage[0].hash);
+      expect(result[PAGE_SIZE].hash).toBe("0xlast1");
+      expect(result[result.length - 1].hash).toBe("0xlast2");
+
+      axiosSpy.mockRestore();
+    });
+
+    it("propagates errors from explorer API call", async () => {
+      mockGetConfig.mockImplementation((): any => ({
+        info: {
+          explorer: { type: "etherscan", uri: "https://api.etherscan.io" },
+          node: { type: "external", uri: "mock" },
+          showNfts: true,
+        },
+      }));
+      jest.mocked(axios.request).mockReset();
+      jest.mocked(axios.request).mockRejectedValue(new Error("network error"));
+
+      await expect(
+        ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight),
+      ).rejects.toThrow("network error");
+    });
+  });
+
   describe("getNftOperations without nft", () => {
     beforeEach(() => {
       mockGetConfig.mockImplementation((): any => {
@@ -1522,6 +1735,7 @@ describe("EVM Family", () => {
         address: account.freshAddress,
         accountId: account.id,
         fromBlock: 0,
+        sort: "desc",
       });
       expect(response).toEqual({
         operations: [],
@@ -1600,8 +1814,8 @@ describe("EVM Family", () => {
       return async (config: any) => {
         const url = config.url as string;
         const params = config.params;
-        const startBlock = params.startBlock ?? 0;
-        const endBlock = params.endBlock ?? Infinity;
+        const startBlock = params.startblock ?? 0;
+        const endBlock = params.endblock ?? Infinity;
         const pageLimit = params.offset ?? limit;
         const endpointType = getEndpointType(url);
 
@@ -1669,9 +1883,9 @@ describe("EVM Family", () => {
 
     // Helper to extract result summary for assertions
     const summarize = (result: {
-      lastCoinOperations: { blockHeight?: number }[];
-      lastTokenOperations: { blockHeight?: number }[];
-      lastInternalOperations: { blockHeight?: number }[];
+      lastCoinOperations: { blockHeight?: number | null | undefined }[];
+      lastTokenOperations: { blockHeight?: number | null | undefined }[];
+      lastInternalOperations: { blockHeight?: number | null | undefined }[];
       nextPagingToken?: string;
     }): { ops: string[]; pagingState: PagingState | undefined } => {
       const tagged = [

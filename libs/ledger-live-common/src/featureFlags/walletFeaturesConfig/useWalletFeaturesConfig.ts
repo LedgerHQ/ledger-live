@@ -35,12 +35,17 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
+      shouldDisplayQuickActionsCtasVariant: isEnabled && Boolean(params?.quickActionsCtasVariant),
       shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
+      shouldDisplayOnboardingWidget:
+        isEnabled && Boolean(params && "onboardingWidget" in params && params.onboardingWidget),
+      shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
+      shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
     };
   }, [walletFeatureFlag]);
 };

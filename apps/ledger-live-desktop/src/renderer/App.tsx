@@ -18,7 +18,6 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import { CountervaluesBridgedProvider } from "~/renderer/components/CountervaluesProvider";
-import { CountervaluesMarketcapBridgedProvider } from "~/renderer/components/CountervaluesMarketcapProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatusProviderWrapper";
@@ -26,6 +25,7 @@ import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppPro
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
+import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
@@ -67,7 +67,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
 
   return (
     <StyleProvider selectedPalette={selectedPalette}>
-      <ThemeProvider defaultMode={selectedPalette}>
+      <ThemeProvider colorScheme={selectedPalette}>
         <ThrowBlock
           onError={() => {
             if (!__DEV__) {
@@ -78,29 +78,28 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           <FirebaseRemoteConfigProvider>
             <FirebaseFeatureFlagsProvider getFeature={getFeature}>
               <ConnectEnvsToSentry />
+              <ConnectEnvsToDatadog />
               <UpdaterProvider>
                 <AppDataStorageProvider>
                   <DeviceManagementKitProvider>
-                    <CountervaluesMarketcapBridgedProvider>
-                      <CountervaluesBridgedProvider initialState={initialCountervalues}>
-                        <ToastProvider>
-                          <ServiceStatusProviderWrapper>
-                            <Router>
-                              <PostOnboardingProviderWrapped>
-                                <PlatformAppProviderWrapper>
-                                  <DrawerProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </DrawerProvider>
-                                </PlatformAppProviderWrapper>
-                              </PostOnboardingProviderWrapped>
-                            </Router>
-                          </ServiceStatusProviderWrapper>
-                        </ToastProvider>
-                      </CountervaluesBridgedProvider>
-                    </CountervaluesMarketcapBridgedProvider>
+                    <CountervaluesBridgedProvider initialState={initialCountervalues}>
+                      <ToastProvider>
+                        <ServiceStatusProviderWrapper>
+                          <Router>
+                            <PostOnboardingProviderWrapped>
+                              <PlatformAppProviderWrapper>
+                                <DrawerProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                    <ReactQueryDevtoolsProvider />
+                                  </QueryClientProvider>
+                                </DrawerProvider>
+                              </PlatformAppProviderWrapper>
+                            </PostOnboardingProviderWrapped>
+                          </Router>
+                        </ServiceStatusProviderWrapper>
+                      </ToastProvider>
+                    </CountervaluesBridgedProvider>
                   </DeviceManagementKitProvider>
                 </AppDataStorageProvider>
               </UpdaterProvider>

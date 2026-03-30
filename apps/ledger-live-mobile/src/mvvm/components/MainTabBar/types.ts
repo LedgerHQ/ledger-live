@@ -1,7 +1,10 @@
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import type { TabBarItemProps } from "@ledgerhq/lumen-ui-rnative";
 
-export type TabItemConfig = Pick<TabBarItemProps, "value" | "label" | "icon" | "activeIcon">;
+export type TabItemConfig = Pick<
+  TabBarItemProps,
+  "value" | "label" | "icon" | "activeIcon" | "testID"
+>;
 
 export interface MainTabBarViewProps {
   readonly activeRouteName: string;

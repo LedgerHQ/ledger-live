@@ -31,56 +31,47 @@ const expectConfig = (
   expect(result.current).toEqual(expected);
 };
 
-const DISABLED_CONFIG: WalletFeaturesConfig = {
-  isEnabled: false,
-  shouldDisplayMarketBanner: false,
-  shouldDisplayGraphRework: false,
-  shouldDisplayQuickActionCtas: false,
-  shouldDisplayNewReceiveDialog: false,
-  shouldDisplayWallet40MainNav: false,
-  shouldUseLazyOnboarding: false,
-  shouldDisplayBalanceRefreshRework: false,
-  shouldDisplayTour: false,
-  shouldDisplayAssetSection: false,
-};
+const makeConfig = (
+  value: boolean,
+  overrides?: Partial<WalletFeaturesConfig>,
+): WalletFeaturesConfig => ({
+  isEnabled: value,
+  shouldDisplayMarketBanner: value,
+  shouldDisplayGraphRework: value,
+  shouldDisplayQuickActionCtas: value,
+  shouldDisplayQuickActionsCtasVariant: value,
+  shouldDisplayNewReceiveDialog: value,
+  shouldDisplayWallet40MainNav: value,
+  shouldUseLazyOnboarding: value,
+  shouldDisplayBalanceRefreshRework: value,
+  shouldDisplayTour: value,
+  shouldDisplayAssetSection: value,
+  shouldDisplayOnboardingWidget: value,
+  shouldDisplayBrazePlacement: value,
+  shouldDisplayOperationsList: value,
+  ...overrides,
+});
 
-const ENABLED_NO_PARAMS_CONFIG: WalletFeaturesConfig = {
-  isEnabled: true,
-  shouldDisplayMarketBanner: false,
-  shouldDisplayGraphRework: false,
-  shouldDisplayQuickActionCtas: false,
-  shouldDisplayNewReceiveDialog: false,
-  shouldDisplayWallet40MainNav: false,
-  shouldUseLazyOnboarding: false,
-  shouldDisplayBalanceRefreshRework: false,
-  shouldDisplayTour: false,
-  shouldDisplayAssetSection: false,
-};
+const makeParams = (value: boolean): Wallet40Params => ({
+  marketBanner: value,
+  graphRework: value,
+  quickActionCtas: value,
+  quickActionsCtasVariant: value,
+  newReceiveDialog: value,
+  mainNavigation: value,
+  lazyOnboarding: value,
+  balanceRefreshRework: value,
+  tour: value,
+  assetSection: value,
+  onboardingWidget: value,
+  brazePlacement: value,
+  operationsList: value,
+});
 
-const ALL_ENABLED_CONFIG: WalletFeaturesConfig = {
-  isEnabled: true,
-  shouldDisplayMarketBanner: true,
-  shouldDisplayGraphRework: true,
-  shouldDisplayQuickActionCtas: true,
-  shouldDisplayNewReceiveDialog: true,
-  shouldDisplayWallet40MainNav: true,
-  shouldUseLazyOnboarding: true,
-  shouldDisplayBalanceRefreshRework: true,
-  shouldDisplayTour: true,
-  shouldDisplayAssetSection: true,
-};
-
-const ALL_PARAMS_ENABLED: Wallet40Params = {
-  marketBanner: true,
-  graphRework: true,
-  quickActionCtas: true,
-  newReceiveDialog: true,
-  mainNavigation: true,
-  lazyOnboarding: true,
-  balanceRefreshRework: true,
-  tour: true,
-  assetSection: true,
-};
+const DISABLED_CONFIG = makeConfig(false);
+const ENABLED_NO_PARAMS_CONFIG = makeConfig(false, { isEnabled: true });
+const ALL_ENABLED_CONFIG = makeConfig(true);
+const ALL_PARAMS_ENABLED = makeParams(true);
 
 describe("useWalletFeaturesConfig hook", () => {
   describe("when feature flag is disabled", () => {
@@ -122,6 +113,11 @@ describe("useWalletFeaturesConfig hook", () => {
         ["marketBanner", { marketBanner: true }, { shouldDisplayMarketBanner: true }],
         ["graphRework", { graphRework: true }, { shouldDisplayGraphRework: true }],
         ["quickActionCtas", { quickActionCtas: true }, { shouldDisplayQuickActionCtas: true }],
+        [
+          "quickActionsCtasVariant",
+          { quickActionsCtasVariant: true },
+          { shouldDisplayQuickActionsCtasVariant: true },
+        ],
         ["newReceiveDialog", { newReceiveDialog: true }, { shouldDisplayNewReceiveDialog: true }],
         ["mainNavigation", { mainNavigation: true }, { shouldDisplayWallet40MainNav: true }],
         ["lazyOnboarding", { lazyOnboarding: true }, { shouldUseLazyOnboarding: true }],
@@ -132,6 +128,9 @@ describe("useWalletFeaturesConfig hook", () => {
         ],
         ["tour", { tour: true }, { shouldDisplayTour: true }],
         ["assetSection", { assetSection: true }, { shouldDisplayAssetSection: true }],
+        ["onboardingWidget", { onboardingWidget: true }, { shouldDisplayOnboardingWidget: true }],
+        ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
+        ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),

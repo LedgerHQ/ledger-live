@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route } from "react-router";
-import user from "~/helpers/user";
+import { useSelector } from "LLD/hooks/redux";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -37,13 +38,8 @@ import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
 
 const Default = () => {
   const { t } = useTranslation();
-  const [segmentId, setSegmentID] = useState("loading...");
-
-  useEffect(() => {
-    user().then(u => {
-      setSegmentID(u.id);
-    });
-  }, []);
+  const userId = useSelector(userIdSelector);
+  const segmentId = userId.exportUserIdForAnalytics();
 
   return (
     <Body>

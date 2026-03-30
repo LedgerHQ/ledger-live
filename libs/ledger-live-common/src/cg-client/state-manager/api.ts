@@ -19,10 +19,10 @@ function transformSupportedCoinsResponse(response: unknown): SupportedCoins {
 
   if (!result.success) {
     log("cg-client", "Invalid supported coins response schema:", {
-      errors: result.error.errors,
+      errors: result.error.issues,
     });
     throw new Error(
-      `[GC API] Supported coins schema validation failed: ${result.error.errors
+      `[GC API] Supported coins schema validation failed: ${result.error.issues
         .map(e => `${e.path.join(".")}: ${e.message}`)
         .join(", ")}`,
     );
@@ -36,10 +36,10 @@ function transformSupportedCounterCurrenciesResponse(response: unknown): string[
 
   if (!result.success) {
     log("cg-client", "Invalid supported counter currencies response schema:", {
-      errors: result.error.errors,
+      errors: result.error.issues,
     });
     throw new Error(
-      `[GC API] Counter currencies schema validation failed: ${result.error.errors
+      `[GC API] Counter currencies schema validation failed: ${result.error.issues
         .map(e => `${e.path.join(".")}: ${e.message}`)
         .join(", ")}`,
     );
@@ -53,10 +53,10 @@ function transformChartDataResponse(response: unknown, range: string): MarketCoi
 
   if (!result.success) {
     log("cg-client", "Invalid chart data response schema:", {
-      errors: result.error.errors,
+      errors: result.error.issues,
     });
     throw new Error(
-      `[GC API] Chart data schema validation failed: ${result.error.errors
+      `[GC API] Chart data schema validation failed: ${result.error.issues
         .map(e => `${e.path.join(".")}: ${e.message}`)
         .join(", ")}`,
     );

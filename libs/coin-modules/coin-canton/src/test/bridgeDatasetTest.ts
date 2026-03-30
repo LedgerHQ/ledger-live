@@ -1,5 +1,3 @@
-import BigNumber from "bignumber.js";
-import { DatasetTest } from "@ledgerhq/types-live";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -7,9 +5,11 @@ import {
   RecipientRequired,
   AmountRequired,
 } from "@ledgerhq/errors";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
+import { DatasetTest } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";
 import { Transaction } from "../types";
-import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 
 // Mock Canton addresses using SECP256R1-compatible format
 export const mockCantonAddresses = {

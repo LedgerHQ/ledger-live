@@ -5,10 +5,11 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib",
-    "baseUrl": "."
+    "rootDir": "src",
+    "paths": { "*": ["./*"] },
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*", "src/index.ts"]
 }

@@ -4,9 +4,9 @@ import { MarketQuickActions } from "./";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { State } from "~/reducers/types";
-import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
+import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -19,9 +19,9 @@ const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
 let usdcCurrency: TokenCurrency;
+let usdtCurrency: TokenCurrency;
 
 beforeAll(async () => {
-  // Setup mock store with USDC token for tests
   setupMockCryptoAssetsStore({
     findTokenById: async (id: string) => {
       if (id === "ethereum/erc20/usd__coin") {
@@ -38,14 +38,31 @@ beforeAll(async () => {
           units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
         } as TokenCurrency;
       }
+      if (id === "ethereum/erc20/usd_tether__erc20_") {
+        return {
+          type: "TokenCurrency",
+          id: "ethereum/erc20/usd_tether__erc20_",
+          contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          parentCurrency: ethereumCurrency,
+          tokenType: "erc20",
+          name: "Tether USD",
+          ticker: "USDT",
+          delisted: false,
+          disableCountervalue: false,
+          units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+        } as TokenCurrency;
+      }
       return undefined;
     },
   });
-  // Store is automatically set as global store by setupMockCryptoAssetsStore
 
   const usdc = await getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin");
   if (!usdc) throw new Error("USDC token not found");
   usdcCurrency = usdc;
+
+  const usdt = await getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_");
+  if (!usdt) throw new Error("USDT token not found");
+  usdtCurrency = usdt;
 });
 
 const bitcoinAccount = genAccount("bitcoin-account", { currency: bitcoinCurrency });
@@ -53,7 +70,7 @@ const kaspaAccount = genAccount("kaspa-account", { currency: kaspaCurrency });
 const ethereumAccount = genAccount("ethereum-account", { currency: ethereumCurrency });
 
 // Mock the support module
-jest.mock("@ledgerhq/coin-framework/currencies/support");
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support");
 
 // Set up the mock implementation
 (isCurrencySupported as jest.Mock).mockImplementation(currency => {
@@ -221,5 +238,42 @@ describe("MarketQuickActions", () => {
     expect(queryByText(/sell/i)).toBeNull();
     expect(getByText(/send/i)).toBeVisible();
     expect(getByText(/receive/i)).toBeVisible();
+  });
+
+  it("should render earn button for partner-staked token currencies", () => {
+    const { getByText } = renderWithReactQuery(
+      <TestNavigator>
+        <MarketQuickActions currency={usdtCurrency} accounts={[ethereumAccount]} />
+      </TestNavigator>,
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: {
+              stakePrograms: {
+                enabled: true,
+                params: {
+                  list: [],
+                  redirects: {
+                    "ethereum/erc20/usd_tether__erc20_": { platform: "earn" },
+                  },
+                },
+              },
+            },
+          },
+        }),
+      },
+    );
+    expect(getByText(/(earn|yield)/i)).toBeVisible();
+  });
+
+  it("should not render earn button for token currencies without stake support", () => {
+    const { queryByText } = renderWithReactQuery(
+      <TestNavigator>
+        <MarketQuickActions currency={usdcCurrency} accounts={[ethereumAccount]} />
+      </TestNavigator>,
+    );
+    expect(queryByText(/(earn|yield)/i)).toBeNull();
   });
 });

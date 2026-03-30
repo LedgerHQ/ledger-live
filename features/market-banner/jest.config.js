@@ -27,6 +27,7 @@ module.exports = {
   collectCoverage: true,
   reporters: [
     "default",
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   projects: [
     // Web tests (Desktop) - uses jsdom environment

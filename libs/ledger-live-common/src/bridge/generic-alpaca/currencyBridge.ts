@@ -1,8 +1,8 @@
-import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { CurrencyBridge } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
-import type { AlpacaSigner } from "./signer/types";
+import type { AlpacaSigner } from "./types";
 import { postSync } from "./postSync";
 
 export function getAlpacaCurrencyBridge(

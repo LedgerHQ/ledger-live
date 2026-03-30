@@ -26,7 +26,6 @@ permissions:
   pull-requests: write
 
 jobs:
-
   build-desktop-app:
     strategy:
       fail-fast: false
@@ -59,7 +58,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -74,9 +74,12 @@ jobs:
 
       - name: Build the app
         id: build-app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
           GENERATE_METAFILES: "lite"
+        run: pnpm turbo build --filter=ledger-live-desktop
 
       - name: Upload ${{ matrix.config.name }} app
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

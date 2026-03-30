@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -12,6 +12,7 @@ import {
   getMainAccount,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
+import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -25,6 +26,8 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
+import type { ModalData } from "~/renderer/modals/types";
+import { getLLDCoinFamily } from "~/renderer/families";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
@@ -32,7 +35,7 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
-import { St, StepId } from "./types";
+import type { St, StepId } from "./types";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -49,6 +52,8 @@ export type Data = {
 };
 
 type OwnProps = {
+  title?: string;
+  modalName?: keyof ModalData;
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
@@ -63,7 +68,7 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;
-const createSteps = (disableBacks: string[] = []): St[] => {
+const defaultCreateSteps = (disableBacks: string[] = []): St[] => {
   const steps: Array<St | undefined> = [
     {
       id: "warning",
@@ -131,6 +136,8 @@ const Body = ({
   closeModal,
   onChangeStepId,
   onClose,
+  title,
+  modalName = "MODAL_SEND",
   stepId,
   params,
   accounts,
@@ -149,8 +156,6 @@ const Body = ({
   const onResetMaybeRecipient = useCallback(() => {
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
-
-  const [steps] = useState(() => createSteps(params.disableBacks));
 
   const {
     transaction,
@@ -221,9 +226,21 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
+  const specific =
+    currency && isCryptoCurrency(currency) ? getLLDCoinFamily(currency.family) : null;
+
+  const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
+  const customSteps = useMemo(() => {
+    return specific?.createSendSteps?.(params.disableBacks) ?? null;
+  }, [specific, params.disableBacks]);
+
+  // This assertion is necessary as a workaround for errors related to stepID. At the moment,
+  // there are no plans to fully extend the send modal with custom steps
+  const steps = (customSteps as St[] | null) ?? defaultSteps;
+
   const handleCloseModal = useCallback(() => {
-    closeModal("MODAL_SEND");
-  }, [closeModal]);
+    closeModal(modalName);
+  }, [modalName, closeModal]);
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount?: Account | null) => {
       if (account !== nextAccount) {
@@ -274,7 +291,8 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : t("send.title"),
+    title: stepId === "warning" ? t("common.information") : title ?? t("send.title"),
+    modalName,
     stepId,
     steps,
     errorSteps,

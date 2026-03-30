@@ -1,8 +1,16 @@
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNetworkConfig } from "../logic/utils";
-import type { AleoDecryptedRecordResponse, AleoEncryptedRegistrationResponse } from "../types/sdk";
 import type { AleoDecryptedCiphertextResponse } from "../types";
+import type {
+  AleoDecryptedRecordResponse,
+  AleoEncryptedRegistrationResponse,
+  PreparedRequestResponse,
+  Intent,
+  AuthorizationResponse,
+  FeeConfiguration,
+  EncryptProvingRequestResponse,
+} from "../types/sdk";
 
 async function encryptRegistrationPayload({
   currency,
@@ -91,8 +99,99 @@ async function decryptCiphertext({
   return res.data;
 }
 
+async function createRequestFromIntent({
+  currency,
+  intent,
+  feeConfiguration,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  intent: Intent;
+  feeConfiguration: FeeConfiguration | null;
+  viewKey?: string;
+}): Promise<PreparedRequestResponse> {
+  const { sdkUrl } = getNetworkConfig(currency);
+
+  const res = await network<PreparedRequestResponse>({
+    method: "POST",
+    url: `${sdkUrl}/transactions/request`,
+    data: {
+      intent,
+      fee: feeConfiguration,
+      ...(viewKey && { view_key: viewKey }),
+    },
+  });
+
+  return res.data;
+}
+
+async function createAuthorization({
+  currency,
+  request,
+  signatures,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  request: PreparedRequestResponse;
+  signatures: string;
+  viewKey: string;
+}) {
+  const { sdkUrl } = getNetworkConfig(currency);
+
+  const res = await network<AuthorizationResponse>({
+    method: "POST",
+    url: `${sdkUrl}/transactions/authorization`,
+    data: {
+      request,
+      signatures,
+      view_key: viewKey,
+    },
+  });
+
+  return res.data;
+}
+
+async function encryptProvingRequest({
+  currency,
+  jwt,
+  publicKey,
+  authorization,
+  feeAuthorization,
+  broadcast,
+}: {
+  publicKey: string;
+  currency: CryptoCurrency;
+  jwt: string;
+  authorization: Record<string, unknown>;
+  feeAuthorization?: Record<string, unknown>;
+  broadcast: boolean;
+}): Promise<string> {
+  const { sdkUrl } = getNetworkConfig(currency);
+
+  const res = await network<EncryptProvingRequestResponse>({
+    method: "POST",
+    url: `${sdkUrl}/encrypt_proving_request`,
+    headers: {
+      Authorization: jwt,
+    },
+    data: {
+      public_key: publicKey,
+      proving_request: {
+        authorization,
+        fee_authorization: feeAuthorization ?? null,
+        broadcast,
+      },
+    },
+  });
+
+  return res.data.encrypted;
+}
+
 export const sdkClient = {
   encryptRegistrationPayload,
   decryptRecord,
   decryptCiphertext,
+  createRequestFromIntent,
+  createAuthorization,
+  encryptProvingRequest,
 };

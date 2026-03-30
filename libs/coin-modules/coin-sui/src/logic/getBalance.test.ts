@@ -54,8 +54,8 @@ describe("getBalance", () => {
     const address = "0x123";
     const result = await getBalance(address);
 
-    expect(getAllBalancesCached).toHaveBeenCalledWith(address);
-    expect(getStakes).toHaveBeenCalledWith(address);
+    expect(getAllBalancesCached).toHaveBeenCalledWith(address, undefined);
+    expect(getStakes).toHaveBeenCalledWith(address, undefined);
     expect(result).toHaveLength(3);
 
     expect(result[2]).toMatchObject({

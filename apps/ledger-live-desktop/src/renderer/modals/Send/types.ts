@@ -4,6 +4,8 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
+import type { ModalData } from "~/renderer/modals/types";
+
 export type StepId = "warning" | "recipient" | "amount" | "summary" | "device" | "confirmation";
 export type StepProps = {
   t: TFunction;
@@ -35,5 +37,6 @@ export type StepProps = {
   onFailHandler: () => void;
   currencyName: string | undefined | null;
   walletConnectProxy?: boolean;
+  modalName?: keyof ModalData;
 };
 export type St = Step<StepId, StepProps>;

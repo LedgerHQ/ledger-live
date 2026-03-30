@@ -1,12 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { BigNumber } from "bignumber.js";
-import {
-  getDescriptor,
-  getSendDescriptor,
-  sendFeatures,
-  applyMemoToTransaction,
-} from "./descriptor";
+import { getDescriptor, getSendDescriptor } from "./descriptor/registry";
+import { sendFeatures } from "./descriptor/send/features";
+import { applyMemoToTransaction } from "./descriptor/send/memo";
 import * as configModule from "../config/index";
 
 jest.mock("../config/index");
@@ -277,6 +274,43 @@ describe("sendFeatures", () => {
     expect(config?.inputs.map(i => i.key)).toContain("maxFeePerGas");
     expect(typeof config?.getInitialValues).toBe("function");
     expect(typeof config?.buildTransactionPatch).toBe("function");
+  });
+
+  it("should return custom fee config for stellar", () => {
+    const stellar = getCryptoCurrencyById("stellar");
+    const config = sendFeatures.getCustomFeeConfig(stellar);
+    expect(config).not.toBeNull();
+    expect(config?.inputs).toHaveLength(1);
+    expect(config?.inputs[0]).toMatchObject({
+      key: "fees",
+      type: "number",
+      unitLabel: "stroop",
+    });
+    expect(config?.buildTransactionPatch({ fees: "100" })).toMatchObject({
+      fees: new BigNumber(100),
+      customFees: { parameters: { fees: new BigNumber(100) } },
+    });
+  });
+
+  it("should return custom fee config for kaspa", () => {
+    const kaspa = getCryptoCurrencyById("kaspa");
+    const config = sendFeatures.getCustomFeeConfig(kaspa);
+    expect(config).not.toBeNull();
+    expect(config?.inputs).toHaveLength(1);
+    expect(config?.inputs[0]).toMatchObject({
+      key: "feePerByte",
+      type: "number",
+      unitLabel: "Sompi/byte",
+    });
+  });
+
+  it("should return false for custom fees when coin does not expose custom config", () => {
+    const stacks = getCryptoCurrencyById("stacks");
+    const filecoin = getCryptoCurrencyById("filecoin");
+    expect(sendFeatures.hasCustomFees(stacks)).toBe(false);
+    expect(sendFeatures.hasCustomFees(filecoin)).toBe(false);
+    expect(sendFeatures.getCustomFeeConfig(stacks)).toBeNull();
+    expect(sendFeatures.getCustomFeeConfig(filecoin)).toBeNull();
   });
 
   it("should return empty fee preset options when not implemented", () => {

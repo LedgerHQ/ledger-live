@@ -11,7 +11,6 @@ import CustomImage from "~/renderer/screens/customImage";
 
 const assetsTransfer: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
-  featureFlagId: "postOnboardingAssetsTransfer",
   Icon: Icons.Lock,
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
@@ -120,7 +119,6 @@ const customImageMock: PostOnboardingAction = {
 
 const assetsTransferMock: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransferMock,
-  featureFlagId: "postOnboardingAssetsTransfer",
   Icon: Icons.Lock,
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",

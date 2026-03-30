@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
+    "outDir": "lib",
+    "rootDir": "src",
+    "exactOptionalPropertyTypes": true,
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "types/*.d.ts"
+  ]
+}

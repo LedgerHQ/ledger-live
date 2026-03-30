@@ -147,11 +147,6 @@ function readPackage(pkg, context) {
 
       // addPeerDependencies("styled-components", { "react-native": "*" }),
       addPeerDependencies("use-latest-callback", { react: "*" }),
-      addPeerDependencies("rn-range-slider", {
-        react: "*",
-        "react-native": "*",
-        "prop-types": "*",
-      }),
 
       addDependencies("expo-pwa", {
         "@expo/config": "*",

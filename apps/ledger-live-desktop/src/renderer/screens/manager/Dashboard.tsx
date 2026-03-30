@@ -14,10 +14,10 @@ import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { getEnv } from "@ledgerhq/live-env";
-import { useLocation } from "react-router";
 import { context as drawerContext } from "~/renderer/drawers/Provider";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
+import { useLocation } from "react-router";
 
 type Props = {
   device: Device;
@@ -36,10 +36,9 @@ const Dashboard = ({
   appsToRestore,
   onRefreshDeviceInfo,
 }: Props) => {
-  const { search } = useLocation();
   const appsBackupEnabled = useFeature("enableAppsBackup");
+  const { search } = useLocation();
   const storage = useAppDataStorageProvider();
-
   const { state: drawerState } = useContext(drawerContext);
   const currentDevice = useSelector(getCurrentDevice);
   const [preventResetOnDeviceChange, setPreventResetOnDeviceChange] = useState(false);
@@ -48,6 +47,7 @@ const Dashboard = ({
   const [firmwareError, setFirmwareError] = useState(null);
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
+
   useEffect(() => {
     getLatestFirmwareForDeviceUseCase(deviceInfo).then(setFirmware, setFirmwareError);
   }, [deviceInfo]);

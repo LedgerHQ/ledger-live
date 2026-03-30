@@ -1,5 +1,6 @@
 import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import type { ConcordiumMemo } from "../types";
+import { TESTNET_COIN_CONFIG } from "../test/fixtures";
 import { createApi } from ".";
 
 /**
@@ -15,16 +16,9 @@ describe("Concordium Api (testnet)", () => {
   // https://testnet.ccdscan.io/
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
-  const PUBLIC_KEY = "aa".repeat(32);
 
   beforeAll(() => {
-    api = createApi({
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    });
+    api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
   });
 
   describe("estimateFees", () => {
@@ -117,25 +111,6 @@ describe("Concordium Api (testnet)", () => {
       expect(result.height).toBe(targetHeight);
       expect(result.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
       expect(result.time).toBeInstanceOf(Date);
-    });
-  });
-
-  describe("getBlock", () => {
-    it("returns block with transaction info", async () => {
-      const lastBlock = await api.lastBlock();
-      const targetHeight = lastBlock.height - 10;
-
-      const result = await api.getBlock(targetHeight);
-
-      expect(result.info.height).toBe(targetHeight);
-      expect(result.info.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-      expect(result.info.time).toBeInstanceOf(Date);
-      expect(result.transactions).toBeInstanceOf(Array);
-
-      result.transactions.forEach(tx => {
-        expect(tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-        expect(tx.fees).toBeGreaterThanOrEqual(BigInt(0));
-      });
     });
   });
 
@@ -256,6 +231,10 @@ describe("Concordium Api (testnet)", () => {
   });
 
   describe("unsupported methods", () => {
+    it("getBlock throws not supported error", async () => {
+      await expect(async () => api.getBlock(100)).rejects.toThrow("getBlock is not supported");
+    });
+
     it("getStakes throws not supported error", async () => {
       await expect(async () => api.getStakes(ADDRESS_WITH_BALANCE)).rejects.toThrow();
     });

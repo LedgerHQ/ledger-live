@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { Account } from "@ledgerhq/types-live";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";
 
 setSupportedCurrencies(["ethereum"]);
@@ -46,7 +47,7 @@ describe("account persistence predicates", () => {
         ...account,
         subAccounts: [...(account.subAccounts ?? []), { ...account, id: account.id + "+token" }],
       };
-      expect(accountPersistedStateChanged(withOneSub, withExtraSub)).toBe(true);
+      expect(accountPersistedStateChanged(withOneSub, withExtraSub as Account)).toBe(true);
     });
 
     it("returns false when same account (reference equality)", () => {

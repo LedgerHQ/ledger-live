@@ -16,7 +16,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
   asDerivationMode,
-} from "@ledgerhq/coin-framework/derivation";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 const localCache: Record<string, unknown> = {};

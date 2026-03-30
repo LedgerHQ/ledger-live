@@ -1,6 +1,7 @@
 import { ModularDrawerWrapper } from "LLM/features/ModularDrawer";
 import ReceiveDrawerWrapper from "LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer";
 import RebornBuyDeviceDrawer from "LLM/features/Reborn/drawers/RebornBuyDeviceDrawer";
+import { DeeplinkInstallAppDrawer } from "LLM/features/DeeplinkInstallApp";
 
 /**
  * Registry of all global drawers in the application.
@@ -20,6 +21,9 @@ export const DRAWER_REGISTRY = {
   },
   reborn: {
     component: RebornBuyDeviceDrawer,
+  },
+  deeplinkInstallApp: {
+    component: DeeplinkInstallAppDrawer,
   },
 } as const satisfies Record<string, DrawerRegistryEntry>;
 

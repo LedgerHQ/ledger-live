@@ -24,7 +24,8 @@ import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import ledgerExplorer from "../network/explorer/ledger";
 import ledgerGasTracker from "../network/gasTracker/ledger";
-import ledgerNode from "../network/node/ledger";
+import { getNodeApi } from "../network/node";
+import { mockNodeApi } from "../network/node/node.fixtures";
 import * as computeGasLimitModule from "./computeGasLimit";
 import { validateIntent } from "./validateIntent";
 
@@ -32,6 +33,13 @@ jest.mock("./computeGasLimit", () => ({
   ...jest.requireActual("./computeGasLimit"),
   computeEIP7623GasLimit: jest.fn().mockReturnValue(0n),
 }));
+
+jest.mock("../network/node", () => ({
+  ...jest.requireActual("../network/node"),
+  getNodeApi: jest.fn(),
+}));
+
+const mockGetNodeApi = jest.mocked(getNodeApi);
 
 function legacyIntent(
   intent: Omit<Partial<TransactionIntent>, "type">,
@@ -64,20 +72,23 @@ function eip1559Intent(
 }
 
 describe("validateIntent", () => {
+  const nodeApiMock = mockNodeApi();
+
   beforeEach(() => {
     setCoinConfig(
       () =>
         ({
           info: {
-            node: { type: "ledger" },
+            node: { type: "ledger", explorerId: "eth" },
             explorer: { type: "ledger" },
             gasTracker: { type: "ledger", explorerId: "eth" },
           },
         }) as unknown as EvmCoinConfig,
     );
 
-    jest.spyOn(ledgerNode, "getGasEstimation").mockResolvedValue(new BigNumber(0));
-    jest.spyOn(ledgerNode, "getFeeData").mockResolvedValue({
+    mockGetNodeApi.mockReturnValue(nodeApiMock);
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber(0));
+    nodeApiMock.getFeeData.mockResolvedValue({
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
       gasPrice: null,
@@ -88,6 +99,7 @@ describe("validateIntent", () => {
       lastInternalOperations: [],
       lastNftOperations: [],
       lastTokenOperations: [],
+      nextPagingToken: "",
     });
     jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
       slow: {
@@ -109,7 +121,7 @@ describe("validateIntent", () => {
         nextBaseFee: null,
       },
     });
-    jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(30);
+    nodeApiMock.getTransactionCount.mockResolvedValue(30);
   });
 
   afterEach(() => {
@@ -249,7 +261,7 @@ describe("validateIntent", () => {
     });
 
     it("detects an intent for token asset sending without amount with an error", async () => {
-      jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
+      nodeApiMock.getTransactionCount.mockResolvedValue(10);
 
       const res = await validateIntent(
         {} as CryptoCurrency,
@@ -286,7 +298,7 @@ describe("validateIntent", () => {
     });
 
     it("detects token asset sending intent with an error", async () => {
-      jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
+      nodeApiMock.getTransactionCount.mockResolvedValue(10);
       jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
         lastCoinOperations: [],
         lastInternalOperations: [],
@@ -294,6 +306,7 @@ describe("validateIntent", () => {
         lastTokenOperations: [
           { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" } as Operation,
         ],
+        nextPagingToken: "",
       });
 
       const res = await validateIntent(
@@ -790,6 +803,7 @@ describe("validateIntent", () => {
           lastInternalOperations: [],
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          nextPagingToken: "",
         });
 
         const res = await validateIntent(
@@ -825,6 +839,7 @@ describe("validateIntent", () => {
           lastInternalOperations: [],
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          nextPagingToken: "",
         });
         jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
           slow: {
@@ -885,6 +900,7 @@ describe("validateIntent", () => {
           lastInternalOperations: [],
           lastNftOperations: [],
           lastTokenOperations: [{ contract: "contract-address" } as Operation],
+          nextPagingToken: "",
         });
         const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
           slow: {

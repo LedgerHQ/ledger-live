@@ -8,7 +8,6 @@ test.use({
     hasSeenWalletV4Tour: true,
   },
   featureFlags: {
-    welcomeScreenVideoCarousel: { enabled: false },
     noah: { enabled: false },
   },
 });
@@ -39,7 +38,6 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.waitForDeviceToBeVisible(Nano.nanoS);
         await expect(page).toHaveScreenshot("v3-device-selection.png", {
           mask: [page.locator("video")],
-          animations: "disabled",
         });
       });
 
@@ -57,15 +55,17 @@ test.describe.parallel("Onboarding", () => {
 
         await expect
           .soft(page)
-          .toHaveScreenshot(["v3-restore-tutorial", `get-started-2-${nano}.png`], {
-            mask: [onboardingPage.roleAnimation],
-          });
+          .toHaveScreenshot(["v3-restore-tutorial", `get-started-2-${nano}.png`]);
         await onboardingPage.continueTutorial();
 
-        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-1.png`]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-1.png`], {
+          mask: [onboardingPage.roleAnimation],
+        });
         await onboardingPage.acceptPrivatePinCode();
 
-        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-2.png`]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-2.png`], {
+          mask: [onboardingPage.roleAnimation],
+        });
         await onboardingPage.continueTutorial();
 
         await expect
@@ -97,8 +97,10 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}] Device genuine check`, async () => {
+        await onboardingPage.waitForGenuineCheckPage();
         await expect(page).toHaveScreenshot("v3-genuine-check.png");
         await onboardingPage.checkDevice();
+        await onboardingPage.continueButton.isEnabled({ timeout: 10000 });
         await expect(page).toHaveScreenshot("v3-before-genuine-check.png");
       });
 

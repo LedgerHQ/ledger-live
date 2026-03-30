@@ -1,5 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
-import { Account } from "@ledgerhq/live-common/lib/e2e/enum/Account";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class OperationDetailsPage {
   titleId = "operationDetails-title";
@@ -87,10 +87,10 @@ export default class OperationDetailsPage {
   }
 
   @Step("Check that transaction details are displayed")
-  async checkTransactionDetailsVisibility(currencyName: string) {
+  async checkTransactionDetailsVisibility(accountName: string) {
     await this.waitForOperationDetails();
     await detoxExpect(this.account()).toBeVisible();
-    await detoxExpect(this.account()).toHaveText(currencyName + " 1");
+    await detoxExpect(this.account()).toHaveText(accountName);
     await detoxExpect(this.amount()).toBeVisible();
     await scrollToId(this.operationDetailsIdentifier, this.operationDetailsScrollViewId);
     await detoxExpect(this.operation()).toBeVisible();

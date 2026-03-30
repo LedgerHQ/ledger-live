@@ -175,6 +175,15 @@ export class ConnectAppEventMapper {
           }
         }
         break;
+      case "device-deprecation":
+        if (intermediateValue.deviceDeprecation) {
+          this.eventSubject.next({
+            type: "deprecation",
+            deprecate: {
+              ...intermediateValue.deviceDeprecation,
+            },
+          });
+        }
     }
   }
 

@@ -1,12 +1,11 @@
 import BigNumber from "bignumber.js";
 import { TRANSACTION_TYPE } from "../constants";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import type { TransactionType } from "../types";
-import type { AleoCoinConfig } from "../config";
+import type { TransactionType, AleoCoinConfig } from "../types";
 import { estimateFees } from "./estimateFees";
 
 describe("estimateFees", () => {
-  const mockConfig = getMockedConfig("testnet");
+  const mockConfig = { ...getMockedConfig("testnet"), isFeeSponsored: false };
   const mockFeeByTransactionType = mockConfig.feeByTransactionType;
   const mockFeeSafetyMultiplier = mockConfig.feeSafetyMultiplier;
 
@@ -43,6 +42,20 @@ describe("estimateFees", () => {
       .integerValue(BigNumber.ROUND_CEIL);
 
     expect(result.value).toEqual(BigInt(expected.toString()));
+  });
+
+  it("should return zero fee when fee sponsorship is enabled", () => {
+    const feeSponsoredConfig: AleoCoinConfig = {
+      ...mockConfig,
+      isFeeSponsored: true,
+    };
+
+    const result = estimateFees({
+      configOrCurrencyId: feeSponsoredConfig,
+      transactionType: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    });
+
+    expect(result.value).toEqual(BigInt(0));
   });
 
   it("should throw error for unknown transaction type", () => {

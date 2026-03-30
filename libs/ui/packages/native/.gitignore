@@ -7,8 +7,10 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
-web-build/
 lib/
 
 # macOS
 .DS_Store
+
+storybook-static/
+.vercel

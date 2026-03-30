@@ -8,6 +8,7 @@ import {
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
 import type { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { useGetCounterValueIdsPolling } from "@ledgerhq/live-common/counterValues/state-manager/useGetCounterValueIdsPolling";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { bindActionCreators } from "redux";
@@ -25,6 +26,7 @@ import {
 
 export function useCountervaluesBridge() {
   const dispatch = useDispatch();
+
   return useMemo(
     (): CountervaluesBridge => ({
       ...bindActionCreators(
@@ -38,6 +40,7 @@ export function useCountervaluesBridge() {
         },
         dispatch,
       ),
+      useMarketcapIds: useGetCounterValueIdsPolling,
       usePollingIsPolling: useCountervaluesPollingIsPolling,
       usePollingTriggerLoad: useCountervaluesPollingTriggerLoad,
       useState: useCountervaluesState,
@@ -84,11 +87,7 @@ function useCacheManager() {
 
   useEffect(() => {
     if (!hasNewCountervaluesToExport(lastStateRef.current, state)) return;
-    const exported = exportCountervalues(
-      state,
-      userSettings.trackingPairs,
-      userSettings.selectedTimeRange,
-    );
+    const exported = exportCountervalues(state, userSettings.trackingPairs);
     setKey("app", "countervalues", exported);
     lastStateRef.current = state;
   }, [state, userSettings]);

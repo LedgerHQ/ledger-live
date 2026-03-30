@@ -2,7 +2,7 @@
 
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInput, Transaction } from "./types";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import BigNumber from "bignumber.js";
 
 // Mock modules before importing the module under test
@@ -15,8 +15,8 @@ jest.mock("./cache", () => {
   };
 });
 
-jest.mock("@ledgerhq/coin-framework/sanction/index", () => {
-  const actual = jest.requireActual("@ledgerhq/coin-framework/sanction/index");
+jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/sanction/index");
   return {
     ...actual,
     isAddressSanctioned: jest.fn(),
@@ -24,12 +24,12 @@ jest.mock("@ledgerhq/coin-framework/sanction/index", () => {
 });
 
 import * as cache from "./cache";
-import * as sanction from "@ledgerhq/coin-framework/sanction/index";
+import * as sanction from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import getTransactionStatus, { MAX_BLOCK_HEIGHT_FOR_TAPROOT } from "./getTransactionStatus";
 
-const calculateFeesSpy = cache.calculateFees as jest.Mock;
-const validateRecipientSpy = cache.validateRecipient as jest.Mock;
-const isAddressSanctionedSpy = sanction.isAddressSanctioned as jest.Mock;
+const calculateFeesSpy = jest.mocked(cache.calculateFees);
+const validateRecipientSpy = jest.mocked(cache.validateRecipient);
+const isAddressSanctionedSpy = jest.mocked(sanction.isAddressSanctioned);
 
 describe("getTransactionStatus on Bitcoin", () => {
   it("should return as sender error only sanctioned utxo addresses", async () => {

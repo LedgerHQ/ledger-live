@@ -53,7 +53,7 @@ const getTransactionChallenge = ({
 
     // Format: [length (1B) = 0x18][challenge (16 bytes)][deadline (8 bytes)]
     return "18" + challenge_nonce.toLowerCase() + deadlineHex.toString("hex");
-  } catch (error) {
+  } catch {
     return undefined;
   }
 };

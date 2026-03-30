@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "~/context/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 import RequiresBLE from "../RequiresBLE";
 import { addKnownDevice } from "~/actions/ble";
@@ -15,7 +16,7 @@ import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
 import { urls } from "~/utils/urls";
 import { Linking } from "react-native";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { BleScanningState } from "@ledgerhq/live-dmk-mobile";
+import { BleScanningState, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -59,8 +60,10 @@ export type BleDevicePairingFlowProps = {
 
   /**
    * During pairing step: callback called when the pairing is done and successful
+   * @param device - The device that was paired. (legacy Device type)
+   * @param discoveredDevice - The discovered device that was paired. (directly compatible with DeviceManagementKit.connect())
    */
-  onPairingSuccess: (device: Device) => void;
+  onPairingSuccess: (device: Device, discoveredDevice: DiscoveredDevice) => void;
 
   /**
    * During pairing step: if true, this component adds the paired device to the list of known devices by LLM
@@ -120,22 +123,22 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
     };
   }, [pairingFlowStep, onPairingFlowStepChanged]);
 
-  const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
+  type DeviceToPair = Device & { discoveredDevice: DiscoveredDevice };
+  const [deviceToPair, setDeviceToPair] = useState<DeviceToPair | null>(null);
   const [isPaired, setIsPaired] = useState(false);
 
   const onDeviceSelect = useCallback(
-    (item: Device) => {
-      const deviceToPair = {
+    (item: ScannedDevice) => {
+      setDeviceToPair({
         deviceId: item.deviceId,
         deviceName: item.deviceName,
         modelId: item.modelId,
         wired: false,
-      };
-
-      setDeviceToPair(deviceToPair);
+        discoveredDevice: item.discoveredDevice,
+      });
       setPairingFlowStep("pairing");
     },
-    [setDeviceToPair, setPairingFlowStep],
+    [setPairingFlowStep],
   );
 
   useTrackOnboardingFlow({
@@ -175,7 +178,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
         // the scanning component before calling onPairingSuccess
         setPairingFlowStep("done");
 
-        onPairingSuccess(deviceToPair);
+        onPairingSuccess(deviceToPair, deviceToPair.discoveredDevice);
       }, TIMEOUT_AFTER_PAIRED_MS);
     }
 

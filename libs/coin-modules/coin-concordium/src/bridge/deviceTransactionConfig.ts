@@ -1,5 +1,5 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Transaction, TransactionStatus } from "../types";
 
 // This method adds additional fields that need to be reviewed when signing a transaction on the device.

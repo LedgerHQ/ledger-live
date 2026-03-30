@@ -23,7 +23,6 @@ The component implements a 4-step device selection process:
 A device can be selected in two ways:
 
 1. **Auto-connection** (if `autoSelectLastConnectedDevice` is enabled):
-
    - **USB devices**: Waits 1200ms for the device to be plugged in. If detected, auto-selects it.
    - **BLE devices**: Automatically selects the last connected device if available.
 

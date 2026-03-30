@@ -17,20 +17,23 @@ import {
 } from "../../constants";
 import { getProgressViewOffset } from "../../utils/getProgressViewOffset";
 import usePortfolioViewModel from "./usePortfolioViewModel";
+import { useScrollToTop } from "./useScrollToTop";
 
-import { Box } from "@ledgerhq/native-ui";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
+import MarketBanner from "LLM/features/MarketBanner";
 
 import {
   PortfolioAllocationsSection,
   PortfolioAssetsSection,
+  WalletAssetsView,
   PortfolioCarouselSection,
   PortfolioEmptySection,
   PortfolioHeaderSection,
   PortfolioOperationsSection,
   PortfolioBannersSection,
+  PortfolioPerpsEntryPoint,
 } from "../../components";
-
+import { Box } from "@ledgerhq/native-ui";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -48,20 +51,27 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
     shouldDisplayQuickActionCtas,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
     showAssets,
     isLNSUpsellBannerShown,
     isAddModalOpened,
     shouldDisplayGraphRework,
     backgroundColor,
+    isSyncError,
     openAddModal,
     closeAddModal,
     handleHeightChange,
     onBackFromUpdate,
     goToAnalyticsAllocations,
     shouldDisplayWallet40MainNav,
+    shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
   const progressViewOffset = getProgressViewOffset(Platform.OS, shouldDisplayWallet40MainNav);
+
+  const { handleFlatListRef } = useScrollToTop();
 
   const { isDrawerOpen, handleCloseDrawer, closeDrawer, onSlideChange, slides } =
     useWalletV4TourDrawer();
@@ -112,15 +122,34 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       />,
     );
 
+    if (shouldDisplayMarketBanner) {
+      sections.push(
+        <Box key="marketBanner" px={6} pt={6}>
+          <MarketBanner />
+        </Box>,
+      );
+    }
+
     sections.push(
-      <PortfolioAssetsSection
-        key="assets"
-        isAccountListUIEnabled={isAccountListUIEnabled}
-        hideEmptyTokenAccount={hideEmptyTokenAccount}
-        openAddModal={openAddModal}
-        onHeightChange={handleHeightChange}
-      />,
+      <Box key="perps" px={6}>
+        <PortfolioPerpsEntryPoint key="perpsEntryPoint" />
+      </Box>,
     );
+
+    if (shouldDisplayAssetSection) {
+      sections.push(<WalletAssetsView key="categorizedAssets" />);
+    } else {
+      sections.push(
+        <PortfolioAssetsSection
+          key="assets"
+          isAccountListUIEnabled={isAccountListUIEnabled}
+          hideEmptyTokenAccount={hideEmptyTokenAccount}
+          openAddModal={openAddModal}
+          onHeightChange={handleHeightChange}
+          shouldAddBottomPadding={shouldAddBottomPaddingForLegacyAssets}
+        />,
+      );
+    }
 
     if (isAWalletCardDisplayed) {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);
@@ -136,12 +165,16 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
     }
 
-    sections.push(<PortfolioOperationsSection key="operations" />);
+    if (!shouldDisplayOperationsList) {
+      sections.push(<PortfolioOperationsSection key="operations" />);
+    }
 
     return sections;
   }, [
     showAssets,
     shouldDisplayGraphRework,
+    shouldDisplayAssetSection,
+    shouldDisplayMarketBanner,
     onBackFromUpdate,
     isLNSUpsellBannerShown,
     shouldDisplayQuickActionCtas,
@@ -152,14 +185,17 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     backgroundColor,
     goToAnalyticsAllocations,
+    shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   ]);
 
   return (
     <>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
-      <Animated.View style={{ flex: 1 }}>
+      <Animated.View testID="portfolio-screen" style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
+          onFlatListRef={handleFlatListRef}
           data={data}
           renderItem={renderItem<React.JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
@@ -167,6 +203,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
           useSafeArea={!shouldDisplayWallet40MainNav}
           overrideRefreshControlProps={{ progressViewOffset }}
+          isError={isSyncError}
         />
         <AddAccountDrawer
           isOpened={isAddModalOpened}

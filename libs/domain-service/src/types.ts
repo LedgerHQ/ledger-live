@@ -1,5 +1,5 @@
 import { CoinType } from "@ledgerhq/types-cryptoassets";
-import type { SupportedRegistries, DomainServiceResolution } from "@ledgerhq/types-live/lib/domain";
+import type { SupportedRegistries, DomainServiceResolution } from "@ledgerhq/types-live/domain";
 
 export type Registry = {
   name: SupportedRegistries;

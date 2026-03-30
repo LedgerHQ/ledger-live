@@ -3,8 +3,8 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { makeGetAccountShape, postSync } from "../synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
@@ -48,7 +48,7 @@ function buildAccountBridge(signerContext: SignerContext) {
   });
 
   const getAddress = resolver(signerContext);
-  const injectGetAddressParams = (account: BitcoinAccount): any => {
+  const injectGetAddressParams = (account: BitcoinAccount) => {
     const perCoin = perCoinLogic[account.currency.id];
 
     if (perCoin && perCoin.injectGetAddressParams) {
@@ -62,11 +62,13 @@ function buildAccountBridge(signerContext: SignerContext) {
   const wrappedBroadcast: AccountBridge<Transaction, BitcoinAccount>["broadcast"] = async ({
     account,
     signedOperation,
+    broadcastConfig,
   }) => {
     calculateFees.reset();
     return broadcast({
       account,
       signedOperation,
+      ...(broadcastConfig ? { broadcastConfig } : {}),
     });
   };
 

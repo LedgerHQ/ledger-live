@@ -33,6 +33,83 @@ export type LogWithAddress = {
   data: string;
 };
 
+/**
+ * Call action part of a trace_block trace item (OpenEthereum/Erigon trace API).
+ * @see https://www.quicknode.com/docs/ethereum/trace_block
+ */
+export type TraceBlockCallAction = {
+  from: string;
+  to: string;
+  callType: string;
+  value: string;
+};
+
+export function isTraceBlockCallAction(
+  action: Record<string, unknown>,
+): action is TraceBlockCallAction {
+  return (
+    typeof action.from === "string" &&
+    typeof action.to === "string" &&
+    typeof action.callType === "string" &&
+    typeof action.value === "string"
+  );
+}
+
+/**
+ * Other action types (e.g. reward, or other trace_block action shapes).
+ * No specific fields are prescribed.
+ */
+export type TraceBlockOtherAction = Record<string, unknown>;
+
+/**
+ * Result part of a trace_block trace item.
+ */
+export type TraceBlockResult = {
+  gasUsed: string;
+  output: string;
+  error?: string;
+};
+
+/**
+ * Single trace entry returned by trace_block RPC.
+ * When a call reverts, RPC may omit `result` and set top-level `error` (e.g. "Reverted").
+ * "reward" type items have no transactionHash/transactionPosition and result is null.
+ */
+export type TraceBlockItem = {
+  action: TraceBlockCallAction | TraceBlockOtherAction;
+  /** null when the trace is a reward */
+  result?: TraceBlockResult | null;
+  /** Present when the trace reverted (no result object). */
+  error?: string;
+  blockHash?: string;
+  blockNumber: number;
+  transactionHash: string | null;
+  transactionPosition: number | null;
+  traceAddress: number[];
+  subtraces: number;
+  type: string;
+};
+
+/** Type guard for {@link TraceBlockItem} (Erigon `trace_block` and Geth adapter output). */
+export function isTraceBlockItem(value: unknown): value is TraceBlockItem {
+  if (typeof value !== "object" || value === null) return false;
+  const o = value as Record<string, unknown>;
+  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
+  const action = o.action as Record<string, unknown>;
+  if (o.error !== undefined && typeof o.error !== "string") return false;
+
+  const result = o.result;
+  const resultOk =
+    result === undefined ||
+    result === null ||
+    (typeof result === "object" &&
+      ((result as Record<string, unknown>).error === undefined ||
+        typeof (result as Record<string, unknown>).error === "string"));
+  const validCall = typeof o.transactionHash === "string" && resultOk;
+
+  return !isTraceBlockCallAction(action) || validCall;
+}
+
 /** A transaction receipt as returned by a RPC node. */
 export type TransactionReceipt = {
   transactionHash: string;
@@ -53,7 +130,7 @@ export type TransactionInfo = {
   nonce: number;
   gasUsed: string;
   gasPrice: string;
-  value: string;
+  value: string | bigint; // can be returned as bigint by ethers prefetched txs, or string in raw payloads
   status: number | null;
   from: string;
   to: string | undefined;
@@ -67,6 +144,15 @@ export type BlockReceiptInfo = Pick<
   TransactionInfo,
   "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers"
 >;
+
+export type BlockByHeightResult = {
+  hash: string;
+  height: number;
+  timestamp: number;
+  parentHash: string;
+  transactionHashes?: string[];
+  transactions?: PrefetchedBlockTransaction[];
+};
 
 export type NodeApi = {
   getTransaction: (currency: CryptoCurrency, hash: string) => Promise<TransactionInfo>;
@@ -95,26 +181,17 @@ export type NodeApi = {
     blockHeight: number | "latest",
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
-  ) => Promise<{
-    hash: string;
-    height: number;
-    timestamp: number;
-    parentHash: string;
-    transactionHashes?: string[];
-    transactions?: PrefetchedBlockTransaction[];
-  }>;
+  ) => Promise<BlockByHeightResult>;
   getBlockReceipts?: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
-  getOptimismAdditionalFees: (
+  traceBlock?: (
     currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
-  getScrollAdditionalFees: (
-    currency: CryptoCurrency,
-    transaction: EvmTransaction | string,
-  ) => Promise<BigNumber>;
+    blockHeight: number | "latest",
+  ) => Promise<TraceBlockItem[]>;
+  getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
+  getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];

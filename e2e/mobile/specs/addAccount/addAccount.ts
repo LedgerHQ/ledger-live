@@ -36,6 +36,7 @@ export function runAddAccountTest(currency: CurrencyType, tmsLinks: string[], ta
       await app.addAccount.tapCloseAddAccountCta();
 
       await app.portfolio.goToAccounts(currency.name);
+
       await app.assetAccountsPage.waitForAccountPageToLoad(currency.name);
       await app.assetAccountsPage.expectAccountsBalanceVisible();
       await app.common.goToAccount(accountId);

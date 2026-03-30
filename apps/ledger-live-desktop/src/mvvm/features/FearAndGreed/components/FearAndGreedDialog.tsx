@@ -20,7 +20,7 @@ export const FearAndGreedDialog = ({ children }: { children: React.ReactNode }) 
 
       <DialogContent data-testid="fear-and-greed-dialog-content">
         <DialogHeader
-          appearance="extended"
+          appearance="expanded"
           title={t("fearAndGreed.dialog.title")}
           onClose={() => setOpen(false)}
         />

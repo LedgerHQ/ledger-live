@@ -3,7 +3,7 @@ import { useAssets } from "../useAssets";
 import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
-jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => ({
   isCurrencySupported: jest.fn(() => true),
 }));
 

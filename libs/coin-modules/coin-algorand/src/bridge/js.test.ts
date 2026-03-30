@@ -1,16 +1,16 @@
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AlgorandSigner } from "../signer";
 import { buildCurrencyBridge, buildAccountBridge, createBridges } from "./js";
 
 // Mock all dependencies
-jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers", () => ({
   getSerializedAddressParameters: jest.fn(),
   makeAccountBridgeReceive: jest.fn().mockReturnValue(jest.fn()),
   makeScanAccounts: jest.fn().mockReturnValue(jest.fn()),
   updateTransaction: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-framework/bridge/getAddressWrapper", () => jest.fn(fn => fn));
+jest.mock("@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper", () => jest.fn(fn => fn));
 
 jest.mock("../estimateMaxSpendable", () => ({
   estimateMaxSpendable: jest.fn(),

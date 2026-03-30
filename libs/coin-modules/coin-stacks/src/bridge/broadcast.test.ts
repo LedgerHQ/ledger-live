@@ -1,11 +1,11 @@
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { broadcast } from "./broadcast";
 import { broadcastTx } from "../network/api";
-import { getTxToBroadcast } from "./utils/transactions";
 import { StacksOperation } from "../types";
+import { broadcast } from "./broadcast";
+import { getTxToBroadcast } from "./utils/transactions";
 
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../network/api");
 jest.mock("./utils/transactions");
 

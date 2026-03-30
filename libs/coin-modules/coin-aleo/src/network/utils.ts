@@ -1,6 +1,7 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
   EXPLORER_TRANSFER_TYPES,
@@ -11,10 +12,9 @@ import { sdkClient } from "../network/sdk";
 import type {
   ProvableApi,
   AleoPublicTransaction,
-  AleoPublicTransactionDetailsResponse,
-  EnrichedTransaction,
   EnrichedPrivateRecord,
   AleoPrivateRecord,
+  AleoOperation,
 } from "../types";
 import { generateUniqueUsername, parseMicrocredits } from "../logic/utils";
 import { apiClient } from "./api";
@@ -114,26 +114,6 @@ export async function fetchAccountTransactionsFromHeight({
   throw new Error("aleo: unexpected end of loop in fetchAccountTransactionsFromHeight");
 }
 
-// transactions list doesn't include all the details we need to build the operation, so we need to fetch them separately
-export async function enrichTransaction({
-  currency,
-  rawTx,
-}: {
-  currency: CryptoCurrency;
-  rawTx: AleoPublicTransaction;
-}): Promise<EnrichedTransaction> {
-  let details: AleoPublicTransactionDetailsResponse | null = null;
-
-  if (rawTx.program_id === PROGRAM_ID.CREDITS) {
-    details = await apiClient.getTransactionById(currency, rawTx.transaction_id);
-  }
-
-  return {
-    rawTx,
-    details,
-  };
-}
-
 /**
  * Manages access to the Provable API by handling authentication and account registration.
  *
@@ -206,7 +186,7 @@ export async function accessProvableApi({
   }
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getPublicKey(currency, jwt.token);
+    const { public_key, key_id } = await apiClient.getScannerPublicKey(currency, jwt.token);
 
     const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
       currency,
@@ -283,16 +263,29 @@ export async function enrichPrivateRecord({
       return null;
     }
 
+    // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
+    // Other input (missing `value` field) would indicate unexpected API data.
+    // In that case we skip processing rather than crash.
+    const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
+    const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
+    const recipientArgument = recipientInput && "value" in recipientInput ? recipientInput : null;
+    const amountArgument = amountInput && "value" in amountInput ? amountInput : null;
+
+    if (!recipientArgument || !amountArgument) {
+      log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
+      return null;
+    }
+
     if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-      if (recordTransition.inputs[RECIPIENT_ARG_INDEX].value === address) return null;
+      if (recipientArgument.value === address) return null;
       sender = address;
-      recipient = recordTransition.inputs[RECIPIENT_ARG_INDEX].value;
-      value = new BigNumber(parseMicrocredits(recordTransition.inputs[AMOUNT_ARG_INDEX].value));
+      recipient = recipientArgument.value;
+      value = new BigNumber(parseMicrocredits(amountArgument.value));
     } else {
       const [recipientData, amountData] = await Promise.all([
         sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+          ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: rawRecord.program_name,
@@ -301,7 +294,7 @@ export async function enrichPrivateRecord({
         }),
         sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+          ciphertext: amountArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: rawRecord.program_name,
@@ -334,3 +327,158 @@ export async function enrichPrivateRecord({
 
   return { rawRecord, details, sender, recipient, value };
 }
+
+function splitPublicAndSemiPublicOperations(
+  operations: AleoOperation[],
+): [AleoOperation[], AleoOperation[]] {
+  const semiPublicOps: AleoOperation[] = [];
+  const publicOps: AleoOperation[] = [];
+  const semiPublicFunctionIds = new Set([
+    EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+    EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+  ]);
+
+  for (const operation of operations) {
+    const isSemiPublic = semiPublicFunctionIds.has(operation.extra.functionId);
+    (isSemiPublic ? semiPublicOps : publicOps).push(operation);
+  }
+
+  return [semiPublicOps, publicOps];
+}
+
+/**
+ * Patches public operations to handle semi transparent transactions (public_to_private and private_to_public).
+ * For self-transfers involving private records, creates additional operations to show both sides of the transfer.
+ *
+ * @param publicOperations - List of public operations to check
+ * @param privateRecords - List of owned private records
+ * @param address - The account address
+ * @param ledgerAccountId - The Ledger account ID
+ * @returns Array of patched operations including additional operations for semi transparent transfers
+ */
+export const patchPublicOperations = async ({
+  currency,
+  publicOperations,
+  privateRecords,
+  address,
+  ledgerAccountId,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  publicOperations: AleoOperation[];
+  privateRecords: AleoPrivateRecord[];
+  address: string;
+  ledgerAccountId: string;
+  viewKey: string;
+}): Promise<AleoOperation[]> => {
+  const patchedOperations: AleoOperation[] = [];
+  const [semiPublicOperations, fullyPublicOperations] =
+    splitPublicAndSemiPublicOperations(publicOperations);
+
+  const latestPrivateRecordBlockHeight = privateRecords.reduce((max, record) => {
+    // this should be recordScanner.status.lastBlockHeight, but we don't have such information yet
+    // current implementation guarantees no duplicates, but it can enter else condition many times
+    return Math.max(max, record.block_height);
+  }, 0);
+
+  for (const operation of semiPublicOperations) {
+    // skip already patched operations to avoid duplication
+    if (operation.extra.patched) {
+      patchedOperations.push(operation);
+      continue;
+    }
+
+    // try to find a matching private record, ignore fee_private records
+    const privateRecord = privateRecords.find(
+      record =>
+        record.transaction_id.trim() === operation.hash.trim() &&
+        record.function_name !== "fee_private",
+    );
+
+    // if private record was found, operation can be one of:
+    // - self transfer from public to private
+    // - self transfer from private to public
+    if (privateRecord) {
+      // for self-transfers, the original operation is IN or OUT
+      // we can patch senders/recipients + add cloned operation with opposite type
+      const oppositeOperationType = operation.type === "IN" ? "OUT" : "IN";
+      const oppositeTransactionType =
+        operation.extra.transactionType === "private" ? "public" : "private";
+
+      // ensure unique date for sorting for cloned operations
+      const dateOffset = oppositeOperationType === "OUT" ? -1 : 1;
+      const oppositeOperationDate = new Date(operation.date.getTime() + dateOffset);
+
+      patchedOperations.push(
+        {
+          ...operation,
+          senders: privateRecord.sender ? [privateRecord.sender] : operation.senders,
+          recipients: [address],
+          extra: {
+            ...operation.extra,
+            patched: true,
+          },
+        },
+        {
+          ...operation,
+          id: encodeOperationId(ledgerAccountId, operation.hash, oppositeOperationType),
+          type: oppositeOperationType,
+          date: oppositeOperationDate,
+          senders: [address],
+          recipients: [address],
+          extra: {
+            ...operation.extra,
+            transactionType: oppositeTransactionType,
+            patched: true,
+          },
+        },
+      );
+    }
+    // if private record was not found, operation can be one of:
+    // - semi-transparent transfer from another account to another account
+    // - semi-transparent transfer from our own account to another account
+    else {
+      const txDetails = await apiClient.getTransactionById(currency, operation.hash);
+      const recordTransition = txDetails.execution.transitions[0] ?? null;
+      const recipientInput = recordTransition?.inputs[0] ?? {};
+      const recipientArgument = "value" in recipientInput ? recipientInput : null;
+
+      // if this is public to private, our account is sender, so it's possible to decrypt the recipient address
+      // arguments of transfer_public_to_private function are (address_ciphertext, amount)
+      if (
+        recipientArgument &&
+        operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
+      ) {
+        const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
+        const recipientData = await sdkClient.decryptCiphertext({
+          currency,
+          ciphertext: recipientArgument.value,
+          tpk: recordTransition.tpk,
+          viewKey,
+          programId: PROGRAM_ID.CREDITS,
+          functionName: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+          outputIndex: 0,
+        });
+
+        patchedOperations.push({
+          ...operation,
+          recipients: [recipientData.plaintext],
+          extra: {
+            ...operation.extra,
+            // record scanner may be delayed, so we can consider the operation as patched only when
+            // we are sure that record scanner block height is greater than or equal to the block height of the transaction
+            ...(shouldMarkAsPatched && { patched: true }),
+          },
+        });
+      }
+      // private to public is IN operation
+      else {
+        patchedOperations.push(operation);
+      }
+    }
+  }
+
+  patchedOperations.push(...fullyPublicOperations);
+
+  return patchedOperations;
+};

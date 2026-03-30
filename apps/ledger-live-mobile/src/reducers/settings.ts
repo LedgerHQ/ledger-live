@@ -109,7 +109,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
-  theme: "system",
+  theme: "dark",
   osTheme: undefined,
   customLockScreenType: null,
   lastSeenCustomImage: {
@@ -145,6 +145,8 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
+    totalMarketCap: true,
+    topGainersLosers: true,
   },
   neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
@@ -171,6 +173,7 @@ export const INITIAL_STATE: SettingsState = {
   isPostOnboardingFlow: false,
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
+  deprecationDoNotRemind: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -212,6 +215,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       ...filteredPayload,
+      notifications: {
+        ...state.notifications,
+        ...filteredPayload.notifications,
+      },
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };
@@ -645,6 +652,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
   }),
 
+  [SettingsActionTypes.DEPRECATION_DO_NOT_REMIND]: (state: SettingsState, { payload }) => {
+    return {
+      ...state,
+      deprecationDoNotRemind: [...state.deprecationDoNotRemind, payload as string],
+    };
+  },
+
   [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
     ...state,
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
@@ -855,10 +869,8 @@ export const notificationsSelector = (state: State) => state.settings.notificati
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
-export const overriddenFeatureFlagsSelector = (state: State) =>
-  state.settings.overriddenFeatureFlags;
-export const featureFlagsBannerVisibleSelector = (state: State) =>
-  state.settings.featureFlagsBannerVisible;
+export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
+export const featureFlagsBannerVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
 /* NB: Protect is the former codename for Ledger Recover */

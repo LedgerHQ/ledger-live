@@ -22,8 +22,8 @@ test("Settings", async ({ page }) => {
   });
 
   await test.step("go to settings -> change language with device in English", async () => {
-    await page.route("**/language-package?**", route => {
-      route.fulfill({
+    await page.route("**/language-package?**", async route => {
+      await route.fulfill({
         headers: { teststatus: "mocked" },
         status: 200,
         body: JSON.stringify(languagePacksData),

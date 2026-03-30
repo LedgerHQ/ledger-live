@@ -105,7 +105,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -139,7 +140,7 @@ jobs:
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm build:llm:deps
+          command: pnpm turbo build --filter="live-mobile^..."
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -147,7 +148,7 @@ jobs:
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm build:dummy-apps
+          command: pnpm turbo build --filter="@ledgerhq/dummy-*-app"
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -197,7 +198,8 @@ jobs:
         id: setup-caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: "true"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "false"
@@ -218,7 +220,7 @@ jobs:
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm build:llm:deps
+          command: pnpm turbo build --filter="live-mobile^..."
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}

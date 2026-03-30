@@ -34,14 +34,14 @@ runs:
         version: 10.24.0
     - uses: actions/setup-node@v4
       with:
-        node-version: 22.13.1
+        node-version: 24.14.0
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: Install dependencies
       run: pnpm i --filter="coin-modules-monitoring..." --silent
       shell: bash
     - name: Build dependencies
-      run: pnpm build:llc
+      run: pnpm turbo build --filter=./libs/ledger-live-common
       shell: bash
     - name: Build coin-modules-monitoring
       run: pnpm coin:modules:monitoring build

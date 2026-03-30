@@ -1,7 +1,7 @@
-import { submit } from "../../network/gateway";
-import * as coinConfigModule from "../../config";
-import { broadcast } from "./broadcast";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import * as coinConfigModule from "../../config";
+import { submit } from "../../network/gateway";
+import { broadcast } from "./broadcast";
 
 jest.mock("../../network/gateway", () => ({
   submit: jest.fn(),

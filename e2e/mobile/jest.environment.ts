@@ -1,4 +1,13 @@
 import { takeSpeculosScreenshot } from "./utils/speculosUtils";
+import {
+  attachTestExecutionConsoleToAllure,
+  attachFailureLogsToAllure,
+  attachSpeculosStartupErrorToAllure,
+  resetStderrCaptureForCurrentTest,
+  installConsoleCapture,
+  uninstallConsoleCapture,
+} from "./utils/loggingUtils";
+import { getLogs } from "./bridge/server";
 import { Circus } from "@jest/types";
 import { logMemoryUsage, takeAppScreenshot, setupEnvironment } from "./helpers/commonHelpers";
 import { config as detoxConfig } from "detox/internals";
@@ -31,7 +40,6 @@ export default class TestEnvironment extends DetoxEnvironment {
     setupEnvironment();
 
     const speculosDevicesMap = new Map<string, number>();
-    const proxySubscriptionsMap = new Map<number, { port: number; subscription: any }>();
     const webSocketObj = {
       wss: undefined,
       ws: undefined,
@@ -44,14 +52,12 @@ export default class TestEnvironment extends DetoxEnvironment {
     this.global.app = appInstance;
     this.global.IS_FAILED = false;
     this.global.speculosDevices = speculosDevicesMap;
-    this.global.proxySubscriptions = proxySubscriptionsMap;
     this.global.webSocket = webSocketObj;
     this.global.pendingCallbacks = pendingCallbacksMap;
 
     globalThis.app = appInstance;
     globalThis.IS_FAILED = false;
     globalThis.speculosDevices = speculosDevicesMap;
-    globalThis.proxySubscriptions = proxySubscriptionsMap;
     globalThis.webSocket = webSocketObj;
     globalThis.pendingCallbacks = pendingCallbacksMap;
 
@@ -75,11 +81,13 @@ export default class TestEnvironment extends DetoxEnvironment {
       getAttributesOfElement: NativeElementHelpers.getAttributesOfElement,
       getElementById: NativeElementHelpers.getElementById,
       getElementByIdAndText: NativeElementHelpers.getElementByIdAndText,
+      getElementByIdWithDescendantTexts: NativeElementHelpers.getElementByIdWithDescendantTexts,
       getElementByText: NativeElementHelpers.getElementByText,
       getElementsById: NativeElementHelpers.getElementsById,
       getIdByRegexp: NativeElementHelpers.getIdByRegexp,
       getIdOfElement: NativeElementHelpers.getIdOfElement,
       getTextOfElement: NativeElementHelpers.getTextOfElement,
+      IsIdPresent: NativeElementHelpers.isIdPresent,
       IsIdVisible: NativeElementHelpers.isIdVisible,
       scrollToId: NativeElementHelpers.scrollToId,
       scrollToText: NativeElementHelpers.scrollToText,
@@ -112,6 +120,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       waitForCurrentWebviewUrlToContain: WebElementHelpers.waitForCurrentWebviewUrlToContain,
       waitForWebElementToBeEnabled: WebElementHelpers.waitForWebElementToBeEnabled,
       waitForWebElementToMatchRegex: WebElementHelpers.waitForWebElementToMatchRegex,
+      waitWebElement: WebElementHelpers.waitWebElement,
       waitWebElementByTestId: WebElementHelpers.waitWebElementByTestId,
     };
 
@@ -145,6 +154,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   async teardown() {
     try {
+      uninstallConsoleCapture();
       if (this.global.webSocket?.wss) {
         this.global.webSocket.wss.close();
         this.global.webSocket.wss = undefined;
@@ -158,28 +168,11 @@ export default class TestEnvironment extends DetoxEnvironment {
         this.global.webSocket.e2eBridgeServer.complete();
       }
 
-      if (this.global.proxySubscriptions) {
-        for (const [_, { subscription }] of this.global.proxySubscriptions) {
-          if (subscription?.unsubscribe && !subscription.closed) {
-            subscription.unsubscribe();
-          }
-        }
-        this.global.proxySubscriptions.clear();
-      }
-
-      // Clean up DeviceManagementKit transport connections to prevent TLS socket errors
-      // The static byBase Map can hold stale connections that cause "Cannot read properties of null"
-      // Using dynamic import to avoid module loading side effects during environment initialization
       try {
         const { DeviceManagementKitTransportSpeculos } = await import(
           "@ledgerhq/live-dmk-speculos"
         );
-        for (const [_baseUrl, entry] of DeviceManagementKitTransportSpeculos.byBase) {
-          if (entry.sessionId && entry.dmk?.disconnect) {
-            await entry.dmk.disconnect({ sessionId: entry.sessionId }).catch(() => {});
-          }
-        }
-        DeviceManagementKitTransportSpeculos.byBase.clear();
+        await DeviceManagementKitTransportSpeculos.disconnectAll();
       } catch {
         // Ignore cleanup errors
       }
@@ -197,14 +190,21 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     if (["hook_failure", "test_fn_failure"].includes(event.name)) {
       this.global.IS_FAILED = true;
-    }
-
-    if (this.global.IS_FAILED && ["test_fn_start", "test_fn_failure"].includes(event.name)) {
       await takeSpeculosScreenshot();
       await takeAppScreenshot("Test Failure");
+      try {
+        await attachTestExecutionConsoleToAllure();
+        await attachSpeculosStartupErrorToAllure();
+        const logsPayload = await getLogs();
+        await attachFailureLogsToAllure(logsPayload);
+      } catch (err) {
+        console.warn("Failed to attach failure logs to Allure:", err);
+      }
     }
 
     if (event.name === "run_start") {
+      resetStderrCaptureForCurrentTest();
+      installConsoleCapture();
       await logMemoryUsage();
     }
   }

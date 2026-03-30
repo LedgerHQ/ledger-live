@@ -1,13 +1,19 @@
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
-import { getBlock } from "./getBlock";
-import { getBlockInfo } from "./getBlockInfo";
 import { apiClient } from "../network/api";
 import type { StakingAnalysis } from "../types";
+import { getBlock } from "./getBlock";
+import { getBlockInfo } from "./getBlockInfo";
 import { analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
 
 jest.mock("./getBlockInfo");
 jest.mock("../network/api");
-jest.mock("./utils");
+// mock all functions in utils except extractFeesPayer
+jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
+  analyzeStakingOperation: jest.fn(),
+  getDateRangeFromBlockHeight: jest.fn(),
+  getMemoFromBase64: jest.fn(),
+}));
 
 describe("getBlock", () => {
   const mockBlockInfo = {
@@ -53,7 +59,7 @@ describe("getBlock", () => {
     });
   });
 
-  it("should extract fee payer from transaction_id", async () => {
+  it("should extract fee payer from transaction_id by default", async () => {
     const mockTx = {
       transaction_id: "0.0.999-1234567890-000000000",
       transaction_hash: "hash",
@@ -70,6 +76,33 @@ describe("getBlock", () => {
     const result = await getBlock(100);
 
     expect(result.transactions[0].feesPayer).toBe("0.0.999");
+  });
+
+  it("should infer fee payer from transfers when initiator is not debited", async () => {
+    const mockTx = {
+      transaction_id: "0.0.10067173-1761755118-730000493",
+      transaction_hash: "hash",
+      name: "CRYPTOTRANSFER",
+      result: "INSUFFICIENT_PAYER_BALANCE",
+      charged_tx_fee: 40743,
+      staking_reward_transfers: [],
+      transfers: [
+        { account: "0.0.23", amount: -40743 },
+        { account: "0.0.801", amount: 40743 },
+      ],
+      token_transfers: [],
+    };
+
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([mockTx]);
+
+    const result = await getBlock(100);
+    const payerOperation = result.transactions[0].operations.find(op => op.address === "0.0.23");
+
+    expect(result.transactions[0].feesPayer).toBe("0.0.23");
+    expect(payerOperation).toMatchObject({
+      address: "0.0.23",
+      amount: BigInt(0),
+    });
   });
 
   it("should exclude fee from payer's operation amount", async () => {

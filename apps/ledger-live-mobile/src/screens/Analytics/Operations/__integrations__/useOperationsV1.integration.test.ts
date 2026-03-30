@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook } from "@tests/test-renderer";
 import { useOperationsV1 } from "../useOperationsV1";
 import { State } from "~/reducers/types";

@@ -42,6 +42,20 @@ type CommonOperationType = {
 export type APITransactionType = CommonOperationType & {
   type: "transaction";
   amount: number;
+  /**
+   * The account that initiated the whole operation group (i.e. the account that signed and paid fees).
+   *
+   * - For top-level transactions: `null` (the `sender` is the initiator).
+   * - For internal transactions (emitted by a smart contract): set to the original user account.
+   *   In that case `sender` is the contract that emitted the internal operation.
+   *
+   *
+   * Example (real mainnet tx opK5rnDgd4ipyeS3JnFrENMpeu7xY44AMcke9u9GDku7Udt8sYd):
+   *   initiator: { address: "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV" }  // user account, fee payer
+   *   sender:    { address: "KT1WPEis2WhAc2FciM2tZVn8qe6pCBe9HkDp" }  // smart contract "Vested funds 1"
+   *   target:    { address: "tz3bTdwZinP8U1JmSweNzVKhmwafqWmFWRfk" }  // recipient
+   *   bakerFee:  0  (fees are on the top-level operation, not on internal ones)
+   */
   initiator: { address: string } | undefined | null;
   sender: { address: string } | undefined | null;
   target: { address: string } | undefined | null;
@@ -148,4 +162,41 @@ export type APIBlock = {
   };
   lbEscapeVote: boolean;
   lbEscapeEma: number;
+  /** Hash of the previous block. Not included by default; request via TzKT `select` param if needed. */
+  prevHash?: string;
+};
+
+/**
+ * A FA1.2 / FA2 token transfer event returned by `GET /v1/tokens/transfers`.
+ * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
+ */
+export type APITokenTransfer = {
+  /** Unique transfer identifier (monotonically increasing, usable as cursor). */
+  id: number;
+  level: number;
+  timestamp: string;
+  token: {
+    id: number;
+    contract: { address: string };
+    /** Stringified token ID (FA2 only; "0" for FA1.2). */
+    tokenId: string;
+    standard: "fa1.2" | "fa2";
+    metadata?: {
+      name?: string;
+      symbol?: string;
+      decimals?: string;
+    };
+  };
+  /** Sender address. Null/undefined for minting events. */
+  from: { address: string } | undefined | null;
+  /** Receiver address. Null/undefined for burning events. */
+  to: { address: string } | undefined | null;
+  /** Transfer amount as a decimal string (integer, no magnitude applied). */
+  amount: string;
+  /**
+   * The `id` of the `APITransactionType` operation that triggered this transfer.
+   * Use this to join token transfers back to their parent on-chain operation hash.
+   * Undefined for implicit/protocol-level transfers.
+   */
+  transactionId?: number;
 };

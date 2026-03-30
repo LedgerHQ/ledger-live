@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.62.0",
+  "version": "34.66.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -38,10 +38,18 @@
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./*.js": {
+      "@ledgerhq/source": [
+        "./src/*.ts",
+        "./src/*.tsx"
+      ],
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -50,34 +58,72 @@
       "default": "./lib-es/index.js"
     },
     "./currencies/*": {
+      "@ledgerhq/source": "./src/currencies/*.ts",
       "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
+    },
+    "./device-action/*": {
+      "@ledgerhq/source": "./src/device-action/*.ts",
+      "require": "./lib/device-action/*.js",
+      "default": "./lib-es/device-action/*.js"
     },
     "./hooks": {
       "require": "./lib/hooks/index.js",
       "default": "./lib-es/hooks/index.js"
     },
     "./e2e": {
+      "@ledgerhq/source": "./src/e2e/index.ts",
       "require": "./lib/e2e/index.js",
       "default": "./lib-es/e2e/index.js"
     },
     "./featureFlags": {
+      "@ledgerhq/source": "./src/featureFlags/*.ts",
       "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
     },
-    "./bridge/descriptor": {
-      "require": "./lib/bridge/descriptor.js",
-      "default": "./lib-es/bridge/descriptor.js"
+    "./bridge/descriptor/registry": {
+      "@ledgerhq/source": "./src/bridge/descriptor/registry.ts",
+      "require": "./lib/bridge/descriptor/registry.js",
+      "default": "./lib-es/bridge/descriptor/registry.js"
+    },
+    "./bridge/descriptor/types": {
+      "@ledgerhq/source": "./src/bridge/descriptor/types.ts",
+      "require": "./lib/bridge/descriptor/types.js",
+      "default": "./lib-es/bridge/descriptor/types.js"
+    },
+    "./bridge/descriptor/send/features": {
+      "@ledgerhq/source": "./src/bridge/descriptor/send/features.ts",
+      "require": "./lib/bridge/descriptor/send/features.js",
+      "default": "./lib-es/bridge/descriptor/send/features.js"
+    },
+    "./bridge/descriptor/send/memo": {
+      "@ledgerhq/source": "./src/bridge/descriptor/send/memo.ts",
+      "require": "./lib/bridge/descriptor/send/memo.js",
+      "default": "./lib-es/bridge/descriptor/send/memo.js"
     },
     "./test-helpers/cryptoAssetsStore": {
+      "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
       "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
       "require": "./lib/test-helpers/cryptoAssetsStore.js",
       "default": "./lib-es/test-helpers/cryptoAssetsStore.js"
     },
     "./test-helpers/*": {
+      "@ledgerhq/source": "./src/test-helpers/*.ts",
       "types": "./lib/test-helpers/*.d.ts",
       "require": "./lib/test-helpers/*.js",
       "default": "./lib-es/test-helpers/*.js"
+    },
+    "./modularDrawer/__mocks__/*": {
+      "@ledgerhq/source": "./src/modularDrawer/__mocks__/*.ts",
+      "types": "./lib/modularDrawer/__mocks__/*.d.ts",
+      "require": "./lib/modularDrawer/__mocks__/*.js",
+      "default": "./lib-es/modularDrawer/__mocks__/*.js"
+    },
+    "./cmc-client/__mocks__/*": {
+      "@ledgerhq/source": "./src/cmc-client/__mocks__/*.ts",
+      "types": "./lib/cmc-client/__mocks__/*.d.ts",
+      "require": "./lib/cmc-client/__mocks__/*.js",
+      "default": "./lib-es/cmc-client/__mocks__/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -88,12 +134,15 @@
     "watch:es": "zx ./scripts/watch-ts-es.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s'",
-    "lint": "eslint src --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "jest": "jest",
     "jest:debug": "cross-env TZ=America/New_York node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "typecheck": "tsc --noEmit -p src/tsconfig.json",
-    "ci-lint": "pnpm lint",
+    "typecheck": "tsc --noEmit -p src/tsconfig.json --customConditions node",
+    "ci-lint": "pnpm lint:ci",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
@@ -202,6 +251,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
@@ -215,16 +265,17 @@
     "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-canton": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
+    "@ledgerhq/live-signer-hyperliquid": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.13.1",
-    "@ledgerhq/wallet-api-core": "^1.29.0",
+    "@ledgerhq/wallet-api-client": "^1.14.0",
+    "@ledgerhq/wallet-api-core": "^1.30.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
-    "@ledgerhq/wallet-api-server": "^3.2.0",
+    "@ledgerhq/wallet-api-server": "^3.3.0",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",
@@ -238,7 +289,7 @@
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",
-    "@xstate/react": "^5.0.2",
+    "@xstate/react": "catalog:",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
     "@zondax/ledger-filecoin": "^3.0.6",
@@ -253,6 +304,7 @@
     "bip39": "^3.0.4",
     "bs58": "catalog:",
     "date-fns": "^2.23.0",
+    "eip55": "^2.1.1",
     "ethers": "catalog:",
     "expect": "catalog:",
     "fuse.js": "^6.6.2",
@@ -278,9 +330,9 @@
     "usehooks-ts": "^2.13.0",
     "utility-types": "^3.10.0",
     "winston": "^3.4.0",
-    "xstate": "^5.19.2",
+    "xstate": "catalog:",
     "yargs": "^17.0.0",
-    "zod": "^3.22.4"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/device-react": "workspace:^",
@@ -299,7 +351,7 @@
     "@types/invariant": "^2.2.36",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.179",
-    "@types/node": "^22.10.10",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
@@ -307,10 +359,6 @@
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
     "jest": "catalog:",
@@ -319,6 +367,8 @@
     "mkdirp": "1.0.4",
     "msw": "catalog:",
     "nock": "^13.0.5",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
@@ -327,9 +377,15 @@
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",
     "ts-node": "^10.4.0",
-    "typescript": "5.4.3",
+    "typescript": "catalog:",
     "undici": "catalog:",
     "uuid": "^8.3.2",
     "ws": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

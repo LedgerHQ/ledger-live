@@ -1,6 +1,6 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import {

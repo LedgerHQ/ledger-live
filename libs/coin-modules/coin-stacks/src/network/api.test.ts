@@ -1,5 +1,6 @@
 import * as env from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
+import { EstimatedFeesRequest } from "../types/api";
 import {
   fetchBalances,
   fetchTokenBalancesPage,
@@ -14,7 +15,6 @@ import {
   fetchFullMempoolTxs,
   fetchNonce,
 } from "./api";
-import { EstimatedFeesRequest } from "../types/api";
 
 jest.mock("@ledgerhq/live-env");
 jest.mock("@ledgerhq/live-network/network");
@@ -69,7 +69,7 @@ describe("Stacks API", () => {
 
       expect(network).toHaveBeenCalledWith({
         method: "GET",
-        url: `${mockApiUrl}/extended/v1/address/${mockAddress}/stx`,
+        url: `${mockApiUrl}/extended/v2/addresses/${mockAddress}/balances/stx`,
       });
       expect(result).toEqual(mockBalanceResponse);
     });

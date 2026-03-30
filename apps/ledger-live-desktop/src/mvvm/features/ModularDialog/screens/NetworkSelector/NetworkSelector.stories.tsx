@@ -75,7 +75,7 @@ const createMockState = () => ({
     ],
   },
   application: { debug: {} },
-  modularDrawer: {
+  modularDialog: {
     flow: "Modular Network Flow",
     source: "sourceTest",
   },
@@ -92,7 +92,7 @@ const createStore = () =>
       locale: (state = initialMockState.locale) => state,
       currency: (state = initialMockState.currency) => state,
       application: (state = initialMockState.application) => state,
-      modularDrawer: (state = initialMockState.modularDrawer) => state,
+      modularDialog: (state = initialMockState.modularDialog) => state,
       assetsDataApi: (state = {}) => state,
     },
     preloadedState: { assetsDataApi: preloadedAssetsDataApiState },

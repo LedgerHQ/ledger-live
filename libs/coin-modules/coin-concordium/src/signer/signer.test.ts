@@ -8,7 +8,7 @@ import ConcordiumSigner from "./index";
 describe("signer", () => {
   describe("getAddress", () => {
     const deviceId = "test-device-id";
-    const path = "m/1105'/0'/0'/0'/0'/0'";
+    const path = "44'/919'/404'/404'/0'";
 
     it("should return address and publicKey from signer", async () => {
       // GIVEN
@@ -17,7 +17,7 @@ describe("signer", () => {
       const getAddressFn = getAddress(signerContext);
 
       // WHEN
-      const result = await getAddressFn(deviceId, { path, verify: false });
+      const result = await getAddressFn(deviceId, { path, verify: false } as any);
 
       // THEN
       expect(result).toEqual({
@@ -34,7 +34,7 @@ describe("signer", () => {
       const getAddressFn = getAddress(signerContext);
 
       // WHEN
-      await getAddressFn(deviceId, { path, verify: false });
+      await getAddressFn(deviceId, { path, verify: false } as any);
 
       // THEN
       expect(mockSigner.getAddress).toHaveBeenCalledWith(path, false);
@@ -47,7 +47,7 @@ describe("signer", () => {
       const getAddressFn = getAddress(signerContext);
 
       // WHEN
-      await getAddressFn(deviceId, { path, verify: true });
+      await getAddressFn(deviceId, { path, verify: true } as any);
 
       // THEN
       expect(mockSigner.getAddress).toHaveBeenCalledWith(path, true);
@@ -60,7 +60,7 @@ describe("signer", () => {
       const getAddressFn = getAddress(signerContext);
 
       // WHEN
-      await getAddressFn(deviceId, { path });
+      await getAddressFn(deviceId, { path } as any);
 
       // THEN
       expect(mockSigner.getAddress).toHaveBeenCalledWith(path, undefined);
@@ -75,7 +75,7 @@ describe("signer", () => {
       const getAddressFn = getAddress(signerContext);
 
       // WHEN / THEN
-      await expect(getAddressFn(deviceId, { path })).rejects.toThrow("Device disconnected");
+      await expect(getAddressFn(deviceId, { path } as any)).rejects.toThrow("Device disconnected");
     });
 
     it("should handle different derivation paths", async () => {
@@ -83,10 +83,10 @@ describe("signer", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const getAddressFn = getAddress(signerContext);
-      const customPath = "m/1105'/0'/1'/2'/3'/4'";
+      const customPath = "44'/919'/404'/404'/5'";
 
       // WHEN
-      const result = await getAddressFn(deviceId, { path: customPath });
+      const result = await getAddressFn(deviceId, { path: customPath } as any);
 
       // THEN
       expect(result.path).toBe(customPath);
@@ -96,7 +96,7 @@ describe("signer", () => {
 
   describe("getPublicKey", () => {
     const deviceId = "test-device-id";
-    const path = "m/1105'/0'/0'/0'/0'/0'";
+    const path = "44'/919'/404'/404'/0'";
 
     it("should return public key from signer", async () => {
       // GIVEN
@@ -166,7 +166,7 @@ describe("signer", () => {
 
   describe("signCredentialDeployment", () => {
     const deviceId = "test-device-id";
-    const path = "m/1105'/0'/0'/0'/0'/0'";
+    const path = "44'/919'/404'/404'/0'";
     // 128 hex chars = 64 bytes, Ed25519 signature
     const mockSignature = "bb".repeat(64);
 
@@ -267,7 +267,7 @@ describe("signer", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const transaction = createMockTransaction();
-      const customPath = "m/1105'/0'/1'/2'/3'/4'";
+      const customPath = "44'/919'/404'/404'/5'";
 
       // WHEN
       await signCredentialDeployment(signerContext, deviceId, transaction, customPath);

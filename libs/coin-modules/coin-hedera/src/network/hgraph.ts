@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import type {
   ERC20TokenAccount,
   ERC20TokenTransfer,
@@ -116,7 +116,7 @@ async function getERC20Transfers({
           query GetAccountTransfers($accountId: bigint!, $tokenEvmAddresses: [String!]!, $cursor: bigint, $limit: Int!) {
             erc_token_transfer(
                 where: {
-                    transfer_type: { _eq: "transfer" }
+                    transfer_type: { _in: ["transfer", "mint", "burn"] }
                     contract_type: { _eq: "ERC_20" }
                     token_evm_address: { _in: $tokenEvmAddresses }
                     ${cursor ? `consensus_timestamp: { ${getPaginationDirection(fetchAllPages, order)}: $cursor }` : ""}
@@ -207,7 +207,7 @@ async function getERC20TransfersByTimestampRange({
           query GetAccountTransfers($startTimestamp: bigint!, $endTimestamp: bigint!, $cursor: bigint, $limit: Int!) {
             erc_token_transfer(
                 where: {
-                    transfer_type: { _eq: "transfer" }
+                    transfer_type: { _in: ["transfer", "mint", "burn"] }
                     contract_type: { _eq: "ERC_20" }
                     consensus_timestamp: { 
                       ${cursor ? "_gt: $cursor" : "_gte: $startTimestamp"}

@@ -1,5 +1,5 @@
-import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AleoSigner } from "../types";
 
 export type GetViewKeyOptions = Pick<GetAddressOptions, "path" | "currency">;
@@ -13,12 +13,12 @@ export type GetViewKeyFn = (
 ) => Promise<GetViewKeyResult>;
 
 const getViewKey = (signerContext: SignerContext<AleoSigner>): GetViewKeyFn => {
-  return async (deviceId: string, opts: GetViewKeyOptions) => {
-    const viewKey = await signerContext(deviceId, signer => signer.getViewKey(opts.path));
+  return async (deviceId: string, { path }: GetViewKeyOptions) => {
+    const result = await signerContext(deviceId, signer => signer.getViewKey(path));
 
     return {
-      path: opts.path,
-      viewKey: viewKey.toString(),
+      path,
+      viewKey: result.viewKey,
     };
   };
 };

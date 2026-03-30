@@ -50,14 +50,10 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
           onActiveChange={viewModel.handleActiveChange}
           collapsed={viewModel.collapsed}
           onCollapsedChange={viewModel.handleCollapsedChange}
+          data-testid="sidebar-navigation"
         >
           <SideBarLeading>
-            <SideBarItem
-              value="home"
-              icon={Home}
-              activeIcon={HomeFill}
-              label={t("dashboard.title")}
-            />
+            <SideBarItem value="home" icon={Home} activeIcon={HomeFill} label={t("sidebar.home")} />
             <SideBarItem
               value="accounts"
               icon={Wallet}

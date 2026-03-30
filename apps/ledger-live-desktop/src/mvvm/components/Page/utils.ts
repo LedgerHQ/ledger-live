@@ -4,14 +4,23 @@
  * - RightPanel (swap sidebar)
  * - Wallet40Layout with pt-32 spacing
  */
-const WALLET_40_PAGES = new Set(["/", "/market", "/analytics", "/earn", "/perps"]);
+const WALLET_40_PAGES = new Set([
+  "/",
+  "/market",
+  "/analytics",
+  "/cryptos",
+  "/assets",
+  "/earn",
+  "/perps",
+  "/history",
+]);
 
 const WALLET_40_PREFIXES = ["/card", "/swap", "/exchange"];
 
 /**
  * Pages that display the right panel (swap sidebar)
  */
-const RIGHT_PANEL_PAGES = new Set(["/", "/analytics"]);
+const RIGHT_PANEL_PAGES = new Set(["/", "/analytics", "/cryptos"]);
 
 /**
  * Check if a pathname uses the Wallet 4.0 layout

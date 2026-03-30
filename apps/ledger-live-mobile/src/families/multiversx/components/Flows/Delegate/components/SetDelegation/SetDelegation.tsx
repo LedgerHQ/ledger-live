@@ -8,7 +8,7 @@ import {
   denominate,
 } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

@@ -1,3 +1,3 @@
 export { categorizeAssets } from "./categorizeAssets";
 export { useCategorizedAssets } from "./useCategorizedAssets";
-export type { CategorizedAssetItem, CategorizedAssets, MarketDataMap } from "./types";
+export type { CategorizedAssetItem, CategorizedAssets } from "./types";

@@ -744,6 +744,14 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     const recipient = Addresses.SANCTIONED_ETHEREUM; // Sanctioned address
     const amount = "500000000000000"; // 0.0005 ETH in wei
 
+    await page.route("**/all_sanctioned_addresses_without_ticker.json", route =>
+      route.fulfill({
+        headers: { teststatus: "mocked" },
+        status: 200,
+        body: JSON.stringify({ bannedAddresses: [Addresses.SANCTIONED_ETHEREUM] }),
+      }),
+    );
+
     await liveAppWebview.setAccountId("a758d3a7-e057-5fcc-8b6e-23169bc4d577");
     await liveAppWebview.setRecipient(recipient);
     await liveAppWebview.setAmount(amount);
@@ -755,6 +763,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await modal.close();
     await modal.waitForModalToDisappear();
 
+    await page.unroute("**/all_sanctioned_addresses_without_ticker.json");
     await resetWebview();
   });
 

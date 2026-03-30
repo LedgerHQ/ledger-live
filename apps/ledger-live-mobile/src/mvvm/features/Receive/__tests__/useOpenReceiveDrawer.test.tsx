@@ -1,5 +1,6 @@
 import { renderHook, act } from "@testing-library/react-native";
 import { useOpenReceiveDrawer } from "../index";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigatorName, ScreenName } from "~/const";
 import { Account } from "@ledgerhq/types-live";
@@ -10,6 +11,11 @@ const mockOpenDrawer = jest.fn();
 const mockOpenReceiveOptionsDrawer = jest.fn();
 const mockNavigate = jest.fn();
 const mockShowNoahMenu = jest.fn(() => false);
+const mockSetOriginFlow = jest.fn();
+
+jest.mock("~/analytics/originFlow", () => ({
+  setOriginFlow: (...args: unknown[]) => mockSetOriginFlow(...args),
+}));
 
 jest.mock("../../ModularDrawer", () => ({
   useModularDrawerController: () => ({
@@ -85,6 +91,7 @@ describe("useOpenReceiveDrawer", () => {
         result.current.handleOpenReceiveDrawer();
       });
 
+      expect(mockSetOriginFlow).toHaveBeenCalledWith(HOOKS_TRACKING_LOCATIONS.receiveFlow);
       expect(mockOpenDrawer).toHaveBeenCalledWith({
         currencies: [mockEthCryptoCurrency.id],
         flow: "receive_flow",

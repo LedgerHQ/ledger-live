@@ -9,6 +9,7 @@ import { useGetSwapTrackingProperties } from "../../../../renderer/screens/excha
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import {
   isAvailableOnBuy,
+  isAvailableOnSell,
   isAvailableOnStake,
   isAvailableOnSwap,
 } from "../../../../renderer/screens/market/utils";
@@ -18,6 +19,7 @@ import { useLazyLedgerCurrency } from "@ledgerhq/live-common/dada-client/hooks/u
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 import { useSwapNavigation } from "./useSwapNavigation";
 import { useBuyNavigation } from "./useBuyNavigation";
+import { useSellNavigation } from "./useSellNavigation";
 
 export enum Page {
   Market = "Page Market",
@@ -39,6 +41,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const { isCurrencyAvailable } = useRampCatalog();
   const { navigateToSwap } = useSwapNavigation();
   const { navigateToBuy } = useBuyNavigation();
+  const { navigateToSell } = useSellNavigation();
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
@@ -58,13 +61,38 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     async (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      setTrackingSource(page);
 
       const ledgerCurrency = await getLedgerCurrency();
+      track("button_clicked2", {
+        button: "buy",
+        currency: ledgerCurrency ? ledgerCurrency.ticker : currency?.ticker,
+        page,
+        flow: "buy",
+      });
+      setTrackingSource(page);
 
       navigateToBuy(ledgerCurrency, currency?.ticker);
     },
     [currency?.ticker, getLedgerCurrency, page, navigateToBuy],
+  );
+
+  const onSell = useCallback(
+    async (e: React.SyntheticEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const ledgerCurrency = await getLedgerCurrency();
+      track("button_clicked2", {
+        button: "sell",
+        currency: ledgerCurrency ? ledgerCurrency.ticker : currency?.ticker,
+        page,
+        flow: "sell",
+      });
+      setTrackingSource(page);
+
+      navigateToSell(ledgerCurrency, currency?.ticker);
+    },
+    [currency?.ticker, getLedgerCurrency, page, navigateToSell],
   );
 
   const onSwap = useCallback(
@@ -115,6 +143,10 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     () => isCurrencySupported && isAvailableOnBuy(currency, isCurrencyAvailable),
     [currency, isCurrencyAvailable, isCurrencySupported],
   );
+  const availableOnSell = useMemo(
+    () => isCurrencySupported && isAvailableOnSell(currency, isCurrencyAvailable),
+    [currency, isCurrencyAvailable, isCurrencySupported],
+  );
   const availableOnSwap = useMemo(
     () => isCurrencySupported && isAvailableOnSwap(currency, currenciesForSwapAllSet),
     [currency, currenciesForSwapAllSet, isCurrencySupported],
@@ -129,9 +161,11 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   return {
     onBuy,
+    onSell,
     onSwap,
     onStake,
     availableOnBuy,
+    availableOnSell,
     availableOnStake,
     availableOnSwap,
   };

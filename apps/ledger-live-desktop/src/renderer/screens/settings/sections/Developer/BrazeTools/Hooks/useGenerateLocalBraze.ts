@@ -1,11 +1,13 @@
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
   setPortfolioCards,
+  setBottomPortfolioCards,
   setActionCards,
   setNotificationsCards,
 } from "~/renderer/actions/dynamicContent";
 import {
   portfolioContentCardSelector,
+  bottomPortfolioContentCardSelector,
   actionContentCardSelector,
   notificationsContentCardSelector,
 } from "~/renderer/reducers/dynamicContent";
@@ -16,10 +18,11 @@ import {
   LocationContentCard,
 } from "~/types/dynamicContent";
 
-const generateNewPortfolioCard = (
+const generateNewPortfolioContentCard = (
   title: string,
   description: string,
   image: string,
+  location: LocationContentCard.Portfolio | LocationContentCard.BottomPortfolio,
   order?: number,
   url?: string,
   cta?: string,
@@ -28,7 +31,7 @@ const generateNewPortfolioCard = (
   id: String(Date.now()),
   title,
   description,
-  location: LocationContentCard.Portfolio,
+  location,
   image,
   created: new Date(),
   order,
@@ -46,6 +49,8 @@ const generateNewActionCard = (
   link: string,
   secondaryCta: string,
   order?: number,
+  icon?: string,
+  image_background?: string,
 ): ActionContentCard => ({
   id: String(Date.now()),
   title,
@@ -58,6 +63,8 @@ const generateNewActionCard = (
   created: new Date(),
   order,
   isMock: true,
+  ...(icon !== undefined && { icon }),
+  ...(image_background !== undefined && image_background !== "" && { image_background }),
 });
 
 const generateNewNotificationCard = (
@@ -86,6 +93,7 @@ export const useGenerateLocalBraze = () => {
   const dispatch = useDispatch();
 
   const portfolioCards = useSelector(portfolioContentCardSelector);
+  const bottomPortfolioCards = useSelector(bottomPortfolioContentCardSelector);
   const actionCards = useSelector(actionContentCardSelector);
   const notificationCards = useSelector(notificationsContentCardSelector);
 
@@ -98,8 +106,39 @@ export const useGenerateLocalBraze = () => {
     cta?: string,
     tag?: string,
   ) => {
-    const newCard = generateNewPortfolioCard(title, description, image, order, url, cta, tag);
+    const newCard = generateNewPortfolioContentCard(
+      title,
+      description,
+      image,
+      LocationContentCard.Portfolio,
+      order,
+      url,
+      cta,
+      tag,
+    );
     dispatch(setPortfolioCards([...portfolioCards, newCard]));
+  };
+
+  const addLocalBottomPortfolioCard = (
+    title: string,
+    description: string,
+    image: string,
+    order?: number,
+    url?: string,
+    cta?: string,
+    tag?: string,
+  ) => {
+    const newCard = generateNewPortfolioContentCard(
+      title,
+      description,
+      image,
+      LocationContentCard.BottomPortfolio,
+      order,
+      url,
+      cta,
+      tag,
+    );
+    dispatch(setBottomPortfolioCards([...bottomPortfolioCards, newCard]));
   };
 
   const addLocalActionCard = (
@@ -110,6 +149,8 @@ export const useGenerateLocalBraze = () => {
     link: string,
     secondaryCta: string,
     order?: number,
+    icon?: string,
+    image_background?: string,
   ) => {
     const newCard = generateNewActionCard(
       title,
@@ -119,6 +160,8 @@ export const useGenerateLocalBraze = () => {
       link,
       secondaryCta,
       order,
+      icon,
+      image_background,
     );
     dispatch(setActionCards([...actionCards, newCard]));
   };
@@ -138,9 +181,16 @@ export const useGenerateLocalBraze = () => {
 
   const dismissLocalCards = () => {
     dispatch(setPortfolioCards([]));
+    dispatch(setBottomPortfolioCards([]));
     dispatch(setActionCards([]));
     dispatch(setNotificationsCards([]));
   };
 
-  return { addLocalPortfolioCard, addLocalActionCard, addLocalNotificationCard, dismissLocalCards };
+  return {
+    addLocalPortfolioCard,
+    addLocalBottomPortfolioCard,
+    addLocalActionCard,
+    addLocalNotificationCard,
+    dismissLocalCards,
+  };
 };

@@ -1,4 +1,3 @@
-import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
 import type {
   AssetInfo,
   Balance,
@@ -24,6 +23,7 @@ import {
   PriorityFeeTooLow,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
@@ -267,7 +267,12 @@ function refreshEstimationValue(
   intent: TransactionIntent,
   parameters: Record<string, unknown>,
 ): bigint {
-  const gasLimit = typeof parameters.gasLimit === "bigint" ? parameters.gasLimit : 0n;
+  const gasLimit =
+    typeof parameters.customGasLimit === "bigint"
+      ? parameters.customGasLimit
+      : typeof parameters.gasLimit === "bigint"
+        ? parameters.gasLimit
+        : 0n;
   const transactionType = getTransactionType(intent.type);
   let gasPrice = 0n;
 

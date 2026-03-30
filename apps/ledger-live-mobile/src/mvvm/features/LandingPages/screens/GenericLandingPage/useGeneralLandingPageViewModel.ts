@@ -19,7 +19,7 @@ export type NavigationProps = BaseComposite<
 
 export type HookResult = {
   isLoading: boolean;
-  openLink: (card: LandingPageStickyCtaContentCard) => void;
+  openLink: (card: LandingPageStickyCtaContentCard) => Promise<void>;
   categoriesCards: CategoryContentCard[];
   landingStickyCTA?: LandingPageStickyCtaContentCard;
   useCase: LandingPageUseCase;
@@ -33,15 +33,15 @@ export const useGeneralLandingPage = (props: NavigationProps) => {
 
   const landingStickyCTA = getStickyCtaCardByLandingPage(useCase);
 
-  const openLink = (card: LandingPageStickyCtaContentCard) => {
-    trackContentCardEvent("contentcard_clicked", {
+  const openLink = async (card: LandingPageStickyCtaContentCard) => {
+    await trackContentCardEvent("contentcard_clicked", {
       ...card.extras,
       campaign: card.id,
       contentcard: card.cta,
       landingPage: useCase,
     });
     logClickCard(card.id);
-    Linking.openURL(card.link);
+    await Linking.openURL(card.link);
   };
 
   useEffect(() => {

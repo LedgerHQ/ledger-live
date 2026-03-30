@@ -19,7 +19,7 @@ jest.mock("../logic", () => {
 });
 
 const patchOperationWithHashMock = jest.fn();
-jest.mock("@ledgerhq/coin-framework/operation", () => {
+jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => {
   return {
     patchOperationWithHash: (operation: Operation, hash: string) =>
       patchOperationWithHashMock(operation, hash),

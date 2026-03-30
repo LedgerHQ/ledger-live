@@ -6,6 +6,7 @@ import type {
   FeatureId,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -38,6 +39,7 @@ import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
+import type { PortfolioRefreshState } from "./portfolioRefresh";
 
 // === ACCOUNT STATE ===
 
@@ -290,6 +292,7 @@ export type SettingsState = {
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
+  deprecationDoNotRemind: string[];
 };
 
 export type NotificationsSettings = {
@@ -297,6 +300,8 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
+  totalMarketCap: boolean;
+  topGainersLosers: boolean;
 };
 
 // === WALLET CONNECT STATE ===
@@ -314,6 +319,12 @@ export type EarnState = {
     message?: string;
     messageTitle?: string;
     learnMoreLink?: string;
+  };
+  infoBottomSheet?: {
+    message: string;
+    title: string;
+    linkText?: string;
+    linkHref?: string;
   };
   menuModal?: {
     title?: string;
@@ -368,6 +379,14 @@ export type LargeMoverState = {
   tutorial: boolean;
 };
 
+// === DEEPLINK INSTALL APP STATE ===
+
+export type DeeplinkInstallAppState = {
+  isDrawerOpen: boolean;
+  appToInstall: string | null;
+  selectedDevice: Device | null;
+};
+
 // === ROOT STATE ===
 
 export type State = LLMRTKApiState & {
@@ -376,8 +395,10 @@ export type State = LLMRTKApiState & {
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
+  deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  featureFlags: FeatureFlagsState;
   identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
@@ -397,4 +418,5 @@ export type State = LLMRTKApiState & {
   wallet: WalletState;
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;
+  portfolioRefresh: PortfolioRefreshState;
 };

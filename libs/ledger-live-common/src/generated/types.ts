@@ -135,7 +135,7 @@ import type {
   TransactionRaw as stellarTransactionRaw,
   TransactionStatus as stellarTransactionStatus,
   TransactionStatusRaw as stellarTransactionStatusRaw,
-} from "@ledgerhq/coin-stellar/types/index";
+} from "../families/stellar/types";
 import type {
   Transaction as suiTransaction,
   TransactionRaw as suiTransactionRaw,
@@ -171,7 +171,7 @@ import type {
   TransactionRaw as xrpTransactionRaw,
   TransactionStatus as xrpTransactionStatus,
   TransactionStatusRaw as xrpTransactionStatusRaw,
-} from "@ledgerhq/coin-xrp/types/index";
+} from "../families/xrp/types";
 
 export type Transaction =
   | aleoTransaction

@@ -1,9 +1,15 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { track } from "~/analytics";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useSelector } from "~/context/hooks";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { useSyncIndicator } from "./hooks/useSyncIndicator";
 
 export function useTopBarViewModel(
   navigation: NativeStackNavigationProp<{ [key: string]: object | undefined }>,
@@ -12,6 +18,25 @@ export function useTopBarViewModel(
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
   const page = screenName ?? ScreenName.Portfolio;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { navigateToRebornFlow } = useRebornFlow();
+  const {
+    hasAccounts,
+    isError,
+    isPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
+    errorCurrencyIds,
+  } = useSyncIndicator();
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
+  const openSyncDrawer = useCallback(() => {
+    setIsSyncDrawerOpen(true);
+    track("SyncErrorList", {
+      currencies: errorCurrencyIds,
+      page,
+    });
+  }, [errorCurrencyIds, page]);
+  const closeSyncDrawer = useCallback(() => setIsSyncDrawerOpen(false), []);
 
   const hasUnreadNotifications = useMemo(
     () => notificationCards.some(n => !n.viewed),
@@ -20,15 +45,20 @@ export function useTopBarViewModel(
 
   const onMyLedgerPress = useCallback(() => {
     track("menuentry_clicked", { button: "MyLedger", page });
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
-      params: {
-        tab: undefined,
-        searchQuery: undefined,
-        updateModalOpened: undefined,
-      },
-    });
-  }, [navigation, page]);
+    if (readOnlyModeEnabled) {
+      setOriginFlow(HOOKS_TRACKING_LOCATIONS.myLedger);
+      navigateToRebornFlow();
+    } else {
+      navigation.navigate(NavigatorName.MyLedger, {
+        screen: ScreenName.MyLedgerChooseDevice,
+        params: {
+          tab: undefined,
+          searchQuery: undefined,
+          updateModalOpened: undefined,
+        },
+      });
+    }
+  }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
 
   const onDiscoverPress = useCallback(() => {
     track("menuentry_clicked", { button: "Discover", page });
@@ -51,15 +81,31 @@ export function useTopBarViewModel(
   }, [navigation, page]);
 
   const onSettingsPress = useCallback(() => {
-    track("menuentry_clicked", { button: "Settings" });
+    track("menuentry_clicked", { button: "Settings", page });
     navigation.navigate(NavigatorName.Settings);
-  }, [navigation]);
+  }, [navigation, page]);
+
+  const onTransactionHistoryPress = useCallback(() => {
+    track("menuentry_clicked", { button: "operation_list", page });
+    navigation.navigate(NavigatorName.OperationsHistory, {
+      screen: ScreenName.OperationsList,
+    });
+  }, [navigation, page]);
 
   return {
     onMyLedgerPress,
     onDiscoverPress,
     onNotificationsPress,
     onSettingsPress,
+    onTransactionHistoryPress,
     hasUnreadNotifications,
+    hasAccounts,
+    isSyncError: isError,
+    isSyncPending: isPending,
+    listOfErrorAccountNames,
+    syncAccessibilityLabel,
+    isSyncDrawerOpen,
+    openSyncDrawer,
+    closeSyncDrawer,
   };
 }

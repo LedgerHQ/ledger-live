@@ -104,7 +104,7 @@ function applyFilter(
   contrastAmount: number,
   ditheringAlgorithm: DitheringAlgorithm,
   bitsPerPixel: 1 | 4,
-): { imageDataResult: Uint8ClampedArray; hexRawResult: string } {
+): { imageDataResult: ImageDataArray; hexRawResult: string } {
   let hexRawResult = "";
   const filteredImageData = [];
 
@@ -225,11 +225,7 @@ export function processImage(args: ProcessImageArgs): ProcessorResult {
     ditheringAlgorithm,
     bitsPerPixel,
   );
-  context.putImageData(
-    new ImageData(grayData, width, height), // eslint-disable-line no-undef
-    0,
-    0,
-  );
+  context.putImageData(new ImageData(grayData, width, height), 0, 0);
   const grayScaleBase64 = canvas.toDataURL();
   return {
     previewResult: { imageBase64DataUri: grayScaleBase64, height, width },

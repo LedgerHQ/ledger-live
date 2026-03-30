@@ -3,32 +3,26 @@ import styled from "styled-components";
 
 import { Carousel } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
-import { usePortfolioCards } from "../../hooks/usePortfolioCards";
+import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
 import Slide from "./Slide";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export default PortfolioContentCards;
 
-// Wrapper with animated padding that grows on hover so the content area shrinks to reveal arrows (Wallet 4.0 only)
 const CarouselWrapper = styled.div<{ $isWallet40Enabled: boolean }>`
-  overflow: hidden;
-
-  ${({ $isWallet40Enabled }) =>
-    $isWallet40Enabled &&
-    `
-    padding-left: 0;
-    padding-right: 0;
-    transition: padding 0.25s ease-in-out;
-
-    &:hover {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-  `}
+  & > div > div > button {
+    ${({ $isWallet40Enabled, theme }) =>
+      $isWallet40Enabled &&
+      `
+      translate: 0 -50%;
+      margin: 0 -12px;
+      background-color: ${theme.colors.neutral.c00};
+    `}
+  }
 `;
 
 function PortfolioContentCards() {
-  const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCards();
+  const { portfolioCards, logSlideClick, dismissCard } = usePortfolioCarouselCards("top");
   const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("desktop");
   const handlePrevButton = () => trackSlide("prev");
   const handleNextButton = () => trackSlide("next");
@@ -59,5 +53,5 @@ function PortfolioContentCards() {
 }
 
 function trackSlide(button: "prev" | "next") {
-  track("contentcards_slide", { button, page: "Portfolio", type: "portfolio_carousel" });
+  track("contentcards_slide", { button, page: "Portfolio", type: "carousel_portfolio" });
 }

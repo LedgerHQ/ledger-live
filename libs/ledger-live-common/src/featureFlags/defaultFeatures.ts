@@ -60,10 +60,13 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyKlaytnBaobab: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
+  currencyMantle: DEFAULT_FEATURE,
+  currencyMantleSepolia: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
+  currencyPolygonAmoy: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
   currencyQuicksilver: DEFAULT_FEATURE,
@@ -97,6 +100,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
+  currencySuiTestnet: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
   currencySeiNetworkEvm: DEFAULT_FEATURE,
@@ -128,9 +132,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
   nanoOnboardingFundWallet: DEFAULT_FEATURE,
-  welcomeScreenVideoCarousel: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
-  postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
@@ -159,6 +161,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: { record_sessions_percent: 100 },
   }),
+  llmNanoSDeprecation: DEFAULT_FEATURE,
 
   ptxSwapDetailedView: initFeature({
     enabled: false,
@@ -189,6 +192,11 @@ export const DEFAULT_FEATURES: Features = {
   editEvmTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["ethereum"] },
+  },
+
+  editBitcoinTx: {
+    enabled: false,
+    params: { supportedCurrencyIds: ["bitcoin"] },
   },
 
   referralProgramDesktopSidebar: {
@@ -388,8 +396,7 @@ export const DEFAULT_FEATURES: Features = {
         restoreInfoDrawer: {
           enabled: true,
           manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
-          supportLinkURI:
-            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
+          supportLinkURI: "https://support.ledger.com",
         },
       },
       protectId: "protect-simu",
@@ -687,6 +694,8 @@ export const DEFAULT_FEATURES: Features = {
       enableDialogDesktop: false,
     },
   },
+  lldWebviewManifestDomainCheck: DEFAULT_FEATURE,
+  llmWebviewManifestDomainCheck: DEFAULT_FEATURE,
   llmModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
@@ -734,6 +743,17 @@ export const DEFAULT_FEATURES: Features = {
       trackWatchdogTerminations: false,
       uploadFrequency: "AVERAGE",
       vitalsUpdateFrequency: "AVERAGE",
+    },
+  },
+  lldDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      sessionSamplingRate: 100,
+      sessionReplaySampleRate: 0,
+      defaultPrivacyLevel: "mask-user-input",
+      traceSampleRate: 100,
+      allowedTracingUrls: ["/^https:\\/\\/[^/]+\\.ledger\\.com(\\/|$)/"],
+      profilingSampleRate: 25,
     },
   },
   llmSentry: { enabled: true },
@@ -785,11 +805,15 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      quickActionsCtasVariant: false,
       tour: true,
       mainNavigation: true,
       lazyOnboarding: true,
       balanceRefreshRework: true,
       assetSection: true,
+      onboardingWidget: true,
+      brazePlacement: true,
+      operationsList: true,
     },
   },
   lwdWallet40: {
@@ -798,12 +822,15 @@ export const DEFAULT_FEATURES: Features = {
       marketBanner: true,
       graphRework: true,
       quickActionCtas: true,
+      quickActionsCtasVariant: false,
       mainNavigation: true,
       tour: true,
       lazyOnboarding: true,
       newReceiveDialog: true,
       balanceRefreshRework: true,
       assetSection: true,
+      operationsList: true,
+      brazePlacement: true,
     },
   },
   addressPoisoningOperationsFilter: {

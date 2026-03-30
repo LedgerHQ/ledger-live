@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "@ledgerhq/native-ui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PortfolioAssets from "~/screens/Portfolio/PortfolioAssets";
 import AnimatedContainer from "~/screens/Portfolio/AnimatedContainer";
 
@@ -8,6 +9,7 @@ interface PortfolioAssetsSectionProps {
   readonly hideEmptyTokenAccount: boolean;
   readonly openAddModal: () => void;
   readonly onHeightChange: (height: number) => void;
+  readonly shouldAddBottomPadding?: boolean;
 }
 
 export const PortfolioAssetsSection = ({
@@ -15,23 +17,23 @@ export const PortfolioAssetsSection = ({
   hideEmptyTokenAccount,
   openAddModal,
   onHeightChange,
+  shouldAddBottomPadding = false,
 }: PortfolioAssetsSectionProps) => {
-  if (isAccountListUIEnabled) {
-    return (
-      <AnimatedContainer onHeightChange={onHeightChange}>
-        <Box px={6} key="PortfolioAssets">
-          <PortfolioAssets
-            hideEmptyTokenAccount={hideEmptyTokenAccount}
-            openAddModal={openAddModal}
-          />
-        </Box>
-      </AnimatedContainer>
-    );
-  }
+  const { bottom } = useSafeAreaInsets();
 
-  return (
-    <Box px={6} key="PortfolioAssets">
+  const content = (
+    <Box
+      px={6}
+      key="PortfolioAssets"
+      style={shouldAddBottomPadding ? { paddingBottom: bottom + 16 } : undefined}
+    >
       <PortfolioAssets hideEmptyTokenAccount={hideEmptyTokenAccount} openAddModal={openAddModal} />
     </Box>
   );
+
+  if (isAccountListUIEnabled) {
+    return <AnimatedContainer onHeightChange={onHeightChange}>{content}</AnimatedContainer>;
+  }
+
+  return content;
 };

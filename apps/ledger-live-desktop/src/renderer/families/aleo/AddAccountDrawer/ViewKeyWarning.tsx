@@ -5,7 +5,7 @@ import { urls } from "~/config/urls";
 import BulletRow from "~/renderer/components/BulletRow";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 import { ADD_ACCOUNT_FLOW_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { ActionButtons } from "LLD/features/AddAccountDrawer/screens/AccountsWarning/components";
 import { useSelector } from "LLD/hooks/redux";
@@ -26,13 +26,13 @@ const bulletPointTranslationKeys = [
 ];
 
 export function ViewKeyWarning({ onAllow, onCancel }: Props) {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const { t } = useTranslation();
-  const viewKeyLearnMoreUrl = useLocalizedUrl(urls.aleo.viewKeyLearnMore);
+  const learnMoreUrl = useLocalizedUrl(urls.aleo.learnMore);
 
   const handleClick = useCallback(() => {
-    openURL(viewKeyLearnMoreUrl);
-  }, [viewKeyLearnMoreUrl]);
+    openURL(learnMoreUrl);
+  }, [learnMoreUrl]);
 
   return (
     <>

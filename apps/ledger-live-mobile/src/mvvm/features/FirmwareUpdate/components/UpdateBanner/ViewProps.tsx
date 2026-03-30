@@ -8,4 +8,16 @@ export interface ViewProps {
   unsupportedUpdateDrawerOpened: boolean;
   closeUnsupportedUpdateDrawer(): void;
   isUpdateSupportedButDeviceNotWired: boolean;
+  shouldDisplayWallet40MainNav: boolean;
+  isInMyLedgerDeviceScreen: boolean;
 }
+
+export type DrawerProps = Pick<
+  ViewProps,
+  | "unsupportedUpdateDrawerOpened"
+  | "closeUnsupportedUpdateDrawer"
+  | "isUpdateSupportedButDeviceNotWired"
+> & {
+  productName: string | undefined;
+  noCloseButton?: boolean;
+};

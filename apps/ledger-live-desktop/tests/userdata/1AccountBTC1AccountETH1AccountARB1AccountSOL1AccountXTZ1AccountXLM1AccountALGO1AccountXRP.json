@@ -1,0 +1,530 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "theme": null,
+      "region": null,
+      "locale": "en-US",
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoS",
+      "hasInstalledApps": true,
+      "hasAcceptedSwapKYC": false,
+      "lastSeenDevice": { "modelId": "nanoSP", "deviceInfo": {}, "apps": [] },
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviderIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "swapProviders": [],
+      "showClearCacheBanner": false,
+      "starredAccountIds": [],
+      "hasPassword": false
+    },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "mock:1:bitcoin:true_bitcoin_1:",
+          "seedIdentifier": "mock",
+          "name": "Bitcoin 2 (legacy)",
+          "starred": false,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "19qAJ5F2eH7CRPFfj5c94x22zFcXpa8rZ77",
+          "freshAddressPath": "44'/0'/0'/0/0",
+          "blockHeight": 123828,
+          "creationDate": "2020-03-01T04:26:49.397Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "128092473",
+          "spendableBalance": "128092473",
+          "xpub": "D2C2B76D346B6EA64EB4F8C6E9995F81C39E0A2449CA1B3D87AF9D720ABD35C2",
+          "bitcoinResources": {
+            "utxos": []
+          },
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:bitcoin:true_bitcoin_0:",
+          "seedIdentifier": "mock",
+          "name": "Bitcoin 1 (legacy)",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+          "freshAddressPath": "44'/0'/0'/0/0",
+          "blockHeight": 193870,
+          "creationDate": "2020-02-27T13:30:59.233Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "35688397",
+          "spendableBalance": "35688397",
+          "xpub": "B51F10770C0C5879A4FE5456E088505FCA9430B377F62EC5423E8AFE487BCF4F",
+          "bitcoinResources": {
+            "utxos": []
+          },
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:ethereum:true_ethereum_1:",
+          "seedIdentifier": "mock",
+          "name": "Ethereum 2",
+          "starred": false,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 167357,
+          "creationDate": "2020-03-01T19:23:50.897Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "11310048568372696785",
+          "spendableBalance": "11310048568372696785",
+          "xpub": "C7785FED77C832DCB16E8C1333B7956E11C03152B68E1F37235C4CCF1939C636",
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_1:|1",
+              "parentId": "mock:1:ethereum:true_ethereum_1:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/usd__coin",
+              "balance": "102966480",
+              "spendableBalance": "102966480",
+              "creationDate": "2020-02-20T05:25:00.868Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_1:|2",
+              "parentId": "mock:1:ethereum:true_ethereum_1:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/usd_tether__erc20_",
+              "balance": "84437760",
+              "spendableBalance": "84437760",
+              "creationDate": "2020-02-24T07:32:30.025Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_1:|0",
+              "parentId": "mock:1:ethereum:true_ethereum_1:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/dai_stablecoin_v2_0",
+              "balance": "81381327",
+              "spendableBalance": "81381327",
+              "creationDate": "2020-02-23T17:36:01.420Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            }
+          ],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:ethereum:true_ethereum_0:",
+          "seedIdentifier": "mock",
+          "name": "Ethereum 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 121403,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10135465432293584185",
+          "spendableBalance": "10135465432293584185",
+          "xpub": "9E69E7535D132709D70AE0F85B7560A55DF243BAC817194D3E079950CBE00EBC",
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_0:|0",
+              "parentId": "mock:1:ethereum:true_ethereum_0:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/dai_stablecoin_v2_0",
+              "balance": "82865885",
+              "spendableBalance": "82865885",
+              "creationDate": "2020-02-24T22:26:24.461Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            }
+          ],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:bitcoin:true_bitcoin_2:",
+          "seedIdentifier": "mock",
+          "name": "Bitcoin 3 (legacy)",
+          "starred": false,
+          "derivationMode": "",
+          "index": 2,
+          "freshAddress": "13x7TUzymwejUWQmoWusnYcdmC8RNMGG17f",
+          "freshAddressPath": "44'/0'/0'/0/0",
+          "blockHeight": 135277,
+          "creationDate": "2020-02-15T05:21:37.866Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "0",
+          "spendableBalance": "0",
+          "xpub": "5CDAD79559F6F3655BECA6AA4278F10BFEB9A46087BA090973262673118D4E3D",
+          "bitcoinResources": {
+            "utxos": []
+          },
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:ethereum:true_ethereum_2:",
+          "seedIdentifier": "mock",
+          "name": "Ethereum 3",
+          "starred": false,
+          "derivationMode": "",
+          "index": 2,
+          "freshAddress": "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 180116,
+          "creationDate": "2020-03-02T21:33:54.941Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "0",
+          "spendableBalance": "0",
+          "xpub": "D40BA10E7F7C4402C4421D6EFBDBDEE11C84DABB4BBD3B222E6722CE75883679",
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_2:|1",
+              "parentId": "mock:1:ethereum:true_ethereum_2:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/usd__coin",
+              "balance": "106621194",
+              "spendableBalance": "106621194",
+              "creationDate": "2020-02-20T17:40:56.142Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_2:|2",
+              "parentId": "mock:1:ethereum:true_ethereum_2:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/usd_tether__erc20_",
+              "balance": "71817412",
+              "spendableBalance": "71817412",
+              "creationDate": "2020-02-27T12:59:48.670Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "mock:1:ethereum:true_ethereum_2:|0",
+              "parentId": "mock:1:ethereum:true_ethereum_2:",
+              "starred": false,
+              "tokenId": "ethereum/erc20/dai_stablecoin_v2_0",
+              "balance": "45480062",
+              "spendableBalance": "45480062",
+              "creationDate": "2020-02-15T16:39:20.326Z",
+              "operationsCount": 0,
+              "operations": [],
+              "pendingOperations": [],
+              "swapHistory": []
+            }
+          ],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:arbitrum:true_arbitrum_0:",
+          "seedIdentifier": "mock",
+          "name": "Arbitrum 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 121403,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "arbitrum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10135465432293584185",
+          "spendableBalance": "10135465432293584185",
+          "xpub": "9E69E7535D132709D70AE0F85B7560A55DF243BAC817194D3E079950CBE00EBC",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:solana:4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx:",
+          "seedIdentifier": "mock",
+          "name": "Solana 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx",
+          "freshAddressPath": "44'/501'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "solana",
+          "unitMagnitude": 9,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10010000",
+          "spendableBalance": "9119120",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:tezos:tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6:",
+          "seedIdentifier": "mock",
+          "name": "Tezos 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
+          "freshAddressPath": "44'/1729'/0'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "tezos",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10000000",
+          "spendableBalance": "10000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": [],
+          "tezosResources": {
+            "revealed": true,
+            "counter": 0
+          }
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:stellar:GDRXE2BQUC3AZ2T7BHP2VMRZGR7DX3PIP5K7E5YXJ3VGDUT3KNSW5M2L:",
+          "seedIdentifier": "mock",
+          "name": "Stellar 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "GDRXE2BQUC3AZ2T7BHP2VMRZGR7DX3PIP5K7E5YXJ3VGDUT3KNSW5M2L",
+          "freshAddressPath": "44'/148'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "stellar",
+          "unitMagnitude": 7,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "100000000",
+          "spendableBalance": "100000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:algorand:PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI:",
+          "seedIdentifier": "mock",
+          "name": "Algorand 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
+          "freshAddressPath": "44'/283'/0'/0/0",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "algorand",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "10000000",
+          "spendableBalance": "10000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": [],
+          "algorandResources": {
+            "rewards": "0",
+            "nbAssets": 0
+          }
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "mock:1:ripple:rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH:",
+          "seedIdentifier": "mock",
+          "name": "XRP 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+          "freshAddressPath": "44'/501'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ripple",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "25000000",
+          "spendableBalance": "25000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:ethereum:0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf:",
+          "seedIdentifier": "js",
+          "name": "Sanctioned Ethereum",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 349298484,
+          "creationDate": "2024-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "unitMagnitude": 18,
+          "lastSyncDate": "2025-03-14T17:34:42.000Z",
+          "balance": "494006503578097",
+          "spendableBalance": "494006503578097",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {},
+    "recentAddresses": {
+      "ethereum": [
+        {
+          "address": "0x000000000000000000000000000000000000dEaD",
+          "lastUsed": 1710000000000
+        },
+        {
+          "address": "0x1111111111111111111111111111111111111111",
+          "lastUsed": 1709900000000
+        }
+      ],
+      "arbitrum": [
+        {
+          "address": "0x000000000000000000000000000000000000dEaD",
+          "lastUsed": 1710000000000
+        }
+      ],
+      "bitcoin": [
+        {
+          "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+          "lastUsed": 1710000000000
+        }
+      ]
+    }
+  }
+}

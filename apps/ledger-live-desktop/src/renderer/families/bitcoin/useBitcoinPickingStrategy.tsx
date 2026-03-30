@@ -8,10 +8,13 @@ export type Option = {
 };
 const keys = Object.keys(bitcoinPickingStrategy) as Keys[];
 
-const options: Array<Option> = keys.map(value => ({
-  value,
-  label: <Trans i18nKey={`bitcoin.pickingStrategyLabels.${value}`} />,
-}));
+const options: Array<Option> = keys
+  .filter(value => value !== "CUSTOM")
+  .map(value => ({
+    value,
+    label: <Trans i18nKey={`bitcoin.pickingStrategyLabels.${value}`} />,
+  }));
+
 type BitcoinStrategyResult = {
   item: Option | undefined | null;
   options: Array<Option>;

@@ -1,7 +1,12 @@
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import network from "@ledgerhq/live-network";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
+import { getCoinConfig } from "../config";
+import { NodeErrorCodeAccountNotFound } from "../consts";
+import { TEST_ADDRESSES } from "../test/fixtures";
+import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "./types";
 import {
   fetchAccountStateInfo,
   fetchBalance,
@@ -10,11 +15,6 @@ import {
   broadcastTx,
   getCasperNodeRpcClient,
 } from ".";
-import { getCoinConfig } from "../config";
-import { TEST_ADDRESSES } from "../test/fixtures";
-import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "./types";
-import { NodeErrorCodeAccountNotFound } from "../consts";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 // Constants
 const MOCK_NODE_URL = "https://mock.casper.node";

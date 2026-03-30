@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { ExtractLocalState, ExtractSchema, ExtractUpdateEvent } from "./types";
+import { ExtractDistantState, ExtractLocalState, ExtractSchema, ExtractUpdateEvent } from "./types";
 import { createAggregator } from "./aggregator";
 
 // Maintain here the list of modules to aggregate for WalletSync data
@@ -26,6 +25,6 @@ type Root = typeof root;
 export type LocalState = ExtractLocalState<Root>;
 export type UpdateEvent = ExtractUpdateEvent<Root>;
 export type Schema = ExtractSchema<Root>;
-export type DistantState = z.infer<Schema>;
+export type DistantState = ExtractDistantState<Root>;
 
 export default root;

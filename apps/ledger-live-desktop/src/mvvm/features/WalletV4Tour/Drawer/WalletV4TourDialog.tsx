@@ -1,24 +1,56 @@
-import React from "react";
-import { Button, Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { Slides, useSlidesContext } from "LLD/components/Slides";
+import React, { useEffect, useMemo, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { Slides } from "LLD/components/Slides";
+import { SlideItem } from "./components/SlideItem";
+import { SlideFooterButton } from "./components/SlideFooterButton";
+import { TourProgressIndicator } from "./components/TourProgressIndicator";
 
 interface WalletV4TourDialogProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onComplete: () => void;
+  readonly onSlideChange?: (index: number) => void;
 }
 
-function ContinueButton() {
-  const { goToNext } = useSlidesContext();
-  return (
-    <div className="px-8 pb-8">
-      <Button appearance="base" size="lg" className="w-full" onClick={goToNext}>
-        Continue
-      </Button>
-    </div>
+export const WalletV4TourDialog = ({
+  isOpen,
+  onClose,
+  onComplete,
+  onSlideChange,
+}: WalletV4TourDialogProps) => {
+  const { t } = useTranslation();
+  const prevOpenRef = useRef(false);
+
+  useEffect(() => {
+    const justOpened = isOpen && !prevOpenRef.current;
+    prevOpenRef.current = isOpen;
+    if (justOpened) {
+      onSlideChange?.(0);
+    }
+  }, [isOpen, onSlideChange]);
+
+  const slides = useMemo(
+    () => [
+      {
+        id: "portfolio" as const,
+        title: t("walletV4Tour.slides.portfolio.title"),
+        description: t("walletV4Tour.slides.portfolio.description"),
+      },
+      {
+        id: "navigation" as const,
+        title: t("walletV4Tour.slides.navigation.title"),
+        description: t("walletV4Tour.slides.navigation.description"),
+      },
+      {
+        id: "actions" as const,
+        title: t("walletV4Tour.slides.actions.title"),
+        description: t("walletV4Tour.slides.actions.description"),
+      },
+    ],
+    [t],
   );
-}
 
-export const WalletV4TourDialog = ({ isOpen, onClose }: WalletV4TourDialogProps) => {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onClose();
@@ -27,25 +59,23 @@ export const WalletV4TourDialog = ({ isOpen, onClose }: WalletV4TourDialogProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent>
-        <DialogHeader appearance="extended" title="Wallet V4 Tour" onClose={onClose} />
-        <Slides>
+      <DialogContent className="flex h-screen min-h-0 flex-col">
+        <DialogHeader appearance="compact" onClose={onClose} />
+        <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
           <Slides.Content>
-            <Slides.Content.Item>
-              <div className="flex flex-col items-center gap-4 p-8">
-                <span className="heading-3-semi-bold text-base">Slide 1</span>
-                <p className="text-center body-2 text-muted">Placeholder content</p>
-              </div>
-            </Slides.Content.Item>
-            <Slides.Content.Item>
-              <div className="flex flex-col items-center gap-4 p-8">
-                <span className="heading-3-semi-bold text-base">Slide 2</span>
-                <p className="text-center body-2 text-muted">Placeholder content</p>
-              </div>
-            </Slides.Content.Item>
+            {slides.map((slide, index) => (
+              <Slides.Content.Item key={slide.id}>
+                <SlideItem slideIndex={index} title={slide.title} description={slide.description} />
+              </Slides.Content.Item>
+            ))}
           </Slides.Content>
+
+          <Slides.ProgressIndicator>
+            <TourProgressIndicator />
+          </Slides.ProgressIndicator>
+
           <Slides.Footer>
-            <ContinueButton />
+            <SlideFooterButton onComplete={onComplete} />
           </Slides.Footer>
         </Slides>
       </DialogContent>

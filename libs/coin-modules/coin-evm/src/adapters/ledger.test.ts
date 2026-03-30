@@ -1,4 +1,4 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -32,7 +32,7 @@ const coinOperation: Operation = {
   blockHeight: 38476740,
   recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
   senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-  value: new BigNumber("4254163264389158"),
+  value: new BigNumber("0"), // FEES op: transferred amount only
   fee: new BigNumber("4254163264389158"),
   date: new Date("2023-01-24T17:11:45Z"),
   transactionSequenceNumber: new BigNumber(75),
@@ -165,7 +165,7 @@ describe("EVM Family", () => {
             blockHeight: 38476740,
             recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("4254163264389158"),
+            value: new BigNumber("0"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
             transactionSequenceNumber: new BigNumber(75),
@@ -228,7 +228,7 @@ describe("EVM Family", () => {
             blockHeight: 38476740,
             recipients: ["0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("4254163264389159"),
+            value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
             transactionSequenceNumber: new BigNumber(75),
@@ -504,7 +504,7 @@ describe("EVM Family", () => {
             blockHeight: 38476740,
             recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
             senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-            value: new BigNumber("4254163264389159"),
+            value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
             transactionSequenceNumber: new BigNumber(75),
@@ -617,18 +617,14 @@ describe("EVM Family", () => {
             },
           };
 
-          // Successful Op
+          // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
           expect(ledgerOperationToOperations(accountId, ledgerExplorerFeesOp)[0].value).toEqual(
-            new BigNumber(ledgerExplorerFeesOp.value).plus(
-              new BigNumber(ledgerExplorerFeesOp.gas_price).times(ledgerExplorerFeesOp.gas_used),
-            ),
+            new BigNumber(ledgerExplorerFeesOp.value),
           );
-          // Failing Op
+          // Failing Op (value = tx value, same as success)
           expect(
             ledgerOperationToOperations(accountId, { ...ledgerExplorerFeesOp, status: 0 })[0].value,
-          ).toEqual(
-            new BigNumber(ledgerExplorerFeesOp.gas_price).times(ledgerExplorerFeesOp.gas_used),
-          );
+          ).toEqual(new BigNumber(ledgerExplorerFeesOp.value));
 
           const ledgerOperationOut: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -667,16 +663,14 @@ describe("EVM Family", () => {
             },
           };
 
-          // Successful Op
+          // Successful Op (value = transferred only; fee is separate; Ledger Wallet adds fee in bridge)
           expect(ledgerOperationToOperations(accountId, ledgerOperationOut)[0].value).toEqual(
-            new BigNumber(ledgerOperationOut.value).plus(
-              new BigNumber(ledgerOperationOut.gas_price).times(ledgerOperationOut.gas_used),
-            ),
+            new BigNumber(ledgerOperationOut.value),
           );
-          // Failing Op
+          // Failing Op (value = tx value, same as success)
           expect(
             ledgerOperationToOperations(accountId, { ...ledgerOperationOut, status: 0 })[0].value,
-          ).toEqual(new BigNumber(ledgerOperationOut.gas_price).times(ledgerOperationOut.gas_used));
+          ).toEqual(new BigNumber(ledgerOperationOut.value));
 
           const ledgerOperationIn: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
@@ -1331,11 +1325,12 @@ describe("EVM Family", () => {
             type: "IN" as const,
           };
 
+          // Action value must match coin op value (transferred amount) for deduplication
           const ledgerActionOutOrFees: LedgerExplorerInternalTransaction = {
             from: coinOperationFees.senders[0],
             to: coinOperationFees.recipients[0],
             input: null,
-            value: coinOperationFees.value.minus(coinOperationFees.fee).toFixed(),
+            value: coinOperationFees.value.toFixed(),
             gas: "57090",
             gas_used: "27485",
             error: null,
@@ -1358,6 +1353,43 @@ describe("EVM Family", () => {
           expect(ledgerInternalTransactionToOperations(coinOperationIn, ledgerActionIn)).toEqual(
             [],
           );
+        });
+
+        it("should emit internal op when action has same from/to but value differs from coin op value", () => {
+          // Deduplication only when action.value === coinOperation.value (transferred amount)
+          const coinOpOutWithTransfer = {
+            ...coinOperation,
+            type: "OUT" as const,
+            value: new BigNumber("10000000000000000"),
+          };
+          const actionSameFromToDifferentValue: LedgerExplorerInternalTransaction = {
+            from: coinOpOutWithTransfer.senders[0],
+            to: coinOpOutWithTransfer.recipients[0],
+            input: null,
+            value: "10000000000000000",
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+          // Value matches → filtered
+          expect(
+            ledgerInternalTransactionToOperations(
+              coinOpOutWithTransfer,
+              actionSameFromToDifferentValue,
+            ),
+          ).toEqual([]);
+
+          const actionDifferentValue: LedgerExplorerInternalTransaction = {
+            ...actionSameFromToDifferentValue,
+            value: "1",
+          };
+          // Value differs → internal op emitted
+          const result = ledgerInternalTransactionToOperations(
+            coinOpOutWithTransfer,
+            actionDifferentValue,
+          );
+          expect(result).toHaveLength(1);
+          expect(result[0].value.toFixed()).toBe("1");
         });
 
         it("should convert a ledger explorer none action to a Ledger Live Operation", () => {

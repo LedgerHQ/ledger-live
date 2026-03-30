@@ -1,9 +1,9 @@
+import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import chunk from "lodash/chunk";
 import range from "lodash/range";
-import { getEnv } from "@ledgerhq/live-env";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import { getBipPath, getCredentialKey, getExtendedPublicKeyFromHex, isTestnet } from "../logic";
 import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";

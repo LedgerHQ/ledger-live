@@ -37,7 +37,7 @@ import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import Config from "react-native-config";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -279,7 +279,7 @@ function tx({
   return {
     family: "solana",
     amount: new BigNumber(
-      delegationAction.kind === "new" ? amount ?? 0 : txAmount(delegationAction),
+      delegationAction.kind === "new" ? (amount ?? 0) : txAmount(delegationAction),
     ),
     recipient: "",
     model: txModelByDelegationAction(delegationAction, defaultValidator, chosenValidator),
@@ -432,7 +432,7 @@ function txModelByDelegationAction(
         },
       };
     default:
-      assertUnreachable(stakeAction);
+      return assertUnreachable(stakeAction);
   }
 }
 

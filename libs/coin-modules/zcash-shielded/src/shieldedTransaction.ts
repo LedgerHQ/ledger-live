@@ -1,15 +1,7 @@
-import { DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
-import { RawTransaction } from "./jsonRpcClient";
-
-export type ShieldedTransaction = {
-  id: string;
-  hex: string;
-  height: number;
-  blockHash: string;
-  time: number;
-  fee: number;
-  decryptedData?: DecryptedTransaction; // Decrypted transaction data
-};
+import type { DecryptedTransaction } from "@ledgerhq/zcash-decrypt";
+import type { RawTransaction } from "./jsonRpcClient";
+import type { ShieldedTransaction } from "./types";
+import { BigNumber } from "bignumber.js";
 
 export const toShieldedTransaction = (
   tx: RawTransaction,
@@ -17,9 +9,18 @@ export const toShieldedTransaction = (
 ): ShieldedTransaction => ({
   id: tx.txid,
   hex: tx.hex,
-  height: tx.height,
   blockHash: tx.blockhash,
-  time: tx.time,
-  fee: tx.orchard.valueBalance,
-  decryptedData: decryptedTx,
+  blockHeight: tx.height,
+  timestamp: tx.time,
+  fee: new BigNumber(tx.orchard.valueBalance),
+  decryptedData: {
+    orchard_outputs: decryptedTx.orchard_outputs.map(output => ({
+      ...output,
+      amount: new BigNumber(output.amount),
+    })),
+    sapling_outputs: decryptedTx.sapling_outputs.map(output => ({
+      ...output,
+      amount: new BigNumber(output.amount),
+    })),
+  },
 });

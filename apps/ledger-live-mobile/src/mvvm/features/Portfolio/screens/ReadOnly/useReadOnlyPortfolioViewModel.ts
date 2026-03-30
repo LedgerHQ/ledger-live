@@ -1,26 +1,19 @@
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useContext } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
-import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
-import { NavigatorName, ScreenName } from "~/const";
-import { Asset } from "~/types/asset";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 
-const MAX_ASSETS_TO_DISPLAY = 5;
-
 interface UseReadOnlyPortfolioViewModelResult {
-  assets: Asset[];
   safeAreaTop: number;
   shouldDisplayGraphRework: boolean;
   shouldDisplayWallet40MainNav: boolean;
   isLNSUpsellBannerShown: boolean;
   source: string | undefined;
-  goToAssets: () => void;
   onBackFromUpdate: () => void;
 }
 
@@ -33,28 +26,10 @@ const useReadOnlyPortfolioViewModel = (navigation: {
   const { top: safeAreaTop } = useSafeAreaInsets();
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
-  const { sortedCryptoCurrencies } = useReadOnlyCoins({ maxDisplayed: MAX_ASSETS_TO_DISPLAY });
-
-  const assets: Asset[] = useMemo(
-    () =>
-      sortedCryptoCurrencies?.map(currency => ({
-        amount: 0,
-        accounts: [],
-        currency,
-      })),
-    [sortedCryptoCurrencies],
-  );
-
   usePortfolioAnalyticsOptInPrompt();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
-
-  const goToAssets = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.Assets,
-    });
-  }, [navigation]);
 
   const onBackFromUpdate = useCallback(() => {
     navigation.goBack();
@@ -70,13 +45,11 @@ const useReadOnlyPortfolioViewModel = (navigation: {
   useFocusEffect(focusEffect);
 
   return {
-    assets,
     safeAreaTop,
     shouldDisplayGraphRework,
     shouldDisplayWallet40MainNav,
     isLNSUpsellBannerShown,
     source,
-    goToAssets,
     onBackFromUpdate,
   };
 };

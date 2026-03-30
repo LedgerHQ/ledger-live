@@ -2,6 +2,10 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 
 export const SolanaAccountNotFunded = createCustomErrorClass("SolanaAccountNotFunded");
 
+export const SolanaRecipientAccountNotFunded = createCustomErrorClass(
+  "SolanaRecipientAccountNotFunded",
+);
+
 export const SolanaRecipientAssociatedTokenAccountWillBeFunded = createCustomErrorClass(
   "SolanaAssociatedTokenAccountWillBeFunded",
 );

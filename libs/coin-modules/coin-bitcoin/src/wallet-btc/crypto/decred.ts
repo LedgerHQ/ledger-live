@@ -6,11 +6,11 @@ import bs58check from "bs58check";
 import { blake256 as nobleBlake256 } from "@noble/hashes/blake1";
 import { ripemd160 } from "@noble/hashes/ripemd160";
 import bs58 from "bs58";
+import type { BitcoinJS } from "coininfo";
 import BIP32 from "./bip32";
 
 class Decred extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     this.network.dustThreshold = 10000;
     this.network.dustPolicy = "FIXED";

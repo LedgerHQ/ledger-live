@@ -4,7 +4,7 @@ import {
   flattenAccounts,
   getAccountCurrency,
   getAccountHistoryBalances,
-} from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
@@ -306,7 +306,7 @@ export function getPortfolio(
     balanceHistory,
     balanceAvailable: accounts.length === 0 || availables.length > 0,
     availableAccounts: availables.map(a => a.account),
-    unavailableCurrencies: [...new Set(unavailableAccounts.map(getAccountCurrency))],
+    unavailableCurrencies: [...new Set(unavailableAccounts.map(a => getAccountCurrency(a)))],
     accounts,
     range,
     histories,

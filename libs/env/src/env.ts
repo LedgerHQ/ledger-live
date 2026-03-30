@@ -107,6 +107,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node endpoint for celo",
   },
+  BITCOIN_STUCK_TRANSACTION_TIMEOUT: {
+    def: 20 * 60 * 1000,
+    parser: intParser,
+    desc: "Time after which an optimistic operation is considered stuck",
+  },
   ENABLE_CELO_TOKENS: {
     def: true,
     parser: boolParser,
@@ -212,10 +217,10 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
-  API_SUI_NODE_PROXY_TEST: {
+  API_SUI_TESTNET_NODE_PROXY: {
     parser: stringParser,
     def: "https://sui.coin.ledger-test.com",
-    desc: "reverse proxy url for sui node",
+    desc: "reverse proxy url for sui testnet node",
   },
   API_SUI_NODE_PROXY: {
     parser: stringParser,
@@ -326,6 +331,11 @@ const envDefinitions = {
     def: "https://buy.api.live.ledger.com/buy/v1",
     parser: stringParser,
     desc: "Buy crypto API base url - version 1",
+  },
+  SELL_API_BASE: {
+    def: "https://buy.api.live.ledger.com/sell/v1",
+    parser: stringParser,
+    desc: "Sell crypto API base url - version 1",
   },
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
@@ -971,7 +981,7 @@ const envDefinitions = {
   ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
     def: 5 * 60 * 1000,
     parser: intParser,
-    desc: "Time after which an optimisc operation is considered stuck",
+    desc: "Time after which an optimistic operation is considered stuck",
   },
   EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR: {
     def: 1.3,
@@ -1035,9 +1045,9 @@ const envDefinitions = {
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> => {
+export const getDefinition = (name: string): EnvDef<any> | undefined => {
   if (name in envDefinitions) {
-    return envDefinitions[name];
+    return envDefinitions[name as EnvName];
   }
   return undefined;
 };
@@ -1046,7 +1056,7 @@ const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[
   (acc, curr) => {
     return {
       ...acc,
-      [curr]: envDefinitions[curr].def,
+      [curr]: envDefinitions[curr as EnvName].def,
     };
   },
   {} as { [Key in EnvName]: EnvDefs[Key]["def"] },

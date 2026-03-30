@@ -4,7 +4,8 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 4 * * 1-5"
+    - cron: "0 4 * * 1,3,5" # Mon, Wed, Fri → Wallet 4.0
+    - cron: "0 4 * * 2,4" # Tue, Thu → Legacy
   workflow_dispatch:
     inputs:
       ref:
@@ -56,10 +57,15 @@ on:
           - stax
           - flex
           - nanoGen5
+          - nanoSP and stax
         default: nanoSP
       smoke_tests:
         description: "Run smoke tests"
         required: false
+        type: boolean
+        default: false
+      enable_wallet40:
+        description: "Enable Wallet 4.0 feature"
         type: boolean
         default: false
 
@@ -101,16 +107,50 @@ on:
         required: false
         type: boolean
         default: false
+      enable_wallet40:
+        description: "Enable Wallet 4.0 feature"
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
+  prepare-devices:
+    name: "Prepare device matrix"
+    runs-on: ubuntu-latest
+    outputs:
+      device_1: ${{ steps.parse.outputs.device_1 }}
+      device_2: ${{ steps.parse.outputs.device_2 }}
+      is_dual: ${{ steps.parse.outputs.is_dual }}
+      e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
+    steps:
+      - name: Parse speculos device input
+        id: parse
+        run: |
+          if [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
+            echo "device_1=nanoSP" >> $GITHUB_OUTPUT
+            echo "device_2=stax" >> $GITHUB_OUTPUT
+            echo "is_dual=true" >> $GITHUB_OUTPUT
+            echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}' >> $GITHUB_OUTPUT
+          else
+            DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
+            echo "device_2=skipped" >> $GITHUB_OUTPUT
+            echo "is_dual=false" >> $GITHUB_OUTPUT
+            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
   e2e-tests:
-    name: "Desktop E2E"
-    runs-on: [ledger-live-linux-e2e-speculos-8CPU-32RAM]
-    timeout-minutes: 90
+    name: "Desktop E2E (${{ matrix.device }})"
+    needs: [prepare-devices]
+    runs-on: [ledger-live-linux-e2e-speculos-32CPU-128RAM]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
+    timeout-minutes: 40
     env:
       NODE_OPTIONS: "--max-old-space-size=14336"
       INSTRUMENT_BUILD: true
@@ -120,8 +160,8 @@ jobs:
       npm_config_loglevel: warn
       TURBO_TELEMETRY_DISABLED: 1
       DO_NOT_TRACK: 1
-      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
-      SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoSP' }}
+      SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
+      SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
     outputs:
       test_passed: ${{ steps.run-playwright.outputs.passed }}
@@ -160,7 +200,8 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: "true"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -214,7 +255,7 @@ jobs:
       - name: Write workflow context to GitHub Summary
         run: |
           FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
-          DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+          DEVICE="$SPECULOS_DEVICE"
           BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
           TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
           BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
@@ -239,12 +280,13 @@ jobs:
         id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
-          speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
+          speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.filter }}
           invert_filter: ${{ inputs.invert_filter || false }}
+          enable_wallet40: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 1,3,5') || inputs.enable_wallet40 || false }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          XRAY: ${{ inputs.export_to_xray }}
+          XRAY: ${{ matrix.is_primary && inputs.export_to_xray || false }}
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
@@ -253,20 +295,20 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: allure-results
+          name: allure-results${{ matrix.artifact_suffix }}
           path: "e2e/desktop/allure-results"
 
       - name: Upload Xray test results for Jira
-        if: ${{ !cancelled() && inputs.export_to_xray }}
+        if: ${{ !cancelled() && inputs.export_to_xray && matrix.is_primary }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: xray-reports
           path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
   report-to-allure:
-    name: "Create Allure Report"
+    name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
     runs-on: [ledger-live-medium]
-    needs: e2e-tests
+    needs: [prepare-devices, e2e-tests]
     outputs:
       test_result: ${{ steps.summary.outputs.test_result }}
       status_color: ${{ steps.summary.outputs.status_color }}
@@ -298,7 +340,44 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
-          platform: linux
+          platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
+
+  report-to-allure-device2:
+    name: "Create Allure Report - device 2"
+    runs-on: [ledger-live-medium]
+    needs: [prepare-devices, e2e-tests]
+    if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
+    outputs:
+      test_result: ${{ steps.summary.outputs.test_result }}
+      status_color: ${{ steps.summary.outputs.status_color }}
+      status_emoji: ${{ steps.summary.outputs.status_emoji }}
+      report-url: ${{ steps.allure-server.outputs.report-url }}
+    env:
+      ALLURE_RESULTS: "allure-results-device2"
+    steps:
+      - name: Download Allure results from device2 test job
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
+          path: ${{ env.ALLURE_RESULTS }}
+
+      - name: Publish report to Allure Server
+        id: allure-server
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        with:
+          platform: linux-speculos-${{ needs.prepare-devices.outputs.device_2 }}
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: ${{ env.ALLURE_RESULTS }}
+
+      - name: Extract test summary for Slack notification
+        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule') }}
+        id: summary
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        with:
+          allure-results-path: ${{ env.ALLURE_RESULTS }}
+          platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -308,8 +387,8 @@ jobs:
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
       JIRA_URL: https://ledgerhq.atlassian.net/browse
-    needs: e2e-tests
-    if: ${{ !cancelled() && inputs.export_to_xray }}
+    needs: [prepare-devices, e2e-tests]
+    if: ${{ !cancelled() && inputs.export_to_xray && needs.prepare-devices.outputs.is_dual == 'false' }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
@@ -343,71 +422,126 @@ jobs:
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-live-medium]
-    needs: report-to-allure
-    if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2]
+    if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     steps:
       - uses: actions/github-script@v7
         name: Prepare Slack payload
         id: status
         env:
+          IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
+          DEVICE_1: ${{ needs.prepare-devices.outputs.device_1 }}
+          DEVICE_2: ${{ needs.prepare-devices.outputs.device_2 }}
           STATUS_EMOJI: ${{ needs.report-to-allure.outputs.status_emoji }}
+          STATUS_EMOJI_D2: ${{ needs.report-to-allure-device2.outputs.status_emoji }}
           EXPORT_TO_XRAY: ${{ inputs.export_to_xray }}
           TEST_EXECUTION: ${{ github.event.inputs.test_execution }}
         with:
           script: |
             const fs = require("fs");
-            const statusEmoji = process.env.STATUS_EMOJI;
-            const blocks = [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
-                  "emoji": true
-                }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
-                }
-              },
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
-                  },
-                  {
-                    "type": "mrkdwn",
-                    "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
+            const isDual = process.env.IS_DUAL === "true";
+            const device1 = process.env.DEVICE_1 || "nanoSP";
+            const device2 = process.env.DEVICE_2;
+            let blocks;
+            if (isDual) {
+              blocks = [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${device1} + ${device2}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
+                    "emoji": true
                   }
-                ]
+                },
+                { "type": "divider" },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux (${device1}) : ${process.env.STATUS_EMOJI} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux (${device2}) : ${process.env.STATUS_EMOJI_D2} ${{ needs.report-to-allure-device2.outputs.test_result || 'No test results' }}`
+                  }
+                },
+                { "type": "divider" },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": `*Allure Report (${device1})*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-${device1}>`
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": `*Allure Report (${device2})*\n<${{ needs.report-to-allure-device2.outputs.report-url }}|allure-results-${device2}>`
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
+                    }
+                  ]
+                }
+              ];
+            } else {
+              const statusEmoji = process.env.STATUS_EMOJI;
+              blocks = [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
+                    "emoji": true
+                  }
+                },
+                { "type": "divider" },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux : ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+                  }
+                },
+                { "type": "divider" },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
+                    }
+                  ]
+                }
+              ];
+              if (process.env.EXPORT_TO_XRAY === 'true') {
+                blocks.push({
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": `*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${process.env.TEST_EXECUTION}|Test Execution>`
+                    }
+                  ]
+                });
               }
-            ];
-            if (process.env.EXPORT_TO_XRAY === 'true') {
-              blocks.push({
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": `*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${process.env.TEST_EXECUTION}|Test Execution>`
-                  }
-                ]
-              });
             }
+            const d1Color = "${{ needs.report-to-allure.outputs.status_color }}";
+            const d2Color = "${{ needs.report-to-allure-device2.outputs.status_color }}";
+            const color = isDual
+              ? (d1Color === "#33FF39" && d2Color === "#33FF39" ? "#33FF39" : "#FF333C")
+              : (d1Color || "#808080");
             const slackPayload = {
               "attachments": [
                 {
-                  "color": "${{ needs.report-to-allure.outputs.status_color }}",
+                  "color": color,
                   blocks
                 }
               ]

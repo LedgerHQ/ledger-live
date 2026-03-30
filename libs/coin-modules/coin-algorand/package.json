@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "0.18.1",
+  "version": "1.3.0",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -37,6 +37,7 @@
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./api": {
+      "@ledgerhq/source": "./src/api/index.ts",
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
@@ -45,18 +46,22 @@
       "default": "./lib-es/bridge/index.js"
     },
     "./config": {
+      "@ledgerhq/source": "./src/config.ts",
       "require": "./lib/config.js",
       "default": "./lib-es/config.js"
     },
     "./logic": {
+      "@ledgerhq/source": "./src/logic/index.ts",
       "require": "./lib/logic/index.js",
       "default": "./lib-es/logic/index.js"
     },
     "./logic/*": {
+      "@ledgerhq/source": "./src/logic/*.ts",
       "require": "./lib/logic/*.js",
       "default": "./lib-es/logic/*.js"
     },
     "./network": {
+      "@ledgerhq/source": "./src/network/index.ts",
       "require": "./lib/network/index.js",
       "default": "./lib-es/network/index.js"
     },
@@ -65,10 +70,12 @@
       "default": "./lib-es/signer/index.js"
     },
     "./types": {
+      "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
     },
     "./*": {
+      "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
@@ -80,6 +87,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
@@ -95,6 +103,7 @@
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "jest": "catalog:",
@@ -104,11 +113,11 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

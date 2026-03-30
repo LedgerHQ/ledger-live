@@ -8,17 +8,42 @@ import {
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type {
+  AleoAccount,
   Transaction as AleoTransaction,
+  TransactionPrivate,
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
   TransactionTransfer,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
-import { calculateAmount, isSelfTransferTransaction } from "../logic/utils";
+import {
+  calculateAmount,
+  getAvailableBalance,
+  getRecordByCommitment,
+  isPrivateTransaction,
+  isSelfTransferTransaction,
+} from "../logic/utils";
 import aleoCoinConfig from "../config";
+import { AleoAmountRecordRequired, AleoFeeRecordRequired } from "../errors";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
+
+function validateRecord({
+  account,
+  commitment,
+  error,
+}: {
+  account: AleoAccount;
+  commitment: TransactionPrivate["properties"]["amountRecordCommitment"];
+  error: Error;
+}): Error | null {
+  if (!commitment || !getRecordByCommitment({ account, commitment })) {
+    return error;
+  }
+
+  return null;
+}
 
 async function validateRecipient({
   account,
@@ -52,17 +77,18 @@ async function handleTransferTransaction({
   transaction,
   allowSelfTransfer,
 }: {
-  account: Account;
+  account: AleoAccount;
   transaction: TransactionSelfTransfer | TransactionTransfer;
   allowSelfTransfer: boolean;
 }): Promise<AleoTransactionStatus> {
   const errors: Errors = {};
   const warnings: Warnings = {};
 
+  const availableBalance = getAvailableBalance(account, transaction);
   const config = aleoCoinConfig.getCoinConfig(account.currency);
   const feeEstimation = estimateFees({
     configOrCurrencyId: config,
-    transactionType: transaction.type,
+    transactionType: transaction.mode,
   });
   const estimatedFees = new BigNumber(feeEstimation.value.toString());
   const calculatedAmount = calculateAmount({
@@ -85,7 +111,29 @@ async function handleTransferTransaction({
     errors.amount = new AmountRequired();
   }
 
-  if (account.balance.isLessThan(calculatedAmount.totalSpent)) {
+  if (isPrivateTransaction(transaction)) {
+    const amountRecordError = validateRecord({
+      account,
+      commitment: transaction.properties.amountRecordCommitment,
+      error: new AleoAmountRecordRequired(),
+    });
+    if (amountRecordError) {
+      errors.amountRecord = amountRecordError;
+    }
+
+    if (!config.isFeeSponsored) {
+      const feeRecordError = validateRecord({
+        account,
+        commitment: transaction.properties.feeRecordCommitment,
+        error: new AleoFeeRecordRequired(),
+      });
+      if (feeRecordError) {
+        errors.feeRecord = feeRecordError;
+      }
+    }
+  }
+
+  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -100,7 +148,7 @@ async function handleTransferTransaction({
 
 export const getTransactionStatus: AccountBridge<
   AleoTransaction,
-  Account,
+  AleoAccount,
   AleoTransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
   const allowSelfTransfer = isSelfTransferTransaction(transaction);

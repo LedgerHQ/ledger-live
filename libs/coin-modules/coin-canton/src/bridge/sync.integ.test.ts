@@ -1,12 +1,12 @@
-import BigNumber from "bignumber.js";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
   runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { Account, Operation } from "@ledgerhq/types-live";
+} from "@ledgerhq/ledger-wallet-framework/derivation";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
@@ -40,7 +40,7 @@ const TIMEOUT = 30000;
 // Mock signer context for testing
 const keyPair = generateMockKeyPair();
 const mockSigner = createMockSigner(keyPair);
-const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
+const mockSignerContext = jest.fn().mockImplementation((_deviceId, callback) => {
   return callback(mockSigner);
 });
 
@@ -64,19 +64,13 @@ describe.skip("sync (devnet)", () => {
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-        expect(result).toBeDefined();
-        expect(result.id).toBeDefined();
+        expect(result.id).toEqual(expect.any(String));
         expect(result.xpub).toBe(TEST_ADDRESS);
         expect(result.blockHeight).toBeGreaterThan(0);
-        expect(result.balance).toBeDefined();
-        expect(result.spendableBalance).toBeDefined();
-        expect(result.operations).toBeDefined();
+        expect(result.balance?.toNumber()).toBeGreaterThanOrEqual(0);
+        expect(result.spendableBalance?.toNumber()).toBeGreaterThanOrEqual(0);
+        expect(result.operations).toBeInstanceOf(Array);
         expect(result.operationsCount).toBeGreaterThanOrEqual(0);
-
-        expect(result.balance).toBeInstanceOf(Object);
-        expect(result.balance?.toNumber).toBeDefined();
-        expect(result.spendableBalance).toBeInstanceOf(Object);
-        expect(result.spendableBalance?.toNumber).toBeDefined();
 
         expect(result.spendableBalance?.toNumber()).toBeLessThanOrEqual(
           result.balance?.toNumber() || 0,
@@ -123,15 +117,23 @@ describe.skip("sync (devnet)", () => {
           {
             ...ACCOUNT_SHAPE_INFO,
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-            initialAccount: { xpub, operations } as Account,
+            initialAccount: {
+              xpub,
+              operations,
+              cantonResources: {
+                isOnboarded: true,
+                instrumentUtxoCounts: {},
+                pendingTransferProposals: [],
+              },
+            } as unknown as CantonAccount,
           },
           { paginationConfig: {} },
         );
 
-        expect(result.operations).toBeDefined();
         expect(result.operationsCount).toBeGreaterThanOrEqual(1);
-        const initialOp = result.operations?.find(op => op.id === "test-op-1");
-        expect(initialOp).toBeDefined();
+        expect(result.operations?.find(op => op.id === "test-op-1")).toMatchObject({
+          id: "test-op-1",
+        });
       },
       TIMEOUT,
     );
@@ -144,13 +146,17 @@ describe.skip("sync (devnet)", () => {
         mockGetBalance.mockResolvedValue([
           {
             instrument_id: "Amulet",
+            admin_id: "native-admin",
             amount: "500",
             locked: false,
+            utxo_count: 1,
           },
           {
             instrument_id: "LockedAmulet",
+            admin_id: "native-admin",
             amount: "1000000",
             locked: true,
+            utxo_count: 1,
           },
         ]);
 
@@ -186,7 +192,15 @@ describe.skip("sync (devnet)", () => {
         };
 
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-        const initialAccount = { xpub, operations: [operation] } as Account;
+        const initialAccount = {
+          xpub,
+          operations: [operation],
+          cantonResources: {
+            isOnboarded: true,
+            instrumentUtxoCounts: {},
+            pendingTransferProposals: [],
+          },
+        } as unknown as CantonAccount;
 
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(
@@ -201,7 +215,6 @@ describe.skip("sync (devnet)", () => {
           cursor: (operation.blockHeight || 0) + 1,
           limit: 100,
         });
-        expect(result.operations).toBeDefined();
         expect(result.operationsCount).toBeGreaterThan(1);
       },
       TIMEOUT,
@@ -215,7 +228,6 @@ describe.skip("sync (devnet)", () => {
         const getAccountShape = makeGetAccountShape(mockSignerContext);
         const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-        expect(result.operations).toBeDefined();
         expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
         expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {

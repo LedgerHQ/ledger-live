@@ -1,24 +1,13 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig from "../../config";
+import type { RawOperation } from "../../types";
+import { setupTestnetCoinConfig } from "../../test/fixtures";
 import { listOperations } from "./listOperations";
 
 describe("listOperations", () => {
-  const currency = getCryptoCurrencyById("concordium");
   const ADDRESS_WITH_BALANCE = "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx";
   const ADDRESS_PRISTINE = "4ox4d7b4S9Mi3qA696v3yYjBQB4f6GDEVATrH9oFnoHUd5zLgh";
 
   beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      networkType: "testnet",
-      grpcUrl: "grpc.testnet.concordium.com",
-      grpcPort: 20000,
-      proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-      minReserve: 100000,
-    }));
+    setupTestnetCoinConfig();
   });
 
   describe("Account with no transactions", () => {
@@ -26,7 +15,7 @@ describe("listOperations", () => {
       const { items: operations, next: cursor } = await listOperations(
         ADDRESS_PRISTINE,
         { minHeight: 0 },
-        currency,
+        "concordium_testnet",
       );
 
       expect(Array.isArray(operations)).toBe(true);
@@ -36,11 +25,15 @@ describe("listOperations", () => {
   });
 
   describe("Account with transactions", () => {
-    let operations: Operation[];
+    let operations: RawOperation[];
     let cursor: string | undefined;
 
     beforeAll(async () => {
-      const page = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      const page = await listOperations(
+        ADDRESS_WITH_BALANCE,
+        { minHeight: 0 },
+        "concordium_testnet",
+      );
       operations = page.items;
       cursor = page.next;
     });
@@ -52,18 +45,18 @@ describe("listOperations", () => {
     it("should return operations with correct structure", async () => {
       if (operations.length > 0) {
         operations.forEach(operation => {
-          expect(operation).toHaveProperty("id");
+          expect(operation).toHaveProperty("hash");
           expect(operation).toHaveProperty("type");
           expect(operation).toHaveProperty("value");
-          expect(operation).toHaveProperty("senders");
-          expect(operation).toHaveProperty("recipients");
-          expect(operation).toHaveProperty("asset");
-          expect(operation).toHaveProperty("tx");
+          expect(operation).toHaveProperty("sender");
+          expect(operation).toHaveProperty("recipient");
+          expect(operation).toHaveProperty("amount");
+          expect(operation).toHaveProperty("fee");
 
-          expect(operation.asset).toEqual({ type: "native" });
           expect(["IN", "OUT"]).toContain(operation.type);
-          expect(operation.value).toBeGreaterThanOrEqual(0);
-          expect(typeof operation.value).toBe("bigint");
+          expect(typeof operation.value).toBe("string");
+          expect(typeof operation.amount).toBe("string");
+          expect(typeof operation.fee).toBe("string");
         });
       }
     });
@@ -71,37 +64,20 @@ describe("listOperations", () => {
     it("should return operations with valid transaction data", async () => {
       if (operations.length > 0) {
         operations.forEach(operation => {
-          expect(operation.tx.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
-          expect(typeof operation.tx.fees).toBe("bigint");
-          expect(operation.tx.fees).toBeGreaterThanOrEqual(BigInt(0));
-          expect(operation.tx.date).toBeInstanceOf(Date);
-          expect(operation.tx.failed).toBe(false);
-
-          expect(operation.tx.block).toHaveProperty("height");
-          expect(operation.tx.block).toHaveProperty("hash");
-          expect(operation.tx.block).toHaveProperty("time");
-          expect(operation.tx.block.height).toBeGreaterThanOrEqual(0);
-          expect(operation.tx.block.time).toBeInstanceOf(Date);
+          expect(operation.hash).toMatch(/^[A-Fa-f0-9]{64}$/);
+          expect(Number(operation.fee)).toBeGreaterThanOrEqual(0);
+          expect(operation.date).toBeInstanceOf(Date);
+          expect(typeof operation.failed).toBe("boolean");
         });
       }
     });
 
-    it("should return operations sorted by height (newest first)", async () => {
-      if (operations.length > 1) {
-        for (let i = 0; i < operations.length - 1; i++) {
-          expect(operations[i].tx.block.height).toBeGreaterThanOrEqual(
-            operations[i + 1].tx.block.height,
-          );
-        }
-      }
-    });
-
-    it("should include the account address in senders or recipients", async () => {
+    it("should include the account address in sender or recipient", async () => {
       if (operations.length > 0) {
         operations.forEach(operation => {
           const isSenderOrRecipient =
-            operation.senders.includes(ADDRESS_WITH_BALANCE) ||
-            operation.recipients.includes(ADDRESS_WITH_BALANCE);
+            operation.sender === ADDRESS_WITH_BALANCE ||
+            operation.recipient === ADDRESS_WITH_BALANCE;
           expect(isSenderOrRecipient).toBe(true);
         });
       }
@@ -109,7 +85,7 @@ describe("listOperations", () => {
 
     it("should return unique operations without duplicates", async () => {
       if (operations.length > 0) {
-        const hashes = operations.map(op => op.tx.hash);
+        const hashes = operations.map(op => op.hash);
         const uniqueHashes = new Set(hashes);
         expect(uniqueHashes.size).toBeLessThanOrEqual(operations.length);
       }
@@ -121,10 +97,14 @@ describe("listOperations", () => {
   });
 
   describe("Transaction types", () => {
-    let operations: Operation[];
+    let operations: RawOperation[];
 
     beforeAll(async () => {
-      const page = await listOperations(ADDRESS_WITH_BALANCE, { minHeight: 0 }, currency);
+      const page = await listOperations(
+        ADDRESS_WITH_BALANCE,
+        { minHeight: 0 },
+        "concordium_testnet",
+      );
       operations = page.items;
     });
 
@@ -137,19 +117,19 @@ describe("listOperations", () => {
       }
     });
 
-    it("should have correct sender/recipient for OUT operations", async () => {
+    it("should have correct sender for OUT operations", async () => {
       const outOps = operations.filter(op => op.type === "OUT");
 
       outOps.forEach(operation => {
-        expect(operation.senders.includes(ADDRESS_WITH_BALANCE)).toBe(true);
+        expect(operation.sender).toBe(ADDRESS_WITH_BALANCE);
       });
     });
 
-    it("should have correct sender/recipient for IN operations", async () => {
+    it("should have correct recipient for IN operations", async () => {
       const inOps = operations.filter(op => op.type === "IN");
 
       inOps.forEach(operation => {
-        expect(operation.recipients.includes(ADDRESS_WITH_BALANCE)).toBe(true);
+        expect(operation.recipient).toBe(ADDRESS_WITH_BALANCE);
       });
     });
   });

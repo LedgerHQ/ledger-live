@@ -1,4 +1,4 @@
-import { Page, Stake, Reward } from "@ledgerhq/coin-framework/lib/api/types";
+import { Page, Stake, Reward } from "@ledgerhq/coin-framework/api/types";
 import type { SuiCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";
@@ -103,7 +103,7 @@ describe("api/index", () => {
       asset: { type: "native" as const },
       tx: {
         hash: "hash1",
-        block: { height: 1 },
+        block: { height: 1, hash: "block-hash-1", time: new Date() },
         fees: 1n,
         date: new Date(),
         failed: false,

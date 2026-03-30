@@ -2,7 +2,8 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { Account, VersionedMessage } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
-import { SolanaMemoIsTooLong } from "./errors";
+import { SolanaMemoIsTooLong, SolanaRecipientAccountNotFunded } from "./errors";
+import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 import * as logicValidateMemo from "./logic/validateMemo";
 import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
@@ -28,8 +29,26 @@ jest.mock("./logic/validateMemo", () => {
   };
 });
 
+const mockGetMaybeVoteAccount = jest.fn();
+const mockGetStakeAccountAddressWithSeed = jest.fn();
+const mockGetStakeAccountMinimumBalanceForRentExemption = jest.fn();
+jest.mock("./network/chain/web3", () => {
+  const actual = jest.requireActual("./network/chain/web3");
+  return {
+    ...actual,
+    getMaybeVoteAccount: (...args: unknown[]) => mockGetMaybeVoteAccount(...args),
+    getStakeAccountAddressWithSeed: (...args: unknown[]) =>
+      mockGetStakeAccountAddressWithSeed(...args),
+    getStakeAccountMinimumBalanceForRentExemption: (...args: unknown[]) =>
+      mockGetStakeAccountMinimumBalanceForRentExemption(...args),
+  };
+});
+
 describe("testing prepareTransaction", () => {
   const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
+  const mockedEstimateFeeAndSpendable = estimateFeeAndSpendable as jest.MockedFunction<
+    typeof estimateFeeAndSpendable
+  >;
 
   it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
     const preparedTransaction = await prepareTransaction(
@@ -162,6 +181,41 @@ describe("testing prepareTransaction", () => {
     expect(preparedTransaction).not.toBe(nonRawTransaction);
   });
 
+  it("blocks tiny native transfers to an unfunded recipient", async () => {
+    mockedEstimateFeeAndSpendable.mockResolvedValueOnce({
+      fee: 5000,
+      spendable: new BigNumber(2_000_000),
+    });
+
+    const tx = transaction({ kind: "transfer" });
+    tx.recipient = "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4";
+    tx.amount = new BigNumber(100_000);
+
+    const preparedTransaction = await prepareTransaction(
+      {
+        currency: { name: "Solana", ticker: "SOL", units: [{ magnitude: 9 }] },
+        freshAddress: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+      } as unknown as SolanaAccount,
+      tx,
+      {
+        getBalance: () => Promise.resolve(0),
+        getAccountInfo: () => Promise.resolve(null),
+        getMinimumBalanceForRentExemption: () => Promise.resolve(890_880),
+      } as unknown as ChainAPI,
+    );
+
+    expect(preparedTransaction.model.commandDescriptor?.errors.amount).toBeInstanceOf(
+      SolanaRecipientAccountNotFunded,
+    );
+    expect(
+      (
+        preparedTransaction.model.commandDescriptor?.errors.amount as Error & {
+          minimumAmount?: string;
+        }
+      )?.minimumAmount,
+    ).toBe("0.00089088 SOL");
+  });
+
   it.each(["transfer", "token.transfer"])(
     "should not set error on transaction when memo is validated for kind %s",
     async (kind: string) => {
@@ -263,6 +317,72 @@ describe("testing prepareTransaction", () => {
       );
     },
   );
+
+  describe("stake.createAccount and stake.split (createWithSeed-compatible seed)", () => {
+    const voteAccAddress = "Vote111111111111111111111111111111111111111111";
+    const stakeAccAddress = "StakeAccountAddr111111111111111111111111111";
+    const STAKE_SEED_MAX_BYTES = 32;
+
+    beforeEach(() => {
+      mockGetMaybeVoteAccount.mockResolvedValue({});
+      mockGetStakeAccountAddressWithSeed.mockResolvedValue(stakeAccAddress);
+      mockGetStakeAccountMinimumBalanceForRentExemption.mockResolvedValue(123456);
+    });
+
+    it("should derive stake.createAccount command with seed <= 32 bytes", async () => {
+      const stakeCreateTx = transaction({
+        kind: "stake.createAccount",
+        uiState: { delegate: { voteAccAddress } },
+      });
+      (stakeCreateTx as { amount?: BigNumber }).amount = new BigNumber(1000);
+
+      const preparedTransaction = await prepareTransaction(
+        {
+          currency: { units: [{ magnitude: 9 }] },
+          freshAddress: "Sender11111111111111111111111111111111",
+          spendableBalance: new BigNumber(1e9),
+        } as unknown as SolanaAccount,
+        stakeCreateTx,
+        {} as ChainAPI,
+      );
+
+      const command = preparedTransaction.model.commandDescriptor?.command;
+      expect(command !== undefined && command !== null).toBe(true);
+      expect(command?.kind).toBe("stake.createAccount");
+      if (command?.kind === "stake.createAccount") {
+        expect(command.seed).toMatch(/^stake:[0-9a-f]{26}$/);
+        expect(Buffer.byteLength(command.seed, "utf8")).toBeLessThanOrEqual(STAKE_SEED_MAX_BYTES);
+        expect(command.stakeAccAddress).toBe(stakeAccAddress);
+      }
+    });
+
+    it("should derive stake.split command with seed <= 32 bytes", async () => {
+      const stakeSplitTx = transaction({
+        kind: "stake.split",
+        uiState: { stakeAccAddr: stakeAccAddress },
+      });
+      (stakeSplitTx as { amount?: BigNumber }).amount = new BigNumber(500);
+
+      const preparedTransaction = await prepareTransaction(
+        {
+          currency: { units: [{ magnitude: 9 }] },
+          freshAddress: "Sender11111111111111111111111111111111",
+          solanaResources: { stakes: [] },
+        } as unknown as SolanaAccount,
+        stakeSplitTx,
+        {} as ChainAPI,
+      );
+
+      const command = preparedTransaction.model.commandDescriptor?.command;
+      expect(command !== undefined && command !== null).toBe(true);
+      expect(command?.kind).toBe("stake.split");
+      if (command?.kind === "stake.split") {
+        expect(command.seed).toMatch(/^stake:[0-9a-f]{26}$/);
+        expect(Buffer.byteLength(command.seed, "utf8")).toBeLessThanOrEqual(STAKE_SEED_MAX_BYTES);
+        expect(command.splitStakeAccAddr).toBe(stakeAccAddress);
+      }
+    });
+  });
 });
 
 function api(estimatedFees?: number) {

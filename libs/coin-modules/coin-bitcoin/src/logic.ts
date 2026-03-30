@@ -8,11 +8,13 @@ import type {
   NetworkInfo,
   UtxoStrategy,
   BtcOperation,
+  BitcoinAccount,
+  ZcashAccount,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 
@@ -215,7 +217,9 @@ export const mapTxToOperations = (
   const inputs = new Set<`${string}-${number}`>(); // txid-outputIndex
 
   for (const input of tx.inputs) {
-    inputs.add(`${input.output_hash}-${input.output_index}`);
+    if (input.output_hash) {
+      inputs.add(`${input.output_hash}-${input.output_index}`);
+    }
     if (input.address) {
       senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
@@ -299,7 +303,7 @@ export const mapTxToOperations = (
       accountId,
       date,
       hasFailed,
-      extra: {},
+      extra: { inputs: Array.from(inputs) },
     });
   }
 
@@ -340,3 +344,7 @@ export const mapTxToOperations = (
 
   return operations;
 };
+
+export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
+  return "privateInfo" in a;
+}

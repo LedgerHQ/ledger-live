@@ -9,8 +9,18 @@ import MyLedgerNavigator, { ManagerTabIcon } from "../MyLedgerNavigator";
 import DiscoverNavigator from "../DiscoverNavigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
+import { setOriginFlow } from "~/analytics/originFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { Tab } from "./tabNavigator";
 import type { LegacyTabNavigatorProps } from "./types";
+
+const LEGACY_TAB_TEST_IDS: Partial<Record<string, string>> = {
+  [NavigatorName.Portfolio]: "tab-bar-portfolio",
+  [NavigatorName.Earn]: "tab-bar-earn",
+  [NavigatorName.Web3HubTab]: "tab-bar-discover",
+  [NavigatorName.Discover]: "tab-bar-discover",
+  [NavigatorName.MyLedger]: "TabBarManager",
+};
 
 export function LegacyTabNavigator({
   tabBar,
@@ -31,6 +41,7 @@ export function LegacyTabNavigator({
         options={{
           headerShown: false,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
+          tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Portfolio],
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -53,10 +64,11 @@ export function LegacyTabNavigator({
             <TabIcon
               Icon={IconsLegacy.LendMedium}
               i18nKey={earnYieldLabel}
-              testID="tab-bar-earn"
+              testID={LEGACY_TAB_TEST_IDS[NavigatorName.Earn]}
               {...props}
             />
           ),
+          tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Earn],
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -68,6 +80,7 @@ export function LegacyTabNavigator({
                   parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
                 }
               } else if (readOnlyModeEnabled) {
+                setOriginFlow(HOOKS_TRACKING_LOCATIONS.earn);
                 navigateToRebornFlow();
               } else
                 navigation.navigate(NavigatorName.Earn, {
@@ -101,6 +114,7 @@ export function LegacyTabNavigator({
             tabBarIcon: props => (
               <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
+            tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Web3HubTab],
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
@@ -120,6 +134,7 @@ export function LegacyTabNavigator({
             tabBarIcon: props => (
               <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
+            tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.Discover],
           }}
           listeners={({ navigation }) => ({
             tabPress: e => {
@@ -139,7 +154,7 @@ export function LegacyTabNavigator({
         options={{
           headerShown: false,
           tabBarIcon: props => <ManagerTabIcon {...props} />,
-          tabBarButtonTestID: "TabBarManager",
+          tabBarButtonTestID: LEGACY_TAB_TEST_IDS[NavigatorName.MyLedger],
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -151,6 +166,7 @@ export function LegacyTabNavigator({
                   parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
                 }
               } else if (readOnlyModeEnabled) {
+                setOriginFlow(HOOKS_TRACKING_LOCATIONS.myLedger);
                 navigateToRebornFlow();
               } else {
                 navigation.jumpTo(NavigatorName.MyLedger, {

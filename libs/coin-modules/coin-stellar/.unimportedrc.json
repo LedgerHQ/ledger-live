@@ -1,30 +1,12 @@
 {
-  "entry": [
-    "src/api/index.ts",
-    "src/bridge/index.ts",
-    "src/bridge/deviceTransactionConfig.ts",
-    "src/signer/index.ts",
-    "src/test/index.ts",
-    "src/transaction.ts",
-    "src/index.ts",
-    "src/logic/validateAddress.ts"
-  ],
+  "entry": ["src/api/index.ts", "src/index.ts", "src/logic/validateAddress.ts"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/*.fixture.ts",
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/live-env",
-    "rxjs"
-  ],
-  "ignoreUnresolved": [
-    "@jest/expect-utils",
-    "@jest/get-type",
-    "jest-util"],
-  "ignoreUnimported": [
-    "src/globals.d.ts",
-    "src/supportedFeatures.ts"
-  ]
+  "ignoreUnused": ["@ledgerhq/live-env", "expect", "invariant", "rxjs"],
+  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnimported": ["src/globals.d.ts", "src/network/index.ts", "src/supportedFeatures.ts"]
 }

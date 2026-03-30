@@ -5,7 +5,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import invariant from "invariant";
@@ -35,7 +35,7 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { Alert as NativeUiAlert, Flex, Text } from "@ledgerhq/native-ui";
 import SupportLinkError from "~/components/SupportLinkError";
-import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/errors";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -70,20 +70,17 @@ function SendSummary({ navigation, route }: Props) {
   const [utxoWarningOpen, setUtxoWarningOpen] = useState(false);
   const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
   const navigateToNext = useCallback(() => {
-    if (!nextNavigation) return null;
+    const nextScreen = nextNavigation ?? ScreenName.SendSelectDevice;
     return (
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
-        nextNavigation,
-        {
-          ...route.params,
-          transaction,
-          status,
-          selectDeviceLink: true,
-        },
-      )
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(nextScreen, {
+        ...route.params,
+        transaction,
+        status,
+        selectDeviceLink: true,
+      })
     );
   }, [navigation, nextNavigation, route.params, transaction, status]);
   useEffect(() => {
@@ -325,6 +322,7 @@ function SendSummary({ navigation, route }: Props) {
             bridgePending ||
             !!transactionError ||
             (!!error && error instanceof NotEnoughGas) ||
+            (!!error && error instanceof NotEnoughBalance) ||
             !!displayedError
           }
           pending={bridgePending}

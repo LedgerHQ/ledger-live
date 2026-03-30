@@ -4,10 +4,28 @@
       "libs/client-ids/src/api/api.ts",
       "libs/ledger-live-common/src/hw/actions/manager.ts"
     ],
-    "exportDeviceIdForPersistence": [
-      "libs/client-ids/src/store/persistence.ts",
-      "libs/client-ids/src/ids/DeviceId.ts"
+    "exportDeviceIdForPersistence": ["libs/client-ids/src/store/persistence.ts"]
+  },
+  "libs/client-ids/src/ids/UserId.ts": {
+    "exportUserIdForPushDevicesService": ["libs/client-ids/src/store/middleware.ts"],
+    "exportUserIdForPersistence": ["libs/client-ids/src/store/persistence.ts"],
+    "exportUserIdForAnalytics": [
+      "apps/ledger-live-desktop/src/renderer/live-common-setup.ts",
+      "apps/ledger-live-desktop/src/renderer/analytics/segment.ts",
+      "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx"
+    ],
+    "exportUserIdForBraze": ["apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts"],
+    "exportUserIdForRecover": ["apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts"],
+    "exportUserIdForWalletAPI": ["apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/WalletAPIWebview.tsx"],
+    "exportUserIdForUserLogs": [
+      "apps/ledger-live-desktop/src/renderer/components/ExportLogsButton.tsx",
+      "apps/ledger-live-desktop/src/mvvm/hooks/useExportLogs.ts"
     ]
+  },
+  "libs/client-ids/src/ids/DatadogId.ts": {
+    "exportDatadogIdForPersistence": ["libs/client-ids/src/store/persistence.ts"],
+    "exportDatadogIdForSentry": ["apps/ledger-live-desktop/src/sentry/renderer.ts"],
+    "exportDatadogIdForRumUser": ["apps/ledger-live-desktop/src/datadog/renderer.ts"]
   },
   "libs/client-ids/src/store/persistence.ts": {
     "exportIdentitiesForPersistence": [

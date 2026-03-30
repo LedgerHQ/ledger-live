@@ -77,6 +77,7 @@ export enum ScreenName {
   DelegationSummary = "DelegationSummary",
   DelegationValidationError = "DelegationValidationError",
   DelegationValidationSuccess = "DelegationValidationSuccess",
+  DeeplinkInstallAppDeviceSelection = "DeeplinkInstallAppDeviceSelection",
   DeveloperCustomManifest = "DeveloperCustomManifest",
   DeveloperSettings = "DeveloperSettings",
   DeviceConnect = "DeviceConnect",
@@ -301,6 +302,9 @@ export enum ScreenName {
   EditTransactionSummary = "EditTransactionSummary",
   EvmEditTransactionMethodSelection = "EvmEditTransactionMethodSelection",
 
+  // Bitcoin
+  BitcoinEditTransactionMethodSelection = "BitcoinEditTransactionMethodSelection",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -341,6 +345,8 @@ export enum ScreenName {
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
   CantonOnboardAccount = "CantonOnboardAccount",
+  // Concordium
+  ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
 
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
@@ -561,6 +567,7 @@ export enum ScreenName {
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
+  OperationsList = "OperationsList",
 }
 
 export enum NavigatorName {
@@ -603,6 +610,7 @@ export enum NavigatorName {
   Settings = "Settings",
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
+  SwapSubScreens = "SwapSubScreensNavigator",
   Perps = "PerpsNavigator",
   Earn = "EarnNavigator",
   Fees = "FeesNavigator",
@@ -620,6 +628,9 @@ export enum NavigatorName {
 
   // Evm
   EvmEditTransaction = "EvmEditTransaction",
+
+  // Bitcoin
+  BitcoinEditTransaction = "BitcoinEditTransaction",
 
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
@@ -661,6 +672,7 @@ export enum NavigatorName {
   SuiUndelegateFlow = "SuiUndelegateFlow",
 
   CantonOnboard = "CantonOnboard",
+  ConcordiumOnboard = "ConcordiumOnboard",
 
   // Tab
   Main = "Main",
@@ -690,4 +702,5 @@ export enum NavigatorName {
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
   Analytics = "Analytics",
+  OperationsHistory = "OperationsHistory",
 }

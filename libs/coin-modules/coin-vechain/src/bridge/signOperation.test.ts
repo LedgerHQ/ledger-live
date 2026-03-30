@@ -2,7 +2,7 @@ import { buildSignOperation } from "./signOperation";
 import { buildOptimisticOperation } from "./buildOptimisticOperatioin";
 import { VechainSDKTransaction, VechainSigner, Transaction } from "../types";
 import { Account, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import BigNumber from "bignumber.js";
 
 // Mock dependencies

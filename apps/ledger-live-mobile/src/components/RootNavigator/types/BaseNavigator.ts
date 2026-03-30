@@ -5,11 +5,8 @@ import type {
   DeviceInfo,
   FirmwareUpdateContext,
   Operation,
-  SwapOperation,
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams } from "@react-navigation/native";
-// eslint-disable-next-line no-restricted-imports
-import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -17,6 +14,7 @@ import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types"
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
+import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
 import type { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
@@ -36,6 +34,7 @@ import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/Del
 import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
 import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
 import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
+import type { BitcoinEditTransactionParamList } from "../../../families/bitcoin/EditTransactionFlow/EditTransactionParamList";
 import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
@@ -47,6 +46,7 @@ import type { TezosDelegationFlowParamList } from "../../../families/tezos/Deleg
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
 import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
+import type { ConcordiumOnboardAccountParamList } from "../../../families/concordium/Onboard/types";
 import type { HederaDelegationFlowParamList } from "../../../families/hedera/DelegationFlow/types";
 import type { HederaUndelegationFlowParamList } from "../../../families/hedera/UndelegationFlow/types";
 import type { HederaRedelegationFlowParamList } from "../../../families/hedera/RedelegationFlow/types";
@@ -80,6 +80,7 @@ import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator"
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
+import type { SwapSubScreensNavigatorParamList } from "./SwapSubScreensNavigator";
 import type { PerpsNavigatorParamList } from "./PerpsNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
@@ -140,9 +141,6 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
-  };
-  [ScreenName.SwapOperationDetails]: {
-    swapOperation: MappedSwapOperation;
   };
   [ScreenName.VerifyAccount]: {
     account: AccountLike;
@@ -206,10 +204,6 @@ export type BaseNavigatorStackParamList = {
     currencyId: string;
     resetSearchOnUmount?: boolean;
   };
-  [ScreenName.SwapCustomError]: {
-    error: SwapLiveError | Error;
-  };
-
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
@@ -290,6 +284,9 @@ export type BaseNavigatorStackParamList = {
   // EVM
   [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
+  // Bitcoin edit transaction (RBF)
+  [NavigatorName.BitcoinEditTransaction]: NavigatorScreenParams<BitcoinEditTransactionParamList>;
+
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
 
@@ -312,10 +309,19 @@ export type BaseNavigatorStackParamList = {
   // Canton
   [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
 
+  // Concordium
+  [NavigatorName.ConcordiumOnboard]: NavigatorScreenParams<ConcordiumOnboardAccountParamList>;
+
   [ScreenName.DeviceConnect]: {
     appName?: string;
+    requireLatestFirmware?: boolean;
+    allowPartialDependencies?: boolean;
+    skipAppInstallIfNotFound?: boolean;
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
+  };
+  [ScreenName.DeeplinkInstallAppDeviceSelection]: {
+    appKey: string;
   };
   [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
@@ -346,9 +352,8 @@ export type BaseNavigatorStackParamList = {
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
-  [ScreenName.SwapHistory]: undefined;
-  [ScreenName.SwapLoading]: undefined;
-  [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
+  [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;
+  [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };
 

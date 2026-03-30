@@ -1,11 +1,11 @@
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import broadcast from "../../bridge/broadcast";
 import { AptosAPI } from "../../network";
 
 jest.mock("../../network");
-jest.mock("@ledgerhq/coin-framework/operation");
+jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 
 describe("broadcast", () => {
   const mockAccount: Account = {

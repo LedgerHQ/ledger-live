@@ -1,4 +1,9 @@
-import { LockedDeviceError, TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  ConcordiumSessionExpiredError,
+  LockedDeviceError,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
 import {
@@ -34,8 +39,14 @@ jest.mock("../signer", () => ({
   signCredentialDeployment: jest.fn().mockResolvedValue("bb".repeat(64)),
 }));
 
+jest.mock("../config", () => ({
+  __esModule: true,
+  default: {
+    getCoinConfig: jest.fn().mockReturnValue({ networkType: "mainnet" }),
+  },
+}));
+
 jest.mock("../network/utils", () => ({
-  getConcordiumNetwork: jest.fn().mockReturnValue("Mainnet"),
   buildSubmitCredentialData: jest.fn().mockReturnValue({ v: 0, value: {} }),
   deserializeCredentialDeploymentTransaction: jest.fn().mockReturnValue({
     // 96 hex chars = 48 bytes, credential ID
@@ -74,7 +85,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -96,11 +107,11 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      const result = events[events.length - 1];
+      const result = events[events.length - 1] as any;
       expect(result.account).not.toBeUndefined();
       expect(result.account.freshAddress).toBe(VALID_ADDRESS);
       expect(result.account.concordiumResources).toMatchObject({
@@ -123,7 +134,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -141,11 +152,11 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
-        "No active WalletConnect session",
+        ConcordiumSessionExpiredError,
       );
     });
 
@@ -163,7 +174,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -185,7 +196,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -205,7 +216,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -226,7 +237,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(UserRefusedOnDevice);
@@ -245,7 +256,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(LockedDeviceError);
@@ -264,7 +275,7 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -281,17 +292,17 @@ describe("onboard", () => {
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
-      account.freshAddressPath = "m/1105'/0'/1'/2'/3'/4'";
+      account.freshAddressPath = "44'/919'/404'/404'/5'";
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
       expect(getPublicKey).toHaveBeenCalledWith(
         signerContext,
         "test-device",
-        "m/1105'/0'/1'/2'/3'/4'",
+        "44'/919'/404'/404'/5'",
       );
     });
 
@@ -308,11 +319,11 @@ describe("onboard", () => {
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
 
       // WHEN
-      const observable = onboardAccount(currency, "test-device", account);
+      const observable = onboardAccount(currency.id, "test-device", account);
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(submitCredential).toHaveBeenCalledWith(currency, { v: 0, value: { test: "data" } });
+      expect(submitCredential).toHaveBeenCalledWith(currency.id, { v: 0, value: { test: "data" } });
     });
   });
 
@@ -327,7 +338,7 @@ describe("onboard", () => {
       const currency = createFixtureCurrency();
 
       // WHEN
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -351,7 +362,7 @@ describe("onboard", () => {
       const currency = createFixtureCurrency();
 
       // WHEN
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -369,7 +380,7 @@ describe("onboard", () => {
       const currency = createFixtureCurrency();
 
       // WHEN
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
 
       // THEN
       await expect(firstValueFrom(observable.pipe(toArray()))).rejects.toThrow(
@@ -385,7 +396,7 @@ describe("onboard", () => {
       const currency = createFixtureCurrency();
 
       // WHEN
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
       const events: unknown[] = [];
       await new Promise<void>((resolve, reject) => {
         observable.subscribe({
@@ -412,7 +423,7 @@ describe("onboard", () => {
       const currency = createFixtureCurrency();
 
       // WHEN
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
       const events = await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
@@ -425,22 +436,22 @@ describe("onboard", () => {
       expect(prepareEvent.walletConnectUri).toContain(`encodedUri=${encodedUri}`);
     });
 
-    it("should call getConcordiumNetwork with currency", async () => {
+    it("should call coinConfig.getCoinConfig with currencyId", async () => {
       // GIVEN
       mockInitiatePairing.mockResolvedValue({
         uri: "wc:test",
         approval: jest.fn().mockResolvedValue({ topic: "topic" }),
       });
-      const { getConcordiumNetwork } = jest.requireMock("../network/utils");
+      const coinConfig = jest.requireMock("../config").default;
       const pairWalletConnect = buildPairWalletConnect();
       const currency = createFixtureCurrency();
 
       // WHEN
-      const observable = pairWalletConnect(currency, "test-device");
+      const observable = pairWalletConnect(currency.id, "test-device");
       await firstValueFrom(observable.pipe(toArray()));
 
       // THEN
-      expect(getConcordiumNetwork).toHaveBeenCalledWith(currency);
+      expect(coinConfig.getCoinConfig).toHaveBeenCalledWith(currency.id);
     });
   });
 });

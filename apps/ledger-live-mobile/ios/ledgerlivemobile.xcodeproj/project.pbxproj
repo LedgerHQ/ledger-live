@@ -37,6 +37,8 @@
 		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
+		RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */; };
+		RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +91,8 @@
 		E978BF722D91A2A800E9B78E /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F3993D7FF61549FE9270BC06 /* Inter-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.otf"; path = "../assets/fonts/Inter-SemiBold.otf"; sourceTree = "<group>"; };
 		F837348622721A48009D747A /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReduceTransparencyModule.m; sourceTree = "<group>"; };
+		RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceTransparencyModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +127,8 @@
 			children = (
 				CA3D2EC12EDE0D93008E836E /* BluetoothHelperModule.swift */,
 				CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */,
+				RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */,
+				RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */,
 				2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */,
 				CAEE7B922E9FF33000479D0B /* splash_logo.png */,
 				CA33C2502ED88BBB003C128E /* AppDelegate.swift */,
@@ -536,6 +542,8 @@
 				CA3D2EBE2EDDA70E008E836E /* AppKeys.swift in Sources */,
 				CA0B38082EDF3E62005A0FAA /* BluetoothHelperModule.m in Sources */,
 				CA3D2EC22EDE0D9B008E836E /* BluetoothHelperModule.swift in Sources */,
+				RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */,
+				RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */,
 				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -751,7 +759,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_b05588e379b6d3b0d4fadcd517236808/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
@@ -896,7 +904,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_b05588e379b6d3b0d4fadcd517236808/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
@@ -985,7 +993,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_b05588e379b6d3b0d4fadcd517236808/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1075,7 +1083,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_b05588e379b6d3b0d4fadcd517236808/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1215,7 +1223,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_2ca30d8e726ac322c10ffb2a9a4bd8b0/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.79.7_patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba_b05588e379b6d3b0d4fadcd517236808/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;

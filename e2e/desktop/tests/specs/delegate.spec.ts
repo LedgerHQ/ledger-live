@@ -8,6 +8,7 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { isWallet40Enabled, LWD_WALLET_40_FF_DISABLED } from "tests/utils/featureFlagUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -71,7 +72,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 4"),
+    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment"),
     xrayTicket: "B2CQA-2766",
   },
   {
@@ -102,7 +103,7 @@ const liveApps = [
 for (const account of e2eDelegationAccounts) {
   test.describe("Delegate", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -137,7 +138,7 @@ for (const account of e2eDelegationAccounts) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
         if (account.delegate.account.currency.name == Currency.INJ.name) {
@@ -188,7 +189,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
   test.describe("Delegate without Broadcasting", () => {
     setupEnv(true);
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -222,7 +223,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
@@ -276,7 +277,7 @@ test.describe("e2e delegation - Tezos", () => {
   const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
   setupEnv(true);
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
@@ -312,7 +313,7 @@ test.describe("e2e delegation - Tezos", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.clickDelegateToEarnRewardsButton();
@@ -334,7 +335,7 @@ test.describe("e2e delegation - Tezos", () => {
 test.describe("e2e delegation - Celo", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.account.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
@@ -370,7 +371,7 @@ test.describe("e2e delegation - Celo", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await addBugLink(["NAPPS-1128"]);
-      await app.layout.goToAccounts();
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.checkCeloManageAssetModal();
@@ -394,7 +395,7 @@ test.describe("e2e delegation - Celo", () => {
 for (const validator of validators) {
   test.describe("Select a validator", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: validator.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -428,7 +429,7 @@ for (const validator of validators) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
@@ -450,11 +451,12 @@ for (const validator of validators) {
   });
 }
 
-test.describe("Staking flow from different entry point", () => {
+test.describe("Staking flow from different entry point - legacy", () => {
   const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: delegateAccount.account.currency.speculosApp,
+    featureFlags: LWD_WALLET_40_FF_DISABLED,
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
@@ -509,6 +511,26 @@ test.describe("Staking flow from different entry point", () => {
       await app.delegate.continue();
     },
   );
+});
+
+test.describe("Staking flow from different entry point", () => {
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
+  test.use({
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: delegateAccount.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: delegateAccount.account.currency.id,
+          index: delegateAccount.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  const family = getFamilyByCurrencyId(delegateAccount.account.currency.id);
 
   test(
     "Staking flow from market entry point",
@@ -531,7 +553,12 @@ test.describe("Staking flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToMarket();
+      if (await isWallet40Enabled(app.getPage())) {
+        await app.marketBanner.clickExploreMarketHeader();
+      } else {
+        await app.layout.goToMarket();
+      }
+
       await app.market.search(delegateAccount.account.currency.ticker);
       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 
@@ -551,7 +578,7 @@ test.describe("Staking flow from different entry point", () => {
 for (const currency of liveApps) {
   test.describe("LiveApp delegate", () => {
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.delegate.account.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -585,12 +612,12 @@ for (const currency of liveApps) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await app.layout.goToAccounts();
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(currency.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
         if (currency.delegate.account.currency.name == Currency.ETH.name) {
-          await app.delegate.goToProviderLiveApp(currency.delegate.provider);
+          await app.delegate.clickLidoProvider();
         }
         await app.liveApp.verifyLiveAppTitle(currency.delegate.provider);
       },

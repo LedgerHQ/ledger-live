@@ -22,14 +22,14 @@ import walletsync, {
   makeLocalIncrementalUpdate,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { Account, BridgeCacheSystem } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";

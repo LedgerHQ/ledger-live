@@ -1,4 +1,4 @@
-import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
+import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { getCurrentBlock, getRawMempool } from "./helpers";
 import network from "@ledgerhq/live-network/network";
 

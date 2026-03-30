@@ -1,14 +1,15 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { expect, Locator } from "@playwright/test";
-import { waitForAccountsPersisted } from "tests/utils/userdata";
+import { waitForAccountsPersisted, waitForIdentitiesInAppJson } from "tests/utils/userdata";
+import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
 export class PortfolioPage extends AppPage {
   private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
   private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
-  private swapEntryButton = this.page.getByTestId("swap-entry-button");
+  private embeddedSwapContainer = this.page.getByTestId("embedded-swap-container");
   private stakeEntryButton = this.page.getByTestId("stake-entry-button");
   private chart = this.page.getByTestId("chart-container");
   private operationList = this.page.locator("#operation-list");
@@ -39,9 +40,22 @@ export class PortfolioPage extends AppPage {
     await expect(locator).toBeVisible();
   }
 
-  @step("Open `Add account` modal")
-  async openAddAccountModal() {
-    await this.addAccountButton.click();
+  @step("Check add account button visibility")
+  async checkAddAccountButtonVisibility() {
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioAddAccountButton
+      : this.addAccountButton;
+
+    await this.checkVisibility(selector);
+  }
+
+  @step("Click add account button")
+  async clickAddAccountButton() {
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioAddAccountButton
+      : this.addAccountButton;
+
+    await selector.click();
   }
 
   @step("Check 'Buy/Sell' button visibility")
@@ -55,14 +69,9 @@ export class PortfolioPage extends AppPage {
     await this.buySellEntryButton.click();
   }
 
-  @step("Check 'Swap' button visibility")
-  async checkSwapButtonVisibility() {
-    await this.checkVisibility(this.swapEntryButton);
-  }
-
-  @step("Click on swap button")
-  async clickSwapButton() {
-    await this.swapEntryButton.click();
+  @step("Check embedded swap container visibility")
+  async checkEmbeddedSwapContainerVisibility() {
+    await this.checkVisibility(this.embeddedSwapContainer);
   }
 
   @step("Check 'Stake' button visibility")
@@ -125,26 +134,21 @@ export class PortfolioPage extends AppPage {
     }
   }
 
-  @step("Expect total balance to be visible")
-  async expectTotalBalanceToBeVisible() {
-    await this.checkVisibility(this.totalBalance);
-  }
-
-  @step("Expect total balance to have the correct counter value $0")
+  @step("Expect total balance to display the correct counter value $0")
   async expectTotalBalanceCounterValue(counterValue: string) {
-    await this.expectTotalBalanceToBeVisible();
-    await expect(this.totalBalance).toContainText(counterValue);
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioTotalBalance
+      : this.totalBalance;
+
+    await expect(selector).toBeVisible();
+    await expect(selector).toContainText(counterValue);
   }
 
-  @step("Expect balance diff to be visible")
-  async expectBalanceDiffToBeVisible() {
-    await this.checkVisibility(this.balanceDiff);
-  }
-
-  @step("Expect balance diff to have the correct counter value $0")
+  @step("Expect balance diff to display the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
-    await this.expectBalanceDiffToBeVisible();
-    await expect(this.balanceDiff).toContainText(counterValue);
+    const selector = (await isWallet40Enabled(this.page)) ? this.portfolioTrend : this.balanceDiff;
+    await expect(selector).toBeVisible();
+    await expect(selector).toContainText(counterValue);
   }
 
   @step("Expect asset row $0 to be visible")
@@ -161,7 +165,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
     const operationRow = this.operationRows.first();
-    await operationRow.isVisible();
+    await this.checkVisibility(operationRow);
   }
 
   @step("Expect operation to contain counter value $0")
@@ -173,7 +177,11 @@ export class PortfolioPage extends AppPage {
 
   @step("Wait for balance to be visible")
   async expectBalanceVisibility() {
-    await this.totalBalance.waitFor({ state: "visible" });
+    const selector = (await isWallet40Enabled(this.page))
+      ? this.portfolioTotalBalance
+      : this.totalBalance;
+
+    await selector.waitFor({ state: "visible" });
   }
 
   @step("Expect app.json to be persisted with at least $1 account(s) within $2ms")
@@ -185,12 +193,15 @@ export class PortfolioPage extends AppPage {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
   }
 
-  // Wallet 4.0 methods
-  @step("Check portfolio total balance visibility")
-  async checkPortfolioTotalBalanceVisibility() {
-    await this.checkVisibility(this.portfolioTotalBalance);
+  @step("Expect app.json to have identities object within $1ms")
+  async expectIdentitiesPersistedInAppJson(
+    userdataFile: string,
+    timeoutMs: number = 10000,
+  ): Promise<{ userId: string; datadogId: string; deviceIds: string[] }> {
+    return waitForIdentitiesInAppJson(userdataFile, timeoutMs);
   }
 
+  // Wallet 4.0 methods
   @step("Check one-day performance indicator visibility")
   async checkOneDayPerformanceIndicatorVisibility() {
     await this.checkVisibility(this.portfolioTrend);
@@ -263,18 +274,23 @@ export class PortfolioPage extends AppPage {
     await expect(this.quickActionButton("send")).toBeEnabled();
   }
 
-  @step("Check add account button visibility")
-  async checkAddAccountButtonVisibility() {
-    await this.checkVisibility(this.portfolioAddAccountButton);
-  }
-
   @step("Check no device title is visible")
   async checkNoDeviceTitleVisibility() {
     await this.checkVisibility(this.noDeviceTitle);
   }
 
-  @step("Click add account button")
-  async clickAddAccountButton() {
-    await this.portfolioAddAccountButton.click();
+  @step("Click send button")
+  async clickSendButton() {
+    await this.quickActionButton("send").click();
+  }
+
+  @step("Click sell button")
+  async clickSellButton() {
+    await this.quickActionButton("sell").click();
+  }
+
+  @step("Click buy button")
+  async clickBuyButton() {
+    await this.quickActionButton("buy").click();
   }
 }

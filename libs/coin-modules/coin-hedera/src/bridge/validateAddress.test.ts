@@ -14,9 +14,9 @@ describe("validateAddress", () => {
     "should call safeParseAccountId and return expected value (%s)",
     async (expectedValue: boolean) => {
       if (expectedValue) {
-        mockedSafeParseAccountId.mockReturnValueOnce([null, { accountId: "", checksum: "" }]);
+        mockedSafeParseAccountId.mockResolvedValueOnce([null, { accountId: "", checksum: "" }]);
       } else {
-        mockedSafeParseAccountId.mockReturnValueOnce([new Error(), null]);
+        mockedSafeParseAccountId.mockResolvedValueOnce([new Error(), null]);
       }
 
       const address = "some random address";

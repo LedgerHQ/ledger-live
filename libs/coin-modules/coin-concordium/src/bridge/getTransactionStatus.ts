@@ -7,11 +7,11 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { MAX_MEMO_LENGTH, AccountAddress } from "@ledgerhq/concordium-core";
 import coinConfig from "../config";
-import { Transaction, TransactionStatus } from "../types";
+import type { Transaction, TransactionStatus } from "../types";
 import { ConcordiumInsufficientFunds, ConcordiumMemoTooLong } from "../types/errors";
 
 function validateAmount(
@@ -78,7 +78,7 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency).minReserve);
+  const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency.id).minReserve);
   const estimatedFees = new BigNumber(transaction.fee || 0);
 
   // Calculate amount based on useAllAmount flag

@@ -1,5 +1,5 @@
 import Tippy from "@tippyjs/react";
-import React, { useState, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 
@@ -94,6 +94,7 @@ const DropDownSelector = <ContentType, Item extends DropDownItemType<ContentType
     },
     [controlled, onChange],
   );
+  const triggerRef = useRef<HTMLDivElement | null>(null);
   const renderOption = useCallback(
     (item: Item) => {
       return (
@@ -112,24 +113,26 @@ const DropDownSelector = <ContentType, Item extends DropDownItemType<ContentType
     [buttonId, renderItem, selectedOption, setSelectedOption],
   );
   return (
-    <Tippy
-      visible={isOpen}
-      onClickOutside={() => setOpen(false)}
-      onShow={() => setOpen(true)}
-      onHide={() => setOpen(false)}
-      animation="shift-away"
-      placement="bottom-start"
-      interactive
-      arrow={false}
-      content={<DropContainer>{items.map(renderOption)}</DropContainer>}
-    >
-      <ButtonContainer id={buttonId} onClick={() => setOpen(!isOpen)}>
+    <>
+      <ButtonContainer ref={triggerRef} id={buttonId} onClick={() => setOpen(!isOpen)}>
         {children({
           isOpen,
           value: selectedOption,
         })}
       </ButtonContainer>
-    </Tippy>
+      <Tippy
+        reference={triggerRef as React.RefObject<Element>}
+        visible={isOpen}
+        onClickOutside={() => setOpen(false)}
+        onShow={() => setOpen(true)}
+        onHide={() => setOpen(false)}
+        animation="shift-away"
+        placement="bottom-start"
+        interactive
+        arrow={false}
+        content={<DropContainer>{items.map(renderOption)}</DropContainer>}
+      />
+    </>
   );
 };
 export default DropDownSelector;

@@ -31,7 +31,7 @@ on:
         description: Whether to skip the pod lockfile checks
         required: false
         type: string
-        default: 'true'
+        default: "true"
 
   workflow_dispatch:
     inputs:
@@ -65,7 +65,7 @@ on:
         description: Whether to skip the pod lockfile checks
         required: false
         type: string
-        default: 'true'
+        default: "true"
 
 permissions:
   id-token: write
@@ -83,7 +83,7 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-ios-js.outputs.cache-hit }}
@@ -100,7 +100,6 @@ jobs:
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
     steps:
-
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -212,7 +211,7 @@ jobs:
 
   build-ios:
     name: "iOS Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
@@ -226,7 +225,7 @@ jobs:
 
   build-android:
     name: "Android Build"
-    needs: [ determine-builds ]
+    needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
@@ -239,7 +238,7 @@ jobs:
 
   detox-tests-ios:
     name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [ build-ios, determine-builds ]
+    needs: [build-ios, determine-builds]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     timeout-minutes: 120
     strategy:
@@ -257,7 +256,6 @@ jobs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     steps:
-
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -271,6 +269,8 @@ jobs:
           skip-pod-cache: "true"
           skip-turbo-cache: "false"
           skip-pnpm-cache: "true"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -332,14 +332,14 @@ jobs:
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm build:llm:deps
+          command: pnpm turbo build --filter="live-mobile^..."
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm build:dummy-apps
+          pnpm turbo build --filter="@ledgerhq/dummy-*-app"
         shell: bash
 
       - name: Test iOS app
@@ -374,8 +374,8 @@ jobs:
 
   detox-tests-android:
     name: "Android Build / Android Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [ build-android, determine-builds ]
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    needs: [build-android, determine-builds]
+    runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -467,7 +467,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -495,7 +496,7 @@ jobs:
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm build:llm:deps
+          command: pnpm turbo build --filter="live-mobile^..."
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -503,7 +504,7 @@ jobs:
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
         with:
-          command: pnpm build:dummy-apps
+          command: pnpm turbo build --filter="@ledgerhq/dummy-*-app"
           turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           turbo_port: ${{ steps.setup-caches.outputs.port }}
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
@@ -596,9 +597,9 @@ jobs:
 
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
-    runs-on: [ ubuntu-22.04 ]
+    runs-on: [ubuntu-22.04]
     if: needs.build-ios.outputs.js-bundle-size != '' && needs.build-android.outputs.js-bundle-size != ''
-    needs: [ build-ios, build-android ]
+    needs: [build-ios, build-android]
     steps:
       - name: generate token
         id: generate-token
@@ -628,7 +629,7 @@ jobs:
 
   merge-ios-timings:
     name: Merge iOS Timing Files
-    needs: [ determine-builds, detox-tests-ios ]
+    needs: [determine-builds, detox-tests-ios]
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
@@ -656,7 +657,7 @@ jobs:
 
   merge-android-timings:
     name: Merge Android Timing Files
-    needs: [ determine-builds, detox-tests-android ]
+    needs: [determine-builds, detox-tests-android]
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
@@ -684,8 +685,8 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
-    runs-on: [ macOS, ARM64 ]
-    needs: [ determine-builds ]
+    runs-on: [macOS, ARM64]
+    needs: [determine-builds]
     if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true'
     steps:
       - name: Configure AWS credentials
@@ -708,7 +709,8 @@ jobs:
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
-          install-proto: "true"
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "true"
 
       - name: Install dependencies

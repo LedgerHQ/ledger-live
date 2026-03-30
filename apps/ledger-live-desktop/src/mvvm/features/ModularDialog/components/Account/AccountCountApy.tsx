@@ -14,6 +14,6 @@ export const accountsCountAndApy = ({
 }) => (
   <>
     {label && accountsCount({ label })}
-    {value && type ? <ApyIndicator value={value} type={type} /> : undefined}
+    {!!value && !!type ? <ApyIndicator value={value} type={type} /> : null}
   </>
 );

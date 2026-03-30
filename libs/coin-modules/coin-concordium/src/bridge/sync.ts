@@ -1,16 +1,17 @@
 import BigNumber from "bignumber.js";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { type GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import type { Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import coinConfig from "../config";
 import {
   getAccountBalance,
-  getOperations,
   getAccountsByPublicKey,
-  ProxyOperation,
+  getConsensusInfo,
 } from "../network/proxyClient";
+import { listOperations } from "../logic/history/listOperations";
 import type { ConcordiumAccount, ConcordiumResources } from "../types";
+import { mapRawOperationToBridgeOperation } from "./serialization";
 
 const fillConcordiumResources = (
   existing: Partial<ConcordiumResources> = {},
@@ -31,21 +32,54 @@ const valueToBigNumber = (value?: string | number): BigNumber => {
   return result.isNaN() ? new BigNumber(0) : result;
 };
 
-const proxyOperationToLiveOperation = (op: ProxyOperation): Operation => ({
-  id: op.id,
-  hash: op.hash,
-  accountId: op.accountId,
-  type: op.type as OperationType,
-  value: op.value,
-  fee: op.fee,
-  blockHash: op.blockHash,
-  blockHeight: op.blockHeight,
-  senders: op.senders,
-  recipients: op.recipients,
-  date: op.date,
-  transactionSequenceNumber: op.transactionSequenceNumber,
-  extra: op.extra,
-});
+export async function getBalance(
+  currencyId: string,
+  address: string,
+): Promise<{ balance: BigNumber; spendableBalance: BigNumber }> {
+  const { finalizedBalance: { accountAmount, accountAtDisposal } = {} } = await getAccountBalance(
+    currencyId,
+    address,
+  ).catch((error): { finalizedBalance: { accountAmount: string; accountAtDisposal: string } } => {
+    log("concordium-sync", `Error fetching balance for account with address ${address}`, {
+      error,
+    });
+    return { finalizedBalance: { accountAmount: "0", accountAtDisposal: "0" } };
+  });
+
+  const balance = valueToBigNumber(accountAmount);
+  const minReserve = coinConfig.getCoinConfig(currencyId).minReserve;
+
+  let spendableBalance = accountAtDisposal
+    ? valueToBigNumber(accountAtDisposal)
+    : balance.minus(minReserve);
+  spendableBalance = spendableBalance.isNegative() ? new BigNumber(0) : spendableBalance;
+
+  return { balance, spendableBalance };
+}
+
+export async function syncOperations(
+  currencyId: string,
+  address: string,
+  accountId: string,
+  oldOperations: Operation[],
+): Promise<Operation[]> {
+  const lastBlockHeight = oldOperations[0]?.blockHeight ?? 0;
+  const minHeight = lastBlockHeight > 0 ? lastBlockHeight + 1 : 0;
+
+  const result = await listOperations(
+    address,
+    { minHeight, limit: 100, order: "desc" },
+    currencyId,
+  ).catch(error => {
+    log("concordium-sync", `Error fetching operations for account with address ${address}`, {
+      error,
+    });
+    return { items: [] as const, next: undefined };
+  });
+
+  const newOperations = result.items.map(op => mapRawOperationToBridgeOperation(op, accountId));
+  return mergeOps(oldOperations, newOperations);
+}
 
 export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info => {
   const { currency, derivationMode, derivationPath, index, initialAccount, rest = {} } = info;
@@ -60,15 +94,12 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
     derivationMode,
   });
 
-  let balance = new BigNumber(0);
-  let spendableBalance = new BigNumber(0);
-
   try {
-    const accountsResponse = await getAccountsByPublicKey(currency, publicKey);
+    const accountsResponse = await getAccountsByPublicKey(currency.id, publicKey);
 
     if (!accountsResponse?.length) {
       return {
-        balance,
+        balance: new BigNumber(0),
         blockHeight: 0,
         concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
           publicKey,
@@ -80,58 +111,25 @@ export const getAccountShape: GetAccountShape<ConcordiumAccount> = async info =>
         index,
         operations: [],
         operationsCount: 0,
-        spendableBalance,
+        spendableBalance: new BigNumber(0),
         used: false,
         xpub: publicKey,
       };
     }
 
-    // The actual concordium on-chain address, associated with the given public key.
     const account = accountsResponse[0];
 
-    const { finalizedBalance: { accountAmount, accountAtDisposal } = {} } = await getAccountBalance(
-      currency,
-      account.address,
-    ).catch(error => {
-      // If balance request fails, log the error and return zeros,
-      // as the account existence is already confirmed by getAccountsByPublicKey
-      log("concordium-sync", `Error fetching balance for account with address ${account.address}`, {
-        error,
-      });
-
-      return { finalizedBalance: { accountAmount: "0", accountAtDisposal: "0" } };
-    });
-
-    balance = valueToBigNumber(accountAmount);
-
-    const minReserve = coinConfig.getCoinConfig(currency).minReserve;
-    spendableBalance = accountAtDisposal
-      ? valueToBigNumber(accountAtDisposal)
-      : balance.minus(minReserve);
-    spendableBalance = spendableBalance.isNegative() ? new BigNumber(0) : spendableBalance;
-
-    const oldOperations = initialAccount?.operations ?? [];
-
-    const proxyOperations = await getOperations(currency, account.address, accountId, {
-      size: 100,
-    }).catch((error): ProxyOperation[] => {
-      // If operations request fails, log the error and return an empty array,
-      // to avoid blocking the account sync, as we can still show the balance and other details
-      log(
-        "concordium-sync",
-        `Error fetching operations for account with address ${account.address}`,
-        { error },
-      );
-
-      return [];
-    });
-
-    const newOperations = proxyOperations.map(proxyOperationToLiveOperation);
-    const operations = mergeOps(oldOperations, newOperations);
+    const [{ balance, spendableBalance }, operations, blockHeight] = await Promise.all([
+      getBalance(currency.id, account.address),
+      syncOperations(currency.id, account.address, accountId, initialAccount?.operations ?? []),
+      getConsensusInfo(currency.id)
+        .then(info => info.lastFinalizedBlockHeight)
+        .catch(() => 0),
+    ]);
 
     return {
       balance,
-      blockHeight: operations[0]?.blockHeight ?? 0,
+      blockHeight,
       concordiumResources: fillConcordiumResources(initialAccount?.concordiumResources, {
         isOnboarded: true,
         publicKey,

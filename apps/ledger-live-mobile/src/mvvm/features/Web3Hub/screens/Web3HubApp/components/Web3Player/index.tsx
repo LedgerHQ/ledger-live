@@ -1,6 +1,5 @@
-import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View, BackHandler, Platform } from "react-native";
-import { SharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -14,25 +13,30 @@ import {
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { BottomBar } from "./BottomBar";
 import { InfoPanel } from "./InfoPanel";
+import { AppProps } from "LLM/features/Web3Hub/types";
+import Header from "../Header";
 
 type Props = {
   manifest: AppManifest;
   inputs?: Record<string, string | undefined>;
-  onScroll?: ComponentProps<typeof Web3AppWebview>["onScroll"];
-  layoutY: SharedValue<number>;
   webviewState: WebviewState;
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
+  navigation: AppProps["navigation"];
+  initialLoad: boolean;
+  secure: boolean;
+  baseUrl: string;
 };
 
 const WebPlatformPlayer = ({
   manifest,
   inputs,
-  onScroll,
-  layoutY,
   webviewState,
   setWebviewState,
+  navigation,
+  initialLoad,
+  secure,
+  baseUrl,
 }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
@@ -79,21 +83,24 @@ const WebPlatformPlayer = ({
 
   return (
     <View style={styles.root}>
+      <Header
+        navigation={navigation}
+        initialLoad={initialLoad}
+        secure={secure}
+        baseUrl={baseUrl}
+        manifest={manifest}
+        currentAccountHistDb={currentAccountHistDb}
+        webviewAPIRef={webviewAPIRef}
+        webviewState={webviewState}
+        setIsInfoPanelOpened={setIsInfoPanelOpened}
+      />
       <Web3AppWebview
         ref={webviewAPIRef}
-        onScroll={onScroll}
         manifest={manifest}
         currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
-      />
-      <BottomBar
-        manifest={manifest}
-        currentAccountHistDb={currentAccountHistDb}
-        webviewAPIRef={webviewAPIRef}
-        webviewState={webviewState}
-        layoutY={layoutY}
       />
       <InfoPanel
         name={manifest.name}
@@ -113,14 +120,5 @@ export default WebPlatformPlayer;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  headerRight: {
-    display: "flex",
-    flexDirection: "row",
-    paddingRight: 8,
-  },
-  buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
   },
 });

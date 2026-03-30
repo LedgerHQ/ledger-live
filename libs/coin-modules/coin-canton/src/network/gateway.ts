@@ -1,8 +1,10 @@
-import network from "@ledgerhq/live-network";
-import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
+import network from "@ledgerhq/live-network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import type { LiveNetworkRequest, LiveNetworkResponse } from "@ledgerhq/live-network/network";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
+import { TopologyChangeError } from "../types/errors";
 import {
   PrepareTransactionRequest,
   PrepareTransactionResponse,
@@ -10,9 +12,7 @@ import {
   SubmitTransactionResponse,
   PreApprovalResult,
 } from "../types/onboard";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CantonSignature } from "../types/signer";
-import { TopologyChangeError } from "../types/errors";
 
 export type OnboardingPrepareResponse = {
   party_id: string;

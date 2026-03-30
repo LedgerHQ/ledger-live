@@ -1,10 +1,10 @@
-import { BigNumber } from "bignumber.js";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import type { NearAccount, Transaction } from "./types";
+import { BigNumber } from "bignumber.js";
 import { createTransaction } from "./createTransaction";
 import getEstimatedFees from "./getFeesForTransaction";
 import { getMaxAmount } from "./logic";
+import type { NearAccount, Transaction } from "./types";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,

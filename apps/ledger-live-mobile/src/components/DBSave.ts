@@ -6,12 +6,13 @@ import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
-import { useTrackingPairs, useUserSettings } from "~/actions/general";
+import { useTrackingPairs } from "~/actions/general";
 import {
   saveAccounts,
   saveBle,
   saveCountervalues,
   saveCryptoAssetsCacheState,
+  saveFeatureFlagsState,
   saveIdentities,
   saveLargeMoverState,
   saveMarketState,
@@ -160,6 +161,13 @@ const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMove
 
 const cryptoAssetsNotEquals = (a: State, b: State) =>
   !persistedCALContentEqual(extractPersistedCALFromState(a), extractPersistedCALFromState(b));
+const featureFlagsNotEquals = (a: State, b: State) =>
+  a.featureFlags.overrides !== b.featureFlags.overrides ||
+  a.featureFlags.bannerVisible !== b.featureFlags.bannerVisible;
+const featureFlagsLense = (state: State) => ({
+  overrides: state.featureFlags.overrides,
+  bannerVisible: state.featureFlags.bannerVisible,
+});
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
@@ -175,19 +183,13 @@ const countervaluesChangesStats = (oldState: State, newState: State) => {
 export const ConfigureDBSaveEffects = () => {
   // TODO: instead of using these hooks, we should select from the redux state and make a static lense function.
   const trackingPairs = useTrackingPairs();
-  const userSettings = useUserSettings();
 
   useDBSaveEffect({
     throttle: 2000,
     getChangesStats: countervaluesChangesStats,
     lense: useCallback(
-      (state: State) =>
-        exportCountervalues(
-          countervaluesStateSelector(state),
-          trackingPairs,
-          userSettings.selectedTimeRange,
-        ),
-      [trackingPairs, userSettings.selectedTimeRange],
+      (state: State) => exportCountervalues(countervaluesStateSelector(state), trackingPairs),
+      [trackingPairs],
     ),
     save: saveCountervalues,
   });
@@ -257,6 +259,13 @@ export const ConfigureDBSaveEffects = () => {
     getChangesStats: identitiesNotEquals,
     lense: extractIdentitiesForPersistence,
     saveAtStart: true, // since the middleware has already possibly saved the identities, we need to be sure to save it at start
+  });
+
+  useDBSaveEffect({
+    save: saveFeatureFlagsState,
+    throttle: 400,
+    getChangesStats: featureFlagsNotEquals,
+    lense: featureFlagsLense,
   });
 
   return null;

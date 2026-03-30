@@ -3,9 +3,9 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "lib",
+    "rootDir": "src",
     "strict": true,
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

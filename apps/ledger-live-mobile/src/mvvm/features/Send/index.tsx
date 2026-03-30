@@ -16,12 +16,14 @@ import { RecipientScreen } from "./screens/Recipient";
 import { AmountScreen } from "./screens/Amount";
 import { ConfirmationScreen } from "./screens/Confirmation";
 import { SignatureScreen } from "./screens/Signature";
+import { CoinControlScreen } from "./screens/CoinControl";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
+  [SEND_FLOW_STEP.RECENT_HISTORY]: () => <></>,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
   [SEND_FLOW_STEP.CUSTOM_FEES]: () => <></>,
-  [SEND_FLOW_STEP.COIN_CONTROL]: () => <></>,
+  [SEND_FLOW_STEP.COIN_CONTROL]: CoinControlScreen,
   [SEND_FLOW_STEP.SIGNATURE]: SignatureScreen,
   [SEND_FLOW_STEP.CONFIRMATION]: ConfirmationScreen,
 };

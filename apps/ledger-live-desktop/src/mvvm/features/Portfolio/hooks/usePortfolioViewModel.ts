@@ -4,7 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import uniq from "lodash/uniq";
 import { useTranslation } from "react-i18next";
-import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/operation";
+import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
@@ -19,6 +19,9 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayMarketBanner: boolean;
   readonly shouldDisplayGraphRework: boolean;
   readonly shouldDisplayQuickActionCtas: boolean;
+  readonly shouldDisplayAssetSection: boolean;
+  readonly shouldDisplayOperationsList: boolean;
+  readonly shouldDisplayBrazePlacement: boolean;
   readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
@@ -33,6 +36,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayMarketBanner,
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
+    shouldDisplayAssetSection,
+    shouldDisplayOperationsList,
+    shouldDisplayBrazePlacement,
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
@@ -76,6 +82,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayMarketBanner,
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
+    shouldDisplayAssetSection,
+    shouldDisplayOperationsList,
+    shouldDisplayBrazePlacement,
     isWallet40Enabled,
     filterOperations,
     accounts,

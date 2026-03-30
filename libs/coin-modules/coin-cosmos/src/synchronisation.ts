@@ -1,10 +1,10 @@
-import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   AccountShapeInfo,
   GetAccountShape,
   mergeOps,
-} from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+} from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getMainMessage, isAccountEmpty } from "./helpers";

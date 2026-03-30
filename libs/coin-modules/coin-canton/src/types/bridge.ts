@@ -1,5 +1,4 @@
-import type { BigNumber } from "bignumber.js";
-import type { Observable } from "rxjs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountRaw,
@@ -9,14 +8,15 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { BigNumber } from "bignumber.js";
+import type { Observable } from "rxjs";
+import type { TransferProposal } from "../network/gateway";
 import type {
   CantonOnboardProgress,
   CantonOnboardResult,
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
 } from "./onboard";
-import type { TransferProposal } from "../network/gateway";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (

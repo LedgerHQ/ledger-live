@@ -1,6 +1,3 @@
-import { AnchorMode } from "@stacks/transactions";
-import BigNumber from "bignumber.js";
-
 import {
   Operation,
   TransactionCommon,
@@ -8,6 +5,8 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { AnchorMode } from "@stacks/transactions";
+import BigNumber from "bignumber.js";
 
 import { StacksNetwork } from "../network/api";
 

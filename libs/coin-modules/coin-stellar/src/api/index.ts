@@ -1,5 +1,4 @@
 import {
-  Api,
   Block,
   BlockInfo,
   Cursor,
@@ -12,6 +11,7 @@ import {
   Reward,
   TransactionIntent,
   CraftedTransaction,
+  AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
@@ -27,14 +27,12 @@ import {
   validateIntent,
   lastBlock,
   listOperations,
-  STELLAR_BURN_ADDRESS,
-  getTokenFromAsset,
-  getAssetFromToken,
 } from "../logic";
+import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence } from "../network";
-import { StellarBurnAddressError, StellarMemo } from "../types";
+import { StellarMemo } from "../types";
 
-export function createApi(config: StellarConfig): Api<StellarMemo> {
+export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -53,7 +51,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     getBalance,
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block> {
+    getBlock(_height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     getBlockInfo(_height: number): Promise<BlockInfo> {
@@ -66,27 +64,14 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       throw new Error("getRewards is not supported");
     },
     validateIntent,
-    getSequence: async (address: string) => {
+    getNextSequence: async (address: string) => {
       const sequence = await fetchSequence(address);
-      // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return BigInt(sequence.plus(1).toFixed());
     },
-    getTokenFromAsset,
-    getAssetFromToken,
-    getChainSpecificRules: () => ({
-      getAccountShape: (address: string) => {
-        // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
-        if (address === STELLAR_BURN_ADDRESS) {
-          throw new StellarBurnAddressError();
-        }
-      },
-      getTransactionStatus: {
-        throwIfPendingOperation: true,
-      },
-    }),
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
+    validateAddress,
   };
 }
 
@@ -182,10 +167,10 @@ async function operationsFromHeight(
       options.cursor = state.apiNextCursor;
     }
     try {
-      const [operations, nextCursor] = await listOperations(address, options);
+      const { items: operations, next: nextCursor } = await listOperations(address, options);
       state.accumulator.push(...operations);
-      state.apiNextCursor = nextCursor;
-      state.continueIterations = nextCursor !== "";
+      state.apiNextCursor = nextCursor ?? "";
+      state.continueIterations = !!nextCursor;
     } catch (e: unknown) {
       if (e instanceof LedgerAPI4xx && (e as unknown as { status: number }).status === 429) {
         log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");

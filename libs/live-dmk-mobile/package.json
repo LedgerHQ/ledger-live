@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.18.4",
+  "version": "0.21.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -24,7 +24,7 @@
     "watch:es": "pnpm watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-mobile",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -49,7 +49,7 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
-    "@types/node": "22.10.10",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
@@ -65,5 +65,19 @@
     "react-native-ble-plx": ">3.4.0",
     "rxjs": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib-es/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "@ledgerhq/source": "./src/*.ts",
+      "require": "./lib-es/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

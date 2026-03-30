@@ -41,7 +41,7 @@ jest.mock("../../useAutoRedirectToPostOnboarding", () => ({
 const mockOpenAddAccountFlow = jest.fn();
 const mockOpenAssetFlow = jest.fn();
 
-jest.mock("LLD/features/ModularDrawer/hooks/useOpenAssetFlow", () => ({
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
   useOpenAssetFlow: () => ({
     openAddAccountFlow: mockOpenAddAccountFlow,
     openAssetFlow: mockOpenAssetFlow,

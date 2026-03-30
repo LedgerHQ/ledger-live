@@ -1,3 +1,2 @@
 export * from "./types";
-
-export type { AleoCoinConfig } from "./config";
+export * from "./errors";

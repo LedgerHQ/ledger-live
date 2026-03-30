@@ -20,6 +20,7 @@ type AmountScreenInnerProps = Readonly<{
   transactionActions: SendFlowTransactionActions;
   onReview: () => void;
   onGetFunds: () => void;
+  onSelectCoinControl: () => void;
 }>;
 
 export function AmountScreenInner({
@@ -33,6 +34,7 @@ export function AmountScreenInner({
   transactionActions,
   onReview,
   onGetFunds,
+  onSelectCoinControl,
 }: AmountScreenInnerProps) {
   const handleReview = useCallback(() => {
     onReview();
@@ -57,7 +59,12 @@ export function AmountScreenInner({
         transaction={transaction}
         transactionActions={transactionActions}
       />
-      <AmountScreenView {...viewModel} onReview={handleReview} onGetFunds={onGetFunds} />
+      <AmountScreenView
+        {...viewModel}
+        onReview={handleReview}
+        onGetFunds={onGetFunds}
+        onSelectCoinControl={onSelectCoinControl}
+      />
     </>
   );
 }

@@ -1,3 +1,6 @@
+import stellar from "../families/stellar/deviceTransactionConfig";
+import xrp from "../families/xrp/deviceTransactionConfig";
+import aleo from "@ledgerhq/coin-aleo/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import aptos from "@ledgerhq/coin-aptos/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
@@ -18,14 +21,15 @@ import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
 import stacks from "@ledgerhq/coin-stacks/deviceTransactionConfig";
-import stellar from "@ledgerhq/coin-stellar/deviceTransactionConfig";
 import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
-import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 import mina from "@ledgerhq/coin-mina/deviceTransactionConfig";
 
 export default {
+  stellar,
+  xrp,
+  aleo,
   algorand,
   aptos,
   bitcoin,
@@ -46,11 +50,9 @@ export default {
   polkadot,
   solana,
   stacks,
-  stellar,
   tezos,
   ton,
   tron,
-  xrp,
   mina,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";

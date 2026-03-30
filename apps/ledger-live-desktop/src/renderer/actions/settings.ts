@@ -29,6 +29,7 @@ import {
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
 } from "./constants";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -201,6 +202,11 @@ export const setSidebarCollapsed = (sidebarCollapsed: boolean) =>
 export const blacklistToken = (tokenId: string) => ({
   type: "BLACKLIST_TOKEN",
   payload: tokenId,
+});
+
+export const deprecateWarningReminder = (coinName: string) => ({
+  type: "DEPRECATION_DO_NOT_REMIND",
+  payload: coinName,
 });
 
 export const setLastSeenCustomImage = (lastSeenCustomImage: {
@@ -391,4 +397,12 @@ export const updateAnonymousUserNotifications = (payload: {
 export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
+});
+
+export const setAnalyticsConsentInfo = () => ({
+  type: "SET_ANALYTICS_CONSENT_INFO",
+  payload: {
+    consentDate: new Date(),
+    privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+  },
 });

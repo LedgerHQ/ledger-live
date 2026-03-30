@@ -1,5 +1,3 @@
-import invariant from "invariant";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   AccountId,
   Hbar,
@@ -8,16 +6,21 @@ import {
   TokenAssociateTransaction,
   TransferTransaction,
   AccountUpdateTransaction,
+  ContractExecuteTransaction,
+  ContractFunctionParameters,
 } from "@hashgraph/sdk";
 import type { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getEnv } from "@ledgerhq/live-env";
+import invariant from "invariant";
 import { createApi } from "../api";
-import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
-import { getSyntheticBlock } from "../logic/utils";
+import { HEDERA_TRANSACTION_MODES, STAKING_REWARD_HASH_SUFFIX, TINYBAR_SCALE } from "../constants";
+import { getSyntheticBlock, toEVMAddress } from "../logic/utils";
 import { rpcClient } from "../network/rpc";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 
 describe("createApi", () => {
-  const api = createApi({});
+  const api = createApi({ useHgraphForErc20: true }, "hedera");
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -76,7 +79,7 @@ describe("createApi", () => {
         memo: {
           kind: "text",
           type: "string",
-          value: "token transfer",
+          value: "hts token transfer",
         },
       });
 
@@ -92,7 +95,53 @@ describe("createApi", () => {
       expect(senderTransfer).toEqual(Long.fromNumber(-1));
       expect(recipientTransfer).toEqual(Long.fromNumber(1));
       expect(tokenTransfers).not.toBeNull();
-      expect(rawTx.transactionMemo).toBe("token transfer");
+      expect(rawTx.transactionMemo).toBe("hts token transfer");
+    });
+
+    it("returns serialized ERC20 token ContractExecuteTransaction", async () => {
+      const { transaction: hex } = await api.craftTransaction({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        amount: 1n,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "erc20 token transfer",
+        },
+        data: {
+          type: "erc20",
+          gasLimit: 100n,
+        },
+      } as any);
+
+      const rawTx = ContractExecuteTransaction.fromBytes(Buffer.from(hex, "hex"));
+      expect(rawTx).toBeInstanceOf(ContractExecuteTransaction);
+      invariant(
+        rawTx instanceof ContractExecuteTransaction,
+        "ContractExecuteTransaction type guard",
+      );
+
+      const recipientEvmAddress = await toEVMAddress(MAINNET_TEST_ACCOUNTS.withTokens.accountId);
+      invariant(recipientEvmAddress, "hedera: missing recipient EVM address");
+      const expectedFunctionParameters = new ContractFunctionParameters()
+        .addAddress(recipientEvmAddress)
+        .addUint256(1);
+
+      expect(rawTx.gas).toEqual(Long.fromNumber(100));
+      expect(rawTx.transactionMemo).toBe("erc20 token transfer");
+      expect(rawTx.functionParameters).toEqual(
+        Buffer.concat([
+          Buffer.from([0xa9, 0x05, 0x9c, 0xbb]), // transfer(address,uint256) selector
+          Buffer.from(expectedFunctionParameters._build()), // address + amount parameters
+        ]),
+      );
     });
 
     it("returns serialized HTS token association transaction", async () => {
@@ -190,6 +239,28 @@ describe("createApi", () => {
       invariant(rawTx instanceof TransferTransaction, "TransferTransaction type guard");
       expect(rawTx.maxTransactionFee).toEqual(expectedMaxFee);
     });
+
+    it("throws if useAllAmount is true", async () => {
+      await expect(
+        api.craftTransaction({
+          intentType: "transaction",
+          asset: {
+            type: "native",
+          },
+          amount: BigInt(100),
+          useAllAmount: true,
+          sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+          recipient: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+          type: HEDERA_TRANSACTION_MODES.TokenAssociate,
+          memo: {
+            kind: "text",
+            type: "string",
+            value: "token association",
+          },
+        }),
+      ).rejects.toThrow("useAllAmount is not supported");
+    });
   });
 
   describe("estimateFees", () => {
@@ -214,7 +285,7 @@ describe("createApi", () => {
       expect(fees.value).toBeGreaterThanOrEqual(0n);
     });
 
-    it("returns fee for token transfer transaction", async () => {
+    it("returns fee for HTS token transfer transaction", async () => {
       const fees = await api.estimateFees({
         intentType: "transaction",
         asset: {
@@ -225,6 +296,28 @@ describe("createApi", () => {
         sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
         senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
         amount: BigInt(100),
+        recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+        memo: {
+          kind: "text",
+          type: "string",
+          value: "",
+        },
+      });
+
+      expect(fees.value).toBeGreaterThanOrEqual(0n);
+    });
+
+    it("returns fee for ERC20 token transfer transaction", async () => {
+      const fees = await api.estimateFees({
+        intentType: "transaction",
+        asset: {
+          type: "erc20",
+          assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+        },
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: MAINNET_TEST_ACCOUNTS.withoutTokens.accountId,
+        senderPublicKey: MAINNET_TEST_ACCOUNTS.withoutTokens.publicKey,
+        amount: 100n,
         recipient: MAINNET_TEST_ACCOUNTS.withTokens.accountId,
         memo: {
           kind: "text",
@@ -293,6 +386,12 @@ describe("createApi", () => {
       expect(balances[0].value).toBe(0n);
     });
 
+    it("returns empty result for non-existent account", async () => {
+      const balances = await api.getBalance("0.0.0");
+
+      expect(balances).toEqual([]);
+    });
+
     it("returns native asset for account without tokens", async () => {
       const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.withoutTokens.accountId);
       const nativeBalance = balances.filter(b => b.asset.type === "native");
@@ -326,10 +425,18 @@ describe("createApi", () => {
         );
       });
 
+      const erc20TokenBalance = balances.find(b => {
+        return (
+          "assetReference" in b.asset &&
+          b.asset.assetReference === MAINNET_TEST_ACCOUNTS.withTokens.erc20Token
+        );
+      });
+
       expect(tokenBalances.length).toBeGreaterThan(0);
       expect(associatedTokenWithBalance?.value).toBeGreaterThan(0n);
       expect(associatedTokenWithoutBalance?.value).toBe(0n);
       expect(notAssociatedToken?.value).toBe(undefined);
+      expect(erc20TokenBalance?.value).toBeGreaterThan(0n);
     });
 
     it("returns stake information for delegated account", async () => {
@@ -482,12 +589,76 @@ describe("createApi", () => {
       expect(transaction?.details?.memo).toBe("test");
     });
 
+    it("derives fees payer from transfers for failed transactions", async () => {
+      const blockHeight = 176175512;
+      const txPaidBySender = "zlE5fX0N44XgMzi9jxr9G4gcCwuAQ4v75wYVXmqBqE808wLKhc/aS+3ZZFl1XOzp";
+      const txNotPaidBySender = "su9qFNvTpteObMCdqJZ8UxKmgB0UFafqPbwjpawBKzAzJOPwCgpQz6TLCL80oZXd";
+
+      const block = await api.getBlock(blockHeight);
+      const firstTx = block.transactions.find(tx => tx.hash === txPaidBySender);
+      const secondTx = block.transactions.find(tx => tx.hash === txNotPaidBySender);
+
+      expect(firstTx?.failed).toBe(true);
+      expect(firstTx?.feesPayer).toBe("0.0.10067173");
+
+      expect(secondTx?.failed).toBe(true);
+      expect(secondTx?.feesPayer).toBe("0.0.23");
+    });
+
+    it("correctly identifies erc20 operations in blocks", async () => {
+      const blockHeight = 176814261;
+      const txHash = "dN7BMus6+8ISOwNPVt7l4KpQT9VaSM9LG6qLPXBqpRVw83ZPMO6Bzyt63305lLXu";
+
+      const block = await api.getBlock(blockHeight);
+      const transaction = block.transactions.find(tx => tx.hash === txHash);
+
+      expect(transaction?.fees).toBe(BigInt(3741416));
+      expect(transaction?.operations).toEqual(
+        expect.arrayContaining([
+          {
+            type: "transfer",
+            address: "0.0.801",
+            asset: {
+              type: "native",
+            },
+            amount: 3741416n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: 0n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "erc20",
+              assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+            },
+            amount: 7770000000000n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "erc20",
+              assetReference: "0xca367694cdac8f152e33683bb36cc9d6a73f1ef2",
+            },
+            amount: -7770000000000n,
+          },
+        ]),
+      );
+    });
+
     it("correctly identifies staking operations in blocks", async () => {
       const [delegateBlock, undelegateBlock, redelegateBlock, rewardsBlock] = await Promise.all([
         api.getBlock(176220207),
         api.getBlock(176220201),
         api.getBlock(176220211),
-        api.getBlock(176397349),
+        api.getBlock(176777078),
       ]);
 
       const delegateOperations = delegateBlock.transactions
@@ -500,7 +671,7 @@ describe("createApi", () => {
         .flatMap(tx => tx.operations)
         .filter(op => op.type === "other");
       const rewardsTransaction = rewardsBlock.transactions.find(
-        tx => tx.hash === "Axie2CIoLVxhU6gcHEDJEdNbQ0BW1AqYXqUu97ume44JGvdfSTvF9go2Svc/lms8",
+        tx => tx.hash === "dwKzBC5qV79SxlRufB6yfXIVOrNh9Nswt36zDoxRgwOQaKmjDHJlM5ImKxSnnRgs",
       );
 
       expect(delegateOperations).toEqual([
@@ -530,40 +701,66 @@ describe("createApi", () => {
           stakedAmount: BigInt(21083202902),
         },
       ]);
-      expect(rewardsTransaction?.operations).toEqual([
-        {
-          type: "transfer",
-          address: "0.0.800",
-          amount: BigInt(-6013422),
-          asset: {
-            type: "native",
+      expect(rewardsTransaction?.operations).toEqual(
+        expect.arrayContaining([
+          {
+            type: "transfer",
+            address: "0.0.35",
+            asset: {
+              type: "native",
+            },
+            amount: 3235n,
           },
-        },
-        {
-          type: "transfer",
-          address: "0.0.801",
-          amount: BigInt(1968210),
-          asset: {
-            type: "native",
+          {
+            type: "transfer",
+            address: "0.0.800",
+            asset: {
+              type: "native",
+            },
+            amount: -30505446n,
           },
-        },
-        {
-          type: "transfer",
-          address: "0.0.8835924",
-          amount: BigInt(4045212 + 1968210),
-          asset: {
-            type: "native",
+          {
+            type: "transfer",
+            address: "0.0.801",
+            asset: {
+              type: "native",
+            },
+            amount: 76639n,
           },
-        },
-        {
-          type: "transfer",
-          address: "0.0.8835924",
-          amount: BigInt(6013422),
-          asset: {
-            type: "native",
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: -1000000n, // excluded fee and staking reward
           },
-        },
-      ]);
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "native",
+            },
+            amount: 1000000n, // excluded staking reward
+          },
+          {
+            type: "transfer",
+            address: "0.0.8835924",
+            asset: {
+              type: "native",
+            },
+            amount: 30313674n,
+          },
+          {
+            type: "transfer",
+            address: "0.0.9124531",
+            asset: {
+              type: "native",
+            },
+            amount: 191772n,
+          },
+        ]),
+      );
     });
 
     it("returns block for latest finalized height from lastBlock", async () => {
@@ -575,6 +772,66 @@ describe("createApi", () => {
       // Note: lastBlock().time is the transaction timestamp, while getBlock().info.time is the block start time
       expect(block.info.time).toBeInstanceOf(Date);
       expect(block.transactions).toBeInstanceOf(Array);
+    });
+
+    it("returns single transaction for multiple erc20 transfers", async () => {
+      const data = await api.getBlock(177314999);
+
+      const erc20Asset = {
+        type: "erc20",
+        assetReference: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+      };
+      const erc20TxHash = "givnas3WAL3fiGeap+oSRIYOqUbqE0Ig2XIMTWgTDQzTMc8g7aOC1vxc8hQy7wZX";
+      const filteredTransactions = data.transactions.filter(tx => tx.hash === erc20TxHash);
+
+      expect(filteredTransactions).toEqual([
+        expect.objectContaining({
+          operations: [
+            {
+              type: "transfer",
+              address: "0.0.802",
+              asset: {
+                type: "native",
+              },
+              amount: 26596592n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.10067136",
+              asset: {
+                type: "native",
+              },
+              amount: 0n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.6145236",
+              asset: erc20Asset,
+              amount: 2863838n,
+            },
+            {
+              type: "transfer",
+              address: "0x0000000000000000000000000000000000000000",
+              asset: erc20Asset,
+              amount: -2863838n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.10067136",
+              asset: erc20Asset,
+              amount: 148440n,
+            },
+            {
+              type: "transfer",
+              address: "0x0000000000000000000000000000000000000000",
+              asset: erc20Asset,
+              amount: -148440n,
+            },
+          ],
+          fees: 26596592n,
+          feesPayer: "0.0.10067136",
+        }),
+      ]);
     });
   });
 
@@ -589,11 +846,12 @@ describe("createApi", () => {
   });
 
   describe("listOperations", () => {
+    const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
+
     it("returns empty array for pristine account", async () => {
-      const block = await api.lastBlock();
       const { items: operations } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.pristine.accountId,
-        { minHeight: block.height, order: "desc" },
+        { minHeight: 0, order: "desc" },
       );
 
       expect(operations).toBeInstanceOf(Array);
@@ -602,9 +860,8 @@ describe("createApi", () => {
 
     it("returns operations with valid synthetic block info", async () => {
       const cursor = "1753099264.927988000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
-        minHeight: block.height,
+        minHeight: 0,
         cursor,
         limit: 4,
         order: "asc",
@@ -613,15 +870,13 @@ describe("createApi", () => {
       const expectedSyntheticBlock = getSyntheticBlock(cursor);
       const blockHeights = ops.map(o => o.tx.block.height);
 
-      expect(blockHeights).toHaveLength(6);
       expect(blockHeights.every(h => h >= expectedSyntheticBlock.blockHeight)).toBe(true);
     });
 
     it("returns operations for real account with tokens", async () => {
       const cursor = "1753099264.927988000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
-        minHeight: block.height,
+        minHeight: 0,
         cursor,
         limit: 100,
         order: "desc",
@@ -664,14 +919,58 @@ describe("createApi", () => {
         ledgerOpType: expect.any(String),
         associatedTokenId: expect.any(String),
       });
+      // every transfer operation should have a fees payer
+      expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("returns IN/OUT operations for mint and burn of amUSDC", async () => {
+      const ownerAccountId = MAINNET_TEST_ACCOUNTS.withTokens.accountIdWithErc20;
+      const { items: ops } = await api.listOperations(ownerAccountId, {
+        minHeight: 0,
+        limit: 10,
+        cursor: "1749584382.000000000",
+        order: "asc",
+      });
+
+      const zeroAddress = "0x0000000000000000000000000000000000000000";
+      const mintTxHash = "1Ed3RfhFN0VQIyFfUrkljtsV9CzbzYNt3LJqqQyHsbiyKoVbJFhGkZwvqr3k0rYJ";
+      const burnTxHash = "45Y5pSeY7ULMqJObvAtOow8AjamVNlG3XGbGLt5UrCP2HOdrQ4PzQfXqFlY4GDwd";
+
+      const mintOperation = ops.find(op => op.tx.hash === mintTxHash);
+      const burnOperation = ops.find(op => op.tx.hash === burnTxHash);
+      const expectedAsset = {
+        type: "erc20",
+        assetReference: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+        assetOwner: ownerAccountId,
+      };
+
+      expect(mintOperation).toMatchObject({
+        type: "IN",
+        recipients: [ownerAccountId],
+        senders: [zeroAddress],
+        asset: expectedAsset,
+        tx: {
+          fees: 30080000n,
+          feesPayer: ownerAccountId,
+        },
+      });
+      expect(burnOperation).toMatchObject({
+        type: "OUT",
+        recipients: [zeroAddress],
+        senders: [ownerAccountId],
+        asset: expectedAsset,
+        tx: {
+          fees: 52800000n,
+          feesPayer: ownerAccountId,
+        },
+      });
     });
 
     it("returns staking operations with correct metadata", async () => {
       const cursor = "1762202113.000000000";
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.activeStaking.accountId,
-        { minHeight: block.height, cursor, limit: 30, order: "desc" },
+        { minHeight: 0, cursor, limit: 30, order: "desc" },
       );
 
       const rewardOp = ops.find(op => op.type === "REWARD");
@@ -702,13 +1001,41 @@ describe("createApi", () => {
       });
       expect(rewardOp?.value).toBeGreaterThan(BigInt(0));
       expect(rewardOp?.tx.fees).toBe(BigInt(0));
+      expect(rewardOp?.tx.hash).not.toContain(STAKING_REWARD_HASH_SUFFIX);
+      // every staking operation should have a fees payer
+      expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
+    });
+
+    it("returns valid senders and recipients for staking operations", async () => {
+      const cursor = "1772617523.000000000";
+      const { items: ops } = await api.listOperations(
+        MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId,
+        { minHeight: 0, cursor, limit: 30, order: "desc" },
+      );
+
+      const delegateHash = "+07jwNyyEDuwngDgoW3sVgfTfDE5qn+HgPsbltlrUIW/n/LYpFSEwSQNOTu/8GLQ";
+      const undelegateHash = "v0jXJwjKaypunqz91EuQDU2mz/ejSb3AvEJ5fgYkftl+DDT2mBlwB5bSRqXWyoth";
+      const redelegateHash = "pm8vFWlcBEEPbB+pkZTUUxs0FfO2KyDtg0KNfOYnnba+rpHT63OIMhFKKNpfDokk";
+
+      const delegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === delegateHash);
+      const undelegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === undelegateHash);
+      const redelegateOp = ops.find(o => o.type !== "REWARD" && o.tx.hash === redelegateHash);
+      const rewardOp = ops.find(o => o.type === "REWARD");
+
+      expect(delegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(delegateOp?.recipients).toEqual(["0.0.14"]);
+      expect(undelegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(undelegateOp?.recipients).toEqual(["0.0.31"]);
+      expect(redelegateOp?.senders).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
+      expect(redelegateOp?.recipients).toEqual(["0.0.23"]);
+      expect(rewardOp?.senders).toEqual([rewardPayerAddress]);
+      expect(rewardOp?.recipients).toEqual([MAINNET_TEST_ACCOUNTS.withStakingHistory.accountId]);
     });
 
     it("returns valid stakedAmount, respecting uncommitted balance changes", async () => {
-      const block = await api.lastBlock();
       const { items: ops } = await api.listOperations(
         MAINNET_TEST_ACCOUNTS.withQuickBalanceChanges.accountId,
-        { minHeight: block.height, limit: 10, order: "asc" },
+        { minHeight: 0, limit: 10, order: "asc" },
       );
 
       const opDelegate1 = ops[2];
@@ -751,12 +1078,12 @@ describe("createApi", () => {
 
         const { items: page1, next: pagingToken1 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: initialCursor, limit, order },
+          { minHeight, limit, order, ...(initialCursor ? { cursor: initialCursor } : {}) },
         );
 
         const { items: page2, next: pagingToken2 } = await api.listOperations(
           MAINNET_TEST_ACCOUNTS.withTokens.accountId,
-          { minHeight, cursor: pagingToken1, limit, order },
+          { minHeight, limit, order, ...(pagingToken1 ? { cursor: pagingToken1 } : {}) },
         );
 
         const firstPage1Timestamp = page1[0]?.tx?.date;

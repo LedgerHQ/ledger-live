@@ -1,7 +1,7 @@
 // cover specific usecases
 
 import "../__mocks__/environment";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import walletsync, { UpdateEvent } from "../index";
 import { emptyState } from "../__mocks__";
 

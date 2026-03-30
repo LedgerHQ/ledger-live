@@ -1,10 +1,11 @@
-import { Api, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM RSK Network", () => {
-  let module: Api<MemoNotSupported, BufferTxData>;
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -41,12 +42,12 @@ describe("EVM RSK Network", () => {
     });
   });
 
-  describe("getSequence with EIP-1191 checksummed address", () => {
+  describe("getNextSequence with EIP-1191 checksummed address", () => {
     it("accepts RSK addresses with EIP-1191 checksum", async () => {
       const rskAddress = "0xeF7778f630098Df7aD87cFEd8F4476e4c03eE329";
 
       // This should not throw "bad address checksum" error
-      const result = await module.getSequence(rskAddress);
+      const result = await module.getNextSequence(rskAddress);
 
       expect(typeof result).toBe("bigint");
     });

@@ -23,28 +23,27 @@ export const ListHeader = memo<ListHeaderProps>(function ListHeader({
   t,
 }) {
   return (
-    <div className="px-20" data-testid="market-list-header">
-      <TableRow header style={{ paddingRight: 6 }}>
-        <SortTableCell data-testid="market-sort-button" onClick={onToggleSortBy} order={order}>
-          #
-        </SortTableCell>
-        <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
-        <TableCell disabled>{t("market.marketList.price")}</TableCell>
-        <TableCell disabled>{t("market.marketList.change")}</TableCell>
-        <TableCell disabled>{t("market.marketList.marketCap")}</TableCell>
-        <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
-        <TableCell
-          data-testid="market-star-button"
-          disabled={starredMarketCoins.length <= 0 && (!starred || starred.length <= 0)}
-          onClick={onToggleFilterByStarredAccounts}
-        >
-          {starred && starred.length > 0 ? (
-            <StarFill size={16} />
-          ) : (
-            <Star size={16} style={{ fill: "none" }} />
-          )}
-        </TableCell>
-      </TableRow>
-    </div>
+    <TableRow header style={{ paddingRight: 20, paddingLeft: 20 }} data-testid="market-list-header">
+      <SortTableCell data-testid="market-sort-button" onClick={onToggleSortBy} order={order}>
+        #
+      </SortTableCell>
+      <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
+      <TableCell disabled />
+      <TableCell disabled>{t("market.marketList.price")}</TableCell>
+      <TableCell disabled>{t("market.marketList.change")}</TableCell>
+      <TableCell disabled>{t("market.marketList.marketCap")}</TableCell>
+      <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
+      <TableCell
+        data-testid="market-star-button"
+        disabled={starredMarketCoins.length <= 0 && (!starred || starred.length <= 0)}
+        onClick={onToggleFilterByStarredAccounts}
+      >
+        {starred && starred.length > 0 ? (
+          <StarFill size={16} />
+        ) : (
+          <Star size={16} style={{ fill: "none" }} />
+        )}
+      </TableCell>
+    </TableRow>
   );
 });

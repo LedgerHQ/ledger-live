@@ -1,5 +1,5 @@
-import { getValidators } from "./getValidators";
 import { apiClient } from "../network/api";
+import { getValidators } from "./getValidators";
 
 jest.mock("../network/api");
 

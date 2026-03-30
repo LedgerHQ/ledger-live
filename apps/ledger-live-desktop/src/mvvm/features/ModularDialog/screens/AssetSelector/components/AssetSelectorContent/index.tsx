@@ -4,18 +4,18 @@ import { AssetType } from "../../../../types";
 import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import SkeletonList from "../../../../components/SkeletonList";
 import { MarketPriceIndicator, MarketPercentIndicator } from "../../../../components/Market";
-import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
+import { useAssetConfiguration } from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import EmptyList from "../../../../components/EmptyList";
 import { balanceItem } from "../../../../components/Balance";
 import { useBalanceDeps } from "../../../../hooks/useBalanceDeps";
 import { useSelector } from "LLD/hooks/redux";
-import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDialog";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { AssetVirtualList } from "../AssetVirtualList";
-import { ApyIndicator } from "../../../../components/ApyIndicator";
+import { ApyIndicator } from "LLD/features/ModularDialog/components/ApyIndicator";
 
 export type AssetSelectorContentProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -42,23 +42,17 @@ export const AssetSelectorContent = ({
 }: AssetSelectorContentProps) => {
   const assetsMap = groupCurrenciesByAsset(assetsSorted || []);
 
-  const assetConfigurationDeps = {
+  const isDebuggingDuplicates = useSelector(modularDialogIsDebuggingDuplicatesSelector);
+
+  const assetsTransformed = useAssetConfiguration(assetsToDisplay, {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
     assetsMap,
-  };
-  const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
-
-  const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
-
-  const transformAssets = makeAssetConfigurationHook({
-    assetsConfiguration,
+    ...assetsConfiguration,
   });
-
-  const assetsTransformed = transformAssets(assetsToDisplay);
   const formattedAssets = useMemo(() => {
     return assetsTransformed.map(asset => {
       const assetWithNetworks = assetsSorted?.find(c => c.networks[0]?.id === asset.id);

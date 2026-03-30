@@ -51,6 +51,9 @@ describe("index", () => {
         getValidators: expect.any(Function),
         lastBlock: logic.lastBlock,
         listOperations: expect.any(Function),
+        validateIntent: expect.any(Function),
+        validateAddress: expect.any(Function),
+        getNextSequence: expect.any(Function),
       });
     });
   });

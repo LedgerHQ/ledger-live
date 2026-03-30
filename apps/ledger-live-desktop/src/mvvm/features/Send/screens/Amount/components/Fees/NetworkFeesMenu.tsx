@@ -9,13 +9,17 @@ import {
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { sendFeatures, getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useTranslation } from "react-i18next";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
-import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
-import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
-import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
+import type { FeePresetOption } from "../../../../hooks/useFeePresetOptions";
+import type { FeeFiatMap } from "../../../../hooks/useFeePresetFiatValues";
+import type { FeePresetLegendMap } from "../../../../hooks/useFeePresetLegends";
 import { FeePresetMenuItems } from "./FeePresetMenuItems";
 
 type FeeOptionDisplay = Readonly<{
@@ -57,7 +61,7 @@ type NetworkFeesMenuProps = Readonly<{
 export function NetworkFeesMenu({ display, selection, presets, actions }: NetworkFeesMenuProps) {
   const { label: feesLabel, value: feesValue, strategyLabel: feesStrategyLabel } = display;
   const { selectedStrategy, onSelectStrategy } = selection;
-  const { options: feePresetOptions, fiatByPreset, legendByPreset } = presets;
+  const { options: feePresetOptions = [], fiatByPreset = {}, legendByPreset = {} } = presets;
   const { onSelectCustomFees, onSelectCoinControl } = actions ?? {};
   const { t } = useTranslation();
   const { state } = useSendFlowData();
@@ -79,8 +83,9 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   );
 
   const feeOptionsWithFiat = useMemo(() => {
-    if (feePresetOptions.length > 0) {
-      return feePresetOptions.map(option => {
+    const options = feePresetOptions ?? [];
+    if (options.length > 0) {
+      return options.map(option => {
         return {
           ...option,
           fiatValue: fiatByPreset[option.id] ?? null,
@@ -108,7 +113,8 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   }
 
   const hasPresets = sendFeatures.hasFeePresets(currency);
-  const hasCustom = sendFeatures.hasCustomFees(currency);
+  const hasCustom =
+    sendFeatures.hasCustomFees(currency) && !!sendFeatures.getCustomFeeConfig(currency);
   const hasCoinControl = sendFeatures.hasCoinControl(currency);
   const legendConfig = getSendDescriptor(currency)?.fees.presets?.legend;
   const shouldShowFeeRateLegend = legendConfig?.type === "feeRate";
@@ -129,25 +135,25 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   if (!hasMenuOptions) {
     return (
       <div
-        className="flex w-full items-center justify-between py-16"
+        className="flex w-full items-center justify-between mt-16 mb-12"
         data-testid="send-network-fees-row"
       >
         <span className="flex items-center gap-8">
-          <span className="body-2">{feesLabel}</span>
+          <span className="body-3">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="body-2 text-base">{feesValue}</span>
+        <span className="body-3 text-base">{feesValue}</span>
       </div>
     );
   }
 
   return (
     <div
-      className="flex w-full items-center justify-between py-16"
+      className="flex w-full items-center justify-between mt-16 mb-12"
       data-testid="send-network-fees-row"
     >
       <span className="flex items-center gap-8">
-        <span className="body-2">{feesLabel}</span>
+        <span className="body-3">{feesLabel}</span>
         {informationIcon}
       </span>
       <Menu>
@@ -157,7 +163,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
             className="flex items-center gap-8 transition-colors hover:opacity-70"
             data-testid="send-network-fees-menu-trigger"
           >
-            <span className="body-2 text-base">
+            <span className="body-3 text-base">
               {feesValue} • {feesStrategyLabel}
             </span>
             <ChevronUpDown size={16} className="text-muted" />

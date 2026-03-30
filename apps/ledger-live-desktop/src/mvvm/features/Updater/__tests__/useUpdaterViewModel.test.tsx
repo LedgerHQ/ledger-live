@@ -35,14 +35,14 @@ describe("useUpdaterViewModel", () => {
     expect(result.current).toBeNull();
   });
 
-  it("should return base appearance when status is update-available", () => {
+  it("should return transparent appearance when status is update-available", () => {
     const { result } = renderHook(() => useUpdaterViewModel(), {
       wrapper: createContextWrapper({ status: "update-available" }),
     });
 
     expect(result.current).toEqual(
       expect.objectContaining({
-        appearance: "base",
+        appearance: "transparent",
         isLoading: false,
       }),
     );
@@ -55,7 +55,7 @@ describe("useUpdaterViewModel", () => {
 
     expect(result.current).toEqual(
       expect.objectContaining({
-        appearance: "base",
+        appearance: "transparent",
         isLoading: true,
       }),
     );
@@ -75,14 +75,14 @@ describe("useUpdaterViewModel", () => {
     );
   });
 
-  it("should return base appearance when status is check-success", () => {
+  it("should return transparent appearance when status is check-success", () => {
     const { result } = renderHook(() => useUpdaterViewModel(), {
       wrapper: createContextWrapper({ status: "check-success" }),
     });
 
     expect(result.current).toEqual(
       expect.objectContaining({
-        appearance: "base",
+        appearance: "transparent",
         isLoading: false,
       }),
     );

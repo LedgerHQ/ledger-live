@@ -7,7 +7,7 @@ const discoverApps = [
   { name: "Ramp", url: "https://rampnetwork.com/buy-crypto" },
   { name: "Kiln", url: "https://kiln.fi" },
   { name: "Lido", url: "https://lido.fi/" },
-  // { name: "1inch", url: "https://1inch.com/" }, // QAA-997
+  { name: "1inch", url: "https://1inch.com" },
   { name: "Zerion", url: "https://zerion.io/" },
   { name: "Transak", url: "https://transak.com" },
 ] as const;
@@ -19,8 +19,10 @@ export default class DiscoverPage {
   baseLink = "discover/";
   discoverPageHeader = () => getElementById("discover-banner");
   liveAppTitle = () => getElementById("live-app-title");
-  catalogSearchArrowLeft = () => getElementById("catalog-search-arrow-left");
+  // TODO - remove `or` statement when wallet40 is fully activated
+  catalogSearchArrowLeft = () => getElementById(/catalog-back-arrow|catalog-search-arrow-left/);
   catalogSearchBar = () => getElementById("platform-catalog-search-input");
+  catalogSearchCancelButton = () => getElementById("catalog-search-cancel");
   catalogAppCard = (appName: DiscoverAppName) =>
     getElementById(new RegExp(`catalog-app-card-${appName.trim().toLowerCase()}.*`));
 

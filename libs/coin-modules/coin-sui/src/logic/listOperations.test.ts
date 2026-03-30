@@ -14,6 +14,8 @@ const mockOperations: Page<Op> = {
         failed: false,
         block: {
           height: 5,
+          hash: "block-hash-1",
+          time: new Date("2024-03-20T10:00:00.000Z"),
         },
       },
       id: "1",
@@ -33,6 +35,8 @@ const mockOperations: Page<Op> = {
         failed: false,
         block: {
           height: 5,
+          hash: "block-hash-2",
+          time: new Date("2024-03-20T11:00:00.000Z"),
         },
       },
       id: "2",
@@ -67,7 +71,13 @@ describe("List Operations", () => {
 
     expect(operations).toEqual(mockOperations.items);
     expect(next).toBe(mockOperations.next);
-    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, "asc", withApi, undefined);
+    expect(mockGetListOperations).toHaveBeenCalledWith(
+      mockAddress,
+      "asc",
+      withApi,
+      undefined,
+      undefined,
+    );
   });
 
   it("should return empty array and undefined when no operations", async () => {
@@ -91,7 +101,13 @@ describe("List Operations", () => {
     });
 
     expect(operations).toEqual(mockOperations.items);
-    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, "asc", withApi, mockCursor);
+    expect(mockGetListOperations).toHaveBeenCalledWith(
+      mockAddress,
+      "asc",
+      withApi,
+      mockCursor,
+      undefined,
+    );
   });
 
   it("should return operations sorted by date in ascending order", async () => {

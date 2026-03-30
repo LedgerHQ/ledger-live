@@ -1,5 +1,4 @@
-import type { ConcordiumCoinConfig } from "../types";
-import { VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import { TESTNET_COIN_CONFIG, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
 import { createApi } from ".";
 
 jest.mock("../logic", () => ({
@@ -7,21 +6,8 @@ jest.mock("../logic", () => ({
   estimateFees: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/concordium-core", () => ({
-  ...jest.requireActual("@ledgerhq/concordium-core"),
-  encodeMemoToCbor: jest.fn((memo: string) => Buffer.from([0x68, ...Buffer.from(memo, "utf-8")])),
-}));
-
 const { craftTransaction: craftTransactionMock, estimateFees: estimateFeesMock } =
   jest.requireMock("../logic");
-
-const mockConfig: ConcordiumCoinConfig = {
-  networkType: "testnet",
-  grpcUrl: "https://grpc.testnet.concordium.com",
-  grpcPort: 20000,
-  proxyUrl: "https://wallet-proxy.testnet.concordium.com",
-  minReserve: 0,
-};
 
 describe("api/estimateFees", () => {
   beforeEach(() => {
@@ -29,7 +15,7 @@ describe("api/estimateFees", () => {
   });
 
   it("should estimate fees for transaction with memo", async () => {
-    const api = createApi(mockConfig);
+    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
       header: {
@@ -46,24 +32,23 @@ describe("api/estimateFees", () => {
     });
     estimateFeesMock.mockResolvedValue({ cost: BigInt(1500) });
     const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: BigInt(1000000),
+      asset: { type: "native", ticker: "CCD", id: "ccd" },
       memo: { type: "string" as const, value: "fee test" },
-    };
+    } as any;
 
     const result = await api.estimateFees(transactionIntent);
 
-    expect(estimateFeesMock).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "concordium" }),
-      22, // TransactionType.TransferWithMemo
-      9, // memoSize: "fee test" = 9 bytes CBOR-encoded (1 byte header + 8 bytes string)
-    );
+    expect(estimateFeesMock).toHaveBeenCalledWith("concordium_testnet", "fee test");
     expect(result).toEqual({ value: BigInt(1500) });
   });
 
   it("should estimate fees for transaction without memo", async () => {
-    const api = createApi(mockConfig);
+    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
       header: {
@@ -79,10 +64,13 @@ describe("api/estimateFees", () => {
     });
     estimateFeesMock.mockResolvedValue({ cost: BigInt(1000) });
     const transactionIntent = {
+      intentType: "transaction" as const,
+      type: "send",
       sender: VALID_ADDRESS,
       recipient: VALID_ADDRESS_2,
       amount: BigInt(500000),
-    };
+      asset: { type: "native", ticker: "CCD", id: "ccd" },
+    } as any;
 
     const result = await api.estimateFees(transactionIntent);
 

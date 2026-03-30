@@ -3,15 +3,18 @@ import BigNumber from "bignumber.js";
 import { useQuickActions } from "../useQuickActions";
 import { useTranslation } from "~/context/Locale";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 jest.mock("~/context/Locale");
 jest.mock("LLM/hooks/useAccountUnit");
-jest.mock("@ledgerhq/live-common/bridge/descriptor");
-jest.mock("@ledgerhq/coin-framework/account/helpers");
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
+jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 
 const btcUnit = { name: "Bitcoin", code: "BTC", magnitude: 8 };
 const mockCurrency = {

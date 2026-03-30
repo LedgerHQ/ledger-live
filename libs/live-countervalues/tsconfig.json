@@ -5,10 +5,11 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "downlevelIteration": true,
     "jsx": "react",
-    "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "lib": ["es2022", "dom"],
+    "types": ["node", "jest"],
+    "outDir": "lib",
+    "rootDir": "src"
   },
   "include": ["src/**/*"]
 }

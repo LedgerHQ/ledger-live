@@ -1,29 +1,24 @@
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
-import { store } from "~/context/store";
-import {
-  importSettings,
-  setLastConnectedDevice,
-  setOverriddenFeatureFlags,
-  setOverriddenFeatureFlag,
-} from "~/actions/settings";
+import { store } from "~/state-manager/configureStore";
+import { importSettings, setLastConnectedDevice } from "~/actions/settings";
+import { setOverride, setAllOverrides, featureFlagsOverridesSelector } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
+import { addKnownDevice, importBle, removeKnownDevice, removeKnownDevices } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
+import { webviewLogStore } from "../../src/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import Config from "react-native-config";
-import {
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-} from "~/actions/types";
-import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
+import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
+import { bleDevicesSelector } from "~/reducers/ble";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -31,6 +26,10 @@ let ws: WebSocket;
 let retryCount = 0;
 const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
+
+async function disconnectAllSpeculosSessions() {
+  await DeviceManagementKitTransportSpeculos.disconnectAll();
+}
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
@@ -112,14 +111,13 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "overrideFeatureFlags": {
         store.dispatch(
-          setOverriddenFeatureFlags(msg.payload as SettingsSetOverriddenFeatureFlagsPlayload),
+          setAllOverrides(msg.payload as PartialFeatures),
         );
         break;
       }
       case "overrideFeatureFlag": {
-        store.dispatch(
-          setOverriddenFeatureFlag(msg.payload as SettingsSetOverriddenFeatureFlagPlayload),
-        );
+        const { id, value } = msg.payload as { id: FeatureId; value: Feature | undefined };
+        store.dispatch(setOverride({ key: id, value }));
         break;
       }
       case "navigate":
@@ -129,7 +127,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
       case "getLogs": {
-        const payload = JSON.stringify(logReport.getLogs());
+        const payload = JSON.stringify({
+          appLogs: logReport.getLogs(),
+          webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
+          webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
+          webviewLoadErrors: webviewLogStore.getLoadErrors(),
+        });
         postMessage({
           type: "appLogs",
           payload,
@@ -137,7 +140,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "getFlags": {
-        const localOverrides = overriddenFeatureFlagsSelector(store.getState());
+        const localOverrides = featureFlagsOverridesSelector(store.getState());
         const payload = JSON.stringify(getAllFeatureFlags("en", localOverrides));
         postMessage({
           type: "appFlags",
@@ -155,9 +158,16 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "addKnownSpeculos": {
         const { address, model } = JSON.parse(msg.payload);
+        await disconnectAllSpeculosSessions();
+        const knownSpeculosIds = bleDevicesSelector(store.getState())
+          .map(device => device.id)
+          .filter(id => id.startsWith("speculos|"));
+        if (knownSpeculosIds.length) {
+          store.dispatch(removeKnownDevices(knownSpeculosIds));
+        }
         store.dispatch(
           setLastConnectedDevice({
-            deviceId: `httpdebug|ws://${address}`,
+            deviceId: `speculos|${address}`,
             deviceName: `${address}`,
             wired: false,
             modelId: model,
@@ -165,7 +175,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         );
         store.dispatch(
           addKnownDevice({
-            id: `httpdebug|ws://${address}`,
+            id: `speculos|${address}`,
             name: `${address}`,
             modelId: model,
           }),
@@ -175,7 +185,8 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "removeKnownSpeculos": {
         const address = msg.payload;
-        store.dispatch(removeKnownDevice(`httpdebug|ws://${address}`));
+        await disconnectAllSpeculosSessions();
+        store.dispatch(removeKnownDevice(`speculos|${address}`));
         setEnv("DEVICE_PROXY_URL", "");
         break;
       }

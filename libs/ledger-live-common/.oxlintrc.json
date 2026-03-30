@@ -1,0 +1,133 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "19.0.0"
+    }
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "plugins": [
+    "eslint",
+    "import",
+    "oxc",
+    "unicorn",
+    "typescript",
+    "react",
+    "jest",
+    "jsx-a11y"
+  ],
+  "ignorePatterns": [
+    "*.min.js",
+    "src/families/*/types.js",
+    "src/generated/**",
+    "src/load/tokens/**"
+  ],
+  "rules": {
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-empty-pattern": "warn",
+    "eslint/no-constant-binary-expression": "warn",
+    "eslint/no-unused-expressions": "warn",
+    "eslint/arrow-parens": "off",
+    "eslint/no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": ["lodash"],
+        "patterns": [
+          {
+            "group": [
+              "@ledgerhq/live-common/lib/**",
+              "@ledgerhq/live-common/lib-es/**"
+            ],
+            "message": "Please remove the /lib import from live-common import."
+          }
+        ]
+      }
+    ],
+    "import/no-duplicates": "error",
+    "import/no-named-as-default": "off",
+    "react/no-did-mount-set-state": "warn",
+    "react/display-name": "off",
+    "react/prop-types": "off",
+    "react/jsx-key": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    "jest/no-conditional-expect": "warn",
+    "jest/expect-expect": "warn",
+    "jest/require-to-throw-message": "warn",
+    "jest/valid-title": "warn",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-export": "off",
+    "jest/valid-describe-callback": "warn",
+    "jest/no-standalone-expect": "warn",
+    "oxc/only-used-in-recursion": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-namespace": [
+      "error",
+      {
+        "allowDeclarations": true
+      }
+    ],
+    "typescript/no-empty-function": "off",
+    "typescript/no-deprecated": "error",
+    "typescript/consistent-type-assertions": [
+      "warn",
+      {
+        "assertionStyle": "never"
+      }
+    ],
+    "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/prefer-tag-over-role": "off",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": []
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/deviceSDK/tasks/genuineCheck.ts"],
+      "rules": {
+        "unicorn/no-empty-file": "off"
+      }
+    },
+    {
+      "files": [
+        "**/*.test.{ts,tsx}",
+        "**/__tests__/**"
+      ],
+      "env": {
+        "jest": true
+      },
+      "plugins": ["jest"],
+      "rules": {
+        "typescript/no-explicit-any": "warn",
+        "eslint/no-console": "off"
+      }
+    }
+  ]
+}

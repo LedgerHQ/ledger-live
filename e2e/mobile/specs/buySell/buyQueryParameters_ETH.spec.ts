@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runQueryParametersTest } from "./buySell";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 const testConfig = {
   buySell: {
@@ -11,7 +10,6 @@ const testConfig = {
     operation: OperationType.Buy,
   },
   tmsLinks: ["B2CQA-3522"],
-  provider: Provider.MOONPAY,
   paymentMethod: "card",
   tags: [
     "@NanoSP",
@@ -28,7 +26,6 @@ const testConfig = {
 
 runQueryParametersTest(
   testConfig.buySell,
-  testConfig.provider,
   testConfig.paymentMethod,
   testConfig.tmsLinks,
   testConfig.tags,

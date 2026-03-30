@@ -1,6 +1,6 @@
 import React from "react";
 import Select from "react-select";
-import { getAllDerivationModes } from "@ledgerhq/coin-framework/derivation";
+import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { DerivationMode } from "@ledgerhq/types-live";
 
 export type DataTypeDerivationMode = {

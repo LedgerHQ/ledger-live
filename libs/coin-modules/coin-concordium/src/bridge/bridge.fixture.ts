@@ -5,7 +5,7 @@
  * This file contains only bridge-specific fixtures like ConcordiumAccount, Signer, etc.
  */
 import BigNumber from "bignumber.js";
-import type { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { ConcordiumAccount, ConcordiumResources, ConcordiumSigner } from "../types";
 import { VALID_ADDRESS, PUBLIC_KEY, CRED_ID, createFixtureCurrency } from "../test/fixtures";
 
@@ -39,7 +39,7 @@ export function createFixtureConcordiumAccount(
     index: 0,
     currency: createFixtureCurrency(),
     freshAddress: VALID_ADDRESS,
-    freshAddressPath: "m/1105'/0'/0'/0'/0'/0'",
+    freshAddressPath: "44'/919'/404'/404'/0'",
     balance: new BigNumber(10000000),
     spendableBalance: new BigNumber(9900000),
     blockHeight: 1000,

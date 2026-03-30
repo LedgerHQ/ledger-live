@@ -1,6 +1,6 @@
 {
   "name": "@actions/mobile-performance-test",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Run a performance test on mobile",
   "license": "MIT",
   "private": true,
@@ -20,6 +20,6 @@
   "devDependencies": {
     "@types/adm-zip": "0.5.7",
     "@rslib/core": "catalog:",
-    "typescript": "5.8.3"
+    "typescript": "catalog:"
   }
 }

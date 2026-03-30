@@ -137,13 +137,21 @@ export class NetworkAudit {
         if (entry.duration) {
           this._totalTime = (this._totalTime || 0) + entry.duration;
         }
-        const req = (entry.detail as any)?.req;
-        const res = (entry.detail as any)?.res;
+        const detail = (
+          entry as PerformanceEntry & {
+            detail?: {
+              req?: { url?: string };
+              res?: { headers?: { "content-length"?: string } };
+            };
+          }
+        ).detail;
+        const req = detail?.req;
+        const res = detail?.res;
         if (res && req) {
           const { url } = req;
-          if (this._urlsSeen.has(url)) {
+          if (url && this._urlsSeen.has(url)) {
             this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
-          } else {
+          } else if (url) {
             this._urlsSeen.add(url);
           }
           const { headers } = res;

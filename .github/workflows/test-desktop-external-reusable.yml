@@ -38,23 +38,19 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
       - name: lint
-        run: pnpm desktop lint:ci:external
-      - name: prettier
-        run: pnpm desktop prettier:check
+        run: pnpm desktop lint:ci
+      - name: lint (guardrails)
+        run: pnpm desktop lint:guardrails
+        continue-on-error: true  # TODO: Remove once release branch is back-merged into develop (see JIRA)
       - name: typecheck
         run: pnpm desktop typecheck
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        name: upload eslint json output
-        if: ${{ !cancelled() }}
-        with:
-          name: lint-desktop-external
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/lint-desktop-external.json
       - name: check for dead code
         run: pnpm desktop unimported
         shell: bash
@@ -77,7 +73,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
@@ -108,7 +105,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
@@ -154,10 +152,6 @@ jobs:
           repository: ${{ inputs.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           persist-credentials: false
-      - name: "download linter results"
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
-        with:
-          name: lint-desktop-external
       - name: download images artifacts
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:

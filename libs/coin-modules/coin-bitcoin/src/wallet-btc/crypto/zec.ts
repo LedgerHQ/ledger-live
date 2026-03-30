@@ -1,14 +1,11 @@
 import bs58check from "bs58check";
 import * as bjs from "bitcoinjs-lib";
+import type { BitcoinJS } from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import Base from "./base";
 
 class ZCash extends Base {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  network: any;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor({ network }: { network: any }) {
+  constructor({ network }: { network: BitcoinJS }) {
     super({ network });
     this.network = network;
     this.network.dustThreshold = 10000;

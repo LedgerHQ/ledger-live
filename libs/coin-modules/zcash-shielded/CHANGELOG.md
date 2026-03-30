@@ -1,5 +1,107 @@
 # @ledgerhq/zcash-shielded
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.4.2
+
+## 0.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.4.2-next.0
+
+## 0.7.0
+
+### Minor Changes
+
+- [#15014](https://github.com/LedgerHQ/ledger-live/pull/15014) [`70f6288`](https://github.com/LedgerHQ/ledger-live/commit/70f6288597722a1e8fd6b5884d843f27be87e9d8) Thanks [@semeano](https://github.com/semeano)! - Zcash: merge transparent and shielded ops
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0
+  - @ledgerhq/live-network@2.4.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#15014](https://github.com/LedgerHQ/ledger-live/pull/15014) [`70f6288`](https://github.com/LedgerHQ/ledger-live/commit/70f6288597722a1e8fd6b5884d843f27be87e9d8) Thanks [@semeano](https://github.com/semeano)! - Zcash: merge transparent and shielded ops
+
+### Patch Changes
+
+- Updated dependencies [[`c8d7be6`](https://github.com/LedgerHQ/ledger-live/commit/c8d7be6964aa9d8defd77de0b77ba7d42f472025)]:
+  - @ledgerhq/logs@6.16.0-next.0
+  - @ledgerhq/live-network@2.4.1-next.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#14584](https://github.com/LedgerHQ/ledger-live/pull/14584) [`48afda0`](https://github.com/LedgerHQ/ledger-live/commit/48afda0b1d11cdb98ba19373155834d820b166b6) Thanks [@alevito](https://github.com/alevito)! - Exposes a new ZCash.syncShielded method for parsing shielded transactions in blocks, starting from a given start block
+
+- [#14825](https://github.com/LedgerHQ/ledger-live/pull/14825) [`4aa6be3`](https://github.com/LedgerHQ/ledger-live/commit/4aa6be378061d7ce9d445e5e31e12753aa856355) Thanks [@semeano](https://github.com/semeano)! - Move zcash types to zcash-shielded
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/logs@6.15.0
+  - @ledgerhq/live-network@2.4.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#14584](https://github.com/LedgerHQ/ledger-live/pull/14584) [`48afda0`](https://github.com/LedgerHQ/ledger-live/commit/48afda0b1d11cdb98ba19373155834d820b166b6) Thanks [@alevito](https://github.com/alevito)! - Exposes a new ZCash.syncShielded method for parsing shielded transactions in blocks, starting from a given start block
+
+- [#14825](https://github.com/LedgerHQ/ledger-live/pull/14825) [`4aa6be3`](https://github.com/LedgerHQ/ledger-live/commit/4aa6be378061d7ce9d445e5e31e12753aa856355) Thanks [@semeano](https://github.com/semeano)! - Move zcash types to zcash-shielded
+
+- [#14913](https://github.com/LedgerHQ/ledger-live/pull/14913) [`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update TypeScript to latest 5.8.x
+
+### Patch Changes
+
+- Updated dependencies [[`dceb492`](https://github.com/LedgerHQ/ledger-live/commit/dceb4921a811ffc3cba96ff532ffcb5d1205431f)]:
+  - @ledgerhq/logs@6.15.0-next.0
+  - @ledgerhq/live-network@2.4.0-next.0
+
+## 0.5.0
+
+### Minor Changes
+
+- [#14354](https://github.com/LedgerHQ/ledger-live/pull/14354) [`91450b8`](https://github.com/LedgerHQ/ledger-live/commit/91450b87ab99edf0ebb062802b2f2a21d0a5deb5) Thanks [@semeano](https://github.com/semeano)! - ZCash sync account update
+
+- [#13927](https://github.com/LedgerHQ/ledger-live/pull/13927) [`cab6ad5`](https://github.com/LedgerHQ/ledger-live/commit/cab6ad52c1eefa2d4af3ee002e5ffbf866d84234) Thanks [@alevito](https://github.com/alevito)! - Exposes a new method findShieldedTxsInBlock for finding shielded transactions in block
+
+- [#14182](https://github.com/LedgerHQ/ledger-live/pull/14182) [`b696228`](https://github.com/LedgerHQ/ledger-live/commit/b696228f631aa9371f8d607ce5081abb389af912) Thanks [@pvoliveira](https://github.com/pvoliveira)! - Add findBlockHeight implementation
+
+### Patch Changes
+
+- Updated dependencies [[`91450b8`](https://github.com/LedgerHQ/ledger-live/commit/91450b87ab99edf0ebb062802b2f2a21d0a5deb5), [`17149ee`](https://github.com/LedgerHQ/ledger-live/commit/17149ee26eeef8a600d650a6f4903c52320a0d8d), [`b7dec5c`](https://github.com/LedgerHQ/ledger-live/commit/b7dec5c2a41520114593701c82192ff8ae8ce06f), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8)]:
+  - @ledgerhq/coin-bitcoin@0.32.0
+  - @ledgerhq/live-network@2.3.0
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#14354](https://github.com/LedgerHQ/ledger-live/pull/14354) [`91450b8`](https://github.com/LedgerHQ/ledger-live/commit/91450b87ab99edf0ebb062802b2f2a21d0a5deb5) Thanks [@semeano](https://github.com/semeano)! - ZCash sync account update
+
+- [#13927](https://github.com/LedgerHQ/ledger-live/pull/13927) [`cab6ad5`](https://github.com/LedgerHQ/ledger-live/commit/cab6ad52c1eefa2d4af3ee002e5ffbf866d84234) Thanks [@alevito](https://github.com/alevito)! - Exposes a new method findShieldedTxsInBlock for finding shielded transactions in block
+
+- [#14182](https://github.com/LedgerHQ/ledger-live/pull/14182) [`b696228`](https://github.com/LedgerHQ/ledger-live/commit/b696228f631aa9371f8d607ce5081abb389af912) Thanks [@pvoliveira](https://github.com/pvoliveira)! - Add findBlockHeight implementation
+
+### Patch Changes
+
+- Updated dependencies [[`91450b8`](https://github.com/LedgerHQ/ledger-live/commit/91450b87ab99edf0ebb062802b2f2a21d0a5deb5), [`17149ee`](https://github.com/LedgerHQ/ledger-live/commit/17149ee26eeef8a600d650a6f4903c52320a0d8d), [`b7dec5c`](https://github.com/LedgerHQ/ledger-live/commit/b7dec5c2a41520114593701c82192ff8ae8ce06f), [`f51402e`](https://github.com/LedgerHQ/ledger-live/commit/f51402ebb8a4f05a933df3c3ef499756fbde5cc8)]:
+  - @ledgerhq/coin-bitcoin@0.32.0-next.0
+  - @ledgerhq/live-network@2.3.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

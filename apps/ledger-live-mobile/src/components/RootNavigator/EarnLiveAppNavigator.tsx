@@ -1,4 +1,7 @@
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import {
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { useRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -12,6 +15,7 @@ import { EarnScreen } from "~/screens/PTX/Earn";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
+import { EarnInfoBottomSheet } from "~/screens/PTX/Earn/EarnInfoBottomSheet";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
@@ -172,6 +176,7 @@ const Earn = (props: NavigationProps) => {
       />
       <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
+      <EarnInfoBottomSheet />
       <EarnMenuDrawer navigation={navigation} />
     </>
   );

@@ -15,6 +15,14 @@ jest.mock("~/renderer/screens/card/CardPlatformApp", () => ({
   BAANX_APP_ID: "cl-card",
 }));
 
+jest.mock("electron-store", () => {
+  return jest.fn().mockImplementation(() => ({
+    get: jest.fn(),
+    set: jest.fn(),
+    clear: jest.fn(),
+  }));
+});
+
 const mockUseRemoteLiveAppManifest = jest.fn().mockReturnValue(null);
 jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"),
@@ -23,7 +31,10 @@ jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
-function renderSideBarWithRoute(route: string, initialState = defaultInitialState) {
+function renderSideBarWithRoute(
+  route: string,
+  initialState: typeof defaultInitialState = defaultInitialState,
+) {
   return render(<SideBar />, {
     initialRoute: route,
     initialState,
@@ -46,7 +57,7 @@ describe("SideBar", () => {
     it("should render all leading sidebar items with correct labels", () => {
       renderSideBarWithRoute("/");
 
-      expect(screen.getByText("Portfolio")).toBeVisible();
+      expect(screen.getByText("Home")).toBeVisible();
       expect(screen.getByText("Accounts")).toBeVisible();
       expect(screen.getByText("Swap")).toBeVisible();
       expect(screen.getByText("Earn")).toBeVisible();
@@ -108,6 +119,19 @@ describe("SideBar", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/accounts");
     });
 
+    it("should navigate to cryptos when clicking Accounts item when asset section is enabled", async () => {
+      const { user } = renderSideBarWithRoute(
+        "/",
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
+
+      await user.click(screen.getByText("Accounts"));
+
+      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
+    });
+
     it("should navigate to swap when clicking Swap item", async () => {
       const { user } = renderSideBarWithRoute("/");
 
@@ -144,7 +168,7 @@ describe("SideBar", () => {
     it("should not navigate when clicking the already active item", async () => {
       const { user } = renderSideBarWithRoute("/");
 
-      await user.click(screen.getByText("Portfolio"));
+      await user.click(screen.getByText("Home"));
 
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -154,12 +178,24 @@ describe("SideBar", () => {
     it("should set home as active when on root path", () => {
       renderSideBarWithRoute("/");
 
-      const portfolioButton = screen.getByText("Portfolio").closest("button");
-      expect(portfolioButton).toHaveAttribute("aria-current", "page");
+      const homeButton = screen.getByText("Home").closest("button");
+      expect(homeButton).toHaveAttribute("aria-current", "page");
     });
 
     it("should set accounts as active when on accounts path", () => {
       renderSideBarWithRoute("/accounts");
+
+      const accountsButton = screen.getByText("Accounts").closest("button");
+      expect(accountsButton).toHaveAttribute("aria-current", "page");
+    });
+
+    it("should set accounts as active when on cryptos path and asset section is enabled", () => {
+      renderSideBarWithRoute(
+        "/cryptos",
+        withFeatureFlags({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+        }),
+      );
 
       const accountsButton = screen.getByText("Accounts").closest("button");
       expect(accountsButton).toHaveAttribute("aria-current", "page");
@@ -172,11 +208,11 @@ describe("SideBar", () => {
       expect(swapButton).toHaveAttribute("aria-current", "page");
     });
 
-    it("should set home as active when on asset sub-path", () => {
+    it("should not set home as active when on asset sub-path", () => {
       renderSideBarWithRoute("/asset/bitcoin");
 
-      const portfolioButton = screen.getByText("Portfolio").closest("button");
-      expect(portfolioButton).toHaveAttribute("aria-current", "page");
+      const homeButton = screen.getByText("Home").closest("button");
+      expect(homeButton).not.toHaveAttribute("aria-current", "page");
     });
 
     it("should set discover as active when on platform path", () => {
@@ -203,8 +239,8 @@ describe("SideBar", () => {
     it("should not set non-active items as current page", () => {
       renderSideBarWithRoute("/accounts");
 
-      const portfolioButton = screen.getByText("Portfolio").closest("button");
-      expect(portfolioButton).not.toHaveAttribute("aria-current");
+      const homeButton = screen.getByText("Home").closest("button");
+      expect(homeButton).not.toHaveAttribute("aria-current");
     });
   });
 

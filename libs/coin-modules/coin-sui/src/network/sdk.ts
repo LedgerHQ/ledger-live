@@ -1,15 +1,16 @@
 import type {
+  AssetInfo,
   Block,
   BlockInfo,
-  BlockTransaction,
   BlockOperation,
+  BlockTransaction,
   Operation as Op,
   Page,
   Stake,
   StakeState,
-  AssetInfo,
+  Cursor,
 } from "@ledgerhq/coin-framework/api/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
@@ -18,20 +19,20 @@ import { getInputObjects } from "@mysten/signers/ledger";
 import {
   BalanceChange,
   Checkpoint,
+  DelegatedStake,
   ExecuteTransactionBlockParams,
   PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
+  StakeObject,
   SuiCallArg,
   SuiClient,
   SuiHTTPTransport,
-  SuiTransactionBlockResponse,
   SuiTransaction,
   SuiTransactionBlockKind,
-  TransactionEffects,
+  SuiTransactionBlockResponse,
   SuiTransactionBlockResponseOptions,
-  DelegatedStake,
-  StakeObject,
   TransactionBlockData,
+  TransactionEffects,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
@@ -40,11 +41,11 @@ import uniqBy from "lodash/unionBy";
 import coinConfig from "../config";
 import { ONE_SUI } from "../constants";
 import type {
-  Transaction as TransactionType,
+  CoreTransaction,
+  CreateExtrinsicArg,
   Resolution,
   SuiValidator,
-  CreateExtrinsicArg,
-  CoreTransaction,
+  Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
@@ -58,6 +59,9 @@ const MULTI_GET_OBJECTS_LIMIT = 50;
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
+
+const STAKING_REQUEST_EVENT = "0x3::staking_pool::StakingRequestEvent";
+const UNSTAKING_REQUEST_EVENT = "0x3::validator::UnstakingRequestEvent";
 
 /** Default options for querying transactions. */
 const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
@@ -86,8 +90,8 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
 /**
  * Connects to Sui Api
  */
-export async function withApi<T>(execute: AsyncApiFunction<T>) {
-  const url = coinConfig.getCoinConfig().node.url;
+export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
   const transport = new SuiHTTPTransport({
     url,
     fetch: fetcher,
@@ -133,14 +137,15 @@ export function withBatchedMultiGetObjects(client: SuiClient): SuiClient {
 }
 
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string) =>
+  async (owner: string, currencyId?: string) =>
     withApi(
       async api =>
         await api.getAllBalances({
           owner,
         }),
+      currencyId,
     ),
-  (owner: string) => owner,
+  (owner: string, currencyId?: string) => `${currencyId ?? "sui"}:${owner}`,
   minutes(1),
 );
 
@@ -181,8 +186,11 @@ export type AccountBalance = {
 /**
  * Get account balance (native and tokens)
  */
-export const getAccountBalances = async (addr: string): Promise<AccountBalance[]> => {
-  const balances = await getAllBalancesCached(addr);
+export const getAccountBalances = async (
+  addr: string,
+  currencyId?: string,
+): Promise<AccountBalance[]> => {
+  const balances = await getAllBalancesCached(addr, currencyId);
   return balances.map(({ coinType, totalBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -301,7 +309,10 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
   return computationCost.plus(storageCost).minus(storageRebate);
 };
 
-export const getOperationExtra = (digest: string): Promise<Record<string, string>> =>
+export const getOperationExtra = (
+  digest: string,
+  currencyId?: string,
+): Promise<Record<string, string>> =>
   withApi(async api => {
     const response = await api.getTransactionBlock({
       digest,
@@ -324,7 +335,7 @@ export const getOperationExtra = (digest: string): Promise<Record<string, string
 
     if (isUnstaking(response.transaction?.data?.transaction)) {
       const { principal_amount: amount, validator_address: address } = response.events?.find(
-        e => e.type === "0x3::validator::UnstakingRequestEvent",
+        e => e.type === UNSTAKING_REQUEST_EVENT,
       )?.parsedJson as Record<string, string>;
       const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
 
@@ -332,7 +343,7 @@ export const getOperationExtra = (digest: string): Promise<Record<string, string
     }
 
     return {};
-  });
+  }, currencyId);
 
 /**
  * Extract date from transaction
@@ -341,10 +352,17 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
   return new Date(parseInt(transaction.timestampMs!));
 };
 
-export const getStakesRaw = (owner: string) =>
+/**
+ * Extract the fees payer from transaction (gasData.owner).
+ * For sponsored transactions this is the sponsor; otherwise it is the sender.
+ */
+export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string | undefined =>
+  transaction.transaction?.data?.gasData?.owner || undefined;
+
+export const getStakesRaw = (owner: string, currencyId?: string) =>
   withApi(async api => {
     return api.getStakes({ owner });
-  });
+  }, currencyId);
 
 /**
  * Extract operation coin type from transaction
@@ -431,6 +449,46 @@ export const alpacaGetOperationAmount = (
 };
 
 /**
+ * Extract staking/unstaking event details from transaction events.
+ * For DELEGATE: extracts validatorAddress, stakedObjectId from StakingRequestEvent
+ * For UNDELEGATE: extracts validatorAddress, rewardAmount, withdrawnAmount (from principal_amount) from UnstakingRequestEvent
+ */
+export function getStakingEventDetails(
+  transaction: SuiTransactionBlockResponse,
+): Record<string, unknown> {
+  const stakingDetails = transaction.events?.find(e => e.type === STAKING_REQUEST_EVENT)
+    ?.parsedJson as Record<string, string> | undefined;
+
+  if (stakingDetails) {
+    return Object.fromEntries(
+      Object.entries({
+        stakedObjectId: stakingDetails.staked_sui_id,
+        validatorAddress: stakingDetails.validator_address,
+      }).filter(([, v]) => v !== undefined),
+    );
+  }
+
+  const unstakingDetails = transaction.events?.find(e => e.type === UNSTAKING_REQUEST_EVENT)
+    ?.parsedJson as Record<string, string> | undefined;
+
+  if (unstakingDetails) {
+    return Object.fromEntries(
+      Object.entries({
+        rewardAmount: unstakingDetails.reward_amount
+          ? BigInt(unstakingDetails.reward_amount)
+          : undefined,
+        validatorAddress: unstakingDetails.validator_address,
+        withdrawnAmount: unstakingDetails.principal_amount
+          ? BigInt(unstakingDetails.principal_amount)
+          : undefined,
+      }).filter(([, v]) => v !== undefined),
+    );
+  }
+
+  return {};
+}
+
+/**
  * This function is only used by alpaca code path
  *
  * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
@@ -449,12 +507,15 @@ export function alpacaTransactionToOp(
   const blockHash =
     checkpointHash || (blockHeight > 0 ? `synthetic-${transaction.checkpoint}` : "");
 
+  const feesPayer = getFeesPayer(transaction);
+
   const op: Op = {
     id: hash,
     tx: {
       date: getOperationDate(transaction),
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
+      ...(feesPayer ? { feesPayer } : {}),
       block: {
         height: blockHeight,
         hash: blockHash,
@@ -470,10 +531,11 @@ export function alpacaTransactionToOp(
   };
 
   if (type === "DELEGATE" || type === "UNDELEGATE") {
-    // for staking, the amount is stored in the details
     op.details = {
       stakedAmount: op.value,
+      ...getStakingEventDetails(transaction),
     };
+    // for staking, the amount is stored in the details
     op.value = 0n;
   }
 
@@ -517,6 +579,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  */
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   const operationFee = getOperationFee(transaction);
+  const feesPayer = getFeesPayer(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
@@ -525,7 +588,7 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
         toBlockOperation(transaction, change, operationFee),
       ) || [],
     fees: BigInt(operationFee.toString()),
-    feesPayer: transaction.transaction?.data.sender || "",
+    ...(feesPayer ? { feesPayer } : {}),
   };
 }
 
@@ -610,13 +673,13 @@ export function toSuiAsset(coinType: string): AssetInfo {
   }
 }
 
-export const getLastBlock = () =>
+export const getLastBlock = (currencyId?: string) =>
   withApi(async api => {
     const checkpoint = await api.getLatestCheckpointSequenceNumber();
     const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
 
     return { digest, sequenceNumber, timestampMs };
-  });
+  }, currencyId);
 
 /**
  * Fetch operation list
@@ -626,6 +689,7 @@ export const getOperations = async (
   addr: string,
   cursor?: QueryTransactionBlocksParams["cursor"],
   order?: "asc" | "desc",
+  currencyId?: string,
 ): Promise<Operation[]> =>
   withApi(async api => {
     let rpcOrder: "ascending" | "descending";
@@ -657,7 +721,7 @@ export const getOperations = async (
     return rawTransactions.operations.map(transaction =>
       transactionToOperation(accountId, addr, transaction),
     );
-  });
+  }, currencyId);
 
 export const filterOperations = (
   sendOps: LoadOperationResponse,
@@ -704,50 +768,193 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
   return ret;
 }
 
-/**
- * Fetch operations for Alpaca
- * It fetches separately the "OUT" and "IN" operations and then merge them.
- * The cursor is composed of the last "OUT" and "IN" operation cursors.
- *
- * @returns the operations.
- *
- */
+function compareOperations(
+  order: "asc" | "desc",
+): (a: SuiTransactionBlockResponse, b: SuiTransactionBlockResponse) => number {
+  return (a, b) =>
+    compareTimestampAndDigest(
+      order,
+      Number(a.timestampMs ?? 0),
+      a.digest ?? "",
+      Number(b.timestampMs ?? 0),
+      b.digest ?? "",
+    );
+}
+
+function compareTimestampAndDigest(
+  order: "asc" | "desc",
+  timestampA: number,
+  digestA: string,
+  timestampB: number,
+  digestB: string,
+): number {
+  if (timestampA !== timestampB)
+    return order === "asc" ? timestampA - timestampB : timestampB - timestampA;
+  if (digestA === digestB) return 0;
+  if (order === "asc") return digestA < digestB ? -1 : 1;
+  return digestA > digestB ? -1 : 1;
+}
+
+function isStrictlyAfterCursor(
+  op: SuiTransactionBlockResponse,
+  cursor: ListOperationsCursor,
+  order: "asc" | "desc",
+): boolean {
+  if (op.digest === cursor.digest) return false;
+  return (
+    compareTimestampAndDigest(
+      order,
+      Number(op.timestampMs ?? 0),
+      op.digest ?? "",
+      cursor.timestamp,
+      cursor.digest,
+    ) > 0
+  );
+}
+
+function dropOperationsBeforeCursor(params: {
+  operations: SuiTransactionBlockResponse[];
+  order: "asc" | "desc";
+  cursor: ListOperationsCursor | null;
+}): SuiTransactionBlockResponse[] {
+  const { operations, order, cursor } = params;
+  if (!cursor) return operations;
+  return operations.filter(op => isStrictlyAfterCursor(op, cursor, order));
+}
+
+function dropOperationsAfterNextCursor(params: {
+  order: "asc" | "desc";
+  cursor: Cursor | undefined;
+  pageOps: SuiTransactionBlockResponse[];
+  outOps: PaginatedTransactionResponse;
+  inOps: PaginatedTransactionResponse;
+}): {
+  operations: SuiTransactionBlockResponse[];
+  nextCursor: Cursor | undefined;
+} {
+  const { order, cursor, pageOps, outOps, inOps } = params;
+
+  // if both sides on last page => no filtering or next cursor needed
+  if (!(outOps.hasNextPage || inOps.hasNextPage))
+    return { operations: pageOps, nextCursor: undefined };
+
+  // determine boundary operation for next cursor
+  const lastOps: SuiTransactionBlockResponse[] = [
+    getLastOperation(outOps.data),
+    getLastOperation(inOps.data),
+  ].filter(op => op !== undefined);
+  if (lastOps.length === 0) return { operations: pageOps, nextCursor: undefined };
+  const nextCursorBoundaryOp = lastOps.reduce((selected, current) =>
+    compareOperations(order)(current, selected) < 0 ? current : selected,
+  );
+
+  // drop all operations after next cursor
+  const opsBeforeNextCursor = pageOps.filter(
+    op => compareOperations(order)(op, nextCursorBoundaryOp) <= 0,
+  );
+
+  // serialize next cursor
+  const nextCursorCandidate = serializeListOperationsCursor({
+    digest: nextCursorBoundaryOp.digest,
+    timestamp: Number(nextCursorBoundaryOp.timestampMs ?? 0),
+  });
+
+  // defensive guard to avoid infinite loop in case the API returns unexpected results
+  const nextCursor = nextCursorCandidate === cursor ? undefined : nextCursorCandidate;
+
+  return { operations: opsBeforeNextCursor, nextCursor };
+}
+
+function getLastOperation(
+  operations: SuiTransactionBlockResponse[],
+): SuiTransactionBlockResponse | undefined {
+  return operations.length > 0 ? operations[operations.length - 1] : undefined;
+}
+
+type ListOperationsCursor = {
+  digest: string;
+  timestamp: number;
+};
+
+function serializeListOperationsCursor(cursor: ListOperationsCursor): string {
+  return `${cursor.timestamp}:${cursor.digest}`;
+}
+
+function parseListOperationsCursor(cursor: string | undefined): ListOperationsCursor | null {
+  if (!cursor) return null;
+
+  const sepIdx = cursor.indexOf(":");
+  if (sepIdx <= 0 || sepIdx === cursor.length - 1) {
+    throw new Error("Invalid list operations cursor format: missing timestamp or digest");
+  }
+
+  const ts = Number(cursor.slice(0, sepIdx));
+  const digest = cursor.slice(sepIdx + 1);
+  if (!Number.isFinite(ts) || !digest) {
+    throw new Error("Invalid list operations cursor format: invalid timestamp or digest");
+  }
+
+  return { digest, timestamp: ts };
+}
+
 export const getListOperations = async (
   addr: string,
   order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
   cursor?: string,
+  currencyId?: string,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
+    const parsedCursor = parseListOperationsCursor(cursor);
+    const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
 
     const [opsOut, opsIn] = await Promise.all([
       queryTransactions({
         api,
         addr,
         type: "OUT",
-        cursor: toSdkCursor(cursor),
+        cursor: rpcCursor,
         order: rpcOrder,
+        options: { showEvents: true },
       }),
       queryTransactions({
         api,
         addr,
         type: "IN",
-        cursor: toSdkCursor(cursor),
+        cursor: rpcCursor,
         order: rpcOrder,
+        options: { showEvents: true },
       }),
     ]);
 
-    const ops = dedupOperations(opsOut, opsIn, order);
+    // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+    // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
+    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest);
 
-    const sortedOps = [...ops.operations].sort(
-      (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
-    );
+    // restore order
+    const sortedOps = [...mergedOps].sort(compareOperations(order));
 
+    // drop operations before the current page start cursor
+    const afterCursorOps = dropOperationsBeforeCursor({
+      operations: sortedOps,
+      order,
+      cursor: parsedCursor,
+    });
+
+    // compute next cursor, and drop operations after it
+    const { operations: pageOps, nextCursor } = dropOperationsAfterNextCursor({
+      order,
+      cursor,
+      pageOps: afterCursorOps,
+      outOps: opsOut,
+      inOps: opsIn,
+    });
+
+    // fetch checkpoints for the operations
     const uniqueCheckpoints = new Set(
-      sortedOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
+      pageOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
     );
-
     const checkpointHashMap = new Map<string, string>();
     await Promise.all(
       Array.from(uniqueCheckpoints).map(async checkpoint => {
@@ -763,7 +970,8 @@ export const getListOperations = async (
       }),
     );
 
-    const operations = sortedOps.map(t =>
+    // convert operations to alpaca model
+    const operations = pageOps.map(t =>
       alpacaTransactionToOp(
         addr,
         t,
@@ -773,76 +981,17 @@ export const getListOperations = async (
 
     return {
       items: operations,
-      next: ops.cursor ?? "",
+      next: nextCursor,
     };
-  });
-
-const oldestOpTime = (ops: PaginatedTransactionResponse) =>
-  Number(ops.data[ops.data.length - 1]?.timestampMs ?? 0);
-const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0]?.timestampMs ?? 0);
-
-/**
- * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
- * So IN operations and OUT operations are not disjoint
- * This function will takes the logical lowest operation of the two lists (according so sort order)
- * and remove any higher operation of the other list.
- *
- * Most of the logic have been duplicated from filterOperations (used by bridge).
- *
- * Warning:
- * This function removes some results, so it's not very efficient
- * What we want is the FromOrToAddress filter from SUI RPC, but it's not supported yet
- *
- * Note: I think it's possible to detect duplicated IN oprations:
- * - if the address is the sender of the tx
- * - and there is some transfer to other address
- * - and the address is the single only owner of mutated or deleted object
- * when all that conditions are met, the transaction will be fetched as an OUT operation,
- * and it can be filtered out from the IN operations results.
- *
- * @returns a chronologically sorted list of operations without duplicates and
- *          a cursor that guarantee to not return any operation that was already returned in previous calls
- *
- */
-export const dedupOperations = (
-  outOps: PaginatedTransactionResponse,
-  inOps: PaginatedTransactionResponse,
-  order: "asc" | "desc",
-): LoadOperationResponse => {
-  // in asc order, the operations are sorted by timestamp in ascending order
-  // in desc order, the operations are sorted by timestamp in descending order
-
-  let lastOpTime: number = 0;
-  let nextCursor: string | null | undefined = undefined;
-  const findLastOpTime = order === "asc" ? newestOpTime : oldestOpTime;
-
-  // When we've reached the limit for either sent or received operations,
-  // we filter out extra operations to maintain correct chronological order
-  if (outOps.hasNextPage || inOps.hasNextPage) {
-    const lastOut = findLastOpTime(outOps);
-    const lastIn = findLastOpTime(inOps);
-    if (lastOut >= lastIn) {
-      nextCursor = outOps.nextCursor;
-      lastOpTime = lastOut;
-    } else {
-      nextCursor = inOps.nextCursor;
-      lastOpTime = lastIn;
-    }
-  }
-  const operations = [...outOps.data, ...inOps.data]
-    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= lastOpTime);
-
-  return { operations: uniqBy(operations, tx => tx.digest), cursor: nextCursor };
-};
+  }, currencyId);
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata.
  *
  * @param id the checkpoint digest or sequence number (as a string)
  */
-export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
-  withApi(async api => api.getCheckpoint({ id }));
+export const getCheckpoint = async (id: string, currencyId?: string): Promise<Checkpoint> =>
+  withApi(async api => api.getCheckpoint({ id }), currencyId);
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata only.
@@ -850,11 +999,11 @@ export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
  * @param id the checkpoint digest or sequence number (as a string)
  * @see {@link getBlock}
  */
-export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
+export const getBlockInfo = async (id: string, currencyId?: string): Promise<BlockInfo> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
-  });
+  }, currencyId);
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata with all transactions.
@@ -862,7 +1011,7 @@ export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
  * @param id the checkpoint digest or sequence number (as a string)
  * @see {@link getBlockInfo}
  */
-export const getBlock = async (id: string): Promise<Block> =>
+export const getBlock = async (id: string, currencyId?: string): Promise<Block> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
@@ -870,7 +1019,7 @@ export const getBlock = async (id: string): Promise<Block> =>
       info: toBlockInfo(checkpoint),
       transactions: rawTxs.map(toBlockTransaction),
     };
-  });
+  }, currencyId);
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
@@ -941,8 +1090,13 @@ export const createTransaction = async (
   transaction: CreateExtrinsicArg,
   withObjects: boolean = false,
   resolution?: Resolution,
+  currencyId?: string,
 ): Promise<CoreTransaction> => {
-  const { serialized, bcsObjects } = await createTransactionFromMode(address, transaction);
+  const { serialized, bcsObjects } = await createTransactionFromMode(
+    address,
+    transaction,
+    currencyId,
+  );
 
   return {
     unsigned: serialized,
@@ -951,19 +1105,27 @@ export const createTransaction = async (
   };
 };
 
-const createTransactionFromMode = (address: string, transaction: CreateExtrinsicArg) => {
+const createTransactionFromMode = (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) => {
   const { mode } = transaction;
   switch (mode) {
     case "delegate":
-      return createTransactionForDelegate(address, transaction);
+      return createTransactionForDelegate(address, transaction, currencyId);
     case "undelegate":
-      return createTransactionForUndelegate(address, transaction);
+      return createTransactionForUndelegate(address, transaction, currencyId);
     default:
-      return createTransactionForOthers(address, transaction);
+      return createTransactionForOthers(address, transaction, currencyId);
   }
 };
 
-const createTransactionForDelegate = async (address: string, transaction: CreateExtrinsicArg) =>
+const createTransactionForDelegate = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) =>
   withApi(async api => {
     const tx = new Transaction();
 
@@ -987,9 +1149,13 @@ const createTransactionForDelegate = async (address: string, transaction: Create
     const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
-  });
+  }, currencyId);
 
-const createTransactionForUndelegate = async (address: string, transaction: CreateExtrinsicArg) =>
+const createTransactionForUndelegate = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) =>
   withApi(async api => {
     const tx = new Transaction();
 
@@ -1018,9 +1184,13 @@ const createTransactionForUndelegate = async (address: string, transaction: Crea
     const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
-  });
+  }, currencyId);
 
-const createTransactionForOthers = async (address: string, transaction: CreateExtrinsicArg) =>
+const createTransactionForOthers = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) =>
   withApi(async api => {
     const tx = new Transaction();
 
@@ -1052,14 +1222,24 @@ const createTransactionForOthers = async (address: string, transaction: CreateEx
     const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
-  });
+  }, currencyId);
 
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees
  */
-export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
+export const paymentInfo = async (
+  sender: string,
+  fakeTransaction: TransactionType,
+  currencyId?: string,
+) =>
   withApi(async api => {
-    const { unsigned: txb } = await createTransaction(sender, fakeTransaction);
+    const { unsigned: txb } = await createTransaction(
+      sender,
+      fakeTransaction,
+      false,
+      undefined,
+      currencyId,
+    );
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);
 
@@ -1068,12 +1248,15 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
       totalGasUsed: fees,
       fees,
     };
-  });
+  }, currencyId);
 
-export const executeTransactionBlock = async (params: ExecuteTransactionBlockParams) =>
+export const executeTransactionBlock = async (
+  params: ExecuteTransactionBlockParams,
+  currencyId?: string,
+) =>
   withApi(async api => {
     return api.executeTransactionBlock(params);
-  });
+  }, currencyId);
 
 type LoadOperationResponse = {
   operations: SuiTransactionBlockResponse[];
@@ -1136,10 +1319,11 @@ export const queryTransactions = async (params: {
   type: OperationType;
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
+  options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
 }): Promise<PaginatedTransactionResponse> => {
-  const { api, addr, type, cursor, order } = params;
-  // what we really want is te  FromOrToAddress filter, but it's not supported yet
-  // it would relieve a lot of complexity (see dedupOperations)
+  const { api, addr, type, cursor, order, options = {} } = params;
+  // what we really want is a FromOrToAddress filter, but it's not supported yet
+  // it would relieve a lot of complexity in the merged/sorted pagination and cursor boundary filtering logic above
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 
@@ -1147,7 +1331,7 @@ export const queryTransactions = async (params: {
     filter,
     cursor,
     order,
-    options: TRANSACTIONS_QUERY_OPTIONS,
+    options: { ...TRANSACTIONS_QUERY_OPTIONS, ...options },
     limit: TRANSACTIONS_LIMIT_PER_QUERY,
   });
 };
@@ -1161,15 +1345,16 @@ export const queryTransactions = async (params: {
 export const queryTransactionsByDigest = async (params: {
   api: SuiClient;
   digests: string[];
+  options?: Pick<SuiTransactionBlockResponseOptions, "showEvents">;
 }): Promise<SuiTransactionBlockResponse[]> => {
-  const { api, digests } = params;
+  const { api, digests, options = {} } = params;
   const chunkSize = TRANSACTIONS_LIMIT_PER_QUERY;
   const responses: SuiTransactionBlockResponse[] = [];
 
   for (let i = 0; i < digests.length; i += chunkSize) {
     const chunk = await api.multiGetTransactionBlocks({
       digests: digests.slice(i, i + chunkSize),
-      options: TRANSACTIONS_QUERY_OPTIONS,
+      options: { ...TRANSACTIONS_QUERY_OPTIONS, ...options },
     });
     responses.push(...chunk);
   }
@@ -1177,11 +1362,13 @@ export const queryTransactionsByDigest = async (params: {
   return responses;
 };
 
-export const getStakes = (address: string): Promise<Stake[]> =>
-  withApi(async api =>
-    api
-      .getStakes({ owner: address })
-      .then(delegations => delegations.flatMap(delegation => toStakes(address, delegation))),
+export const getStakes = (address: string, currencyId?: string): Promise<Stake[]> =>
+  withApi(
+    async api =>
+      api
+        .getStakes({ owner: address })
+        .then(delegations => delegations.flatMap(delegation => toStakes(address, delegation))),
+    currencyId,
   );
 
 export const toStakes = (address: string, delegation: DelegatedStake): Stake[] =>
@@ -1225,7 +1412,7 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
   }
 };
 
-export const getValidators = (): Promise<SuiValidator[]> =>
+export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
   withApi(async api => {
     const [{ activeValidators }, { apys }] = await Promise.all([
       api.getLatestSuiSystemState(),
@@ -1240,4 +1427,4 @@ export const getValidators = (): Promise<SuiValidator[]> =>
     );
 
     return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
-  });
+  }, currencyId);

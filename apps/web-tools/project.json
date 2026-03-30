@@ -1,4 +1,5 @@
 {
+  "name": "@ledgerhq/web-tools",
   "targets": {
     "build": {
       "outputs": ["{projectRoot}/dist/**"],

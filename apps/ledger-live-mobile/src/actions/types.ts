@@ -126,9 +126,6 @@ export type BlePayload =
 // === COUNTERVALUES ACTIONS ===
 
 export enum CountervaluesActionTypes {
-  COUNTERVALUES_MARKETCAP_SET_IDS = "COUNTERVALUES_MARKETCAP_SET_IDS",
-  COUNTERVALUES_MARKETCAP_SET_LOADING = "COUNTERVALUES_MARKETCAP_SET_LOADING",
-  COUNTERVALUES_MARKETCAP_SET_ERROR = "COUNTERVALUES_MARKETCAP_SET_ERROR",
   COUNTERVALUES_POLLING_SET_IS_POLLING = "COUNTERVALUES_POLLING_SET_IS_POLLING",
   COUNTERVALUES_POLLING_SET_TRIGGER_LOAD = "COUNTERVALUES_POLLING_SET_TRIGGER_LOAD",
   COUNTERVALUES_STATE_SET = "COUNTERVALUES_STATE_SET",
@@ -137,10 +134,6 @@ export enum CountervaluesActionTypes {
   COUNTERVALUES_WIPE = "COUNTERVALUES_WIPE_STATE",
 }
 
-export type CountervaluesMarketcapFetchIdsPayload = void;
-export type CountervaluesMarketcapSetIdsPayload = string[];
-export type CountervaluesMarketcapSetLoadingPayload = boolean;
-export type CountervaluesMarketcapSetErrorPayload = string | null;
 export type CountervaluesPollingSetIsPollingPayload = boolean;
 export type CountervaluesPollingSetTriggerLoadPayload = boolean;
 export type CountervaluesStateSetPayload = CounterValuesState;
@@ -148,10 +141,6 @@ export type CountervaluesStateSetPendingPayload = boolean;
 export type CountervaluesStateSetErrorPayload = Error;
 
 export type CountervaluesPayload =
-  | CountervaluesMarketcapFetchIdsPayload
-  | CountervaluesMarketcapSetIdsPayload
-  | CountervaluesMarketcapSetLoadingPayload
-  | CountervaluesMarketcapSetErrorPayload
   | CountervaluesPollingSetIsPollingPayload
   | CountervaluesPollingSetTriggerLoadPayload
   | CountervaluesStateSetPayload
@@ -316,6 +305,7 @@ export enum SettingsActionTypes {
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
+  DEPRECATION_DO_NOT_REMIND = "DEPRECATION_DO_NOT_REMIND",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -492,11 +482,14 @@ export enum SwapActionTypes {
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
+  EARN_INFO_BOTTOM_SHEET = "EARN_INFO_BOTTOM_SHEET",
   EARN_MENU_MODAL = "EARN_MENU_MODAL",
   EARN_PROTOCOL_INFO_MODAL = "EARN_PROTOCOL_INFO_MODAL",
 }
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
+
+export type EarnSetInfoBottomSheetPayload = EarnState["infoBottomSheet"];
 
 export type EarnSetMenuModalPayload = EarnState["menuModal"] | undefined;
 
@@ -504,6 +497,7 @@ export type EarnSetProtocolInfoModalPayload = EarnState["protocolInfoModal"] | u
 
 export type EarnPayload =
   | EarnSetInfoModalPayload
+  | EarnSetInfoBottomSheetPayload
   | EarnSetMenuModalPayload
   | EarnSetProtocolInfoModalPayload;
 

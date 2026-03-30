@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
+import { AssetConfigurationOptions } from "../../utils/type";
 
 const createMarketTrendItem = ({
   percent,
@@ -12,7 +13,7 @@ const createMarketTrendItem = ({
 
 export const useLeftMarketTrendModule = (
   currencies: CryptoOrTokenCurrency[],
-  MarketPercentIndicator: React.ComponentType<{ percent: number }>,
+  { MarketPercentIndicator }: Pick<AssetConfigurationOptions, "MarketPercentIndicator">,
 ) => {
   const marketByCurrencies = useMarketByCurrencies(currencies);
 

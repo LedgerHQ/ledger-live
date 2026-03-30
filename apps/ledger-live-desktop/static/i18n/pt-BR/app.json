@@ -209,7 +209,11 @@
       "BURN" : "Queimado",
       "ASSOCIATE_TOKEN" : "Associar token",
       "CONTRACT_CALL" : "Chamada do contrato",
-      "UPDATE_ACCOUNT" : "Conta atualizada"
+      "UPDATE_ACCOUNT" : "Conta atualizada",
+      "SHIELDED_TX_SAPLING_IN" : "Recebido",
+      "SHIELDED_TX_SAPLING_OUT" : "Enviado",
+      "SHIELDED_TX_ORCHARD_IN" : "Recebido",
+      "SHIELDED_TX_ORCHARD_OUT" : "Enviado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -233,7 +237,7 @@
       },
       "cancel" : {
         "title" : "Cancelar",
-        "description" : "Enviando 0 {{ticker}} ao seu próprio endereço."
+        "description" : "Enviando 0 {{ticker}} para seu próprio endereço. O cancelamento não é garantido. Se a rede processar sua transação original antes dessa solicitação de cancelamento, os fundos ainda serão enviados ao destinatário."
       },
       "steps" : {
         "method" : {
@@ -268,6 +272,8 @@
     "minute" : "Minuto",
     "minute_other" : "Minutos",
     "minute_short" : "min",
+    "second" : "Segundo",
+    "second_other" : "Segundos",
     "second_short" : "sec",
     "hour" : "Hora",
     "hour_other" : "Horas",
@@ -302,6 +308,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "perps" : "Perpétuos",
+    "home" : "Início",
     "refer" : "Indicar",
     "lend" : "Emprestar",
     "catalog" : "Explorar",
@@ -1492,6 +1499,25 @@
       }
     }
   },
+  "deviceDeprecation" : {
+    "warning" : {
+      "title" : "A {{device}}™ não oferece assinatura transparente para esta transação",
+      "subtitle" : "Use qualquer outro dispositivo Ledger para verificar os detalhes desta transação antes de assinar. Sem a assinatura transparente, você corre o risco de perder todos os seus ativos.",
+      "continue" : "Prossiga por sua própria conta e risco"
+    },
+    "info" : {
+      "title" : "A partir de {{date}}, o suporte a {{coinName}} na {{device}}™ via Ledger Live™ será encerrado",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os provedores de serviços no Ledger Live e o melhor suporte ao cliente",
+      "reminder" : "Não me lembre de novo"
+    },
+    "error" : {
+      "title" : "A {{device}}™ não é compatível com este recurso",
+      "subtitle" : "Faça a atualização para um dispositivo Ledger mais recente hoje mesmo para garantir o acesso a todos os recursos recentes do Ledger Live."
+    },
+    "update" : "Descubra o programa de upgrade",
+    "learnMore" : "Saiba mais",
+    "continue" : "Continuar"
+  },
   "currentAddress" : {
     "title" : "Endereço Atual",
     "for" : "Endereço para <1><0>{{name}}</0></1>",
@@ -1745,7 +1771,8 @@
       "previousStakingNodeId" : "ID do node anterior",
       "gasConsumed" : "Gás consumido",
       "gasUsed" : "Gás usado",
-      "gasLimit" : "Limite de gás"
+      "gasLimit" : "Limite de gás",
+      "functionId" : "ID da Função"
     }
   },
   "operationList" : {
@@ -1933,6 +1960,13 @@
       "updateBtn" : "Atualizar Firmware",
       "installUpdate" : "Instalar atualização",
       "banner" : {
+        "wallet40" : {
+          "warning" : {
+            "default" : "Atualização do OS disponível",
+            "manager" : "Atualização do Ledger OS disponível"
+          },
+          "cta" : "Atualizar"
+        },
         "warning" : "Atualização do OS disponível",
         "version" : "Versão {{latestFirmware}}",
         "cta" : "Ir para Minha Ledger",
@@ -2138,6 +2172,24 @@
         "description" : "Sua operação foi enviada para a rede para confirmação. Aguarde até que sua transação seja confirmada e que o provedor a processe."
       }
     }
+  },
+  "buyDeviceModal" : {
+    "title" : "Conectar um dispositivo Ledger",
+    "subtitle" : "Para aproveitar todo o potencial da sua Ledger Wallet, conecte sua Ledger.",
+    "0" : {
+      "title" : "Propriedade total",
+      "desc" : "Suas chaves privadas permanecem sempre no dispositivo."
+    },
+    "1" : {
+      "title" : "Faça suas negociações com segurança",
+      "desc" : "Confirme suas transações em uma tela segura."
+    },
+    "2" : {
+      "title" : "Tenha acesso à carteira mais poderosa",
+      "desc" : "Gerencie todos os seus ativos em um único lugar."
+    },
+    "connectCTA" : "Conectar",
+    "buyCTA" : "Compre seu dispositivo Ledger"
   },
   "fund" : {
     "title" : "Financiar",
@@ -2356,6 +2408,24 @@
     "addressNotFound" : "Endereço não encontrado",
     "alreadyUsed" : "Já usado · {{date}}",
     "recentSendWillAppear" : "O seu envio recente aparecerá aqui",
+    "securityInfo" : {
+      "title" : "Como enviar com segurança?",
+      "items" : {
+        "compatibility" : "Certifique-se de que o endereço do destinatário seja compatível com a rede selecionada",
+        "review" : "Revise os detalhes da sua transação na tela segura do seu Ledger.",
+        "smallAmount" : "Em caso de dúvida, tente enviar uma pequena quantia primeiro"
+      }
+    },
+    "recentHistory" : {
+      "banner" : {
+        "description" : "Este endereço não está no seu histórico recente. Em caso de dúvida, envie uma pequena quantia primeiro."
+      },
+      "dialog" : {
+        "title" : "Histórico de envios recentes",
+        "description" : "Seu histórico recente permite que você veja imediatamente se você já enviou para um endereço específico ou não. Isso pode evitar possíveis erros de copiar e colar ou invasões. Seu histórico contém os últimos 12 endereços para os quais você enviou cripto usando a Ledger Wallet.",
+        "cta" : "Entendi"
+      }
+    },
     "relativeDate" : {
       "justNow" : "Agora mesmo",
       "minutesAgo_one" : "1 minuto atrás",
@@ -2419,11 +2489,38 @@
     "gasOptionsSync" : {
       "warningTitle" : "Não foi possível atualizar as taxas de rede",
       "warningDescription" : "As configurações de taxa podem estar desatualizadas."
+    },
+    "customFees" : {
+      "title" : "Taxas personalizadas",
+      "confirm" : "Confirmar",
+      "maxFee" : "Taxa máxima ({{unit}})",
+      "maxPriorityFee" : "Taxa de Prioridade Máxima ({{unit}})",
+      "feePerByte" : "Quantia da taxa ({{unit}})",
+      "suggested" : "Sugerido",
+      "nextBlock" : "Próximo bloco",
+      "networkFeesInFiat" : "Taxas de rede em {{currency}}",
+      "invalidValue" : "Insira um número válido.",
+      "belowMinimum" : "O mínimo é {{min}}",
+      "maxFeeBelowPriorityFee" : "A taxa máxima deve ser maior ou igual à taxa de prioridade máxima.",
+      "feeAsset" : "Ativo da taxa",
+      "feesAmount" : "Quantia da taxa ({{unit}})",
+      "payFeesIn" : "Pagar taxas em"
+    },
+    "coinControl" : {
+      "title" : "Controle de moedas",
+      "strategy" : "Estratégia",
+      "learnMore" : "Saiba mais",
+      "coinToSend" : "Moeda a enviar",
+      "changeToReturn" : "Alterar para retorno",
+      "enterAmount" : "Insira a quantidade",
+      "amountToSendInCurrency" : "Quantia a enviar em ({{ticker}})",
+      "amountInputLabel" : "Quantia a enviar"
     }
   },
   "releaseNotes" : {
     "title" : "Notas de lançamento",
-    "version" : "Ledger Wallet {{versionNb}}"
+    "version" : "Ledger Wallet {{versionNb}}",
+    "gotIt" : "Entendi"
   },
   "troubleshootNetwork" : {
     "title" : "Solucionar problemas de rede",
@@ -4992,7 +5089,7 @@
     }
   },
   "theme" : {
-    "system" : "Selecione o tema do sistema",
+    "system" : "Sistema",
     "light" : "Claro",
     "dusk" : "Sombrio",
     "dark" : "Escuro"
@@ -5950,6 +6047,68 @@
         }
       }
     },
+    "concordium" : {
+      "addAccount" : {
+        "title" : "Adicionar conta Concordium",
+        "acknowledge" : {
+          "title" : "Reconhecimento",
+          "description" : "O Concordium exige uma verificação externa de identidade. Leia estas importantes advertências de segurança:",
+          "list" : {
+            "1" : "<0>Sem verificação de endereço</0> – a sua Ledger não consegue verificar os endereços de recebimento Concordium. Verifique manualmente os endereços antes de receber fundos.",
+            "2" : "<0>O aplicativo Concordium ID usa uma seed separada</0> – Você criará NOVAS 24 palavras no aplicativo Concordium. NUNCA use sua seed da Ledger.",
+            "3" : "<0>Você será redirecionado para fora da Ledger Wallet</0> – A verificação de identidade é feita no aplicativo externo Concordium Wallet. Isso é exigido pelo protocolo blockchain da Concordium.",
+            "4" : "<0>A assinatura da transação permanece segura</0> – somente o seu dispositivo Ledger pode assinar transações e criar contas."
+          },
+          "allow" : "Concordo"
+        },
+        "identity" : {
+          "title" : "Conectar",
+          "account" : "Conta",
+          "newAccount" : "Nova Conta",
+          "init" : "Clicar em Concordo significa que você está pronto para continuar com a verificação de identidade KYC necessária para verificar sua conta.",
+          "scanQRCode" : "Escaneie o QR code com seu dispositivo móvel para conectar seu aplicativo Concordium ID. <0>Saiba mais</0>",
+          "ledgerSeedWarning" : "<0>NÃO</0> use sua Ledger Seed para o aplicativo Concordium ID.",
+          "downloadApp" : "Baixe o aplicativo Concordium ID",
+          "connecting" : "Conectando ao aplicativo Concordium ID…",
+          "onboarded" : "Contas integradas",
+          "success" : "Conectado com sucesso ao aplicativo Concordium ID.",
+          "error" : "Falha ao integrar a nova conta. Tente novamente.",
+          "status" : {
+            "prepare" : "Preparando a integração da conta…",
+            "submit" : "Integrando conta…",
+            "default" : "Processando…"
+          }
+        },
+        "create" : {
+          "title" : "Criar conta",
+          "init" : {
+            "title" : "Conectado com sucesso ao aplicativo Concordium ID"
+          },
+          "prepare" : {
+            "title" : "Para criar uma conta, insira o código abaixo no aplicativo Concordium ID",
+            "resendButton" : "Reenviar confirmação",
+            "resendDescription" : "A confirmação pode ser reenviada em <0>{{count}}</0> {{unit}}"
+          },
+          "success" : "Sua conta Concordium foi criada com sucesso.",
+          "error" : "Falha ao criar conta. Tente novamente.",
+          "error429" : "Muitas solicitações. Aguarde e tente novamente mais tarde.",
+          "button" : "Criar",
+          "processing" : "Processando…",
+          "status" : {
+            "prepare" : "Preparando a criação da conta…",
+            "submit" : "Criando conta…",
+            "default" : "Processando…"
+          }
+        },
+        "finish" : {
+          "title" : "Confirmação"
+        }
+      },
+      "receive" : {
+        "messageIfSkipped" : "Não é possível verificar seu endereço Concordium no momento. Certifique-se de verificar novamente colando seu endereço no explorador Concordium.",
+        "verifyLink" : "Verificar"
+      }
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6535,6 +6694,10 @@
       "title" : "Não pode ser acelerada nem cancelada",
       "description" : "Essa transação já foi validada"
     },
+    "InvalidTransactionError" : {
+      "title" : "Transação inválida",
+      "description" : "A transação não corresponde mais ao estado da blockchain. Inicie o fluxo novamente."
+    },
     "SequenceNumberError" : {
       "title" : "Erro do número de sequência",
       "description" : "Feche a janela e tente novamente mais tarde"
@@ -6846,6 +7009,13 @@
     "CardanoMemoExceededSizeError" : {
       "title" : "Tamanho do memo inválido, o máximo permitido é 64 caracteres",
       "description" : "O campo de memo da Cardano tem um tamanho máximo limitado. Reduza o tamanho do memo"
+    },
+    "ConcordiumMemoTooLong" : {
+      "title" : "O memo excede o comprimento máximo",
+      "description" : "Seu memo tem {{memoLength}} bytes, mas o máximo permitido é de {{maxLength}} bytes. Reduza o tamanho do memo."
+    },
+    "ConcordiumInsufficientFunds" : {
+      "title" : "Fundos Insuficientes"
     },
     "StacksMemoTooLong" : {
       "title" : "O memo é muito longo"
@@ -7435,7 +7605,8 @@
     },
     "selectAccount" : {
       "title" : "escolher conta",
-      "addAccount" : "Adicionar conta nova ou existente"
+      "addAccount" : "Adicionar conta nova ou existente",
+      "perpetualsBanner" : "Atualmente, só é compatível com USDC na cadeia Arbitrum."
     }
   },
   "customImage" : {
@@ -7596,7 +7767,16 @@
     }
   },
   "analytics" : {
-    "title" : "Métricas"
+    "title" : "Métricas",
+    "allocation" : {
+      "title" : "Alocação de ativos",
+      "columns" : {
+        "name" : "Nome",
+        "balance" : "Saldo",
+        "value" : "Valor",
+        "allocation" : "Alocação"
+      }
+    }
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -7898,6 +8078,8 @@
     "title" : "Explorar o mercado",
     "genericError" : "Falha de conexão",
     "cta" : "Ver todos",
+    "scrollLeft" : "Deslize para a esquerda",
+    "scrollRight" : "Deslize para a direita",
     "fearAndGreed" : {
       "title" : "Sentimento"
     }
@@ -7924,6 +8106,23 @@
     "connect" : "Conectar",
     "buyALedger" : "Comprar uma Ledger"
   },
+  "assets" : {
+    "cryptos" : "Criptomoedas",
+    "stablecoins" : "Stablecoins",
+    "cryptoAccounts" : "Contas cripto",
+    "accountsCount_one" : "{{count}} conta",
+    "accountsCount_other" : "{{count}} contas",
+    "noCryptoAccounts" : "Ainda nenhuma conta",
+    "add" : "Adicionar",
+    "columns" : {
+      "name" : "Nome",
+      "price" : "Preço",
+      "balance" : "Saldo",
+      "value" : "Valor",
+      "trend" : "Variação 1D",
+      "trendTooltip" : "Alteração no saldo em 24 horas"
+    }
+  },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens Não Fungíveis)",
     "entry" : {
@@ -7933,15 +8132,10 @@
   },
   "topBar" : {
     "activityIndicator" : {
-      "errorToolTip" : "Houve um problema temporário na rede. Seus ativos estão seguros. Lista de contas afetadas: {{accounts}}. Toque para tentar novamente",
-      "emptyErrorToolTip" : "Houve um problema temporário na rede. Seus ativos estão seguros. Toque para tentar novamente",
+      "errorToolTip" : "Houve um problema temporário na rede. Seus ativos estão seguros.\n Lista de contas afetadas: {{accounts}}. Toque para tentar novamente",
+      "emptyErrorToolTip" : "Houve um problema temporário na rede. Seus ativos estão seguros.\n Toque para tentar novamente",
       "upToDate" : "Você está em dia",
-      "minutesAgo_one" : "Última sincronização: {{count}} minuto atrás. Toque para atualizar",
-      "minutesAgo_other" : "Última sincronização: {{count}} minutos atrás. Toque para atualizar",
-      "hoursAgo_one" : "Última sincronização: {{count}} hora atrás. Toque para atualizar",
-      "hoursAgo_other" : "Última sincronização: {{count}} horas atrás. Toque para atualizar",
-      "daysAgo_one" : "Última sincronização: {{count}} dia atrás. Toque para atualizar",
-      "daysAgo_other" : "Última sincronização: {{count}} dias atrás. Toque para atualizar"
+      "lastSync" : "Última sincronização: {{timeAgo}} Toque para atualizar"
     },
     "notificationIndicator" : {
       "tooltip" : "Notificações"
@@ -7976,8 +8170,14 @@
     "shielded" : {
       "state" : {
         "showBalance" : "Mostrar saldo",
-        "pausedAt" : "Pausado em ",
+        "startSync" : "Iniciar sincronização",
+        "stopSync" : "Parar sincronização",
+        "lastProcessedBlock" : "Bloco mais recente processado: {{block}}. {{missing}} blocos ainda não processados.",
         "lastSync" : "Última sincronização: {{date}}"
+      },
+      "datepicker" : {
+        "label" : "Altura de nascimento",
+        "tooltip" : "A altura de nascimento é o ponto na blockchain a partir do qual sua carteira começa a escanear seus fundos."
       },
       "flows" : {
         "export" : {
@@ -8016,12 +8216,13 @@
             }
           }
         }
-      },
-      "startSync" : "Iniciar sincronização",
-      "datepicker" : {
-        "label" : "Altura de nascimento",
-        "tooltip" : "A altura de nascimento é o ponto na blockchain a partir do qual sua carteira começa a escanear seus fundos."
       }
+    },
+    "operationDetails" : {
+      "txType" : "Tipo de transação",
+      "transparentTx" : "Transparente",
+      "shieldedSaplingTx" : "🛡 Privado (Sapling)",
+      "shieldedOrchardTx" : "🛡 Privado (Orchard)"
     }
   },
   "aleo" : {
@@ -8054,6 +8255,24 @@
         }
       }
     },
+    "selfTransfer" : {
+      "headerAction" : "Auto transferência",
+      "headerActionTooltip" : "Você não tem fundos para realizar uma transferência para si mesmo",
+      "modal" : {
+        "title" : "Auto transferência",
+        "stepRecipient" : {
+          "selectLabel" : "Transferência de"
+        }
+      }
+    },
+    "shared" : {
+      "balanceSelector" : {
+        "private" : "Saldo privado",
+        "public" : "Saldo público",
+        "lastUpdate" : "Última atualização",
+        "switchBalance" : "Alterar a origem do saldo"
+      }
+    },
     "account" : {
       "availableBalance" : "Saldo disponível",
       "availableBalanceTooltip" : "Saldo que pode ser transferido",
@@ -8061,6 +8280,38 @@
       "transparentBalanceTooltip" : "Saldo visível ao público",
       "privateBalance" : "Saldo privado",
       "privateBalanceTooltip" : "Saldo oculto ao público"
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Pública",
+        "private" : "Privada"
+      }
+    }
+  },
+  "updater" : {
+    "newUpdateAvailable" : "Nova atualização disponível",
+    "downloadProgress" : "{{progress}}%",
+    "errorTryAgain" : "Erro durante a atualização. Tentar novamente",
+    "installAndRelaunch" : "Nova atualização. Instalar e reiniciar"
+  },
+  "walletV4Tour" : {
+    "slides" : {
+      "portfolio" : {
+        "title" : "Uma visão mais clara do seu portfólio",
+        "description" : "Veja seu saldo total na hora e toque em “Hoje” para explorar mais a fundo."
+      },
+      "navigation" : {
+        "title" : "Acesse as ações principais mais rapidamente",
+        "description" : "Acesse as ações de receber, comprar, vender e enviar na hora."
+      },
+      "actions" : {
+        "title" : "Veja as tendências do mercado instantaneamente",
+        "description" : "Acompanhe o que está em alta no seu portfólio e transforme insights em ação."
+      }
+    },
+    "cta" : {
+      "continue" : "Continuar",
+      "explore" : "Explorar meu novo portfólio"
     }
   }
 }
