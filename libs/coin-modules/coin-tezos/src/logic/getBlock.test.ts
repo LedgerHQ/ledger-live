@@ -770,7 +770,7 @@ describe("delegation operations", () => {
       amount: 0n,
       details: {
         operationType: "DELEGATE",
-        stakedAmount: 0,
+        stakedAmount: 0n,
         delegate: "tz1Baker",
       },
     });
@@ -801,7 +801,7 @@ describe("delegation operations", () => {
       amount: 0n,
       details: {
         operationType: "UNDELEGATE",
-        stakedAmount: 0,
+        stakedAmount: 0n,
         delegate: "tz1PrevBaker",
       },
     });
@@ -884,21 +884,21 @@ describe("delegation operations", () => {
     expect(tx.fees).toBe(800n); // 500 + 300
   });
 
-  it("marks merged transaction as failed if delegation failed", async () => {
+  it("marks merged transaction as failed and clears operations if delegation failed", async () => {
     // Given - transaction succeeded but delegation in same batch failed
     mockGetBlockByLevel.mockResolvedValue(makeBlock());
     mockFetchBlockTransactions.mockResolvedValue([
-      makeTx({ hash: "opSharedHash", amount: 1_000_000, status: "applied" }),
+      makeTx({ hash: "opSharedHash", amount: 1_000_000, status: "applied", bakerFee: 500 }),
     ]);
     mockFetchBlockDelegations.mockResolvedValue([
-      makeDelegation({ hash: "opSharedHash", status: "failed" }),
+      makeDelegation({ hash: "opSharedHash", status: "failed", bakerFee: 300 }),
     ]);
 
     // When
     const result = await getBlock(5_000_000);
 
-    // Then - the whole batch is marked as failed
-    expect(result.transactions).toMatchObject([{ failed: true }]);
+    // Then - the whole batch is marked as failed, operations cleared, fees accumulated
+    expect(result.transactions).toMatchObject([{ failed: true, operations: [], fees: 800n }]);
   });
 
   it("does not add delegation operations to failed transaction", async () => {

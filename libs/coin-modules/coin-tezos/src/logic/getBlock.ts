@@ -137,7 +137,7 @@ function buildDelegationOperations(op: APIDelegationType): BlockOperation[] {
       amount: 0n,
       details: {
         operationType: isDelegate ? "DELEGATE" : "UNDELEGATE",
-        stakedAmount: 0,
+        stakedAmount: 0n,
         ...(targetAddr && { delegate: targetAddr }),
       },
     },
@@ -318,13 +318,13 @@ function groupAndMapTransactions(
       continue;
     }
 
-    if (!existing.failed && delegationTx.operations.length > 0) {
+    if (delegationTx.failed) {
+      existing.failed = true;
+      existing.operations = [];
+    } else if (!existing.failed && delegationTx.operations.length > 0) {
       existing.operations.push(...delegationTx.operations);
     }
     existing.fees += delegationTx.fees;
-    if (delegationTx.failed) {
-      existing.failed = true;
-    }
   }
 
   const standaloneByKey = new Map<string, BlockTransaction>();
