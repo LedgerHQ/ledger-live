@@ -26,15 +26,12 @@ export const NonEmptyStringSchema = z.string().trim().min(1).brand<"NonEmptyStri
  * preserve `Date` compatibility — use `Temporal.ZonedDateTime` strings if you
  * need named-timezone annotations.
  *
+ * Uses Zod's native `.datetime({ offset: true })` which validates both the
+ * format and the calendar date (e.g. month 1–12, valid day range).
+ *
  * @example `"2024-01-31T12:00:00Z"`, `"2024-01-31T12:00:00+05:30"`, `"2024-01-31T12:00:00.123Z"`
  */
-export const DateTimeIsoSchema = z
-  .string()
-  .regex(
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/,
-    "Expected an RFC 3339 datetime string (e.g. 2024-01-31T12:00:00Z)",
-  )
-  .brand<"DateTimeIso">();
+export const DateTimeIsoSchema = z.iso.datetime({ offset: true }).brand<"DateTimeIso">();
 
 /** Absolute `http://` or `https://` URL. */
 export const HttpUrlSchema = z
