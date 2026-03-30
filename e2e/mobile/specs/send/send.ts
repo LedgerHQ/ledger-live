@@ -59,6 +59,29 @@ const beforeAllInvalidAddressFunction = async (
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
+export async function verifySendAndOperationDetails(
+  transaction: TransactionType,
+  amountWithCode: string,
+) {
+  await app.send.expectSummaryAmount(amountWithCode);
+  await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
+  await app.send.expectSummaryMemoTag(transaction.memoTag);
+  await app.send.chooseFeeStrategy(transaction.speed);
+  await app.send.summaryContinue();
+  await app.send.dismissHighFeeModal();
+
+  await verifyAppValidationSendInfo(transaction, amountWithCode);
+
+  await device.disableSynchronization();
+  await app.speculos.signSendTransaction(transaction);
+  await app.common.successViewDetails();
+
+  await app.operationDetails.waitForOperationDetails();
+  await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
+  await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
+  await app.operationDetails.checkTransactionType("OUT");
+}
+
 export function runSendTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -74,23 +97,7 @@ export function runSendTest(transaction: TransactionType, tmsLinks: string[], ta
       await app.send.setAmountAndContinue(transaction.amount);
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
-      await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecipient(addressToCredit);
-      await app.send.expectSummaryMemoTag(transaction.memoTag);
-      await app.send.chooseFeeStrategy(transaction.speed);
-      await app.send.summaryContinue();
-      await app.send.dismissHighFeeModal();
-
-      await verifyAppValidationSendInfo(transaction, amountWithCode);
-
-      await device.disableSynchronization();
-      await app.speculos.signSendTransaction(transaction);
-      await app.common.successViewDetails();
-
-      await app.operationDetails.waitForOperationDetails();
-      await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
-      await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
-      await app.operationDetails.checkTransactionType("OUT");
+      await verifySendAndOperationDetails(transaction, amountWithCode);
     });
   });
 }
