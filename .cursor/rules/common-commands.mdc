@@ -1,0 +1,6 @@
+---
+description: Use pnpm commands for build, dev, linting and testing.
+alwaysApply: true
+---
+
+See [/docs/common-commands.md](/docs/common-commands.md)
