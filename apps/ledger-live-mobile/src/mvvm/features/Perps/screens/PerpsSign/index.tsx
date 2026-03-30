@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
-import { Alert, Flex, Text, Tag } from "@ledgerhq/native-ui";
+import { Banner, BottomSheetView, Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -15,7 +15,7 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { getProductName } from "LLM/utils/getProductName";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceAction from "~/components/DeviceAction";
-import QueuedDrawer from "~/components/QueuedDrawer";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { PartialNullable } from "~/types/helpers";
 
@@ -109,62 +109,67 @@ export default function PerpsSign({ navigation, route }: NavigationProps) {
 
   return (
     <SafeAreaView edges={["bottom"]} style={[styles.root, { backgroundColor: colors.background }]}>
-      <Flex px={16} py={5} flex={1}>
+      <Box lx={{ paddingHorizontal: "s16", paddingVertical: "s8", flex: 1 }}>
         <SelectDevice2
           onSelect={setSelectedDevice}
           stopBleScanning={!!selectedDevice}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           autoSelectLastConnectedDevice
         />
-      </Flex>
-      <QueuedDrawer
+      </Box>
+      <QueuedDrawerBottomSheet
         isRequestingToBeOpened={drawerOpen}
         onClose={handleDrawerClose}
         onModalHide={handleDrawerHidden}
         preventBackdropClick={!!connectedDevice}
+        enableDynamicSizing
       >
-        {connectedDevice ? (
-          <Flex alignItems="center" p={6} rowGap={4}>
-            <Animation
-              source={getDeviceAnimation({ modelId: connectedDevice.modelId, key: "sign", theme })}
-              style={getDeviceAnimationStyles(connectedDevice.modelId)}
-            />
-            {connectedDevice.deviceName ? (
-              <Tag my={8} uppercase={false}>
-                {connectedDevice.deviceName}
-              </Tag>
-            ) : null}
-            <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={4}>
-              {t("ValidateOnDevice.title.send", {
-                productName: getProductName(connectedDevice.modelId),
-              })}
-            </Text>
-          </Flex>
-        ) : (
-          selectedDevice && (
-            <Flex alignItems="center" testID="device-action-modal">
-              <Flex flexDirection="row" mb={showInfo ? "16px" : 0}>
-                <DeviceAction
-                  action={
-                    action as unknown as Action<
-                      typeof request,
-                      PartialNullable<Record<string, unknown>>,
-                      AppResult
-                    >
-                  }
-                  device={selectedDevice}
-                  request={request}
-                  onResult={handleAppResult}
-                  analyticsPropertyFlow="perps sign"
-                  onClose={handleDrawerClose}
-                />
-              </Flex>
-              {showInfo && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
-            </Flex>
-          )
-        )}
-        {selectedDevice && <SyncSkipUnderPriority priority={100} />}
-      </QueuedDrawer>
+        <BottomSheetView>
+          {connectedDevice ? (
+            <Box lx={{ alignItems: "center", padding: "s24", gap: "s16" }}>
+              <Animation
+                source={getDeviceAnimation({
+                  modelId: connectedDevice.modelId,
+                  key: "sign",
+                  theme,
+                })}
+                style={getDeviceAnimationStyles(connectedDevice.modelId)}
+              />
+              {connectedDevice.deviceName ? (
+                <Tag size="md" appearance="gray" label={connectedDevice.deviceName} />
+              ) : null}
+              <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+                {t("ValidateOnDevice.title.send", {
+                  productName: getProductName(connectedDevice.modelId),
+                })}
+              </Text>
+            </Box>
+          ) : (
+            selectedDevice && (
+              <Box lx={{ alignItems: "center" }} testID="device-action-modal">
+                <Box lx={{ flexDirection: "row", marginBottom: showInfo ? "s16" : "s0" }}>
+                  <DeviceAction
+                    action={
+                      action as unknown as Action<
+                        typeof request,
+                        PartialNullable<Record<string, unknown>>,
+                        AppResult
+                      >
+                    }
+                    device={selectedDevice}
+                    request={request}
+                    onResult={handleAppResult}
+                    analyticsPropertyFlow="perps sign"
+                    onClose={handleDrawerClose}
+                  />
+                </Box>
+                {showInfo && <Banner appearance="info" title={t("DeviceAction.stayInTheAppPlz")} />}
+              </Box>
+            )
+          )}
+          {selectedDevice && <SyncSkipUnderPriority priority={100} />}
+        </BottomSheetView>
+      </QueuedDrawerBottomSheet>
     </SafeAreaView>
   );
 }

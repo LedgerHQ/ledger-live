@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-fix device interation modal for perps
+fix device interaction modal for perps
