@@ -46,8 +46,8 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
         page: route.name,
       });
 
-      navigation.navigate(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.AccountsList,
         params: {
           sourceScreenName: ScreenName.Portfolio,
           showHeader: true,

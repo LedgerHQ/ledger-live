@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "tests/utils/cliUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
@@ -45,6 +46,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
   test.describe("Start ETH staking flow from Earn Dashboard", () => {
     setupEnv(true);
     test.use({
+      teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataWithAddressCommand(account)],
@@ -114,6 +116,7 @@ test.describe("Inline Add Account", () => {
   const account = Account.ETH_1;
   setupEnv(true);
   test.use({
+    teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     featureFlags: EARN_V1_DESKTOP_FLAGS,
@@ -198,6 +201,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
   test.describe("Correct Earn page is loaded depending on user's staking situation", () => {
     setupEnv(true);
     test.use({
+      teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       featureFlags: EARN_V1_DESKTOP_FLAGS,

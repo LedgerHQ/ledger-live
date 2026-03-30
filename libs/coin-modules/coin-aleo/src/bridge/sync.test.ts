@@ -1049,6 +1049,65 @@ describe("sync.ts", () => {
       expect(emissions).toHaveLength(0); // private sync skipped → null → no emission
     });
 
+    it("private-only sync (SYNC_TYPE_SHIELDED) emits a progress update when scanner is configured but not fully synced", async () => {
+      // Account with provableApi already configured (has aleoResources)
+      const accountWithProvableApi: AleoAccount = {
+        ...getMockedAccount(),
+        aleoResources: {
+          ...mockAleoResources,
+          provableApi: {
+            ...mockAleoResources.provableApi!,
+            scannerStatus: { percentage: 30, synced: false },
+          },
+        },
+      };
+
+      // accessProvableApi returns a refreshed provableApi with updated percentage
+      const refreshedProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 75, synced: false },
+      };
+      mockAccessProvableApi.mockResolvedValue(refreshedProvableApi);
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: accountWithProvableApi },
+        { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED },
+      );
+
+      expect(syncs).toHaveLength(1);
+      const emissions = await collectAll(syncs[0]);
+      // Should emit exactly one partial update carrying the refreshed provableApi
+      expect(emissions).toHaveLength(1);
+      expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.percentage).toBe(75);
+      expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.synced).toBe(false);
+      // Only aleoResources is emitted — no stale balance/ops fields
+      expect(emissions[0].balance).toBeUndefined();
+      expect(emissions[0].operations).toBeUndefined();
+    });
+
+    it("combined sync (SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED) does NOT emit progress when scanner is not ready", async () => {
+      const accountWithProvableApi: AleoAccount = {
+        ...getMockedAccount(),
+        aleoResources: { ...mockAleoResources },
+      };
+      const notSyncedProvableApi = {
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 50, synced: false },
+      };
+      mockAccessProvableApi.mockResolvedValue(notSyncedProvableApi);
+
+      const { syncs } = buildSyncObservables(
+        { ...baseInfo, initialAccount: accountWithProvableApi },
+        { paginationConfig: {}, syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED },
+      );
+
+      expect(syncs).toHaveLength(1);
+      const emissions = await collectAll(syncs[0]);
+      // Public sync emits its result; private sync (not ready, emitProgressUpdates=false) skips
+      expect(emissions).toHaveLength(1);
+      expect(emissions[0]).toMatchObject({ blockHeight: 100 }); // only the public result
+    });
+
     it("returns no syncs when syncType is 0", () => {
       const { syncs } = buildSyncObservables(baseInfo, {
         paginationConfig: {},

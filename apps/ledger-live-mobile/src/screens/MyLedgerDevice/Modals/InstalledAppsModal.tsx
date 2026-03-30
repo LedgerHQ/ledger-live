@@ -28,9 +28,10 @@ type UninstallButtonProps = {
   app: App;
   state: State;
   dispatch: (_: Action) => void;
+  onClose: () => void;
 };
 
-const UninstallButton = ({ app, state, dispatch }: UninstallButtonProps) => {
+const UninstallButton = ({ app, state, dispatch, onClose }: UninstallButtonProps) => {
   const { uninstallQueue } = state;
   const uninstalling = useMemo(() => uninstallQueue.includes(app.name), [uninstallQueue, app.name]);
   const renderAppState = () => {
@@ -38,7 +39,15 @@ const UninstallButton = ({ app, state, dispatch }: UninstallButtonProps) => {
       case uninstalling:
         return <AppProgressButton state={state} name={app.name} size={34} />;
       default:
-        return <AppUninstallButton app={app} state={state} dispatch={dispatch} size={34} />;
+        return (
+          <AppUninstallButton
+            app={app}
+            state={state}
+            dispatch={dispatch}
+            size={34}
+            onBeforeUninstallWithDependencies={onClose}
+          />
+        );
     }
   };
 
@@ -50,9 +59,10 @@ type RowProps = {
   state: State;
   dispatch: (_: Action) => void;
   deviceInfo: DeviceInfo;
+  onClose: () => void;
 };
 
-const Row = ({ app, state, dispatch, deviceInfo }: RowProps) => (
+const Row = ({ app, state, dispatch, deviceInfo, onClose }: RowProps) => (
   <Flex flexDirection="row" py={4} alignItems="center" justifyContent="space-between">
     <Flex flexDirection="row" alignItems="center">
       <AppIcon app={app} size={24} />
@@ -68,7 +78,7 @@ const Row = ({ app, state, dispatch, deviceInfo }: RowProps) => (
           firmwareVersion={deviceInfo.version}
         />
       </Text>
-      <UninstallButton app={app} state={state} dispatch={dispatch} />
+      <UninstallButton app={app} state={state} dispatch={dispatch} onClose={onClose} />
     </Flex>
   </Flex>
 );
@@ -96,9 +106,9 @@ const InstalledAppsModal = ({
 
   const renderItem = useCallback(
     ({ item }: { item: App }) => (
-      <Row app={item} state={state} dispatch={dispatch} deviceInfo={deviceInfo} />
+      <Row app={item} state={state} dispatch={dispatch} deviceInfo={deviceInfo} onClose={onClose} />
     ),
-    [deviceInfo, dispatch, state],
+    [deviceInfo, dispatch, state, onClose],
   );
 
   useEffect(() => {

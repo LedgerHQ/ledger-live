@@ -8,11 +8,12 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
 import { launchApp } from "tests/utils/electronUtils";
-import { captureArtifacts } from "tests/utils/allureUtils";
+import { captureArtifacts, addTeamOwner } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "tests/utils/cliUtils";
 import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
@@ -45,6 +46,7 @@ type TestFixtures = {
     cmd: CliCommand;
   }[];
   localManifestOverride?: LiveAppManifest[];
+  teamOwner?: Team;
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -95,6 +97,7 @@ export const test = base.extend<TestFixtures>({
   cliCommandsOnApp: [],
   extraUserdataFiles: undefined,
   localManifestOverride: undefined,
+  teamOwner: undefined,
 
   app: async ({ page, electronApp }, use) => {
     const app = new Application(page, electronApp);
@@ -229,9 +232,13 @@ export const test = base.extend<TestFixtures>({
       }
     }
   },
-  page: async ({ electronApp }, use, testInfo) => {
+  page: async ({ electronApp, teamOwner }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
+
+    if (teamOwner !== undefined) {
+      await addTeamOwner(teamOwner);
+    }
     // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
     page.setDefaultTimeout(120000);
 

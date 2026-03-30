@@ -1,14 +1,14 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { SendFlowTransactionActions, SendFlowUiConfig } from "../../types";
 import type { Transaction, TransactionStatus } from "../../../../generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
+import { sendFeatures } from "../../../../bridge/descriptor/send/features";
+import type { CoinControlDisplayData } from "../../../../bridge/descriptor/types";
 import { getChangeToReturn } from "../utils/changeToReturn";
-import {
-  useBitcoinUtxoDisplayData,
-  type BitcoinUtxoDisplayData,
-} from "../../../../families/bitcoin/react";
 import { useSendFlowAmountReviewCore } from "../../hooks/useSendFlowAmountReviewCore";
 import { useCoinControlAmountInput } from "./useCoinControlAmountInput";
 
@@ -45,7 +45,7 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   amountValue: string | null;
   onAmountChange: (rawValue: string) => void;
   amountError: string | undefined;
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly { value: number; label: string }[];
   changeToReturnFormatted: string;
   onSelectStrategy: (value: string) => void;
@@ -102,35 +102,78 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     accountUnit,
   });
 
-  const utxoDisplayData = useBitcoinUtxoDisplayData({
-    account,
-    transaction,
-    status,
-    locale,
-  });
+  const coinControlConfig = useMemo(
+    () => sendFeatures.getCoinControlConfig(getAccountCurrency(account)),
+    [account],
+  );
+
+  const utxoDisplayData = useMemo(() => {
+    if (coinControlConfig == null) return null;
+    return coinControlConfig.getDisplayData({
+      account,
+      transaction,
+      status,
+      locale,
+    });
+  }, [account, coinControlConfig, locale, status, transaction]);
+
+  const customStrategyValue = coinControlConfig?.customStrategyValue;
+
+  const customInsufficientUtxoForChangeRow = useMemo(() => {
+    const isCustomStrategy =
+      customStrategyValue != null &&
+      "utxoStrategy" in transaction &&
+      transaction.utxoStrategy != null &&
+      transaction.utxoStrategy.strategy === customStrategyValue;
+    const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
+    if (!isCustomStrategy || !hasFilledAmount) return false;
+
+    const utxoData = utxoDisplayData;
+    const rows = utxoData?.utxoRows;
+    const hasNoSelectedUtxo =
+      utxoData != null &&
+      rows != null &&
+      rows.length > 0 &&
+      utxoData.totalExcludedUTXOS === rows.length;
+    const isInsufficientFundsBridgeError = status.errors?.amount instanceof NotEnoughBalance;
+
+    return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
+  }, [customStrategyValue, status, transaction, utxoDisplayData]);
 
   const changeToReturnFormatted = useMemo(() => {
     const hasAmountForChange = transaction.useAllAmount || transaction.amount?.gt(0);
     if (!hasAmountForChange) return "";
+    if (customInsufficientUtxoForChangeRow) return "";
     const changeAmount = getChangeToReturn(status);
     return formatCurrencyUnit(accountUnit, changeAmount, {
       showCode: true,
       disableRounding: true,
       locale,
     });
-  }, [accountUnit, locale, status, transaction.amount, transaction.useAllAmount]);
+  }, [
+    accountUnit,
+    customInsufficientUtxoForChangeRow,
+    locale,
+    status,
+    transaction.amount,
+    transaction.useAllAmount,
+  ]);
 
   const onSelectStrategy = useCallback(
     (value: string) => {
       const strategy = Number.parseInt(value, 10);
-      if (Number.isNaN(strategy)) return;
-      if (!("utxoStrategy" in transaction) || transaction.utxoStrategy == null) return;
+      if (Number.isNaN(strategy) || coinControlConfig === null) return;
 
-      updateTransactionWithPatch({
-        utxoStrategy: { ...transaction.utxoStrategy, strategy, excludeUTXOs: [] },
+      const patch = coinControlConfig.buildStrategyChangePatch({
+        transaction,
+        strategy,
+        displayData: utxoDisplayData,
       });
+      if (patch != null) {
+        updateTransactionWithPatch(patch);
+      }
     },
-    [transaction, updateTransactionWithPatch],
+    [coinControlConfig, transaction, updateTransactionWithPatch, utxoDisplayData],
   );
 
   const strategyOptionsWithLabels = useMemo(() => {
@@ -141,10 +184,45 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     }));
   }, [utxoDisplayData?.pickingStrategyOptions, labels]);
 
+  const resolvedAmountError = useMemo(() => {
+    const isCustomStrategy =
+      customStrategyValue != null &&
+      "utxoStrategy" in transaction &&
+      transaction.utxoStrategy != null &&
+      transaction.utxoStrategy.strategy === customStrategyValue;
+    const hasFilledAmount = transaction.useAllAmount || transaction.amount?.gt(0);
+    if (isCustomStrategy && !hasFilledAmount) return undefined;
+
+    const isInsufficientFundsBridgeError = status.errors?.amount instanceof NotEnoughBalance;
+    // Transaction patches (e.g. toggling custom exclusions) apply before the next bridge sync;
+    // status can briefly still reflect the previous pick and show a stale NotEnoughBalance.
+    if (isCustomStrategy && hasFilledAmount && bridgePending && isInsufficientFundsBridgeError) {
+      return undefined;
+    }
+
+    const utxoData = utxoDisplayData;
+    const rows = utxoData?.utxoRows;
+    const hasNoSelectedUtxo =
+      utxoData != null &&
+      rows != null &&
+      rows.length > 0 &&
+      utxoData.totalExcludedUTXOS === rows.length;
+    if (
+      isCustomStrategy &&
+      hasFilledAmount &&
+      hasNoSelectedUtxo &&
+      isInsufficientFundsBridgeError
+    ) {
+      return undefined;
+    }
+
+    return amountError;
+  }, [amountError, bridgePending, customStrategyValue, status, transaction, utxoDisplayData]);
+
   return {
     amountValue: amountInput.amountValue,
     onAmountChange: amountInput.onAmountChange,
-    amountError,
+    amountError: resolvedAmountError,
     utxoDisplayData,
     strategyOptionsWithLabels,
     changeToReturnFormatted,

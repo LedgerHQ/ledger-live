@@ -15,6 +15,7 @@ type Props = {
   state: State;
   dispatch: (_: Action) => void;
   size?: number;
+  onBeforeUninstallWithDependencies?: () => void;
 };
 
 const ButtonContainer = styled(Box).attrs({
@@ -23,7 +24,13 @@ const ButtonContainer = styled(Box).attrs({
   justifyContent: "center",
 })``;
 
-const AppUninstallButton = ({ app, state, dispatch, size = 48 }: Props) => {
+const AppUninstallButton = ({
+  app,
+  state,
+  dispatch,
+  size = 48,
+  onBeforeUninstallWithDependencies,
+}: Props) => {
   const { name } = app;
 
   const needsDependencies = useAppUninstallNeedsDeps(state, app);
@@ -32,10 +39,19 @@ const AppUninstallButton = ({ app, state, dispatch, size = 48 }: Props) => {
     useSetAppsWithDependenciesToInstallUninstall();
 
   const uninstallApp = useCallback(() => {
-    if (needsDependencies && setAppUninstallWithDependencies)
+    if (needsDependencies && setAppUninstallWithDependencies) {
+      onBeforeUninstallWithDependencies?.();
       setAppUninstallWithDependencies(needsDependencies);
-    else dispatch({ type: "uninstall", name });
-  }, [needsDependencies, setAppUninstallWithDependencies, dispatch, name]);
+    } else {
+      dispatch({ type: "uninstall", name });
+    }
+  }, [
+    needsDependencies,
+    setAppUninstallWithDependencies,
+    dispatch,
+    name,
+    onBeforeUninstallWithDependencies,
+  ]);
 
   return (
     <TouchableOpacity onPress={uninstallApp} testID={`app-${name}-installed`}>

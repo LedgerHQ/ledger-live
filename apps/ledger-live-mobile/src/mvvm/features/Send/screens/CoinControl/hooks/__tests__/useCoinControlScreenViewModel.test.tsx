@@ -78,18 +78,22 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
     name: "Bitcoin",
   })),
 }));
-jest.mock("@ledgerhq/live-common/families/bitcoin/react", () => ({
-  useBitcoinUtxoDisplayData: () => ({
-    pickingStrategyValue: bitcoinPickingStrategy.MERGE_OUTPUTS,
-    pickingStrategyOptions: [
-      { value: String(bitcoinPickingStrategy.MERGE_OUTPUTS), labelKey: "merge" },
-      { value: String(bitcoinPickingStrategy.OPTIMIZE_SIZE), labelKey: "optimize" },
-    ],
-    utxoRows: [],
-    totalExcludedUTXOS: 0,
-    totalSpent: new BigNumber(0),
-  }),
-}));
+
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
+  const { bitcoinCoinControlConfig } = jest.requireActual(
+    "@ledgerhq/live-common/families/bitcoin/descriptor/coinControl",
+  );
+  return {
+    ...actual,
+    sendFeatures: {
+      ...actual.sendFeatures,
+      getCoinControlConfig: jest.fn((currency: { id?: string } | undefined) =>
+        currency?.id === "bitcoin" ? bitcoinCoinControlConfig : null,
+      ),
+    },
+  };
+});
 
 jest.mock("@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlAmountInput", () => ({
   useCoinControlAmountInput: () => ({

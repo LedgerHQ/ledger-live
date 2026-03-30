@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -23,6 +24,7 @@ const accounts = [
 for (const account of accounts) {
   test.describe("Delete Accounts", () => {
     test.use({
+      teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [
         (appjsonPath: string) => {

@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -11,6 +12,7 @@ const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 for (const account of accounts) {
   test.describe("Rename Account", () => {
     test.use({
+      teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       cliCommands: [
         (appjsonPath: string) => {

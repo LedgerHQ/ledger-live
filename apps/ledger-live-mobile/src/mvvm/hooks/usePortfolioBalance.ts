@@ -126,6 +126,7 @@ export function usePortfolioBalance() {
     isBalanceLoading,
     isColdStart,
     isManualRefreshLoading,
+    isBridgeSyncPending: syncSources.stablePending,
     allAccounts,
     accountsWithError,
     accountsImpactedByError,
@@ -134,5 +135,6 @@ export function usePortfolioBalance() {
     areAllAccountsUpToDate,
     hasAccounts,
     handleSync,
+    triggerRefresh,
   };
 }
