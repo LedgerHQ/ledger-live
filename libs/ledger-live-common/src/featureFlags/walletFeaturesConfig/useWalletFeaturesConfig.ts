@@ -35,6 +35,7 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayMarketBanner: isEnabled && Boolean(params?.marketBanner),
       shouldDisplayGraphRework: isEnabled && Boolean(params?.graphRework),
       shouldDisplayQuickActionCtas: isEnabled && Boolean(params?.quickActionCtas),
+      shouldDisplayQuickActionsCtasVariant: isEnabled && Boolean(params?.quickActionsCtasVariant),
       shouldDisplayNewReceiveDialog: isEnabled && Boolean(params?.newReceiveDialog),
       shouldDisplayWallet40MainNav: isEnabled && Boolean(params?.mainNavigation),
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
