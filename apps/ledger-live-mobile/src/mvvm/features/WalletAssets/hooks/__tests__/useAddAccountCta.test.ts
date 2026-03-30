@@ -6,6 +6,11 @@ jest.mock("~/analytics", () => ({
   track: jest.fn(),
 }));
 
+jest.mock("@react-navigation/native", () => ({
+  ...jest.requireActual("@react-navigation/native"),
+  useRoute: jest.fn().mockReturnValue({ name: "WalletAssets", params: {} }),
+}));
+
 describe("useAddAccountCta", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -48,7 +53,11 @@ describe("useAddAccountCta", () => {
     });
 
     expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("button_clicked", { button: "add_account_cta" });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "account_cta",
+      type: "add",
+      page: "WalletAssets",
+    });
   });
 
   it("should not fire track when close is called", () => {

@@ -140,7 +140,7 @@ describe("useCryptoAddressesButtonViewModel", () => {
   });
 
   describe("onPress — with accounts (view)", () => {
-    it("should navigate to AssetsList", () => {
+    it("should navigate to AccountsList", () => {
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
         overrideInitialState: withAccounts([btcAccount]),
       });
@@ -149,8 +149,8 @@ describe("useCryptoAddressesButtonViewModel", () => {
         result.current.onPress();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.AccountsList,
         params: {
           sourceScreenName: ScreenName.Portfolio,
           showHeader: true,
