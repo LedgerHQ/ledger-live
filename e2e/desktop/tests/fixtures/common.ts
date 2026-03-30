@@ -20,6 +20,7 @@ import { launchSpeculos, killSpeculos } from "tests/utils/speculosUtils";
 import { SpeculosDevice } from "@ledgerhq/live-common/e2e/speculos";
 import { attachNetworkLogging } from "../utils/networkLogging";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -44,6 +45,7 @@ type TestFixtures = {
     app: AppInfos;
     cmd: CliCommand;
   }[];
+  localManifestOverride?: LiveAppManifest[];
   teamOwner?: Team;
 };
 
@@ -94,6 +96,7 @@ export const test = base.extend<TestFixtures>({
   cliCommands: [],
   cliCommandsOnApp: [],
   extraUserdataFiles: undefined,
+  localManifestOverride: undefined,
   teamOwner: undefined,
 
   app: async ({ page, electronApp }, use) => {
@@ -126,6 +129,7 @@ export const test = base.extend<TestFixtures>({
       cliCommands,
       cliCommandsOnApp,
       extraUserdataFiles,
+      localManifestOverride,
     },
     use,
     testInfo,
@@ -138,6 +142,11 @@ export const test = base.extend<TestFixtures>({
       : {};
 
     const userData = merge({ data: { settings } }, fileUserData);
+    if (localManifestOverride?.length) {
+      userData.data = userData.data || {};
+      userData.data.discover = userData.data.discover || {};
+      userData.data.discover.localLiveApp = localManifestOverride;
+    }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     if (extraUserdataFiles) {
       await Promise.all(

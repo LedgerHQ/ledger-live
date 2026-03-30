@@ -8,6 +8,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
+import { EARN_V1_DESKTOP_FLAGS } from "tests/utils/featureFlagUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -50,6 +51,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
       speculosApp: account.currency.speculosApp,
       cliCommands: [liveDataWithAddressCommand(account)],
       featureFlags: {
+        ...EARN_V1_DESKTOP_FLAGS,
         // TODO: sync Firebase environments and remove this override when final variant is chosen
         stakePrograms: {
           enabled: true,
@@ -117,6 +119,7 @@ test.describe("Inline Add Account", () => {
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
+    featureFlags: EARN_V1_DESKTOP_FLAGS,
   });
 
   test(
@@ -201,6 +204,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
       teamOwner: Team.EARN,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
+      featureFlags: EARN_V1_DESKTOP_FLAGS,
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
