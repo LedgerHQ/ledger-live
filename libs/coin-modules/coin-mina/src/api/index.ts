@@ -209,15 +209,6 @@ interface MakeOperationOptions {
 
 function makeOperation(options: MakeOperationOptions): Operation {
   const { idx, relatedIdxs, opType, addr, value, isPositive, isStake = false, to } = options;
-  if (!addr) {
-    throw new Error("Address is required");
-  }
-  if (value < 0) {
-    throw new Error("Value cannot be negative");
-  }
-  if (isStake && !to) {
-    throw new Error("Target address is required for delegate change");
-  }
 
   const relatedOps =
     relatedIdxs.length > 0

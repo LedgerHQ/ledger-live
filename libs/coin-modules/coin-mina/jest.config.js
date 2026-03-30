@@ -16,6 +16,14 @@ const sharedConfig = {
 };
 
 module.exports = {
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.msw.test.ts",
+    "!src/**/*.integ.test.ts",
+    "!src/test/**",
+    "!src/index.ts",
+  ],
   projects: [
     {
       ...sharedConfig,
