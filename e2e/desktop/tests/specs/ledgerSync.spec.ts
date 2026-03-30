@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
@@ -46,6 +47,7 @@ function initializeTrustchain() {
 test.describe(`[${app.name}] Sync Accounts`, () => {
   setupSeed();
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: app,
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],

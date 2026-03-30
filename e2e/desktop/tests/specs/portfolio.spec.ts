@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
@@ -7,6 +8,7 @@ import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils
 
 test.describe("Portfolio - legacy", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "speculos-subAccount",
     featureFlags: LWD_WALLET_40_FF_DISABLED,
   });
@@ -37,6 +39,7 @@ test.describe("Portfolio - legacy", () => {
 test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   const currency = Currency.BTC;
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     // to-do remove when wallet 4.0 is default
@@ -74,6 +77,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
 test.describe("Portfolio Wallet 4.0 - With Account", () => {
   const currency = Currency.BTC;
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     cliCommands: [
@@ -118,6 +122,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
 
 test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   test.use({
+    teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding",
     // to-do remove when wallet 4.0 is default
     featureFlags: LWD_WALLET_40_FF_ENABLED,

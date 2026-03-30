@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import {
@@ -56,6 +57,7 @@ for (const asset of assets) {
     const { crypto, fiat, operation, amount } = asset.buySell;
 
     test.use({
+      teamOwner: Team.BUY_AND_SELL,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: crypto.currency.speculosApp,
       cliCommands: [
@@ -249,6 +251,7 @@ test.describe("Sell flow - ", () => {
   const { crypto, fiat, amount, operation } = sellAsset.buySell;
 
   test.use({
+    teamOwner: Team.BUY_AND_SELL,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: crypto.currency.speculosApp,
     cliCommands: [

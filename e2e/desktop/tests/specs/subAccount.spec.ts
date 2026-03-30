@@ -1,4 +1,5 @@
 import { test } from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
@@ -50,6 +51,7 @@ const subAccountReceive: Array<{
 for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
     });
@@ -109,6 +111,7 @@ for (const token of subAccounts) {
 for (const token of subAccountReceive) {
   test.describe("Add subAccount when parent exists", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
       speculosApp: token.account.currency.speculosApp,
     });
@@ -161,6 +164,7 @@ for (const token of subAccountReceive) {
 for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
     });
 
@@ -212,6 +216,7 @@ const transactionE2E = [
 for (const transaction of transactionE2E) {
   test.describe("Send token - E2E", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -308,6 +313,7 @@ const transactionsAddressInvalid = [
 for (const transaction of transactionsAddressInvalid) {
   test.describe("Send token - invalid address input", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -383,6 +389,7 @@ const transactionsAddressValid = [
 for (const transaction of transactionsAddressValid) {
   test.describe("Send token - valid address input", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -475,6 +482,7 @@ const tokenTransactionInvalid = [
 for (const transaction of tokenTransactionInvalid) {
   test.describe("Send token (subAccount) - invalid amount input", () => {
     test.use({
+      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -534,6 +542,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     Fee.MEDIUM,
   );
   test.use({
+    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
     cliCommands: [
@@ -587,6 +596,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
     xrayTicket: "B2CQA-3908",
   };
   test.use({
+    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tokenValidSend.tx.accountToDebit.currency.speculosApp,
     cliCommands: [
