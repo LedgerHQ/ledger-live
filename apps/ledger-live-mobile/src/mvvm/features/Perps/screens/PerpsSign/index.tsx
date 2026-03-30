@@ -1,114 +1,37 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "~/context/Locale";
-import { useTheme } from "@react-navigation/native";
 import { Banner, BottomSheetView, Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Action } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "~/const";
 import Animation from "~/components/Animation";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { getProductName } from "LLM/utils/getProductName";
-import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceAction from "~/components/DeviceAction";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { PartialNullable } from "~/types/helpers";
+import type { PerpsSignViewModel } from "./usePerpsSignViewModel";
 
-type NavigationProps = RootComposite<
-  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsSign>
->;
-
-export default function PerpsSign({ navigation, route }: NavigationProps) {
-  const { t } = useTranslation();
-  const { colors, dark } = useTheme();
-  const theme = dark ? "dark" : "light";
-  const { appName, appOptions, signFactory, onSuccess, onError, onCancel } = route.params;
-
-  const [selectedDevice, setSelectedDevice] = useState<Device | null | undefined>();
-  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  const completedRef = useRef(false);
-
-  const action = useAppDeviceAction();
-  const request = useMemo(
-    () => ({
-      appName,
-      requireLatestFirmware: appOptions?.requireLatestFirmware,
-      allowPartialDependencies: appOptions?.allowPartialDependencies,
-      skipAppInstallIfNotFound: appOptions?.skipAppInstallIfNotFound,
-    }),
-    [appName, appOptions],
-  );
-
-  const drawerOpen = !!selectedDevice;
-  const showInfo = !selectedDevice?.wired;
-
-  const handleAppResult = useCallback((result: AppResult) => {
-    setConnectedDevice(result.device);
-  }, []);
-
-  const handleDrawerClose = useCallback(() => {
-    if (!completedRef.current) {
-      onCancel();
-    }
-    setSelectedDevice(undefined);
-  }, [onCancel]);
-
-  const handleDrawerHidden = useCallback(() => {
-    if (completedRef.current) {
-      navigation.goBack();
-    }
-  }, [navigation]);
-
-  const requestToSetHeaderOptions = useCallback(
-    (req: SetHeaderOptionsRequest) => {
-      if (req.type === "set") {
-        navigation.setOptions({
-          headerShown: true,
-          headerLeft: req.options.headerLeft,
-          headerRight: req.options.headerRight,
-        });
-      } else {
-        navigation.setOptions({
-          headerLeft: () => null,
-          headerRight: () => null,
-        });
-      }
-    },
-    [navigation],
-  );
-
-  useEffect(() => {
-    if (!connectedDevice) return;
-
-    let cancelled = false;
-
-    signFactory(connectedDevice)
-      .then(result => {
-        if (cancelled) return;
-        completedRef.current = true;
-        onSuccess(result);
-        setSelectedDevice(undefined);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        completedRef.current = true;
-        const e = err instanceof Error ? err : new Error(String(err));
-        onError(e);
-        setSelectedDevice(undefined);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [connectedDevice]);
-
+export function PerpsSignView({
+  t,
+  backgroundColor,
+  theme,
+  selectedDevice,
+  connectedDevice,
+  drawerOpen,
+  showInfo,
+  action,
+  request,
+  setSelectedDevice,
+  handleAppResult,
+  handleDrawerClose,
+  handleDrawerHidden,
+  requestToSetHeaderOptions,
+}: PerpsSignViewModel) {
   return (
-    <SafeAreaView edges={["bottom"]} style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView edges={["bottom"]} style={[styles.root, { backgroundColor }]}>
       <Box lx={{ paddingHorizontal: "s16", paddingVertical: "s8", flex: 1 }}>
         <SelectDevice2
           onSelect={setSelectedDevice}
