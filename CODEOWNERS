@@ -35,6 +35,7 @@ domain/entity/crypto-asset                               @ledgerhq/platform
 domain/api/crypto-assets                                 @ledgerhq/platform
 # Platform — shared
 shared/feature-flags                                     @ledgerhq/platform
+shared/schema-primitives                                 @ledgerhq/platform
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
 apps/ledger-live-mobile/ios/                             @ledgerhq/platform
