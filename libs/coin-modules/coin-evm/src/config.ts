@@ -19,7 +19,13 @@ export type EvmConfig = {
     | {
         type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
         noCache?: boolean | undefined;
-        /** Optional cap applied to requested operation limit. */
+        /**
+         * Optional cap applied to the requested operation `limit` before the internal `limit + 1` probe.
+         *
+         * This is a pre-probe cap, not necessarily the explorer's advertised hard maximum page size.
+         * If your explorer enforces a strict maximum page size `M`, set `maxLimit` to at most `M - 1`
+         * so that the underlying `limit + 1` request never exceeds `M`.
+         */
         maxLimit?: number | undefined;
         uri: string;
       }
