@@ -1,5 +1,5 @@
 import { NetworkDown } from "@ledgerhq/errors";
-import { Memo } from "@stellar/stellar-sdk";
+import { Horizon, Memo } from "@stellar/stellar-sdk";
 import { getRecipientAccount, loadAccount } from "../network";
 import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../types";
 import { craftTransaction } from "./craftTransaction";
@@ -49,7 +49,7 @@ describe("craftTransaction", () => {
     jest
       .mocked(buildTransactionBuilder)
       .mockReturnValue(txBuilder as unknown as ReturnType<typeof buildTransactionBuilder>);
-    jest.mocked(loadAccount).mockResolvedValue({ id: "source-account" });
+    jest.mocked(loadAccount).mockResolvedValue({ id: "source-account" } as Horizon.AccountResponse);
     jest.mocked(getRecipientAccount).mockResolvedValue({
       id: "GRECIPIENT",
       isMuxedAccount: false,
