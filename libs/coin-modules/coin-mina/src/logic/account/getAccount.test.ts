@@ -1,12 +1,15 @@
 jest.mock("../../api");
 
+import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
 import BigNumber from "bignumber.js";
 import { fetchAccountBalance, fetchNetworkStatus } from "../../api";
 import { getAccount } from "./getAccount";
 
-const mockFetchNetworkStatus = fetchNetworkStatus as jest.MockedFunction<typeof fetchNetworkStatus>;
+const mockFetchNetworkStatus = fetchNetworkStatus as jest.MockedFunction<
+  DeepPartialReturn<typeof fetchNetworkStatus>
+>;
 const mockFetchAccountBalance = fetchAccountBalance as jest.MockedFunction<
-  typeof fetchAccountBalance
+  DeepPartialReturn<typeof fetchAccountBalance>
 >;
 
 describe("getAccount", () => {
@@ -17,14 +20,14 @@ describe("getAccount", () => {
   it("should return account with balance from rosetta", async () => {
     mockFetchNetworkStatus.mockResolvedValue({
       current_block_identifier: { index: 100, hash: "hash" },
-    } as any);
+    });
     mockFetchAccountBalance.mockResolvedValue({
       balances: [
         {
           metadata: { total_balance: 5000000000, liquid_balance: 4000000000 },
         },
       ],
-    } as any);
+    });
 
     const result = await getAccount("B62qtest");
 
@@ -38,7 +41,7 @@ describe("getAccount", () => {
   it("should return zero balances when fetchAccountBalance fails", async () => {
     mockFetchNetworkStatus.mockResolvedValue({
       current_block_identifier: { index: 100, hash: "hash" },
-    } as any);
+    });
     mockFetchAccountBalance.mockRejectedValue(new Error("not found"));
 
     const result = await getAccount("B62qtest");

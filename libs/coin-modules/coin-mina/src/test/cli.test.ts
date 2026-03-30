@@ -1,4 +1,6 @@
+import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
 import { Account } from "@ledgerhq/types-live";
+import { Transaction } from "../types";
 import makeCliTools from "./cli";
 
 describe("cli-transaction", () => {
@@ -15,32 +17,34 @@ describe("cli-transaction", () => {
 
   describe("inferAccounts", () => {
     it("should return account in array for mina family", () => {
-      const account = { currency: { family: "mina" } } as unknown as Account;
-      const result = inferAccounts(account);
+      const account: DeepPartial<Account> = { currency: { family: "mina" } };
+      const result = inferAccounts(account as Account);
       expect(result).toEqual([account]);
     });
 
     it("should throw for non-mina family", () => {
-      const account = { currency: { family: "bitcoin" } } as unknown as Account;
-      expect(() => inferAccounts(account)).toThrow();
+      const account: DeepPartial<Account> = { currency: { family: "bitcoin" } };
+      expect(() => inferAccounts(account as Account)).toThrow();
     });
   });
 
   describe("inferTransactions", () => {
-    const baseTxn = { family: "mina", amount: "1000" };
+    const baseTxn: DeepPartial<Transaction> = { family: "mina" };
 
     it("should set memo from opts", () => {
-      const result = inferTransactions([{ account: {} as any, transaction: baseTxn as any }], {
-        memo: "hello",
-      });
+      const result = inferTransactions(
+        [{ account: {} as DeepPartial<Account> as Account, transaction: baseTxn as Transaction }],
+        { memo: "hello" },
+      );
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(expect.objectContaining({ family: "mina", memo: "hello" }));
     });
 
     it("should create delegation transaction when delegateAddress is provided", () => {
-      const result = inferTransactions([{ account: {} as any, transaction: baseTxn as any }], {
-        delegateAddress: "B62qdelegate",
-      });
+      const result = inferTransactions(
+        [{ account: {} as DeepPartial<Account> as Account, transaction: baseTxn as Transaction }],
+        { delegateAddress: "B62qdelegate" },
+      );
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(
         expect.objectContaining({
@@ -52,8 +56,17 @@ describe("cli-transaction", () => {
     });
 
     it("should throw for non-mina family transaction", () => {
+      const nonMinaTxn = { family: "bitcoin" } as unknown as Transaction;
       expect(() =>
-        inferTransactions([{ account: {} as any, transaction: { family: "bitcoin" } as any }], {}),
+        inferTransactions(
+          [
+            {
+              account: {} as DeepPartial<Account> as Account,
+              transaction: nonMinaTxn as Transaction,
+            },
+          ],
+          {},
+        ),
       ).toThrow();
     });
   });

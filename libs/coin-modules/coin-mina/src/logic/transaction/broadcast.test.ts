@@ -1,6 +1,5 @@
 jest.mock("../../api");
 
-import BigNumber from "bignumber.js";
 import { rosettaSubmitTransaction } from "../../api";
 import { TxType } from "../../types/common";
 import { broadcastTransaction } from "./broadcast";
@@ -27,15 +26,15 @@ describe("broadcastTransaction", () => {
         senderAddress: "sender",
         receiverAddress: "receiver",
         amount: 1000,
-        fee: new BigNumber(100),
-        nonce: new BigNumber(5),
+        fee: 100,
+        nonce: 5,
         memo: "test",
         networkId: 1,
       },
-    } as any);
+    });
 
     expect(result).toBe("tx_hash_123");
-    const calledBlob = JSON.parse((mockRosettaSubmitTransaction.mock.calls[0] as any)[0]);
+    const calledBlob = JSON.parse(mockRosettaSubmitTransaction.mock.calls[0][0]);
     expect(calledBlob.signature).toBe("sig123");
     expect(calledBlob.payment).not.toBeNull();
     expect(calledBlob.stake_delegation).toBeNull();
@@ -53,16 +52,16 @@ describe("broadcastTransaction", () => {
         senderAccount: 0,
         senderAddress: "sender",
         receiverAddress: "delegate_target",
-        amount: new BigNumber(0),
-        fee: new BigNumber(100),
-        nonce: new BigNumber(5),
-        memo: null,
+        amount: 0,
+        fee: 100,
+        nonce: 5,
+        memo: "",
         networkId: 1,
       },
-    } as any);
+    });
 
     expect(result).toBe("tx_delegate_hash");
-    const calledBlob = JSON.parse((mockRosettaSubmitTransaction.mock.calls[0] as any)[0]);
+    const calledBlob = JSON.parse(mockRosettaSubmitTransaction.mock.calls[0][0]);
     expect(calledBlob.payment).toBeNull();
     expect(calledBlob.stake_delegation).not.toBeNull();
     expect(calledBlob.stake_delegation.new_delegate).toBe("delegate_target");

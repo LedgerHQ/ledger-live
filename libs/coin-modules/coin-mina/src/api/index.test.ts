@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 jest.mock("@ledgerhq/live-network");
 jest.mock("@ledgerhq/logs");
 jest.mock("../config");
 
+import { DeepPartial } from "@ledgerhq/coin-framework/test/utils";
 import { LedgerAPI5xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { getCoinConfig } from "../config";
@@ -31,6 +31,10 @@ import {
   fetchValidators,
 } from "./index";
 
+type NetworkResponse<T> = Awaited<ReturnType<typeof network<T>>>;
+const mockRes = <T>(data: T, status = 200): NetworkResponse<T> =>
+  ({ status, data }) as NetworkResponse<T>;
+
 const mockNetwork = network as jest.MockedFunction<typeof network>;
 const mockGetCoinConfig = getCoinConfig as jest.MockedFunction<typeof getCoinConfig>;
 
@@ -52,7 +56,7 @@ describe("makeNetworkRequest", () => {
   });
 
   it("should return data on successful 200 response", async () => {
-    mockNetwork.mockResolvedValue({ status: 200, data: { result: "ok" } } as any);
+    mockNetwork.mockResolvedValue(mockRes({ result: "ok" }));
 
     const result = await makeNetworkRequest({
       method: "POST",
@@ -94,9 +98,7 @@ describe("makeNetworkRequest", () => {
       url: "/test",
       method: "POST",
     });
-    mockNetwork
-      .mockRejectedValueOnce(error502)
-      .mockResolvedValueOnce({ status: 200, data: { success: true } } as any);
+    mockNetwork.mockRejectedValueOnce(error502).mockResolvedValueOnce(mockRes({ success: true }));
 
     const result = await makeNetworkRequest({
       method: "POST",
@@ -114,9 +116,7 @@ describe("makeNetworkRequest", () => {
       url: "/test",
       method: "POST",
     });
-    mockNetwork
-      .mockRejectedValueOnce(error503)
-      .mockResolvedValueOnce({ status: 200, data: { ok: true } } as any);
+    mockNetwork.mockRejectedValueOnce(error503).mockResolvedValueOnce(mockRes({ ok: true }));
 
     const result = await makeNetworkRequest({
       method: "POST",
@@ -129,10 +129,7 @@ describe("makeNetworkRequest", () => {
   });
 
   it("should throw on non-200 status with object error data", async () => {
-    mockNetwork.mockResolvedValue({
-      status: 400,
-      data: { error: "bad request" },
-    } as any);
+    mockNetwork.mockResolvedValue(mockRes({ error: "bad request" }, 400));
 
     await expect(
       makeNetworkRequest({
@@ -144,10 +141,7 @@ describe("makeNetworkRequest", () => {
   });
 
   it("should throw on non-200 status with string error data", async () => {
-    mockNetwork.mockResolvedValue({
-      status: 500,
-      data: "Internal Server Error",
-    } as any);
+    mockNetwork.mockResolvedValue(mockRes("Internal Server Error", 500));
 
     await expect(
       makeNetworkRequest({
@@ -181,7 +175,7 @@ describe("makeNetworkRequest", () => {
 
     mockNetwork
       .mockRejectedValueOnce(timeoutError)
-      .mockResolvedValueOnce({ status: 200, data: { recovered: true } } as any);
+      .mockResolvedValueOnce(mockRes({ recovered: true }));
 
     const result = await makeNetworkRequest({
       method: "POST",
@@ -215,7 +209,7 @@ describe("makeNetworkRequest", () => {
     mockNetwork
       .mockRejectedValueOnce(error502)
       .mockRejectedValueOnce(error502)
-      .mockResolvedValueOnce({ status: 200, data: { ok: true } } as any);
+      .mockResolvedValueOnce(mockRes({ ok: true }));
 
     await makeNetworkRequest({
       method: "POST",
@@ -253,7 +247,7 @@ describe("makeNetworkRequest", () => {
   });
 
   it("should use custom timeout when provided", async () => {
-    mockNetwork.mockResolvedValue({ status: 200, data: {} } as any);
+    mockNetwork.mockResolvedValue(mockRes({}));
 
     await makeNetworkRequest({
       method: "GET",
@@ -449,7 +443,7 @@ describe("rosetta API functions", () => {
         API_MINA_GRAPHQL_NODE: "",
         API_VALIDATORS_BASE_URL: "",
       },
-    } as any);
+    } as DeepPartial<ReturnType<typeof getCoinConfig>> as ReturnType<typeof getCoinConfig>);
   });
 
   describe("fetchNetworkStatus", () => {
@@ -457,7 +451,7 @@ describe("rosetta API functions", () => {
       const mockResponse = {
         current_block_identifier: { index: 100, hash: "hash" },
       };
-      mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
+      mockNetwork.mockResolvedValue(mockRes(mockResponse));
 
       const result = await fetchNetworkStatus();
 
@@ -476,7 +470,7 @@ describe("rosetta API functions", () => {
       const mockResponse = {
         balances: [{ metadata: { total_balance: 1000, liquid_balance: 900 } }],
       };
-      mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
+      mockNetwork.mockResolvedValue(mockRes(mockResponse));
 
       const result = await fetchAccountBalance("B62qtest");
 
@@ -492,14 +486,8 @@ describe("rosetta API functions", () => {
   describe("fetchAccountTransactions", () => {
     it("should fetch all pages of transactions", async () => {
       mockNetwork
-        .mockResolvedValueOnce({
-          status: 200,
-          data: { transactions: [{ id: "tx1" }], next_offset: 100 },
-        } as any)
-        .mockResolvedValueOnce({
-          status: 200,
-          data: { transactions: [{ id: "tx2" }], next_offset: undefined },
-        } as any);
+        .mockResolvedValueOnce(mockRes({ transactions: [{ id: "tx1" }], next_offset: 100 }))
+        .mockResolvedValueOnce(mockRes({ transactions: [{ id: "tx2" }], next_offset: undefined }));
 
       const result = await fetchAccountTransactions("B62qtest");
 
@@ -508,10 +496,9 @@ describe("rosetta API functions", () => {
     });
 
     it("should start from specified offset", async () => {
-      mockNetwork.mockResolvedValue({
-        status: 200,
-        data: { transactions: [{ id: "tx1" }], next_offset: undefined },
-      } as any);
+      mockNetwork.mockResolvedValue(
+        mockRes({ transactions: [{ id: "tx1" }], next_offset: undefined }),
+      );
 
       await fetchAccountTransactions("B62qtest", 50);
 
@@ -523,10 +510,7 @@ describe("rosetta API functions", () => {
     });
 
     it("should return empty array when no transactions", async () => {
-      mockNetwork.mockResolvedValue({
-        status: 200,
-        data: { transactions: [], next_offset: undefined },
-      } as any);
+      mockNetwork.mockResolvedValue(mockRes({ transactions: [], next_offset: undefined }));
 
       const result = await fetchAccountTransactions("B62qtest");
 
@@ -539,7 +523,7 @@ describe("rosetta API functions", () => {
       const mockResponse = {
         block: { block_identifier: { index: 50, hash: "bh" }, timestamp: 12345 },
       };
-      mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
+      mockNetwork.mockResolvedValue(mockRes(mockResponse));
 
       const result = await rosettaGetBlockInfo(50);
 
@@ -562,21 +546,21 @@ describe("rosetta API functions", () => {
         suggested_fee: [{ value: "100" }],
       };
       mockNetwork
-        .mockResolvedValueOnce({ status: 200, data: preprocessResponse } as any)
-        .mockResolvedValueOnce({ status: 200, data: metadataResponse } as any);
+        .mockResolvedValueOnce(mockRes(preprocessResponse))
+        .mockResolvedValueOnce(mockRes(metadataResponse));
 
       const result = await fetchTransactionMetadata("src", "dst", 100, 1000);
 
       expect(result).toEqual(metadataResponse);
       expect(mockNetwork).toHaveBeenCalledTimes(2);
       // First call: preprocess
-      expect((mockNetwork.mock.calls[0] as any)[0]).toEqual(
+      expect(mockNetwork.mock.calls[0][0]).toEqual(
         expect.objectContaining({
           url: "https://rosetta.example.com/construction/preprocess",
         }),
       );
       // Second call: metadata
-      expect((mockNetwork.mock.calls[1] as any)[0]).toEqual(
+      expect(mockNetwork.mock.calls[1][0]).toEqual(
         expect.objectContaining({
           url: "https://rosetta.example.com/construction/metadata",
         }),
@@ -587,7 +571,7 @@ describe("rosetta API functions", () => {
   describe("rosettaSubmitTransaction", () => {
     it("should submit transaction blob to rosetta", async () => {
       const mockResponse = { transaction_identifier: { hash: "txhash" } };
-      mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
+      mockNetwork.mockResolvedValue(mockRes(mockResponse));
 
       const result = await rosettaSubmitTransaction('{"signed":"tx"}');
 
@@ -612,7 +596,7 @@ describe("graphql API functions", () => {
         API_MINA_ROSETTA_NODE: "",
         API_VALIDATORS_BASE_URL: "",
       },
-    } as any);
+    } as DeepPartial<ReturnType<typeof getCoinConfig>> as ReturnType<typeof getCoinConfig>);
   });
 
   describe("getEpochInfo", () => {
@@ -630,7 +614,7 @@ describe("graphql API functions", () => {
           },
         },
       };
-      mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
+      mockNetwork.mockResolvedValue(mockRes(mockResponse));
 
       const result = await getEpochInfo();
 
@@ -655,7 +639,7 @@ describe("graphql API functions", () => {
           },
         },
       };
-      mockNetwork.mockResolvedValue({ status: 200, data: mockResponse } as any);
+      mockNetwork.mockResolvedValue(mockRes(mockResponse));
 
       const result = await getDelegateAccount(validPublicKey);
 
@@ -712,14 +696,12 @@ describe("fetchValidators", () => {
         API_MINA_ROSETTA_NODE: "",
         API_MINA_GRAPHQL_NODE: "",
       },
-    } as any);
+    } as DeepPartial<ReturnType<typeof getCoinConfig>> as ReturnType<typeof getCoinConfig>);
   });
 
   it("should fetch a single page of validators", async () => {
     const validator = makeValidator();
-    mockNetwork.mockResolvedValue({
-      data: { content: [validator], last: true },
-    } as any);
+    mockNetwork.mockResolvedValue(mockRes({ content: [validator], last: true }));
 
     const result = await fetchValidators();
 
@@ -744,8 +726,8 @@ describe("fetchValidators", () => {
     const v2 = makeValidator({ validatorAddress: "B62q_page2" });
 
     mockNetwork
-      .mockResolvedValueOnce({ data: { content: [v1], last: false } } as any)
-      .mockResolvedValueOnce({ data: { content: [v2], last: true } } as any);
+      .mockResolvedValueOnce(mockRes({ content: [v1], last: false }))
+      .mockResolvedValueOnce(mockRes({ content: [v2], last: true }));
 
     const result = await fetchValidators();
 
@@ -761,9 +743,7 @@ describe("fetchValidators", () => {
       description: undefined,
       website: undefined,
     } as unknown as Partial<ValidatorInfoFromAPI>);
-    mockNetwork.mockResolvedValue({
-      data: { content: [validator], last: true },
-    } as any);
+    mockNetwork.mockResolvedValue(mockRes({ content: [validator], last: true }));
 
     const result = await fetchValidators();
 
@@ -773,9 +753,7 @@ describe("fetchValidators", () => {
   });
 
   it("should return empty array when no validators", async () => {
-    mockNetwork.mockResolvedValue({
-      data: { content: [], last: true },
-    } as any);
+    mockNetwork.mockResolvedValue(mockRes({ content: [], last: true }));
 
     const result = await fetchValidators();
 

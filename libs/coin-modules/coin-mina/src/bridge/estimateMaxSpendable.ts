@@ -19,13 +19,7 @@ const estimateMaxSpendable: AccountBridge<
 
   const { fee } = await getEstimatedFees(t, a.freshAddress);
 
-  const maxSpendable = getMaxAmount(a, t, fee);
-
-  if (maxSpendable.lt(0)) {
-    return new BigNumber(0);
-  }
-
-  return maxSpendable;
+  return getMaxAmount(a, t, fee);
 };
 
 export default estimateMaxSpendable;

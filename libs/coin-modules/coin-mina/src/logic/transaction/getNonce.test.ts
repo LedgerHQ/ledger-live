@@ -1,12 +1,13 @@
 jest.mock("../../api");
 
+import { DeepPartial, DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
 import BigNumber from "bignumber.js";
 import { fetchTransactionMetadata } from "../../api";
 import { Transaction } from "../../types/common";
 import { getNonce } from "./getNonce";
 
 const mockFetchTransactionMetadata = fetchTransactionMetadata as jest.MockedFunction<
-  typeof fetchTransactionMetadata
+  DeepPartialReturn<typeof fetchTransactionMetadata>
 >;
 
 describe("getNonce", () => {
@@ -42,13 +43,13 @@ describe("getNonce", () => {
   });
 
   it("should return transaction nonce when fees is missing", async () => {
-    const txn = {
+    const txn: DeepPartial<Transaction> = {
       recipient: validAddress,
       nonce: 42,
       amount: new BigNumber(1000),
-    } as unknown as Transaction;
+    };
 
-    const result = await getNonce(txn, "B62qtest");
+    const result = await getNonce(txn as Transaction, "B62qtest");
 
     expect(result).toBe(42);
   });
@@ -57,7 +58,7 @@ describe("getNonce", () => {
     mockFetchTransactionMetadata.mockResolvedValue({
       metadata: { nonce: "99" },
       suggested_fee: [{ value: "50000000" }],
-    } as any);
+    });
 
     const txn = {
       recipient: validAddress,

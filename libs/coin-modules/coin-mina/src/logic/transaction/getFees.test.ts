@@ -1,12 +1,13 @@
 jest.mock("../../api");
 
+import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
 import BigNumber from "bignumber.js";
 import { fetchTransactionMetadata } from "../../api";
 import { Transaction } from "../../types/common";
 import { getFees } from "./getFees";
 
 const mockFetchTransactionMetadata = fetchTransactionMetadata as jest.MockedFunction<
-  typeof fetchTransactionMetadata
+  DeepPartialReturn<typeof fetchTransactionMetadata>
 >;
 
 describe("getFees", () => {
@@ -50,7 +51,7 @@ describe("getFees", () => {
     mockFetchTransactionMetadata.mockResolvedValue({
       metadata: { account_creation_fee: "1000000000" },
       suggested_fee: [{ value: "50000000" }],
-    } as any);
+    });
 
     const txn = {
       amount: new BigNumber(1000),
@@ -68,7 +69,7 @@ describe("getFees", () => {
     mockFetchTransactionMetadata.mockResolvedValue({
       metadata: {},
       suggested_fee: [{ value: "50000000" }],
-    } as any);
+    });
 
     const txn = {
       amount: new BigNumber(1000),

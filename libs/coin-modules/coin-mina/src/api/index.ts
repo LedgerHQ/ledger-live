@@ -69,7 +69,7 @@ const backoffDelay = (attempt: number): Promise<void> =>
 
 const getRosettaUrl = (route: string): string => {
   const currencyConfig = getCoinConfig();
-  return `${currencyConfig.infra.API_MINA_ROSETTA_NODE}${route || ""}`;
+  return `${currencyConfig.infra.API_MINA_ROSETTA_NODE}${route}`;
 };
 
 const getGraphqlUrl = (): string => {
@@ -242,14 +242,9 @@ function makeOperation(options: MakeOperationOptions): Operation {
     };
   }
 
-  const metadata: Operation["metadata"] = {};
-  if (to) {
-    metadata.delegate_change_target = to;
-  }
-
   return {
     ...baseOperation,
-    metadata,
+    ...(to ? { metadata: { delegate_change_target: to } } : {}),
   };
 }
 

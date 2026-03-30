@@ -6,21 +6,19 @@ import { MinaAccount, MinaSigner } from "../types";
 import { createBridges, buildCurrencyBridge, buildAccountBridge, makeCliTools } from ".";
 
 describe("buildCurrencyBridge", () => {
-  const currencyBridge = buildCurrencyBridge(undefined as unknown as SignerContext<MinaSigner>);
+  const currencyBridge = buildCurrencyBridge(jest.fn() as SignerContext<MinaSigner>);
 
   it("preload resolves to empty object", async () => {
     expect(await currencyBridge.preload({} as CryptoCurrency)).toEqual({});
   });
 
   it("hydrate does not throw", () => {
-    expect(() =>
-      currencyBridge.hydrate({} as CryptoCurrency, {} as unknown as CryptoCurrency),
-    ).not.toThrow();
+    expect(() => currencyBridge.hydrate({} as CryptoCurrency, {} as CryptoCurrency)).not.toThrow();
   });
 });
 
 describe("buildAccountBridge", () => {
-  const accountBridge = buildAccountBridge(undefined as unknown as SignerContext<MinaSigner>);
+  const accountBridge = buildAccountBridge(jest.fn() as SignerContext<MinaSigner>);
 
   it("signRawOperation is not supported", () => {
     expect(() => accountBridge.signRawOperation({} as SignRawOperationArg0<MinaAccount>)).toThrow(
@@ -38,8 +36,8 @@ describe("makeCliTools", () => {
 describe("createBridges", () => {
   it("returns a currency bridge and an account bridge with all required methods", () => {
     const bridges = createBridges(
-      undefined as unknown as SignerContext<MinaSigner>,
-      {} as unknown as MinaCoinConfig,
+      jest.fn() as SignerContext<MinaSigner>,
+      jest.fn() as MinaCoinConfig,
     );
     expect(bridges).toEqual({
       accountBridge: {

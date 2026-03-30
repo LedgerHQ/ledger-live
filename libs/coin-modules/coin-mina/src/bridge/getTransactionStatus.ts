@@ -78,7 +78,7 @@ const getTransactionStatus: AccountBridge<
 
   validateAccountCreationFee(t, a, errors, warnings);
 
-  const estimatedFees = t.fees.fee || new BigNumber(0);
+  const estimatedFees = t.fees.fee;
   const maxAmountWithFees = getMaxAmount(a, t, estimatedFees);
   const totalSpent = getTotalSpent(a, t, estimatedFees);
   const amount = useAllAmount ? maxAmountWithFees : new BigNumber(t.amount);
