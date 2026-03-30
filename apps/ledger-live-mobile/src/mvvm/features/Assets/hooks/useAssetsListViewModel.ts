@@ -2,10 +2,8 @@ import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
-import { useSelector } from "~/context/hooks";
-import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
+import { useNonBlacklistedDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
@@ -35,10 +33,7 @@ const useAssetsListViewModel = ({
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const navigation = useNavigation<NavigationProp>();
 
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
-  const distribution = useDistribution({
+  const filteredDistribution = useNonBlacklistedDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });
@@ -46,21 +41,9 @@ const useAssetsListViewModel = ({
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
-  const assets: Asset[] = useMemo(
-    () => (distribution.isAvailable && distribution.list.length > 0 ? distribution.list : []),
-    [distribution],
-  );
-
   const assetsToDisplay = useMemo(
-    () =>
-      assets
-        .filter(
-          asset =>
-            asset.currency.type !== "TokenCurrency" ||
-            !blacklistedTokenIdsSet.has(asset.currency.id),
-        )
-        .slice(0, limitNumberOfAssets),
-    [assets, blacklistedTokenIdsSet, limitNumberOfAssets],
+    () => filteredDistribution.slice(0, limitNumberOfAssets),
+    [filteredDistribution, limitNumberOfAssets],
   );
 
   const onItemPress = useCallback(

@@ -163,8 +163,12 @@ export function useTrackingPairs(): TrackingPair[] {
   );
 }
 
-export function useNonBlacklistedDistribution() {
-  const distribution = useDistribution({ showEmptyAccounts: true });
+export function useNonBlacklistedDistribution(
+  opts: Omit<Parameters<typeof useDistributionCommon>[0], "accounts" | "to"> = {
+    showEmptyAccounts: true,
+  },
+) {
+  const distribution = useDistribution(opts);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 

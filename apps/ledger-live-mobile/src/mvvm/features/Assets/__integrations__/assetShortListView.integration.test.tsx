@@ -6,11 +6,28 @@ import { AssetShortListView } from "../components/AssetsShortListView";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Props } from "../hooks/useAssetsListViewModel";
+import {
+  createFixtureAccount,
+  createFixtureTokenAccount,
+} from "@ledgerhq/live-common/mock/fixtures/cryptoCurrencies";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
   useCalculate: ({ value }: { value: number }) => value,
 }));
+
+// ETH_ACCOUNT_WITH_USDC from accounts.mock.ts is not used here because genAccount generates
+// sub-accounts non-deterministically — the USDC token may not appear depending on the seed.
+// Fixture helpers always produce a TokenAccount with a non-zero balance.
+const mockEthereumCurrency = getCryptoCurrencyById("ethereum");
+const usdcSubAccount = createFixtureTokenAccount("01", usdcToken);
+const ethAccount = createFixtureAccount("01", mockEthereumCurrency);
+const mockEthAccountWithUSDC = {
+  ...ethAccount,
+  subAccounts: [{ ...usdcSubAccount, parentId: ethAccount.id }],
+};
 
 const INITIAL_STATE = {
   overrideInitialState: (state: State) => ({
@@ -100,6 +117,44 @@ describe("AssetShortListView", () => {
     const assetsList = screen.getByTestId("AssetsList");
     expect(assetsList).toBeVisible();
     expect(screen.queryAllByTestId(/^assetItem-.+-name$/).length).toBe(0);
+  });
+
+  describe("blacklisted tokens", () => {
+    const mockStateWithBlacklistedToken = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+      settings: { ...state.settings, blacklistedTokenIds: [usdcToken.id] },
+    });
+
+    const mockStateWithNonBlacklistedToken = (state: State): State => ({
+      ...state,
+      accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+      settings: { ...state.settings, blacklistedTokenIds: [] },
+    });
+
+    it("should display a token that is not blacklisted", () => {
+      const ScreenComponent = () => <AssetShortListView sourceScreenName={ScreenName.Portfolio} />;
+      render(
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="TestScreen" component={ScreenComponent} />
+        </Stack.Navigator>,
+        { overrideInitialState: mockStateWithNonBlacklistedToken },
+      );
+
+      expect(screen.getByText(usdcToken.name)).toBeVisible();
+    });
+
+    it("should not display a blacklisted token", () => {
+      const ScreenComponent = () => <AssetShortListView sourceScreenName={ScreenName.Portfolio} />;
+      render(
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="TestScreen" component={ScreenComponent} />
+        </Stack.Navigator>,
+        { overrideInitialState: mockStateWithBlacklistedToken },
+      );
+
+      expect(screen.queryByText(usdcToken.name)).toBeNull();
+    });
   });
 
   it("should handle asset press", async () => {
