@@ -15,6 +15,7 @@ import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
+// TODO: Same as LWM, Select random provider in the list of available providers. - ALL the BUY SELL TESTS - lire le code pour voir si y'a des dingz
 const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }> = [
   {
     buySell: {

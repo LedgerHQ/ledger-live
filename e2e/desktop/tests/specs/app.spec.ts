@@ -52,3 +52,5 @@ test.describe("Identities migration from legacy user", () => {
     },
   );
 });
+
+// TODO: Do we need a e2e test to check this -> Investigate and drop / replace by unit test this test if not

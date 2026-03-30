@@ -15,8 +15,10 @@ import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
+// TODO: check if warning still accurate
 
 const transactionsAmountInvalid = [
+  // TODO: @gabrielB To check if there is other coin with specific scenarios
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
     expectedErrorMessage: null,
@@ -50,6 +52,7 @@ const transactionsAmountInvalid = [
 ];
 
 const transactionsAddressInvalid = [
+  // TODO: @gabrielB To check if there is other coin with specific scenarios
   {
     transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
     address: Addresses.BTC_NATIVE_SEGWIT_1,
@@ -88,6 +91,7 @@ const transactionsAddressInvalid = [
 ];
 
 const transactionAddressValid = [
+  // TODO: check if we need to keep the one with NULL warning message - already checked on e2e send ?
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.MEDIUM),
     expectedWarningMessage: null,
@@ -161,6 +165,7 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
+  // TODO: Remove Sepolia and use ETH instead - same as LWM
   {
     transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
     xrayTicket: "B2CQA-2574",
@@ -364,7 +369,9 @@ test.describe("Send flows", () => {
 
           await app.send.craftTx(transaction.transaction);
           await app.send.checkContinueButtonDisabled();
-          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          if (transaction.expectedErrorMessage) {
+            await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          }
         },
       );
     });
@@ -542,7 +549,9 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.fillRecipient(transaction.address);
-          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          if (transaction.expectedErrorMessage) {
+            await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          }
           await app.send.checkContinueButtonDisabled();
         },
       );

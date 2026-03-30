@@ -122,13 +122,11 @@ export class SendModal extends Modal {
   }
 
   @step("Check if the error message is the same as expected")
-  async checkErrorMessage(errorMessage: string | null) {
-    if (errorMessage !== null) {
-      await this.inputError.waitFor({ state: "visible" });
-      const errorText: any = await this.inputError.textContent();
-      const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
-      expect(normalize(errorText)).toEqual(normalize(errorMessage));
-    }
+  async checkErrorMessage(errorMessage: string) {
+    await this.inputError.waitFor({ state: "visible" });
+    const errorText: any = await this.inputError.textContent();
+    const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
+    expect(normalize(errorText)).toEqual(normalize(errorMessage));
   }
 
   @step("Check warning message")

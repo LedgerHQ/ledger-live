@@ -37,11 +37,10 @@ test.describe("Portfolio - legacy", () => {
 });
 
 test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
-  const currency = Currency.BTC;
+  //TODO: Remove speculos
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: currency.speculosApp,
     // to-do remove when wallet 4.0 is default
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });

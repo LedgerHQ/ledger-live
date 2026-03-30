@@ -28,7 +28,8 @@ const currencies = [
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
   { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
-  { currency: Currency.ALEO, xrayTicket: "B2CQA-4450, B2CQA-4451, B2CQA-4452" },
+  { currency: Currency.ALEO, xrayTicket: "B2CQA-4450, B2CQA-4451, B2CQA-4452" }, // TODO: Prévenir que test va fail en Release validation car pas en prod
+  // TODO: Goal test all coin modules -> Wait for Coin-inté - @GabrielB
 ];
 
 for (const currency of currencies) {
@@ -78,6 +79,7 @@ for (const currency of currencies) {
           await selector.selectAssetByTicker(currency.currency);
           await selector.selectNetwork(currency.currency);
 
+          // TODO: Check with @mateusz if better to have a Aleo spec.
           if (currency.currency === Currency.ALEO) {
             await app.scanAccountsDrawer.expectViewKeyWarningVisibility();
             await app.scanAccountsDrawer.clickAllowButton();
@@ -115,3 +117,5 @@ for (const currency of currencies) {
     );
   });
 }
+
+// TODO: see if possible to refacto this code

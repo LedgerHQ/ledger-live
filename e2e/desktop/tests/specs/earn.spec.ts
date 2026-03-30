@@ -30,6 +30,7 @@ const ethEarn = [
     provider: Provider.LIDO,
     xrayTicket: "B2CQA-3676, B2CQA-1713",
   },
+  // TODO: delete STADER_LABS
   {
     account: Account.ETH_1,
     provider: Provider.STADER_LABS,
@@ -112,7 +113,8 @@ for (const { account, provider, xrayTicket } of ethEarn) {
   });
 }
 
-test.describe("Inline Add Account", () => {
+// TODO: rename the test - inline add acccount -> Earn live app Add Account
+test.describe("Earn live app Add Account", () => {
   const account = Account.ETH_1;
   setupEnv(true);
   test.use({

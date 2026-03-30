@@ -45,7 +45,7 @@ test.describe("Main navigation", () => {
       await app.mainNavigation.validateTargetFromMainNavigation("earn");
       await app.mainNavigation.openTargetFromMainNavigation("discover");
       await app.mainNavigation.validateTargetFromMainNavigation("discover");
-      await app.mainNavigation.openTargetFromMainNavigation("refer a friend");
+      await app.mainNavigation.openTargetFromMainNavigation("refer a friend"); // TODO: Talk with Martijn and Bruno about this one later - Do we need to check refer and discover
       await app.mainNavigation.validateTargetFromMainNavigation("refer a friend");
 
       await app.mainNavigation.openTargetFromMainNavigation("card");

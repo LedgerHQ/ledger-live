@@ -7,6 +7,7 @@ import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
 const accounts = [
+  // TODO: add a erc20 token in the list
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
   { account: Account.ETH_1, xrayTicket: "B2CQA-2561, B2CQA-2688, B2CQA-2697" },
   { account: Account.SOL_1, xrayTicket: "B2CQA-2563, B2CQA-2689" },
@@ -66,6 +67,7 @@ for (const account of accounts) {
         await app.accounts.navigateToAccountByName(account.account.accountName);
         await app.account.expectAccountVisibility(account.account.accountName);
         await app.account.clickReceive();
+        // TODO: refacto the switch case here - If we can't change it move to a function
         switch (account.account) {
           case Account.TRX_1:
             await app.receive.verifySendCurrencyTokensWarningMessage(

@@ -6,6 +6,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 
+// TODO: Same coin list as Add account test
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
   { account: Account.ETH_1, xrayTicket: "B2CQA-2551" },

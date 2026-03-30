@@ -22,6 +22,7 @@ test.describe("Market", () => {
         description: "B2CQA-4316",
       },
     },
+    // TODO: delete this one (same as the 2 first step of the next one)
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
@@ -44,7 +45,7 @@ test.describe("Market", () => {
 
       await app.marketBanner.clickExploreMarketHeader();
 
-      await app.market.validateMarketList();
+      await app.market.validateMarketList(); // TODO: add a real check here
 
       await app.market.starCoin(Account.BTC_NATIVE_SEGWIT_1.currency.ticker);
       await app.market.expectFilterDropdownToBeVisible();

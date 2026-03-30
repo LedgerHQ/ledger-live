@@ -59,6 +59,7 @@ const e2eDelegationAccountsWithoutBroadcast = [
   },
 ];
 
+// TODO:Check if overlap with e2edelegation test or other test
 const validators = [
   {
     delegate: new Delegate(Account.ATOM_2, "0.001", "Ledger"),
@@ -87,6 +88,7 @@ const validators = [
 ];
 
 const liveApps = [
+  // TODO: check if the same as earn test - imo just checking the entry point - redirected to live app - If checking the entry point should go to earn spec file - Only for ETH
   {
     delegate: new Delegate(Account.ETH_1, "0.01", "lido"),
     xrayTicket: "B2CQA-3024",
@@ -121,6 +123,7 @@ for (const account of e2eDelegationAccounts) {
 
     const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
 
+    // TODO: Refacto this test to check if possible to improve it
     test(
       `[${account.delegate.account.currency.name}] Delegate`,
       {
@@ -208,6 +211,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 
     const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
 
+    // TODO: Refacto this test to check if possible to improve it
     test(
       `[${account.delegate.account.currency.name}] Delegate without broadcasting`,
       {
@@ -336,6 +340,7 @@ test.describe("e2e delegation - Tezos", () => {
   );
 });
 
+// TODO: Add Vote scenario - Same as LWM
 test.describe("e2e delegation - Celo", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
   test.use({
