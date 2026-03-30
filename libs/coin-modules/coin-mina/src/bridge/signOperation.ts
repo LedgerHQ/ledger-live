@@ -28,12 +28,12 @@ export const buildOptimisticOperation = (
     value = value.minus(transaction.fees.accountCreationFee);
   }
 
-  const type: OperationType =
-    transaction.txType === "stake"
-      ? "DELEGATE"
-      : transaction.txType === "unstake"
-        ? "UNDELEGATE"
-        : "OUT";
+  let type: OperationType = "OUT";
+  if (transaction.txType === "stake") {
+    type = "DELEGATE";
+  } else if (transaction.txType === "unstake") {
+    type = "UNDELEGATE";
+  }
 
   const operation: MinaOperation = {
     id: encodeOperationId(account.id, "", type),

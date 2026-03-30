@@ -51,7 +51,7 @@ const isAbortOrTimeoutError = (error: unknown): error is Error & { code?: string
   typeof (error as Error & { code?: string }).code === "string" &&
   (error as Error & { code?: string }).code === "ECONNABORTED";
 
-const RETRYABLE_HTTP_STATUS_CODES = [502, 503, 504];
+const RETRYABLE_HTTP_STATUS_CODES = new Set([502, 503, 504]);
 
 type LedgerAPI5xxInstance = InstanceType<typeof LedgerAPI5xx>;
 
@@ -60,7 +60,7 @@ const isRetryableServerError = (
 ): error is LedgerAPI5xxInstance & { status: number } =>
   error instanceof LedgerAPI5xx &&
   typeof (error as LedgerAPI5xxInstance & { status?: number }).status === "number" &&
-  RETRYABLE_HTTP_STATUS_CODES.includes((error as LedgerAPI5xxInstance & { status: number }).status);
+  RETRYABLE_HTTP_STATUS_CODES.has((error as LedgerAPI5xxInstance & { status: number }).status);
 
 const backoffDelay = (attempt: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
