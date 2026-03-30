@@ -4,6 +4,7 @@ export { bakers };
 export {
   default as tzkt,
   fetchAllTransactions,
-  fetchBlockTransactions,
+  fetchBlockDelegations,
   fetchBlockTokenTransfers,
+  fetchBlockTransactions,
 } from "./tzkt";

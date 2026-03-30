@@ -4,11 +4,11 @@ import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
-// Import fetchBlockTransactions / fetchBlockTokenTransfers through the index re-export
+// Import fetchBlockTransactions / fetchBlockTokenTransfers / fetchBlockDelegations through the index re-export
 // so that network/index.ts line 4 is exercised and its coverage is tracked.
-import type { APIBlock, APITokenTransfer, APITransactionType } from "./types";
+import type { APIBlock, APIDelegationType, APITokenTransfer, APITransactionType } from "./types";
 import api from "./tzkt";
-import { fetchBlockTransactions, fetchBlockTokenTransfers } from ".";
+import { fetchBlockDelegations, fetchBlockTokenTransfers, fetchBlockTransactions } from ".";
 
 jest.mock("@ledgerhq/live-network");
 jest.mock("@ledgerhq/logs");
@@ -42,6 +42,10 @@ function makeTxItem(id: number): APITransactionType {
 
 function makeTokenItem(id: number): APITokenTransfer {
   return { id } as APITokenTransfer;
+}
+
+function makeDelegationItem(id: number): APIDelegationType {
+  return { id } as APIDelegationType;
 }
 
 // ---------------------------------------------------------------------------
@@ -238,6 +242,99 @@ describe("tzkt network API", () => {
       expect(mockedLog).toHaveBeenCalledWith(
         "tezos",
         expect.stringContaining("fetchBlockTokenTransfers: maxTxQuery limit reached at level 100"),
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // api.getBlockDelegationsPage
+  // -------------------------------------------------------------------------
+
+  describe("api.getBlockDelegationsPage", () => {
+    it("fetches a page without a cursor", async () => {
+      const items: APIDelegationType[] = [makeDelegationItem(10)];
+      mockedNetwork.mockReturnValue(networkResponse(items) as ReturnType<typeof network>);
+
+      const result = await api.getBlockDelegationsPage(400);
+
+      expect(result).toEqual(items);
+      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
+      expect(params).toMatchObject({ level: 400, limit: 1000, "sort.asc": "id" });
+      expect(params).not.toHaveProperty("offset.cr");
+    });
+
+    it("includes offset.cr in params when cursor is provided", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      await api.getBlockDelegationsPage(400, 88);
+
+      const params = (mockedNetwork.mock.calls[0][0] as { params: Record<string, unknown> }).params;
+      expect(params["offset.cr"]).toBe(88);
+    });
+
+    it("calls the delegations endpoint", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      await api.getBlockDelegationsPage(500);
+
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("/v1/operations/delegations"),
+        }),
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // fetchBlockDelegations — pagination logic
+  // -------------------------------------------------------------------------
+
+  describe("fetchBlockDelegations", () => {
+    it("returns an empty array when the first page is empty", async () => {
+      jest.spyOn(api, "getBlockDelegationsPage").mockResolvedValue([]);
+
+      const result = await fetchBlockDelegations(100);
+
+      expect(result).toEqual([]);
+    });
+
+    it("returns a single page when the page is smaller than the page size", async () => {
+      const items = [makeDelegationItem(1), makeDelegationItem(2)];
+      jest.spyOn(api, "getBlockDelegationsPage").mockResolvedValue(items);
+
+      const result = await fetchBlockDelegations(100);
+
+      expect(result).toEqual(items);
+    });
+
+    it("fetches a second page when the first page is full (1 000 items)", async () => {
+      const fullPage = Array.from({ length: 1000 }, (_, i) => makeDelegationItem(i + 1));
+      const lastPage = [makeDelegationItem(1001)];
+
+      const spy = jest
+        .spyOn(api, "getBlockDelegationsPage")
+        .mockResolvedValueOnce(fullPage)
+        .mockResolvedValueOnce(lastPage);
+
+      const result = await fetchBlockDelegations(100);
+
+      expect(result).toHaveLength(1001);
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenNthCalledWith(1, 100, undefined);
+      expect(spy).toHaveBeenNthCalledWith(2, 100, 1000);
+    });
+
+    it("stops after maxTxQuery iterations regardless of page length", async () => {
+      const fullPage = Array.from({ length: 1000 }, (_, i) => makeDelegationItem(i + 1));
+      const spy = jest.spyOn(api, "getBlockDelegationsPage").mockResolvedValue(fullPage);
+
+      const result = await fetchBlockDelegations(100);
+
+      expect(spy).toHaveBeenCalledTimes(100);
+      expect(result).toHaveLength(100_000);
+      expect(mockedLog).toHaveBeenCalledWith(
+        "tezos",
+        expect.stringContaining("fetchBlockDelegations: maxTxQuery limit reached at level 100"),
       );
     });
   });
