@@ -106,10 +106,14 @@ describe("Perps handlers", () => {
       .mocked(withDevice)
       .mockReturnValue(job => from(job({ dmk: {}, sessionId: "session-1" } as never)));
 
-    // UI hook — simulates the modal calling signFactory(device) then onSuccess
-    mockUiSigningExecute = jest.fn().mockImplementation(async ({ signFactory, onSuccess }) => {
-      const result = await signFactory(mockDevice);
-      onSuccess(result);
+    // UI hook — simulates the modal calling signFactory(device) then onSuccess/onError
+    mockUiSigningExecute = jest.fn().mockImplementation(async ({ signFactory, onSuccess, onError }) => {
+      try {
+        const result = await signFactory(mockDevice);
+        onSuccess(result);
+      } catch (err) {
+        onError(err);
+      }
     });
 
     serverHandlers = handlers({
