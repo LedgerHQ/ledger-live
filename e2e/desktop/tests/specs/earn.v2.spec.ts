@@ -65,9 +65,7 @@ test.describe("Earn [v2]", () => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.verifyIceColdStartPage();
         await app.earnV2Dashboard.clickIceColdStartEarnCTA();
-        const selector = await getModularSelector(app, "ASSET");
-        if (!selector) throw new Error("Expected modular ASSET selector to be visible");
-        await selector.validateItems();
+        await app.earnV2Dashboard.expectModularSelectorToBeVisible(app, "ASSET");
       },
     );
   });
@@ -98,6 +96,10 @@ test.describe("Earn [v2]", () => {
           await app.earnV2Dashboard.verifyAssetReadyToEarn(account.currency.ticker);
           await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
           await app.earnV2Dashboard.verifyModalContainerVisible();
+
+          if (account === Account.ETH_2) {
+            await app.earnV2Dashboard.verifyProviderVisible();
+          }
         },
       );
     });
@@ -184,11 +186,11 @@ test.describe("Earn [v2]", () => {
         await app.earnV2Dashboard.clickIceColdStartEarnCTA();
 
         const assetSelector = await getModularSelector(app, "ASSET");
-        if (!assetSelector) throw new Error("Expected modular ASSET selector to be visible");
-        await assetSelector.selectAsset(account.currency);
+        expect(assetSelector).not.toBeNull();
+        await assetSelector!.selectAsset(account.currency);
 
         const accountSelector = await getModularSelector(app, "ACCOUNT");
-        if (!accountSelector) throw new Error("Expected modular ACCOUNT selector to be visible");
+        expect(accountSelector).not.toBeNull();
         await accountSelector.clickOnAddAndExistingAccount();
         await app.scanAccountsDrawer.selectFirstAccount();
         await app.scanAccountsDrawer.clickContinueButton();
@@ -249,7 +251,7 @@ test.describe("Earn [v2]", () => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
         await app.earnV2Dashboard.selectAccountInModularSelector(app, account);
-        await app.earnV2Dashboard.verifyModalOrProviderVisible();
+        await app.earnV2Dashboard.verifyProviderVisible();
       },
     );
   });
