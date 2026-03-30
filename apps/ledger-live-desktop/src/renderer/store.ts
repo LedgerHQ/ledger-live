@@ -6,9 +6,8 @@ const store = new ElectronStore({
   encryptionKey: "this_only_obfuscates",
 });
 
-export async function getStoreValue<T>(key: string, storeId: string): Promise<T | undefined> {
-  const value = await store.get(`${storeId}-${key}`);
-
+export function getStoreValue<T>(key: string, storeId: string): T | undefined {
+  const value = store.get(`${storeId}-${key}`);
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return isEmpty(value) ? undefined : (value as T);
 }
