@@ -1,5 +1,4 @@
-import axios from "axios";
-import { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { DisconnectedDevice } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
