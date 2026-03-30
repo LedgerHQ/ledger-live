@@ -1,6 +1,7 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { Subject } from "rxjs";
-import { act, render, screen } from "tests/testSetup";
+import { act, render, screen, waitFor } from "tests/testSetup";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
 import StepMandatoryPrivateSync from "./StepMandatoryPrivateSync";
@@ -9,7 +10,12 @@ import { makeStepProps } from "../../../__mocks__/stepProps.mock";
 jest.mock("@ledgerhq/live-common/bridge/impl");
 jest.mock("~/renderer/actions/accounts", () => ({
   ...jest.requireActual("~/renderer/actions/accounts"),
-  updateAccountWithUpdater: jest.fn().mockReturnValue({ type: "UPDATE_ACCOUNT" }),
+  updateAccountWithUpdater: jest
+    .fn()
+    .mockImplementation((accountId: string, updater: (a: unknown) => unknown) => ({
+      type: "UPDATE_ACCOUNT",
+      payload: { accountId, updater },
+    })),
 }));
 
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
@@ -53,5 +59,45 @@ describe("StepMandatoryPrivateSync", () => {
     render(<StepMandatoryPrivateSync {...props} />);
 
     expect(mockSync).not.toHaveBeenCalled();
+  });
+
+  describe("transition to record-picker when progress reaches 100%", () => {
+    const makeAleoAccountAt100 = (): AleoAccount => ({
+      ...ALEO_ACCOUNT_1,
+      aleoResources: {
+        transparentBalance: new BigNumber(0),
+        privateBalance: new BigNumber(0),
+        unspentPrivateRecords: [],
+        provableApi: { scannerStatus: { synced: true, percentage: 100 } },
+        lastPrivateSyncDate: null,
+      },
+    });
+
+    it("should call transitionTo('record-picker') after progress reaches 100", async () => {
+      const props = makeStepProps();
+      render(<StepMandatoryPrivateSync {...props} />);
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccountAt100());
+      });
+
+      await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("record-picker"), {
+        timeout: 1000,
+      });
+    });
+
+    it("should not call transitionTo if the component unmounts before the timer fires", async () => {
+      const props = makeStepProps();
+      const { unmount } = render(<StepMandatoryPrivateSync {...props} />);
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccountAt100());
+      });
+
+      unmount();
+
+      await new Promise(resolve => setTimeout(resolve, 600));
+      expect(props.transitionTo).not.toHaveBeenCalled();
+    });
   });
 });

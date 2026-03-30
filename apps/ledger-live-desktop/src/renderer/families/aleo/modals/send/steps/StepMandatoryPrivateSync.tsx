@@ -41,7 +41,7 @@ const StepMandatoryPrivateSync = ({ transitionTo, account }: StepProps) => {
 
     const runSync = () => {
       const acc = accountRef.current;
-      if (!acc || acc.type !== "Account" || !isAleoAccount(acc)) return;
+      if (acc?.type !== "Account" || !isAleoAccount(acc)) return;
 
       let latestPercentage = 0;
       const bridge = getAccountBridge(acc);
@@ -51,7 +51,7 @@ const StepMandatoryPrivateSync = ({ transitionTo, account }: StepProps) => {
           next: updater => {
             if (cancelled) return;
             const currentAcc = accountRef.current;
-            if (!currentAcc || currentAcc.type !== "Account" || !isAleoAccount(currentAcc)) return;
+            if (currentAcc?.type !== "Account" || !isAleoAccount(currentAcc)) return;
             dispatch(updateAccountWithUpdater(currentAcc.id, updater));
             const updatedAccount = updater(currentAcc);
             if (!isAleoAccount(updatedAccount)) return;
