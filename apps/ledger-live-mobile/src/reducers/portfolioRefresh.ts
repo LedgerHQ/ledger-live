@@ -7,6 +7,7 @@ export interface PortfolioRefreshState {
   lastSyncTimestampSnapshot: number | null;
   hasCompletedInitialSync: boolean;
   lastUserSyncClickTimestamp: number;
+  lastOfflineRefreshAttemptTimestamp: number;
 }
 
 export const INITIAL_STATE: PortfolioRefreshState = {
@@ -14,6 +15,7 @@ export const INITIAL_STATE: PortfolioRefreshState = {
   lastSyncTimestampSnapshot: null,
   hasCompletedInitialSync: false,
   lastUserSyncClickTimestamp: 0,
+  lastOfflineRefreshAttemptTimestamp: 0,
 };
 
 const portfolioRefreshSlice = createSlice({
@@ -34,6 +36,9 @@ const portfolioRefreshSlice = createSlice({
     setLastUserSyncClickTimestamp: (state, action: PayloadAction<number>) => {
       state.lastUserSyncClickTimestamp = action.payload;
     },
+    setOfflineRefreshAttempt: (state, action: PayloadAction<number>) => {
+      state.lastOfflineRefreshAttemptTimestamp = action.payload;
+    },
   },
 });
 
@@ -42,6 +47,7 @@ export const {
   setRefreshCompleted,
   setHasCompletedInitialSync,
   setLastUserSyncClickTimestamp,
+  setOfflineRefreshAttempt,
 } = portfolioRefreshSlice.actions;
 
 export const selectIsRefreshing = (state: State) => state.portfolioRefresh.isRefreshing;
@@ -54,6 +60,9 @@ export const selectHasCompletedInitialSync = (state: State) =>
 
 export const selectLastUserSyncClickTimestamp = (state: State) =>
   state.portfolioRefresh.lastUserSyncClickTimestamp;
+
+export const selectLastOfflineRefreshAttemptTimestamp = (state: State) =>
+  state.portfolioRefresh.lastOfflineRefreshAttemptTimestamp;
 
 export const selectLastSyncTimestamp = createSelector(
   (state: State) => state.accounts.active,

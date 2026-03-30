@@ -30,8 +30,15 @@ const StatusText = ({ testID, children }: { testID: string; children: string }) 
 );
 
 export const PortfolioRefreshStatus = () => {
-  const { isVisible, isRefreshing, outcome, refreshingLabel, upToDateLabel, syncErrorLabel } =
-    usePortfolioRefreshStatusViewModel();
+  const {
+    isVisible,
+    isRefreshing,
+    outcome,
+    refreshingLabel,
+    upToDateLabel,
+    syncErrorLabel,
+    offlineLabel,
+  } = usePortfolioRefreshStatusViewModel();
 
   const opacity = useSharedValue(0);
   const height = useSharedValue(0);
@@ -90,6 +97,15 @@ export const PortfolioRefreshStatus = () => {
         <>
           <Warning size={16} color="error" />
           <StatusText testID="portfolio-refresh-status-error">{syncErrorLabel}</StatusText>
+        </>
+      );
+    }
+
+    if (outcome === "offline") {
+      return (
+        <>
+          <Warning size={16} color="warning" />
+          <StatusText testID="portfolio-refresh-status-offline">{offlineLabel}</StatusText>
         </>
       );
     }

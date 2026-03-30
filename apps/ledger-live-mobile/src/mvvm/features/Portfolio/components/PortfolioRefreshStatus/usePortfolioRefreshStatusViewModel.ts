@@ -2,12 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { selectIsRefreshing } from "~/reducers/portfolioRefresh";
+import {
+  selectIsRefreshing,
+  selectLastOfflineRefreshAttemptTimestamp,
+} from "~/reducers/portfolioRefresh";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
 
-export const UP_TO_DATE_VISIBLE_DURATION_MS = 3_000;
+export const REFRESH_STATUS_VISIBLE_DURATION_MS = 3_000;
 
-type RefreshOutcome = "success" | "error" | null;
+type RefreshOutcome = "success" | "error" | "offline" | null;
 
 interface UsePortfolioRefreshStatusViewModelResult {
   isVisible: boolean;
@@ -15,6 +18,7 @@ interface UsePortfolioRefreshStatusViewModelResult {
   refreshingLabel: string;
   upToDateLabel: string;
   syncErrorLabel: string;
+  offlineLabel: string;
   outcome: RefreshOutcome;
 }
 
@@ -22,6 +26,7 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
   const { t } = useTranslation();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
   const legacyIsRefreshing = useSelector(selectIsRefreshing);
+  const lastOfflineRefreshAttemptTimestamp = useSelector(selectLastOfflineRefreshAttemptTimestamp);
   const { syncPhase, isManualRefreshLoading } = usePortfolioBalance();
 
   // Stays true for the entire sync cycle once the user triggers a refresh;
@@ -53,7 +58,7 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
     const result: RefreshOutcome = syncPhase === "failed" ? "error" : "success";
     setOutcome(result);
 
-    const timer = setTimeout(() => setOutcome(null), UP_TO_DATE_VISIBLE_DURATION_MS);
+    const timer = setTimeout(() => setOutcome(null), REFRESH_STATUS_VISIBLE_DURATION_MS);
     return () => clearTimeout(timer);
   }, [isSyncing, syncPhase]);
 
@@ -64,6 +69,13 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
     }
   }, [syncPhase, outcome, shouldDisplayBalanceRefreshRework]);
 
+  useEffect(() => {
+    if (!shouldDisplayBalanceRefreshRework || !lastOfflineRefreshAttemptTimestamp) return;
+    setOutcome("offline");
+    const timer = setTimeout(() => setOutcome(null), REFRESH_STATUS_VISIBLE_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, [lastOfflineRefreshAttemptTimestamp, shouldDisplayBalanceRefreshRework]);
+
   return {
     isVisible: isSyncing || outcome !== null,
     isRefreshing: isSyncing,
@@ -71,5 +83,6 @@ export const usePortfolioRefreshStatusViewModel = (): UsePortfolioRefreshStatusV
     refreshingLabel: t("portfolio.refreshStatus.refreshing"),
     upToDateLabel: t("portfolio.refreshStatus.upToDate"),
     syncErrorLabel: t("portfolio.refreshStatus.syncError"),
+    offlineLabel: t("portfolio.refreshStatus.offline"),
   };
 };
