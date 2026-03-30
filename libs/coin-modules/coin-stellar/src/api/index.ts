@@ -1,3 +1,4 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
   Block,
@@ -11,7 +12,9 @@ import {
   Reward,
   Stake,
   TransactionIntent,
-  Validator,
+  CraftedTransaction,
+  AlpacaApi,
+  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
@@ -48,7 +51,8 @@ export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
     getBlock(_height: number): Promise<Block> {

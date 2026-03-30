@@ -1,4 +1,5 @@
-import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import expect from "expect";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
@@ -153,6 +154,14 @@ describe("Testing transaction loading functions", () => {
       "Failed decoding transaction as an envelope (TypeError: XDR Read Error: attempt to read outside the boundary of" +
         " the buffer) or as a signature base: (TypeError: XDR Read Error: attempt to read outside the boundary of the" +
         " buffer)",
+    );
+  });
+});
+
+describe("getBalance", () => {
+  it("should throw an exception when options is provided", async () => {
+    await expect(api.getBalance("random address", {} as unknown as BalanceOptions)).rejects.toThrow(
+      InvalidParameterError,
     );
   });
 });

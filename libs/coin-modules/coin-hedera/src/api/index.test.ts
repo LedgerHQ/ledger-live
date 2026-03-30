@@ -1,4 +1,5 @@
-import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import { InvalidParameterError } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
@@ -175,6 +176,12 @@ describe("createApi", () => {
 
       expect(mockGetBalance).toHaveBeenCalledTimes(1);
       expect(result).toEqual([{ value: 42n, asset: { type: "native" } }]);
+    });
+
+    it("should throw an exception when options is provided", async () => {
+      await expect(
+        api.getBalance("random address", {} as unknown as BalanceOptions),
+      ).rejects.toThrow(InvalidParameterError);
     });
   });
 

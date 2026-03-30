@@ -98,11 +98,7 @@ async function getTokenBalances(
         assetOwner: address,
       };
 
-      let includeAssets: boolean | undefined = true;
-      if (options && options.includeAssets) {
-        includeAssets = await options.includeAssets(assetInfo);
-      }
-
+      const includeAssets = !options?.includeAssets || (await options.includeAssets(assetInfo));
       if (includeAssets) {
         contracts.add(operation.contract);
         assets.set(operation.contract, assetInfo);

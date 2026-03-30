@@ -1,4 +1,4 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
@@ -53,11 +53,25 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
   throw new Error(`Unsupported transaction mode: '${transaction.mode}'`);
 }
 
+function getBalanceOptions(currency: CryptoCurrency): BalanceOptions {
+  return {
+    includeAssets: async (assetInfo: AssetInfo) => {
+      if (assetInfo.type !== "native") {
+        const tokenCurrency = await getTokenFromAsset(currency, assetInfo);
+        return tokenCurrency !== undefined;
+      }
+
+      return true;
+    },
+  };
+}
+
 export default function evmBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string) =>
       getAssetFromToken(currency, token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
+    getBalanceOptions: () => getBalanceOptions(currency),
   };
 }

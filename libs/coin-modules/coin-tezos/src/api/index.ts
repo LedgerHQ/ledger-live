@@ -1,3 +1,4 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   CraftedTransaction,
   Cursor,
@@ -10,6 +11,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
   AlpacaApi,
+  BalanceOptions,
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -61,7 +63,8 @@ export function createApi(config: TezosConfig): AlpacaApi {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
-    getBalance: getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
     getStakes,

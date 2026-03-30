@@ -14,7 +14,6 @@
 "@ledgerhq/coin-tron": minor
 "@ledgerhq/ledger-wallet-framework": minor
 "@ledgerhq/live-common": minor
-"@ledgerhq/coin-framework": minor
 ---
 
 Reduce redundant eth_call calls to node by implementing includeAssets from BalanceOptions

@@ -8,7 +8,7 @@ import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
-import type { Balance, AssetInfo, BalanceOptions, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
+import type { Balance, BalanceOptions, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
@@ -320,25 +320,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const blockInfo = await alpacaApi.lastBlock();
 
-    const cryptoAssetStore = getCryptoAssetsStore();
-    const balanceOptions: BalanceOptions = {
-      includeAssets: async (assetInfo: AssetInfo) => {
-        if (
-          "assetReference" in assetInfo &&
-          assetInfo.assetReference !== null &&
-          assetInfo.assetReference !== undefined
-        ) {
-          const tokenCurrency = await cryptoAssetStore.findTokenByAddressInCurrency(
-            assetInfo.assetReference,
-            currency.id,
-          );
-
-          return tokenCurrency !== undefined;
-        }
-
-        return true;
-      },
-    };
+    const balanceOptions: BalanceOptions | undefined = bridgeApi.getBalanceOptions?.();
     const balanceRes = await alpacaApi.getBalance(address, balanceOptions);
 
     const nativeAsset = extractBalance(balanceRes, "native");

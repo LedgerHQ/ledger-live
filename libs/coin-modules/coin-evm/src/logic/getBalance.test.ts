@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getExplorerApi } from "../network/explorer";
@@ -120,7 +120,7 @@ describe("getBalance", () => {
 
   it.each([
     {
-      title: "only one 1 token",
+      title: "only one token",
       operations: {
         lastTokenOperations: [{ contract: "0x123" }, { contract: "0x456" }],
         nextPagingToken: "",
@@ -133,7 +133,7 @@ describe("getBalance", () => {
       expected: [
         {
           value: BigInt("1000000"),
-          asset: { type: "erc20", assetReference: "0x123", assetOwner: "address" },
+          asset: { type: "erc20", assetReference: "0x123", assetOwner: "0x000" },
         },
       ],
     },
@@ -155,7 +155,7 @@ describe("getBalance", () => {
         },
         {
           value: BigInt("2"),
-          asset: { type: "0x456", assetReference: "0x456", assetOwner: "0x000" },
+          asset: { type: "erc20", assetReference: "0x456", assetOwner: "0x000" },
         },
       ],
     },
@@ -174,11 +174,25 @@ describe("getBalance", () => {
 
       await getBalance(currency, userAddress, { includeAssets });
 
+      expect(nodeApiMock.getTokenBalance).toHaveBeenCalledTimes(expected.length);
       for (const balance of expected) {
         expect(nodeApiMock.getTokenBalance).toHaveBeenCalledWith(
           currency,
           userAddress,
           balance.asset.assetReference,
+        );
+      }
+
+      const notSupportedTokens = operations.lastTokenOperations.filter(
+        token => !expected.some(item => item.asset.assetReference === token.contract),
+      );
+
+      expect(notSupportedTokens).not.toHaveLength(0);
+      for (const token of notSupportedTokens) {
+        expect(nodeApiMock.getTokenBalance).not.toHaveBeenCalledWith(
+          currency,
+          userAddress,
+          token.contract,
         );
       }
     },

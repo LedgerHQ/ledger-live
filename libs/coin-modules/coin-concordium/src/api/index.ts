@@ -1,6 +1,7 @@
 import type {
   AlpacaApi,
   Balance,
+  BalanceOptions,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -22,6 +23,7 @@ import {
 import BigNumber from "bignumber.js";
 import { validateAddress } from "../bridge/validateAddress";
 import coinConfig from "../config";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   broadcast,
   combine,
@@ -48,7 +50,8 @@ export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaA
     craftRawTransaction,
     estimateFees: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
       estimateFees(transactionIntent, currencyId),
-    getBalance: (address: string) => getBalance(address, currencyId),
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address, currencyId), options),
     lastBlock: () => lastBlock(currencyId),
     listOperations: (address: string, options: ListOperationsOptions) =>
       listOperations(address, options, currencyId),

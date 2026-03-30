@@ -1,3 +1,4 @@
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AlpacaApi,
   Block,
@@ -8,6 +9,7 @@ import {
   Stake,
   TransactionIntent,
   Validator,
+  BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import coinConfig, { type AlgorandCoinConfig } from "../config";
@@ -33,7 +35,8 @@ export function createApi(config: AlgorandCoinConfig): AlpacaApi<AlgorandMemo> {
     combine,
     craftTransaction: craftApiTransaction,
     estimateFees: (_transactionIntent: TransactionIntent<AlgorandMemo>) => estimateFees(),
-    getBalance,
+    getBalance: (address: string, options?: BalanceOptions) =>
+      rejectBalanceOptions(() => getBalance(address), options),
     getBlockInfo,
     lastBlock,
     listOperations,

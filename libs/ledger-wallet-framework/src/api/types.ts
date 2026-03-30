@@ -1,4 +1,4 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 
@@ -20,4 +20,5 @@ export type BridgeApi = {
    * Whether the chain surfaces staking data through `getBalance`
    */
   stakingSupported?: boolean;
+  getBalanceOptions?: () => BalanceOptions;
 };

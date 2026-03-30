@@ -1,67 +1,66 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./bridge";
-
-beforeAll(() => {
-  const ethereum = getCryptoCurrencyById("ethereum");
-  const sonic = getCryptoCurrencyById("sonic");
-
-  const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
-    findTokenById: async () => undefined,
-    findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
-      const normalizedAddress = address.toLowerCase();
-
-      if (
-        normalizedAddress === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" &&
-        currencyId === "ethereum"
-      ) {
-        const usdc: TokenCurrency = {
-          type: "TokenCurrency",
-          id: "ethereum/erc20/usd__coin",
-          contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-          parentCurrency: ethereum,
-          tokenType: "erc20",
-          name: "USD Coin",
-          ticker: "USDC",
-          delisted: false,
-          disableCountervalue: false,
-          units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
-        };
-        return usdc;
-      }
-
-      if (
-        normalizedAddress === "0x29219dd400f2bf60e5a23d13be72b486d4038894" &&
-        currencyId === "sonic"
-      ) {
-        const bridgedUsdc: TokenCurrency = {
-          type: "TokenCurrency",
-          id: "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
-          contractAddress: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
-          parentCurrency: sonic,
-          tokenType: "erc20",
-          name: "Bridged USDC (Sonic Labs)",
-          ticker: "USDC",
-          delisted: false,
-          disableCountervalue: false,
-          units: [{ name: "Bridged USDC (Sonic Labs)", code: "USDC", magnitude: 6 }],
-        };
-        return bridgedUsdc;
-      }
-
-      return undefined;
-    },
-    getTokensSyncHash: async () => "",
-  };
-
-  setCryptoAssetsStore(mockStore);
-});
+import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./bridge";
 
 describe("evm bridge", () => {
   const ethereum = getCryptoCurrencyById("ethereum");
   const sonic = getCryptoCurrencyById("sonic");
   const flare = getCryptoCurrencyById("flare");
+
+  beforeAll(() => {
+    const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+        const normalizedAddress = address.toLowerCase();
+
+        if (
+          normalizedAddress === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" &&
+          currencyId === "ethereum"
+        ) {
+          return {
+            type: "TokenCurrency",
+            id: "ethereum/erc20/usd__coin",
+            contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+            parentCurrency: ethereum,
+            tokenType: "erc20",
+            name: "USD Coin",
+            ticker: "USDC",
+            delisted: false,
+            disableCountervalue: false,
+            units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+          };
+        }
+
+        if (
+          normalizedAddress === "0x29219dd400f2bf60e5a23d13be72b486d4038894" &&
+          currencyId === "sonic"
+        ) {
+          return {
+            type: "TokenCurrency",
+            id: "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
+            contractAddress: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+            parentCurrency: sonic,
+            tokenType: "erc20",
+            name: "Bridged USDC (Sonic Labs)",
+            ticker: "USDC",
+            delisted: false,
+            disableCountervalue: false,
+            units: [{ name: "Bridged USDC (Sonic Labs)", code: "USDC", magnitude: 6 }],
+          };
+        }
+
+        return undefined;
+      },
+      getTokensSyncHash: async () => "",
+    };
+
+    setCryptoAssetsStore(mockStore);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("computes the token of a known asset", async () => {
     await expect(
@@ -88,8 +87,10 @@ describe("evm bridge", () => {
   });
 
   it("does not compute the token of an unknown asset", async () => {
-    const mockStore = getCryptoAssetsStore();
-    const findTokenByAddressInCurrency = jest.spyOn(mockStore, "findTokenByAddressInCurrency");
+    const findTokenByAddressInCurrency = jest.spyOn(
+      getCryptoAssetsStore(),
+      "findTokenByAddressInCurrency",
+    );
 
     await expect(
       getTokenFromAsset(ethereum, {
@@ -192,6 +193,58 @@ describe("evm bridge", () => {
       expect(() => computeIntentType({ mode: "any" })).toThrow(
         "Unsupported transaction mode: 'any'",
       );
+    });
+  });
+
+  describe("getBalanceOptions", () => {
+    const bridgeApi = evmBridge(ethereum);
+
+    it("should return a defined BalanceOptions", () => {
+      expect(bridgeApi.getBalanceOptions).toBeDefined();
+
+      const result = bridgeApi.getBalanceOptions!();
+      expect(result).toEqual({
+        includeAssets: expect.any(Function),
+      });
+    });
+
+    it("should accept supported tokens from includeAssets", async () => {
+      const supportedAsset = {
+        type: "erc20",
+        assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      };
+
+      expect(bridgeApi.getBalanceOptions).toBeDefined();
+      const balanceOptions = bridgeApi.getBalanceOptions!();
+
+      expect(await balanceOptions.includeAssets!(supportedAsset)).toEqual(true);
+    });
+
+    it("should reject unsupported tokens from includeAssets", async () => {
+      const unsupportedAsset = {
+        type: "erc20",
+        assetReference: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+      };
+
+      const balanceOptions = bridgeApi.getBalanceOptions!();
+      expect(await balanceOptions.includeAssets!(unsupportedAsset)).toEqual(false);
+    });
+
+    it("should not filter native asset from includeAssets", async () => {
+      const findTokenByAddressInCurrencySpy = jest.spyOn(
+        getCryptoAssetsStore(),
+        "findTokenByAddressInCurrency",
+      );
+
+      const nativeAsset = {
+        type: "native",
+        name: "ethereum",
+      };
+
+      const balanceOptions = bridgeApi.getBalanceOptions!();
+      expect(await balanceOptions.includeAssets!(nativeAsset)).toEqual(true);
+
+      expect(findTokenByAddressInCurrencySpy).not.toHaveBeenCalled();
     });
   });
 });
