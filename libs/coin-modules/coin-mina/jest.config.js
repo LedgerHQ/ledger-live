@@ -16,6 +16,7 @@ const sharedConfig = {
 };
 
 module.exports = {
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
@@ -23,6 +24,12 @@ module.exports = {
     "!src/**/*.integ.test.ts",
     "!src/test/**",
     "!src/index.ts",
+  ],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
+  coverageDirectory: "coverage",
+  reporters: [
+    "default",
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   projects: [
     {
