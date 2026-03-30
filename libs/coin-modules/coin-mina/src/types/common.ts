@@ -18,7 +18,7 @@ export type Transaction = TransactionCommon & {
   };
   memo: string | undefined;
   nonce: number;
-  txType?: "stake" | "unstake";
+  txType?: "send" | "stake" | "unstake";
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -29,7 +29,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   };
   memo: string | undefined;
   nonce: number;
-  txType?: "stake" | "unstake";
+  txType?: "send" | "stake" | "unstake";
 };
 
 export interface MinaAccount extends Account {

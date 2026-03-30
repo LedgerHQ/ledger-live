@@ -11,11 +11,13 @@ export const getNonce = async (txn: Transaction, address: string): Promise<numbe
     return txn.nonce;
   }
 
+  const txKind = txn.txType === "send" || txn.txType === undefined ? "transfer" : "delegation";
   const data = await fetchTransactionMetadata(
     address,
     txn.recipient,
     txn.fees.fee.toNumber(),
     txn.amount.toNumber(),
+    txKind,
   );
 
   return Number.parseInt(data.metadata.nonce, 10);
