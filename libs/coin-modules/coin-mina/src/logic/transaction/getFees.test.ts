@@ -65,6 +65,30 @@ describe("getFees", () => {
     expect(result.accountCreationFee).toEqual(new BigNumber("1000000000"));
   });
 
+  it("should pass delegation txKind for staking transactions", async () => {
+    mockFetchTransactionMetadata.mockResolvedValue({
+      metadata: {},
+      suggested_fee: [{ value: "10000000" }],
+    });
+
+    const txn = {
+      txType: "stake",
+      amount: new BigNumber(0),
+      recipient: validAddress,
+      fees: { fee: new BigNumber(10), accountCreationFee: new BigNumber(0) },
+    } as Transaction;
+
+    await getFees(txn, "B62qtest");
+
+    expect(mockFetchTransactionMetadata).toHaveBeenCalledWith(
+      "B62qtest",
+      validAddress,
+      10,
+      0,
+      "delegation",
+    );
+  });
+
   it("should return zero accountCreationFee when not present in response", async () => {
     mockFetchTransactionMetadata.mockResolvedValue({
       metadata: {},

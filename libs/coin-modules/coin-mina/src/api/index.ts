@@ -379,8 +379,28 @@ export const rosettaGetBlockInfo = async (blockHeight: number) => {
   });
 };
 
-const rosettaPreprocess = async (from: string, to: string, feeNano: number, valueNano: number) => {
-  const payload = makeTransferPayload(from, to, feeNano, valueNano);
+type TxKind = "transfer" | "delegation";
+
+function buildConstructionPayload(
+  from: string,
+  to: string,
+  feeNano: number,
+  valueNano: number,
+  txKind: TxKind,
+) {
+  return txKind === "delegation"
+    ? makeDelegateChangePayload(from, to, feeNano)
+    : makeTransferPayload(from, to, feeNano, valueNano);
+}
+
+const rosettaPreprocess = async (
+  from: string,
+  to: string,
+  feeNano: number,
+  valueNano: number,
+  txKind: TxKind,
+) => {
+  const payload = buildConstructionPayload(from, to, feeNano, valueNano, txKind);
   return await makeNetworkRequest<RosettaPreprocessResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/preprocess"),
@@ -393,9 +413,10 @@ export const fetchTransactionMetadata = async (
   destAddress: string,
   feeNano: number,
   valueNano: number,
+  txKind: TxKind = "transfer",
 ) => {
-  const options = await rosettaPreprocess(srcAddress, destAddress, feeNano, valueNano);
-  const payload = makeTransferPayload(srcAddress, destAddress, feeNano, valueNano);
+  const options = await rosettaPreprocess(srcAddress, destAddress, feeNano, valueNano, txKind);
+  const payload = buildConstructionPayload(srcAddress, destAddress, feeNano, valueNano, txKind);
   return await makeNetworkRequest<RosettaMetadataResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/metadata"),

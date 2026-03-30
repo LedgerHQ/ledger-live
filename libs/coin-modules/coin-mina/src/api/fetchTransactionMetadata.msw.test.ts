@@ -50,6 +50,32 @@ describe("fetchTransactionMetadata via MSW", () => {
     expect(metadata.metadata.account_creation_fee).toBe("1000000000");
   });
 
+  it("should use delegation payload for staking transactions", async () => {
+    server.use(
+      ...rosettaHandlers({
+        "/construction/preprocess": () => makePreprocessResponse(SRC_ADDRESS, DST_ADDRESS),
+        "/construction/metadata": () =>
+          makeMetadataResponse({
+            nonce: "5",
+            feeValue: "10000000",
+            sender: SRC_ADDRESS,
+            receiver: DST_ADDRESS,
+          }),
+      }),
+    );
+
+    const metadata = await fetchTransactionMetadata(
+      SRC_ADDRESS,
+      DST_ADDRESS,
+      10000000,
+      0,
+      "delegation",
+    );
+
+    expect(metadata.suggested_fee[0].value).toBe("10000000");
+    expect(metadata.metadata.nonce).toBe("5");
+  });
+
   it("should propagate error when preprocess fails", async () => {
     server.use(
       ...rosettaHandlers({
