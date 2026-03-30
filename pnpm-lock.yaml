@@ -2396,6 +2396,31 @@ importers:
         specifier: 'catalog:'
         version: 30.2.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
+  domain/entity/unit:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   e2e/desktop:
     dependencies:
       '@ledgerhq/ledger-key-ring-protocol':
@@ -35269,9 +35294,6 @@ packages:
     peerDependencies:
       zod: ^3.18.0
 
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
@@ -58316,7 +58338,7 @@ snapshots:
       bignumber.js: 9.1.2
       iso-base: 4.0.0
       iso-web: 1.0.6
-      zod: 3.23.8
+      zod: 3.25.76
 
   iso-kv@3.0.3:
     dependencies:
@@ -69281,8 +69303,6 @@ snapshots:
   zod-validation-error@3.4.0(zod@3.25.76):
     dependencies:
       zod: 3.25.76
-
-  zod@3.23.8: {}
 
   zod@3.25.76: {}
 
