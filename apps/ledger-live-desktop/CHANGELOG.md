@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.0.0-next.1
+
+### Minor Changes
+
+- [#15867](https://github.com/LedgerHQ/ledger-live/pull/15867) [`a5e306a`](https://github.com/LedgerHQ/ledger-live/commit/a5e306a8a855bc8dd4bef5e6da327b8114a0a0bc) Thanks [@sarneijim](https://github.com/sarneijim)! - Add async storage flag retrieval for desktop
+
 ## 4.0.0-next.0
 
 ### Major Changes
