@@ -14,5 +14,10 @@ export const PortfolioEmptySection = ({ isLNSUpsellBannerShown }: PortfolioEmpty
     return <PortfolioNoAccountsContent isLNSUpsellBannerShown={isLNSUpsellBannerShown} />;
   }
 
-  return <PortfolioNoSignerContent isLNSUpsellBannerShown={isLNSUpsellBannerShown} />;
+  return (
+    <PortfolioNoSignerContent
+      isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+      variant="emptyState"
+    />
+  );
 };

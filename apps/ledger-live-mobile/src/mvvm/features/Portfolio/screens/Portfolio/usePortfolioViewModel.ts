@@ -147,8 +147,6 @@ const usePortfolioViewModel = (navigation: {
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
 
-  // Legacy assets section (shouldDisplayAssetSection=false) is the last section before the tab
-  // bar only when no wallet card is displayed, graph rework is active, and operations list is shown.
   const shouldAddBottomPaddingForLegacyAssets =
     !isAWalletCardDisplayed && shouldDisplayGraphRework && shouldDisplayOperationsList;
 

@@ -52,7 +52,11 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
           />
         </Box>
       ),
-      <PortfolioNoSignerContent key="noSigner" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
+      <PortfolioNoSignerContent
+        key="noSigner"
+        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        variant="readOnly"
+      />,
     ],
     [shouldDisplayGraphRework, isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );

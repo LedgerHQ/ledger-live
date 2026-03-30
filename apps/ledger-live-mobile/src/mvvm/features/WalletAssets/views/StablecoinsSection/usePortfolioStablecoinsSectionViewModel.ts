@@ -28,7 +28,7 @@ interface UsePortfolioStablecoinsSectionViewModelOptions {
 const usePortfolioStablecoinsSectionViewModel = ({
   variant = "normal",
 }: UsePortfolioStablecoinsSectionViewModelOptions = {}): PortfolioStablecoinsSectionViewModelResult => {
-  const isEmptyState = variant === "emptyState";
+  const isLimitedView = variant === "emptyState" || variant === "readOnly";
   const isReadOnly = variant === "readOnly";
   const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly);
 
@@ -48,10 +48,7 @@ const usePortfolioStablecoinsSectionViewModel = ({
     [categorizedAssets.stablecoins, blacklistedTokenIdsSet],
   );
 
-  // Pad with placeholder stablecoins from the DADA API when the user owns fewer
-  // than EMPTY_STATE_MAX_STABLECOINS, matching the desktop behaviour.
-  const needsPadding =
-    isEmptyState || isReadOnly || filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS;
+  const needsPadding = isLimitedView || filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS;
   const {
     stablecoins: defaultStablecoins,
     isLoading,
@@ -59,25 +56,24 @@ const usePortfolioStablecoinsSectionViewModel = ({
   } = useDefaultAssetsByCategory(needsPadding, stablecoinTickers, 0, EMPTY_STATE_MAX_STABLECOINS);
 
   const assets = useMemo<Asset[]>(() => {
-    if (isEmptyState || isReadOnly) return defaultStablecoins;
+    if (isLimitedView) return defaultStablecoins;
     return padAssetsWithDefaults(
       filteredStablecoins,
       defaultStablecoins,
       EMPTY_STATE_MAX_STABLECOINS,
     );
-  }, [isEmptyState, isReadOnly, defaultStablecoins, filteredStablecoins]);
+  }, [isLimitedView, defaultStablecoins, filteredStablecoins]);
 
   const assetsCount = assets.length;
 
-  const maxToDisplay =
-    isEmptyState || isReadOnly ? EMPTY_STATE_MAX_STABLECOINS : MAX_STABLECOINS_TO_DISPLAY;
+  const maxToDisplay = isLimitedView ? EMPTY_STATE_MAX_STABLECOINS : MAX_STABLECOINS_TO_DISPLAY;
 
   const assetsToDisplay = useMemo(() => assets.slice(0, maxToDisplay), [assets, maxToDisplay]);
 
   const hasMore = useMemo(() => {
-    if (isEmptyState || isReadOnly) return false;
+    if (isLimitedView) return false;
     return filteredStablecoins.length > MAX_STABLECOINS_TO_DISPLAY;
-  }, [isEmptyState, isReadOnly, filteredStablecoins.length]);
+  }, [isLimitedView, filteredStablecoins.length]);
 
   return {
     assetsCount,

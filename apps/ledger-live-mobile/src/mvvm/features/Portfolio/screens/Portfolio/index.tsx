@@ -186,6 +186,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     backgroundColor,
     goToAnalyticsAllocations,
     shouldDisplayOperationsList,
+    shouldAddBottomPaddingForLegacyAssets,
   ]);
 
   return (
