@@ -36,8 +36,9 @@ export type ShieldedTransaction = {
 export type ZcashPrivateInfo = {
   saplingBalance: BigNumber;
   orchardBalance: BigNumber;
-  ufvk: string | null;
   syncState: ZcashSyncState;
+  ufvk: string | null;
+  birthday: string | null;
   lastSyncTimestamp: number | null;
   lastBlockProcessed: number | null;
   transactions: ShieldedTransaction[];
@@ -46,8 +47,9 @@ export type ZcashPrivateInfo = {
 export type ZcashPrivateInfoRaw = {
   orchardBalance: string;
   saplingBalance: string;
-  ufvk: string | null;
   syncState: string;
+  ufvk: string | null;
+  birthday: string | null;
   lastSyncTimestamp: number | null;
   lastBlockProcessed: number | null;
   transactions: ShieldedTransactionRaw[];
