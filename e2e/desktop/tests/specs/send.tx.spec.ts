@@ -261,10 +261,13 @@ function shouldSkipLNSTag(currencyId: string): boolean {
 test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
+      const isCosmosFamily =
+        getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id) === "cosmos";
       test.use({
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
+        ...(isCosmosFamily ? { featureFlags: { ldmkCosmosSigner: { enabled: true } } } : {}),
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);

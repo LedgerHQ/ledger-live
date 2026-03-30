@@ -102,6 +102,8 @@ const liveApps = [
 
 for (const account of e2eDelegationAccounts) {
   test.describe("Delegate", () => {
+    const isCosmosFamily =
+      getFamilyByCurrencyId(account.delegate.account.currency.id) === "cosmos";
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.delegate.account.currency.speculosApp,
@@ -115,6 +117,7 @@ for (const account of e2eDelegationAccounts) {
           });
         },
       ],
+      ...(isCosmosFamily ? { featureFlags: { ldmkCosmosSigner: { enabled: true } } } : {}),
     });
 
     const family = getFamilyByCurrencyId(account.delegate.account.currency.id);
