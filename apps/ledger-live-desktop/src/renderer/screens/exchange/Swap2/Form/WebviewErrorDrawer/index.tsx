@@ -46,12 +46,6 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
-const generateRandomString = (numberOfChars: number = 4): string => {
-  return times(numberOfChars, () => random(35).toString(36))
-    .join("")
-    .toUpperCase();
-};
-
 export default function WebviewErrorDrawer(error?: Error) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   let titleKey = "swap2.webviewErrorDrawer.title";
@@ -114,23 +108,23 @@ function ErrorCodeSection({
   swapCode,
   correlationId,
 }: {
-  swapCode: string | undefined;
-  correlationId: string | undefined;
+  readonly swapCode: string | undefined;
+  readonly correlationId: string | undefined;
 }) {
   return (
     <div className="flex flex-col rounded-md bg-surface gap-8 p-8 mt-20">
-      <ErrorBlock dictionaryKey="swap2.webviewErrorDrawer.code" value={swapCode} />
-      <ErrorBlock dictionaryKey="swap2.webviewErrorDrawer.correlationId" value={correlationId} />
+      <ErrorBlock translationKey="swap2.webviewErrorDrawer.code" value={swapCode} />
+      <ErrorBlock translationKey="swap2.webviewErrorDrawer.correlationId" value={correlationId} />
     </div>
   );
 }
 
 function ErrorBlock({
-  dictionaryKey,
+  translationKey,
   value,
 }: {
-  dictionaryKey: string;
-  value: string | undefined;
+  readonly translationKey: string;
+  readonly value: string | undefined;
 }) {
   if (!value) {
     return null;
@@ -139,9 +133,15 @@ function ErrorBlock({
   return (
     <div className="flex flex-row justify-between">
       <span className="text-sm text-muted basis-1/3 text-left">
-        <Trans i18nKey={dictionaryKey} />
+        <Trans i18nKey={translationKey} />
       </span>
       <span className="text-sm text-base basis-2/3 text-right">{value}</span>
     </div>
   );
+}
+
+function generateRandomString(numberOfChars: number = 4) {
+  return times(numberOfChars, () => random(35).toString(36))
+    .join("")
+    .toUpperCase();
 }

@@ -97,23 +97,6 @@ const resolveFallbackCopy = (
   return getDefaultCopy(t);
 };
 
-function ErrorBlock({ dictionaryKey, value }: { dictionaryKey: string; value: string | null }) {
-  const { t } = useTranslation();
-
-  if (!value) {
-    return null;
-  }
-
-  return (
-    <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
-      <Text variant="body" color="neutral.c70">
-        {t(dictionaryKey)}
-      </Text>
-      <Text variant="body">{value}</Text>
-    </Flex>
-  );
-}
-
 export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
   const error = route.params.error;
@@ -151,8 +134,8 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
         </Text>
         {swapCode || correlationId ? (
           <Flex bg="neutral.c20" borderRadius={8} alignSelf="stretch" p={4} mt={6} rowGap={6}>
-            <ErrorBlock dictionaryKey="swapErrors.details.code" value={swapCode} />
-            <ErrorBlock dictionaryKey="swapErrors.details.correlationId" value={correlationId} />
+            <ErrorBlock translationKey="swapErrors.details.code" value={swapCode} />
+            <ErrorBlock translationKey="swapErrors.details.correlationId" value={correlationId} />
           </Flex>
         ) : null}
         <Button
@@ -165,6 +148,23 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
         />
       </Flex>
     </SafeAreaView>
+  );
+}
+
+function ErrorBlock({ translationKey, value }: { translationKey: string; value: string | null }) {
+  const { t } = useTranslation();
+
+  if (!value) {
+    return null;
+  }
+
+  return (
+    <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
+      <Text variant="body" color="neutral.c70">
+        {t(translationKey)}
+      </Text>
+      <Text variant="body">{value}</Text>
+    </Flex>
   );
 }
 
