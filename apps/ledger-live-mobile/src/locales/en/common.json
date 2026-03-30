@@ -6356,10 +6356,10 @@
     },
     "summaryFooter": {
       "delegatedTo": "Delegated to",
-      "stakedBalance": "Staked Balance",
+      "stakedBalance": "Delegated Balance",
       "producerAddress": "Producer Address",
       "delegatedToTooltip": "Name of the block producer you are delegating to",
-      "stakedBalanceTooltip": "Total amount of MINA currently staked with this validator",
+      "stakedBalanceTooltip": "Total amount of MINA currently delegated to this validator",
       "producerAddressTooltip": "Public address of the block producer you are delegating to"
     },
     "delegators": "Delegators",
@@ -6370,7 +6370,7 @@
         "connectDevice": "Connect Device",
         "confirmation": "Confirmation"
       },
-      "title": "Stake MINA",
+      "title": "Delegate MINA",
       "help": "Select a validator from the list below to delegate your MINA tokens.",
       "success": {
         "title": "Transaction successfully broadcasted",
@@ -6385,7 +6385,11 @@
       "commission": "Commission",
       "showAll": "Show all",
       "showLess": "Show less",
-      "iDelegate": "I delegate"
+      "iDelegate": "I delegate",
+      "listHeader": "Delegation",
+      "redelegate": "Change Validator",
+      "undelegate": "Undelegate",
+      "undelegateTitle": "Undelegate MINA"
     }
   },
   "stellar": {
