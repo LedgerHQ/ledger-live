@@ -2498,7 +2498,7 @@ describe("EVM Family", () => {
       );
     };
 
-    it("always uses limit + 1 as probe, regardless of maxLimit config", async () => {
+    it("always uses limit + 1 as probe", async () => {
       const mockFetch = jest
         .fn<Promise<ETHERSCAN_API.EndpointResult>, [ETHERSCAN_API.FetchOperationsParams]>()
         .mockResolvedValue({
