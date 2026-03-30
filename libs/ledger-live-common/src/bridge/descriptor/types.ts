@@ -141,7 +141,6 @@ export type CoinControlBuildToggleRowExclusionPatchParams = Readonly<{
  * Implemented per family (e.g. Bitcoin) and attached to `FeeDescriptor.coinControl`.
  */
 export type CoinControlConfig = Readonly<{
-  /** Numeric value for the "custom / manual selection" strategy (e.g. Bitcoin CUSTOM). */
   customStrategyValue: number;
   getDisplayData: (params: CoinControlGetDisplayDataParams) => CoinControlDisplayData | null;
   buildStrategyChangePatch: (

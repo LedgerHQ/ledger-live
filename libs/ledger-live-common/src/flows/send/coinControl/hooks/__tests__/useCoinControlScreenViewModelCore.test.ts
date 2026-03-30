@@ -384,7 +384,7 @@ describe("useCoinControlScreenViewModelCore", () => {
 
     expect(result.current.amountError).toBeUndefined();
     expect(result.current.changeToReturnFormatted).toBe("");
-    expect(result.current.enterAmountPlaceholder).toBe("Select sufficient coins");
+    expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
   });
 
   it("still shows NotEnoughBalance for CUSTOM when at least one UTXO is selected", () => {
@@ -438,7 +438,7 @@ describe("useCoinControlScreenViewModelCore", () => {
 
     expect(result.current.amountError).toBe("Insufficient funds");
     expect(result.current.changeToReturnFormatted).toBe("");
-    expect(result.current.enterAmountPlaceholder).toBe("Select sufficient coins");
+    expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
   });
 
   it("hides NotEnoughBalance for CUSTOM while bridgePending (stale status after UTXO toggle)", () => {

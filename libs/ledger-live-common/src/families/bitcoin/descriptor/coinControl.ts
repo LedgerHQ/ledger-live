@@ -125,10 +125,7 @@ function utxoToRowDisplayData(
   };
 }
 
-/**
- * Pure computation for Bitcoin UTXO / strategy display data (also used by the coin control descriptor).
- */
-export function computeBitcoinUtxoDisplayData({
+function computeBitcoinUtxoDisplayData({
   account,
   transaction,
   status,
@@ -216,7 +213,7 @@ function mapBitcoinUtxoDisplayDataToCoinControl(
   };
 }
 
-export function parseBitcoinRowKey(rowKey: string): { hash: string; outputIndex: number } | null {
+function parseBitcoinRowKey(rowKey: string): { hash: string; outputIndex: number } | null {
   const lastDash = rowKey.lastIndexOf("-");
   if (lastDash <= 0) return null;
   const hash = rowKey.slice(0, lastDash);
