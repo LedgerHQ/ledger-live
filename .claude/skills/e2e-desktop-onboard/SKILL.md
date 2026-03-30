@@ -1,4 +1,5 @@
 ---
+name: e2e-desktop-onboard
 description: Interactive setup wizard for running desktop E2E (Playwright + Speculos) tests locally
 ---
 
@@ -6,15 +7,15 @@ description: Interactive setup wizard for running desktop E2E (Playwright + Spec
 
 You are an interactive setup wizard that checks the developer's machine and guides them through every prerequisite for running Ledger Live Desktop E2E tests (Playwright + Speculos) locally.
 
-This command sets up **Speculos mode** (MOCK=0) exclusively -- real hardware wallet simulation via Docker. Mock mode does not require onboarding.
+This skill sets up **Speculos mode** (MOCK=0) exclusively — real hardware wallet simulation via Docker. Mock mode does not require onboarding.
 
-Work through each phase sequentially. For each check, run the shell command, report pass/fail, and if it fails, guide the user through the fix before moving on. Use TodoWrite to track progress across phases.
+Work through each phase sequentially. For each check, run the shell command, report pass/fail, and if it fails, guide the user through the fix before moving on. Use TaskCreate to track progress across phases.
 
 **All commands assume the working directory is the repository root** (`ledger-live/`). Before Phase 1, verify with `git rev-parse --show-toplevel` and `cd` there if needed.
 
 **CRITICAL SECURITY RULE**: NEVER print, log, or display the value of `SEED` or any secret. Only confirm whether it is set or not.
 
-**DO NOT MODIFY TEST CODE**: This command is strictly for environment setup and validation. Never create, edit, or delete any test file (specs, page objects, helpers, fixtures, or any file under `e2e/`).
+**DO NOT MODIFY TEST CODE**: This skill is strictly for environment setup and validation. Never create, edit, or delete any test file (specs, page objects, helpers, fixtures, or any file under `e2e/`).
 
 ---
 
@@ -29,13 +30,13 @@ Work through each phase sequentially. For each check, run the shell command, rep
 
 First, read the config files to determine expected versions. Then run these checks:
 
-| Check          | Command                        | Expected                                        |
-| -------------- | ------------------------------ | ----------------------------------------------- |
-| Docker         | `docker --version`             | Installed (required -- Speculos runs in Docker) |
-| Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running                       |
-| Proto          | `proto --version`              | Installed (recommended, not required)           |
-| Node           | `node --version`               | See version policy below                        |
-| pnpm           | `pnpm --version`               | See version policy below                        |
+| Check          | Command                        | Expected                                       |
+| -------------- | ------------------------------ | ---------------------------------------------- |
+| Docker         | `docker --version`             | Installed (required — Speculos runs in Docker) |
+| Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running                      |
+| Proto          | `proto --version`              | Installed (recommended, not required)          |
+| Node           | `node --version`               | See version policy below                       |
+| pnpm           | `pnpm --version`               | See version policy below                       |
 
 **Node / pnpm version policy:**
 
@@ -61,13 +62,13 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
 
 Check each variable is set and valid. Run `[ -n "$VAR" ] && echo "set" || echo "NOT SET"` for each.
 
-| Variable             | Validation                                            | Default / Guidance                                                                                    |
-| -------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `SEED`               | Non-empty                                             | Ask the team for guidance                                                                             |
-| `MOCK`               | Equals `0` (`[ "$MOCK" = "0" ]`)                      | Must be `0` for Speculos mode                                                                         |
-| `COINAPPS`           | Non-empty AND directory exists (`[ -d "$COINAPPS" ]`) | Path to cloned `coin-apps` repo. If not cloned: `git clone https://github.com/LedgerHQ/coin-apps.git` |
-| `SPECULOS_IMAGE_TAG` | Non-empty                                             | `ghcr.io/ledgerhq/speculos:latest`                                                                    |
-| `SPECULOS_DEVICE`    | Non-empty                                             | `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)                                        |
+| Variable             | Validation                                                    | Default / Guidance                                                                                    |
+| -------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `MOCK`               | Equals `0` (`[ "$MOCK" = "0" ]`)                              | Must be `0` for Speculos mode                                                                         |
+| `COINAPPS`           | Non-empty AND directory exists (`[ -d "$COINAPPS" ]`)         | Path to cloned `coin-apps` repo. If not cloned: `git clone https://github.com/LedgerHQ/coin-apps.git` |
+| `SEED`               | Non-empty only (`[ -n "$SEED" ]`). **NEVER print its value.** | See SEED guidance below.                                                                              |
+| `SPECULOS_IMAGE_TAG` | Non-empty                                                     | `ghcr.io/ledgerhq/speculos:latest`                                                                    |
+| `SPECULOS_DEVICE`    | Non-empty                                                     | `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)                                        |
 
 **Optional variables:**
 
@@ -77,6 +78,31 @@ Check each variable is set and valid. Run `[ -n "$VAR" ] && echo "set" || echo "
 | `DISABLE_TRANSACTION_BROADCAST` | Set to `1` to prevent real tx broadcast | Unset (broadcast enabled)       |
 
 For any missing variable (except SEED), provide the exact `export` line to add to `~/.zshrc`.
+
+**SEED guidance:**
+
+The SEED must be set but its value must **NEVER** be printed, logged, or displayed by this skill.
+
+Recommended approach (persistent):
+
+```
+export SEED=$(op read "op://Vault/Item/field")
+```
+
+Add to `~/.zshrc` for persistence. This uses 1Password CLI to inject the value securely.
+
+Also acceptable (session-only):
+
+```
+export SEED="<value>"
+```
+
+A manual one-time export in the current terminal session is fine for local E2E, especially when using a known public test seed. Do not add raw seed values to shell config files.
+
+Both approaches are valid. The key rules are:
+
+- This skill must never echo, print, or log the SEED value in command output.
+- Never commit SEED values to version control.
 
 **coin-apps freshness check:**
 
@@ -122,7 +148,7 @@ If the pull fails:
 
 Run: `docker run --rm $SPECULOS_IMAGE_TAG --help`
 
-This should print the Speculos help text. If it fails, the image may be corrupted -- suggest removing and re-pulling:
+This should print the Speculos help text. If it fails, the image may be corrupted — suggest removing and re-pulling:
 
 ```bash
 docker rmi $SPECULOS_IMAGE_TAG && docker pull $SPECULOS_IMAGE_TAG
@@ -215,19 +241,19 @@ This is a **GUI environment limitation**, not a setup failure. In this case:
 1. Do **not** treat it as a failed setup step.
 2. Report that all setup phases (1-4) completed successfully and the environment is ready.
 3. Explain that Electron cannot launch from the agent shell due to missing display/WindowServer access.
-4. Print the exact command for the user to run in their **Cursor integrated terminal** (not the agent shell):
+4. Print the exact command for the user to run in their **terminal** (not the agent shell):
 
 ```
-Your E2E environment is fully set up. To validate, paste this command in your Cursor integrated terminal:
+Your E2E environment is fully set up. To validate, paste this command in your terminal:
 
-  pnpm e2e:desktop test:playwright tests/specs/add.account.spec.ts --grep "@smoke"
+  pnpm e2e:desktop test:playwright tests/specs/add.account.spec.ts
 ```
 
 5. Mark the smoke test as **manual** in the Phase 6 summary (not as a failure).
 
 **Common smoke test failures (real setup issues):**
 
-- "Timeout waiting for selector": app didn't load -- check that `pnpm desktop build:testing` ran successfully, check that the built app exists under `apps/ledger-live-desktop/dist/`
+- "Timeout waiting for selector": app didn't load — check that `pnpm desktop build:testing` ran successfully, check that the built app exists under `apps/ledger-live-desktop/dist/`
 - Docker errors / Speculos container failed to start: check Docker is running (`docker info`), check `COINAPPS` path is correct, check image tag matches a pulled image
 - `TypeError: Invalid Version: DS_Store`: `.DS_Store` files in the coin-apps repo are causing semver lookup failures. Fix with: `find $COINAPPS -name ".DS_Store" -type f -delete`
 - Speculos app version mismatch / missing nano app: the `coin-apps` repo may be outdated. Pull latest: `cd $COINAPPS && git pull origin master`
@@ -247,21 +273,21 @@ If the app launches and connects to Speculos successfully but the test fails on 
 
 Print a final checklist summarizing everything.
 
-Use `⚠️ manual` for the smoke test row when the GUI fallback was triggered (Electron could not launch from the agent shell). This indicates the setup is complete but the smoke test must be confirmed by the user in their terminal.
+Use `manual` for the smoke test row when the GUI fallback was triggered (Electron could not launch from the agent shell). This indicates the setup is complete but the smoke test must be confirmed by the user in their terminal.
 
 ```markdown
-## E2E Desktop Setup -- Complete
+## E2E Desktop Setup — Complete
 
-| Check                  | Status              |
-| ---------------------- | ------------------- |
-| Docker                 | ✅ / ❌             |
-| Proto / Node / pnpm    | ✅ / ❌             |
-| Environment variables  | ✅ / ❌             |
-| Speculos image         | ✅ / ❌             |
-| Dependencies installed | ✅ / ❌             |
-| App built              | ✅ / ❌             |
-| Playwright browser     | ✅ / ❌             |
-| Smoke test             | ✅ / ❌ / ⚠️ manual |
+| Check                  | Status           |
+| ---------------------- | ---------------- |
+| Docker                 | ✅ / ❌          |
+| Proto / Node / pnpm    | ✅ / ❌          |
+| Environment variables  | ✅ / ❌          |
+| Speculos image         | ✅ / ❌          |
+| Dependencies installed | ✅ / ❌          |
+| App built              | ✅ / ❌          |
+| Playwright browser     | ✅ / ❌          |
+| Smoke test             | ✅ / ❌ / manual |
 ```
 
 If everything passed, confirm the user is ready to run tests with:
