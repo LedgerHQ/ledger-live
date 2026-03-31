@@ -231,9 +231,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
         : state.analyticsConsentInfo;
 
     if (
-      !hasAnalyticsConsentInfoInImport &&
       mergedPreview.hasSeenAnalyticsOptInPrompt &&
-      importConsentBackfillAt
+      importConsentBackfillAt &&
+      hasAnalyticsConsentInfoInImport === false
     ) {
       analyticsConsentInfo = {
         consentDate: importConsentBackfillAt,

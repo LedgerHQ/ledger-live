@@ -29,7 +29,7 @@ function ConsentSheetFigmaHeader() {
   );
 }
 
-export type AnalyticsConsentDrawerViewProps = {
+export type AnalyticsConsentDrawerViewProps = Readonly<{
   phase: ConsentDrawerPhase;
   isDrawerOpen: boolean;
   handleCloseDrawer: () => void;
@@ -37,12 +37,14 @@ export type AnalyticsConsentDrawerViewProps = {
   applyOptIn: () => void;
   applyOptOut: () => void;
   onSetPreferences: () => void;
-};
+}>;
 
-function ConsentFooter({ privacyPolicyUrl }: { privacyPolicyUrl: string }) {
+type ConsentFooterProps = Readonly<{ privacyPolicyUrl: string }>;
+
+function ConsentFooter({ privacyPolicyUrl }: ConsentFooterProps) {
   const { t } = useTranslation();
   const openPrivacyPolicy = useCallback(() => {
-    void Linking.openURL(privacyPolicyUrl);
+    Linking.openURL(privacyPolicyUrl).catch(() => {});
   }, [privacyPolicyUrl]);
 
   return (
@@ -57,13 +59,12 @@ function ConsentFooter({ privacyPolicyUrl }: { privacyPolicyUrl: string }) {
   );
 }
 
-function DescriptionWithPreferencesLink({
-  text,
-  onSetPreferences,
-}: {
+type DescriptionWithPreferencesLinkProps = Readonly<{
   text: string;
   onSetPreferences: () => void;
-}) {
+}>;
+
+function DescriptionWithPreferencesLink({ text, onSetPreferences }: DescriptionWithPreferencesLinkProps) {
   const { t } = useTranslation();
   return (
     <Text typography="body2" lx={{ color: "muted", textAlign: "center", width: "full" }}>
@@ -75,10 +76,12 @@ function DescriptionWithPreferencesLink({
   );
 }
 
-function PrivacyDescription({ privacyPolicyUrl }: { privacyPolicyUrl: string }) {
+type PrivacyDescriptionProps = Readonly<{ privacyPolicyUrl: string }>;
+
+function PrivacyDescription({ privacyPolicyUrl }: PrivacyDescriptionProps) {
   const { t } = useTranslation();
   const openPrivacyPolicy = useCallback(() => {
-    void Linking.openURL(privacyPolicyUrl);
+    Linking.openURL(privacyPolicyUrl).catch(() => {});
   }, [privacyPolicyUrl]);
 
   return (
@@ -97,7 +100,7 @@ function PrivacyDescription({ privacyPolicyUrl }: { privacyPolicyUrl: string }) 
   );
 }
 
-type TwoCtaSheetProps = {
+type TwoCtaSheetProps = Readonly<{
   title: string;
   description: React.ReactNode;
   primaryLabel: string;
@@ -105,7 +108,7 @@ type TwoCtaSheetProps = {
   onPrimary: () => void;
   onSecondary: () => void;
   privacyPolicyUrl: string;
-};
+}>;
 
 function TwoCtaConsentSheet({
   title,
@@ -144,10 +147,10 @@ function TwoCtaConsentSheet({
   );
 }
 
-type PrivacySheetProps = {
+type PrivacySheetProps = Readonly<{
   privacyPolicyUrl: string;
   onGotIt: () => void;
-};
+}>;
 
 function PrivacyUpdateSheet({ privacyPolicyUrl, onGotIt }: PrivacySheetProps) {
   const { t } = useTranslation();
@@ -172,15 +175,16 @@ function PrivacyUpdateSheet({ privacyPolicyUrl, onGotIt }: PrivacySheetProps) {
   );
 }
 
-export function AnalyticsConsentDrawerView({
-  phase,
-  isDrawerOpen,
-  handleCloseDrawer,
-  onPrivacyGotIt,
-  applyOptIn,
-  applyOptOut,
-  onSetPreferences,
-}: AnalyticsConsentDrawerViewProps) {
+export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProps) {
+  const {
+    phase,
+    isDrawerOpen,
+    handleCloseDrawer,
+    onPrivacyGotIt,
+    applyOptIn,
+    applyOptOut,
+    onSetPreferences,
+  } = props;
   const { t } = useTranslation();
   const { locale } = useLocale();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -191,8 +195,9 @@ export function AnalyticsConsentDrawerView({
 
   const paddingBottom = bottomInset + 24;
 
-  const sheetBody =
-    phase === "consentReconfirm" ? (
+  let sheetBody: React.ReactNode = null;
+  if (phase === "consentReconfirm") {
+    sheetBody = (
       <TwoCtaConsentSheet
         title={t("analyticsConsentDrawer.reconfirm.title")}
         description={
@@ -207,7 +212,9 @@ export function AnalyticsConsentDrawerView({
         onSecondary={applyOptOut}
         privacyPolicyUrl={privacyPolicyUrl}
       />
-    ) : phase === "consentFresh" ? (
+    );
+  } else if (phase === "consentFresh") {
+    sheetBody = (
       <TwoCtaConsentSheet
         title={t("analyticsConsentDrawer.fresh.title")}
         description={
@@ -222,9 +229,10 @@ export function AnalyticsConsentDrawerView({
         onSecondary={applyOptOut}
         privacyPolicyUrl={privacyPolicyUrl}
       />
-    ) : phase === "privacy" ? (
-      <PrivacyUpdateSheet privacyPolicyUrl={privacyPolicyUrl} onGotIt={onPrivacyGotIt} />
-    ) : null;
+    );
+  } else if (phase === "privacy") {
+    sheetBody = <PrivacyUpdateSheet privacyPolicyUrl={privacyPolicyUrl} onGotIt={onPrivacyGotIt} />;
+  }
 
   if (!isDrawerOpen) return null;
 
