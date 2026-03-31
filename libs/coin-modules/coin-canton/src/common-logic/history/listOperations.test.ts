@@ -145,7 +145,7 @@ describe("listOperations", () => {
 
     const page = await listOperations(mockCurrency, "alice-party", 0);
 
-    expect(page.items[0].tx.hash).toBe("");
+    expect(page.items[0].tx.hash).toBe("0xtxhash");
     expect(page.items[0].tx.block.hash).toBe("");
   });
 

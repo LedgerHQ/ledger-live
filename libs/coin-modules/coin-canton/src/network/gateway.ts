@@ -34,6 +34,7 @@ import {
 import type { CantonSignature } from "../types/signer";
 
 export const SEPARATOR = "____";
+export const DEFAULT_TAP_REQUEST_AMOUNT = "100000000000000000000000000000000000000";
 
 export const getKey = (id: string, adminId: string) => `${id}${SEPARATOR}${adminId}`;
 
@@ -348,7 +349,7 @@ export async function preparePreApprovalTransaction(currency: CryptoCurrency, pa
 
 export async function prepareTapRequest(currency: CryptoCurrency, { partyId, amount }: TapRequest) {
   // Default to 1.0 in fixed-point representation (1 * 10^38)
-  const fixedPointAmount = amount || "1000000000000000000000000000000000000000";
+  const fixedPointAmount = amount ?? DEFAULT_TAP_REQUEST_AMOUNT;
 
   const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
     method: "POST",

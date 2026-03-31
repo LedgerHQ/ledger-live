@@ -40,6 +40,7 @@ import {
   submitPreApprovalTransaction,
   submitTapRequest,
   submitTransferInstruction,
+  DEFAULT_TAP_REQUEST_AMOUNT,
   type InstrumentsResponse,
 } from "./gateway";
 
@@ -523,7 +524,7 @@ describe("prepare and submit transaction helpers", () => {
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         data: {
-          amount: "1000000000000000000000000000000000000000",
+          amount: DEFAULT_TAP_REQUEST_AMOUNT,
           type: TransactionType.TAP_REQUEST,
         },
       }),
@@ -545,6 +546,27 @@ describe("prepare and submit transaction helpers", () => {
       expect.objectContaining({
         data: {
           amount: "1000",
+          type: TransactionType.TAP_REQUEST,
+        },
+      }),
+    );
+  });
+
+  it("prepareTapRequest preserves explicit zero amount", async () => {
+    const tapPrepare = {
+      serialized: "s",
+      json: null,
+      hash: "h",
+      step: { type: "single-step" as const },
+    };
+    mockNetwork.mockResolvedValue({ data: tapPrepare, status: 200 });
+
+    await prepareTapRequest(mockCurrency, { partyId: "party-1", amount: "0" });
+
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          amount: "0",
           type: TransactionType.TAP_REQUEST,
         },
       }),

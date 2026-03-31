@@ -56,7 +56,7 @@ export async function listOperations(
         recipients: tx.recipients,
         asset,
         tx: {
-          hash: tx.block.hash ?? "",
+          hash: tx.transaction_hash,
           fees: BigInt(tx.fee.value),
           date: new Date(tx.transaction_timestamp),
           block: {
