@@ -1,9 +1,11 @@
 import {
+  Background,
   ContentCardLocation,
   ContentCardsLayout,
   ContentCardsType,
   type BrazeContentCard,
   type CategoryContentCard,
+  type WalletContentCard,
 } from "./types";
 
 const SAMPLE_IMAGE =
@@ -151,4 +153,24 @@ export function buildSampleActionCarousel(
   );
 
   return { category, cards };
+}
+
+/** Bottom Portfolio wallet carousel (`location: wallet`) — one slide with the same shape as Braze wallet cards. */
+export function buildSampleWalletCarousel(): WalletContentCard[] {
+  const ts = Date.now();
+  return [
+    {
+      id: `local-wallet-carousel-${ts}`,
+      location: ContentCardLocation.Wallet,
+      createdAt: ts,
+      viewed: false,
+      order: 0,
+      tag: "Discover",
+      title: "Sample bottom carousel",
+      link: "https://www.ledger.com/",
+      image: SAMPLE_IMAGE,
+      background: Background.purple,
+      extras: { source: "local-debug" },
+    },
+  ];
 }
