@@ -8,19 +8,19 @@ $TmsLink("B2CQA-1837");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
-  const nanoApp = AppInfos.ETHEREUM;
+  const account = Account.ETH_2;
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
   const randomLiveApp = app.discover.getRandomLiveApp();
 
   beforeAll(async () => {
     await app.init({
-      speculosApp: nanoApp,
+      speculosApp: account.currency.speculosApp,
       cliCommands: [
         async (userdataPath?: string) => {
           return CLI.liveData({
-            currency: nanoApp.name,
-            index: 0,
+            currency: account.currency.id,
+            index: account.index,
             appjson: userdataPath,
             add: true,
           });
@@ -146,7 +146,7 @@ describe("DeepLinks Tests", () => {
       await app.portfolio.openViaDeeplink();
       await app.portfolio.waitForPortfolioPageToLoad();
       await app.receive.receiveViaDeeplink(ethereumLong);
-      await app.modularDrawer.validateAccountsScreen([Account.ETH_1.accountName]);
+      await app.modularDrawer.validateAccountsScreen([account.accountName]);
     });
   });
 });
