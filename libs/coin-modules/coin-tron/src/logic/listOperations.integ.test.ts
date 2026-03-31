@@ -64,10 +64,16 @@ describe("listOperations", () => {
       };
 
       const firstPage = await listOperations(testingAccount, options);
-      expect(firstPage.next).toBeDefined();
+      expect(typeof firstPage.next).toBe("string");
 
-      const secondPageA = await listOperations(testingAccount, { ...options, cursor: firstPage.next });
-      const secondPageB = await listOperations(testingAccount, { ...options, cursor: firstPage.next });
+      const secondPageA = await listOperations(testingAccount, {
+        ...options,
+        cursor: firstPage.next,
+      });
+      const secondPageB = await listOperations(testingAccount, {
+        ...options,
+        cursor: firstPage.next,
+      });
 
       expect(secondPageA.items.length).toBe(secondPageB.items.length);
       for (let i = 0; i < secondPageA.items.length; i++) {

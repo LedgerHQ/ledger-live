@@ -1,11 +1,6 @@
 import BigNumber from "bignumber.js";
 import { TrongridTxInfo } from "../types";
-import {
-  compareTxsByTimestamp,
-  dropTxsBeforeCursor,
-  parseCursor,
-  serializeCursor,
-} from "./cursor";
+import { compareTxsByTimestamp, dropTxsBeforeCursor, parseCursor, serializeCursor } from "./cursor";
 
 describe("cursor utilities", () => {
   describe("serializeCursor", () => {

@@ -42,11 +42,15 @@ export async function listOperations(
   // Fetch native and TRC20 transactions in parallel from TronGrid.
   // Both endpoints are queried with the same minTimestamp to ensure
   // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(address, {}, {
-    limit,
-    minTimestamp,
-    order,
-  });
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(
+    address,
+    {},
+    {
+      limit,
+      minTimestamp,
+      order,
+    },
+  );
 
   // Merge and dedupe: some transactions appear in both native and TRC20 results
   const mergedTxs = uniqBy([...nativeTxs.txs, ...trc20Txs.txs], tx => tx.txID);
