@@ -2,9 +2,28 @@ import {
   getChangePercentage,
   isAvailableForTrading,
   filterMarketPerformersByAvailability,
+  dadaIdToMarketId,
   IsCurrencyAvailable,
 } from "../index";
 import { createMockMarketPerformer, MOCK_MARKET_PERFORMERS } from "../fixtures";
+
+describe("dadaIdToMarketId", () => {
+  it("returns the id unchanged when it has no colon", () => {
+    expect(dadaIdToMarketId("bitcoin")).toBe("bitcoin");
+  });
+
+  it("strips the chain prefix and keeps the last segment", () => {
+    expect(dadaIdToMarketId("ethereum:usd-coin")).toBe("usd-coin");
+  });
+
+  it("replaces underscores with dashes in the last segment", () => {
+    expect(dadaIdToMarketId("ethereum:usd_coin")).toBe("usd-coin");
+  });
+
+  it("handles multiple colons by taking only the last segment", () => {
+    expect(dadaIdToMarketId("ethereum:erc20:usd_tether")).toBe("usd-tether");
+  });
+});
 
 describe("getChangePercentage", () => {
   const mockData = createMockMarketPerformer({

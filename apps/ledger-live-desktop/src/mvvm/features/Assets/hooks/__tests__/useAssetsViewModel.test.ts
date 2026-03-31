@@ -1,7 +1,7 @@
 import { renderHook, act } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { useAssetsViewModel } from "../useAssetsViewModel";
-import { padItems, resolveMarketId } from "../../utils/assetTableHelpers";
+import { padItems, dadaIdToMarketId } from "../../utils/assetTableHelpers";
 import {
   createMockCategorizedAssets,
   BITCOIN_ASSET,
@@ -171,21 +171,21 @@ describe("padItems", () => {
   });
 });
 
-describe("resolveMarketId", () => {
+describe("dadaIdToMarketId", () => {
   it("should return the last segment of a URN", () => {
-    expect(resolveMarketId("urn:crypto:meta-currency:ethereum")).toBe("ethereum");
+    expect(dadaIdToMarketId("urn:crypto:meta-currency:ethereum")).toBe("ethereum");
   });
 
   it("should return the id as-is when it has no colons", () => {
-    expect(resolveMarketId("bitcoin")).toBe("bitcoin");
+    expect(dadaIdToMarketId("bitcoin")).toBe("bitcoin");
   });
 
   it("should replace underscores with hyphens in URN last segment", () => {
-    expect(resolveMarketId("urn:crypto:meta-currency:usd_coin")).toBe("usd-coin");
+    expect(dadaIdToMarketId("urn:crypto:meta-currency:usd_coin")).toBe("usd-coin");
   });
 
   it("should not replace underscores in plain ids", () => {
-    expect(resolveMarketId("usd_coin")).toBe("usd_coin");
+    expect(dadaIdToMarketId("usd_coin")).toBe("usd_coin");
   });
 });
 
@@ -617,7 +617,7 @@ describe("useCryptoAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent(resolveMarketId(placeholder!.marketId ?? placeholder!.currency.id))}`,
+      `/market/${encodeURIComponent(dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id))}`,
     );
   });
 

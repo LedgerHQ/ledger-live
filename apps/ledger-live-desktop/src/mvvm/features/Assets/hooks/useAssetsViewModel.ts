@@ -17,12 +17,13 @@ import {
   MAX_ITEM_DISPLAYED,
 } from "../constants";
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
-import { padItems, resolveMarketId } from "../utils/assetTableHelpers";
+import { padItems } from "../utils/assetTableHelpers";
 import { track } from "~/renderer/analytics/segment";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,
 } from "../../CryptoAddresses/constants";
+import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 export function useAssetsViewModel(): AssetsViewProps {
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
@@ -69,7 +70,7 @@ export function useAssetsViewModel(): AssetsViewProps {
       setTrackingSource("asset allocation");
       navigate(
         item.isPlaceholder
-          ? `/market/${encodeURIComponent(resolveMarketId(item.marketId ?? item.currency.id))}`
+          ? `/market/${encodeURIComponent(dadaIdToMarketId(item.marketId ?? item.currency.id))}`
           : `/asset/${item.currency.id}`,
       );
     },
