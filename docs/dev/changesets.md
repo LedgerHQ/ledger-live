@@ -34,9 +34,9 @@ Package names **must match exactly** what's in each `package.json`:
 
 | Level | When to use |
 |-------|-------------|
-| `minor` | New features, bug fixes, non-breaking changes |
+| `patch` | Bug fixes, internal-only changes, dependency bumps |
+| `minor` | New features and backward-compatible improvements |
 | `major` | Breaking changes (rare, requires discussion) |
-| `patch` | Internal-only changes, dependency bumps |
 
 ## Description
 

@@ -7,9 +7,9 @@ Use the following template for all pull requests. Fill each placeholder using th
 ```markdown
 ### ✅ Checklist
 
-- [x] `npx changeset` was attached.
+- [ ] `npx changeset` was attached.
 - [{{TEST_CHECKBOX}}] **Covered by automatic tests.** {{TEST_EXPLANATION}}
-- [x] **Impact of the changes:**
+- [ ] **Impact of the changes:**
       {{QA_FOCUS_AREAS}}
 
 ### 📝 Description
@@ -21,6 +21,7 @@ Use the following template for all pull requests. Fill each placeholder using th
 ### ❓ Context
 
 - **JIRA or GitHub link**: {{TICKET_LINK}}
+- **ADR link (if any)**: {{ADR_LINK}}
 
 ---
 
@@ -47,6 +48,7 @@ Use the following template for all pull requests. Fill each placeholder using th
 | `{{DESCRIPTION}}` | Problem statement paragraph + solution approach paragraph; include code samples for lib changes, before/after for bug fixes |
 | `{{SCREENSHOTS_SECTION}}` | If UI changes: add the table below. If no UI changes: omit entirely. |
 | `{{TICKET_LINK}}` | JIRA: `[LIVE-1234](url)` / GitHub: `#123` |
+| `{{ADR_LINK}}` | Link to ADR if an architectural decision was made; omit the line if not applicable |
 
 ### Screenshots table (when UI changes are present)
 
@@ -92,4 +94,5 @@ This PR introduces a new analytics dashboard to the portfolio feature, providing
 ### ❓ Context
 
 - **JIRA or GitHub link**: [LIVE-5678](https://ledgerhq.atlassian.net/browse/LIVE-5678)
+- **ADR link (if any)**: N/A
 ```

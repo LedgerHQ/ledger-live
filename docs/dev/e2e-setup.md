@@ -26,7 +26,7 @@ Shared reference for E2E environment setup (desktop and mobile).
 | Check  | Command                        | Expected |
 |--------|--------------------------------|----------|
 | Docker | `docker --version`             | Installed |
-| Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running |
+| Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running. **Note:** this command requires Docker socket access — it may return a false negative when run from a sandboxed agent shell even if Docker is actually running. If it fails, ask the user to confirm Docker Desktop is open before treating it as a FAIL. |
 | Proto  | `proto --version`              | Installed (recommended, not required) |
 | Node   | `node --version`               | See version policy below |
 | pnpm   | `pnpm --version`               | See version policy below |
