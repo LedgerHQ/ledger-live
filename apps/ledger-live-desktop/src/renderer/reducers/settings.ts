@@ -41,6 +41,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 
 /* Initial state */
 
@@ -776,10 +777,37 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
-export const trackingEnabledSelector = createSelector(
-  settingsStoreSelector,
-  s => s.shareAnalytics || s.sharePersonalizedRecommandations,
-);
+
+// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
+export const trackingEnabledSelector = (state: State) => {
+  const s = state.settings;
+
+  if (!s.lastAnalyticsConsentDate || !s.privacyPolicyVersion) {
+    return false;
+  }
+
+  const lastAnalyticsConsentDate = new Date(s.lastAnalyticsConsentDate);
+  if (Number.isNaN(lastAnalyticsConsentDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  // Copy `now`: `setUTCFullYear` mutates its receiver; the cutoff must be a separate Date from "right now".
+  const oneYearAgo = new Date(now.getTime());
+
+  oneYearAgo.setUTCFullYear(oneYearAgo.getUTCFullYear() - 1);
+
+  if (lastAnalyticsConsentDate.getTime() < oneYearAgo.getTime()) {
+    return false;
+  }
+
+  if (s.privacyPolicyVersion < CURRENT_PRIVACY_POLICY_VERSION) {
+    return false;
+  }
+
+  return s.shareAnalytics || s.sharePersonalizedRecommandations;
+};
+
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>
