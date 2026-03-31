@@ -15,7 +15,13 @@ const emptyTx = (serialized: string) => ({
   hash: "00".repeat(32),
 });
 
-const defaultPrepareResponse = {
+const basePath = `${CANTON_DEVNET_GATEWAY}/v1/node/${CANTON_DEVNET_NODE_ID}`;
+
+export const cantonOnboardingPrepareUrl = `${basePath}/onboarding/prepare`;
+export const cantonOnboardingSubmitUrl = `${basePath}/onboarding/submit`;
+
+/** Default success body for `POST .../onboarding/prepare` — reused by integ tests (e.g. retry-after-failure). */
+export const mockOnboardingPrepareResponse = {
   party_id: MOCK_ONBOARD_PARTY_ID,
   party_name: "Mock Party",
   public_key_fingerprint: "fingerprint",
@@ -27,16 +33,12 @@ const defaultPrepareResponse = {
   },
 };
 
-const basePath = `${CANTON_DEVNET_GATEWAY}/v1/node/${CANTON_DEVNET_NODE_ID}`;
-
-export const cantonOnboardingPrepareUrl = `${basePath}/onboarding/prepare`;
-
 const handlers = [
   http.get(`${basePath}/party/:_identifier`, () =>
     HttpResponse.json({ message: "not found" }, { status: 404 }),
   ),
-  http.post(`${basePath}/onboarding/prepare`, () => HttpResponse.json(defaultPrepareResponse)),
-  http.post(`${basePath}/onboarding/submit`, () =>
+  http.post(cantonOnboardingPrepareUrl, () => HttpResponse.json(mockOnboardingPrepareResponse)),
+  http.post(cantonOnboardingSubmitUrl, () =>
     HttpResponse.json({
       party: {
         party_id: MOCK_ONBOARD_PARTY_ID,

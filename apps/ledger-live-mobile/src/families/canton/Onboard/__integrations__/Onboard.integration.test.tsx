@@ -11,13 +11,14 @@ import { screen, render, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import coinConfig from "@ledgerhq/coin-canton/config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import OnboardScreen from "../OnboardScreen";
 import {
   CANTON_DEVNET_GATEWAY,
   CANTON_DEVNET_NODE_ID,
   cantonOnboardingPrepareUrl,
+  mockOnboardingPrepareResponse,
 } from "@tests/handlers/canton";
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
@@ -154,9 +155,9 @@ describe("Canton onboarding integration", () => {
     await waitFor(
       () => {
         expect(mockParentNavigate).toHaveBeenCalledWith(
-          "AddAccounts",
+          NavigatorName.AddAccounts,
           expect.objectContaining({
-            screen: "AddAccountsSuccess",
+            screen: ScreenName.AddAccountsSuccess,
             params: expect.objectContaining({
               currency: expect.objectContaining({ id: currency.id }),
             }),
@@ -167,11 +168,16 @@ describe("Canton onboarding integration", () => {
     );
   }, 25_000);
 
-  it("should show retry when onboarding prepare fails", async () => {
+  it("should show retry when onboarding prepare fails, then recover when prepare succeeds on retry", async () => {
+    let prepareCallCount = 0;
     server.use(
-      http.post(cantonOnboardingPrepareUrl, () =>
-        HttpResponse.json({ error: "gateway error" }, { status: 500 }),
-      ),
+      http.post(cantonOnboardingPrepareUrl, () => {
+        prepareCallCount += 1;
+        if (prepareCallCount === 1) {
+          return HttpResponse.json({ error: "gateway error" }, { status: 500 });
+        }
+        return HttpResponse.json(mockOnboardingPrepareResponse);
+      }),
     );
 
     const { user } = render(<OnboardScreen {...createScreenProps()} />, {
@@ -186,5 +192,15 @@ describe("Canton onboarding integration", () => {
     );
 
     await user.press(screen.getByText("Retry"));
+
+    await waitFor(
+      () => {
+        expect(screen.queryByText("Retry")).not.toBeOnTheScreen();
+      },
+      { timeout: 15_000 },
+    );
+
+    // Strict mode / effect timing can issue more than one initial prepare; we only require a new attempt after Retry.
+    expect(prepareCallCount).toBeGreaterThanOrEqual(2);
   }, 20_000);
 });
