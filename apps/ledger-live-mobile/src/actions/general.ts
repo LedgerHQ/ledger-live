@@ -21,7 +21,6 @@ import {
   orderAccountsSelector,
   selectedTimeRangeSelector,
 } from "../reducers/settings";
-import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
