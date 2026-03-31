@@ -98,7 +98,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
         index: chosenVote?.index,
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params, updateTransaction, bridge, setTransaction, chosenValidator, chosenVote]);
 
   const onChangeDelegator = useCallback(() => {

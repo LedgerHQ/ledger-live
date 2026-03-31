@@ -78,7 +78,7 @@ export default function ConnectDevice({
         />
       </SafeAreaView>
     ), // prevent rerendering caused by optimistic update (i.e. exclude account related deps)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [route.params.message],
   );
 }

@@ -100,7 +100,7 @@ export function useOrderedBleScannedDevices({ devices, areKnownDevicesPairable }
     });
 
     return enriched;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [displayListVersion, areKnownDevicesPairable, knownIdSet]);
 
   return { displayedDevices, knownDeviceIds };

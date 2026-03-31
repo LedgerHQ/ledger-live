@@ -484,7 +484,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
         return Promise.resolve();
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [customPTXHandlers],
   );
 
@@ -552,7 +552,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
       // the live app has re-directed to /unknown-error. Handle this in callback, probably wallet-api failure.
       onSwapWebviewError();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState?.url]);
 
   const manifestWithHash = useMemo(

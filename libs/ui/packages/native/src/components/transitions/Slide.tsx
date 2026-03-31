@@ -56,7 +56,7 @@ export function Slide({ status, duration, style, direction = "left", children }:
     if (status === "exiting") {
       animateOut.start();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   return (

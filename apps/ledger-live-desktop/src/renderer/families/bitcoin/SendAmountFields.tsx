@@ -59,7 +59,7 @@ const Fields: Props = ({
         }),
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [updateTransaction, bridge],
   );
   const setAdvanceModeAndTrack = useCallback(

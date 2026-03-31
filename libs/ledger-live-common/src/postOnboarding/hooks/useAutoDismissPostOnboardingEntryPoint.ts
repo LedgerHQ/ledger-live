@@ -25,7 +25,7 @@ export function useAutoDismissPostOnboardingEntryPoint() {
     if (isPostOnboardingEntryPointVisible && isMoreThanSevenDaysAgo(entryPointFirstDisplayedDate)) {
       dispatch(hidePostOnboardingWalletEntryPoint());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;

@@ -119,7 +119,7 @@ function ApduCommandSender({
         dispatch({ type: "CLEAR_VALUE" });
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [state.value],
   );
 

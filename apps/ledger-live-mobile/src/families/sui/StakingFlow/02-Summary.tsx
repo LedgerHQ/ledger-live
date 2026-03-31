@@ -93,7 +93,7 @@ export default function StakingSummary({ navigation, route }: Props) {
         }),
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     route.params,
     bridge,

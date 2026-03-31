@@ -472,7 +472,7 @@ export const createAction = (
 
     const request = useMemo(
       () => inferCommandParams(appRequest), // for now i don't have better
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
       [
         appRequest.appName,
         appRequest.account?.id,

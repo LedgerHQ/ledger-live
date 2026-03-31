@@ -45,7 +45,7 @@ const ScrollLoadingList = ({
     } else {
       setScrollOffset(data.length - 20);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [data, scrollRef, bufferSize]);
 
   const handleScroll = useCallback(async () => {

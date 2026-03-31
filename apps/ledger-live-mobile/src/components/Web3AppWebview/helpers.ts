@@ -161,7 +161,7 @@ export function useWebView(
   useEffect(() => {
     serverRef.current = server;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
   const { onDappMessage, noAccounts } = useDappLogic({
@@ -331,7 +331,7 @@ export function useWebviewState(
         headers,
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [currentURI, manifest.id, manifest.nocache],
   );
 
@@ -368,7 +368,7 @@ export function useWebviewState(
         },
       };
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [manifest.domains, manifestDomainCheckEnabled],
   );
 

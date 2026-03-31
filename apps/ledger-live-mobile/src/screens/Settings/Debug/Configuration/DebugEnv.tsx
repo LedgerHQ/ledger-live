@@ -34,7 +34,7 @@ export default function DebugEnv() {
     setEnvDefinitions(definitions);
 
     return envs;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [resetIndex]);
 
   const onSetEnv = useCallback(() => {

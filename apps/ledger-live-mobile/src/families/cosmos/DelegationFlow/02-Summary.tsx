@@ -104,7 +104,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         }),
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params, updateTransaction, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));

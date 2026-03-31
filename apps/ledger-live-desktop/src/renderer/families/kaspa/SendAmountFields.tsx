@@ -50,7 +50,7 @@ const Fields: Props = ({
         feerate: strategies.filter(x => x.label === "fast")[0].amount,
       }),
     );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onFeeStrategyClick = useCallback(
     ({ feesStrategy }: OnClickType) => {
@@ -62,7 +62,7 @@ const Fields: Props = ({
           }),
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [updateTransaction, bridge],
   );
 
@@ -100,7 +100,7 @@ const Fields: Props = ({
         }),
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [updateTransaction, bridge],
   );
 

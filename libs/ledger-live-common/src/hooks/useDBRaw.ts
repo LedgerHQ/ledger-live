@@ -25,7 +25,7 @@ export function useDBRaw<State, Selected>({
       setState(state);
     });
     // Run once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setter = useCallback(

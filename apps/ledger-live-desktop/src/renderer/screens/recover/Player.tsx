@@ -109,7 +109,7 @@ export default function RecoverPlayer() {
      *
      * This is to ensure the WebRecoverPlayer is not reloaded given the user disconnects their cable.
      */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [
       theme,
       locale,
