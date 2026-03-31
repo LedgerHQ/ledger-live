@@ -70,16 +70,9 @@ runs:
         EMULATORS_PER_RUNNER=3
         BASE_SHARD=$(( TEST_COUNT > 0 ? (TEST_COUNT + EMULATORS_PER_RUNNER - 1) / EMULATORS_PER_RUNNER : 1 ))
 
-        if [ "${{ inputs.event_name }}" = "schedule" ]; then
-          SHARD_COUNT_IOS=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
-          SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
-        elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
-          SHARD_COUNT_IOS=$(( BASE_SHARD < 6 ? BASE_SHARD : 6 ))
-          SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
-        else
-          SHARD_COUNT_IOS=$(( BASE_SHARD < 3 ? BASE_SHARD : 3 ))
-          SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
-        fi
+        SHARD_COUNT_IOS = 8
+        SHARD_COUNT_ANDROID = 8
+  
         
         if [ "${{ inputs.max_shards }}" -gt 0 ]; then
           if [ "$SHARD_COUNT_IOS" -gt "${{ inputs.max_shards }}" ]; then
