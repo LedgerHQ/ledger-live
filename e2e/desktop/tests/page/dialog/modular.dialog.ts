@@ -34,10 +34,6 @@ export class ModularDialog extends Dialog {
     return await this.selectAssetByTicker(currency);
   }
 
-  // Account selector
-  async isAccountVisible(): Promise<boolean> {
-    return await this.isModularAccountDialogVisible();
-  }
   async selectAccount(account: AccountType) {
     return await this.selectAccountByName(account);
   }
@@ -67,14 +63,6 @@ export class ModularDialog extends Dialog {
 
   async isNetworkDialogVisible(): Promise<boolean> {
     return await this.networkDialog.isNetworkDialogVisible();
-  }
-
-  async isModularAccountDialogVisible(): Promise<boolean> {
-    return await this.accountDialog.isModularAccountDialogVisible();
-  }
-
-  async isModularScanAccountsDrawerVisible(): Promise<boolean> {
-    return await this.scanAccountsDrawer.isModularScanAccountsDrawerVisible();
   }
 
   async selectAccountByName(account: AccountType) {

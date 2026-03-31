@@ -315,15 +315,6 @@ export class SwapPage extends WebViewAppPage {
     await executeSwapButton.click();
   }
 
-  @step("Go to provider live app")
-  async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
-    const [, webview] = electronApp.windows();
-    const continueButton = webview.getByRole("button", { name: new RegExp(provider, "i") });
-    await expect(continueButton).toBeVisible();
-    await expect(continueButton).toBeEnabled();
-    await continueButton.click();
-  }
-
   @step("Retrieve send currency amount value")
   async getAmountToSend(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
@@ -496,58 +487,6 @@ export class SwapPage extends WebViewAppPage {
     }
 
     throw new Error(`Swap app did not become ready within ${overallTimeout}ms`);
-  }
-
-  @step("Verify provider URL")
-  async verifyProviderURL(electronApp: ElectronApplication, selectedProvider: string, swap: Swap) {
-    const newWindow = await electronApp.waitForEvent("window");
-
-    await newWindow.waitForLoadState();
-
-    const url = newWindow.url();
-
-    switch (selectedProvider) {
-      case Provider.ONE_INCH.uiName: {
-        const debitTicker = swap.accountToDebit.currency.ticker;
-        const creditTicker = swap.accountToCredit.currency.ticker;
-
-        if (!debitTicker || !creditTicker) {
-          throw new Error("Missing ticker for one of the currencies");
-        }
-
-        await this.expectUrlToContainAll(url, [
-          swap.amount,
-          debitTicker,
-          creditTicker,
-          `swap%3Fledgerlive%3dtrue`,
-          `src%3d${debitTicker}`,
-          `dst%3d${creditTicker}`,
-        ]);
-        break;
-      }
-      case Provider.VELORA.uiName: {
-        const debitContractAddress = swap.accountToDebit.currency.contractAddress;
-        const creditContractAddress = swap.accountToCredit.currency.contractAddress;
-
-        if (!debitContractAddress || !creditContractAddress) {
-          throw new Error("Missing contract address on one of the currencies");
-        }
-
-        await this.expectUrlToContainAll(url, [
-          swap.amount,
-          debitContractAddress,
-          creditContractAddress,
-          `${debitContractAddress}-${creditContractAddress}`,
-        ]);
-        break;
-      }
-      default:
-        throw new Error(
-          `Unknown provider: ${selectedProvider}. Supported providers: ${Object.values(Provider)
-            .map(p => p.uiName)
-            .join(", ")}`,
-        );
-    }
   }
 
   @step("Go to swap history")

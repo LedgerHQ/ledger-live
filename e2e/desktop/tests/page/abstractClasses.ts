@@ -17,7 +17,6 @@ export abstract class Component extends PageHolder {
   protected dropdownOptionsList = this.page.getByTestId("select-options-list");
   protected optionWithText = (text: string) =>
     this.page.locator(`//*[contains(text(),"${text}")]`).first();
-  protected dropdownSelectedValue = this.page.locator(".select__single-value span").first();
   protected optionWithTextAndFollowingText = (text: string, followingText: string) =>
     this.page
       .locator(

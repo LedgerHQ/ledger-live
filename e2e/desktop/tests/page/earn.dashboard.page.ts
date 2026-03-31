@@ -17,7 +17,6 @@ export class EarnPage extends EarnBasePage {
   private totalRewardsBalanceCard = "Total rewards-balance-card";
   private depositedAssetsText = "Deposited assets";
   private tabAssetsButton = "tab-assets";
-  private loadingSkeleton = "loading-skeleton";
   private learnMoreButton = (currency: string) => `get-${currency}-button`;
 
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);

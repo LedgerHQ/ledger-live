@@ -7,7 +7,6 @@ export class ModularNetworkDialog extends Dialog {
     .getByTestId("modular-dialog-screen-NETWORK_SELECTION")
     .first();
   private networkItemByName = (name: string) => this.page.getByTestId(`network-item-name-${name}`);
-  private firstNetworkItem = this.page.locator("[data-testid^='network-item-name-']").first();
 
   @step("Select a network by name")
   async selectNetwork(currency: Currency, networkIndex: number = 0) {
@@ -18,15 +17,10 @@ export class ModularNetworkDialog extends Dialog {
     await networkItem.click();
   }
 
-  @step("Select the first available network")
-  async selectFirstNetwork() {
-    await this.firstNetworkItem.click();
-  }
-
   @step("Check if network dialog is visible")
   async isNetworkDialogVisible() {
     try {
-      await this.networkSelectorListContainer.waitFor({ state: "visible", timeout: 500 });
+      await this.networkSelectorListContainer.waitFor({ timeout: 5000 });
       return true;
     } catch {
       return false;

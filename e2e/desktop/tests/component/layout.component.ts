@@ -30,9 +30,6 @@ export class Layout extends Component {
   readonly topbarSettingsButton = this.topbarActionButton("settings").or(
     this.page.getByTestId("topbar-settings-button"),
   );
-  readonly topbarDiscreetButton = this.topbarActionButton("discreet").or(
-    this.page.getByTestId("topbar-discreet-button"),
-  );
   readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
   @step("Go to Portfolio")
@@ -45,29 +42,14 @@ export class Layout extends Component {
     await this.drawerMarketButton.click();
   }
 
-  @step("Open Accounts")
-  async goToAccounts() {
-    await this.drawerAccountsButton.click();
-  }
-
   @step("Open send modal")
   async openSendModalFromSideBar() {
     await this.drawerSendButton.click();
   }
 
-  @step("Go to earn")
-  async goToEarn() {
-    await this.drawerEarnButton.click();
-  }
-
   @step("Go to buy crypto")
   async goToBuySellCrypto() {
     await this.drawerBuycryptoButton.click();
-  }
-
-  @step("Go to swap")
-  async goToSwap() {
-    await this.drawerSwapButton.click();
   }
 
   @step("Go to Settings")
@@ -78,11 +60,6 @@ export class Layout extends Component {
   @step("synchronize accounts")
   async syncAccounts() {
     await this.topbarSynchronizeButton.click();
-  }
-
-  @step("toggle discreet mode")
-  async toggleDiscreetMode() {
-    await this.topbarDiscreetButton.click();
   }
 
   @step("Wait for accounts sync to be finished")
