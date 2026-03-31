@@ -30,9 +30,9 @@ export function HistoryActionsList({ selectedType, onTypeChange, onExportClick }
         <SelectTrigger render={props => <SelectTriggerButton {...props} label="Type" />} />
         <SelectContent>
           {options.map(option => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem key={option.value} value={option.value} className="p-8">
               <SelectItemText>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-12">
                   {option.icon && <option.icon size={16} />}
                   {option.label}
                 </div>

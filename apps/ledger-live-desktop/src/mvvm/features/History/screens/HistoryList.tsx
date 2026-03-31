@@ -12,6 +12,7 @@ type HistoryListProps = {
   readonly rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
   readonly flatItems: VirtualItem[];
   readonly onRowClick: (row: OperationRow) => void;
+  readonly onClearFilters?: () => void;
 };
 
 function HistoryList({
@@ -20,9 +21,10 @@ function HistoryList({
   rowVirtualizer,
   flatItems,
   onRowClick,
+  onClearFilters,
 }: HistoryListProps) {
   if (flatItems.length === 0) {
-    return <EmptyState />;
+    return <EmptyState onClearFilters={onClearFilters} />;
   }
 
   return (

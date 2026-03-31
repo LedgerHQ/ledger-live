@@ -23,6 +23,8 @@ export type HistoryViewModel = {
   hasPendingOperations: boolean;
   selectedType: HistoryTypeFilter;
   onTypeChange: (type: HistoryTypeFilter) => void;
+  isFiltered: boolean;
+  onClearFilters: () => void;
 };
 
 export function useHistoryViewModel(): HistoryViewModel {
@@ -58,6 +60,8 @@ export function useHistoryViewModel(): HistoryViewModel {
   const onExportClick = () => track("ExportAccountOperations");
   const operationsCount = flatItems.length;
   const hasPendingOperations = useMemo(() => operations.some(op => op.isPending), [operations]);
+  const isFiltered = selectedType !== ALL_TYPES_VALUE;
+  const onClearFilters = useCallback(() => setSelectedType(ALL_TYPES_VALUE), [setSelectedType]);
 
   return {
     navigateToDashboard,
@@ -71,5 +75,7 @@ export function useHistoryViewModel(): HistoryViewModel {
     hasPendingOperations,
     selectedType,
     onTypeChange: setSelectedType,
+    isFiltered,
+    onClearFilters,
   };
 }
