@@ -37,7 +37,11 @@ function resolveMenuItemIcon(iconName: string): MenuSymbol {
   return typeof Icon === "function" ? (Icon as MenuSymbol) : Plus;
 }
 
-export function EarnMenuBottomSheet({ navigation }: { navigation: NavigationProp<ParamListBase> }) {
+type EarnMenuBottomSheetProps = Readonly<{
+  navigation: NavigationProp<ParamListBase>;
+}>;
+
+export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
   const dispatch = useDispatch();
   const route = useRoute();
   const menuBottomSheet = useSelector(earnMenuBottomSheetSelector);
