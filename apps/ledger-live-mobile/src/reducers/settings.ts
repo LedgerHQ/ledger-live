@@ -85,6 +85,7 @@ import {
 } from "../actions/types";
 import { ScreenName } from "~/const";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -217,6 +218,24 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const isWallet40Enabled = wallet40FF?.enabled === true;
     const isWallet40GraphReworkEnabled =
       wallet40FF?.params?.graphRework === true && isWallet40Enabled;
+    const mergedPreview = { ...state, ...filteredPayload };
+    const hasAnalyticsConsentInfoInImport = Object.prototype.hasOwnProperty.call(
+      filteredPayload,
+      "analyticsConsentInfo",
+    );
+
+    let analyticsConsentInfo =
+      filteredPayload.analyticsConsentInfo !== undefined
+        ? { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo }
+        : state.analyticsConsentInfo;
+
+    if (!hasAnalyticsConsentInfoInImport && mergedPreview.hasSeenAnalyticsOptInPrompt) {
+      analyticsConsentInfo = {
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      };
+    }
+
     return {
       ...state,
       ...filteredPayload,
@@ -224,6 +243,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
         ...state.notifications,
         ...filteredPayload.notifications,
       },
+      analyticsConsentInfo,
       locale: filteredPayload.locale ?? state.locale ?? getDefaultLocale(),
       ...(isWallet40GraphReworkEnabled && { selectedTimeRange: "day" }),
     };

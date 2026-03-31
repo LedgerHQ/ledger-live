@@ -8,9 +8,14 @@ import { hasSeenAnalyticsOptInPromptSelector } from "~/reducers/settings";
 const usePortfolioAnalyticsOptInPrompt = () => {
   const navigation = useNavigation();
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
+  const analyticsOptInFeature = useFeature("analyticsOptIn");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
 
   useEffect(() => {
+    if (analyticsOptInFeature?.enabled) {
+      return;
+    }
+
     const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
 
     if (
@@ -27,6 +32,7 @@ const usePortfolioAnalyticsOptInPrompt = () => {
     }
   }, [
     hasSeenAnalyticsOptInPrompt,
+    analyticsOptInFeature?.enabled,
     llmAnalyticsOptInPromptFeature?.enabled,
     llmAnalyticsOptInPromptFeature?.params?.entryPoints,
     navigation,
