@@ -138,6 +138,7 @@ export class SendModal extends Modal {
     }
   }
 
+  // TODO: remove the null possibility ? Step should not go through if warning is not expected - Investigate this in all repo
   @step("Check warning message")
   async checkInputWarningMessage(expectedWarningMessage: string | null) {
     if (expectedWarningMessage !== null) {

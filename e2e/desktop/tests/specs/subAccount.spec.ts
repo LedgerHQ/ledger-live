@@ -31,6 +31,7 @@ const subAccounts = [
   { account: TokenAccount.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
   { account: TokenAccount.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
   { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
+  // TODO: Add Solana to the list ?
 ];
 
 const subAccountReceive: Array<{
@@ -39,7 +40,7 @@ const subAccountReceive: Array<{
   shouldSelectTokenOnReceiveFlow?: boolean;
 }> = [
   { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
-  { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" },
+  { account: TokenAccount.ETH_LIDO, xrayTicket: "B2CQA-2491" }, // TODO: remove LIDO - 1 erc20 is enough
   { account: TokenAccount.TRX_USDT, xrayTicket: "B2CQA-2496" },
   //TODO: re-enable tests when https://ledgerhq.atlassian.net/browse/LIVE-25852 is fixed
   // { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
@@ -95,6 +96,7 @@ for (const token of subAccounts) {
           await app.addAccount.addAccounts();
           await app.addAccount.done();
         }
+        // TODO: Check Why there is a specific flow for SUI
         if (token.account === TokenAccount.SUI_USDC_1) {
           await app.portfolio.navigateToAsset(token.account.currency.ticker);
         } else {
@@ -161,6 +163,7 @@ for (const token of subAccountReceive) {
   });
 }
 
+// TODO: Investigate if possible to merge in an other test - soft assertion ?
 for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
@@ -200,6 +203,7 @@ for (const token of subAccounts) {
   });
 }
 
+// TODO: add erc20 token transaction
 const transactionE2E = [
   {
     tx: new Transaction(
@@ -534,7 +538,8 @@ for (const transaction of tokenTransactionInvalid) {
   });
 }
 
-test.describe("Send token (subAccount) - valid address & amount input", () => {
+// TODO: actual e2e test for erc20 - Rename the test
+test.describe("Send token (subAccount) - valid address & valid amount input", () => {
   const tokenTransactionValid = new Transaction(
     TokenAccount.ETH_USDT_1,
     TokenAccount.ETH_USDT_3,
@@ -554,7 +559,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   });
 
   test(
-    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
+    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & valid amount input`,
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: {
@@ -655,3 +660,5 @@ test.describe("Send token (subAccount) - e2e ", () => {
     },
   );
 });
+
+// TODO: Investigate Possibility to do a global e2e test for all the tokens

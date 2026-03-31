@@ -109,6 +109,7 @@ export class SettingsPage extends AppPage {
     await expect(this.viewUserDataButton).toBeEnabled();
   }
 
+  // TODO: Split in 3 steps (click and other to check + rename) - Why do we rename the file ?
   @step("Click on export logs")
   async clickExportLogs() {
     await this.exportLogsButton.click();

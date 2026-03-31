@@ -79,10 +79,12 @@ test.describe("Password", () => {
       const countAfterLock = await app.accounts.countAccounts();
       await app.accounts.compareAccountsCountFromJson(countBeforeLock, countAfterLock);
       await app.accounts.navigateToAccountByName(account.accountName);
+      // TODO: add expect to check that the account is still here
     },
   );
 });
 
+// TODO: delete? counter value selection test
 test.describe("counter value selection", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   test.use({
@@ -107,7 +109,7 @@ test.describe("counter value selection", () => {
       ],
       annotation: {
         type: "TMS",
-        description: "B2CQA-804",
+        description: "B2CQA-804", // Mohamed to check / remove Xray ticket from non regression
       },
     },
     async ({ app }) => {
@@ -130,6 +132,8 @@ test.describe("counter value selection", () => {
     },
   );
 });
+
+// TODO: merge with euro test when soft assertion is available
 
 test.describe("Ledger Support (web link)", () => {
   test.use({
@@ -188,6 +192,7 @@ test.describe("Reset app", () => {
   );
 });
 
+//TODO: Change name to export Log instead of Help tab
 test.describe("Settings - Help tab", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
