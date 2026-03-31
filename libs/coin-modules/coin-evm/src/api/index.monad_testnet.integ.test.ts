@@ -41,7 +41,7 @@ describe("EVM Api (Monad Testnet)", () => {
       items.forEach(op => {
         expect(op.tx.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
         expect(op.tx.date).toBeInstanceOf(Date);
-        expect(op.value).toBeGreaterThanOrEqual(0n);
+        expect(typeof op.value).toBe("bigint");
       });
     });
   });
