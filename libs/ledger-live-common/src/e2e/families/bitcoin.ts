@@ -40,6 +40,11 @@ export const sendBTCBasedCoin = withDeviceController(
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
       } else {
+        if (currencyId !== Currency.ZEC.id) {
+          await buttons.both();
+          await waitFor(DeviceLabels.CONFIRM);
+          await pressUntilTextFound(DeviceLabels.ACCEPT);
+        }
         await buttons.both();
       }
     },
