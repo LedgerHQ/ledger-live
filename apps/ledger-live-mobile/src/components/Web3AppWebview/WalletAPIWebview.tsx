@@ -117,9 +117,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
-        injectedJavaScript={
-          Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined
-        }
+        injectedJavaScript={Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined}
         {...webviewProps}
         {...webviewCacheOptions}
       />
