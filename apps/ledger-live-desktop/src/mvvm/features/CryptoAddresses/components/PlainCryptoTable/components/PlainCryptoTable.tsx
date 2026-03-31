@@ -18,7 +18,7 @@ export function PlainCryptoTable<TData extends RowData>({
   onRowClick,
 }: PlainCryptoTableProps<TData>) {
   return (
-    <TableRoot appearance="plain">
+    <TableRoot appearance="plain" className="min-h-0 flex-1 overflow-auto mb-32">
       <Table>
         <PlainCryptoTableHeader table={table} />
         <PlainCryptoTableBody table={table} onRowClick={onRowClick} />
