@@ -117,6 +117,7 @@ export type SwapUiRequest = CompleteExchangeUiRequest & {
   fromAccountId?: string;
   toAccountId?: string;
   tokenCurrency?: string;
+  correlationId?: string;
 };
 
 type ExchangeUiHooks = {
@@ -399,6 +400,7 @@ export const handlers = ({
           swapAppVersion,
           sponsored,
           isEmbedded,
+          correlationId,
         } = params;
 
         const trackingParams = {
@@ -466,6 +468,7 @@ export const handlers = ({
           const wrappedError = createStepError({
             error: toError(rawError),
             step: StepError.NONCE,
+            correlationId: params?.correlationId,
           });
           throw wrappedError;
         }
@@ -500,12 +503,13 @@ export const handlers = ({
           quoteId,
           toNewTokenId,
           flags,
+          correlationId,
         }).catch((error: Error) => {
           const wrappedError = createStepError({
             error: get(error, "response.data.error", error),
             step: StepError.PAYLOAD,
+            correlationId: params?.correlationId,
           });
-
           throw wrappedError;
         });
 
@@ -609,6 +613,7 @@ export const handlers = ({
               payoutAddress,
               sponsored,
               isEmbeddedSwap: isEmbedded,
+              ...(correlationId && { correlationId }),
             },
             onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
               tracking.completeExchangeSuccess({
@@ -697,7 +702,7 @@ export const handlers = ({
             });
           });
 
-        await handleErrors(error, {
+        handleErrors(error, {
           onDisplayError: displayError,
         });
 

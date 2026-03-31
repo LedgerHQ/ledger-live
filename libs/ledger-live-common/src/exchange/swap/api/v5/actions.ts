@@ -23,9 +23,10 @@ export async function retrieveSwapPayload(
     rateId: data.quoteId,
   };
 
-  const requestConfig = data.flags?.wallet40Ux
-    ? { headers: { "x-ledger-client-v4-ux": "true" } }
-    : undefined;
+  const headers: Record<string, string> = {};
+  if (data.correlationId) headers["x-correlation-id"] = data.correlationId;
+  if (data.flags?.wallet40Ux) headers["x-ledger-client-v4-ux"] = "true";
+  const requestConfig = Object.keys(headers).length > 0 ? { headers } : undefined;
   const res = await swapAxiosClient.post(`${SWAP_API_BASE}/swap`, request, requestConfig);
 
   return {
