@@ -99,7 +99,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@zondax/ledger-live-icp": "1.4.1",
+    "@zondax/ledger-live-icp": "1.4.2",
     "bignumber.js": "^9.1.2",
     "expect": "catalog:",
     "invariant": "^2.2.2",
