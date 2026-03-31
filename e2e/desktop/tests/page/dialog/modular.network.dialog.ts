@@ -25,7 +25,12 @@ export class ModularNetworkDialog extends Dialog {
 
   @step("Check if network dialog is visible")
   async isNetworkDialogVisible() {
-    return await this.networkSelectorListContainer.isVisible();
+    try {
+      await this.networkSelectorListContainer.waitFor({ state: "visible", timeout: 3000 });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   private async scrollUntilVisible(element: ReturnType<typeof this.page.locator>) {
