@@ -25,7 +25,6 @@ test.describe("Portfolio - legacy", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToPortfolio());
       await app.portfolio.checkBuySellButtonVisibility();
       await app.portfolio.checkStakeButtonVisibility();
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
