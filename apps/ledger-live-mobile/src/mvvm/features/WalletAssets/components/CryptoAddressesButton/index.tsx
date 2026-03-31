@@ -15,6 +15,7 @@ import { Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useTranslation } from "~/context/Locale";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { IconStack } from "LLM/components/IconStack";
 import { useCryptoAddressesButtonViewModel } from "./useCryptoAddressesButtonViewModel";
 
 export const CryptoAddressesButton: React.FC = () => {
@@ -42,9 +43,11 @@ export const CryptoAddressesButton: React.FC = () => {
                     <CardContentDescription>
                       {t("portfolio.cryptoAddresses.count", { count: accountsCount })}
                     </CardContentDescription>
-                    {firstThreeCurrencies.map(currency => (
-                      <CurrencyIcon key={currency.id} currency={currency} size={20} squared />
-                    ))}
+                    <IconStack size={20} borderRadius={5}>
+                      {firstThreeCurrencies.map(currency => (
+                        <CurrencyIcon key={currency.id} currency={currency} size={20} squared />
+                      ))}
+                    </IconStack>
                   </>
                 ) : (
                   <CardContentDescription>
