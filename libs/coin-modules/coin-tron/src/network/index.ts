@@ -550,6 +550,7 @@ export type TxPageResult = {
 export type FetchTxsPageParams = {
   limit: number;
   minTimestamp: number;
+  maxTimestamp?: number;
   order: "asc" | "desc";
 };
 
@@ -571,7 +572,8 @@ export async function fetchTronAccountTxsPage(
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchTxsPageParams,
 ): Promise<FetchTxsPageResult> {
-  const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}&order_by=block_timestamp,${params.order}`;
+  const maxTimestampParam = params.maxTimestamp ? `&max_timestamp=${params.maxTimestamp}` : "";
+  const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
   const [nativeResult, trc20Result] = await Promise.all([
     fetchSinglePage<

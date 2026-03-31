@@ -359,4 +359,107 @@ describe("listOperations", () => {
     const hashes = result.items.map(op => op.tx.hash);
     expect(hashes).toEqual(["native1", "trc20-1"]);
   });
+
+  it("should pass maxTimestamp from cursor for desc order pagination", async () => {
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx3",
+        value: new BigNumber(30),
+        date: new Date("2023-01-01T03:00:00Z"),
+        blockHeight: 300,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const cursorTimestamp = new Date("2023-01-01T04:00:00Z").getTime();
+    const cursor = `${cursorTimestamp}:tx4`;
+    const minTimestamp = 1000;
+
+    await listOperations(mockAddress, {
+      ...defaultOptions,
+      order: "desc",
+      cursor,
+      minTimestamp,
+    });
+
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
+      mockAddress,
+      {},
+      {
+        limit: 200,
+        minTimestamp,
+        maxTimestamp: cursorTimestamp,
+        order: "desc",
+      },
+    );
+  });
+
+  it("should not pass maxTimestamp for desc order without cursor", async () => {
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+
+    const minTimestamp = 1000;
+
+    await listOperations(mockAddress, {
+      ...defaultOptions,
+      order: "desc",
+      minTimestamp,
+    });
+
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
+      mockAddress,
+      {},
+      {
+        limit: 200,
+        minTimestamp,
+        maxTimestamp: undefined,
+        order: "desc",
+      },
+    );
+  });
+
+  it("should pass cursor timestamp as minTimestamp for asc order pagination", async () => {
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+
+    const cursorTimestamp = new Date("2023-01-01T02:00:00Z").getTime();
+    const cursor = `${cursorTimestamp}:tx2`;
+    const minTimestamp = 1000;
+
+    await listOperations(mockAddress, {
+      ...defaultOptions,
+      order: "asc",
+      cursor,
+      minTimestamp,
+    });
+
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
+      mockAddress,
+      {},
+      {
+        limit: 200,
+        minTimestamp: cursorTimestamp,
+        maxTimestamp: undefined,
+        order: "asc",
+      },
+    );
+  });
 });

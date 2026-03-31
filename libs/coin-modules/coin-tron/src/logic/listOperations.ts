@@ -37,17 +37,21 @@ export async function listOperations(
   const { limit, order, cursor } = options;
   const parsedCursor = parseCursor(cursor);
 
-  // For asc: cursor timestamp is already past minTimestamp, so use it as the fetch starting point
-  // For desc: always use minTimestamp as the lower bound (we're going backwards toward minHeight)
+  // For asc: cursor timestamp is the new lower bound (we're moving forward in time)
+  // For desc: cursor timestamp is the new upper bound (we're moving backward in time)
+  //           minTimestamp remains the lower bound (the stopping point)
   let fetchMinTimestamp: number;
+  let fetchMaxTimestamp: number | undefined;
   if (order === "asc") {
     fetchMinTimestamp = parsedCursor ? parsedCursor.timestamp : options.minTimestamp;
+    fetchMaxTimestamp = undefined;
   } else {
     fetchMinTimestamp = options.minTimestamp;
+    fetchMaxTimestamp = parsedCursor?.timestamp;
   }
 
   // Fetch native and TRC20 transactions in parallel from TronGrid.
-  // Both endpoints are queried with the same minTimestamp to ensure
+  // Both endpoints are queried with the same timestamp bounds to ensure
   // we can properly merge and sort them chronologically.
   const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(
     address,
@@ -55,6 +59,7 @@ export async function listOperations(
     {
       limit,
       minTimestamp: fetchMinTimestamp,
+      maxTimestamp: fetchMaxTimestamp,
       order,
     },
   );
