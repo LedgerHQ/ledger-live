@@ -93,7 +93,7 @@ function useDBSaveEffect<D, S>({
         lastSavedState.current = state; // for the next round, we will be able to compare with latest successful state
         forceSave.current = false;
       }, throttle),
-    [throttle],
+    [throttle, store],
   );
   useFlushMechanism(checkForSave);
   // each time the selected slice or props change, we will checkForSave
@@ -108,7 +108,7 @@ function useDBSaveEffect<D, S>({
       lastSavedState.current = state;
     }
     checkForSave();
-  }, [lense, save, checkForSave, getChangesStats, selectedSlice]);
+  }, [lense, save, checkForSave, store, getChangesStats, selectedSlice]);
 }
 const flushes: Array<() => void> = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));
