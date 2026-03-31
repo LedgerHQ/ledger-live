@@ -41,7 +41,6 @@ export const PortfolioBannersSection = ({
         <ContentCardsLocation
           key="contentCardsLocationPortfolio"
           locationId={ContentCardLocation.TopWallet}
-          mx={6}
           mb={6}
         />
       ) : null}
