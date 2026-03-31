@@ -19,7 +19,6 @@ import {
   blacklistedTokenIdsSelector,
   counterValueCurrencySelector,
   orderAccountsSelector,
-  selectedTimeRangeSelector,
 } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
