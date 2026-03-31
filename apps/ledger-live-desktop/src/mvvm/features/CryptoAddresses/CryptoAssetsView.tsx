@@ -22,10 +22,10 @@ export function CryptoAssetsView({
   onRowClick,
 }: CryptoAssetsViewProps) {
   return (
-    <div className="flex flex-col gap-32 pb-32">
+    <div className="flex min-h-0 flex-1 flex-col gap-24">
       <TrackPage category="Crypto assets" />
       <PageHeader title={title} onBack={onBack} />
-      <div data-testid="crypto-assets-page-content" className="flex flex-col gap-12">
+      <div data-testid="crypto-assets-page-content" className="flex min-h-0 flex-1 flex-col gap-12">
         {isLoading ? (
           <Skeleton component="table" />
         ) : (

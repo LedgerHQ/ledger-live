@@ -31,13 +31,13 @@ export function CryptoAddressesView({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-32 pb-32">
+    <div className="flex min-h-0 flex-1 flex-col gap-24">
       <TrackPage category="Crypto" />
       <PageHeader title={t("cryptoAddresses.title")} />
-      <div data-testid="crypto-page-content" className="flex flex-col gap-12">
+      <div data-testid="crypto-page-content" className="flex min-h-0 flex-1 flex-col gap-16">
         <TableActionBar>
           <TableActionBarLeading>
-            <div className="max-w-[350px] flex-auto pt-4">
+            <div className="w-[400px] flex-auto pt-4">
               <SearchInput
                 value={searchValue}
                 placeholder={t("cryptoAddresses.tableActions.searchAddress")}

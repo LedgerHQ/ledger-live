@@ -8173,7 +8173,7 @@
     }
   },
   "cryptoAddresses": {
-    "title": "Crypto accounts",
+    "title": "Accounts",
     "tableActions": {
       "searchAddress": "Search address",
       "addAddress": "Add address"

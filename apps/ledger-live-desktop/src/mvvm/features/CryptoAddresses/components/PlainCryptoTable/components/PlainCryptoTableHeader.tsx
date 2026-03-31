@@ -40,7 +40,7 @@ export function PlainCryptoTableHeader<TData extends RowData>({
   return (
     <TableHeader>
       {table.getHeaderGroups().map(headerGroup => (
-        <TableHeaderRow key={headerGroup.id}>
+        <TableHeaderRow key={headerGroup.id} className="z-10">
           {headerGroup.headers.map(header => {
             const meta = header.column.columnDef.meta;
             const align = meta?.align;
