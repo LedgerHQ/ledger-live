@@ -5,13 +5,18 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import useAddAccountAnalytics from "LLD/features/AddAccountDrawer/analytics/useAddAccountAnalytics";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
-import { ADD_ACCOUNT_EVENTS_NAME } from "LLD/features/AddAccountDrawer/analytics/addAccount.types";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import useCryptoAddressesViewModel from "../useCryptoAddressesViewModel";
 import { useCryptoAccountRows } from "../../components/Table/hooks/useCryptoAccountRows";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../constants";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+
+const mockTrack = jest.fn();
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: (event: string, props?: Record<string, unknown>) => mockTrack(event, props),
+  setAnalyticsFeatureFlagMethod: jest.fn(),
+}));
 
 const mockNavigate = jest.fn();
 const mockOpenAssetFlow = jest.fn();
@@ -60,21 +65,17 @@ describe("useCryptoAddressesViewModel", () => {
     });
   });
 
-  it("should call trackAddAccountEvent and openAssetFlow on onAddAddressClick", () => {
+  it("should track button_clicked and call openAssetFlow on onAddAddressClick", () => {
     const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
       result.current.onAddAddressClick();
     });
 
-    expect(mockTrackAddAccountEvent).toHaveBeenCalledTimes(1);
-    expect(mockTrackAddAccountEvent).toHaveBeenCalledWith(
-      ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED,
-      {
-        button: "Add address",
-        page: CRYPTO_TRACKING_PAGE_NAME,
-      },
-    );
+    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+      button: "add_account",
+      page: CRYPTO_TRACKING_PAGE_NAME,
+    });
     expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
     expect(mockUseOpenAssetFlow).toHaveBeenCalledWith(
       { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -88,7 +89,7 @@ describe("useCryptoAddressesViewModel", () => {
       result.current.onAccountClick(ETH_ACCOUNT);
     });
 
-    expect(mockSetTrackingSource).toHaveBeenCalledWith("crypto page");
+    expect(mockSetTrackingSource).toHaveBeenCalledWith("Addresses");
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith(getAccountUrl(ETH_ACCOUNT.id));
   });
@@ -138,7 +139,7 @@ describe("useCryptoAddressesViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });
 
-  it("should update searchValue when setSearchValue is called", () => {
+  it("should update searchValue and track search_query when setSearchValue is called", () => {
     const { result } = renderHook(() => useCryptoAddressesViewModel());
 
     act(() => {
@@ -147,6 +148,10 @@ describe("useCryptoAddressesViewModel", () => {
 
     expect(result.current.searchValue).toBe("eth");
     expect(mockUseCryptoAccountRows).toHaveBeenLastCalledWith("eth");
+    expect(mockTrack).toHaveBeenCalledWith("search_query", {
+      query: "eth",
+      page: CRYPTO_TRACKING_PAGE_NAME,
+    });
   });
 
   it("should expose empty table message for no search query", () => {

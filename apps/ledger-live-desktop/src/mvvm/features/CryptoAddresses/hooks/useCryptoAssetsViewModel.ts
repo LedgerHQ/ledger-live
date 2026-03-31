@@ -18,6 +18,8 @@ import {
 } from "LLD/features/Assets/constants";
 import type { AssetTableItem } from "LLD/features/Assets/types";
 import type { CryptoAssetsViewModel } from "../types";
+import { track } from "~/renderer/analytics/segment";
+import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 
 export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
   const { t } = useTranslation();
@@ -94,7 +96,11 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
 
   const onAssetRowClick = useCallback(
     (item: AssetTableItem) => {
-      setTrackingSource("crypto assets");
+      setTrackingSource(ASSETS_TRACKING_PAGE_NAME);
+      track("asset_clicked", {
+        asset: item.currency.name,
+        page: ASSETS_TRACKING_PAGE_NAME,
+      });
       navigate(
         item.isPlaceholder
           ? `/market/${encodeURIComponent(resolveMarketId(item.marketId ?? item.currency.id))}`

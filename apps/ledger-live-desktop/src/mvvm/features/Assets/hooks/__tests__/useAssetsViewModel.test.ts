@@ -589,7 +589,7 @@ describe("useCryptoAssetsViewModel", () => {
       result.current.onAssetRowClick(real!);
     });
 
-    expect(mockSetTrackingSource).toHaveBeenCalledWith("crypto assets");
+    expect(mockSetTrackingSource).toHaveBeenCalledWith("Assets");
     expect(mockNavigate).toHaveBeenCalledWith(`/asset/${real!.currency.id}`);
   });
 
