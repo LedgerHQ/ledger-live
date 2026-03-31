@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -84,13 +85,16 @@ const AddressField = ({ field }: FieldComponentProps) => {
 // in case we want specific styles for addresses.
 const TextField = ({ field }: FieldComponentProps) => {
   invariant(field.type === "text", "TextField invalid");
+  const { t } = useTranslation();
+  const value = t(field.value, { defaultValue: field.value });
+
   return (
     <TransactionConfirmField
       label={field.label}
       tooltipKey={field.tooltipI18nKey}
       tooltipArgs={field.tooltipI18nArgs}
     >
-      <FieldText>{field.value}</FieldText>
+      <FieldText>{value}</FieldText>
     </TransactionConfirmField>
   );
 };

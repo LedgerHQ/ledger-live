@@ -387,19 +387,27 @@ export type LLDCoinFamily<
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
 
   /**
-   * Replace Amount row on Summary Step
-   */
-  StepSummaryAmountRow?: React.ComponentType<{
-    transaction: T;
-    amount: BigNumber;
-    unit: Unit | undefined;
-    currency: Currency;
-  }>;
-
-  /**
    * Replace Networkfees row on Summary Step
    */
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps<T>>;
+
+  /**
+   * Allow to override the sender (From) address display on Summary Step
+   */
+  StepSummaryFromAddress?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount: A | null | undefined;
+    transaction: T;
+  }>;
+
+  /**
+   * Allow to override the recipient display in the To row on Summary Step
+   */
+  StepSummaryRecipientValue?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount: A | null | undefined;
+    transaction: T;
+  }>;
 
   /**
    * Allow to add specific component in Send modal below the recipient address
