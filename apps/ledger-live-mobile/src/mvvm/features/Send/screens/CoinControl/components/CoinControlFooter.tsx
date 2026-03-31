@@ -3,12 +3,11 @@ import { Box, Button, Divider } from "@ledgerhq/lumen-ui-rnative";
 import React from "react";
 import { NetworkFeesRow } from "../../../components/NetworkFeesRow";
 import { NetworkFeesViewModel } from "../../../types";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 import { ChangeToReturn } from "./ChangeToReturn";
 
 type AmountFooterProps = Readonly<{
-  changeToReturnFormatted: string;
-  changeToReturnLabel: string;
-  changeToReturnPlaceholder: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -19,9 +18,7 @@ type AmountFooterProps = Readonly<{
 }>;
 
 export function CoinControlFooter({
-  changeToReturnFormatted,
-  changeToReturnLabel,
-  changeToReturnPlaceholder,
+  changeToReturn,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -33,11 +30,7 @@ export function CoinControlFooter({
   return (
     <Box lx={{ paddingVertical: "s8" }}>
       <Divider />
-      <ChangeToReturn
-        value={changeToReturnFormatted}
-        changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={changeToReturnPlaceholder}
-      />
+      <ChangeToReturn changeToReturn={changeToReturn} />
       <NetworkFeesRow viewModel={networkFees} />
       <Button
         appearance="base"

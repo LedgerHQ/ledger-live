@@ -6,6 +6,7 @@ import { AmountInput } from "./AmountInput";
 import { CoinControlFooter } from "./CoinControlFooter";
 import { StrategySelect } from "./StrategySelect";
 import { UtxoSelector } from "./UtxoSelector";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 import { SendFlowLayout } from "../../../components/SendFlowLayout";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
@@ -13,7 +14,7 @@ type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 type CoinControlScreenViewProps = Readonly<{
   utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly StrategyOptionWithLabel[];
-  changeToReturnFormatted: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   onSelectStrategy: (value: string) => void;
   amountValue: string | null;
   onAmountChange: (text: string) => void;
@@ -22,8 +23,6 @@ type CoinControlScreenViewProps = Readonly<{
   learnMoreLabel: string;
   onLearnMoreClick: () => void;
   coinToSendLabel: string;
-  changeToReturnLabel: string;
-  changeToReturnPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: NetworkFeesViewModel;
@@ -40,7 +39,7 @@ type CoinControlScreenViewProps = Readonly<{
 export function CoinControlScreenView({
   utxoDisplayData,
   strategyOptionsWithLabels,
-  changeToReturnFormatted,
+  changeToReturn,
   onSelectStrategy,
   amountValue,
   onAmountChange,
@@ -49,8 +48,6 @@ export function CoinControlScreenView({
   learnMoreLabel,
   onLearnMoreClick,
   coinToSendLabel,
-  changeToReturnLabel,
-  changeToReturnPlaceholder,
   amountToSendLabel,
   amountInputLabel,
   networkFees,
@@ -89,9 +86,7 @@ export function CoinControlScreenView({
         />
       </Box>
       <CoinControlFooter
-        changeToReturnFormatted={changeToReturnFormatted}
-        changeToReturnLabel={changeToReturnLabel}
-        changeToReturnPlaceholder={changeToReturnPlaceholder}
+        changeToReturn={changeToReturn}
         networkFees={networkFees}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}

@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 import { ChangeToReturn } from "./ChangeToReturn";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
@@ -7,9 +8,7 @@ import { useSendFlowData } from "../../../context/SendFlowContext";
 import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 
 type AmountFooterProps = Readonly<{
-  changeToReturnFormatted: string;
-  changeToReturnLabel: string;
-  changeToReturnPlaceholder: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -20,9 +19,7 @@ type AmountFooterProps = Readonly<{
 }>;
 
 export function CoinControlFooter({
-  changeToReturnFormatted,
-  changeToReturnLabel,
-  changeToReturnPlaceholder,
+  changeToReturn,
   networkFees,
   reviewLabel,
   reviewShowIcon,
@@ -44,11 +41,7 @@ export function CoinControlFooter({
   return (
     <DialogFooter data-testid="send-coin-control-footer" className="flex flex-col">
       <div className="border-t border-muted-subtle" />
-      <ChangeToReturn
-        value={changeToReturnFormatted}
-        changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={changeToReturnPlaceholder}
-      />
+      <ChangeToReturn changeToReturn={changeToReturn} />
       <NetworkFeesMenu
         display={{
           label: networkFees.feesRowLabel,

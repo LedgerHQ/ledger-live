@@ -6,13 +6,14 @@ import type { NetworkFeesViewModel } from "../../../hooks/useNetworkFees";
 import { UtxoSelector } from "./UtxoSelector";
 import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 
 type CoinControlScreenViewProps = Readonly<{
   utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly StrategyOptionWithLabel[];
-  changeToReturnFormatted: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   onSelectStrategy: (value: string) => void;
   amountValue: string | null;
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -21,8 +22,6 @@ type CoinControlScreenViewProps = Readonly<{
   learnMoreLabel: string;
   onLearnMoreClick: () => void;
   coinToSendLabel: string;
-  changeToReturnLabel: string;
-  changeToReturnPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: NetworkFeesViewModel;
@@ -39,7 +38,7 @@ type CoinControlScreenViewProps = Readonly<{
 export function CoinControlScreenView({
   utxoDisplayData,
   strategyOptionsWithLabels,
-  changeToReturnFormatted,
+  changeToReturn,
   onSelectStrategy,
   amountValue,
   onAmountChange,
@@ -48,8 +47,6 @@ export function CoinControlScreenView({
   learnMoreLabel,
   onLearnMoreClick,
   coinToSendLabel,
-  changeToReturnLabel,
-  changeToReturnPlaceholder,
   amountToSendLabel,
   amountInputLabel,
   networkFees,
@@ -89,9 +86,7 @@ export function CoinControlScreenView({
       </DialogBody>
 
       <CoinControlFooter
-        changeToReturnFormatted={changeToReturnFormatted}
-        changeToReturnLabel={changeToReturnLabel}
-        changeToReturnPlaceholder={changeToReturnPlaceholder}
+        changeToReturn={changeToReturn}
         networkFees={networkFees}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}

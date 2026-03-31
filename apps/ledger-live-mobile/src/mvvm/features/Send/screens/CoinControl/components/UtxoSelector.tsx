@@ -31,6 +31,14 @@ export const UtxoSelector = ({
 }: UtxoSelectorProps) => {
   const rows = utxoDisplayData?.utxoRows ?? [];
 
+  const handleToggle = React.useCallback(
+    (rowKey: string, disabled: boolean) => {
+      if (!isCustomPickingStrategy || disabled) return;
+      onToggleUtxoExclusion?.(rowKey);
+    },
+    [isCustomPickingStrategy, onToggleUtxoExclusion],
+  );
+
   return (
     <Box lx={{ flexDirection: "column", gap: "s12", flex: 1 }} style={{ minHeight: 0 }}>
       <Subheader>
@@ -44,11 +52,7 @@ export const UtxoSelector = ({
             key={row.rowKey}
             disabled={row.disabled}
             onPress={
-              isCustomPickingStrategy && !row.disabled
-                ? () => {
-                    onToggleUtxoExclusion?.(row.rowKey);
-                  }
-                : undefined
+              isCustomPickingStrategy ? () => handleToggle(row.rowKey, row.disabled) : undefined
             }
           >
             <ListItemLeading>
@@ -57,13 +61,7 @@ export const UtxoSelector = ({
                   <Checkbox
                     checked={!row.excluded}
                     disabled={row.disabled}
-                    onCheckedChange={
-                      isCustomPickingStrategy && !row.disabled
-                        ? () => {
-                            onToggleUtxoExclusion?.(row.rowKey);
-                          }
-                        : undefined
-                    }
+                    onCheckedChange={() => handleToggle(row.rowKey, row.disabled)}
                   />
                 ) : null}
                 <ListItemContent>

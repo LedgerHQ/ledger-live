@@ -1,17 +1,12 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import type { CoinControlChangeToReturnViewModel } from "@ledgerhq/live-common/flows/send/coinControl/hooks/useCoinControlScreenViewModelCore";
 
 type ChangeToReturnProps = Readonly<{
-  value?: string;
-  changeToReturnLabel: string;
-  enterAmountPlaceholder: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
 }>;
 
-export const ChangeToReturn = ({
-  value,
-  changeToReturnLabel,
-  enterAmountPlaceholder,
-}: ChangeToReturnProps) => {
+export const ChangeToReturn = ({ changeToReturn }: ChangeToReturnProps) => {
   return (
     <Box
       lx={{
@@ -23,15 +18,15 @@ export const ChangeToReturn = ({
       data-testid="send-change-to-return-row"
     >
       <Text typography="body3" lx={{ color: "base" }}>
-        {changeToReturnLabel}
+        {changeToReturn.changeToReturnLabel}
       </Text>
-      {value ? (
+      {changeToReturn.value ? (
         <Text typography="body3" lx={{ color: "base" }}>
-          {value}
+          {changeToReturn.value}
         </Text>
       ) : (
         <Text typography="body3" lx={{ color: "warning" }}>
-          {enterAmountPlaceholder}
+          {changeToReturn.placeholder}
         </Text>
       )}
     </Box>

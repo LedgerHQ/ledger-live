@@ -26,6 +26,12 @@ export type CoinControlScreenViewModelLabels = Readonly<{
   getStrategyOptionLabel: (labelKey: string) => string;
 }>;
 
+export type CoinControlChangeToReturnViewModel = Readonly<{
+  changeToReturnLabel: string;
+  value: string;
+  placeholder: string;
+}>;
+
 export type UseCoinControlScreenViewModelCoreParams<TNetworkFees = unknown> = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
@@ -48,7 +54,7 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   amountError: string | undefined;
   utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly { value: number; label: string }[];
-  changeToReturnFormatted: string;
+  changeToReturn: CoinControlChangeToReturnViewModel;
   onSelectStrategy: (value: string) => void;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -58,10 +64,7 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   onLearnMoreClick: () => void;
   learnMoreLabel: string;
   coinToSendLabel: string;
-  changeToReturnLabel: string;
   enterAmountPlaceholder: string;
-  /** Resolved empty-state text for the change row (amount missing vs insufficient custom UTXOs). */
-  changeToReturnPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: TNetworkFees;
@@ -155,31 +158,31 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
   }, [customStrategyValue, status, transaction, utxoDisplayData]);
 
-  const changeToReturnPlaceholder = useMemo(
-    () =>
-      customInsufficientUtxoForChangeRow
-        ? labels.selectSufficientCoinsPlaceholder
-        : labels.enterAmountPlaceholder,
-    [
-      customInsufficientUtxoForChangeRow,
-      labels.enterAmountPlaceholder,
-      labels.selectSufficientCoinsPlaceholder,
-    ],
-  );
-
-  const changeToReturnFormatted = useMemo(() => {
+  const changeToReturn = useMemo((): CoinControlChangeToReturnViewModel => {
+    const placeholder = customInsufficientUtxoForChangeRow
+      ? labels.selectSufficientCoinsPlaceholder
+      : labels.enterAmountPlaceholder;
     const hasAmountForChange = transaction.useAllAmount || transaction.amount?.gt(0);
-    if (!hasAmountForChange) return "";
-    if (customInsufficientUtxoForChangeRow) return "";
-    const changeAmount = getChangeToReturn(status);
-    return formatCurrencyUnit(accountUnit, changeAmount, {
-      showCode: true,
-      disableRounding: true,
-      locale,
-    });
+    let value = "";
+    if (hasAmountForChange && !customInsufficientUtxoForChangeRow) {
+      const changeAmount = getChangeToReturn(status);
+      value = formatCurrencyUnit(accountUnit, changeAmount, {
+        showCode: true,
+        disableRounding: true,
+        locale,
+      });
+    }
+    return {
+      changeToReturnLabel: labels.changeToReturnLabel,
+      value,
+      placeholder,
+    };
   }, [
     accountUnit,
     customInsufficientUtxoForChangeRow,
+    labels.changeToReturnLabel,
+    labels.enterAmountPlaceholder,
+    labels.selectSufficientCoinsPlaceholder,
     locale,
     status,
     transaction.amount,
@@ -274,7 +277,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     amountError: resolvedAmountError,
     utxoDisplayData,
     strategyOptionsWithLabels,
-    changeToReturnFormatted,
+    changeToReturn,
     onSelectStrategy,
     reviewLabel: amountReviewCore.reviewLabel,
     reviewShowIcon: amountReviewCore.reviewShowIcon,
@@ -284,9 +287,7 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     onLearnMoreClick,
     learnMoreLabel: labels.learnMoreLabel,
     coinToSendLabel: labels.coinToSendLabel,
-    changeToReturnLabel: labels.changeToReturnLabel,
     enterAmountPlaceholder: labels.enterAmountPlaceholder,
-    changeToReturnPlaceholder,
     amountToSendLabel: labels.amountToSendLabel,
     amountInputLabel: labels.amountInputLabel,
     networkFees,
