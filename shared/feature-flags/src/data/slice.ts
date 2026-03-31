@@ -134,8 +134,7 @@ const featureFlagsSlice = createSlice({
           state.resolved = resolveAll(state.overrides, state.remote, getResolutionConfig());
         }
 
-        const bannerValue =
-          payload.featureFlagsBannerVisible ?? payload.featureFlagsButtonVisible;
+        const bannerValue = payload.featureFlagsBannerVisible ?? payload.featureFlagsButtonVisible;
         if (bannerValue !== undefined) {
           state.bannerVisible = bannerValue;
         }

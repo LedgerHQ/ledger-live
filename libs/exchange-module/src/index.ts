@@ -153,6 +153,7 @@ export class ExchangeModule extends CustomModule {
     swapAppVersion,
     sponsored,
     isEmbedded,
+    correlationId,
   }: ExchangeSwapParams) {
     const { operationHash, swapId } = await this.request<ExchangeSwapParams, SwapResult>(
       "custom.exchange.swap",
@@ -170,6 +171,7 @@ export class ExchangeModule extends CustomModule {
         swapAppVersion,
         sponsored,
         isEmbedded,
+        correlationId,
       },
     );
 

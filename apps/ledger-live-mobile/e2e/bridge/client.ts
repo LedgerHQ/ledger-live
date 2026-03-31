@@ -2,12 +2,8 @@ import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
-import {
-  importSettings,
-  setLastConnectedDevice,
-  setOverriddenFeatureFlags,
-  setOverriddenFeatureFlag,
-} from "~/actions/settings";
+import { importSettings, setLastConnectedDevice } from "~/actions/settings";
+import { setOverride, setAllOverrides, featureFlagsOverridesSelector } from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
@@ -15,15 +11,12 @@ import { addKnownDevice, importBle, removeKnownDevice, removeKnownDevices } from
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
+import { webviewLogStore } from "../../src/e2e/webviewLogStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import Config from "react-native-config";
-import {
-  SettingsSetOverriddenFeatureFlagsPlayload,
-  SettingsSetOverriddenFeatureFlagPlayload,
-} from "~/actions/types";
-import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
+import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 
@@ -118,14 +111,13 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "overrideFeatureFlags": {
         store.dispatch(
-          setOverriddenFeatureFlags(msg.payload as SettingsSetOverriddenFeatureFlagsPlayload),
+          setAllOverrides(msg.payload as PartialFeatures),
         );
         break;
       }
       case "overrideFeatureFlag": {
-        store.dispatch(
-          setOverriddenFeatureFlag(msg.payload as SettingsSetOverriddenFeatureFlagPlayload),
-        );
+        const { id, value } = msg.payload as { id: FeatureId; value: Feature | undefined };
+        store.dispatch(setOverride({ key: id, value }));
         break;
       }
       case "navigate":
@@ -135,7 +127,12 @@ async function onMessage(event: WebSocketMessageEvent) {
         DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
       case "getLogs": {
-        const payload = JSON.stringify(logReport.getLogs());
+        const payload = JSON.stringify({
+          appLogs: logReport.getLogs(),
+          webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
+          webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
+          webviewLoadErrors: webviewLogStore.getLoadErrors(),
+        });
         postMessage({
           type: "appLogs",
           payload,
@@ -143,7 +140,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "getFlags": {
-        const localOverrides = overriddenFeatureFlagsSelector(store.getState());
+        const localOverrides = featureFlagsOverridesSelector(store.getState());
         const payload = JSON.stringify(getAllFeatureFlags("en", localOverrides));
         postMessage({
           type: "appFlags",

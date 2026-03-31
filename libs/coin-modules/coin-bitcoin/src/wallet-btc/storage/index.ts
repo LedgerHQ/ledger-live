@@ -135,6 +135,7 @@ class BitcoinLikeStorage implements IStorage {
       });
 
       tx.inputs.forEach(input => {
+        if (!input.address || !input.output_hash) return;
         const inputAddress = input.address;
 
         // Initialize arrays if needed

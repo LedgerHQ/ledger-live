@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-currency-format",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Ledger Live currency formatting utilities",
   "keywords": [
     "Ledger"
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@types/node": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

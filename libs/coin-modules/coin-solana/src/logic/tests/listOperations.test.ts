@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
+import { http, HttpResponse } from "msw";
 import { listOperations } from "../listOperations";
-import { server, rpcHandler, createTestChainApi } from "./helpers/msw-rpc.mock";
+import { server, rpcHandler, createTestChainApi, TEST_ENDPOINT } from "./helpers/msw-rpc.mock";
 
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const TEST_RECIPIENT = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
@@ -68,6 +69,30 @@ describe("listOperations (MSW integration)", () => {
 
     expect(result.items).toEqual([]);
     expect(result.next).toBeUndefined();
+  });
+
+  it("intercepts error code -32020", async () => {
+    server.use(
+      http.post(TEST_ENDPOINT, async ({ request }) => {
+        const body: unknown = await request.clone().json();
+        if (
+          typeof body === "object" &&
+          body !== null &&
+          "method" in body &&
+          body.method === "getSignaturesForAddress"
+        ) {
+          return HttpResponse.json({
+            jsonrpc: "2.0",
+            error: { code: -32020, message: "Invalid param: until" },
+            id: "1",
+          });
+        }
+      }),
+    );
+
+    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+
+    expect(result).toEqual({ items: [] });
   });
 
   it("should parse an OUT operation from RPC data", async () => {

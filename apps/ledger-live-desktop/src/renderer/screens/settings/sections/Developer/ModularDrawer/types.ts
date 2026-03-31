@@ -1,4 +1,4 @@
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import {
   assetsLeftElementOptions,
   assetsRightElementOptions,

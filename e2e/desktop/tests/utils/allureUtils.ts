@@ -2,10 +2,12 @@ import { Page, TestInfo } from "@playwright/test";
 import { ElectronApplication } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
-import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
+import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-common/e2e/speculos";
+import { getEnv } from "@ledgerhq/live-env";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
+import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 
 const readFileAsync = promisify(readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -36,6 +38,57 @@ export async function addBugLink(ids: string[]) {
   }
 }
 
+export async function addTeamOwner(team: Team) {
+  const teamString = team.toString();
+  await allure.owner(teamString);
+  await allure.parentSuite(teamString);
+  await allure.feature(teamString);
+}
+
+async function attachSpeculosScreenshots(testInfo: TestInfo): Promise<void> {
+  const speculosPort = getEnv("SPECULOS_API_PORT");
+  const navigatedScreenshots = drainSpeculosScreenshots(speculosPort);
+
+  let screenshots: Buffer[];
+  if (navigatedScreenshots.length > 0) {
+    screenshots = navigatedScreenshots;
+  } else {
+    const fallback = await takeScreenshot();
+    screenshots = fallback ? [fallback] : [];
+  }
+
+  if (screenshots.length === 0) {
+    console.warn(
+      "[captureArtifacts] No Speculos screenshots available — Speculos may be unreachable",
+    );
+  } else if (screenshots.length === 1) {
+    await testInfo.attach("Speculos Screenshot", {
+      body: screenshots[0],
+      contentType: "image/png",
+    });
+  } else {
+    const images = screenshots
+      .map(
+        (s, i) =>
+          `<figure>
+            <figcaption>Screen ${i + 1} / ${screenshots.length}</figcaption>
+            <img src="data:image/png;base64,${s.toString("base64")}" />
+          </figure>`,
+      )
+      .join("\n");
+    const html = `<!DOCTYPE html><html><head><style>
+      body { background:#1a1a1a; margin:0; padding:12px; display:flex; flex-wrap:wrap; gap:12px; font-family:monospace; }
+      figure { margin:0; }
+      figcaption { color:#aaa; font-size:11px; text-align:center; padding:4px 0; }
+      img { display:block; image-rendering:pixelated; border:1px solid #444; }
+    </style></head><body>${images}</body></html>`;
+    await testInfo.attach("Speculos Screenshots", {
+      body: Buffer.from(html),
+      contentType: "text/html",
+    });
+  }
+}
+
 export async function captureArtifacts(
   page: Page,
   testInfo: TestInfo,
@@ -46,11 +99,7 @@ export async function captureArtifacts(
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
 
   if (IS_NOT_MOCK) {
-    const speculosScreenshot = await takeScreenshot();
-    await testInfo.attach("Speculos Screenshot", {
-      body: speculosScreenshot,
-      contentType: "image/png",
-    });
+    await attachSpeculosScreenshots(testInfo);
   }
 
   if (isLastRetry(testInfo)) {

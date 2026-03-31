@@ -28,6 +28,7 @@ describe("TopBar", () => {
     dynamicContent: {
       desktopCards: [],
       portfolioCards: [],
+      bottomPortfolioCards: [],
       actionCards: [],
       notificationsCards: [],
     },

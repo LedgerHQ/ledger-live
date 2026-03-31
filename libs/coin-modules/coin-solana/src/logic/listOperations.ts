@@ -369,7 +369,6 @@ function parseTokenOperations(
 
   for (const [, change] of tokenChanges) {
     if (change.delta === 0n) continue;
-
     const op = buildTokenOperation(
       address,
       change,

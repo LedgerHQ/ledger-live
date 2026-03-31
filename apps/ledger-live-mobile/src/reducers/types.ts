@@ -6,6 +6,7 @@ import type {
   FeatureId,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -292,6 +293,12 @@ export type SettingsState = {
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
   deprecationDoNotRemind: string[];
+  analyticsConsentInfo: AnalyticsConsentInfo;
+};
+
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export type NotificationsSettings = {
@@ -299,6 +306,8 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
+  totalMarketCap: boolean;
+  topGainersLosers: boolean;
 };
 
 // === WALLET CONNECT STATE ===
@@ -316,6 +325,12 @@ export type EarnState = {
     message?: string;
     messageTitle?: string;
     learnMoreLink?: string;
+  };
+  infoBottomSheet?: {
+    message: string;
+    title: string;
+    linkText?: string;
+    linkHref?: string;
   };
   menuModal?: {
     title?: string;
@@ -389,6 +404,7 @@ export type State = LLMRTKApiState & {
   deeplinkInstallApp: DeeplinkInstallAppState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  featureFlags: FeatureFlagsState;
   identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;

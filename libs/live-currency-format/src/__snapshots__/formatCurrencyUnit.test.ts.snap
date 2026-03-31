@@ -216,6 +216,10 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
@@ -621,6 +625,10 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Lukso unit (LYX) 1`] = `"0.012345678900000000- -LYX"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
@@ -1028,6 +1036,10 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
@@ -1433,6 +1445,10 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Lukso unit (LYX) 1`] = `"0,012345678900000000- -LYX"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format MIX Blockchain unit (MIX) 1`] = `"123 456 789,00000000- -MIX"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
@@ -1840,6 +1856,10 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
@@ -2245,6 +2265,10 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Lukso unit (LYX) 1`] = `"0.012345678900000000- -LYX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
@@ -2652,6 +2676,10 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
@@ -3057,6 +3085,10 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Lukso unit (LYX) 1`] = `"0,012345678900000000- -LYX"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format MIX Blockchain unit (MIX) 1`] = `"123 456 789,00000000- -MIX"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
@@ -3464,6 +3496,10 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format MIX Blockchain unit (MIX) 1`] = `"123.456.789,00000000- -MIX"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantle Sepolia unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantle unit (MNT) 1`] = `"0,012345678900000000- -MNT"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Mantra unit (Mantra) 1`] = `"0,012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Metis unit (METIS) 1`] = `"0,012345678900000000- -METIS"`;
@@ -3870,6 +3906,10 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789.00000000- -MIX"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantle unit (MNT) 1`] = `"0.012345678900000000- -MNT"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Mantra unit (Mantra) 1`] = `"0.012345678900000000- -MANTRA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Metis unit (METIS) 1`] = `"0.012345678900000000- -METIS"`;
@@ -4275,6 +4315,10 @@ exports[`formatCurrencyUnit with default options should correctly format Litecoi
 exports[`formatCurrencyUnit with default options should correctly format Lukso unit (LYX) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format MIX Blockchain unit (MIX) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Mantle Sepolia unit (MNT) 1`] = `"0.0123456"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Mantle unit (MNT) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Mantra unit (Mantra) 1`] = `"0.0123456"`;
 

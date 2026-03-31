@@ -6,7 +6,6 @@ import {
   takeScreenshot,
   setExchangeDependencies,
 } from "@ledgerhq/live-common/e2e/speculos";
-import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
 import { device, log } from "detox";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
@@ -17,6 +16,41 @@ import { promises as fs } from "fs";
 import path from "path";
 
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { getCapturedStderr } from "./loggingUtils";
+
+const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
+const SPECULOS_STDERR_MARKER = "--- Speculos stderr ---";
+
+function attachSpeculosOutputToAllure(message: string): Promise<void> {
+  const promises: Promise<void>[] = [];
+  try {
+    if (message.includes(SPECULOS_STDOUT_MARKER)) {
+      const afterStdout = message.indexOf(SPECULOS_STDOUT_MARKER) + SPECULOS_STDOUT_MARKER.length;
+      const rest = message.slice(afterStdout).replace(/^\n+/, "");
+      const endOfStdout = rest.includes(SPECULOS_STDERR_MARKER)
+        ? rest.indexOf(SPECULOS_STDERR_MARKER)
+        : rest.length;
+      const stdout = rest.slice(0, endOfStdout).replace(/\n+$/, "").trim();
+      if (stdout) {
+        promises.push(
+          allure.attachment("Speculos stdout", stdout, "text/plain").then(() => undefined),
+        );
+      }
+    }
+    if (message.includes(SPECULOS_STDERR_MARKER)) {
+      const afterStderr = message.indexOf(SPECULOS_STDERR_MARKER) + SPECULOS_STDERR_MARKER.length;
+      const stderr = message.slice(afterStderr).replace(/^\n+/, "").replace(/\n+$/, "").trim();
+      if (stderr) {
+        promises.push(
+          allure.attachment("Speculos stderr", stderr, "text/plain").then(() => undefined),
+        );
+      }
+    }
+    return Promise.all(promises).then(() => undefined);
+  } catch {
+    return Promise.resolve();
+  }
+}
 
 // Re-export setExchangeDependencies to ensure the same module instance is used
 export { setExchangeDependencies };
@@ -61,12 +95,42 @@ async function writeInstances(instances: SpeculosId[]) {
 
 export async function launchSpeculos(appName: string) {
   const testName = jestExpect.getState().testPath || "unknown";
-  const device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+  let device;
+  try {
+    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+  } catch (e: unknown) {
+    const err = e instanceof Error ? e : new Error(String(e));
+    globalThis.speculosStartupErrorMessage = err.message;
+    globalThis.speculosFailureStderr = getCapturedStderr();
+    await attachSpeculosOutputToAllure(err.message);
+    const message = ["[E2E Setup] Speculos failed to start.", err.message]
+      .filter(Boolean)
+      .join("\n\n");
+    log.error("E2E Setup", message);
+    throw new Error(message);
+  }
 
-  invariant(device, "[E2E Setup] Speculos not started");
+  if (!device) {
+    const note =
+      "[E2E Setup] Speculos not started: no device returned. Check SEED, COINAPPS, and Docker (local) or CI workflow (remote).";
+    globalThis.speculosStartupErrorMessage = note;
+    globalThis.speculosFailureStderr = getCapturedStderr();
+    log.error("E2E Setup", "[E2E Setup] Speculos not started");
+    throw new Error("[E2E Setup] Speculos not started");
+  }
+  if (!device.port) {
+    const remoteHint = isSpeculosRemote()
+      ? " Remote Speculos workflow may have failed (port 0). Check CI/GitHub Actions."
+      : "";
+    const message = [
+      "[E2E Setup] Speculos port not set.",
+      `deviceId: ${device.id}, appName: ${device.appName ?? appName}${remoteHint}`,
+    ].join(" ");
+    log.error("E2E Setup", message);
+    throw new Error(message);
+  }
   setEnv("SPECULOS_API_PORT", device.port);
   speculosDevices.set(device.id, device.port);
-  invariant(device.port, "[E2E Setup] Speculos port not null");
 
   await writeSpeculosInFile(device.id);
   log.info("E2E Setup", "Device info before map set:", {
@@ -93,7 +157,7 @@ async function findPortByDeviceId(
       "E2E",
       `Current speculosDevices map (attempt ${attempt}/${maxAttempts}):`,
       Array.from(speculosDevices.entries())
-        .map(([deviceId, port]) => `${deviceId} -> ${port}`)
+        .map(([id, p]) => `${id} -> ${p ?? "(null)"}`)
         .join(", "),
     );
 

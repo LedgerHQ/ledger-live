@@ -8,9 +8,32 @@ import {
   overrideInitialStateWithGraphReworkEnabled,
   overrideInitialStateWithGraphReworkAndReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
+  overrideInitialStateWithPerpsAndAssetSection,
   overrideInitialStateWithAssetSection,
   overrideInitialStateWithNoAccountsAndAssetSection,
 } from "./shared";
+
+const DADA_API_URLS = [
+  "https://dada.api.ledger-test.com/v1/assets",
+  "https://dada.api.ledger.com/v1/assets",
+];
+
+const setupDadaApiError = () => {
+  server.use(
+    ...DADA_API_URLS.map(url => http.get(url, () => HttpResponse.json(null, { status: 500 }))),
+  );
+};
+
+const setupDadaApiLoading = () => {
+  server.use(
+    ...DADA_API_URLS.map(url =>
+      http.get(url, async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }),
+    ),
+  );
+};
 
 describe("Portfolio Screen", () => {
   it("should render Portfolio when feature flag is enabled", async () => {
@@ -85,10 +108,20 @@ describe("Portfolio Screen", () => {
 
       expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
     });
+
+    it("should show perps entry point when assetSection is also enabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithPerpsAndAssetSection,
+      });
+
+      await screen.findByTestId("PortfolioAccountsList");
+
+      expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
   });
 
   describe("Asset Section Feature", () => {
-    it("should display the cryptos list when assetSection is enabled and user has accounts", async () => {
+    it("should display the cryptos list and crypto accounts button when assetSection is enabled and user has accounts", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithAssetSection(true),
       });
@@ -96,9 +129,10 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(await screen.findByTestId("crypto-addresses-button")).toBeVisible();
     });
 
-    it("should not display the cryptos list when assetSection is disabled", async () => {
+    it("should not display the cryptos list nor the crypto accounts button when assetSection is disabled", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithAssetSection(false),
       });
@@ -106,16 +140,19 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
     });
 
-    it("should not display the cryptos list when user has no accounts and assetSection is disabled", async () => {
+    it("should display the fallback read-only cryptos list when user has no accounts and assetSection is disabled", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithFeatureFlag,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
 
-      expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
+      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
     });
 
     it("should display the cryptos list with DADA API assets when no accounts and assetSection is enabled", async () => {
@@ -130,25 +167,34 @@ describe("Portfolio Screen", () => {
       expect(await screen.findByTestId("assetItem-Ethereum")).toBeVisible();
     });
 
-    it("should not display the cryptos list when no accounts and assetSection is disabled", async () => {
+    it("should display the fallback read-only cryptos list when no accounts and assetSection is disabled", async () => {
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(false),
       });
 
       await screen.findByTestId("PortfolioEmptyList");
 
-      expect(screen.queryByTestId("PortfolioCryptosList")).toBeNull();
+      expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
+      expect(screen.queryByTestId("PortfolioStablecoinsList")).toBeNull();
+      expect(screen.queryByTestId("crypto-addresses-button")).toBeNull();
     });
+  });
 
-    it("should display error state when DADA API fails", async () => {
-      server.use(
-        http.get("https://dada.api.ledger-test.com/v1/assets", () =>
-          HttpResponse.json(null, { status: 500 }),
-        ),
-        http.get("https://dada.api.ledger.com/v1/assets", () =>
-          HttpResponse.json(null, { status: 500 }),
-        ),
-      );
+  describe("Stablecoin Section Feature", () => {
+    it("should display the stablecoins list with DADA API assets when no accounts and assetSection is enabled", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
+      });
+
+      await screen.findByTestId("PortfolioEmptyList");
+
+      expect(await screen.findByTestId("PortfolioStablecoinsList")).toBeVisible();
+    });
+  });
+
+  describe("DADA API States", () => {
+    it("should display error states in both cryptos and stablecoins sections when DADA API fails", async () => {
+      setupDadaApiError();
 
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
@@ -157,20 +203,13 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioEmptyList");
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-      expect(await screen.findByTestId("assets-error-state")).toBeVisible();
+      expect(await screen.findByTestId("PortfolioStablecoinsList")).toBeVisible();
+      const errorStates = await screen.findAllByTestId("assets-error-state");
+      expect(errorStates.length).toBeGreaterThanOrEqual(2);
     });
 
-    it("should display skeleton items while DADA API is loading", async () => {
-      server.use(
-        http.get("https://dada.api.ledger-test.com/v1/assets", async () => {
-          await delay("infinite");
-          return HttpResponse.json({});
-        }),
-        http.get("https://dada.api.ledger.com/v1/assets", async () => {
-          await delay("infinite");
-          return HttpResponse.json({});
-        }),
-      );
+    it("should display skeleton items in both sections while DADA API is loading", async () => {
+      setupDadaApiLoading();
 
       renderWithReactQuery(<PortfolioTest />, {
         overrideInitialState: overrideInitialStateWithNoAccountsAndAssetSection(true),
@@ -179,7 +218,8 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioEmptyList");
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
-      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(4);
+      expect(await screen.findByTestId("PortfolioStablecoinsList")).toBeVisible();
+      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(6);
     });
   });
 

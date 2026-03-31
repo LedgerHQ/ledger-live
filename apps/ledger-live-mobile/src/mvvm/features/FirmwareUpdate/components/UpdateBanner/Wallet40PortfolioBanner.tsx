@@ -19,7 +19,7 @@ const Wallet40PortfolioBanner = ({
   const { t } = useTranslation();
   return (
     <>
-      <Box lx={{ alignItems: "center", paddingTop: "s16", gap: "s10" }}>
+      <Box lx={{ alignItems: "center", paddingTop: "s24" }}>
         <Button
           appearance="transparent"
           size="sm"

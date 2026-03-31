@@ -6,6 +6,8 @@ export const QUICK_ACTIONS_TEST_IDS = {
     buy: "quick-action-buy",
     connect: "quick-action-connect",
     buyLedger: "quick-action-buy-ledger",
+    receive: "quick-action-receive",
+    send: "quick-action-send",
   },
   transferDrawer: {
     container: "transfer-drawer",

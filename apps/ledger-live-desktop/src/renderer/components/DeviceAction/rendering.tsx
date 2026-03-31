@@ -98,6 +98,7 @@ export const AnimationWrapper = styled.div`
   overflow: hidden;
   padding-bottom: 12px;
   align-self: center;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;

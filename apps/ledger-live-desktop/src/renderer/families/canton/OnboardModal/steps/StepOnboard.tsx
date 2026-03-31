@@ -1,76 +1,42 @@
-import React, { memo } from "react";
-import { Trans } from "react-i18next";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+import { isAxiosError } from "axios";
+import React from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import { urls } from "~/config/urls";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Spinner from "~/renderer/components/Spinner";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 import { TransactionConfirm } from "../components/TransactionConfirm";
 import { StepId, StepProps } from "../types";
-import { urls } from "~/config/urls";
-import { openURL } from "~/renderer/linking";
-import { isAxiosError } from "axios";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-const SectionAccounts = memo(
-  ({
-    currency,
-    accountName,
-    editedNames,
-    creatableAccount,
-    importableAccounts,
-    isReonboarding,
-  }: Pick<
-    StepProps,
-    | "currency"
-    | "accountName"
-    | "editedNames"
-    | "creatableAccount"
-    | "importableAccounts"
-    | "isReonboarding"
-  >) => {
-    return (
-      <SectionAccountsStyled>
-        {importableAccounts?.length > 0 && (
-          <Box mb={4}>
-            <Box
-              horizontal
-              ff="Inter|Bold"
-              color="neutral.c100"
-              fontSize={2}
-              textTransform="uppercase"
-              mb={3}
-            >
-              <Trans
-                i18nKey="families.canton.addAccount.onboard.onboarded"
-                count={importableAccounts?.length}
-              />
-            </Box>
-            <Box flow={2}>
-              {importableAccounts.map((account, index) => (
-                <AccountRow
-                  key={account.id}
-                  account={account}
-                  accountName={
-                    editedNames[account.id] ||
-                    getDefaultAccountNameForCurrencyIndex({ currency, index })
-                  }
-                  isDisabled={false}
-                  hideAmount={false}
-                  isReadonly={true}
-                />
-              ))}
-            </Box>
-          </Box>
-        )}
-
+const SectionAccounts = ({
+  currency,
+  accountName,
+  editedNames,
+  creatableAccount,
+  importableAccounts,
+  isReonboarding,
+}: Pick<
+  StepProps,
+  | "currency"
+  | "accountName"
+  | "editedNames"
+  | "creatableAccount"
+  | "importableAccounts"
+  | "isReonboarding"
+>) => {
+  return (
+    <SectionAccountsStyled>
+      {importableAccounts?.length > 0 && (
         <Box mb={4}>
           <Box
             horizontal
@@ -81,29 +47,58 @@ const SectionAccounts = memo(
             mb={3}
           >
             <Trans
-              i18nKey={
-                isReonboarding
-                  ? "families.canton.addAccount.onboard.account"
-                  : "families.canton.addAccount.onboard.newAccount"
-              }
+              i18nKey="families.canton.addAccount.onboard.onboarded"
+              count={importableAccounts?.length}
             />
           </Box>
-          {creatableAccount && (
-            <AccountRow
-              account={creatableAccount}
-              accountName={accountName}
-              isDisabled={false}
-              hideAmount={true}
-              isReadonly={true}
-            />
-          )}
+          <Box flow={2}>
+            {importableAccounts.map((account, index) => (
+              <AccountRow
+                key={account.id}
+                account={account}
+                accountName={
+                  editedNames[account.id] ||
+                  getDefaultAccountNameForCurrencyIndex({ currency, index })
+                }
+                isDisabled={false}
+                hideAmount={false}
+                isReadonly={true}
+              />
+            ))}
+          </Box>
         </Box>
-      </SectionAccountsStyled>
-    );
-  },
-);
+      )}
 
-SectionAccounts.displayName = "SectionAccounts";
+      <Box mb={4}>
+        <Box
+          horizontal
+          ff="Inter|Bold"
+          color="neutral.c100"
+          fontSize={2}
+          textTransform="uppercase"
+          mb={3}
+        >
+          <Trans
+            i18nKey={
+              isReonboarding
+                ? "families.canton.addAccount.onboard.account"
+                : "families.canton.addAccount.onboard.newAccount"
+            }
+          />
+        </Box>
+        {creatableAccount && (
+          <AccountRow
+            account={creatableAccount}
+            accountName={accountName}
+            isDisabled={false}
+            hideAmount={true}
+            isReadonly={true}
+          />
+        )}
+      </Box>
+    </SectionAccountsStyled>
+  );
+};
 
 const getStatusMessage = (status?: OnboardStatus): string => {
   switch (status) {
@@ -259,10 +254,9 @@ export const StepOnboardFooter = ({
   onboardingStatus,
   onOnboardAccount,
   onRetryOnboardAccount,
+  skipPreapprovalStep,
   transitionTo,
 }: StepProps) => {
-  const skipCantonPreapprovalStep = useFeature("cantonSkipPreapprovalStep");
-
   if (onboardingStatus === OnboardStatus.SIGN) {
     return <></>;
   }
@@ -274,9 +268,7 @@ export const StepOnboardFooter = ({
           <Button
             primary
             disabled={isProcessing}
-            onClick={() =>
-              transitionTo(skipCantonPreapprovalStep?.enabled ? StepId.FINISH : StepId.AUTHORIZE)
-            }
+            onClick={() => transitionTo(skipPreapprovalStep ? StepId.FINISH : StepId.AUTHORIZE)}
           >
             <Trans i18nKey="common.continue" />
           </Button>

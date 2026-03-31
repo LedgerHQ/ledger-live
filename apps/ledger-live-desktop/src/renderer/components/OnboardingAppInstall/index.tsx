@@ -172,7 +172,10 @@ const OnboardingAppInstallStep = ({
           onError={handleError}
         />
       ) : (
-        <Flex flexDirection="column">
+        <Flex
+          flexDirection="column"
+          data-testid={deviceToRestore ? "install-set-of-apps-restore-body" : undefined}
+        >
           <Flex justifyContent="center" alignItems="center" mb={10} mt={4}>
             {deviceToRestore ? <RestoreAppsIllustration /> : <DefaultAppsIllustration />}
           </Flex>

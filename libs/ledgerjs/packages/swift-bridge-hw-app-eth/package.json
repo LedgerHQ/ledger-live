@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-eth",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Package to facilitate bundling hw-app-eth in the EthWrapper Swift package",
   "keywords": [
     "Ledger",
@@ -37,7 +37,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint": "oxlint ./src",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "coverage": "jest --coverage",

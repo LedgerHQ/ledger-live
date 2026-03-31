@@ -6,7 +6,7 @@ import styled from "styled-components";
 import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 
 export const listItemHeight = 73;
-export const miniChartThreshold = 900;
+export const miniChartThreshold = 1200;
 export const miniMarketCapThreshold = 1100;
 export const actionsIconOnlyThreshold = 1300;
 
@@ -70,7 +70,7 @@ const TableRowBase = styled((props: FlexBoxProps & { header?: boolean; disabled?
     justify-content: flex-start;
   }
   ${TableCellBaseStyled}:nth-child(4) {
-    flex: 0 0 90px;
+    flex: 0 0 110px;
     justify-content: flex-end;
   }
   ${TableCellBaseStyled}:nth-child(5) {

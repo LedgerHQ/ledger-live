@@ -332,6 +332,7 @@ export type SwapPayloadRequestData = {
   quoteId?: string;
   toNewTokenId?: string;
   flags?: FeatureFlags;
+  correlationId?: string;
 };
 export type SwapPayloadResponse = {
   binaryPayload: string;

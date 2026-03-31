@@ -787,6 +787,51 @@ describe.each([
   });
 });
 
+describe("EVM Api (Moonbeam Network)", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    module = createApi(
+      {
+        node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
+        },
+        showNfts: false,
+      } as EvmConfig,
+      "moonbeam",
+    );
+  });
+
+  describe("listOperations", () => {
+    /**
+     * Non-regression: some Moonbeam transactions (e.g. contract creations) have
+     * an empty `to` field in the Etherscan API response. The adapter used to emit
+     * `recipients: [""]` (array with one empty string) instead of `recipients: []`.
+     * @see https://alpaca.api.ledger.com/v1/moonbeam/account/0x2a9c55b6dc56da178f9f9a566f1161237b73ba66/operations?limit=100
+     */
+    it("returns no operations with empty string recipients or senders", async () => {
+      const { items } = await module.listOperations("0x2a9c55b6dc56da178f9f9a566f1161237b73ba66", {
+        minHeight: 0,
+        order: "desc",
+        limit: 100,
+      });
+
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach(op => {
+        op.recipients.forEach(r => {
+          expect(r).not.toBe("");
+        });
+        op.senders.forEach(s => {
+          expect(s).not.toBe("");
+        });
+      });
+    });
+  });
+});
+
 describe("EVM Api (SEI Network)", () => {
   let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
@@ -908,5 +953,68 @@ describe("EVM Api (SEI Network)", () => {
 
       expectEstimationForMode(result);
     });
+  });
+});
+
+describe("EVM Api (Zero Gravity)", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    const config = {
+      node: {
+        type: "external",
+        uri: "https://evmrpc.0g.ai",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://chainscan.0g.ai/open/api",
+        maxLimit: 99, // use 99 so internal `limit + 1` probing stays within the explorer's hard max of 100
+      },
+    };
+    module = createApi(config as EvmConfig, "zero_gravity");
+  });
+
+  describe("listOperations", () => {
+    it("returns consistent results for limits below/at/above 100", async () => {
+      const address = "0x70793181A947C4034B0F9E547e5a8D1a21B9bD60";
+      const commonParams = {
+        minHeight: 0,
+        order: "desc" as const,
+      };
+
+      const [limit99, limit100, limit101] = await Promise.all([
+        module.listOperations(address, { ...commonParams, limit: 99 }),
+        module.listOperations(address, { ...commonParams, limit: 100 }),
+        module.listOperations(address, { ...commonParams, limit: 101 }),
+      ]);
+
+      const allResults = [limit99, limit100, limit101];
+
+      allResults.forEach(result => {
+        expect(result).toEqual(
+          expect.objectContaining({
+            items: expect.any(Array),
+            next: expect.any(String),
+          }),
+        );
+
+        // Ensure basic operation structure remains valid across limits.
+        result.items.forEach(op => {
+          expect(op.tx.date).toBeInstanceOf(Date);
+        });
+      });
+
+      // Larger limits should not return fewer operations.
+      expect(limit99.items.length).toBeLessThanOrEqual(limit100.items.length);
+      expect(limit100.items.length).toBeLessThanOrEqual(limit101.items.length);
+
+      // Results should be consistent when increasing limits.
+      const atCapIds = new Set(limit100.items.map(op => op.id));
+      expect(limit99.items.every(op => atCapIds.has(op.id))).toBe(true);
+
+      const aboveCapIds = new Set(limit101.items.map(op => op.id));
+      expect(limit100.items.every(op => aboveCapIds.has(op.id))).toBe(true);
+    }, 60000);
   });
 });

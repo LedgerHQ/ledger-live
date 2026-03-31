@@ -8,12 +8,14 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   if (!paths) return jestPaths;
 
   Object.keys(paths).forEach(pathKey => {
+    // tsconfig uses "*": ["./*"] instead of baseUrl; mapping (.*) -> $1 breaks every module in Jest
+    if (pathKey === "*") return;
     const pathValues = Array.isArray(paths[pathKey]) ? paths[pathKey] : [paths[pathKey]];
     pathValues.forEach(pathValue => {
       // Convert TypeScript path pattern to Jest regex pattern
       // Use /\*$/ for key (wildcard at end) but /\*/ for value (wildcard can be anywhere)
       const jestKey = pathKey.replace(/\*$/, "(.*)");
-      const jestValue = pathValue.replace(/\*/, "$1");
+      const jestValue = pathValue.replace(/\*/g, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
   });
@@ -87,7 +89,7 @@ const commonConfig = {
   },
   globalSetup: "<rootDir>/tests/setup.ts",
   moduleDirectories: ["node_modules", "./tests"],
-  modulePaths: [compilerOptions.baseUrl],
+  modulePaths: [compilerOptions.baseUrl ?? "."],
   resolver: "<rootDir>/scripts/resolver.js",
   testEnvironmentOptions: {
     customExportConditions: [""],

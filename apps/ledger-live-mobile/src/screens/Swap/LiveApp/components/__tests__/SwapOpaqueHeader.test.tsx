@@ -3,7 +3,6 @@ import { render } from "@tests/test-renderer";
 import { SwapOpaqueHeader } from "../SwapOpaqueHeader";
 
 jest.mock("~/context/Locale", () => ({
-  ...jest.requireActual("~/context/Locale"),
   useTranslation: () => ({ t: (key: string) => `translated:${key}` }),
 }));
 

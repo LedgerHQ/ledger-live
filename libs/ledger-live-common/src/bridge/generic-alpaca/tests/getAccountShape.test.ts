@@ -23,8 +23,12 @@ jest.mock("../alpaca", () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
-    getTokenFromAsset: (...a: any[]) => getTokenFromAssetMock(...a),
     refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
+  }),
+}));
+jest.mock("../bridge", () => ({
+  getBridgeApi: () => ({
+    getTokenFromAsset: getTokenFromAssetMock,
     getChainSpecificRules: () => ({
       getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
     }),

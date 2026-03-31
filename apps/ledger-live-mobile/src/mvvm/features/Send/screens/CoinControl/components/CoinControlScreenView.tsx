@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { NetworkFeesViewModel } from "../../../types";
-import type { BitcoinUtxoDisplayData } from "@ledgerhq/live-common/families/bitcoin/react";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { AmountInput } from "./AmountInput";
 import { CoinControlFooter } from "./CoinControlFooter";
 import { StrategySelect } from "./StrategySelect";
@@ -11,7 +11,7 @@ import { SendFlowLayout } from "../../../components/SendFlowLayout";
 type StrategyOptionWithLabel = Readonly<{ value: number; label: string }>;
 
 type CoinControlScreenViewProps = Readonly<{
-  utxoDisplayData: BitcoinUtxoDisplayData | null;
+  utxoDisplayData: CoinControlDisplayData | null;
   strategyOptionsWithLabels: readonly StrategyOptionWithLabel[];
   changeToReturnFormatted: string;
   onSelectStrategy: (value: string) => void;

@@ -136,4 +136,38 @@ describe("getBlock ERC20 transfers", () => {
       expect(tokenOps.map(op => op.amount).sort()).toEqual([-expectedAmount, expectedAmount]);
     });
   });
+
+  // this test is skipped until a RPC provider supporting trace_block is setup for zksync
+  describe.skip("External RPC Node (zkSync)", () => {
+    let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+    beforeAll(() => {
+      const zkSyncConfig: EvmConfig = {
+        node: {
+          type: "external",
+          uri: "https://mainnet.era.zksync.io",
+        },
+        explorer: {
+          type: "none",
+        },
+        showNfts: true,
+      };
+      module = createApi(zkSyncConfig, "zksync");
+    });
+
+    it("should return block 69174056 without failing on unsigned typed transactions", async () => {
+      const block = await module.getBlock(69174056);
+
+      expect(block.info.height).toBe(69174056);
+      expect(block.info.hash).toBe(
+        "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
+      );
+      expect(block.transactions.length).toBeGreaterThan(0);
+      expect(
+        block.transactions.some(
+          tx => tx.hash === "0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e",
+        ),
+      ).toBe(true);
+    });
+  });
 });

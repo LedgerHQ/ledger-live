@@ -41,4 +41,28 @@ describe("CryptoAddressesBannerView", () => {
 
     expect(onAddAccount).toHaveBeenCalledTimes(1);
   });
+
+  it("should call onGoToAccounts when Enter is pressed while the banner is focused", async () => {
+    const onGoToAccounts = jest.fn();
+    const { user } = render(
+      <CryptoAddressesBannerView {...defaultProps} onGoToAccounts={onGoToAccounts} />,
+    );
+
+    await user.tab();
+    await user.keyboard("{Enter}");
+
+    expect(onGoToAccounts).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call onGoToAccounts when Space is pressed while the banner is focused", async () => {
+    const onGoToAccounts = jest.fn();
+    const { user } = render(
+      <CryptoAddressesBannerView {...defaultProps} onGoToAccounts={onGoToAccounts} />,
+    );
+
+    await user.tab();
+    await user.keyboard(" ");
+
+    expect(onGoToAccounts).toHaveBeenCalledTimes(1);
+  });
 });

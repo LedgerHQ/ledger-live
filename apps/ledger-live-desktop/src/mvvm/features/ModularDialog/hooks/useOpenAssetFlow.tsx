@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -21,8 +20,8 @@ import {
   setSourceValue,
   openDialog,
   closeDialog,
-} from "~/renderer/reducers/modularDrawer";
-import { useOpenAssetFlow as useOpenAssetFlowDrawer } from "../../ModularDrawer/hooks/useOpenAssetFlow";
+} from "~/renderer/reducers/modularDialog";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 function selectCurrencyDialog(
   dispatch: ReturnType<typeof useDispatch>,
@@ -47,37 +46,6 @@ function selectCurrencyDialog(
 }
 
 export function useOpenAssetFlow(
-  modularDrawerVisibleParams: ModularDrawerVisibleParams,
-  source: string,
-  modalNameToReopen?: keyof GlobalModalData,
-) {
-  // Interim hook to switch between dialog and modular drawer implementation
-  // To be removed when dialog implementation is fully deprecated LIVE-23773
-  const featureModularDrawer = useFeature("lldModularDrawer");
-
-  const { openAssetFlowDialog, openAddAccountFlow } = useOpenAssetFlowDialog(
-    modularDrawerVisibleParams,
-    source,
-    modalNameToReopen,
-  );
-
-  const { openAssetFlow: openAssetFlowDrawer, openAddAccountFlow: openAddAccountFlowDrawer } =
-    useOpenAssetFlowDrawer(modularDrawerVisibleParams, source, modalNameToReopen);
-
-  if (featureModularDrawer?.params?.enableDialogDesktop) {
-    return {
-      openAssetFlow: openAssetFlowDialog,
-      openAddAccountFlow,
-    };
-  }
-
-  return {
-    openAssetFlow: openAssetFlowDrawer,
-    openAddAccountFlow: openAddAccountFlowDrawer,
-  };
-}
-
-export function useOpenAssetFlowDialog(
   modularDrawerVisibleParams: ModularDrawerVisibleParams,
   source: string,
   modalNameToReopen?: keyof GlobalModalData,
@@ -155,7 +123,7 @@ export function useOpenAssetFlowDialog(
     ],
   );
 
-  const openAssetFlowDialog = useCallback(
+  const openAssetFlow = useCallback(
     (dialogConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         dispatch(setFlowValue(modularDrawerVisibleParams.location));
@@ -188,7 +156,7 @@ export function useOpenAssetFlowDialog(
   );
 
   return {
-    openAssetFlowDialog,
+    openAssetFlow,
     openAddAccountFlow,
   };
 }

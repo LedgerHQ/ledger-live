@@ -1,5 +1,27 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.15.0
+
+### Minor Changes
+
+- [#15254](https://github.com/LedgerHQ/ledger-live/pull/15254) [`be83068`](https://github.com/LedgerHQ/ledger-live/commit/be83068b1580be86b1e97c1eb4c6b19db54ff2a4) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add new keyId for Yield
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.4.2
+
+## 1.15.0-next.0
+
+### Minor Changes
+
+- [#15254](https://github.com/LedgerHQ/ledger-live/pull/15254) [`be83068`](https://github.com/LedgerHQ/ledger-live/commit/be83068b1580be86b1e97c1eb4c6b19db54ff2a4) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add new keyId for Yield
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.4.2-next.0
+
 ## 1.14.0
 
 ### Minor Changes

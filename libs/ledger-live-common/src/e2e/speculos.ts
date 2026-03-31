@@ -51,6 +51,8 @@ import {
 import { withDeviceController } from "./deviceInteraction/DeviceController";
 import { sanitizeError } from ".";
 import { sendVechain } from "./families/vechain";
+import { getDeviceCoordinates } from "./deviceCoordinates";
+import { sendInternetComputer } from "./families/internet_computer";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -373,6 +375,14 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
+  Internet_Computer: {
+    currency: getCryptoCurrencyById("internet_computer"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "InternetComputer",
+    },
+    dependencies: [],
+  },
 };
 
 export async function startSpeculos(
@@ -454,6 +464,7 @@ export async function startSpeculos(
   } catch (e: unknown) {
     console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
+    throw sanitizeError(e);
   }
 }
 
@@ -479,6 +490,14 @@ interface ResponseData {
 export function getSpeculosAddress(): string {
   const speculosAddress = process.env.SPECULOS_ADDRESS;
   return speculosAddress || "http://127.0.0.1";
+}
+
+const _capturedSpeculosScreenshots = new Map<number, Buffer[]>();
+
+export function drainSpeculosScreenshots(port: number): Buffer[] {
+  const screenshots = _capturedSpeculosScreenshots.get(port) ?? [];
+  _capturedSpeculosScreenshots.delete(port);
+  return screenshots;
 }
 
 export async function retryAxiosRequest<T>(
@@ -585,16 +604,26 @@ export const pressUntilTextFound = withDeviceController(
       const maxAttempts = 18;
       const speculosApiPort = getEnv("SPECULOS_API_PORT");
       const buttons = getButtonsController();
+      const seenScreens = new Set<string>();
+      const portScreenshots = _capturedSpeculosScreenshots.get(speculosApiPort) ?? [];
+      _capturedSpeculosScreenshots.set(speculosApiPort, portScreenshots);
 
       for (let attempts = 0; attempts < maxAttempts; attempts++) {
         const texts = await fetchCurrentScreenTexts(speculosApiPort);
-        if (
-          strictMatch
-            ? texts === targetText
-            : texts.toLowerCase().includes(targetText.toLowerCase())
-        ) {
+        const isMatch = strictMatch
+          ? texts === targetText
+          : texts.toLowerCase().includes(targetText.toLowerCase());
+
+        if (!seenScreens.has(texts)) {
+          seenScreens.add(texts);
+          const screenshot = await takeScreenshot(speculosApiPort);
+          if (screenshot) portScreenshots.push(screenshot);
+        }
+
+        if (isMatch) {
           return await fetchAllEvents(speculosApiPort);
         }
+
         if (isTouchDevice()) {
           await swipeRight();
         } else {
@@ -603,8 +632,9 @@ export const pressUntilTextFound = withDeviceController(
         await waitForTimeOut(200);
       }
 
+      const screensLog = [...seenScreens].map((s, i) => `[${i + 1}] "${s}"`).join(" → ");
       throw new Error(
-        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen`,
+        `ElementNotFoundException: Element with text "${targetText}" not found on speculos screen. Screens observed during navigation (${seenScreens.size} unique): ${screensLog}`,
       );
     },
 );
@@ -657,7 +687,7 @@ export const removeMemberLedgerSync = withDeviceController(
         await waitFor(DeviceLabels.TURN_ON_SYNC);
         await pressUntilTextFound(DeviceLabels.LEDGER_WALLET_WILL_BE);
         await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
-        const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+        const turnOnSyncCoordinates = getDeviceCoordinates("turnOnSync");
         await pressAndRelease(
           DeviceLabels.TURN_ON_SYNC,
           turnOnSyncCoordinates.x,
@@ -690,7 +720,7 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
   if (isTouchDevice()) {
-    const turnOnSyncCoordinates = getTurnOnSyncCoordinates();
+    const turnOnSyncCoordinates = getDeviceCoordinates("turnOnSync");
     await pressAndRelease(
       DeviceLabels.TURN_ON_SYNC,
       turnOnSyncCoordinates.x,
@@ -703,61 +733,16 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
-const getSettingsToggle1Coordinates = () => {
-  const deviceModel = getSpeculosModel();
-
-  switch (deviceModel) {
-    case DeviceModelId.stax:
-      return { x: 345, y: 136 };
-    case DeviceModelId.europa:
-      return { x: 420, y: 140 };
-    case DeviceModelId.apex:
-      return { x: 263, y: 100 };
-    default:
-      return { x: 420, y: 140 };
-  }
-};
-
-const getSettingsCogwheelCoordinates = () => {
-  const deviceModel = getSpeculosModel();
-
-  switch (deviceModel) {
-    case DeviceModelId.stax:
-      return { x: 362, y: 43 };
-    case DeviceModelId.europa:
-      return { x: 400, y: 80 };
-    case DeviceModelId.apex:
-      return { x: 253, y: 58 };
-    default:
-      return { x: 400, y: 80 };
-  }
-};
-
-const getTurnOnSyncCoordinates = () => {
-  const deviceModel = getSpeculosModel();
-
-  switch (deviceModel) {
-    case DeviceModelId.stax:
-      return { x: 121, y: 532 };
-    case DeviceModelId.europa:
-      return { x: 151, y: 446 };
-    case DeviceModelId.apex:
-      return { x: 90, y: 301 };
-    default:
-      return { x: 147, y: 548 };
-  }
-};
-
 export const activateExpertMode = withDeviceController(({ getButtonsController }) => async () => {
   const buttons = getButtonsController();
 
   if (isTouchDevice()) {
     await goToSettings();
-    const SettingsToggle1Coordinates = getSettingsToggle1Coordinates();
+    const settingsToggle1Coords = getDeviceCoordinates("settingsToggle1");
     await pressAndRelease(
       DeviceLabels.SETTINGS_TOGGLE_1,
-      SettingsToggle1Coordinates.x,
-      SettingsToggle1Coordinates.y,
+      settingsToggle1Coords.x,
+      settingsToggle1Coords.y,
     );
   } else {
     await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
@@ -778,11 +763,11 @@ export const goToSettings = withDeviceController(({ getButtonsController }) => a
   const buttons = getButtonsController();
 
   if (isTouchDevice()) {
-    const SettingsCogwheelCoordinates = getSettingsCogwheelCoordinates();
+    const settingsCogwheelCoords = getDeviceCoordinates("settingsCogwheel");
     await pressAndRelease(
       DeviceLabels.SETTINGS,
-      SettingsCogwheelCoordinates.x,
-      SettingsCogwheelCoordinates.y,
+      settingsCogwheelCoords.x,
+      settingsCogwheelCoords.y,
     );
   } else {
     await pressUntilTextFound(DeviceLabels.SETTINGS);
@@ -876,7 +861,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.DOGE.id:
     case Currency.BCH.id:
     case Currency.ZEC.id:
-      await sendBTCBasedCoin(tx);
+      await sendBTCBasedCoin(tx, currencyId);
       break;
     case Currency.DOT.id:
       await sendPolkadot(tx);
@@ -918,6 +903,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.VET.id:
       await sendVechain(tx);
+      break;
+    case Currency.ICP.id:
+      await sendInternetComputer(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);

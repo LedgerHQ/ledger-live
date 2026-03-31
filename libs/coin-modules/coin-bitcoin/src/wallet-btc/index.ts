@@ -4,6 +4,7 @@ import { DerivationModes, InputInfo, OutputInfo, TransactionInfo } from "./types
 import { Account, SerializedAccount } from "./account";
 import { TX, Input, Output } from "./storage/types";
 import { CoinSelect } from "./pickingstrategies/CoinSelect";
+import { Custom } from "./pickingstrategies/Custom";
 import { DeepFirst } from "./pickingstrategies/DeepFirst";
 import { Merge } from "./pickingstrategies/Merge";
 import { isValidAddress, isTaprootAddress } from "./utils";
@@ -22,6 +23,7 @@ export {
   type TransactionInfo,
   type TX,
   CoinSelect,
+  Custom,
   DeepFirst,
   Merge,
   isValidAddress,

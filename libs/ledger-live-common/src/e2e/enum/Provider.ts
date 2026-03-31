@@ -21,8 +21,20 @@ export class Provider {
   static readonly SWAPSXYZ = new Provider("swapsxyz", "Swaps.xyz", false, true, true);
 
   // Buy And Sell providers
+  static readonly REVOLUT = new Provider("revolut", "Revolut", true, true, true);
+  static readonly MERCURYO = new Provider("mercuryo", "Mercuryo", true, true, true);
   static readonly TRANSAK = new Provider("transak", "Transak", true, true, true);
+  static readonly TOPPER = new Provider("topper", "Topper", true, true, true);
   static readonly COINBASE = new Provider("coinbase", "Coinbase", true, true, true);
+  static readonly COINIFY = new Provider("coinify-buy", "Coinify", true, true, true);
+  static readonly RAMP_NETWORK = new Provider("ramp", "Ramp Network", true, true, true);
+  static readonly BTC_DIRECT = new Provider("btc_direct", "BTC Direct", true, true, true);
+  static readonly SARDINE = new Provider("sardine", "Sardine", true, true, true);
+  static readonly SIMPLEX = new Provider("simplex", "Simplex", true, true, true);
+  static readonly BANXA = new Provider("banxa", "Banxa", true, true, true);
+  static readonly YOU_HODLER = new Provider("youhodler", "YouHodler", true, true, true);
+  static readonly ALCHEMY_PAY = new Provider("alchemypay", "Alchemy Pay", true, true, true);
+  static readonly CRYPTO_COM = new Provider("cryptocom", "Crypto.com", true, true, true);
 
   // Earn providers
   static readonly KILN = new Provider("kiln_pooling", "Kiln staking Pool", true, true, true);

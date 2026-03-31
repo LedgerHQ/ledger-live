@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-wallet",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Ledger Live wallet",
   "keywords": [
     "Ledger"
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "4",
     "@types/pako": "^2.0.0",

@@ -14,6 +14,7 @@ export interface TrackTutorialProps {
 export const AnimationContainer = styled(Flex)`
   overflow-x: clip;
   width: 324px;
+  flex-shrink: 0;
   > * {
     transform: scale(1.3);
     margin-left: 70px;
@@ -24,6 +25,7 @@ export const IllustrationContainer = styled(Flex)<{ src: string }>`
   // prettier-ignore
   background: url('${({ src }) => src}') no-repeat center;
   background-size: contain;
+  flex-shrink: 0;
 `;
 
 export const Title = (props: TextProps & { children?: React.ReactNode }) => (

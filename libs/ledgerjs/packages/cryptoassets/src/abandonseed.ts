@@ -90,6 +90,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   energy_web: EVM_DEAD_ADDRESS,
   astar: EVM_DEAD_ADDRESS,
   metis: EVM_DEAD_ADDRESS,
+  mantle: EVM_DEAD_ADDRESS,
+  mantle_sepolia: EVM_DEAD_ADDRESS,
   boba: EVM_DEAD_ADDRESS,
   moonriver: EVM_DEAD_ADDRESS,
   velas_evm: EVM_DEAD_ADDRESS,

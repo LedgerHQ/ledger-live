@@ -130,6 +130,8 @@ export type SettingsState = {
   hasSeenWalletV4Tour: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
+  lastAnalyticsConsentDate: string | null;
+  privacyPolicyVersion: number | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -231,6 +233,8 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenWalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
+  lastAnalyticsConsentDate: null,
+  privacyPolicyVersion: null,
 };
 
 export const AFTER_ONBOARDING_STATE: SettingsState = {
@@ -301,6 +305,10 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
+  SET_ANALYTICS_CONSENT_INFO: {
+    consentDate: Date;
+    privacyPolicyVersion: number;
+  };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -527,6 +535,14 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
+  }),
+  SET_ANALYTICS_CONSENT_INFO: (
+    state: SettingsState,
+    { payload: { consentDate, privacyPolicyVersion } },
+  ) => ({
+    ...state,
+    lastAnalyticsConsentDate: consentDate.toISOString(),
+    privacyPolicyVersion: privacyPolicyVersion,
   }),
 };
 
@@ -798,10 +814,8 @@ export const latestFirmwareSelector = (state: State) => state.settings.latestFir
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
-export const overriddenFeatureFlagsSelector = (state: State) =>
-  state.settings.overriddenFeatureFlags;
-export const featureFlagsButtonVisibleSelector = (state: State) =>
-  state.settings.featureFlagsButtonVisible;
+export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
+export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
@@ -827,3 +841,11 @@ export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasS
 // Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
 export const hasOnboardedDeviceSelector = (state: State) =>
   !!lastOnboardedDeviceSelector(state) || lastSeenDeviceSelector(state) !== null;
+
+export const analyticsConsentInfoSelector = (state: State) => ({
+  consentDate:
+    state.settings.lastAnalyticsConsentDate !== null
+      ? new Date(state.settings.lastAnalyticsConsentDate)
+      : null,
+  privacyPolicyVersion: state.settings.privacyPolicyVersion,
+});

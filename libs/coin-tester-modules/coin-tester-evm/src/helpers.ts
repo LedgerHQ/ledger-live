@@ -6,7 +6,7 @@ import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/inde
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Eth";
+import type { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/families/evm/signer";
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";

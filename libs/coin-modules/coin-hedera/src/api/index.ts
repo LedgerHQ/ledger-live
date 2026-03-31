@@ -27,8 +27,6 @@ import {
   getBlockInfo,
   listOperations as logicListOperations,
   listOperationsV2 as logicListOperationsV2,
-  getAssetFromToken,
-  getTokenFromAsset,
   lastBlock,
   lastBlockV2,
   getValidators,
@@ -232,8 +230,6 @@ export function createApi(
 
       return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
     },
-    getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
-    getAssetFromToken,
     getValidators: cursor => getValidators(cursor),
     getStakes: async address => getStakes(address),
     getRewards: async (address, cursor) => getRewards(address, cursor),

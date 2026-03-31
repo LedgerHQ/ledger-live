@@ -229,6 +229,7 @@ export default class SendPage {
   @Step("Choose fee strategy")
   async chooseFeeStrategy(fee?: string) {
     if (fee) {
+      await scrollToText(fee);
       const feeBtn = this.feeStrategy(fee);
       await tapByElement(feeBtn);
     }

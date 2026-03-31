@@ -135,7 +135,7 @@ import type {
   TransactionRaw as stellarTransactionRaw,
   TransactionStatus as stellarTransactionStatus,
   TransactionStatusRaw as stellarTransactionStatusRaw,
-} from "@ledgerhq/coin-stellar/types/index";
+} from "../families/stellar/types";
 import type {
   Transaction as suiTransaction,
   TransactionRaw as suiTransactionRaw,

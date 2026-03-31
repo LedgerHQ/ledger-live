@@ -9,7 +9,7 @@ describe("useModularDialogAnalytics", () => {
     const madState = { flow: "testFlow", source: "testSource" };
 
     const { result } = renderHook(() => useModularDialogAnalytics(), {
-      initialState: { modularDrawer: madState },
+      initialState: { modularDialog: madState },
     });
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;

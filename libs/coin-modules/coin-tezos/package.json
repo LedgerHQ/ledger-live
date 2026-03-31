@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "6.19.0",
+  "version": "6.20.0",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -34,7 +34,6 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
       ]

@@ -61,13 +61,13 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
 
 Check each variable is set and valid. Run `[ -n "$VAR" ] && echo "set" || echo "NOT SET"` for each.
 
-| Variable             | Validation                                                    | Default / Guidance                                                                                    |
-| -------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `MOCK`               | Equals `0` (`[ "$MOCK" = "0" ]`)                              | Must be `0` for Speculos mode                                                                         |
-| `COINAPPS`           | Non-empty AND directory exists (`[ -d "$COINAPPS" ]`)         | Path to cloned `coin-apps` repo. If not cloned: `git clone https://github.com/LedgerHQ/coin-apps.git` |
-| `SEED`               | Non-empty only (`[ -n "$SEED" ]`). **NEVER print its value.** | See SEED guidance below.                                                                              |
-| `SPECULOS_IMAGE_TAG` | Non-empty                                                     | `ghcr.io/ledgerhq/speculos:latest`                                                                    |
-| `SPECULOS_DEVICE`    | Non-empty                                                     | `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)                                        |
+| Variable             | Validation                                            | Default / Guidance                                                                                    |
+| -------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `SEED`               | Non-empty                                             | Ask the team for guidance                                                                             |
+| `MOCK`               | Equals `0` (`[ "$MOCK" = "0" ]`)                      | Must be `0` for Speculos mode                                                                         |
+| `COINAPPS`           | Non-empty AND directory exists (`[ -d "$COINAPPS" ]`) | Path to cloned `coin-apps` repo. If not cloned: `git clone https://github.com/LedgerHQ/coin-apps.git` |
+| `SPECULOS_IMAGE_TAG` | Non-empty                                             | `ghcr.io/ledgerhq/speculos:latest`                                                                    |
+| `SPECULOS_DEVICE`    | Non-empty                                             | `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)                                        |
 
 **Optional variables:**
 
@@ -77,31 +77,6 @@ Check each variable is set and valid. Run `[ -n "$VAR" ] && echo "set" || echo "
 | `DISABLE_TRANSACTION_BROADCAST` | Set to `1` to prevent real tx broadcast | Unset (broadcast enabled)       |
 
 For any missing variable (except SEED), provide the exact `export` line to add to `~/.zshrc`.
-
-**SEED guidance:**
-
-The SEED must be set but its value must **NEVER** be printed, logged, or displayed by this command.
-
-Recommended approach (persistent):
-
-```
-export SEED=$(op read "op://Vault/Item/field")
-```
-
-Add to `~/.zshrc` for persistence. This uses 1Password CLI to inject the value securely.
-
-Also acceptable (session-only):
-
-```
-export SEED="<value>"
-```
-
-A manual one-time export in the current terminal session is fine for local E2E, especially when using a known public test seed. Do not add raw seed values to shell config files.
-
-Both approaches are valid. The key rules are:
-
-- This command must never echo, print, or log the SEED value in command output.
-- Never commit SEED values to version control.
 
 **coin-apps freshness check:**
 

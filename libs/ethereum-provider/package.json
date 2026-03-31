@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ethereum-provider",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Ledger Live ethereum provider",
   "keywords": [
@@ -24,6 +24,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
     "@swc/core": "catalog:",

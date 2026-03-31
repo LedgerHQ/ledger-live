@@ -12,6 +12,7 @@ import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { setResolutionConfig } from "@shared/feature-flags";
 import { prepareCurrency } from "./bridge/cache";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
@@ -25,6 +26,10 @@ listen(log => {
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
 setWalletAPIVersion(WALLET_API_VERSION);
+setResolutionConfig({
+  platform: Platform.OS === "ios" ? "ios" : "android",
+  appVersion: VersionNumber.appVersion ?? undefined,
+});
 
 setSupportedCurrencies([
   "avalanche_c_chain",
@@ -97,6 +102,8 @@ setSupportedCurrencies([
   "energy_web",
   "astar",
   "metis",
+  "mantle",
+  "mantle_sepolia",
   "boba",
   "moonriver",
   "velas_evm",

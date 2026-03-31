@@ -17,6 +17,7 @@ import { marketStoreSelector } from "./reducers/market";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import type { PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
 import type { PersistedIdentities } from "@ledgerhq/client-ids/store";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -49,6 +50,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   cryptoAssets: PersistedCAL;
+  featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   identities: PersistedIdentities;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;

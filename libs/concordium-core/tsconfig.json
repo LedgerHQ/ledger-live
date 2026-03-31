@@ -5,6 +5,7 @@
     "declarationMap": true,
     "lib": ["es2020"],
     "outDir": "lib",
+    "rootDir": "src",
     "types": ["node", "jest"]
   },
   "include": ["src/**/*"]

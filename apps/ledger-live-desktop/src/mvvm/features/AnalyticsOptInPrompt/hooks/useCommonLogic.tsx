@@ -5,7 +5,10 @@ import {
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { setHasSeenAnalyticsOptInPrompt } from "~/renderer/actions/settings";
+import {
+  setAnalyticsConsentInfo,
+  setHasSeenAnalyticsOptInPrompt,
+} from "~/renderer/actions/settings";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
@@ -72,6 +75,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
 
   const onSubmit = async () => {
     setIsAnalyticsOptInPromptOpened(false);
+    dispatch(setAnalyticsConsentInfo());
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });

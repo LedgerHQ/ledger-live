@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
   completeOnboarding,
+  setAnalyticsConsentInfo,
   setHasSeenAnalyticsOptInPrompt,
   setIsReborn,
   setOnboardingHasDevice,
@@ -22,6 +23,7 @@ import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromp
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   Onboarding: "consent onboarding",
@@ -84,6 +86,12 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
 
   const continueOnboarding = () => {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      }),
+    );
 
     switch (entryPoint) {
       case "Portfolio":

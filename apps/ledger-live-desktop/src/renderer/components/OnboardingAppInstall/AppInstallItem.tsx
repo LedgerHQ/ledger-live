@@ -12,13 +12,13 @@ export enum ItemState {
 
 type Props = {
   appName: string;
-  itemProgress?: number;
+  progress: number;
   productName: string;
   state: ItemState;
   i: number;
 };
 
-const AppInstallItem = ({ appName, state, itemProgress, productName, i }: Props) => {
+const AppInstallItem = ({ appName, state, progress, productName, i }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -32,15 +32,24 @@ const AppInstallItem = ({ appName, state, itemProgress, productName, i }: Props)
         bg={colors.neutral.c30}
       >
         {state === ItemState.Active ? (
-          !itemProgress || itemProgress === 1 ? (
-            <InfiniteLoader size={20} />
-          ) : (
-            <ProgressLoader
-              progress={itemProgress * 100}
-              showPercentage={false}
-              radius={10}
-              stroke={2}
+          !progress || progress === 1 ? (
+            <InfiniteLoader
+              size={20}
+              data-testid="app-install-item-infinite-loader"
             />
+          ) : (
+            <Flex
+              data-testid="app-install-item-progress-loader"
+              position="relative"
+              size={20}
+            >
+              <ProgressLoader
+                progress={progress * 100}
+                showPercentage={false}
+                radius={10}
+                stroke={2}
+              />
+            </Flex>
           )
         ) : state === ItemState.Installed ? (
           <IconsLegacy.CheckAloneMedium size={20} color={"success.c50"} />

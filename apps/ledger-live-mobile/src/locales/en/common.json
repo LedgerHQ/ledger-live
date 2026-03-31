@@ -2750,8 +2750,15 @@
       "noAccounts": "Start by funding\nyour wallet"
     },
     "seeAllAssets": "See all assets",
+    "cryptoAddresses": {
+      "title": "Crypto accounts",
+      "count_one": "{{count}} account",
+      "count_other": "{{count}} accounts",
+      "noAccountsYet": "No accounts yet",
+      "add": "Add"
+    },
     "seeAllAccounts": "See all accounts",
-    "cryptoSection": {
+    "assetSection": {
       "connectionFailed": "Connection failed"
     },
     "marketPriceSection": {
@@ -2779,6 +2786,8 @@
       "buy": "Buy",
       "connect": "Connect",
       "buyLedger": "Buy a Ledger",
+      "receive": "Receive",
+      "send": "Send",
       "transferDrawer": {
         "title": "Transfer",
         "receiveCrypto": "Receive via crypto address",
@@ -2801,7 +2810,8 @@
     "refreshStatus": {
       "refreshing": "Refreshing...",
       "upToDate": "Portfolio up to date",
-      "syncError": "Some account data couldn’t load"
+      "syncError": "Some account data couldn’t load",
+      "offline": "You’re offline. Please check your connection"
     }
   },
   "addAccountsModal": {
@@ -3428,6 +3438,14 @@
         "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
+      "totalMarketCap":{
+        "title": "Total Market Cap",
+        "desc": "Get notified when the total crypto market cap makes a significant move"
+      },
+      "topGainersLosers":{
+        "title": "Top Gainers and Losers",
+        "desc": "Get a weekly recap of the top gaining and losing tokens on the market"
+      },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
@@ -3570,8 +3588,10 @@
         "description": "Local cards appear on Portfolio (and other locations) without Braze. They persist until you dismiss them or clear here.",
         "addSampleBanner": "Add sample banner",
         "addSampleBannerDesc": "Add a sample hero banner on Portfolio.",
-        "addSampleActionCarousel": "Add sample action carousel",
-        "addSampleActionCarouselDesc": "Add a carousel of action cards (Buy, Swap, Stake) on Portfolio.",
+        "addSampleActionCarouselIcon": "Add action carousel (icon)",
+        "addSampleActionCarouselIconDesc": "ContentBanner with Spot icons — Buy, Swap, Stake. Requires Braze placement flag.",
+        "addSampleActionCarouselImageBackground": "Add action carousel (image)",
+        "addSampleActionCarouselImageBackgroundDesc": "MediaBanner with image_background — Buy, Swap, Stake. Requires Braze placement flag.",
         "dismissAll": "Dismiss all local cards",
         "dismissAllDesc": "Remove all locally generated content cards."
       }
@@ -3644,7 +3664,8 @@
         },
         "fiat": {
           "title": "Via bank transfer",
-          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "description": "Receive stablecoin by simply sending cash.",
+          "description_legacy": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         }
       },
       "memoTag": {
@@ -7808,6 +7829,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
+      "stablecoins": "Stablecoin",
       "market": "Market"
     },
     "referralProgram": "$20"
@@ -8501,6 +8523,10 @@
       "title": "Rate Expired",
       "description": "Exchange rate expired. Please refresh and try again."
     },
+    "details": {
+      "code": "Error code",
+      "correlationId": "Reference ID"
+    },
     "default": {
       "title": "Something went wrong",
       "description": "Please retry or contact Ledger Support if in doubt"
@@ -8732,6 +8758,7 @@
     "bottomSheet": {
       "title": "Some account data couldn’t load",
       "description": "Your assets are safe. This is a temporary sync issue.\nAffected accounts: {{accounts}}",
+      "tryToRefresh": "Try to refresh",
       "close": "Close"
     }
   },

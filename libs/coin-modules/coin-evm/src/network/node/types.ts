@@ -81,7 +81,7 @@ export type TraceBlockItem = {
   result?: TraceBlockResult | null;
   /** Present when the trace reverted (no result object). */
   error?: string;
-  blockHash: string;
+  blockHash?: string;
   blockNumber: number;
   transactionHash: string | null;
   transactionPosition: number | null;
@@ -89,6 +89,26 @@ export type TraceBlockItem = {
   subtraces: number;
   type: string;
 };
+
+/** Type guard for {@link TraceBlockItem} (Erigon `trace_block` and Geth adapter output). */
+export function isTraceBlockItem(value: unknown): value is TraceBlockItem {
+  if (typeof value !== "object" || value === null) return false;
+  const o = value as Record<string, unknown>;
+  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
+  const action = o.action as Record<string, unknown>;
+  if (o.error !== undefined && typeof o.error !== "string") return false;
+
+  const result = o.result;
+  const resultOk =
+    result === undefined ||
+    result === null ||
+    (typeof result === "object" &&
+      ((result as Record<string, unknown>).error === undefined ||
+        typeof (result as Record<string, unknown>).error === "string"));
+  const validCall = typeof o.transactionHash === "string" && resultOk;
+
+  return !isTraceBlockCallAction(action) || validCall;
+}
 
 /** A transaction receipt as returned by a RPC node. */
 export type TransactionReceipt = {
@@ -110,7 +130,7 @@ export type TransactionInfo = {
   nonce: number;
   gasUsed: string;
   gasPrice: string;
-  value: string;
+  value: string | bigint; // can be returned as bigint by ethers prefetched txs, or string in raw payloads
   status: number | null;
   from: string;
   to: string | undefined;

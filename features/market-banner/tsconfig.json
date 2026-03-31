@@ -6,7 +6,7 @@
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "baseUrl": ".",
+    "paths": { "*": ["./*"] },
     "noEmit": true,
     "types": ["jest", "node", "@testing-library/jest-dom"]
   },

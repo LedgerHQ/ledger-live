@@ -3,11 +3,11 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "downlevelIteration": true,
     "noImplicitAny": false,
     "noImplicitThis": false,
     "lib": ["DOM", "ES2017"],
     "isolatedModules": false,
-    "target": "ESNext"
+    "target": "ESNext",
+    "types": ["node"]
   }
 }

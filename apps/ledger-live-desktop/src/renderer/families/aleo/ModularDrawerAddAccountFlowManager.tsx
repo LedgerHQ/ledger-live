@@ -13,10 +13,10 @@ import {
   WARNING_REASON,
   type ModularDrawerAddAccountStep,
 } from "LLD/features/AddAccountDrawer/domain";
-import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
-import AnimatedScreenWrapper from "LLD/features/ModularDrawer/components/AnimatedScreenWrapper";
-import { BackButtonArrow } from "LLD/features/ModularDrawer/components/BackButton";
-import { AccountSelection } from "LLD/features/ModularDrawer/screens/AccountSelection";
+import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
+import AnimatedScreenWrapper from "LLD/features/AddAccountDrawer/components/AnimatedScreenWrapper";
+import { BackButtonArrow } from "LLD/features/AddAccountDrawer/components/BackButton";
+import { AccountSelection } from "LLD/features/AddAccountDrawer/screens/AccountSelection";
 import HeaderGradient from "LLD/features/AddAccountDrawer/components/HeaderGradient";
 import AccountsAdded from "LLD/features/AddAccountDrawer/screens/AccountsAdded";
 import AccountsWarning from "LLD/features/AddAccountDrawer/screens/AccountsWarning";
@@ -31,7 +31,7 @@ import {
   type ModularDrawerAddAccountFlowManagerProps,
 } from "LLD/features/AddAccountDrawer/ModularDrawerAddAccountFlowManager";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { setFlowValue } from "~/renderer/reducers/modularDrawer";
+import { setFlowValue } from "~/renderer/reducers/modularDialog";
 import {
   ALEO_MODULAR_DRAWER_ADD_ACCOUNT_STEP,
   type AleoModularDrawerAddAccountStep,
@@ -241,7 +241,7 @@ const ModularDrawerAddAccountFlowManager = ({
             </Title>
             <AccountSelection
               asset={cryptoCurrency}
-              overridePageName={MODULAR_DRAWER_PAGE_NAME.FUND_ACCOUNT_LIST}
+              overridePageName={MODULAR_DIALOG_PAGE_NAME.FUND_ACCOUNT_LIST}
               onAccountSelected={accountToFund => navigateToFundAccount(accountToFund as Account)}
               hideAddAccountButton
             />

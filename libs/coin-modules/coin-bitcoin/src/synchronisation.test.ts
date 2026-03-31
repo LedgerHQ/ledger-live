@@ -27,6 +27,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { firstValueFrom, from } from "rxjs";
+import { setCoinConfig } from "./config";
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
@@ -407,6 +408,38 @@ describe("removeReplaced", () => {
     expect(result).toEqual([tx2, tx3, tx4]); // ✅ tx1 is removed, but order remains
   });
 
+  it("should keep all coinbase mining transactions with empty inputs (DigiByte mining scenario)", () => {
+    const coinbaseTx1: BtcOperation = {
+      ...baseTx,
+      id: "cb1-IN",
+      hash: "cb1",
+      blockHeight: 23107323,
+      date: new Date("2026-03-09T04:22:22Z"),
+      extra: { inputs: [] },
+    };
+
+    const coinbaseTx2: BtcOperation = {
+      ...baseTx,
+      id: "cb2-IN",
+      hash: "cb2",
+      blockHeight: 23122260,
+      date: new Date("2026-03-11T18:30:23Z"),
+      extra: { inputs: [] },
+    };
+
+    const coinbaseTx3: BtcOperation = {
+      ...baseTx,
+      id: "cb3-IN",
+      hash: "cb3",
+      blockHeight: 23124700,
+      date: new Date("2026-03-12T04:42:34Z"),
+      extra: { inputs: [] },
+    };
+
+    const result = removeReplaced([coinbaseTx1, coinbaseTx2, coinbaseTx3]);
+    expect(result).toEqual([coinbaseTx1, coinbaseTx2, coinbaseTx3]);
+  });
+
   it("should retain only the most confirmed+recent tx among several using same input", () => {
     const tx1 = {
       ...baseTx,
@@ -446,9 +479,9 @@ describe("getTxType", () => {
       blockHeight: 100,
       blockHash: "hash1",
       timestamp: 1700000000,
-      fee: 100,
+      fee: new BigNumber(100),
       decryptedData: {
-        orchard_outputs: [{ amount: 100, memo: "", transfer_type: "incoming" }],
+        orchard_outputs: [{ amount: new BigNumber(100), memo: "", transfer_type: "incoming" }],
         sapling_outputs: [],
       },
     };
@@ -462,9 +495,9 @@ describe("getTxType", () => {
       blockHeight: 101,
       blockHash: "hash2",
       timestamp: 1700000001,
-      fee: 200,
+      fee: new BigNumber(200),
       decryptedData: {
-        orchard_outputs: [{ amount: 200, memo: "", transfer_type: "outgoing" }],
+        orchard_outputs: [{ amount: new BigNumber(200), memo: "", transfer_type: "outgoing" }],
         sapling_outputs: [],
       },
     };
@@ -478,25 +511,25 @@ describe("getTxType", () => {
       blockHeight: 102,
       blockHash: "hash3",
       timestamp: 1700000002,
-      fee: 50,
+      fee: new BigNumber(50),
       decryptedData: {
-        orchard_outputs: [{ amount: 50, memo: "", transfer_type: "internal" }],
+        orchard_outputs: [{ amount: new BigNumber(50), memo: "", transfer_type: "internal" }],
         sapling_outputs: [],
       },
     };
     expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
   });
 
-  it("should return SHIELDED_TX_INTERNAL when decryptedData is undefined", () => {
+  it("should return UNKNOWN when decryptedData is undefined", () => {
     const tx: ShieldedTransaction = {
       id: "tx4",
       hex: "00",
       blockHeight: 103,
       blockHash: "hash4",
       timestamp: 1700000003,
-      fee: 300,
+      fee: new BigNumber(300),
     };
-    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+    expect(getTxType(tx)).toBe("UNKNOWN");
   });
 });
 
@@ -509,9 +542,9 @@ describe("convertShieldedTransactionsToOperations", () => {
         blockHeight: 100,
         blockHash: "blockhash1",
         timestamp: 1700000000,
-        fee: 500,
+        fee: new BigNumber(500),
         decryptedData: {
-          orchard_outputs: [{ amount: 1000, memo: "", transfer_type: "incoming" }],
+          orchard_outputs: [{ amount: new BigNumber(1000), memo: "", transfer_type: "incoming" }],
           sapling_outputs: [],
         },
       },
@@ -528,7 +561,7 @@ describe("convertShieldedTransactionsToOperations", () => {
       type: "SHIELDED_TX_ORCHARD_IN",
       date: new Date(1700000000), // timestamp in seconds: code uses new Date(tx.timestamp)
       fee: new BigNumber(500),
-      value: new BigNumber(0),
+      value: new BigNumber(1000),
     });
     expect(result[0].id).toContain(accountId);
     expect(result[0].id).toContain("blockhash1");
@@ -542,9 +575,9 @@ describe("convertShieldedTransactionsToOperations", () => {
         blockHeight: 100,
         blockHash: "hash1",
         timestamp: 1700000000,
-        fee: 100,
+        fee: new BigNumber(100),
         decryptedData: {
-          orchard_outputs: [{ amount: 0, memo: "", transfer_type: "outgoing" }],
+          orchard_outputs: [{ amount: new BigNumber(0), memo: "", transfer_type: "outgoing" }],
           sapling_outputs: [],
         },
       },
@@ -554,14 +587,27 @@ describe("convertShieldedTransactionsToOperations", () => {
         blockHeight: 101,
         blockHash: "hash2",
         timestamp: 1700000001,
-        fee: 200,
+        fee: new BigNumber(200),
+        decryptedData: {
+          orchard_outputs: [{ amount: new BigNumber(0), memo: "", transfer_type: "internal" }],
+          sapling_outputs: [],
+        },
+      },
+      {
+        id: "tx3",
+        hex: "00",
+        blockHeight: 102,
+        blockHash: "hash3",
+        timestamp: 1700000001,
+        fee: new BigNumber(200),
       },
     ];
     const result = convertShieldedTransactionsToOperations(shieldedTxs, "acc-1");
 
-    expect(result).toHaveLength(2);
+    expect(result).toHaveLength(3);
     expect(result[0].type).toBe("SHIELDED_TX_ORCHARD_OUT");
     expect(result[1].type).toBe("SHIELDED_TX_INTERNAL");
+    expect(result[2].type).toBe("UNKNOWN");
   });
 
   it("should return empty array for empty input", () => {
@@ -583,31 +629,41 @@ describe("reduceShieldedSyncResult", () => {
   it("should return accumulated with blockHeight when no new transactions", () => {
     const accumulated = {
       processedOperations: [] as ShieldedTransaction[],
-      accountUpdate: { operations: [], balance: new BigNumber(0) } as Partial<BitcoinAccount>,
+      accountUpdate: { operations: [], balance: new BigNumber(890) } as Partial<BitcoinAccount>,
     };
     const result: ShieldedSyncResult = {
-      operations: [],
-      latestBlockHeight: 5000,
+      transactions: [],
+      lastProcessedBlock: 5000,
+      processedBlocks: 0,
+      remainingBlocks: 0,
     };
     const info = createMockInfo();
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
-    expect(output.processedOperations).toEqual([]);
-    expect(output.accountUpdate.blockHeight).toBe(5000);
-    expect(output.accountUpdate.operations).toEqual([]);
+    expect(output).toMatchObject({
+      processedOperations: [],
+      accountUpdate: {
+        blockHeight: 5000,
+        operations: [],
+        balance: new BigNumber(890),
+      },
+    });
   });
 
-  it("should merge new shielded operations and update balance for incoming tx", () => {
+  it("should merge new shielded operations and update balance for incoming tx, using initialAccount as base balance", () => {
+    const initialBalance = new BigNumber(100000);
+    const txAmount = new BigNumber(50000);
+
     const incomingTx: ShieldedTransaction = {
       id: "tx1",
       hex: "00",
       blockHeight: 100,
       blockHash: "hash1",
       timestamp: 1700000000,
-      fee: 100,
+      fee: new BigNumber(100), // ignored for incoming tx
       decryptedData: {
-        orchard_outputs: [{ amount: 50000, memo: "", transfer_type: "incoming" }],
+        orchard_outputs: [{ amount: txAmount, memo: "", transfer_type: "incoming" }],
         sapling_outputs: [],
       },
     };
@@ -615,23 +671,75 @@ describe("reduceShieldedSyncResult", () => {
       processedOperations: [] as ShieldedTransaction[],
       accountUpdate: {
         operations: [] as BtcOperation[],
-        balance: new BigNumber(1000),
         blockHeight: 99,
       } as Partial<BitcoinAccount>,
     };
     const result: ShieldedSyncResult = {
-      operations: [incomingTx],
-      latestBlockHeight: 100,
+      transactions: [incomingTx],
+      lastProcessedBlock: 100,
+      processedBlocks: 1,
+      remainingBlocks: 0,
     };
-    const info = createMockInfo({ balance: new BigNumber(1000) });
+    const info = createMockInfo({ balance: new BigNumber(initialBalance) });
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
-    expect(output.processedOperations).toHaveLength(1);
+    expect(output).toMatchObject({
+      processedOperations: [incomingTx],
+      accountUpdate: {
+        // Calculated as: info.initialAccount.balance + orchard_outputs.amount.
+        // accumulated.accountUpdate.balance ignored because accumulated.accountBalance.balance is missing.
+        balance: new BigNumber(initialBalance).plus(txAmount),
+        blockHeight: 100,
+      },
+    });
     expect(output.accountUpdate.operations).toHaveLength(1);
-    // Note: convertShieldedTransactionsToOperations sets value to 0, so balance stays at initial
-    expect(output.accountUpdate.balance?.toString()).toBe("1000");
-    expect(output.accountUpdate.blockHeight).toBe(100);
+  });
+
+  it("should merge new shielded operations and update balance for incoming tx, using accumulated balance as base balance", () => {
+    const accumulatedBalance = new BigNumber(1000);
+    const txAmount = new BigNumber(50000);
+
+    const incomingTx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: new BigNumber(100), // ignored for incoming tx
+      decryptedData: {
+        orchard_outputs: [{ amount: txAmount, memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: {
+        operations: [] as BtcOperation[],
+        balance: new BigNumber(accumulatedBalance),
+        blockHeight: 99,
+      } as Partial<BitcoinAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      transactions: [incomingTx],
+      lastProcessedBlock: 100,
+      processedBlocks: 1,
+      remainingBlocks: 0,
+    };
+    const info = createMockInfo({ balance: new BigNumber(100000) });
+
+    const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
+
+    expect(output).toMatchObject({
+      processedOperations: [incomingTx],
+      accountUpdate: {
+        // Calculated as: accumulated.accountUpdate.balance + orchard_outputs.amount.
+        // info.initialAccount.balance ignored because accumulated.accountBalance.balance takes priority.
+        balance: new BigNumber(accumulatedBalance).plus(txAmount),
+        blockHeight: 100,
+      },
+    });
+    expect(output.accountUpdate.operations).toHaveLength(1);
   });
 
   it("should filter out already processed operations by blockHash", () => {
@@ -641,9 +749,9 @@ describe("reduceShieldedSyncResult", () => {
       blockHeight: 100,
       blockHash: "hash1",
       timestamp: 1700000000,
-      fee: 100,
+      fee: new BigNumber(100),
       decryptedData: {
-        orchard_outputs: [{ amount: 100, memo: "", transfer_type: "incoming" }],
+        orchard_outputs: [{ amount: new BigNumber(800), memo: "", transfer_type: "incoming" }],
         sapling_outputs: [],
       },
     };
@@ -651,20 +759,28 @@ describe("reduceShieldedSyncResult", () => {
       processedOperations: [tx],
       accountUpdate: {
         operations: [] as BtcOperation[],
-        balance: new BigNumber(0),
+        balance: new BigNumber(700),
         blockHeight: 100,
       } as Partial<BitcoinAccount>,
     };
     const result: ShieldedSyncResult = {
-      operations: [tx],
-      latestBlockHeight: 100,
+      transactions: [tx],
+      lastProcessedBlock: 100,
+      processedBlocks: 0,
+      remainingBlocks: 0,
     };
     const info = createMockInfo();
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
-    expect(output.accountUpdate.operations).toHaveLength(0);
-    expect(output.accountUpdate.blockHeight).toBe(100);
+    expect(output).toMatchObject({
+      processedOperations: [tx],
+      accountUpdate: {
+        operations: [],
+        blockHeight: 100,
+        balance: new BigNumber(700),
+      },
+    });
   });
 });
 
@@ -751,21 +867,58 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
 
 describe("createShieldedSyncObservable", () => {
   it("should emit accumulated account updates from shielded sync results", async () => {
-    const tx: ShieldedTransaction = {
+    const tx1: ShieldedTransaction = {
       id: "tx1",
       hex: "00",
       blockHeight: 100,
       blockHash: "hash1",
       timestamp: 1700000000,
-      fee: 100,
+      fee: new BigNumber(120),
       decryptedData: {
-        orchard_outputs: [{ amount: 1000, memo: "", transfer_type: "incoming" }],
+        orchard_outputs: [{ amount: new BigNumber(3710), memo: "", transfer_type: "outgoing" }],
         sapling_outputs: [],
       },
     };
+
+    const tx2: ShieldedTransaction = {
+      id: "tx2",
+      hex: "01",
+      blockHeight: 100,
+      blockHash: "hash2",
+      timestamp: 1700000000,
+      fee: new BigNumber(70),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(4321), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+
+    const tx3: ShieldedTransaction = {
+      id: "tx3",
+      hex: "02",
+      blockHeight: 101,
+      blockHash: "hash3",
+      timestamp: 1800000000,
+      fee: new BigNumber(40),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(585), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+
     const shieldedSyncRaw = from<ShieldedSyncResult[]>([
-      { operations: [tx], latestBlockHeight: 100 },
-      { operations: [], latestBlockHeight: 101 },
+      {
+        transactions: [tx1, tx2],
+        lastProcessedBlock: 100,
+        processedBlocks: 0,
+        remainingBlocks: 0,
+      },
+      {
+        transactions: [tx3],
+        lastProcessedBlock: 101,
+        processedBlocks: 0,
+        remainingBlocks: 0,
+      },
     ]);
 
     const info: any = {
@@ -778,26 +931,38 @@ describe("createShieldedSyncObservable", () => {
         id: "js:2:zcash:xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4:0",
         xpub: "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4",
         operations: [],
-        balance: new BigNumber(0),
+        balance: new BigNumber(33333),
       },
     };
 
     const observable = createShieldedSyncObservable(info, shieldedSyncRaw);
-    const values: Partial<BitcoinAccount>[] = [];
+    const updates: Partial<BitcoinAccount>[] = [];
+
     await new Promise<void>((resolve, reject) => {
       observable.subscribe({
-        next: v => values.push(v),
+        next: v => updates.push(v),
         error: reject,
         complete: resolve,
       });
     });
 
-    expect(values).toHaveLength(2);
-    expect(values[0]?.operations).toHaveLength(1);
-    // convertShieldedTransactionsToOperations sets value to 0, so balance reflects that
-    expect(values[0]?.balance?.toString()).toBe("0");
-    expect(values[0]?.blockHeight).toBe(100);
-    expect(values[1]?.blockHeight).toBe(101);
+    expect(updates).toHaveLength(2);
+
+    // Check update #1
+    expect(updates[0]).toMatchObject({
+      // Calculated as: info.initialAccount.balance - outgoing tx1 - tx1 fees + incoming tx2
+      balance: new BigNumber(33824),
+      blockHeight: 100,
+    });
+    expect(updates[0]?.operations).toHaveLength(2);
+
+    // Check update #2
+    expect(updates[1]).toMatchObject({
+      // Calculated as: accumulated.accountUpdate.balance + incoming tx3
+      balance: new BigNumber(34409),
+      blockHeight: 101,
+    });
+    expect(updates[1]?.operations).toHaveLength(3);
   });
 });
 
@@ -823,6 +988,13 @@ describe("buildSyncObservables", () => {
   });
 
   it("should return transparent and shielded sync for Zcash with ufvk", () => {
+    setCoinConfig(() => ({
+      info: {
+        status: {
+          type: "active",
+        },
+      },
+    }));
     const zcashInfo: any = {
       ...baseInfo,
       currency: getCryptoCurrencyById("zcash"),

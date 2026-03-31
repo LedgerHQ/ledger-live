@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.35.1",
+  "version": "24.36.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -50,7 +50,9 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
     "asciichart": "1.5.25",
     "bigint-buffer": "*",
     "bignumber.js": "9.1.2",
@@ -77,8 +79,6 @@
     "@zondax/ledger-live-icp": "1.4.1"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@ledgerhq/types-live": "workspace:^",
     "@pnpm/exportable-manifest": "1000.0.7",
     "@pnpm/read-project-manifest": "1000.0.6",
     "@types/asciichart": "1.5.8",

@@ -6,7 +6,7 @@ import { buildOptimisticOperation } from "./utils";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { GenericTransaction } from "./types";
+import type { GenericTransaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware

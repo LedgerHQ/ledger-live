@@ -1,5 +1,73 @@
 # @ledgerhq/coin-evm
 
+## 3.1.0
+
+### Minor Changes
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+- [#15378](https://github.com/LedgerHQ/ledger-live/pull/15378) [`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): throw `InvalidTransactionError` on expired transaction
+
+- [#15526](https://github.com/LedgerHQ/ledger-live/pull/15526) [`a6414f2`](https://github.com/LedgerHQ/ledger-live/commit/a6414f2aedae2ff657b29c2c4fa3e2c081e6e959) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: deduplicate native operations in getBlock
+
+- [#15192](https://github.com/LedgerHQ/ledger-live/pull/15192) [`1c564a9`](https://github.com/LedgerHQ/ledger-live/commit/1c564a9da3a4c0aea9eda63c084dd2068b36b284) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: fallbacks on trace_block in getBlock to retrieve inner txs
+
+- [#15341](https://github.com/LedgerHQ/ledger-live/pull/15341) [`f1959b4`](https://github.com/LedgerHQ/ledger-live/commit/f1959b4e9a35f126b926972ad888081dab20c3c4) Thanks [@qperrot](https://github.com/qperrot)! - fix(exchange): improve invalid transaction handling and messaging
+
+- [#15318](https://github.com/LedgerHQ/ledger-live/pull/15318) [`3488291`](https://github.com/LedgerHQ/ledger-live/commit/348829182b4fdb06f26078e68bce98ee637dfd1b) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - chore(monitoring): log the full error object on failure
+
+- [#15258](https://github.com/LedgerHQ/ledger-live/pull/15258) [`73681cc`](https://github.com/LedgerHQ/ledger-live/commit/73681cc69c80e7d64c7320bb4afcb0b44691d416) Thanks [@jprudent](https://github.com/jprudent)! - Coin module evm: configurable RPC retries for external nodes
+
+- [#15364](https://github.com/LedgerHQ/ledger-live/pull/15364) [`d7b8e13`](https://github.com/LedgerHQ/ledger-live/commit/d7b8e13caa615ca3f2c08c3a21b8e0226ea163b2) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - chore(coin-monitoring): clean code and nitpick on logging
+
+- [#15329](https://github.com/LedgerHQ/ledger-live/pull/15329) [`7de6683`](https://github.com/LedgerHQ/ledger-live/commit/7de6683522c09a23a26137569ffd014bf0b255ec) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: detect quicknode unsupported method error
+
+### Patch Changes
+
+- Updated dependencies [[`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05), [`982d4af`](https://github.com/LedgerHQ/ledger-live/commit/982d4afbeb7faf3814c3e96ffb6e3e88b58dfe73), [`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb), [`01c81b1`](https://github.com/LedgerHQ/ledger-live/commit/01c81b112ab326eff436f0f3279a1225c073f897)]:
+  - @ledgerhq/coin-framework@7.0.0
+  - @ledgerhq/devices@8.13.0
+  - @ledgerhq/errors@6.32.0
+  - @ledgerhq/cryptoassets@13.43.0
+  - @ledgerhq/ledger-wallet-framework@1.0.1
+  - @ledgerhq/domain-service@1.7.2
+  - @ledgerhq/evm-tools@1.12.1
+  - @ledgerhq/live-network@2.4.2
+
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#15291](https://github.com/LedgerHQ/ledger-live/pull/15291) [`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat: add `ledger-wallet-framework`
+
+- [#15378](https://github.com/LedgerHQ/ledger-live/pull/15378) [`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tron): throw `InvalidTransactionError` on expired transaction
+
+- [#15526](https://github.com/LedgerHQ/ledger-live/pull/15526) [`a6414f2`](https://github.com/LedgerHQ/ledger-live/commit/a6414f2aedae2ff657b29c2c4fa3e2c081e6e959) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: deduplicate native operations in getBlock
+
+- [#15192](https://github.com/LedgerHQ/ledger-live/pull/15192) [`1c564a9`](https://github.com/LedgerHQ/ledger-live/commit/1c564a9da3a4c0aea9eda63c084dd2068b36b284) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: fallbacks on trace_block in getBlock to retrieve inner txs
+
+- [#15341](https://github.com/LedgerHQ/ledger-live/pull/15341) [`f1959b4`](https://github.com/LedgerHQ/ledger-live/commit/f1959b4e9a35f126b926972ad888081dab20c3c4) Thanks [@qperrot](https://github.com/qperrot)! - fix(exchange): improve invalid transaction handling and messaging
+
+- [#15318](https://github.com/LedgerHQ/ledger-live/pull/15318) [`3488291`](https://github.com/LedgerHQ/ledger-live/commit/348829182b4fdb06f26078e68bce98ee637dfd1b) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - chore(monitoring): log the full error object on failure
+
+- [#15258](https://github.com/LedgerHQ/ledger-live/pull/15258) [`73681cc`](https://github.com/LedgerHQ/ledger-live/commit/73681cc69c80e7d64c7320bb4afcb0b44691d416) Thanks [@jprudent](https://github.com/jprudent)! - Coin module evm: configurable RPC retries for external nodes
+
+- [#15364](https://github.com/LedgerHQ/ledger-live/pull/15364) [`d7b8e13`](https://github.com/LedgerHQ/ledger-live/commit/d7b8e13caa615ca3f2c08c3a21b8e0226ea163b2) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - chore(coin-monitoring): clean code and nitpick on logging
+
+- [#15329](https://github.com/LedgerHQ/ledger-live/pull/15329) [`7de6683`](https://github.com/LedgerHQ/ledger-live/commit/7de6683522c09a23a26137569ffd014bf0b255ec) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: detect quicknode unsupported method error
+
+### Patch Changes
+
+- Updated dependencies [[`a221ae8`](https://github.com/LedgerHQ/ledger-live/commit/a221ae85b846c6d5dc6efb55ed873942d7720b05), [`982d4af`](https://github.com/LedgerHQ/ledger-live/commit/982d4afbeb7faf3814c3e96ffb6e3e88b58dfe73), [`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb), [`01c81b1`](https://github.com/LedgerHQ/ledger-live/commit/01c81b112ab326eff436f0f3279a1225c073f897)]:
+  - @ledgerhq/coin-framework@7.0.0-next.0
+  - @ledgerhq/devices@8.13.0-next.0
+  - @ledgerhq/errors@6.32.0-next.0
+  - @ledgerhq/cryptoassets@13.43.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.0.1-next.0
+  - @ledgerhq/domain-service@1.7.2-next.0
+  - @ledgerhq/evm-tools@1.12.1
+  - @ledgerhq/live-network@2.4.2-next.0
+
 ## 3.0.0
 
 ### Major Changes

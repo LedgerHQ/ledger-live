@@ -32,6 +32,16 @@ import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
+function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) return undefined;
+  const cap = explorer.maxLimit;
+  if (cap === undefined) return undefined;
+  const flooredCap = Math.floor(cap);
+  return flooredCap >= 1 ? flooredCap : undefined;
+}
+
 /**
  * Common parameters for fetching operations from an endpoint
  */
@@ -688,6 +698,12 @@ export const getOperations = makeLRUCache<
 >(
   async (currency, address, accountId, fromBlock, toBlock, pagingToken, limit, order = "desc") => {
     try {
+      const configuredMaxLimit = getConfiguredMaxLimit(currency);
+      const effectiveLimit =
+        limit !== undefined && configuredMaxLimit !== undefined
+          ? Math.min(limit, configuredMaxLimit)
+          : limit;
+
       const pagingState = deserializePagingToken(pagingToken);
       const paginationBlock = pagingState?.boundBlock;
 
@@ -699,7 +715,7 @@ export const getOperations = makeLRUCache<
         accountId,
         fromBlock,
         ...(toBlock !== undefined && { toBlock }),
-        ...(limit !== undefined && { limit }),
+        ...(effectiveLimit !== undefined && { limit: effectiveLimit }),
         sort: order,
       };
 
@@ -724,7 +740,12 @@ export const getOperations = makeLRUCache<
           ...(effectiveToBlock !== undefined && { toBlock: effectiveToBlock }),
         };
         const result = await exhaustEndpoint(endpoint, params);
-        const effectiveBoundBlock = computeEffectiveBoundBlock(limit, boundBlock, result, cmp);
+        const effectiveBoundBlock = computeEffectiveBoundBlock(
+          effectiveLimit,
+          boundBlock,
+          result,
+          cmp,
+        );
         return { result: result, effectiveBoundBlock: effectiveBoundBlock };
       }
 

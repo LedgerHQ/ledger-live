@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -55,7 +55,7 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache --ignore-pattern '**/setupTests.ts'",
+    "lint": "oxlint ./src --ignore-pattern '**/setupTests.ts'",
     "lint:fix": "pnpm lint --fix",
     "test": "jest --config=jest.config.ts --runInBand",
     "test-integ": "jest --config=jest.integ.config.ts",

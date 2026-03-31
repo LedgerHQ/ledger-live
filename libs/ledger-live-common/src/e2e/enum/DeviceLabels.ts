@@ -70,6 +70,7 @@ export enum DeviceLabels {
   CONFIRM_CHANGE = "Confirm change",
   TAP_TO_CONTINUE = "Tap to continue",
   PROVIDE_PUBLIC_KEY = "Provide Public Key",
+  YES_ENABLE = "Yes, enable",
   YES_REJECT = "Yes, reject",
   CONTINUE_ANYWAY = "Continue anyway",
 }

@@ -88,6 +88,8 @@ export type CurrencyFeatures = {
   currencyEnergyWeb: DefaultFeature;
   currencyAstar: DefaultFeature;
   currencyMetis: DefaultFeature;
+  currencyMantle: DefaultFeature;
+  currencyMantleSepolia: DefaultFeature;
   currencyBoba: DefaultFeature;
   currencyMoonriver: DefaultFeature;
   currencyVelasEvm: DefaultFeature;
@@ -824,6 +826,7 @@ type Feature_Wallet40_Params = {
   marketBanner: boolean;
   graphRework: boolean;
   quickActionCtas: boolean;
+  quickActionsCtasVariant: boolean;
   mainNavigation: boolean;
   tour: boolean;
   lazyOnboarding: boolean;

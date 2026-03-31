@@ -57,6 +57,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "market",
   "cryptoAssets",
   "identities",
+  "featureFlags",
   "discover",
   "ptx",
   "PLAYWRIGHT_RUN", // e2e fixtures: localStorage seed (e.g. acceptedTermsVersion) and env overrides
@@ -107,10 +108,7 @@ async function load(ns: string): Promise<unknown> {
     const dataObj = data as Record<string, unknown>;
 
     if (ns === "app") {
-      memoryNamespaces[ns] = pick(dataObj, APP_NAMESPACE_TOP_LEVEL_KEYS) as Record<
-        string,
-        unknown
-      >;
+      memoryNamespaces[ns] = pick(dataObj, APP_NAMESPACE_TOP_LEVEL_KEYS) as Record<string, unknown>;
     } else {
       memoryNamespaces[ns] = dataObj;
     }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",
   "keywords": [
@@ -72,6 +72,7 @@
     "msw": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@polkadot/rpc-provider": "catalog:",
     "@polkadot/util": "catalog:",
     "@swc/core": "catalog:",

@@ -36,6 +36,13 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="concordiumidapp" />
+        </intent>
+    </queries>
+
     <application
       android:extractNativeLibs="false"
       android:largeHeap="true"

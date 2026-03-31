@@ -13,12 +13,12 @@ export type GetViewKeyFn = (
 ) => Promise<GetViewKeyResult>;
 
 const getViewKey = (signerContext: SignerContext<AleoSigner>): GetViewKeyFn => {
-  return async (deviceId: string, opts: GetViewKeyOptions) => {
-    const viewKey = await signerContext(deviceId, signer => signer.getViewKey(opts.path));
+  return async (deviceId: string, { path }: GetViewKeyOptions) => {
+    const result = await signerContext(deviceId, signer => signer.getViewKey(path));
 
     return {
-      path: opts.path,
-      viewKey: viewKey.toString(),
+      path,
+      viewKey: result.viewKey,
     };
   };
 };

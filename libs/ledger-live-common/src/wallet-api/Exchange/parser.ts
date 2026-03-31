@@ -41,6 +41,7 @@ export type ParseError = {
   error: Error;
   step?: StepError;
   customErrorType?: CustomErrorType;
+  correlationId?: string;
 };
 
 const DRAWER_CLOSED_ERROR_NAME = "DrawerClosedError";
@@ -57,7 +58,7 @@ const isDrawerClosedError = (error: Error): boolean => {
 /**
  * Maps step errors to error constructors
  */
-const ErrorMap: Record<StepError, new (err?: Error) => Error> = {
+const ErrorMap: Record<StepError, new (err?: Error, correlationId?: string) => Error> = {
   [StepError.NONCE]: NonceStepError,
   [StepError.PAYLOAD]: PayloadStepError,
   [StepError.SIGNATURE]: SignatureStepError,
@@ -74,9 +75,10 @@ const ErrorMap: Record<StepError, new (err?: Error) => Error> = {
  *
  * @param error - Original error that occurred
  * @param step - Step where error occurred (optional)
+ * @param correlationId - Optional correlation ID to attach to SwapError
  * @returns Wrapped error or original error if no step specified
  */
-export function createStepError({ error, step }: ParseError): Error {
+export function createStepError({ error, step, correlationId }: ParseError): Error {
   // If no step specified, return original error
   if (!step) {
     return error;
@@ -95,18 +97,18 @@ export function createStepError({ error, step }: ParseError): Error {
   }
 
   // Wrap original error in step-specific error class
-  return new ErrorConstructor(error);
+  return new ErrorConstructor(error, correlationId);
 }
 
 /**
  * Parses an error to determine the correct error class to return based on the context.
  */
-export function parseError({ error, step, customErrorType }: ParseError): Error {
+export function parseError({ error, step, customErrorType, correlationId }: ParseError): Error {
   if (!step || customErrorType !== CustomErrorType.SWAP) {
     return error;
   }
 
-  return createStepError({ error, step });
+  return createStepError({ error, step, correlationId });
 }
 
 export const hasMessage = (value: unknown): value is { message?: unknown } =>

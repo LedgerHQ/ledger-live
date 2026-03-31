@@ -10,7 +10,7 @@ import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
-import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDialogSourceSelector } from "~/renderer/reducers/modularDialog";
 
 interface Props {
   analyticsPropertyFlow?: string;
@@ -23,7 +23,7 @@ export const ConnectYourDevice = ({
   onConnect,
   analyticsPropertyFlow,
 }: Readonly<Props>) => {
-  const source = useSelector(modularDrawerSourceSelector);
+  const source = useSelector(modularDialogSourceSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   useOnDemandCurrencyCountervalues(currency, counterValueCurrency);
 

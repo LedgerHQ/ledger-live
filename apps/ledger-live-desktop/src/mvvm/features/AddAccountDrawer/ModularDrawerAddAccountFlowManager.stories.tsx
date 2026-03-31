@@ -13,7 +13,7 @@ import ModularDrawerAddAccountFlowManager, {
 
 const store = createStore(() => ({
   accounts: [],
-  modularDrawer: {
+  modularDialog: {
     source: "",
   },
   devices: { currentDevice: null },

@@ -1,15 +1,17 @@
-import React, { useCallback, useMemo, useState, useEffect, FC } from "react";
+import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import Modal, { ModalBody } from "~/renderer/components/Modal";
+import BigSpinner from "~/renderer/components/BigSpinner";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import BigSpinner from "~/renderer/components/BigSpinner";
+import Modal, { ModalBody } from "~/renderer/components/Modal";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Text from "~/renderer/components/Text";
-import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
-import { CONNECTION_TYPES } from "~/renderer/analytics/hooks/variables";
 import type { TransferProposalAction } from "./types";
+import {
+  useDeviceAppModalViewModel,
+  type DeviceAppModalViewModel,
+} from "./useDeviceAppModalViewModel";
 
 type Props = {
   isOpen: boolean;
@@ -19,63 +21,37 @@ type Props = {
   onClose?: () => void;
 };
 
-type ConfirmationState = "pending" | "confirming" | "completed" | "error";
-
 const translations = {
-  title: {
+  action: {
+    accept: "families.canton.pendingTransactions.accept",
+    reject: "families.canton.pendingTransactions.reject",
+    withdraw: "families.canton.pendingTransactions.withdraw",
+  },
+  successTitle: {
     accept: "families.canton.pendingTransactions.deviceAppModal.success.accept.title",
     reject: "families.canton.pendingTransactions.deviceAppModal.success.reject.title",
     withdraw: "families.canton.pendingTransactions.deviceAppModal.success.withdraw.title",
   },
-  description: {
+  successDescription: {
     accept: "families.canton.pendingTransactions.deviceAppModal.success.accept.description",
     reject: "families.canton.pendingTransactions.deviceAppModal.success.reject.description",
     withdraw: "families.canton.pendingTransactions.deviceAppModal.success.withdraw.description",
   },
 };
 
-const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName }) => {
+export function View({
+  confirmationState,
+  error,
+  request,
+  actionConnect,
+  handleDeviceResult,
+  handleRetry,
+  isOpen,
+  action,
+  onClose,
+}: DeviceAppModalViewModel) {
   const { t } = useTranslation();
-  const [confirmationState, setConfirmationState] = useState<ConfirmationState>("pending");
-  const [error, setError] = useState<Error | null>(null);
-
-  const actionConnect = useConnectAppAction();
-  const request = useMemo(
-    () => ({
-      appName,
-    }),
-    [appName],
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      setConfirmationState("pending");
-      setError(null);
-    }
-  }, [isOpen]);
-
-  const handleConfirm = useCallback(
-    async (deviceId: string) => {
-      try {
-        setConfirmationState("confirming");
-        await onConfirm(deviceId);
-        setConfirmationState("completed");
-      } catch (err) {
-        setConfirmationState("error");
-        setError(err instanceof Error ? err : new Error(String(err)));
-      }
-    },
-    [onConfirm],
-  );
-
-  const handleRetry = useCallback(() => {
-    setConfirmationState("pending");
-    setError(null);
-  }, []);
-
-  const actionTitle = useMemo(() => {
-    return action.toUpperCase().slice(0, 1) + action.slice(1);
-  }, [action]);
+  const actionTitle = t(translations.action[action]);
 
   return (
     <Modal
@@ -102,8 +78,8 @@ const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName
             {confirmationState === "completed" ? (
               <Box alignItems="center" py={4}>
                 <SuccessDisplay
-                  title={t(translations.title[action])}
-                  description={t(translations.description[action])}
+                  title={t(translations.successTitle[action])}
+                  description={t(translations.successDescription[action])}
                 />
               </Box>
             ) : confirmationState === "error" && error ? (
@@ -121,7 +97,7 @@ const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName
                   style={{ whiteSpace: "pre-wrap" }}
                 >
                   {t("families.canton.pendingTransactions.deviceAppModal.processing", {
-                    action,
+                    action: actionTitle,
                   })}
                 </Text>
               </Box>
@@ -129,17 +105,7 @@ const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName
               <DeviceAction
                 action={actionConnect}
                 request={request}
-                onResult={async result => {
-                  if (result) {
-                    let deviceId = result?.device?.deviceId;
-
-                    if (!deviceId || deviceId === "") {
-                      deviceId = result.device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE;
-                    }
-
-                    await handleConfirm(deviceId);
-                  }
-                }}
+                onResult={handleDeviceResult}
                 analyticsPropertyFlow="canton-pending"
               />
             )}
@@ -148,6 +114,10 @@ const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName
       />
     </Modal>
   );
+}
+
+const DeviceAppModal: FC<Props> = ({ isOpen, onConfirm, action, onClose, appName }) => {
+  return <View {...useDeviceAppModalViewModel({ isOpen, onConfirm, action, appName, onClose })} />;
 };
 
 export default DeviceAppModal;

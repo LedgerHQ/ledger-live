@@ -1,5 +1,27 @@
 # @ledgerhq/devices
 
+## 8.13.0
+
+### Minor Changes
+
+- [#14974](https://github.com/LedgerHQ/ledger-live/pull/14974) [`982d4af`](https://github.com/LedgerHQ/ledger-live/commit/982d4afbeb7faf3814c3e96ffb6e3e88b58dfe73) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update HID framing block types to use Uint8Array for cross-environment transport compatibility.
+
+### Patch Changes
+
+- Updated dependencies [[`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb)]:
+  - @ledgerhq/errors@6.32.0
+
+## 8.13.0-next.0
+
+### Minor Changes
+
+- [#14974](https://github.com/LedgerHQ/ledger-live/pull/14974) [`982d4af`](https://github.com/LedgerHQ/ledger-live/commit/982d4afbeb7faf3814c3e96ffb6e3e88b58dfe73) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update HID framing block types to use Uint8Array for cross-environment transport compatibility.
+
+### Patch Changes
+
+- Updated dependencies [[`6dac7f9`](https://github.com/LedgerHQ/ledger-live/commit/6dac7f974c28dcae409c110a60061996490c5088), [`8ce1cb7`](https://github.com/LedgerHQ/ledger-live/commit/8ce1cb755b3e68c8688f9e828596d3c2605ef3cb)]:
+  - @ledgerhq/errors@6.32.0-next.0
+
 ## 8.12.0
 
 ### Minor Changes

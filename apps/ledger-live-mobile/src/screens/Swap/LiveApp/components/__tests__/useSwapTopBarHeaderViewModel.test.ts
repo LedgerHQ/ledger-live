@@ -31,6 +31,7 @@ describe("useSwapTopBarHeaderViewModel", () => {
       onDiscoverPress: noop,
       onNotificationsPress: noop,
       onSettingsPress: noop,
+      onTransactionHistoryPress: noop,
       hasUnreadNotifications: false,
       hasAccounts: false,
       isSyncError: false,
@@ -40,6 +41,7 @@ describe("useSwapTopBarHeaderViewModel", () => {
       isSyncDrawerOpen: false,
       openSyncDrawer: noop,
       closeSyncDrawer: noop,
+      onTryRefresh: noop,
     }));
   });
 

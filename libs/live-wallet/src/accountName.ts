@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export const MAX_ACCOUNT_NAME_LENGTH = 50;
 
@@ -19,7 +19,10 @@ export const getDefaultAccountNameForCurrencyIndex = ({
   return `${currency.name} ${index + 1}`;
 };
 
-export const validateNameEdition = (account: Account, name?: string | null | undefined): string =>
+export const validateNameEdition = (
+  account: AccountLike,
+  name?: string | null | undefined,
+): string =>
   normalizeName(name || getDefaultAccountName(account) || "").slice(0, MAX_ACCOUNT_NAME_LENGTH);
 
 export const getDefaultAccountName = (account: AccountLike) => {

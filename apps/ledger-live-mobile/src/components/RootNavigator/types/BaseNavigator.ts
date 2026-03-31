@@ -14,6 +14,7 @@ import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types"
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { AnalyticsNavigatorParamsList } from "LLM/features/Analytics/types";
+import type { OperationsHistoryNavigatorParamsList } from "LLM/features/OperationsHistory/types";
 import type { Web3HubStackParamList, Web3HubTabStackParamList } from "LLM/features/Web3Hub/types";
 import type { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import type { MyLedgerNavigatorStackParamList } from "./MyLedgerNavigator";
@@ -351,6 +352,7 @@ export type BaseNavigatorStackParamList = {
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [NavigatorName.Analytics]?: Partial<NavigatorScreenParams<AnalyticsNavigatorParamsList>>;
+  [NavigatorName.OperationsHistory]?: NavigatorScreenParams<OperationsHistoryNavigatorParamsList>;
   [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };

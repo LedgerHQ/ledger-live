@@ -36,13 +36,7 @@ function internalTransactionsFetcher(
       });
       return new Map();
     } else {
-      return nodeApi
-        .traceBlock(currency, height)
-        .then(traceBlockItemsToOperationsByHash)
-        .catch(error => {
-          if (error instanceof UnsupportedRpcMethodError) return new Map();
-          throw error;
-        });
+      return nodeApi.traceBlock(currency, height).then(traceBlockItemsToOperationsByHash);
     }
   }
 

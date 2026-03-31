@@ -37,7 +37,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
         data-testid="scroll-container"
         className="scrollbar-none flex flex-col overflow-x-scroll py-2"
       >
-        <div className="flex items-stretch gap-8">
+        <div className="flex w-max items-stretch gap-8">
           <FearAndGreed />
           {items.map(item => (
             <TrendingAssetTile key={item.id} item={item} onNavigate={onAssetClick} />

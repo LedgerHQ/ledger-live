@@ -2,6 +2,7 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
+import { getBridgeApi } from "./bridge";
 import {
   applyMemoToIntent,
   bigNumberToBigIntDeep,
@@ -11,7 +12,7 @@ import {
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
@@ -36,7 +37,7 @@ function enrichTransactionIntent(
  * Sign Transaction with Ledger hardware
  */
 export const genericSignOperation =
-  (_network: string, kind: string) =>
+  (network: string, kind: string) =>
   (signerContext: SignerContext<any>): AccountBridge<GenericTransaction>["signOperation"] =>
   ({
     account,
@@ -50,6 +51,7 @@ export const genericSignOperation =
     new Observable(o => {
       async function main() {
         const alpacaApi = getAlpacaApi(account.currency.id, kind);
+        const bridgeApi = getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
@@ -78,7 +80,7 @@ export const genericSignOperation =
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
           const { amount } = await alpacaApi.validateIntent(
             transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
-            extractBalances(account, alpacaApi.getAssetFromToken),
+            extractBalances(account, bridgeApi.getAssetFromToken),
             customFees,
           );
           transaction.amount = new BigNumber(amount.toString());

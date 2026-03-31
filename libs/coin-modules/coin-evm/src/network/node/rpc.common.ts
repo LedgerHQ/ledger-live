@@ -14,7 +14,12 @@ import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { withRetries } from "../withRetries";
-import { hasErrorCode, isUnsupportedRpcMethodError } from "./rpc.errors";
+import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
+import {
+  hasErrorCode,
+  isUnsupportedRpcMethodErrorMsg,
+  isUnsupportedRpcMethodError,
+} from "./rpc.errors";
 import {
   NodeApi,
   ERC20Transfer,
@@ -22,10 +27,10 @@ import {
   LogWithAddress,
   TransactionReceipt,
   TraceBlockItem,
+  isTraceBlockItem,
   TransactionInfo,
   BlockByHeightResult,
   BlockReceiptInfo,
-  isTraceBlockCallAction,
 } from "./types";
 
 /**
@@ -312,7 +317,21 @@ async function getBlockByHeight(
   blockHeight: number | "latest",
   prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
-  const block = await api.getBlock(blockHeight, prefetchTxs);
+  let block: ethers.Block | null;
+  try {
+    block = await api.getBlock(blockHeight, prefetchTxs);
+  } catch (error) {
+    // Some chains (e.g. zkSync) can return tx objects missing signature fields, ethers then fails while formatting
+    // prefetched transactions => we fallback to a custom getBlock implementation
+    if (prefetchTxs && isSignatureError(error)) {
+      log("warn", "EVM getBlock fallback: using raw eth_getBlockByNumber response", {
+        blockHeight,
+        error: String(error),
+      });
+      return getBlockByHeightFromRawRpc(api, blockHeight, true);
+    }
+    throw error;
+  }
 
   if (!block) {
     throw new Error(`Block ${blockHeight} not found`);
@@ -360,6 +379,105 @@ async function getBlockByHeight(
   };
 }
 
+/** Specific error thrown by ethers when handling zksync blocks with missing signature fields in prefetched transactions */
+function isSignatureError(error: unknown): boolean {
+  if (!hasErrorCode(error, "INVALID_ARGUMENT")) return false;
+  if (typeof error !== "object" || error === null) return false;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const ethersError = error as { argument?: unknown };
+  return ethersError.argument === "signature";
+}
+
+/**
+ * Parse a quantity (eg: amount or block height) return from an RPC.
+ *
+ * @param value raw RPC value
+ * @param fieldName dereferenced field, for error display only
+ */
+function parseRpcHexQuantity(value: unknown, fieldName: string): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(BigInt(value));
+  throw new Error(`Malformed ${fieldName} in eth_getBlockByNumber response`);
+}
+
+/**
+ * Fallback implementation of {@link getBlockByHeight} using raw RPC call to eth_getBlockByNumber, to handle cases where
+ * ethers fails to parse the block due to malformed prefetched transactions (e.g. missing signature fields in zkSync
+ * blocks).
+ */
+async function getBlockByHeightFromRawRpc(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+  prefetchTxs: boolean,
+): Promise<BlockByHeightResult> {
+  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  const rawBlock = await api.send("eth_getBlockByNumber", [blockTag, prefetchTxs]);
+  if (typeof rawBlock !== "object" || rawBlock === null)
+    throw new Error("Invalid eth_getBlockByNumber response");
+
+  const block = rawBlock as Record<string, unknown>;
+  if (typeof block.hash !== "string")
+    throw new Error("Malformed block hash in eth_getBlockByNumber");
+  if (typeof block.parentHash !== "string")
+    throw new Error("Malformed block parentHash in eth_getBlockByNumber");
+
+  const height = parseRpcHexQuantity(block.number, "block.number");
+  const timestampInSeconds = parseRpcHexQuantity(block.timestamp, "block.timestamp");
+  const rawTransactions = block.transactions;
+  if (rawTransactions !== undefined && !Array.isArray(rawTransactions))
+    throw new Error("Malformed block.transactions in eth_getBlockByNumber response");
+
+  const transactionHashes = rawTransactions?.map((tx, index) => {
+    if (typeof tx === "string") return tx;
+    if (typeof tx === "object" && tx !== null && "hash" in tx && typeof tx.hash === "string")
+      return tx.hash;
+    throw new Error(
+      `Malformed block transaction at index ${index} in eth_getBlockByNumber response`,
+    );
+  });
+
+  const transactions =
+    prefetchTxs && rawTransactions
+      ? rawTransactions.map(tx => {
+          if (typeof tx === "string")
+            throw new Error("Expected prefetched transaction object, got hash string");
+          if (typeof tx !== "object" || tx === null)
+            throw new Error("Malformed prefetched transaction in eth_getBlockByNumber response");
+          if (!("hash" in tx) || typeof tx.hash !== "string")
+            throw new Error(
+              "Malformed prefetched transaction hash in eth_getBlockByNumber response",
+            );
+          if (!("from" in tx) || typeof tx.from !== "string")
+            throw new Error(
+              "Malformed prefetched transaction from in eth_getBlockByNumber response",
+            );
+          if ("to" in tx && tx.to !== null && tx.to !== undefined && typeof tx.to !== "string")
+            throw new Error("Malformed prefetched transaction to in eth_getBlockByNumber response");
+          if ("value" in tx && tx.value !== undefined && typeof tx.value !== "string")
+            throw new Error(
+              "Malformed prefetched transaction value in eth_getBlockByNumber response",
+            );
+
+          return {
+            hash: tx.hash,
+            value: BigInt(tx.value ?? "0x0").toString(),
+            from: tx.from,
+            to: tx.to ?? undefined,
+          };
+        })
+      : undefined;
+
+  return {
+    hash: block.hash,
+    height,
+    timestamp: timestampInSeconds * 1000,
+    parentHash: block.parentHash,
+    ...(transactions !== undefined && { transactions }),
+    ...(transactionHashes !== undefined && { transactionHashes }),
+  };
+}
+
 async function getBlockReceipts(
   api: JsonRpcProvider,
   _currency: CryptoCurrency,
@@ -398,16 +516,36 @@ async function getBlockReceipts(
   });
 }
 
-async function traceBlock(
+async function traceBlockGeth(
   api: JsonRpcProvider,
-  _currency: CryptoCurrency,
+  blockHeight: number,
+): Promise<TraceBlockItem[]> {
+  const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
+  const debugResults = await api
+    .send("debug_traceBlockByNumber", [rpcBlockTag, { tracer: "callTracer" }])
+    .catch(error => {
+      if (isUnsupportedRpcMethodError(error) || isUnsupportedRpcMethodErrorMsg(error)) {
+        throw new UnsupportedRpcMethodError(
+          "debug_traceBlockByNumber is not supported by this RPC provider",
+          {
+            method: "debug_traceBlockByNumber",
+            rawError: error,
+          },
+        );
+      }
+      throw error;
+    });
+  if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
+  const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
+  return items;
+}
+
+async function traceBlockErigon(
+  api: JsonRpcProvider,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  let traces: unknown;
-  try {
-    traces = await api.send("trace_block", [blockTag]);
-  } catch (error) {
+  return await api.send("trace_block", [blockTag]).catch(error => {
     if (isUnsupportedRpcMethodError(error)) {
       throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
         method: "trace_block",
@@ -415,8 +553,31 @@ async function traceBlock(
       });
     }
     throw error;
-  }
+  });
+}
 
+function isNumber(value: unknown): value is number {
+  return typeof value === "number";
+}
+
+async function callTraceBlock(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  return await traceBlockErigon(api, blockHeight).catch(error => {
+    if (isNumber(blockHeight)) {
+      return traceBlockGeth(api, blockHeight);
+    }
+    throw error;
+  });
+}
+
+async function traceBlock(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  blockHeight: number | "latest",
+): Promise<TraceBlockItem[]> {
+  const traces = await callTraceBlock(api, blockHeight);
   if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
 
   return traces.map((trace, index) => {
@@ -425,25 +586,6 @@ async function traceBlock(
     }
     return trace;
   });
-}
-
-function isTraceBlockItem(value: unknown): value is TraceBlockItem {
-  if (typeof value !== "object" || value === null) return false;
-  const o = value as Record<string, unknown>;
-  if (!o.action || typeof o.action !== "object" || o.action === null) return false;
-  const action = o.action as Record<string, unknown>;
-  if (o.error !== undefined && typeof o.error !== "string") return false;
-
-  const result = o.result;
-  const resultOk =
-    result === undefined ||
-    result === null ||
-    (typeof result === "object" &&
-      ((result as Record<string, unknown>).error === undefined ||
-        typeof (result as Record<string, unknown>).error === "string"));
-  const validCall = typeof o.transactionHash === "string" && resultOk;
-
-  return !isTraceBlockCallAction(action) || validCall;
 }
 
 function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockTransaction {
@@ -457,7 +599,7 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
       ? typeof value.to === "string" || value.to === null || value.to === undefined
       : true) &&
     typeof value.hash === "string" &&
-    typeof value.value === "bigint" &&
+    (typeof value.value === "string" || typeof value.value === "bigint") &&
     typeof value.from === "string"
   );
 }

@@ -244,6 +244,18 @@
       "env": ["CI_OS"],
       "outputs": []
     },
+    "@ledgerhq/live-common#lint": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/live-common#lint:ci": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
+    "@ledgerhq/live-common#lint:fix": {
+      "env": ["CI_OS"],
+      "outputs": []
+    },
     "live-mobile#lint": {
       "dependsOn": ["^build"],
       "env": ["CI_OS"]

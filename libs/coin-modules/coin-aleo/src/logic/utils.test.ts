@@ -58,6 +58,8 @@ import {
   getRecordByCommitment,
   getFunctionNameFromTransactionType,
   getNextSequenceNumber,
+  extractViewKey,
+  findBestRecordForFee,
 } from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/currencies");
@@ -1242,6 +1244,26 @@ describe("createFeeTransactionIntent", () => {
     });
   });
 
+  it("should throw when feeRecord is missing for a sponsored private transaction", () => {
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() =>
+      createFeeTransactionIntent({
+        account: mockPrivateAccount,
+        transaction,
+        executionId,
+        baseFee,
+        priorityFee,
+      }),
+    ).toThrow("aleo: missing fee record commitment");
+  });
+
   it("should throw when feeRecord is missing for a private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
@@ -1370,5 +1392,74 @@ describe("getFunctionNameFromTransactionType", () => {
     expect(() => getFunctionNameFromTransactionType("unknown_type")).toThrow(
       "aleo: unsupported transaction type: unknown_type",
     );
+  });
+});
+
+describe("extractViewKey", () => {
+  it("should return the view key extracted from the account id", () => {
+    const account = getMockedAccount({ id: "js:2:aleo:aleo1xyz::AViewKey123" });
+
+    expect(extractViewKey(account)).toBe("AViewKey123");
+  });
+
+  it("should throw when the account id has no view key", () => {
+    const account = getMockedAccount({ id: "js:2:aleo:aleo1test:" });
+
+    expect(() => extractViewKey(account)).toThrow(
+      `aleo: view key is missing in ${account.freshAddress} account`,
+    );
+  });
+});
+
+describe("findBestRecordForFee", () => {
+  it("should return the smallest record sufficient to cover the fee", () => {
+    const targetFee = new BigNumber(500000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+    });
+    // mockUnspentRecord2 (600000) is smaller than mockUnspentRecord1 (800000), both cover 500000
+    expect(result).toBe(mockUnspentRecord2);
+  });
+
+  it("should exclude the record used for the amount", () => {
+    const targetFee = new BigNumber(500000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: mockUnspentRecord2.commitment,
+    });
+    // mockUnspentRecord2 is excluded; only mockUnspentRecord1 (800000) remains
+    expect(result).toBe(mockUnspentRecord1);
+  });
+
+  it("should return null when no record is sufficient to cover the fee", () => {
+    const targetFee = new BigNumber(999999999);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+    });
+    expect(result).toBeNull();
+  });
+
+  it("should return null for an empty records array", () => {
+    const result = findBestRecordForFee({
+      unspentRecords: [],
+      targetFee: new BigNumber(1000),
+      selectedAmountRecordCommitment: null,
+    });
+    expect(result).toBeNull();
+  });
+
+  it("should return the only available record when it exactly meets the fee", () => {
+    const targetFee = new BigNumber(800000);
+    const result = findBestRecordForFee({
+      unspentRecords: [mockUnspentRecord1],
+      targetFee,
+      selectedAmountRecordCommitment: null,
+    });
+    expect(result).toBe(mockUnspentRecord1);
   });
 });

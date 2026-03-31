@@ -53,7 +53,8 @@ export function SendHeader() {
     memoType: uiConfig.memoType,
     memoTypeOptions,
     onMemoChange: memo => {
-      transaction.setRecipient({ ...state.recipient, memo });
+      const address = state.recipient?.address ?? recipientSearch.value;
+      transaction.setRecipient({ ...state.recipient, address, memo });
     },
     onMemoSkip: () => {
       navigation.goToNextStep();
@@ -101,7 +102,7 @@ export function SendHeader() {
     return (
       <>
         <AddressInput
-          className="-mt-12 mb-12 px-24"
+          className="mb-12 px-24"
           id="send-recipient-input"
           data-testid="send-recipient-input"
           autoFocus

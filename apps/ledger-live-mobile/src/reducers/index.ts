@@ -1,6 +1,7 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
+import featureFlags from "@shared/feature-flags";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -42,6 +43,7 @@ const appReducer = combineReducers({
   deeplinkInstallApp,
   dynamicContent,
   earn,
+  featureFlags,
   identities: identitiesSlice.reducer,
   inView,
   largeMover,

@@ -14,19 +14,19 @@ describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
   });
 
   it("should set isOpen on openAssetAndAccount", () => {
-    const { result, store } = renderHook(() => useOpenAssetAndAccount(true));
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
 
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
 
     result.current.openAssetAndAccount({ drawerConfiguration: config });
 
-    expect(store.getState().modularDrawer.isOpen).toBe(true);
+    expect(store.getState().modularDialog.isOpen).toBe(true);
   });
 
   it("should handle callback mode success", () => {
     const onSuccess = jest.fn();
 
-    const { result, store } = renderHook(() => useOpenAssetAndAccount(true));
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
 
     result.current.openAssetAndAccount({
       onSuccess,
@@ -35,26 +35,26 @@ describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
 
     store
       .getState()
-      .modularDrawer.dialogParams?.onAccountSelected?.(mockAccount, mockParentAccount);
+      .modularDialog.dialogParams?.onAccountSelected?.(mockAccount, mockParentAccount);
 
     expect(onSuccess).toHaveBeenCalledWith(mockAccount, mockParentAccount);
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
   });
 
   it("should handle callback mode cancel", () => {
     const onCancel = jest.fn();
 
-    const { result, store } = renderHook(() => useOpenAssetAndAccount(true));
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
 
     result.current.openAssetAndAccount({
       onCancel,
       drawerConfiguration: config,
     });
 
-    store.getState().modularDrawer.dialogParams?.onClose?.();
+    store.getState().modularDialog.dialogParams?.onClose?.();
 
     expect(onCancel).toHaveBeenCalled();
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
   });
 });
 
@@ -64,7 +64,7 @@ describe("useOpenAssetAndAccount - openAssetAndAccountPromise", () => {
   });
 
   it("should resolve with account and parentAccount on success", async () => {
-    const { result, store } = renderHook(() => useOpenAssetAndAccount(true));
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
 
     const resultPromise = result.current.openAssetAndAccountPromise({
       drawerConfiguration: config,
@@ -72,24 +72,24 @@ describe("useOpenAssetAndAccount - openAssetAndAccountPromise", () => {
 
     store
       .getState()
-      .modularDrawer.dialogParams?.onAccountSelected?.(mockAccount, mockParentAccount);
+      .modularDialog.dialogParams?.onAccountSelected?.(mockAccount, mockParentAccount);
 
     const resultValue = await resultPromise;
 
     expect(resultValue).toEqual({ account: mockAccount, parentAccount: mockParentAccount });
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
   });
 
   it("should reject with an error on cancel", async () => {
-    const { result, store } = renderHook(() => useOpenAssetAndAccount(true));
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
 
     const resultPromise = result.current.openAssetAndAccountPromise({
       drawerConfiguration: config,
     });
 
-    store.getState().modularDrawer.dialogParams?.onClose?.();
+    store.getState().modularDialog.dialogParams?.onClose?.();
 
     await expect(resultPromise).rejects.toThrow("Canceled by user");
-    expect(store.getState().modularDrawer.isOpen).toBe(false);
+    expect(store.getState().modularDialog.isOpen).toBe(false);
   });
 });

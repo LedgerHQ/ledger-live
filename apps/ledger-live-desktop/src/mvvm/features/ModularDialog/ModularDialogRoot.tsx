@@ -4,7 +4,7 @@ import {
   modularDialogOnCloseSelector,
   closeDialog,
   modularDialogIsOpenSelector,
-} from "~/renderer/reducers/modularDrawer";
+} from "~/renderer/reducers/modularDialog";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 
 const ModularDialogRoot: React.FC = () => {
