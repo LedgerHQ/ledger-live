@@ -122,7 +122,7 @@ describe("getBlock", () => {
                     owner_address: "41a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
                     to_address: "41f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3b2a1f6e5",
                     amount: 500000,
-                    asset_name: "1000001",
+                    asset_name: "31303030303031",
                   },
                 },
               },
