@@ -4,7 +4,7 @@ import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import RingChart from "./RingChart";
-import { useNonBlacklistedDistribution } from "~/actions/general";
+import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import DistributionCard, { DistributionItem } from "./DistributionCard";
 import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";

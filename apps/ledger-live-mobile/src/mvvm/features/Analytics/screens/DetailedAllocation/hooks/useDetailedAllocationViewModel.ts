@@ -1,4 +1,4 @@
-import { useNonBlacklistedDistribution } from "~/actions/general";
+import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import type { DistributionItem } from "../components/DistributionCard";
 
 export interface DetailedAllocationViewModelResult {

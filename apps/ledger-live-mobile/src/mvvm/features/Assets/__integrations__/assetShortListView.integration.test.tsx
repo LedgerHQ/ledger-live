@@ -6,9 +6,21 @@ import { AssetShortListView } from "../components/AssetsShortListView";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Props } from "../hooks/useAssetsListViewModel";
-import { createFixtureEthAccountWithSubToken } from "@ledgerhq/live-common/mock/fixtures/cryptoCurrencies";
+import {
+  createFixtureAccount,
+  createFixtureTokenAccount,
+} from "@ledgerhq/live-common/mock/fixtures/cryptoCurrencies";
 import type { Account } from "@ledgerhq/types-live";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+
+const createMockEthAccountWithUSDC = (): Account => {
+  const ethAccount = createFixtureAccount("01");
+  const usdcSubAccount = createFixtureTokenAccount("01", usdcToken);
+  return {
+    ...ethAccount,
+    subAccounts: [{ ...usdcSubAccount, parentId: ethAccount.id }],
+  };
+};
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
@@ -102,23 +114,28 @@ describe("AssetShortListView", () => {
   });
 
   describe("blacklisted tokens", () => {
-    let mockEthAccountWithUSDC: Account;
+     const mockStateWithBlacklistedToken = (state: State): State => {
+         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+          return {
+            ...state,
+            accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+            settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
+          };
+        }
+        const mockStateWithNonBlacklistedToken = (state: State): State => {
+         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+          return {
+            ...state,
+            accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+            settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
+          };
+        }
+    
 
     beforeEach(() => {
-      mockEthAccountWithUSDC = createFixtureEthAccountWithSubToken(usdcToken);
+      jest.clearAllMocks();
     });
 
-    const mockStateWithBlacklistedToken = (state: State): State => ({
-      ...state,
-      accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
-      settings: { ...state.settings, blacklistedTokenIds: [usdcToken.id] },
-    });
-
-    const mockStateWithNonBlacklistedToken = (state: State): State => ({
-      ...state,
-      accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
-      settings: { ...state.settings, blacklistedTokenIds: [] },
-    });
 
     it("should display a token that is not blacklisted", () => {
       renderComponent({}, mockStateWithNonBlacklistedToken);
