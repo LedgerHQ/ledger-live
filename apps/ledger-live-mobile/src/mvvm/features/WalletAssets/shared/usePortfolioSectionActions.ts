@@ -13,7 +13,10 @@ interface PortfolioSectionActions {
   onItemPress: (asset: Asset) => void;
 }
 
-export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectionActions {
+export function usePortfolioSectionActions(
+  isReadOnly: boolean,
+  variant: "crypto" | "stablecoin" | "all",
+): PortfolioSectionActions {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
@@ -24,12 +27,11 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
       page: "Wallet",
     });
     if (!isReadOnly && shouldDisplayAssetSection) {
-      navigation.navigate(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Crypto,
         params: {
           sourceScreenName: ScreenName.Portfolio,
-          showHeader: true,
-          isSyncEnabled: true,
+          variant,
         },
       });
     } else {
@@ -37,7 +39,7 @@ export function usePortfolioSectionActions(isReadOnly: boolean): PortfolioSectio
         screen: ScreenName.Assets,
       });
     }
-  }, [navigation, shouldDisplayAssetSection, isReadOnly]);
+  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {

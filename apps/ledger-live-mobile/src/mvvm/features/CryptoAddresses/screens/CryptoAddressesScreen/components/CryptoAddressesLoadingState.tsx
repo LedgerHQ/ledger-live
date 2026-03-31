@@ -1,13 +1,12 @@
 import React from "react";
 import { Box, Skeleton } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-
-const SKELETON_COUNT = 6;
+import { SKELETON_LIST_COUNT } from "LLM/constants";
 
 export default function CryptoAddressesLoadingState() {
   return (
     <Box lx={containerStyle}>
-      {Array.from({ length: SKELETON_COUNT }, (_, i) => (
+      {Array.from({ length: SKELETON_LIST_COUNT }, (_, i) => (
         <Skeleton key={i} component="list-item" />
       ))}
     </Box>

@@ -24,6 +24,7 @@ export enum ScreenName {
   ClaimRewardsValidationSuccess = "ClaimRewardsValidationSuccess",
   ConfirmPassword = "ConfirmPassword",
   CountervalueSettings = "CountervalueSettings",
+  Crypto = "Crypto",
   CryptoAssetsSettings = "CryptoAssetsSettings",
   CurrencySettings = "CurrencySettings",
   EditCurrencyUnits = "EditCurrencyUnits",

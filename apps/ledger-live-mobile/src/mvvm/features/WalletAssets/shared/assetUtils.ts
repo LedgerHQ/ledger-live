@@ -1,13 +1,6 @@
-import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { Asset } from "~/types/asset";
 
-export const toAsset = (item: CategorizedAssetItem): Asset => ({
-  currency: item.currency,
-  accounts: item.accounts,
-  amount: item.balance,
-  distribution: item.distribution,
-  isPlaceholder: false,
-});
+export { toAsset } from "LLM/utils/assetUtils";
 
 /**
  * Pads `owned` with items from `defaults` (deduped by currency id) up to `max` total.

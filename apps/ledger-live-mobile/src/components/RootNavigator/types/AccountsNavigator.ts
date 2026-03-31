@@ -34,4 +34,8 @@ export type AccountsNavigatorParamList = {
   [ScreenName.CryptoAddresses]: {
     sourceScreenName: ScreenName;
   };
+  [ScreenName.Crypto]: {
+    sourceScreenName: ScreenName;
+    variant?: "crypto" | "stablecoin" | "all";
+  };
 };
