@@ -48,7 +48,7 @@ export function CryptoAddressesView({
           <TableActionBarTrailing>
             <Button
               appearance="base"
-              size="sm"
+              size="md"
               icon={Plus}
               onClick={onAddAddressClick}
               data-testid="crypto-add-address-button"
