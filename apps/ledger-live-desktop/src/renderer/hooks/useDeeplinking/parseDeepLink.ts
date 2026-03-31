@@ -156,6 +156,7 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
         fromPath: query.fromPath,
         fromCurrency: query.fromCurrency,
         toCurrency: query.toCurrency,
+        toAccountId: query.toAccountId,
       };
       return route;
     }
