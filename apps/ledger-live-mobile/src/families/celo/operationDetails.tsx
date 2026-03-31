@@ -76,6 +76,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
         <>
           {(validatorGroup || extra.celoSourceValidator) && (
             <Section
+              testID="celo-operationDetails-validatorGroup"
               title={t(`delegation.validatorGroup`)}
               value={validatorGroup?.name || extra.celoSourceValidator}
               onPress={redirectAddressCreator(validatorGroup?.address || extra.celoSourceValidator)}

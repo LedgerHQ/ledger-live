@@ -1,5 +1,6 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { launchApp } from "../../helpers/commonHelpers";
+import { loadConfig } from "../../bridge/server";
 import { device } from "detox";
 
 $TmsLink("B2CQA-2996");
@@ -15,7 +16,7 @@ const tags: string[] = [
   `@family-bitcoin`,
 ];
 tags.forEach(tag => $Tag(tag));
-describe.skip("Account name change", () => {
+describe("Account name change", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   const newAccountName = "New Account Name";
 
@@ -47,8 +48,11 @@ describe.skip("Account name change", () => {
     await app.common.expectAccountName(newAccountName);
     await device.terminateApp();
     await launchApp();
+    await device.disableSynchronization();
+    await loadConfig("skip-onboarding", true);
     await app.portfolio.waitForPortfolioPageToLoad();
-    await app.accounts.openViaDeeplink();
+    await device.enableSynchronization();
+    await app.portfolio.goToSpecificAsset(account.currency.name);
     await app.common.expectAccountName(newAccountName);
   });
 });
