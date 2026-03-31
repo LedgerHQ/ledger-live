@@ -22,7 +22,7 @@ type CoinControlScreenViewProps = Readonly<{
   onLearnMoreClick: () => void;
   coinToSendLabel: string;
   changeToReturnLabel: string;
-  enterAmountPlaceholder: string;
+  changeToReturnPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: NetworkFeesViewModel;
@@ -32,6 +32,8 @@ type CoinControlScreenViewProps = Readonly<{
   reviewLoading: boolean;
   onReview: () => void;
   onGetFunds: () => void;
+  isCustomPickingStrategy: boolean;
+  onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
 export function CoinControlScreenView({
@@ -47,7 +49,7 @@ export function CoinControlScreenView({
   onLearnMoreClick,
   coinToSendLabel,
   changeToReturnLabel,
-  enterAmountPlaceholder,
+  changeToReturnPlaceholder,
   amountToSendLabel,
   amountInputLabel,
   networkFees,
@@ -57,6 +59,8 @@ export function CoinControlScreenView({
   reviewLoading,
   onReview,
   onGetFunds,
+  isCustomPickingStrategy,
+  onToggleUtxoExclusion,
 }: CoinControlScreenViewProps) {
   return (
     <>
@@ -76,13 +80,18 @@ export function CoinControlScreenView({
           amountToSendLabel={amountToSendLabel}
           amountInputLabel={amountInputLabel}
         />
-        <UtxoSelector utxoDisplayData={utxoDisplayData} coinToSendLabel={coinToSendLabel} />
+        <UtxoSelector
+          utxoDisplayData={utxoDisplayData}
+          coinToSendLabel={coinToSendLabel}
+          isCustomPickingStrategy={isCustomPickingStrategy}
+          onToggleUtxoExclusion={onToggleUtxoExclusion}
+        />
       </DialogBody>
 
       <CoinControlFooter
         changeToReturnFormatted={changeToReturnFormatted}
         changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={enterAmountPlaceholder}
+        changeToReturnPlaceholder={changeToReturnPlaceholder}
         networkFees={networkFees}
         reviewLabel={reviewLabel}
         reviewShowIcon={reviewShowIcon}

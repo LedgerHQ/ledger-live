@@ -70,7 +70,7 @@ export function CoinControlScreenInner({
         onLearnMoreClick={viewModel.onLearnMoreClick}
         coinToSendLabel={viewModel.coinToSendLabel}
         changeToReturnLabel={viewModel.changeToReturnLabel}
-        enterAmountPlaceholder={viewModel.enterAmountPlaceholder}
+        changeToReturnPlaceholder={viewModel.changeToReturnPlaceholder}
         amountToSendLabel={viewModel.amountToSendLabel}
         amountInputLabel={viewModel.amountInputLabel}
         networkFees={viewModel.networkFees}
@@ -80,6 +80,8 @@ export function CoinControlScreenInner({
         reviewLoading={viewModel.reviewLoading}
         onReview={handleReview}
         onGetFunds={onGetFunds}
+        isCustomPickingStrategy={viewModel.isCustomPickingStrategy}
+        onToggleUtxoExclusion={viewModel.onToggleUtxoExclusion}
       />
     </>
   );

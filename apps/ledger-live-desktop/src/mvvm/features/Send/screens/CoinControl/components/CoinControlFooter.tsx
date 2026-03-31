@@ -9,7 +9,7 @@ import { NetworkFeesMenu } from "../../Amount/components/Fees/NetworkFeesMenu";
 type AmountFooterProps = Readonly<{
   changeToReturnFormatted: string;
   changeToReturnLabel: string;
-  enterAmountPlaceholder: string;
+  changeToReturnPlaceholder: string;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -22,7 +22,7 @@ type AmountFooterProps = Readonly<{
 export function CoinControlFooter({
   changeToReturnFormatted,
   changeToReturnLabel,
-  enterAmountPlaceholder,
+  changeToReturnPlaceholder,
   networkFees,
   reviewLabel,
   reviewShowIcon,
@@ -47,7 +47,7 @@ export function CoinControlFooter({
       <ChangeToReturn
         value={changeToReturnFormatted}
         changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={enterAmountPlaceholder}
+        enterAmountPlaceholder={changeToReturnPlaceholder}
       />
       <NetworkFeesMenu
         display={{

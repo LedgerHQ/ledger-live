@@ -103,6 +103,7 @@ const mockLabels = {
   coinToSendLabel: "Coin to send",
   changeToReturnLabel: "Change to return",
   enterAmountPlaceholder: "Enter amount",
+  selectSufficientCoinsPlaceholder: "Select sufficient coins",
   amountToSendLabel: "Amount to send",
   amountInputLabel: "Amount",
   getStrategyOptionLabel: (key: string) => key,
@@ -238,6 +239,7 @@ describe("useCoinControlScreenViewModelCore", () => {
       reviewShowIcon: true,
       strategyLabel: "Strategy",
       learnMoreLabel: "Learn more",
+      isCustomPickingStrategy: false,
     });
     expect(typeof result.current.onAmountChange).toBe("function");
     expect(typeof result.current.onSelectStrategy).toBe("function");
@@ -275,6 +277,47 @@ describe("useCoinControlScreenViewModelCore", () => {
     expect(result.current.networkFees).toEqual({ fee: "data" });
   });
 
+  describe("isCustomPickingStrategy", () => {
+    it("is false when coin control config is missing", () => {
+      mockGetCoinControlConfig.mockReturnValue(null);
+      mockBridgeMergePatch();
+      const account = createAccount();
+      const transaction = customTransaction(new BigNumber(1000));
+      const { result } = renderHook(() =>
+        useCoinControlScreenViewModelCore({
+          account,
+          parentAccount: null,
+          transaction,
+          status: createStatus(),
+          bridgePending: false,
+          uiConfig: { hasCoinControl: true } as never,
+          transactionActions: { updateTransaction: jest.fn() } as never,
+          locale: "en",
+          accountUnit: getAccountCurrency(account).units[0],
+          amountError: undefined,
+          networkFees: {},
+          labels: mockLabels,
+          onLearnMoreClick: mockOnLearnMore,
+        }),
+      );
+      expect(result.current.isCustomPickingStrategy).toBe(false);
+    });
+
+    it("is false when strategy is not CUSTOM", () => {
+      const { result } = renderCoinControlCore({
+        transaction: createTransaction(),
+      });
+      expect(result.current.isCustomPickingStrategy).toBe(false);
+    });
+
+    it("is true when strategy is CUSTOM and config exists", () => {
+      const { result } = renderCoinControlCore({
+        transaction: customTransaction(new BigNumber(1000)),
+      });
+      expect(result.current.isCustomPickingStrategy).toBe(true);
+    });
+  });
+
   describe("CUSTOM strategy (amount error, NotEnoughBalance, change)", () => {
     const txFilled = () => customTransaction(new BigNumber(5000));
 
@@ -305,6 +348,7 @@ describe("useCoinControlScreenViewModelCore", () => {
       expect(result.current.amountError).toBeUndefined();
       expect(result.current.changeToReturnFormatted).toBe("");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturnPlaceholder).toBe("Select sufficient coins");
     });
 
     it("still shows NotEnoughBalance when at least one UTXO is selected", () => {
@@ -318,6 +362,7 @@ describe("useCoinControlScreenViewModelCore", () => {
       expect(result.current.amountError).toBe("Insufficient funds");
       expect(result.current.changeToReturnFormatted).toBe("");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturnPlaceholder).toBe("Select sufficient coins");
     });
 
     it("hides NotEnoughBalance while bridgePending (stale status after UTXO toggle)", () => {
@@ -341,6 +386,7 @@ describe("useCoinControlScreenViewModelCore", () => {
       });
       expect(result.current.changeToReturnFormatted).toBe("3500 BTC");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturnPlaceholder).toBe("Enter amount");
     });
   });
 });

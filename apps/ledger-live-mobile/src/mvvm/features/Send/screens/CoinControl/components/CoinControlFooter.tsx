@@ -8,7 +8,7 @@ import { ChangeToReturn } from "./ChangeToReturn";
 type AmountFooterProps = Readonly<{
   changeToReturnFormatted: string;
   changeToReturnLabel: string;
-  enterAmountPlaceholder: string;
+  changeToReturnPlaceholder: string;
   networkFees: NetworkFeesViewModel;
   reviewLabel: string;
   reviewShowIcon: boolean;
@@ -21,7 +21,7 @@ type AmountFooterProps = Readonly<{
 export function CoinControlFooter({
   changeToReturnFormatted,
   changeToReturnLabel,
-  enterAmountPlaceholder,
+  changeToReturnPlaceholder,
   reviewLabel,
   reviewShowIcon,
   reviewDisabled,
@@ -36,7 +36,7 @@ export function CoinControlFooter({
       <ChangeToReturn
         value={changeToReturnFormatted}
         changeToReturnLabel={changeToReturnLabel}
-        enterAmountPlaceholder={enterAmountPlaceholder}
+        enterAmountPlaceholder={changeToReturnPlaceholder}
       />
       <NetworkFeesRow viewModel={networkFees} />
       <Button

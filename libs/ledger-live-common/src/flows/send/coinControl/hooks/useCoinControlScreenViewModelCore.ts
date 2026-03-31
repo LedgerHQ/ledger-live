@@ -20,6 +20,7 @@ export type CoinControlScreenViewModelLabels = Readonly<{
   coinToSendLabel: string;
   changeToReturnLabel: string;
   enterAmountPlaceholder: string;
+  selectSufficientCoinsPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   getStrategyOptionLabel: (labelKey: string) => string;
@@ -59,9 +60,14 @@ export type CoinControlScreenViewModelCoreResult<TNetworkFees = unknown> = Reado
   coinToSendLabel: string;
   changeToReturnLabel: string;
   enterAmountPlaceholder: string;
+  /** Resolved empty-state text for the change row (amount missing vs insufficient custom UTXOs). */
+  changeToReturnPlaceholder: string;
   amountToSendLabel: string;
   amountInputLabel: string;
   networkFees: TNetworkFees;
+  /** True when the active UTXO picking strategy is the coin’s “custom selection” mode. */
+  isCustomPickingStrategy: boolean;
+  onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
 export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
@@ -119,6 +125,15 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
 
   const customStrategyValue = coinControlConfig?.customStrategyValue;
 
+  const isCustomPickingStrategy = useMemo(
+    () =>
+      customStrategyValue !== undefined &&
+      "utxoStrategy" in transaction &&
+      transaction.utxoStrategy !== null &&
+      transaction.utxoStrategy.strategy === customStrategyValue,
+    [customStrategyValue, transaction],
+  );
+
   const customInsufficientUtxoForChangeRow = useMemo(() => {
     const isCustomStrategy =
       customStrategyValue != null &&
@@ -139,6 +154,18 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
 
     return isInsufficientFundsBridgeError || hasNoSelectedUtxo;
   }, [customStrategyValue, status, transaction, utxoDisplayData]);
+
+  const changeToReturnPlaceholder = useMemo(
+    () =>
+      customInsufficientUtxoForChangeRow
+        ? labels.selectSufficientCoinsPlaceholder
+        : labels.enterAmountPlaceholder,
+    [
+      customInsufficientUtxoForChangeRow,
+      labels.enterAmountPlaceholder,
+      labels.selectSufficientCoinsPlaceholder,
+    ],
+  );
 
   const changeToReturnFormatted = useMemo(() => {
     const hasAmountForChange = transaction.useAllAmount || transaction.amount?.gt(0);
@@ -219,6 +246,28 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     return amountError;
   }, [amountError, bridgePending, customStrategyValue, status, transaction, utxoDisplayData]);
 
+  const onToggleUtxoExclusion = useCallback(
+    (rowKey: string) => {
+      if (!coinControlConfig || !isCustomPickingStrategy) return;
+
+      const patch = coinControlConfig.buildToggleRowExclusionPatch({
+        transaction,
+        rowKey,
+        displayData: utxoDisplayData,
+      });
+      if (patch) {
+        updateTransactionWithPatch(patch);
+      }
+    },
+    [
+      coinControlConfig,
+      isCustomPickingStrategy,
+      transaction,
+      updateTransactionWithPatch,
+      utxoDisplayData,
+    ],
+  );
+
   return {
     amountValue: amountInput.amountValue,
     onAmountChange: amountInput.onAmountChange,
@@ -237,8 +286,11 @@ export function useCoinControlScreenViewModelCore<TNetworkFees = unknown>({
     coinToSendLabel: labels.coinToSendLabel,
     changeToReturnLabel: labels.changeToReturnLabel,
     enterAmountPlaceholder: labels.enterAmountPlaceholder,
+    changeToReturnPlaceholder,
     amountToSendLabel: labels.amountToSendLabel,
     amountInputLabel: labels.amountInputLabel,
     networkFees,
+    isCustomPickingStrategy,
+    onToggleUtxoExclusion,
   };
 }

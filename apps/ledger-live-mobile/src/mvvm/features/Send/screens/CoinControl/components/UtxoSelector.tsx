@@ -9,18 +9,26 @@ import {
   SubheaderRow,
   SubheaderTitle,
   Box,
+  Checkbox,
 } from "@ledgerhq/lumen-ui-rnative";
+import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 import React from "react";
 import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { ScrollView } from "react-native";
-import type { CoinControlDisplayData } from "@ledgerhq/live-common/bridge/descriptor/types";
 
 type UtxoSelectorProps = Readonly<{
   utxoDisplayData: CoinControlDisplayData | null;
   coinToSendLabel: string;
+  isCustomPickingStrategy: boolean;
+  onToggleUtxoExclusion?: (rowKey: string) => void;
 }>;
 
-export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorProps) => {
+export const UtxoSelector = ({
+  utxoDisplayData,
+  coinToSendLabel,
+  isCustomPickingStrategy,
+  onToggleUtxoExclusion,
+}: UtxoSelectorProps) => {
   const rows = utxoDisplayData?.utxoRows ?? [];
 
   return (
@@ -32,14 +40,39 @@ export const UtxoSelector = ({ utxoDisplayData, coinToSendLabel }: UtxoSelectorP
       </Subheader>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
         {rows.map(row => (
-          <ListItem key={row.rowKey} disabled={row.disabled}>
+          <ListItem
+            key={row.rowKey}
+            disabled={row.disabled}
+            onPress={
+              isCustomPickingStrategy && !row.disabled
+                ? () => {
+                    onToggleUtxoExclusion?.(row.rowKey);
+                  }
+                : undefined
+            }
+          >
             <ListItemLeading>
-              <ListItemContent>
-                <ListItemTitle>{row.titleLabel}</ListItemTitle>
-                <ListItemDescription>{row.formattedValue}</ListItemDescription>
-              </ListItemContent>
+              <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12", flex: 1 }}>
+                {isCustomPickingStrategy ? (
+                  <Checkbox
+                    checked={!row.excluded}
+                    disabled={row.disabled}
+                    onCheckedChange={
+                      isCustomPickingStrategy && !row.disabled
+                        ? () => {
+                            onToggleUtxoExclusion?.(row.rowKey);
+                          }
+                        : undefined
+                    }
+                  />
+                ) : null}
+                <ListItemContent>
+                  <ListItemTitle>{row.titleLabel}</ListItemTitle>
+                  <ListItemDescription>{row.formattedValue}</ListItemDescription>
+                </ListItemContent>
+              </Box>
             </ListItemLeading>
-            {row.isUsedInTx && (
+            {row.isUsedInTx && !isCustomPickingStrategy && (
               <ListItemTrailing>
                 <Check />
               </ListItemTrailing>

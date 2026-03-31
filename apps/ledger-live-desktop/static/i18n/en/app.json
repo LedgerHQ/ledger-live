@@ -2514,6 +2514,7 @@
       "coinToSend": "Coin to send",
       "changeToReturn": "Change to return",
       "enterAmount": "Enter amount",
+      "selectSufficientCoins": "Select sufficient coins",
       "amountToSendInCurrency": "Amount to send in {{ticker}}",
       "amountInputLabel": "Amount to send"
     }
@@ -2969,7 +2970,8 @@
     "pickingStrategyLabels": {
       "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
       "OPTIMIZE_SIZE": "Minimize fees (optimize size)",
-      "MERGE_OUTPUTS": "Minimize future fees (merge coins)"
+      "MERGE_OUTPUTS": "Minimize future fees (merge coins)",
+      "CUSTOM": "Custom coin selection"
     }
   },
   "celo": {

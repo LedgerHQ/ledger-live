@@ -178,6 +178,7 @@ describe("useCoinControlScreenViewModel", () => {
       reviewShowIcon: true,
       reviewDisabled: true,
       reviewLoading: false,
+      isCustomPickingStrategy: false,
     });
     expect(typeof result.current.onAmountChange).toBe("function");
     expect(typeof result.current.onSelectStrategy).toBe("function");
@@ -305,6 +306,23 @@ describe("useCoinControlScreenViewModel", () => {
     });
 
     expect(result.current.changeToReturnFormatted).toBe("2000 BTC");
+  });
+
+  it("should set isCustomPickingStrategy true when utxo strategy is CUSTOM", () => {
+    const params = buildBaseParams({
+      transaction: {
+        utxoStrategy: {
+          strategy: bitcoinPickingStrategy.CUSTOM,
+          excludeUTXOs: [],
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params), {
+      initialState: defaultInitialState,
+    });
+
+    expect(result.current.isCustomPickingStrategy).toBe(true);
   });
 
   it("should expose onSelectStrategy that accepts a strategy value without throwing", () => {
