@@ -65,7 +65,6 @@ Required for Speculos mode (`MOCK=0`):
 | -------------------- | ---------------------------------------------------------------- |
 | `MOCK`               | `0` = Speculos (real simulation), `1` = mock mode                |
 | `COINAPPS`           | Path to cloned `LedgerHQ/coin-apps` repo                         |
-| `SEED`               | 24-word recovery phrase — **never print or log this**            |
 | `SPECULOS_IMAGE_TAG` | Docker image, e.g. `ghcr.io/ledgerhq/speculos:latest`            |
 | `SPECULOS_DEVICE`    | `nanoSP` \| `nanoX` \| `nanoS` \| `stax` \| `flex` \| `nanoGen5` |
 

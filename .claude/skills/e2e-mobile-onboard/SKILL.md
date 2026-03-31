@@ -19,7 +19,8 @@ Work through each phase sequentially. For each check, run the shell command, rep
 
 ## Phase 0: Platform Selection
 
-Before running any checks, ask the user which platform(s) they want to set up:
+Before running any checks, ask the user which platform(s) they want to set up using the AskUserQuestion tool:
+
 - iOS only
 - Android only
 - Both
@@ -32,139 +33,30 @@ Store the selection and use it throughout all subsequent phases to **skip irrele
 
 ## Phase 1: System Tools
 
-**Do NOT hardcode expected versions.** Read the source-of-truth config files to determine what's required:
+See [/docs/dev/e2e-setup.md](/docs/dev/e2e-setup.md) for the full system checks tables, version policy (PASS / WARN / FAIL rules), and fix commands.
 
-| Tool | Source of truth | How to read |
-|------|----------------|-------------|
-| Node | `.prototools` | `grep "^node" .prototools` |
-| pnpm | `.prototools` | `grep "^pnpm" .prototools` |
-| Java | `apps/ledger-live-mobile/android/build.gradle` | Look for `JavaVersion.VERSION_XX` in `sourceCompatibility` |
-| Android SDK API | `apps/ledger-live-mobile/android/build.gradle` | Look for `compileSdkVersion` |
-| Ruby | No pinned version in repo | Just check `ruby --version` returns >= 3.0 (needed for CocoaPods) |
-| Xcode | No pinned version in repo | Just check `xcodebuild -version` returns a recent version |
+Read the source-of-truth config files first (`.prototools`, `build.gradle`). Then run checks based on the selected platform:
+- **Common** (always): Docker, Proto, Node, pnpm
+- **iOS only**: Xcode CLI, Xcode version, Ruby >= 3.0, Bundler, applesimutils
+- **Android only**: Java, Android SDK (`$ANDROID_HOME`), emulator, sdkmanager (optional)
 
-First, read the config files to determine expected versions. Then run these checks (skip those not relevant to the selected platform):
+Apply PASS / WARN / FAIL policy — only FAIL-level results block progression. WARN-only results (sdkmanager missing, Node/pnpm minor/patch drift, Proto absence) must be surfaced but must not block.
 
-**Common checks (always run):**
-
-| Check | Command | Expected |
-|-------|---------|----------|
-| Docker | `docker --version` | Installed |
-| Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running |
-| Proto | `proto --version` | Installed (recommended, not required) |
-| Node | `node --version` | See version policy below |
-| pnpm | `pnpm --version` | See version policy below |
-
-**Node / pnpm version policy:**
-
-`.prototools` is the source of truth for the **recommended** versions. The check should:
-- **PASS** if the active version matches the pinned version exactly.
-- **WARN** if the active major version matches but the minor/patch differs (e.g. pinned `22.13.1`, active `22.14.0`). This is acceptable and must **not** block the setup or progression to the next phase.
-- **FAIL** only if the active major version is different or older than the pinned major version (e.g. pinned Node 22, active Node 20). Only **FAIL** results are hard blockers that must be resolved before proceeding.
-
-Do not fail just because the binary path is not under `~/.proto/`. The version is what matters, not the install method. If Proto is installed, suggest running `proto use` from the repo root to align versions.
-
-**iOS checks (skip if Android only):**
-
-| Check | Command | Expected |
-|-------|---------|----------|
-| Xcode CLI tools | `xcode-select -v` | Installed |
-| Xcode version | `xcodebuild -version` | Recent stable version |
-| Ruby | `ruby --version` | >= 3.0 (any installation method is fine -- Homebrew, rbenv, asdf, system, etc.) |
-| Bundler | `bundle --version` | Installed (needed for CocoaPods in this repo) |
-| applesimutils | `which applesimutils` | Installed |
-
-**Ruby validation note:** Check the version number returned by `ruby --version`, not the path. Do not fail because `which ruby` points to a non-Homebrew location. The real requirement is: Ruby >= 3.0 and `bundle` is available. Optionally also check `bundle exec pod --version` from `apps/ledger-live-mobile` to confirm CocoaPods works.
-
-**Android checks (skip if iOS only):**
-
-| Check | Command | Expected |
-|-------|---------|----------|
-| Java | `java -version` | Major version matching `build.gradle` `JavaVersion` |
-| Android SDK | `echo $ANDROID_HOME` | Non-empty, directory exists |
-| Android emulator | `$ANDROID_HOME/emulator/emulator -list-avds` | At least one AVD |
-| sdkmanager (optional) | `command -v sdkmanager` or check known paths | Available (nice-to-have, not required for running tests) |
-
-**sdkmanager path note:** `sdkmanager` may be installed at `$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager`, under a Homebrew path like `/opt/homebrew/share/android-commandlinetools/cmdline-tools/latest/bin/sdkmanager`, or elsewhere on `$PATH`. Accept any of these. If it is not found at all, this is a **warning**, not a failure -- `sdkmanager` is only needed to install new SDK components, not to run tests.
-
-**Fix commands for common failures:**
-
-- Xcode CLI: `xcode-select --install`
-- Ruby: install via your preferred method (Homebrew, rbenv, asdf, etc.) -- just ensure version >= 3.0
-- applesimutils: `brew tap wix/brew && brew install applesimutils`
-- Java: `brew install openjdk@<version>` (use the version from `build.gradle`)
-- Docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
-- Docker not running: Open Docker Desktop and wait for it to start
-- Proto: `curl -fsSL https://moonrepo.dev/install/proto.sh | bash` then `proto use` from repo root
-- Android SDK / `ANDROID_HOME`: Add to `~/.zshrc`:
-  ```
-  export JAVA_HOME=$(/usr/libexec/java_home)
-  export ANDROID_HOME=$HOME/Library/Android/sdk
-  export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
-  ```
-
-**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Proto absence, `sdkmanager` missing, Node/pnpm minor/patch drift) should be surfaced but must not block progression.
+**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.**
 
 ---
 
 ## Phase 2: Environment Variables
 
-Check each variable is set and valid. Run `[ -n "$VAR" ] && echo "set" || echo "NOT SET"` for each.
+See [/docs/dev/e2e-setup.md](/docs/dev/e2e-setup.md) for the full variable reference.
 
-Skip platform-irrelevant variables based on Phase 0 selection.
+Check each variable with: `[ -n "$VAR" ] && echo "set" || echo "NOT SET"`. Skip platform-irrelevant variables based on Phase 0 selection.
 
-**Common variables (always check):**
+Required common variables: `SEED`, `COINAPPS`, `SPECULOS_IMAGE_TAG`, `SPECULOS_DEVICE` (default: `nanoX`), `MOCK` (must be `0`).
 
-| Variable | Validation | Default / Guidance |
-|----------|------------|-------------------|
-| `COINAPPS` | Non-empty AND directory exists (`[ -d "$COINAPPS" ]`) | Path to cloned `coin-apps` repo. If not cloned: `git clone https://github.com/LedgerHQ/coin-apps.git` |
-| `SEED` | Non-empty only (`[ -n "$SEED" ]`). **NEVER print its value.** | See SEED guidance below. |
-| `SPECULOS_IMAGE_TAG` | Non-empty | `ghcr.io/ledgerhq/speculos:latest` |
-| `SPECULOS_DEVICE` | Non-empty | `nanoX` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5) |
-| `MOCK` | Equals `0` | `0` |
-
-**Android variables (skip if iOS only):**
-
-| Variable | Validation | Default / Guidance |
-|----------|------------|-------------------|
-| `JAVA_HOME` | Non-empty AND directory exists | `$(/usr/libexec/java_home)` |
-| `ANDROID_HOME` | Non-empty AND directory exists | `$HOME/Library/Android/sdk` |
+Android-only variables: `JAVA_HOME`, `ANDROID_HOME`.
 
 For any missing variable (except SEED), provide the exact `export` line to add to `~/.zshrc`.
-
-**SEED guidance:**
-
-The SEED must be set but its value must **NEVER** be printed, logged, or displayed by this skill.
-
-Recommended approach (persistent):
-```
-export SEED=$(op read "op://Vault/Item/field")
-```
-Add to `~/.zshrc` for persistence. This uses 1Password CLI to inject the value securely.
-
-Also acceptable (session-only):
-```
-export SEED="<value>"
-```
-A manual one-time export in the current terminal session is fine for local E2E, especially when using a known public test seed. Do not add raw seed values to shell config files.
-
-Both approaches are valid. The key rules are:
-- This skill must never echo, print, or log the SEED value in command output.
-- Never commit SEED values to version control.
-
-**coin-apps freshness check:**
-
-If `COINAPPS` is set and the directory exists, check if the repo is up to date:
-
-```bash
-cd "$COINAPPS" && git fetch origin master --dry-run 2>&1
-```
-
-If the fetch shows new commits, warn the user and suggest:
-
-```bash
-cd "$COINAPPS" && git pull origin master
-```
 
 **Do not proceed to Phase 3 until all relevant checks pass.**
 

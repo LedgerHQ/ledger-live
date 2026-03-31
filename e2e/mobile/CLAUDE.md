@@ -25,11 +25,13 @@ pnpm test:ios                                   # All tests, iOS release
 ```
 
 For iOS debug mode, start Metro bundler first (from repo root):
+
 ```bash
 pnpm mobile start
 ```
 
 Filter by pattern (Jest glob):
+
 ```bash
 pnpm test:android "send"              # matches any file with "send" in name
 pnpm test:android "**/send/**"        # matches all send tests
@@ -49,6 +51,7 @@ pnpm typecheck
 ### Build (required before first run and after source changes)
 
 From **repo root**:
+
 ```bash
 pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli..." --filter="ledger-live-mobile-e2e-tests"
 pnpm build:llm:deps
@@ -76,20 +79,19 @@ pnpm allure:open
 
 Required for Speculos mode (`MOCK=0`):
 
-| Variable             | Description                                                       |
-| -------------------- | ----------------------------------------------------------------- |
-| `MOCK`               | `0` = Speculos (real simulation), `1` = mock mode                 |
-| `COINAPPS`           | Path to cloned `LedgerHQ/coin-apps` repo                          |
-| `SEED`               | 24-word recovery phrase — **never print or log this**             |
-| `SPECULOS_IMAGE_TAG` | Docker image, e.g. `ghcr.io/ledgerhq/speculos:latest`             |
+| Variable             | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| `MOCK`               | `0` = Speculos (real simulation), `1` = mock mode                |
+| `COINAPPS`           | Path to cloned `LedgerHQ/coin-apps` repo                         |
+| `SPECULOS_IMAGE_TAG` | Docker image, e.g. `ghcr.io/ledgerhq/speculos:latest`            |
 | `SPECULOS_DEVICE`    | `nanoSP` \| `nanoX` \| `nanoS` \| `stax` \| `flex` \| `nanoGen5` |
 
 Optional:
 
-| Variable                        | Description                                        |
-| ------------------------------- | -------------------------------------------------- |
-| `E2E_ENABLE_WALLET40`           | `1` to enable Wallet 4.0 feature tests             |
-| `DISABLE_TRANSACTION_BROADCAST` | `1` to prevent real transaction broadcast          |
+| Variable                        | Description                               |
+| ------------------------------- | ----------------------------------------- |
+| `E2E_ENABLE_WALLET40`           | `1` to enable Wallet 4.0 feature tests    |
+| `DISABLE_TRANSACTION_BROADCAST` | `1` to prevent real transaction broadcast |
 
 ---
 
@@ -130,23 +132,33 @@ e2e/mobile/
 ### Element Helpers
 
 **Native (iOS/Android):** `NativeElementHelpers` from `helpers/elementHelpers.ts`
+
 - `tapById`, `tapByText`, `typeTextById`, `waitForElementById`, `scrollToId`, `IsIdVisible`, etc.
 
 **Web (embedded webviews):** `WebElementHelpers` from `helpers/elementHelpers.ts`
+
 - `tapWebElementByTestId`, `typeTextByWebTestId`, `waitWebElementByTestId`, `getCurrentWebviewUrl`, etc.
 
 ### Test Initialization & Userdata
 
 Each test gets its own temp copy of a userdata JSON. Common fixtures in `userdata/`:
+
 - `skip-onboarding.json` — default, starts at portfolio
 - `1AccountBTC1AccountETHReadOnlyFalse.json`, `EthAccountXrpAccountReadOnlyFalse.json`, etc.
 
 CLI-based account setup (for Speculos tests):
+
 ```typescript
 await app.init({
   speculosApp: account.currency.speculosApp,
   cliCommands: [
-    async (userdataPath) => CLI.liveData({ currency: account.currency.id, index: account.index, appjson: userdataPath, add: true }),
+    async userdataPath =>
+      CLI.liveData({
+        currency: account.currency.id,
+        index: account.index,
+        appjson: userdataPath,
+        add: true,
+      }),
   ],
 });
 ```
@@ -172,8 +184,16 @@ Most tests use a **runner pattern** — a shared `runXxxTest()` function in a co
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendTest } from "./send";
 
-const transaction = new Transaction(Account.BTC_NATIVE_SEGWIT_1, Account.BTC_NATIVE_SEGWIT_2, "0.0001");
-runSendTest(transaction, ["B2CQA-2809"], ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin"]);
+const transaction = new Transaction(
+  Account.BTC_NATIVE_SEGWIT_1,
+  Account.BTC_NATIVE_SEGWIT_2,
+  "0.0001",
+);
+runSendTest(
+  transaction,
+  ["B2CQA-2809"],
+  ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@bitcoin"],
+);
 ```
 
 ### Tagging

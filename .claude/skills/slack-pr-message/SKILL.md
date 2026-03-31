@@ -13,4 +13,4 @@ Generate a formatted Slack message to announce a pull request.
 2. Determine the correct prefix based on impacted packages.
 3. Output the formatted message.
 
-See [@docs/dev/slack-pr-message.md](@docs/dev/slack-pr-message.md) for the message format and prefix rules.
+See [/docs/dev/slack-pr-message.md](/docs/dev/slack-pr-message.md) for the message format and prefix rules.

@@ -25,19 +25,12 @@ Collect the following from the user before starting. Ask for all of them upfront
 
 ## Step 1: Analyze the changes
 
-Run these commands to understand the current state of the branch:
+1. Read `.cursor/rules/git-workflow.mdc` (if present) or use the conventions below to load commit conventions
+2. Run `git status` and `git diff` to understand current changes
+3. Run `git log develop..HEAD --oneline` to see commits on this branch
+4. Identify all modified packages for the changeset
 
-```bash
-git status
-git diff
-git log develop..HEAD --oneline
-```
-
-Use the output to:
-- Confirm which packages are modified (cross-check with `CHANGE_SCOPE`)
-- Draft the PR title: `CHANGE_TYPE(SCOPE): short description`
-
-**Commit conventions** (from `git-workflow.mdc`):
+**Commit conventions:**
 - Format: `<type>[optional scope]: <description>`
 - Description: imperative, clear, lowercase
 - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`, `ci`
@@ -47,35 +40,9 @@ Use the output to:
 
 ## Step 2: Create the changeset
 
-Create a `.changeset/<adjective-noun-verb>.md` file using the `@changesets/cli` naming convention (random human-readable identifier, e.g. `brave-foxes-sing.md`).
+Use the `create-changeset` skill to add a changeset for the modified packages.
 
-Format:
-
-```markdown
----
-"package-name": minor
----
-
-Short description of the change
-```
-
-**Package name reference:**
-
-| App / Lib | Package name |
-|-----------|-------------|
-| Mobile app | `live-mobile` |
-| Desktop app | `ledger-live-desktop` |
-| Common lib | `@ledgerhq/live-common` |
-| Coin modules | `@ledgerhq/coin-<name>` |
-| Other libs | Check the lib's `package.json` `name` field |
-
-**Impact levels:**
-
-| Level | When to use |
-|-------|-------------|
-| `minor` | New features, bug fixes, non-breaking changes |
-| `major` | Breaking changes (rare, requires discussion) |
-| `patch` | Internal-only changes, dependency bumps |
+See [/docs/dev/changesets.md](/docs/dev/changesets.md) for package names and impact levels.
 
 ---
 
@@ -98,97 +65,38 @@ Push the branch:
 git push -u origin HEAD
 ```
 
-Generate the PR body from this template, filled with the provided inputs:
+Generate the PR body using the template from [/docs/dev/pr-template.md](/docs/dev/pr-template.md), filled with the provided inputs.
 
-```markdown
-### ✅ Checklist
-
-- [x] `npx changeset` was attached.
-- [{{TEST_CHECKBOX}}] **Covered by automatic tests.** {{TEST_EXPLANATION}}
-- [x] **Impact of the changes:**
-      {{QA_FOCUS_AREAS}}
-
-### 📝 Description
-
-{{DESCRIPTION}}
-
-{{SCREENSHOTS_SECTION}}
-
-### ❓ Context
-
-- **JIRA or GitHub link**: {{TICKET_LINK}}
-
----
-
-### 🧐 Checklist for the PR Reviewers
-
-- **The code aligns with the requirements** described in the linked JIRA or GitHub issue.
-- **The PR description clearly documents the changes** made and explains any technical trade-offs or design decisions.
-- **There are no undocumented trade-offs**, technical debt, or maintainability issues.
-- **The PR has been tested** thoroughly, and any potential edge cases have been considered and handled.
-- **Any new dependencies** have been justified and documented.
-- **Performance** considerations have been taken into account. (changes have been profiled or benchmarked if necessary)
-```
-
-Create the PR as a draft:
+Create the PR as a draft and capture the URL:
 
 ```bash
-gh pr create --draft --title "{{PR_TITLE}}" --body "$(cat <<'EOF'
+PR_URL=$(gh pr create --draft --title "{{PR_TITLE}}" --body "$(cat <<'EOF'
 {{GENERATED_PR_BODY}}
 EOF
-)"
+)")
 ```
 
-Then open it in the browser:
+Then open the PR in the browser:
 
 ```bash
-gh pr view --web
+open "$PR_URL"
 ```
 
-**Always open the PR in the browser after creating it.**
+**Always run `open "$PR_URL"` after creating the PR to ensure it opens in the browser. Do NOT skip this step.**
+
+**If there are UI changes** (`HAS_UI_CHANGES` is "yes"):
+
+1. The PR opens in your browser
+2. Click the **"..."** menu (top-right of the PR description) → **"Edit"**
+3. Scroll to the Before/After table
+4. Drag & drop your screenshots into the table cells
+5. Click **"Update comment"**
+6. When ready, click **"Ready for review"** to publish the PR
 
 ---
 
 ## Step 5: Generate Slack message
 
-Output a Slack message using the format below, then ask the user to post it in the relevant channel.
+Use the `slack-pr-message` skill to generate the Slack announcement message for the PR.
 
-```
-:pr-open: {{PREFIX}} - {{SHORT_DESCRIPTION}}
-{{PR_URL}}
-```
-
-**Prefix rules:**
-
-| Impacted packages | Prefix |
-|---|---|
-| `live-mobile` only | `LWM` |
-| `ledger-live-desktop` only | `LWD` |
-| `@ledgerhq/live-common` or shared libs | `Common` |
-| CI, scripts, developer tooling | `Tooling` |
-| Both `live-mobile` and `ledger-live-desktop` | `LWM + LWD` |
-
----
-
-## Template fill rules
-
-| Placeholder | Rule |
-|---|---|
-| `{{PR_TITLE}}` | `CHANGE_TYPE(SCOPE): short description` — e.g. `feat(mobile): add dark mode toggle` |
-| `{{TEST_CHECKBOX}}` | `x` if TEST_COVERAGE is "yes", ` ` (space) if "no" or "partial" |
-| `{{TEST_EXPLANATION}}` | Empty if fully covered; italicised explanation if partial/no |
-| `{{QA_FOCUS_AREAS}}` | Bullet list from QA_FOCUS_AREAS input |
-| `{{DESCRIPTION}}` | Problem statement paragraph + solution approach paragraph; include code samples for lib changes, before/after for bug fixes |
-| `{{SCREENSHOTS_SECTION}}` | If HAS_UI_CHANGES=yes: add the table below and instruct the user to drag & drop screenshots via the GitHub UI. If no, omit entirely. |
-| `{{TICKET_LINK}}` | JIRA: `[LIVE-1234](url)` / GitHub: `#123` |
-
-Screenshots table (when HAS_UI_CHANGES=yes):
-
-```markdown
-| Before | After |
-| ------ | ----- |
-| _Drag & drop screenshot here_ | _Drag & drop screenshot here_ |
-```
-
-If UI changes are present, remind the user:
-> Click **"..."** → **"Edit"** on the PR description in GitHub, then drag & drop your screenshots into the table cells.
+See [/docs/dev/slack-pr-message.md](/docs/dev/slack-pr-message.md) for format and prefix rules.

@@ -47,39 +47,11 @@ $HAS_UI_CHANGES
 
 Use the `create-changeset` skill to add a changeset for the modified packages.
 
+See [@docs/dev/changesets.md](@docs/dev/changesets.md) for package names and impact levels.
+
 ### Step 3: Prepare the PR
 
-Generate the PR body using this template, filled with the provided information:
-
-```markdown
-### ✅ Checklist
-
-- [x] `npx changeset` was attached.
-- [{{TEST_CHECKBOX}}] **Covered by automatic tests.** {{TEST_EXPLANATION}}
-- [x] **Impact of the changes:**
-      {{QA_FOCUS_AREAS}}
-
-### 📝 Description
-
-{{DESCRIPTION}}
-
-{{SCREENSHOTS_SECTION}}
-
-### ❓ Context
-
-- **JIRA or GitHub link**: {{TICKET_LINK}}
-
----
-
-### 🧐 Checklist for the PR Reviewers
-
-- **The code aligns with the requirements** described in the linked JIRA or GitHub issue.
-- **The PR description clearly documents the changes** made and explains any technical trade-offs or design decisions.
-- **There are no undocumented trade-offs**, technical debt, or maintainability issues.
-- **The PR has been tested** thoroughly, and any potential edge cases have been considered and handled.
-- **Any new dependencies** have been justified and documented.
-- **Performance** considerations have been taken into account. (changes have been profiled or benchmarked if necessary)
-```
+Generate the PR body using the template from [@docs/dev/pr-template.md](@docs/dev/pr-template.md), filled with the provided information.
 
 ### Step 4: Create the Pull Request
 
@@ -117,83 +89,10 @@ open "$PR_URL"
 
 ### Step 5: Generate Slack Message
 
-Use the `slack-pr-message` skill (`.cursor/skills/slack-pr-message/SKILL.md`) to generate the Slack announcement message for the PR.
+Use the `slack-pr-message` skill to generate the Slack announcement message for the PR.
+
+See [@docs/dev/slack-pr-message.md](@docs/dev/slack-pr-message.md) for format and prefix rules.
 
 ## Template Fill Rules
 
-1. **PR Title**: `{{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
-
-   - Example: `feat(mobile): add dark mode toggle`
-   - Example: `fix(desktop): resolve transaction signing issue`
-
-2. **TEST_CHECKBOX**:
-
-   - `x` if $TEST_COVERAGE is "yes"
-   - ` ` (space) if "no" or "partial"
-
-3. **TEST_EXPLANATION**:
-
-   - Empty if fully covered
-   - Add explanation in italics if partial/no: `_Explanation here_`
-
-4. **QA_FOCUS_AREAS**: Format as bullet list from $QA_FOCUS_AREAS
-
-5. **DESCRIPTION**: Generate from $TICKET_DESCRIPTION:
-
-   - First paragraph: Problem statement
-   - Second paragraph: Solution approach
-   - Include code samples for library changes
-   - Include before/after for bug fixes
-
-6. **SCREENSHOTS_SECTION**:
-
-   - If $HAS_UI_CHANGES is "yes":
-     - Add the table with placeholders:
-       ```
-       | Before | After |
-       | ------ | ----- |
-       | _Drag & drop screenshot here_ | _Drag & drop screenshot here_ |
-       ```
-     - Tell the user: "Click '...' → 'Edit' on the PR description, then drag & drop your screenshots into the table."
-   - If "no", omit the section entirely
-
-7. **TICKET_LINK**: Format properly:
-   - JIRA: `[LIVE-1234](https://ledgerhq.atlassian.net/browse/LIVE-1234)`
-   - GitHub: `#123`
-
-## Example Output
-
-For a feature adding portfolio analytics:
-
-**PR Title**: `feat(portfolio): add analytics dashboard`
-
-**PR Body**:
-
-```markdown
-### ✅ Checklist
-
-- [x] `npx changeset` was attached.
-- [x] **Covered by automatic tests.**
-- [x] **Impact of the changes:**
-  - Portfolio screen rendering and performance
-  - Analytics data fetching and caching
-  - Chart interactions and accessibility
-
-### 📝 Description
-
-This PR introduces a new analytics dashboard to the portfolio feature, providing users with detailed performance metrics and historical data visualization.
-
-**Problem**: Users currently have no way to track their portfolio performance over time.
-
-**Solution**: Added a new analytics screen with:
-
-- Performance charts (daily, weekly, monthly views)
-- Key metrics summary (gains, losses, total value)
-- Export functionality for data
-
-### ❓ Context
-
-- **JIRA or GitHub link**: [LIVE-5678](https://ledgerhq.atlassian.net/browse/LIVE-5678)
-```
-
-**Slack Message**: Generated via the `slack-pr-message` skill.
+See [@docs/dev/pr-template.md](@docs/dev/pr-template.md) for the full template and fill rules.

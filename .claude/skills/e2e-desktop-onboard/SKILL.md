@@ -21,104 +21,25 @@ Work through each phase sequentially. For each check, run the shell command, rep
 
 ## Phase 1: System Tools
 
-**Do NOT hardcode expected versions.** Read the source-of-truth config files to determine what's required:
+See [/docs/dev/e2e-setup.md](/docs/dev/e2e-setup.md) for the full system checks table, version policy (PASS / WARN / FAIL rules), and fix commands.
 
-| Tool | Source of truth | How to read                |
-| ---- | --------------- | -------------------------- |
-| Node | `.prototools`   | `grep "^node" .prototools` |
-| pnpm | `.prototools`   | `grep "^pnpm" .prototools` |
+**Summary for desktop:** run Docker, Docker running, Proto, Node, pnpm checks. Read versions from `.prototools`.
 
-First, read the config files to determine expected versions. Then run these checks:
+Apply the PASS / WARN / FAIL policy: only FAIL-level results are hard blockers. WARN-only results must be surfaced but must not block progression.
 
-| Check          | Command                        | Expected                                       |
-| -------------- | ------------------------------ | ---------------------------------------------- |
-| Docker         | `docker --version`             | Installed (required — Speculos runs in Docker) |
-| Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running                      |
-| Proto          | `proto --version`              | Installed (recommended, not required)          |
-| Node           | `node --version`               | See version policy below                       |
-| pnpm           | `pnpm --version`               | See version policy below                       |
-
-**Node / pnpm version policy:**
-
-`.prototools` is the source of truth for the **recommended** versions. The check should:
-
-- **PASS** if the active version matches the pinned version exactly.
-- **WARN** if the active major version matches but the minor/patch differs (e.g. pinned `22.13.1`, active `22.14.0`). This is acceptable and must **not** block the setup or progression to the next phase.
-- **FAIL** only if the active major version is different or older than the pinned major version (e.g. pinned Node 22, active Node 20). Only **FAIL** results are hard blockers that must be resolved before proceeding.
-
-Do not fail just because the binary path is not under `~/.proto/`. The version is what matters, not the install method. If Proto is installed, suggest running `proto use` from the repo root to align versions.
-
-**Fix commands for common failures:**
-
-- Docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
-- Docker not running: Open Docker Desktop and wait for it to start
-- Proto: `curl -fsSL https://moonrepo.dev/install/proto.sh | bash` then `proto use` from repo root
-
-**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Proto absence, Node/pnpm minor/patch drift) should be surfaced but must not block progression.
+**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.**
 
 ---
 
 ## Phase 2: Environment Variables
 
-Check each variable is set and valid. Run `[ -n "$VAR" ] && echo "set" || echo "NOT SET"` for each.
+See [/docs/dev/e2e-setup.md](/docs/dev/e2e-setup.md) for the full variable reference (required, optional).
 
-| Variable             | Validation                                                    | Default / Guidance                                                                                    |
-| -------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `MOCK`               | Equals `0` (`[ "$MOCK" = "0" ]`)                              | Must be `0` for Speculos mode                                                                         |
-| `COINAPPS`           | Non-empty AND directory exists (`[ -d "$COINAPPS" ]`)         | Path to cloned `coin-apps` repo. If not cloned: `git clone https://github.com/LedgerHQ/coin-apps.git` |
-| `SEED`               | Non-empty only (`[ -n "$SEED" ]`). **NEVER print its value.** | See SEED guidance below.                                                                              |
-| `SPECULOS_IMAGE_TAG` | Non-empty                                                     | `ghcr.io/ledgerhq/speculos:latest`                                                                    |
-| `SPECULOS_DEVICE`    | Non-empty                                                     | `nanoSP` (options: nanoS, nanoSP, nanoX, stax, flex, nanoGen5)                                        |
+Check each variable with: `[ -n "$VAR" ] && echo "set" || echo "NOT SET"`
 
-**Optional variables:**
-
-| Variable                        | Purpose                                 | Default                         |
-| ------------------------------- | --------------------------------------- | ------------------------------- |
-| `SPECULOS_FIRMWARE_VERSION`     | Firmware version to emulate             | Auto-detected from device model |
-| `DISABLE_TRANSACTION_BROADCAST` | Set to `1` to prevent real tx broadcast | Unset (broadcast enabled)       |
+Required variables for desktop: `SEED`, `MOCK` (must be `0`), `COINAPPS`, `SPECULOS_IMAGE_TAG`, `SPECULOS_DEVICE` (default: `nanoSP`).
 
 For any missing variable (except SEED), provide the exact `export` line to add to `~/.zshrc`.
-
-**SEED guidance:**
-
-The SEED must be set but its value must **NEVER** be printed, logged, or displayed by this skill.
-
-Recommended approach (persistent):
-
-```
-export SEED=$(op read "op://Vault/Item/field")
-```
-
-Add to `~/.zshrc` for persistence. This uses 1Password CLI to inject the value securely.
-
-Also acceptable (session-only):
-
-```
-export SEED="<value>"
-```
-
-A manual one-time export in the current terminal session is fine for local E2E, especially when using a known public test seed. Do not add raw seed values to shell config files.
-
-Both approaches are valid. The key rules are:
-
-- This skill must never echo, print, or log the SEED value in command output.
-- Never commit SEED values to version control.
-
-**coin-apps freshness check:**
-
-If `COINAPPS` is set and the directory exists, check if the repo is up to date:
-
-```bash
-cd "$COINAPPS" && git fetch origin master --dry-run 2>&1
-```
-
-If the fetch shows new commits, warn the user and suggest:
-
-```bash
-cd "$COINAPPS" && git pull origin master
-```
-
-Outdated coin-apps is a common cause of Speculos app version mismatches.
 
 **Do not proceed to Phase 3 until all relevant checks pass.**
 
@@ -273,7 +194,7 @@ If the app launches and connects to Speculos successfully but the test fails on 
 
 Print a final checklist summarizing everything.
 
-Use `manual` for the smoke test row when the GUI fallback was triggered (Electron could not launch from the agent shell). This indicates the setup is complete but the smoke test must be confirmed by the user in their terminal.
+Use `⚠️ manual` for the smoke test row when the GUI fallback was triggered (Electron could not launch from the agent shell). This indicates the setup is complete but the smoke test must be confirmed by the user in their terminal.
 
 ```markdown
 ## E2E Desktop Setup — Complete
@@ -287,7 +208,7 @@ Use `manual` for the smoke test row when the GUI fallback was triggered (Electro
 | Dependencies installed | ✅ / ❌          |
 | App built              | ✅ / ❌          |
 | Playwright browser     | ✅ / ❌          |
-| Smoke test             | ✅ / ❌ / manual |
+| Smoke test             | ✅ / ❌ / ⚠️ manual |
 ```
 
 If everything passed, confirm the user is ready to run tests with:
