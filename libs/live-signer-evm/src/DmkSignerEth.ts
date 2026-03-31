@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/errors";
 import { EvmAddress, EvmSigner, EvmSignerEvent } from "@ledgerhq/coin-evm/types/signer";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
 
 export type DAError =
   | GetAddressDAError
@@ -37,11 +38,17 @@ export class DmkSignerEth implements EvmSigner {
     readonly dmk: DeviceManagementKit,
     readonly sessionId: string,
   ) {
+    const contextModule = new ContextModuleBuilder({
+      originToken: "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5",
+    })
+      .setSource("ledger-wallet")
+      .build();
     this.signer = new SignerEthBuilder({
       dmk,
       sessionId,
-      originToken: "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5",
-    }).build();
+    })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
