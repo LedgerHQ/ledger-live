@@ -1,6 +1,7 @@
 import type { AssetInfo, Cursor, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import coinConfig, { isGatewayEnabled } from "../../config";
+import coinConfig from "../../config";
+import { isGatewayEnabled } from "../../network/gateway";
 import { getOperations } from "../../network/gateway";
 import type { AssetView } from "../../types/gateway";
 
@@ -37,7 +38,7 @@ export async function listOperations(
   _order?: "asc" | "desc",
 ): Promise<Page<Operation>> {
   if (!isGatewayEnabled(currency)) throw new Error("Not implemented");
-  const { nativeInstrumentId } = coinConfig.getCoinConfig(currency);
+  const { nativeInstrumentId } = coinConfig.getCoinConfig(currency.id);
   const { operations, next } = await getOperations(currency, partyId, {
     cursor: cursor !== undefined ? parseInt(cursor) : undefined,
     minOffset: minHeight,

@@ -163,7 +163,7 @@ describe("gateway (devnet)", () => {
         expect(balance[0].amount).toBeGreaterThanOrEqual(0);
         expect(balance[0]).toHaveProperty("instrument_id");
       }
-    });
+    }, 30000);
   });
 
   describe("getPartyById", () => {

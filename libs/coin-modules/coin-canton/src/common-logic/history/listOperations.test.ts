@@ -1,13 +1,16 @@
-import coinConfig, { isGatewayEnabled } from "../../config";
+import coinConfig from "../../config";
+import { isGatewayEnabled } from "../../network/gateway";
 import { getOperations } from "../../network/gateway";
 import { createMockCantonCurrency, createMockCoinConfigValue } from "../../test/fixtures";
 import type { OperationView } from "../../types/gateway";
 import { listOperations } from "./listOperations";
 
-jest.mock("../../network/gateway", () => ({ getOperations: jest.fn() }));
+jest.mock("../../network/gateway", () => ({
+  getOperations: jest.fn(),
+  isGatewayEnabled: jest.fn(() => true),
+}));
 jest.mock("../../config", () => ({
   __esModule: true,
-  isGatewayEnabled: jest.fn(() => true),
   default: {
     getCoinConfig: jest.fn(),
   },

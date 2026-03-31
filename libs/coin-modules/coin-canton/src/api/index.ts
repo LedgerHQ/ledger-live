@@ -17,9 +17,9 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
-import coinConfig, { type CantonConfig } from "../config";
+import coinConfig, { type CantonCoinConfig } from "../config";
 
-export function createApi(config: CantonConfig): AlpacaApi {
+export function createApi(config: CantonCoinConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

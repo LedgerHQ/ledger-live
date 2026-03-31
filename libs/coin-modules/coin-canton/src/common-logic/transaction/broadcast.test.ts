@@ -1,16 +1,15 @@
-import * as coinConfigModule from "../../config";
-import { submit } from "../../network/gateway";
-import { createMockCantonCurrency, createMockCoinConfigValue } from "../../test/fixtures";
+import { isGatewayEnabled, submit } from "../../network/gateway";
+import { createMockCantonCurrency } from "../../test/fixtures";
 import { broadcast } from "./broadcast";
 
-jest.mock("../../network/gateway", () => ({ submit: jest.fn() }));
+jest.mock("../../network/gateway", () => ({
+  submit: jest.fn(),
+  isGatewayEnabled: jest.fn(() => true),
+}));
 
 const mockedSubmit = jest.mocked(submit);
+const mockedIsGatewayEnabled = jest.mocked(isGatewayEnabled);
 const mockCurrency = createMockCantonCurrency();
-const createMockConfig = (useGateway: boolean): coinConfigModule.CantonCoinConfig => ({
-  ...createMockCoinConfigValue(),
-  useGateway,
-});
 
 const mockSerialized = JSON.stringify({
   serialized: "serialized-data",
@@ -19,15 +18,12 @@ const mockSerialized = JSON.stringify({
 });
 
 describe("broadcast", () => {
-  const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it("should broadcast", async () => {
-    mockGetCoinConfig.mockReturnValue(createMockConfig(true));
-
+    mockedIsGatewayEnabled.mockReturnValue(true);
     mockedSubmit.mockResolvedValue({ submission_id: "test-id", update_id: "test-update-id" });
 
     const result = await broadcast(mockCurrency, mockSerialized);
@@ -42,7 +38,7 @@ describe("broadcast", () => {
   });
 
   it("should throw an error when useGateway is false (not implemented with node)", async () => {
-    mockGetCoinConfig.mockReturnValue(createMockConfig(false));
+    mockedIsGatewayEnabled.mockReturnValue(false);
 
     await expect(broadcast(mockCurrency, mockSerialized)).rejects.toThrow("Not implemented");
     expect(mockedSubmit).not.toHaveBeenCalled();

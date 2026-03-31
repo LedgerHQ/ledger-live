@@ -50,6 +50,10 @@ const getNodeId = (currency: CryptoCurrency) => {
 export const getNetworkType = (currency: CryptoCurrency) =>
   coinConfig.getCoinConfig(currency.id).networkType;
 
+export function isGatewayEnabled(currency: CryptoCurrency): boolean {
+  return coinConfig.getCoinConfig(currency.id).useGateway === true;
+}
+
 export const isPartyNotFound = (error: unknown): boolean => {
   if (error instanceof Error) {
     const errorMessage = error.message.toLowerCase().replace(/_/g, " ");

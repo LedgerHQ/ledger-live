@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { isGatewayEnabled } from "../../config";
+import { isGatewayEnabled } from "../../network/gateway";
 import { submit } from "../../network/gateway";
 
 export async function broadcast(currency: CryptoCurrency, signedTx: string): Promise<string> {

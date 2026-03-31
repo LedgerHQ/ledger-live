@@ -1,6 +1,6 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { isGatewayEnabled } from "../../config";
+import { isGatewayEnabled } from "../../network/gateway";
 import { getLedgerEnd } from "../../network/gateway";
 
 export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {

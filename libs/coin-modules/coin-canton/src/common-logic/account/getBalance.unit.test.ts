@@ -1,5 +1,5 @@
 import * as coinConfigModule from "../../config";
-import { getBalance as getBalanceFromNetwork } from "../../network/gateway";
+import { getBalance as getBalanceFromNetwork, isGatewayEnabled } from "../../network/gateway";
 import {
   createMockCantonCurrency,
   createMockCoinConfigValue,
@@ -7,9 +7,13 @@ import {
 } from "../../test/fixtures";
 import { getBalance } from "./getBalance";
 
-jest.mock("../../network/gateway", () => ({ getBalance: jest.fn() }));
+jest.mock("../../network/gateway", () => ({
+  getBalance: jest.fn(),
+  isGatewayEnabled: jest.fn(() => true),
+}));
 
 const mockedGetBalanceFromNetwork = jest.mocked(getBalanceFromNetwork);
+const mockedIsGatewayEnabled = jest.mocked(isGatewayEnabled);
 const mockCurrency = createMockCantonCurrency();
 const createMockConfig = (
   useGateway: boolean,
@@ -70,7 +74,7 @@ describe("getBalance", () => {
   });
 
   it("should throw an error when useGateway is false (not implemented with node)", async () => {
-    mockGetCoinConfig.mockReturnValue(createMockConfig(false));
+    mockedIsGatewayEnabled.mockReturnValue(false);
 
     await expect(getBalance(mockCurrency, "test-party-id")).rejects.toThrow("Not implemented");
     expect(mockedGetBalanceFromNetwork).not.toHaveBeenCalled();

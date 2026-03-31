@@ -1,11 +1,10 @@
-import { isGatewayEnabled } from "../../config";
+import { isGatewayEnabled } from "../../network/gateway";
 import { getLedgerEnd } from "../../network/gateway";
 import { createMockCantonCurrency } from "../../test/fixtures";
 import { lastBlock } from "./lastBlock";
 
-jest.mock("../../network/gateway", () => ({ getLedgerEnd: jest.fn() }));
-jest.mock("../../config", () => ({
-  __esModule: true,
+jest.mock("../../network/gateway", () => ({
+  getLedgerEnd: jest.fn(),
   isGatewayEnabled: jest.fn(() => true),
 }));
 
