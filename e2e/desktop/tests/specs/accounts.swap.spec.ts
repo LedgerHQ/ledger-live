@@ -52,6 +52,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
     ],
   });
 
+  // TODO: Create all the "deeplinks" swap tests and merge this one on "deeplink" test
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency`,
     {
@@ -80,6 +81,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
     },
   );
 
+  // TODO: Deeplink test ? check if it can be merged with the "Default currency" test
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Previous set up`,
     {
@@ -317,6 +319,8 @@ test.describe("Swap a coin for which you have no account yet - from present to n
     ],
   });
 
+  // TODO: This one should be part of "deeplink" tests -> Create a deeplink.swap.spec.ts file
+  // TODO: Merge no account from and no account to into 1 test - if we have it drop the 2 others tests
   test(
     "from Account present to Account not present",
     {
@@ -503,6 +507,7 @@ test.describe("Swap a coin for which you have no account yet - both not present"
   );
 });
 
+// TODO: Merge this test with the Swap a coin for which you have no account yet - both not present test - Need soft assert
 test.describe("Swap - Switch You send and You receive currency", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03");
   setupEnv(true);

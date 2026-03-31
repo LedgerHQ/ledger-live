@@ -12,6 +12,7 @@ import { liveDataWithAddressCommand } from "tests/utils/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
+// TODO: 4 "groups" of provider with 3 differents flows - "uniswap flow", "lifi flow", "1inch flow", "Changely flow"
 const providerFlowTests = [
   {
     fromAccount: Account.ETH_1,
@@ -200,6 +201,7 @@ test.describe("Swap - Landing page", () => {
     ],
   });
 
+  // TODO: Can be merged with "Swap - Check Best Offer" test" test
   test(
     `Swap landing page`,
     {

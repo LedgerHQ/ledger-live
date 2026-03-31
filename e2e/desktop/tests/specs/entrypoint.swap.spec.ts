@@ -50,6 +50,7 @@ test.describe("Swap flow from different entry point", () => {
     ],
   });
 
+  // TODO: entrypoints tests merged with deeplink tests on @Pavlo non reg - Discuss with him about that
   test(
     "Entry Point - Portfolio page",
     {

@@ -150,6 +150,7 @@ export class SwapPage extends WebViewAppPage {
     }
   }
 
+  // TODO: Read this function and simplify it if - swap ticket
   @step("Select available provider without KYC")
   async selectExchangeWithoutKyc(electronApp: ElectronApplication, swap?: Swap) {
     const [, webview] = electronApp.windows();
