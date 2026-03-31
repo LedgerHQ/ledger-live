@@ -136,7 +136,7 @@ function formatBlockTransaction(
     }
 
     const tokenId = isTrc10
-      ? params.asset_name
+      ? decodeHexAssetName(params.asset_name)
       : isTrc20 && params.contract_address
         ? encode58Check(params.contract_address)
         : undefined;
@@ -214,4 +214,9 @@ function getOperationType(contractType: string): string {
     default:
       return "NONE";
   }
+}
+
+function decodeHexAssetName(hexAssetName: string | undefined): string | undefined {
+  if (!hexAssetName) return undefined;
+  return Buffer.from(hexAssetName, "hex").toString("utf8");
 }

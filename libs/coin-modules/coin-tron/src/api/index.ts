@@ -22,11 +22,11 @@ import {
   getBalance,
   getBlock,
   getBlockInfo,
-  listOperations as logicListOperations,
+  listOperations as listOperationsLogic,
   lastBlock,
-  Options,
   validateAddress,
 } from "../logic";
+import { defaultFetchParams, getBlock as getBlockNetwork } from "../network";
 import type { TronMemo } from "../types";
 
 export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
@@ -80,16 +80,24 @@ async function estimate(transactionIntent: TransactionIntent<TronMemo>): Promise
 
 async function listOperations(
   address: string,
-  { minHeight, order }: ListOperationsOptions,
+  { minHeight, order, cursor, limit }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
-  // FIXME ListOperationsOptions allows cursor and limit, but this wrapper ignores both (always using softLimit: 200
-  //  and not validating cursor). If cursor/limit are not supported, please explicitly throw when they are provided;
-  //  otherwise, plumb them through (e.g., map limit to softLimit).
-  const options: Options = {
-    softLimit: 200,
-    minHeight: minHeight,
-    order: order || "asc",
-  } as const;
-  const [items, next] = await logicListOperations(address, options);
-  return { items, next: next || undefined };
+  const effectiveLimit = limit ?? 200;
+  const effectiveOrder = order ?? "asc";
+
+  // When a cursor is provided, it takes precedence over minHeight.
+  // The cursor already encodes a timestamp position, so minHeight is ignored.
+  // minHeight is only used on the first call (no cursor) to establish the starting point.
+  let minTimestamp = defaultFetchParams.minTimestamp;
+  if (minHeight > 0 && !cursor) {
+    const block = await getBlockNetwork(minHeight);
+    minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
+  }
+
+  return listOperationsLogic(address, {
+    limit: effectiveLimit,
+    minTimestamp,
+    order: effectiveOrder,
+    cursor,
+  });
 }
