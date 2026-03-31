@@ -10,6 +10,7 @@ import {
   APITokenTransfer,
   APITransactionType,
   AccountsGetOperationsOptions,
+  APITokenBalance,
 } from "./types";
 
 /** TzKT hard-caps `limit` at 10 000; we use a safer page size to stay well under that. */
@@ -115,6 +116,24 @@ const api = {
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APIDelegationType[]>({
       url: `${getExplorerUrl()}/v1/operations/delegations`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches FA2 token balances (tokenId = 0 only) for a given account.
+   * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
+   */
+  async getTokensBalances(address: string): Promise<APITokenBalance[]> {
+    const params: Record<string, unknown> = {
+      account: address,
+      "token.standard": "fa2",
+      "token.tokenId": "0",
+    };
+    const { data } = await network<APITokenBalance[]>({
+      url: `${getExplorerUrl()}/v1/tokens/balances`,
       params,
     });
     return data;
