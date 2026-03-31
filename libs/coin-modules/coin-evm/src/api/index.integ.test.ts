@@ -1021,7 +1021,11 @@ describe("EVM Api (Zero Gravity)", () => {
       // Regression test: chainscan.0g.ai returns "timestamp" (lowercase) instead of the
       // standard etherscan "timeStamp" (camelCase), causing op.tx.date to be an Invalid Date.
       const address = "0xa86a063a764f96cdb64dac0e5e780d5ade6bdbd5";
-      const result = await module.listOperations(address, { minHeight: 0, order: "desc" });
+      const result = await module.listOperations(address, {
+        minHeight: 0,
+        order: "desc",
+        limit: 10,
+      });
 
       const cutoff = new Date("2015-01-01T00:00:00Z").getTime();
 
