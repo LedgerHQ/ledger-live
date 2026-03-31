@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
@@ -23,11 +24,7 @@ type Props = {
 };
 
 const StepSummaryRecipientValue = ({ account, parentAccount, transaction }: Props) => {
-  const currencyId = parentAccount
-    ? parentAccount.currency.id
-    : account.type === "Account"
-      ? account.currency.id
-      : account.token.parentCurrency.id;
+  const currencyId = getMainAccount(account, parentAccount).currency.id;
   const matchingRecipientAccount = useSelector((state): Account | undefined => {
     const accounts = flattenAccountsSelector(state).filter(
       (candidate): candidate is Account => candidate.type === "Account",

@@ -387,7 +387,7 @@ export type LLDCoinFamily<
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
 
   /**
-   * Replace Networkfees row on Summary Step
+   * Replace Network fees row on Summary Step
    */
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps<T>>;
 

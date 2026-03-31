@@ -7,7 +7,6 @@ import StepSummaryAddressBadge from "./StepSummaryAddressBadge";
 
 type Props = {
   account: AleoAccount | TokenAccount;
-  parentAccount: AleoAccount | null | undefined;
   transaction: Transaction;
 };
 

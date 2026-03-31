@@ -86,7 +86,7 @@ const AddressField = ({ field }: FieldComponentProps) => {
 const TextField = ({ field }: FieldComponentProps) => {
   invariant(field.type === "text", "TextField invalid");
   const { t } = useTranslation();
-  const value = t(field.value, { defaultValue: field.value });
+  const value = field.valueI18nKey ? t(field.valueI18nKey) : field.value;
 
   return (
     <TransactionConfirmField
