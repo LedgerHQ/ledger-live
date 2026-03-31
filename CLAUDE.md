@@ -1,25 +1,9 @@
 # Project Context
 
-## "Ledger Wallet" (formerly "ledger-live") overview
+## Overview
 
-- Ledger Wallet is a crypto wallet with desktop and mobile applications
-- This monorepo (pnpm + turbo) provides frontend application code
-- Backend code (REST APIs) is outside this repo
-
-### Key Directories
-
-- `apps/` – Frontend applications for mobile, desktop, etc.
-- `domain/` NEW – Domain entities shared by apps (React, TypeScript)
-- `features/` NEW – Features shared by apps (React, TypeScript)
-- `shared/` NEW – Cross-cutting packages used by more than one feature or domain entity (React, TypeScript)
-- `libs/` LEGACY — Shared libraries
-- `tools/` — Build and deploy related tooling (GitHub actions, scripts)
-
-## General Principles
-
-- Prioritize cleanliness over cleverness
-- Note ideas for regular incremental improvement
-- Prefer community best-practice over legacy code
+- "Ledger Wallet" (formerly "ledger-live") is a crypto wallet
+- This pnpm and turborepo monorepo provides frontend apps
 
 ## Common Commands
 
@@ -28,5 +12,5 @@
 
 ## Validate Before Finishing
 
-- Before finishing any agentic code changes, run static checks for the affected scope.
+- Before finishing any agentic code change, run static checks for the affected scope
 - See [/docs/dev/validate-before-finishing.md](/docs/dev/validate-before-finishing.md)
