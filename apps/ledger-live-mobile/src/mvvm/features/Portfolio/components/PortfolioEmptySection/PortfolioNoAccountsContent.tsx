@@ -14,7 +14,7 @@ type PortfolioNoAccountsContentProps = {
 const PortfolioNoAccountsContent = ({
   isLNSUpsellBannerShown,
 }: PortfolioNoAccountsContentProps) => (
-  <Box lx={{ paddingHorizontal: "s16" }}>
+  <Box lx={{ paddingHorizontal: "s16", marginBottom: "s48" }}>
     <TrackScreen name="Wallet" accountsLength={0} />
     <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
     <TransferDrawer />
