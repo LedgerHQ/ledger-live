@@ -9,6 +9,7 @@ import {
   etherscanOperationToOperations,
   internalTxsToOperationsByHash,
   safeBigNumber,
+  safeDate,
   deserializePagingToken,
   serializePagingToken,
 } from "../adapters";
@@ -1885,6 +1886,31 @@ describe("EVM Family", () => {
         });
         it("should handle hex values", () => {
           expect(safeBigNumber("0x10")).toEqual(new BigNumber(16));
+        });
+      });
+
+      describe("safeDate", () => {
+        it("parses a valid timeStamp (camelCase) string", () => {
+          expect(safeDate({ timeStamp: "1654646570" })).toEqual(new Date(1654646570000));
+        });
+        it("parses a valid timestamp (lowercase) string as fallback", () => {
+          expect(safeDate({ timestamp: "1654646570" })).toEqual(new Date(1654646570000));
+        });
+        it("prefers timeStamp over timestamp when both are present", () => {
+          expect(safeDate({ timeStamp: "1654646570", timestamp: "0" })).toEqual(
+            new Date(1654646570000),
+          );
+        });
+        it("throws InvalidExplorerResponse when both fields are absent", () => {
+          expect(() => safeDate({})).toThrow("Missing or non-numeric timestamp");
+        });
+        it("throws InvalidExplorerResponse when timeStamp is a non-numeric string", () => {
+          expect(() => safeDate({ timeStamp: "not-a-number" })).toThrow(
+            "Missing or non-numeric timestamp",
+          );
+        });
+        it("throws InvalidExplorerResponse when timestamp (lowercase) is a non-numeric string", () => {
+          expect(() => safeDate({ timestamp: "" })).toThrow("Missing or non-numeric timestamp");
         });
       });
 

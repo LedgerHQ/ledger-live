@@ -14,6 +14,7 @@ import {
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
+import { InvalidExplorerResponse } from "../errors";
 import { NO_TOKEN } from "../network/explorer/types";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 import {
@@ -39,15 +40,21 @@ export const safeBigNumber = (value: string | undefined): BigNumber => {
 };
 
 /**
- * Parses a Date from an etherscan-like operation.
+ * Extracts a unix timestamp from an etherscan-like operation.
  * Some explorers (e.g., chainscan.0g.ai for zero_gravity) return "timestamp" (lowercase)
  * instead of the standard "timeStamp" (camelCase).
+ * Throws InvalidExplorerResponse when neither field is present or the value is non-numeric,
+ * so malformed responses surface as errors rather than silently producing epoch dates.
  */
 export const safeDate = (op: { timeStamp?: string; timestamp?: string }): Date => {
   const raw = op.timeStamp ?? op.timestamp;
-  if (!raw) return new Date(0);
-  const ts = Number.parseInt(raw, 10);
-  return Number.isNaN(ts) ? new Date(0) : new Date(ts * 1000);
+  if (raw !== undefined) {
+    const ts = Number.parseInt(raw, 10);
+    if (!Number.isNaN(ts)) return new Date(ts * 1000);
+  }
+  throw new InvalidExplorerResponse(`Missing or non-numeric timestamp in explorer response`, {
+    op: JSON.stringify(op),
+  });
 };
 
 /**
