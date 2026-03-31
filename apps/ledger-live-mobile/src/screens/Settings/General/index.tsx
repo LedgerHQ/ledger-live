@@ -33,11 +33,7 @@ export default function GeneralSettings() {
       <MevProtection />
       <ReportErrorsRow />
       <AnalyticsRow />
-      {showPersonalizedRecommendationsRow ? 
-        <FeatureToggle featureId="llmAnalyticsOptInPrompt">
-          <PersonalizedRecommendationsRow />
-        </FeatureToggle> : null
-      }
+      {showPersonalizedRecommendationsRow ? <PersonalizedRecommendationsRow /> : null}
     </SettingsNavigationScrollView>
   );
 }

@@ -210,6 +210,7 @@ const LWM_WALLET_40: FeatureId = "lwmWallet40";
 const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_IMPORT]: (state, action) => {
     const payload = (action as Action<SettingsImportPayload>).payload;
+    const { importConsentBackfillAt } = payload;
     const filteredPayload = filterValidSettings(payload);
     const wallet40FF = getFeature({
       key: LWM_WALLET_40,
@@ -229,9 +230,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
         ? { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo }
         : state.analyticsConsentInfo;
 
-    if (!hasAnalyticsConsentInfoInImport && mergedPreview.hasSeenAnalyticsOptInPrompt) {
+    if (
+      !hasAnalyticsConsentInfoInImport &&
+      mergedPreview.hasSeenAnalyticsOptInPrompt &&
+      importConsentBackfillAt
+    ) {
       analyticsConsentInfo = {
-        consentDate: new Date().toISOString(),
+        consentDate: importConsentBackfillAt,
         privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
       };
     }

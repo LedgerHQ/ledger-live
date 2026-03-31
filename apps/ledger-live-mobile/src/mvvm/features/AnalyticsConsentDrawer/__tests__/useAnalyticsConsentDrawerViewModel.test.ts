@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
+import { track, updateIdentify } from "~/analytics";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 import { useAnalyticsConsentDrawerViewModel } from "../useAnalyticsConsentDrawerViewModel";
 import { ONE_YEAR_MS } from "../analyticsConsentDrawerLogic";
@@ -12,14 +13,6 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
   useIsFocused: () => mockUseIsFocused(),
-}));
-
-const mockTrack = jest.fn();
-const mockUpdateIdentify = jest.fn();
-
-jest.mock("~/analytics", () => ({
-  track: (...args: unknown[]) => mockTrack(...args),
-  updateIdentify: (...args: unknown[]) => mockUpdateIdentify(...args),
 }));
 
 describe("useAnalyticsConsentDrawerViewModel", () => {
@@ -66,7 +59,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("consentFresh");
     });
     expect(result.current.isDrawerOpen).toBe(true);
-    expect(mockTrack).toHaveBeenCalledWith("modal_opened", {
+    expect(track).toHaveBeenCalledWith("modal_opened", {
       modal: "Analytics consent drawer",
     });
   });
@@ -133,11 +126,11 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
     expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
     expect(result.current.phase).toBe("closed");
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_opt_in",
       page: "Analytics consent drawer",
     });
-    expect(mockUpdateIdentify).toHaveBeenCalled();
+    expect(updateIdentify).toHaveBeenCalled();
   });
 
   it("should dispatch opt-out settings and close drawer when applyOptOut is called", async () => {
@@ -157,7 +150,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(s.personalizedRecommendationsEnabled).toBe(false);
     expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
     expect(result.current.phase).toBe("closed");
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_opt_out",
       page: "Analytics consent drawer",
     });
@@ -169,7 +162,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       overrideInitialState: withConsentDrawerState({
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: true,
-        privacyPolicyVersion: 1,
+        privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
         consentDate: oldIso,
       }),
     });
@@ -182,7 +175,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
 
     expect(result.current.phase).toBe("consentReconfirm");
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_privacy_got_it",
       page: "Analytics consent drawer",
     });
@@ -193,7 +186,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       overrideInitialState: withConsentDrawerState({
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: true,
-        privacyPolicyVersion: 1,
+        privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
         consentDate: new Date().toISOString(),
       }),
     });
@@ -228,7 +221,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Settings, {
       screen: ScreenName.GeneralSettings,
     });
-    expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_set_preferences",
       page: "Analytics consent drawer",
     });
