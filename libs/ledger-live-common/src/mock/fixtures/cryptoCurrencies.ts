@@ -38,6 +38,7 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
 }
 
 const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
+
 const defaultERC20USDTToken: TokenCurrency = {
   type: "TokenCurrency",
   id: "ethereum/erc20/usd_tether__erc20_",
@@ -120,5 +121,14 @@ export function createFixtureAccount(
       },
     },
     swapHistory: [],
+  };
+}
+
+export function createFixtureEthAccountWithSubToken(token: TokenCurrency): Account {
+  const ethAccount = createFixtureAccount("01");
+  const subAccount = createFixtureTokenAccount("01", token);
+  return {
+    ...ethAccount,
+    subAccounts: [{ ...subAccount, parentId: ethAccount.id }],
   };
 }
