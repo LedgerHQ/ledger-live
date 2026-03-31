@@ -19,29 +19,29 @@ catalogs:
       specifier: 1.4.0
       version: 1.4.0
     '@ledgerhq/device-management-kit':
-      specifier: 1.2.0
-      version: 1.2.0
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-signer-kit-ethereum':
-      specifier: 1.12.0
-      version: 1.12.0
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-signer-kit-hyperliquid':
-      specifier: 1.0.2
-      version: 1.0.2
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.7.1
-      version: 1.7.1
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-transport-kit-react-native-ble':
-      specifier: 1.3.2
-      version: 1.3.2
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-transport-kit-react-native-hid':
-      specifier: 1.0.3
-      version: 1.0.3
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-transport-kit-speculos':
-      specifier: 1.2.0
-      version: 1.2.0
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/device-transport-kit-web-hid':
-      specifier: 1.2.3
-      version: 1.2.3
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@ledgerhq/lumen-design-core':
       specifier: 0.1.6
       version: 0.1.6
@@ -52,8 +52,8 @@ catalogs:
       specifier: 0.1.13
       version: 0.1.13
     '@ledgerhq/speculos-device-controller':
-      specifier: 0.2.3
-      version: 0.2.3
+      specifier: 0.0.0-blind-signing-reporter-20260331074051
+      version: 0.0.0-blind-signing-reporter-20260331074051
     '@playwright/test':
       specifier: 1.53.0
       version: 1.53.0
@@ -428,7 +428,7 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
   '@ledgerhq/hw-transport': workspace:*
-  '@ledgerhq/context-module': 1.15.0
+  '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051
   tslib: 2.6.2
   '@ethersproject/providers>ws': 7.5.10
   elliptic: 6.6.1
@@ -1522,10 +1522,10 @@ importers:
         version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -6172,7 +6172,7 @@ importers:
         version: link:../client-ids
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
@@ -6706,7 +6706,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -6844,7 +6844,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
@@ -8006,7 +8006,7 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0
+        version: 0.0.0-blind-signing-reporter-20260331074051
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -9790,10 +9790,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 'catalog:'
-        version: 1.2.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -9857,10 +9857,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 'catalog:'
-        version: 1.3.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -9885,7 +9885,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
-        version: 1.0.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -9961,7 +9961,7 @@ importers:
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -10006,10 +10006,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-transport-kit-speculos':
         specifier: 'catalog:'
-        version: 1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(rxjs@7.8.2)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -10021,7 +10021,7 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
-        version: 0.2.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -10142,14 +10142,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-aleo
       '@ledgerhq/context-module':
-        specifier: 1.15.0
-        version: 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        specifier: 0.0.0-blind-signing-reporter-20260331074051
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 0.0.0-develop-20260323001608
-        version: 0.0.0-develop-20260323001608(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        version: 0.0.0-develop-20260323001608(@ledgerhq/context-module@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -10243,14 +10243,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 1.15.0
-        version: 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        specifier: 0.0.0-blind-signing-reporter-20260331074051
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
-        version: 1.12.0(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/context-module@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -10293,10 +10293,10 @@ importers:
     dependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-hyperliquid':
         specifier: 'catalog:'
-        version: 1.0.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -10342,10 +10342,10 @@ importers:
         version: link:../coin-modules/coin-solana
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.2.0(rxjs@7.8.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.7.1(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@6.0.2)
+        version: 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(typescript@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -15648,10 +15648,10 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/context-module@1.15.0':
-    resolution: {integrity: sha512-PzO/2JdOL29C2NhiVX85K7ZI9kDQN2E0s74d6lOe8kYb8XfN06ETN3RPdzBnTgO0jkLQUHCjS5aKpPa40S14qA==}
+  '@ledgerhq/context-module@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-tpUAO/DrO/q3K4XxeJTmO1InZhM9RKxQ+gbceYcIT087JHhubbA5Z+cbI8S6yiupSOURJPw6vp4FSwPUQonalw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
 
   '@ledgerhq/crypto-icons@1.4.0':
     resolution: {integrity: sha512-ol1WC43B0bOt6bF2pw/JB2c4EYju3aDmju9ErehpnYOY6qtGXlo4gHL6DSsyMn4N8KrvUcJbbBZ4kbq76yUHEg==}
@@ -15671,58 +15671,58 @@ packages:
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
 
-  '@ledgerhq/device-management-kit@1.2.0':
-    resolution: {integrity: sha512-h/rQwHU8fpuPRtmIxPfnFgMmjuC3HhiRYZAeLPs3HqpQ4X7VikjKQVWqcu/9rAuiHVs6ET/L4adFuU3jjR/qFQ==}
+  '@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-6Wm/uMM4KYlN5IlbTaF80Ph8TQ0ip9boyfoLmvGfXDe5H3+9QmW4+SZmLwQbBHIMxH75CnMVfS5C6GtvJ/JYXw==}
     peerDependencies:
       rxjs: 7.8.2
 
   '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260323001608':
     resolution: {integrity: sha512-SqBHgjg1S2xQ1XKnXSGNz8zEBLi1NbqFKg/zdx9UpOvDukoValf9ucQ+H/DqAPanuyGev+SdT0Dt87NxHxnPCg==}
     peerDependencies:
-      '@ledgerhq/context-module': 1.15.0
+      '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051
       '@ledgerhq/device-management-kit': 0.0.0-develop-20260323001608
 
-  '@ledgerhq/device-signer-kit-ethereum@1.12.0':
-    resolution: {integrity: sha512-Uj3C3UaoaX/pcqSuCHgfQZn1lwqqp60eQr8wyQOY5OCV4zttoWKmB1MRBn+t4LB08eBRAgokcFdsG2dGwFEhiA==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-EwMp6o30SrQ9QyI9vMsKvTiTCfQtg6kPveaMLgIx+HCbMunH2W+KvsrI5G1Wu2y9600/P66Jgk1eJiY3syu9Jg==}
     peerDependencies:
-      '@ledgerhq/context-module': 1.15.0
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.0.2':
-    resolution: {integrity: sha512-vOHQRrMsUj4XMI4LC+WcerH0yyIiWw2kPHK0yN847FccKaB5x9+wiz2zWgcqk7fKHqYFr1S5GqXjmaiRWiAcwA==}
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-wOaPfRCkyodMiUm3H+02CZQroMqid65VbbCXbpo9WimF98Og5hJIFSds3q+H923cz8WPFaCggtGouM5k9xCeTQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
 
-  '@ledgerhq/device-signer-kit-solana@1.7.1':
-    resolution: {integrity: sha512-VmaWZSPW+9/ISrEsJwhWRT4trVv3kPlGWW6EnYVX54ttuaGCaxducS7QnL2CeYPfegtGSt7LP1gUIzbe/RQy2g==}
+  '@ledgerhq/device-signer-kit-solana@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-hye2QrtlYL1o/YzAZJeZC4/T2tt+b7h0ipzEdqGUMlFbigjAfMTtAE9ImHmN8S1eGeS3xmzJDVZcth/4DdwzFw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2':
-    resolution: {integrity: sha512-NX/Ml23AR/8iQ5pUPQqum3qjQpValxNhZSbp+Zm/lSl8W0HETLMFK03w/4lj2nfPjiwBy3U+uPhzYNDzdROYQg==}
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-N/0Rjp7Kg1xPewCMT2ttA508fTntVQQ5cGal6atjoTJzwW6SEIFBee23XHokrSz0KsYAIHlcG5AWU2eBfaAuZw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3':
-    resolution: {integrity: sha512-GNkJf7vLQ3PsnsZ9vHaTI3osjDlnf+7NoBJj5ZusHDfsz4B9s0ajRv+OYbz9NIhd2B7OE2DAYAuYwnnImkbDUw==}
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-2alEpMLtFUMAjwurt9X5Cst94XhH2g3kaSCdFKFyoFWisSPOisFfBd+f1sXIlnCx4tp/FUcV/z8NLZAM4pAGNA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
       react-native: '>0.74.1'
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.0':
-    resolution: {integrity: sha512-ox+VyOYYhGMHfHisglvy7Fmo8uCSOLrTTCJ71mj1RK6RU2ivqcY5IL5IexJJFOv1m+jGZldi0/aSEnYLXNmeCA==}
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-WVopQoXfIxZIyUmbOsKofRtxs/j+lmqgxd33PnQo6DBKQUVj2028c3woc5pcbnKyXtF6T41zJ9KXFgHT1FpGyw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.2.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.3':
-    resolution: {integrity: sha512-p0v0K4otRT/jVC1ysLiXWJ6Nrzw1/5IxGxHaNUrbdiX+ndpjTFQsELkqDyDMKCHaP22sGSXqrQFVFW5Z2DNRVw==}
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-5WYEC4BI1AlQrqKEIZLoPwaqp7JE7P+p2COovm/HMZE65VePk8tBm8n/NmhGPG+JEhnYh+pkoiibUSvubY17hA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.0
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
       rxjs: 7.8.2
 
   '@ledgerhq/domain-service@1.2.12':
@@ -15838,15 +15838,20 @@ packages:
     peerDependencies:
       react: 19.0.0
 
+  '@ledgerhq/signer-utils@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-mPWEkVelYOsm//90NXXi8FK0sBRYDvVXUtoOiQ5wOZ6i/9tt6sbkAKoyn7naSzVwThls2Q+UotOsOjSliZgpcA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
+
   '@ledgerhq/signer-utils@1.1.3':
     resolution: {integrity: sha512-3Y1ove1TyMVuCTKxM1eB9QMXpmrnYVjRc0fEPr5F+I6YJ0DX/yRc+t38ZFJw6m/IkVl8NN1TtmDyaFWJb+xXnQ==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
 
-  '@ledgerhq/speculos-device-controller@0.2.3':
-    resolution: {integrity: sha512-U1dTtyBomWxTzps8PDWG0szaat9Am58C8Z10hVuEamtfrAZw4QGEce3m7B3TWAuJY+fZN63xE8CZMp49YChWiQ==}
+  '@ledgerhq/speculos-device-controller@0.0.0-blind-signing-reporter-20260331074051':
+    resolution: {integrity: sha512-ikD90SvtCcLMxwcA7bbhoCwsO4+QS571yp6QWhr8EpfiuFYAqtvcX7TD1qM1ySK/6BP4Ra/UrbGkefptZotrcg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^1.0.1
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -42554,9 +42559,9 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/context-module@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       axios: 1.13.5
       crypto-js: 4.2.0
       ethers: 6.15.0
@@ -42605,7 +42610,7 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
 
-  '@ledgerhq/device-management-kit@1.2.0':
+  '@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -42623,7 +42628,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)':
+  '@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@sentry/minimal': 6.19.7
@@ -42642,21 +42647,21 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260323001608(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-aleo@0.0.0-develop-20260323001608(@ledgerhq/context-module@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.12.0(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/context-module@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)))(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -42667,11 +42672,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-hyperliquid@1.0.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/device-signer-kit-hyperliquid@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -42680,11 +42685,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@1.7.1(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(typescript@6.0.2)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(typescript@6.0.2)':
     dependencies:
-      '@ledgerhq/context-module': 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@6.0.2))(typescript@6.0.2)
       '@solana/web3.js': 1.98.4(typescript@6.0.2)
       bs58: 6.0.0
@@ -42701,9 +42706,9 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.3.2(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(react-native-ble-plx@3.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.8
       purify-ts: 2.1.0
@@ -42712,35 +42717,35 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-react-native-hid@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       react-native: 0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@react-native-community/cli@15.1.0(typescript@6.0.2))(react@19.0.0)
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@1.2.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       axios: 1.13.5
       purify-ts: 2.1.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(rxjs@7.8.2)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.2
@@ -42933,16 +42938,21 @@ snapshots:
       react: 19.0.0
       tailwind-merge: 2.6.0
 
-  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       semver: 7.7.2
 
-  '@ledgerhq/speculos-device-controller@0.2.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
+      semver: 7.7.2
+
+  '@ledgerhq/speculos-device-controller@0.0.0-blind-signing-reporter-20260331074051(@ledgerhq/device-management-kit@0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-blind-signing-reporter-20260331074051(rxjs@7.8.2)
       '@sentry/minimal': 6.19.7
-      axios: 1.13.2
+      axios: 1.13.5
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
