@@ -1,6 +1,7 @@
 import React from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import HistoryPageHeader from "./components/HistoryPageHeader";
+import { HistoryActionsList } from "./components/HistoryActionsList";
 import { HistoryList } from "./screens/HistoryList";
 import type { HistoryViewModel } from "./useHistoryViewModel";
 
@@ -14,6 +15,8 @@ export function HistoryView({
   onExportClick,
   operationsCount,
   hasPendingOperations,
+  selectedType,
+  onTypeChange,
 }: Readonly<HistoryViewModel>) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24">
@@ -22,7 +25,12 @@ export function HistoryView({
         operationsCount={operationsCount}
         has_pending_operations={hasPendingOperations ? true : false}
       />
-      <HistoryPageHeader onBack={navigateToDashboard} onExportClick={onExportClick} />
+      <HistoryPageHeader onBack={navigateToDashboard} />
+      <HistoryActionsList
+        selectedType={selectedType}
+        onTypeChange={onTypeChange}
+        onExportClick={onExportClick}
+      />
       <HistoryList
         table={table}
         parentRef={parentRef}

@@ -6,8 +6,10 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { useHistoryOperations } from "./hooks/useHistoryOperations";
 import { useHistoryTable } from "./hooks/useHistoryTable";
 import { useHistoryVirtualization } from "./hooks/useHistoryVirtualization";
+import { useHistoryTypeFilter } from "./hooks/useHistoryTypeFilter";
 import type { HistoryTable, OperationRow, VirtualItem } from "./types";
 import { track } from "~/renderer/analytics/segment";
+import { ALL_TYPES_VALUE, type HistoryTypeFilter } from "./utils/operationTypeOptions";
 
 export type HistoryViewModel = {
   navigateToDashboard: () => void;
@@ -19,6 +21,8 @@ export type HistoryViewModel = {
   onExportClick: () => void;
   operationsCount: number;
   hasPendingOperations: boolean;
+  selectedType: HistoryTypeFilter;
+  onTypeChange: (type: HistoryTypeFilter) => void;
 };
 
 export function useHistoryViewModel(): HistoryViewModel {
@@ -28,7 +32,14 @@ export function useHistoryViewModel(): HistoryViewModel {
     navigate("/");
   }, [navigate]);
 
-  const operations = useHistoryOperations();
+  const { selectedType, setSelectedType } = useHistoryTypeFilter();
+
+  const allOperations = useHistoryOperations();
+  const operations = useMemo(() => {
+    if (selectedType === ALL_TYPES_VALUE) return allOperations;
+    return allOperations.filter(op => op.type === selectedType);
+  }, [allOperations, selectedType]);
+
   const table = useHistoryTable(operations);
   const { parentRef, rowVirtualizer, flatItems } = useHistoryVirtualization(table);
 
@@ -58,5 +69,7 @@ export function useHistoryViewModel(): HistoryViewModel {
     onExportClick,
     operationsCount,
     hasPendingOperations,
+    selectedType,
+    onTypeChange: setSelectedType,
   };
 }
