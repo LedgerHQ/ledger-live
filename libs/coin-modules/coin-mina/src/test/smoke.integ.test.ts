@@ -16,8 +16,8 @@ jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
 }));
 
-import { fetchTransactionMetadata } from "../api";
 import { getAccount } from "../logic/account/getAccount";
+import { fetchTransactionMetadata } from "../network";
 
 const VALID_ADDRESS = "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD";
 const DEST_ADDRESS = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";

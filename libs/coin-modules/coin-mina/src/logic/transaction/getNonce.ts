@@ -1,4 +1,4 @@
-import { fetchTransactionMetadata } from "../../api";
+import { fetchTransactionMetadata } from "../../network";
 import { Transaction } from "../../types/common";
 import { isValidAddress } from "../utils";
 

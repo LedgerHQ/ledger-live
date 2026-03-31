@@ -1,5 +1,5 @@
-import type { RosettaTransaction } from "../api/types";
 import { getTransactions } from "../logic/history/getTransactions";
+import type { RosettaTransaction } from "../network/types";
 import {
   makeTransactionsResponse,
   makeRosettaTransaction,

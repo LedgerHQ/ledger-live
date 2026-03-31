@@ -1,6 +1,6 @@
-jest.mock("../../api");
+jest.mock("../../network");
 
-import { getDelegateAccount } from "../../api";
+import { getDelegateAccount } from "../../network";
 import { getDelegateAddress } from "./getDelegateAddress";
 
 const mockGetDelegateAccount = getDelegateAccount as jest.MockedFunction<typeof getDelegateAccount>;

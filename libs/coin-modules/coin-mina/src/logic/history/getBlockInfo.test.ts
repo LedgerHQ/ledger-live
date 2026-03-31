@@ -1,6 +1,6 @@
-jest.mock("../../api");
+jest.mock("../../network");
 
-import { rosettaGetBlockInfo } from "../../api";
+import { rosettaGetBlockInfo } from "../../network";
 import { getBlockInfo } from "./getBlockInfo";
 
 const mockRosettaGetBlockInfo = rosettaGetBlockInfo as jest.MockedFunction<

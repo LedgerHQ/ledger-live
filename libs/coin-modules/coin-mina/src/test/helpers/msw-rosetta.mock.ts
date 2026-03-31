@@ -11,7 +11,7 @@ import type {
   RosettaMetadataResponse,
   RosettaPreprocessResponse,
   RosettaSubmitResponse,
-} from "../../api/types";
+} from "../../network/types";
 
 export const TEST_ROSETTA_ENDPOINT = "https://test-mina-rosetta.example.com";
 export const TEST_GRAPHQL_ENDPOINT = "https://test-mina-graphql.example.com";

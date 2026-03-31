@@ -1,8 +1,8 @@
-jest.mock("../../api");
+jest.mock("../../network");
 
 import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
 import BigNumber from "bignumber.js";
-import { fetchTransactionMetadata } from "../../api";
+import { fetchTransactionMetadata } from "../../network";
 import { Transaction } from "../../types/common";
 import { getFees } from "./getFees";
 

@@ -1,6 +1,6 @@
-jest.mock("../../api");
+jest.mock("../../network");
 
-import { rosettaSubmitTransaction } from "../../api";
+import { rosettaSubmitTransaction } from "../../network";
 import { TxType } from "../../types/common";
 import { broadcastTransaction } from "./broadcast";
 

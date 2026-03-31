@@ -1,8 +1,8 @@
-jest.mock("../../api");
+jest.mock("../../network");
 
 import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
 import BigNumber from "bignumber.js";
-import { fetchAccountBalance, fetchNetworkStatus } from "../../api";
+import { fetchAccountBalance, fetchNetworkStatus } from "../../network";
 import { getAccount } from "./getAccount";
 
 const mockFetchNetworkStatus = fetchNetworkStatus as jest.MockedFunction<

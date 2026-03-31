@@ -1,4 +1,4 @@
-import { getDelegateAccount } from "../../api";
+import { getDelegateAccount } from "../../network";
 
 export const getDelegateAddress = async (address: string): Promise<string | undefined> => {
   const data = await getDelegateAccount(address);
