@@ -21,9 +21,9 @@ For a smooth and quick integration:
 
 ***
 
-## Dependecies
+## Dependencies
 
-This package extends [@mysten/ledgerjs-hw-app-sui](https://www.npmjs.com/package/@mysten/ledgerjs-hw-app-sui)
+This package re-exports [@mysten/ledgerjs-hw-app-sui](https://www.npmjs.com/package/@mysten/ledgerjs-hw-app-sui).
 
 ## API
 
