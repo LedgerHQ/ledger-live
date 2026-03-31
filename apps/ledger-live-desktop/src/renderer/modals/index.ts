@@ -1,4 +1,4 @@
-import { MakeModalsType, GlobalModalData, ModalData, LumenDialogData } from "./types";
+import { MakeModalsType, GlobalModalData, ModalData } from "./types";
 import { coinModals } from "../families/generated";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
@@ -75,7 +75,7 @@ const globalModals: GlobalModals = {
   MODAL_ERROR,
 };
 
-export type Modals = MakeModalsType<Omit<ModalData, keyof LumenDialogData>>;
+export type Modals = MakeModalsType<ModalData>;
 
 const modals: Modals = {
   ...globalModals,

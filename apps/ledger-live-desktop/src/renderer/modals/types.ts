@@ -1,7 +1,6 @@
 import React from "react";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { PerpsSignData } from "LLD/features/Perps/screens/PerpsSign/PerpsSignModal";
 
 import { Data as SendData } from "./Send/Body";
 import { Data as ReceiveData } from "./Receive/Body";
@@ -88,15 +87,7 @@ export type GlobalModalData = {
 };
 
 /**
- * Dialogs rendered by the MVVM GlobalDialogs layer (Lumen Dialog) instead of ModalsLayer.
- * They still use the openModal/closeModal Redux actions for state management.
- */
-export type LumenDialogData = {
-  MODAL_PERPS_SIGNING: PerpsSignData;
-};
-
-/**
  * finally, we make a union with the coin modals data and we obtain the complete modal data type.
  */
-export type ModalData = GlobalModalData & CoinModalsData & LumenDialogData;
+export type ModalData = GlobalModalData & CoinModalsData;
 export type AllModalNames = keyof ModalData;

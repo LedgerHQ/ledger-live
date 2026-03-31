@@ -1,12 +1,14 @@
 import React, { useCallback, useRef } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
-import { closeModal } from "~/renderer/actions/modals";
 import { usePerpsSignViewModel, type PerpsSignData } from "./usePerpsSignViewModel";
 import { PerpsSignView } from "./PerpsSignView";
-
-export type { PerpsSignData };
+import {
+  selectIsPerpsSignOpen,
+  closePerpsSign,
+  getPerpsSignData,
+  clearPerpsSignData,
+} from "./perpsSignDialog";
 
 function PerpsSignBody({ data, onClose }: { data: PerpsSignData; onClose: () => void }) {
   const viewModel = usePerpsSignViewModel(data, onClose);
@@ -15,14 +17,15 @@ function PerpsSignBody({ data, onClose }: { data: PerpsSignData; onClose: () => 
 
 export default function PerpsSignModal() {
   const dispatch = useDispatch();
-  const isOpen = useSelector(state => isModalOpened(state, "MODAL_PERPS_SIGNING"));
-  const data = useSelector(state => getModalData(state, "MODAL_PERPS_SIGNING"));
+  const isOpen = useSelector(selectIsPerpsSignOpen);
 
-  const dataRef = useRef(data);
-  if (data) dataRef.current = data;
+  const dataRef = useRef<PerpsSignData | null>(null);
+  const currentData = getPerpsSignData();
+  if (currentData) dataRef.current = currentData;
 
   const onClose = useCallback(() => {
-    dispatch(closeModal("MODAL_PERPS_SIGNING"));
+    dispatch(closePerpsSign());
+    clearPerpsSignData();
   }, [dispatch]);
 
   const handleOpenChange = useCallback(
