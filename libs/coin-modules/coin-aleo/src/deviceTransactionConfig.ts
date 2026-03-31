@@ -28,22 +28,19 @@ async function getDeviceTransactionConfig({
   const mainAccount = getMainAccount(account, parentAccount);
   const config = aleoCoinConfig.getCoinConfig(mainAccount.currency);
 
-  fields.push({
-    type: "text",
-    label: "Method",
-    value: method,
-  });
-
-  fields.push({
-    type: "amount",
-    label: "Amount",
-  });
+  fields.push(
+    { type: "text", label: "Method", value: method },
+    { type: "address", label: "From", address: mainAccount.freshAddress },
+    { type: "address", label: "To", address: transaction.recipient },
+    { type: "amount", label: "Amount" },
+  );
 
   if (config.isFeeSponsored) {
     fields.push({
       type: "text",
       label: "Fees",
       value: "Sponsored by Provable",
+      valueI18nKey: "aleo.shared.sponsoredByProvable",
     });
   } else if (!status.estimatedFees.isZero()) {
     fields.push({

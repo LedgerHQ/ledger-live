@@ -2,9 +2,9 @@ import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import ModularDrawerAddAccountFlowManager from "./ModularDrawerAddAccountFlowManager";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import createSendSteps from "./createSendSteps";
-import StepSummaryAmountRow from "./modals/send/steps/StepSummaryAmountRow";
-import StepSummaryNetworkFeesRow from "./modals/send/steps/StepSummaryNetworkFeesRow";
+import StepSummaryFromAddress from "./modals/send/steps/StepSummaryFromAddress";
 import StepSummaryPostAlert from "./modals/send/steps/StepSummaryPostAlert";
+import StepSummaryRecipientValue from "./modals/send/steps/StepSummaryRecipientValue";
 import operationDetails from "./operationDetails";
 import type { AleoFamily } from "./types";
 
@@ -14,8 +14,8 @@ const family: AleoFamily = {
   accountHeaderManageActions,
   createSendSteps,
   operationDetails,
-  StepSummaryAmountRow,
-  StepSummaryNetworkFeesRow,
+  StepSummaryFromAddress,
+  StepSummaryRecipientValue,
   StepSummaryPostAlert,
 };
 
