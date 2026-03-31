@@ -1016,5 +1016,20 @@ describe("EVM Api (Zero Gravity)", () => {
       const aboveCapIds = new Set(limit101.items.map(op => op.id));
       expect(limit100.items.every(op => aboveCapIds.has(op.id))).toBe(true);
     }, 60000);
+
+    it("returns operations with valid dates", async () => {
+      // Regression test: chainscan.0g.ai returns "timestamp" (lowercase) instead of the
+      // standard etherscan "timeStamp" (camelCase), causing op.tx.date to be an Invalid Date.
+      const address = "0xa86a063a764f96cdb64dac0e5e780d5ade6bdbd5";
+      const result = await module.listOperations(address, { minHeight: 0, order: "desc" });
+
+      expect(result.items.length).toBeGreaterThan(0);
+      result.items.forEach(op => {
+        expect(op.tx.date).toBeInstanceOf(Date);
+        expect(op.tx.date.getTime()).not.toBeNaN();
+        expect(op.tx.block.time).toBeInstanceOf(Date);
+        expect(op.tx.block.time!.getTime()).not.toBeNaN();
+      });
+    }, 60000);
   });
 });

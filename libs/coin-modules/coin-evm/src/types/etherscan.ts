@@ -1,6 +1,8 @@
 export type EtherscanOperation = {
   blockNumber: string;
   timeStamp: string;
+  /** Some explorers (e.g. chainscan.0g.ai for zero_gravity) use lowercase "timestamp" instead of "timeStamp". */
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -25,6 +27,8 @@ export type EtherscanOperation = {
 export type EtherscanERC20Event = {
   blockNumber: string;
   timeStamp: string;
+  /** Some explorers (e.g. chainscan.0g.ai for zero_gravity) use lowercase "timestamp" instead of "timeStamp". */
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -47,6 +51,8 @@ export type EtherscanERC20Event = {
 export type EtherscanERC721Event = {
   blockNumber: string;
   timeStamp: string;
+  /** Some explorers (e.g. chainscan.0g.ai for zero_gravity) use lowercase "timestamp" instead of "timeStamp". */
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -69,6 +75,8 @@ export type EtherscanERC721Event = {
 export type EtherscanERC1155Event = {
   blockNumber: string;
   timeStamp: string;
+  /** Some explorers (e.g. chainscan.0g.ai for zero_gravity) use lowercase "timestamp" instead of "timeStamp". */
+  timestamp?: string;
   hash: string;
   nonce: string;
   blockHash: string;
@@ -91,6 +99,8 @@ export type EtherscanERC1155Event = {
 export type EtherscanInternalTransaction = {
   blockNumber: string;
   timeStamp: string;
+  /** Some explorers (e.g. chainscan.0g.ai for zero_gravity) use lowercase "timestamp" instead of "timeStamp". */
+  timestamp?: string;
   hash: string;
   // blockscout returns tx hash in transactionHash field
   // instead of hash field

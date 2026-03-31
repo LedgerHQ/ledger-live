@@ -39,6 +39,18 @@ export const safeBigNumber = (value: string | undefined): BigNumber => {
 };
 
 /**
+ * Extracts a unix timestamp from an etherscan-like operation.
+ * Some explorers (e.g., chainscan.0g.ai for zero_gravity) return "timestamp" (lowercase)
+ * instead of the standard "timeStamp" (camelCase).
+ */
+export const safeDate = (op: { timeStamp?: string; timestamp?: string }): Date => {
+  const raw = op.timeStamp ?? op.timestamp;
+  if (!raw) return new Date(0);
+  const ts = Number.parseInt(raw, 10);
+  return Number.isNaN(ts) ? new Date(0) : new Date(ts * 1000);
+};
+
+/**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
  * It can return more than one operation in case of self-send
  */
@@ -82,7 +94,7 @@ export const etherscanOperationToOperations = (
         blockHash: etherscanOp.blockHash,
         transactionSequenceNumber: new BigNumber(etherscanOp.nonce),
         accountId: accountId,
-        date: new Date(Number.parseInt(etherscanOp.timeStamp, 10) * 1000),
+        date: safeDate(etherscanOp),
         subOperations: [],
         nftOperations: [],
         internalOperations: [],
@@ -137,7 +149,7 @@ export const etherscanERC20EventToOperations = (
         // NOTE Bridge implementations replace property `accountId`
         // TODO Remove property once the legacy bridge is deleted
         accountId,
-        date: new Date(Number.parseInt(event.timeStamp, 10) * 1000),
+        date: safeDate(event),
         extra: {},
       }) as Operation,
   );
@@ -189,7 +201,7 @@ export const etherscanERC721EventToOperations = (
         contract,
         tokenId: event.tokenID,
         value,
-        date: new Date(Number.parseInt(event.timeStamp, 10) * 1000),
+        date: safeDate(event),
         extra: {},
       }) as Operation,
   );
@@ -239,7 +251,7 @@ export const etherscanERC1155EventToOperations = (
         contract,
         tokenId: event.tokenID,
         value,
-        date: new Date(Number.parseInt(event.timeStamp, 10) * 1000),
+        date: safeDate(event),
         extra: {},
       }) as Operation,
   );
@@ -254,7 +266,7 @@ export const etherscanInternalTransactionToOperations = (
   internalTx: EtherscanInternalTransaction,
   index = 0,
 ): Operation[] => {
-  const { hash, blockNumber, timeStamp, isError } = internalTx;
+  const { hash, blockNumber, isError } = internalTx;
   const { xpubOrAddress: address } = decodeAccountId(accountId);
 
   const checksummedAddress = eip55.encode(address);
@@ -284,7 +296,7 @@ export const etherscanInternalTransactionToOperations = (
         blockHash: undefined, // not made directly available by etherscan, only blockNumber is provided
         accountId,
         value,
-        date: new Date(Number.parseInt(timeStamp, 10) * 1000),
+        date: safeDate(internalTx),
         hasFailed,
         extra: {},
       }) as Operation,
