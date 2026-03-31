@@ -559,7 +559,7 @@ function Delegations({ account }: Props) {
 export default function CosmosDelegations({ account }: { account: AccountLike<CosmosAccount> }) {
   if (account.type !== "Account" || !account.cosmosResources) return null;
 
-  const coinConfig = getCurrencyConfiguration(account.currency);
+  const coinConfig = getCurrencyConfiguration(account.currency.id);
   if ("disableDelegation" in coinConfig && coinConfig.disableDelegation === true) {
     return null;
   }

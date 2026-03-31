@@ -135,7 +135,7 @@ const AccountScreenInner = ({
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   try {
-    currencyConfig = getCurrencyConfiguration(mainAccount.currency);
+    currencyConfig = getCurrencyConfiguration(mainAccount.currency.id);
   } catch (err) {
     console.warn(err);
   }

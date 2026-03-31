@@ -119,7 +119,7 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    initMswHandlers(getCoinConfig(sonic).info);
+    initMswHandlers(getCoinConfig(sonic.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

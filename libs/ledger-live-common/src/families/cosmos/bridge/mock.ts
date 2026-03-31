@@ -138,7 +138,7 @@ const accountBridge: AccountBridge<Transaction> = {
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
   preload: (currency: CryptoCurrency) => {
-    const config = getCurrencyConfiguration(currency);
+    const config = getCurrencyConfiguration(currency.id);
     setCosmosPreloadData("cosmos", mockPreloadedData);
     return Promise.resolve({ validators: mockPreloadedData, config });
   },

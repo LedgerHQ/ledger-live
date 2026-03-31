@@ -12,7 +12,6 @@ import { Resolver } from "../../hw/getAddress/types";
 import { TransactionStatus, Transaction } from "@ledgerhq/coin-casper/types";
 import { CasperGetAddrResponse, CasperSignature, CasperSigner } from "./types";
 import { getCurrencyConfiguration } from "../../config";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getPath, isError } from "./common";
 import { CasperCoinConfig } from "@ledgerhq/coin-casper/config";
 
@@ -41,7 +40,7 @@ const createSigner: CreateSigner<CasperSigner> = (transport: Transport) => {
 };
 
 const getCoinConfig: CasperCoinConfig = () =>
-  getCurrencyConfiguration<ReturnType<CasperCoinConfig>>(getCryptoCurrencyById("casper"));
+  getCurrencyConfiguration<ReturnType<CasperCoinConfig>>("casper");
 
 const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),

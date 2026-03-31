@@ -9,7 +9,7 @@ export const getAleoCurrencyConfig = (
 ): AleoCoinConfig | undefined => {
   try {
     const cryptoCurrency = isCryptoCurrency(currency) ? currency : currency.parentCurrency;
-    return getCurrencyConfiguration<AleoCoinConfig>(cryptoCurrency);
+    return getCurrencyConfiguration<AleoCoinConfig>(cryptoCurrency.id);
   } catch {
     return undefined;
   }

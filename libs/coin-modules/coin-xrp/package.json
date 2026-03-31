@@ -90,7 +90,6 @@
     "@faker-js/faker": "^8.4.1",
     "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "catalog:",
     "expect": "catalog:",

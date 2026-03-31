@@ -33,7 +33,7 @@ export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
 function getConfiguredMaxLimit(currency: CryptoCurrency): number | undefined {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
   if (!isEtherscanLikeExplorerConfig(explorer)) return undefined;
   const cap = explorer.maxLimit;
@@ -260,7 +260,7 @@ function computeEffectiveBoundBlock(
  * Get all the "normal" transactions (no tokens / NFTs)
  */
 export const getCoinOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency).info;
+  const config = getCoinConfig(params.currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -294,7 +294,7 @@ export const getCoinOperations = async (params: FetchOperationsParams): Promise<
 export const getTokenOperations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency).info;
+  const config = getCoinConfig(params.currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -343,7 +343,7 @@ export const getTokenOperations = async (
 export const getERC721Operations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency).info;
+  const config = getCoinConfig(params.currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -392,7 +392,7 @@ export const getERC721Operations = async (
 export const getERC1155Operations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency).info;
+  const config = getCoinConfig(params.currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -439,7 +439,7 @@ export const getERC1155Operations = async (
  * Get all NFT related operations (ERC721 + ERC1155)
  */
 export const getNftOperations = async (params: FetchOperationsParams): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency).info;
+  const config = getCoinConfig(params.currency.id).info;
   if (!config.showNfts) {
     return EMPTY_RESULT;
   }
@@ -475,7 +475,7 @@ const fixTxHash = (op: EtherscanInternalTransaction): EtherscanInternalTransacti
 export const getInternalOperations = async (
   params: FetchOperationsParams,
 ): Promise<EndpointResult> => {
-  const config = getCoinConfig(params.currency).info;
+  const config = getCoinConfig(params.currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
@@ -524,7 +524,7 @@ export async function getInternalTransactionsByBlock(
   currency: CryptoCurrency,
   blockHeight: number,
 ): Promise<EtherscanInternalTransaction[]> {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
   const { explorer } = config || {};
 
   if (!isEtherscanLikeExplorerConfig(explorer)) {

@@ -17,7 +17,6 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getGasLimit, isEthAddress } from "@ledgerhq/coin-evm/utils";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "../../../config";
 import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";
@@ -145,9 +144,9 @@ const prepareTransaction = async (_a, t) => {
 let isConfigLoaded = false;
 const loadCoinConfig = () => {
   if (!isConfigLoaded) {
-    setCoinConfig((currency: CryptoCurrency) => {
+    setCoinConfig(currencyId => {
       isConfigLoaded = true;
-      return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
+      return { info: getCurrencyConfiguration<EvmConfigInfo>(currencyId) };
     });
   }
 };

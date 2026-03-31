@@ -12,7 +12,7 @@ export const getPreloadStrategy = () => ({
 });
 
 export const preload = async (currency: CryptoCurrency) => {
-  const config = cosmosCoinConfig.getCoinConfig(currency);
+  const config = cosmosCoinConfig.getCoinConfig(currency.id);
   const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById(currency.id), {
     endPoint: (config as unknown as CosmosCurrencyConfig).lcd,
   });

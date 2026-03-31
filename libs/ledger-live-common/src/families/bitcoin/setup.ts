@@ -32,7 +32,7 @@ const signerContext: SignerContext = <T>(
   );
 
 const getCurrencyConfig = (currency: CryptoCurrency) => {
-  return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
+  return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency.id) };
 };
 
 const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(

@@ -130,7 +130,7 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
         },
       },
     });
-    initMswHandlers(getCoinConfig(scroll).info);
+    initMswHandlers(getCoinConfig(scroll.id).info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

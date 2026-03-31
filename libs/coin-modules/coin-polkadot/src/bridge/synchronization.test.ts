@@ -37,8 +37,8 @@ describe("getAccountShape", () => {
     mockGetOperations.mockClear();
     mockGetCoinConfig.mockClear();
 
-    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
-      if (currency?.id === "assethub_polkadot") {
+    mockGetCoinConfig.mockImplementation((currencyId?: string): any => {
+      if (currencyId === "assethub_polkadot") {
         return {
           hasBeenMigrated: true,
         };
@@ -185,8 +185,8 @@ describe("getAccountShape", () => {
   });
 
   it("does not migrate when assethub has not been migrated", async () => {
-    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
-      if (currency?.id === "assethub_polkadot") {
+    mockGetCoinConfig.mockImplementation((currencyId?: string): any => {
+      if (currencyId === "assethub_polkadot") {
         return {
           hasBeenMigrated: false,
         };
@@ -218,8 +218,8 @@ describe("getAccountShape", () => {
 
   it("does not migrate when currency is not polkadot", async () => {
     const nonPolkadotCurrency = getCryptoCurrencyById("westend");
-    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
-      if (currency?.id === "assethub_polkadot") {
+    mockGetCoinConfig.mockImplementation((currencyId?: string): any => {
+      if (currencyId === "assethub_polkadot") {
         return {
           hasBeenMigrated: true,
         };
@@ -273,8 +273,8 @@ describe("getAccountShape", () => {
   });
 
   it("generates correct account ID without migration", async () => {
-    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
-      if (currency?.id === "assethub_polkadot") {
+    mockGetCoinConfig.mockImplementation((currencyId?: string): any => {
+      if (currencyId === "assethub_polkadot") {
         return {
           hasBeenMigrated: false,
         };
@@ -324,8 +324,8 @@ describe("getAccountShape", () => {
   });
 
   it("returns correct currency in account shape without migration", async () => {
-    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
-      if (currency?.id === "assethub_polkadot") {
+    mockGetCoinConfig.mockImplementation((currencyId?: string): any => {
+      if (currencyId === "assethub_polkadot") {
         return {
           hasBeenMigrated: false,
         };

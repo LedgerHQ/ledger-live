@@ -60,7 +60,6 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-currency-format": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "bignumber.js": "^9.1.2",
     "expect": "catalog:"
   },

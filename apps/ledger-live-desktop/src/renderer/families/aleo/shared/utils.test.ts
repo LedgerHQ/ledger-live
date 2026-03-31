@@ -20,7 +20,7 @@ describe("getAleoCurrencyConfig", () => {
     const result = getAleoCurrencyConfig(aleoCurrency);
 
     expect(mockGetCurrencyConfiguration).toHaveBeenCalledTimes(1);
-    expect(mockGetCurrencyConfiguration).toHaveBeenCalledWith(aleoCurrency);
+    expect(mockGetCurrencyConfiguration).toHaveBeenCalledWith(aleoCurrency.id);
     expect(result).toBe(mockAleoCoinConfig);
   });
 
@@ -36,7 +36,7 @@ describe("getAleoCurrencyConfig", () => {
     const result = getAleoCurrencyConfig(tokenCurrency);
 
     expect(mockGetCurrencyConfiguration).toHaveBeenCalledTimes(1);
-    expect(mockGetCurrencyConfiguration).toHaveBeenCalledWith(aleoCurrency);
+    expect(mockGetCurrencyConfiguration).toHaveBeenCalledWith(aleoCurrency.id);
     expect(result).toBe(mockAleoCoinConfig);
   });
 

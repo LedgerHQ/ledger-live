@@ -26,7 +26,7 @@ async function getDeviceTransactionConfig({
   const fields: Array<DeviceTransactionField> = [];
   const method = mapTransactionModeToMethod[transaction.mode] ?? "Unknown";
   const mainAccount = getMainAccount(account, parentAccount);
-  const config = aleoCoinConfig.getCoinConfig(mainAccount.currency);
+  const config = aleoCoinConfig.getCoinConfig(mainAccount.currency.id);
 
   fields.push({
     type: "text",

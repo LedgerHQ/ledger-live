@@ -4,7 +4,7 @@ import ledgerGasTracker from "./ledger";
 import { GasTrackerApi } from "./types";
 
 export const getGasTracker = (currency: CryptoCurrency): GasTrackerApi | null => {
-  const config = getCoinConfig(currency).info;
+  const config = getCoinConfig(currency.id).info;
 
   switch (config?.gasTracker?.type) {
     case "ledger":

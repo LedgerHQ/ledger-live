@@ -85,7 +85,7 @@ async function handleTransferTransaction({
   const warnings: Warnings = {};
 
   const availableBalance = getAvailableBalance(account, transaction);
-  const config = aleoCoinConfig.getCoinConfig(account.currency);
+  const config = aleoCoinConfig.getCoinConfig(account.currency.id);
   const feeEstimation = estimateFees({
     configOrCurrencyId: config,
     transactionType: transaction.mode,

@@ -35,7 +35,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 
   // Default to native instrument if no tokenId set
   if (!tokenId) {
-    tokenId = coinConfig.getCoinConfig(account.currency).nativeInstrumentId;
+    tokenId = coinConfig.getCoinConfig(account.currency.id).nativeInstrumentId;
   }
 
   return updateTransaction(transaction, {

@@ -120,7 +120,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@types/invariant": "^2.2.37",

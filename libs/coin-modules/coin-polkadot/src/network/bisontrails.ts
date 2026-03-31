@@ -24,7 +24,7 @@ const LIMIT = 200;
  * @returns {string}
  */
 const getBaseApiUrl = (currency?: CryptoCurrency): string =>
-  coinConfig.getCoinConfig(currency).indexer.url;
+  coinConfig.getCoinConfig(currency?.id).indexer.url;
 
 /**
  * Fetch operation lists from indexer
