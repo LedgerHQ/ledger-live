@@ -1,6 +1,7 @@
 import { step } from "../../misc/reporters/step";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Dialog } from "../../component/dialog.component";
+import { expect } from "@playwright/test";
 
 export class ModularAccountDialog extends Dialog {
   private dialogContent = this.page.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION");
