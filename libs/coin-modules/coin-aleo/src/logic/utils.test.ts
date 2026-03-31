@@ -517,6 +517,67 @@ describe("calculateAmount", () => {
       totalSpent: estimatedFees,
     });
   });
+
+  it("should use the full amount record for private transactions with useAllAmount", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: mockUnspentRecord1.commitment,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        privateBalance: new BigNumber(1400000),
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(mockUnspentRecord1.microcredits),
+      totalSpent: new BigNumber(mockUnspentRecord1.microcredits).plus(estimatedFees),
+    });
+  });
+
+  it("should return zero for private transactions with useAllAmount when the amount record is missing", () => {
+    const estimatedFees = new BigNumber(5000);
+    const mockTransaction = getMockedTransaction({
+      amount: new BigNumber(0),
+      useAllAmount: true,
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitment: null,
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
+    const mockAccount = getMockedAccount({
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = calculateAmount({
+      account: mockAccount,
+      transaction: mockTransaction,
+      estimatedFees,
+    });
+
+    expect(result).toMatchObject({
+      amount: new BigNumber(0),
+      totalSpent: estimatedFees,
+    });
+  });
 });
 
 describe("isProvableApiConfigured", () => {

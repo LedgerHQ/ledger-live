@@ -247,8 +247,15 @@ export function calculateAmount({
   let amount = transaction.amount;
 
   if (transaction.useAllAmount) {
-    const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
-    amount = BigNumber.max(0, transparentBalance.minus(estimatedFees));
+    if (isPrivateTransaction(transaction)) {
+      const commitment = transaction.properties.amountRecordCommitment;
+      const amountRecord = commitment ? getRecordByCommitment({ account, commitment }) : null;
+
+      amount = new BigNumber(amountRecord?.microcredits ?? "0");
+    } else {
+      const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
+      amount = BigNumber.max(0, transparentBalance.minus(estimatedFees));
+    }
   }
 
   const totalSpent = amount.plus(estimatedFees);
