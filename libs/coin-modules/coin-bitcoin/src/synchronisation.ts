@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
-import { CoinType, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type {
   AccountShapeInfo,
@@ -22,8 +22,8 @@ import {
 } from "@ledgerhq/types-live";
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
-import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
-import { isZcashAccount, perCoinLogic, mapTxToOperations } from "./logic";
+import { BitcoinAccount, BitcoinOutput, BtcOperation, ZcashAccount } from "./types";
+import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { map, merge, Observable, scan } from "rxjs";
 import {
@@ -33,7 +33,10 @@ import {
   ShieldedSyncResult,
 } from "@ledgerhq/zcash-shielded/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getCoinConfig } from "./config";
+import {
+  DEFAULT_ZCASH_PRIVATE_INFO,
+  ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
+} from "@ledgerhq/zcash-shielded/constants";
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -240,7 +243,7 @@ export const getTxType = (tx: ShieldedTransaction): OperationType => {
 
 type ShieldedScanAccumulated = {
   processedOperations: ShieldedTransaction[];
-  accountUpdate: Partial<BitcoinAccount>;
+  accountUpdate: Partial<ZcashAccount>;
 };
 
 export async function performTransparentSync(
@@ -398,9 +401,13 @@ export async function performTransparentSync(
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
   result: ShieldedSyncResult,
-  info: AccountShapeInfo<BitcoinAccount>,
+  info: AccountShapeInfo<ZcashAccount>,
   accountId: string,
 ): ShieldedScanAccumulated {
+  const existingPrivateInfo =
+    accumulated.accountUpdate.privateInfo ||
+    info.initialAccount?.privateInfo ||
+    DEFAULT_ZCASH_PRIVATE_INFO;
   const processedIds = new Set(accumulated.processedOperations.map(tx => tx.id));
   const newTransactions = result.transactions.filter(tx => !processedIds.has(tx.id));
 
@@ -409,7 +416,15 @@ export function reduceShieldedSyncResult(
       ...accumulated,
       accountUpdate: {
         ...accumulated.accountUpdate,
-        blockHeight: result.lastProcessedBlock || accumulated.accountUpdate.blockHeight || 0,
+        blockHeight: result.lastBlockProcessed || accumulated.accountUpdate.blockHeight || 0,
+        privateInfo: {
+          ...existingPrivateInfo,
+          progress: result.progress,
+          syncState: result.syncState,
+          estimatedTimeRemaining: result.estimatedTimeRemaining,
+          lastBlockProcessed: result.lastBlockProcessed,
+          lastSyncTimestamp: Date.now(),
+        },
       },
     };
   }
@@ -420,14 +435,12 @@ export function reduceShieldedSyncResult(
   const mergedOperations = mergeOps(currentOperations, newOperations);
   const operations = removeReplaced(mergedOperations as BtcOperation[]);
 
-  let balance =
-    accumulated.accountUpdate.balance || info.initialAccount?.balance || new BigNumber(0);
-
+  let privateBalance = accumulated.accountUpdate.privateInfo?.orchardBalance || new BigNumber(0);
   for (const op of newOperations) {
     if (ZCASH_SHIELDED_TX_IN_TYPES.includes(op.type)) {
-      balance = balance.plus(op.value);
+      privateBalance = privateBalance.plus(op.value);
     } else if (ZCASH_SHIELDED_TX_OUT_TYPES.includes(op.type)) {
-      balance = balance.minus(op.value).minus(op.fee);
+      privateBalance = privateBalance.minus(op.value).minus(op.fee);
     }
   }
 
@@ -437,8 +450,8 @@ export function reduceShieldedSyncResult(
     {
       accountId,
       totalOperations: operations.length,
-      lastProcessedBlock: result.lastProcessedBlock,
-      balance: balance.toString(),
+      lastBlockProcessed: result.lastBlockProcessed,
+      privateBalance: privateBalance.toString(),
       previousOperations: currentOperations.length,
     },
   );
@@ -446,11 +459,19 @@ export function reduceShieldedSyncResult(
   return {
     processedOperations: [...result.transactions],
     accountUpdate: {
+      ...accumulated.accountUpdate,
       operations,
       operationsCount: operations.length,
-      balance,
-      spendableBalance: balance,
-      blockHeight: result.lastProcessedBlock || info.initialAccount?.blockHeight || 0,
+      blockHeight: result.lastBlockProcessed || info.initialAccount?.blockHeight || 0,
+      privateInfo: {
+        ...existingPrivateInfo,
+        orchardBalance: privateBalance,
+        progress: result.progress,
+        syncState: result.syncState,
+        estimatedTimeRemaining: result.estimatedTimeRemaining,
+        lastBlockProcessed: result.lastBlockProcessed,
+        lastSyncTimestamp: Date.now(),
+      },
     },
   };
 }
@@ -485,9 +506,9 @@ export function createTransparentSyncObservable(
 }
 
 export function createShieldedSyncObservable(
-  info: AccountShapeInfo<BitcoinAccount>,
+  info: AccountShapeInfo<ZcashAccount>,
   shieldedSyncRaw: Observable<ShieldedSyncResult>,
-): Observable<Partial<BitcoinAccount>> {
+): Observable<Partial<ZcashAccount>> {
   const accountId =
     info.initialAccount?.id ??
     encodeAccountId({
@@ -504,7 +525,8 @@ export function createShieldedSyncObservable(
       operations: (info.initialAccount?.operations || []) as BtcOperation[],
       balance: info.initialAccount?.balance,
       blockHeight: info.initialAccount?.blockHeight,
-    } as Partial<BitcoinAccount>,
+      privateInfo: info.initialAccount?.privateInfo,
+    } as Partial<ZcashAccount>,
   };
 
   return shieldedSyncRaw.pipe(
@@ -552,30 +574,95 @@ export function buildSyncObservables(
   info: AccountShapeInfo<BitcoinAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
-): { syncs: Observable<Partial<BitcoinAccount>>[]; syncType: number } {
+): { syncs: Observable<Partial<BitcoinAccount> | Partial<ZcashAccount>>[]; syncType: number } {
   const { currency, initialAccount } = info;
-  const defaultSyncType =
-    currency.coinType === CoinType.ZCASH
-      ? SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED
-      : SYNC_TYPE_TRANSPARENT;
-  const syncType = syncConfig.syncType ?? defaultSyncType;
+  const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
 
-  const syncs: Observable<Partial<BitcoinAccount>>[] = [];
+  const syncs: Observable<Partial<BitcoinAccount> | Partial<ZcashAccount>>[] = [];
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
     syncs.push(createTransparentSyncObservable(info, signerContext));
   }
 
-  const isZcash = initialAccount && isZcashAccount(initialAccount);
-  const ufvk = isZcash && initialAccount?.privateInfo?.ufvk;
-  const shieldedEnabled = isZcash && typeof ufvk === "string" && ufvk.length > 0;
+  const isZcash = currency.id === "zcash";
+  const zcashInitialAccount = isZcash ? (initialAccount as ZcashAccount | undefined) : undefined;
+  const ufvkIsPresent =
+    isZcash &&
+    !!zcashInitialAccount &&
+    !!zcashInitialAccount.privateInfo?.ufvk &&
+    zcashInitialAccount.privateInfo.ufvk.length > 0;
+  const syncStateIsEnabled =
+    isZcash &&
+    !!zcashInitialAccount &&
+    (zcashInitialAccount.privateInfo?.syncState === "ready" ||
+      zcashInitialAccount.privateInfo?.syncState === "outdated");
+  const shieldedEnabled = ufvkIsPresent && syncStateIsEnabled;
+
+  // Mock block processing time
+  const withDelay = async (fn: () => void) => {
+    await new Promise(resolve => setTimeout(resolve, ZCASH_CHECK_OUTDATED_SYNC_INTERVAL));
+    return fn();
+  };
 
   if (syncType & SYNC_TYPE_SHIELDED && shieldedEnabled) {
-    const shieldedSyncRaw = getCoinConfig(currency.id).family?.sync?.(info, syncConfig);
+    // TODO: Implement shielded sync
+    // const shieldedSyncRaw = getCoinConfig(currency).family.sync?.(info, syncConfig);
 
-    if (shieldedSyncRaw) {
-      syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
-    }
+    // TODO: Mock sync progress (remove in the future)
+    const shieldedSyncRaw = new Observable<ShieldedSyncResult>(subscriber => {
+      (async () => {
+        await withDelay(() =>
+          subscriber.next({
+            ...zcashInitialAccount.privateInfo,
+            syncState: "running",
+            progress: 25,
+            estimatedTimeRemaining: { hours: 0, minutes: 3 },
+            processedBlocks: 0,
+            remainingBlocks: 0,
+            lastBlockProcessed: 0,
+            transactions: [],
+          }),
+        );
+        await withDelay(() =>
+          subscriber.next({
+            ...zcashInitialAccount.privateInfo,
+            syncState: "running",
+            progress: 50,
+            estimatedTimeRemaining: { hours: 0, minutes: 2 },
+            processedBlocks: 0,
+            remainingBlocks: 0,
+            lastBlockProcessed: 0,
+            transactions: [],
+          }),
+        );
+        await withDelay(() =>
+          subscriber.next({
+            ...zcashInitialAccount.privateInfo,
+            syncState: "running",
+            progress: 75,
+            estimatedTimeRemaining: { hours: 0, minutes: 1 },
+            processedBlocks: 0,
+            remainingBlocks: 0,
+            lastBlockProcessed: 0,
+            transactions: [],
+          }),
+        );
+        await withDelay(() =>
+          subscriber.next({
+            ...zcashInitialAccount.privateInfo,
+            syncState: "complete",
+            progress: 100,
+            estimatedTimeRemaining: { hours: 0, minutes: 0 },
+            processedBlocks: 0,
+            remainingBlocks: 0,
+            lastBlockProcessed: 0,
+            transactions: [],
+          }),
+        );
+        subscriber.complete();
+      })();
+    });
+    syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
   }
 
   return { syncs, syncType };

@@ -3,7 +3,12 @@ import { decrypt_tx } from "@ledgerhq/zcash-decrypt";
 import { Block, JsonRpcClient } from "./jsonRpcClient";
 import { toShieldedTransaction } from "./shieldedTransaction";
 import { Observable, Subscriber, TeardownLogic } from "rxjs";
-import type { RawTransaction, ShieldedTransaction } from "./types";
+import type {
+  RawTransaction,
+  ShieldedTransaction,
+  SyncEstimatedTime,
+  ShieldedSyncResult,
+} from "./types";
 import { ZCASH_LOG_TYPE } from "./constants";
 
 /**
@@ -11,18 +16,6 @@ import { ZCASH_LOG_TYPE } from "./constants";
  */
 
 export { ZCASH_JSON_RPC_SERVER_MAINNET, ZCASH_JSON_RPC_SERVER_TESTNET } from "./constants";
-
-export type SyncEstimatedTime = {
-  hours: number;
-  minutes: number;
-};
-
-export type ShieldedSyncResult = {
-  processedBlocks: number;
-  remainingBlocks: number;
-  lastProcessedBlock?: number;
-  transactions: ShieldedTransaction[];
-};
 
 type SyncShieldedArgs = {
   startBlockHeight: number;
@@ -208,6 +201,10 @@ export class ZCash {
         processedBlocks: 0,
         remainingBlocks: 0,
         transactions: [],
+        syncState: "running",
+        lastBlockProcessed: startBlockHeight,
+        progress: 0,
+        estimatedTimeRemaining: { hours: 0, minutes: 0 },
       };
 
       // 0. validate args
@@ -260,7 +257,7 @@ export class ZCash {
         syncedShielded.transactions.push(...shieldedTxs);
         syncedShielded.processedBlocks++;
         syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
-        syncedShielded.lastProcessedBlock = block.height;
+        syncedShielded.lastBlockProcessed = block.height;
 
         if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
           subscriber.next({

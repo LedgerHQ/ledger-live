@@ -14,8 +14,11 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   saplingBalance: new BigNumber(0),
   ufvk: null,
   syncState: "disabled",
+  progress: 0,
+  estimatedTimeRemaining: { hours: 0, minutes: 0 },
   birthday: ZCASH_ACTIVATION_DATE_STRING,
   lastSyncTimestamp: null,
   lastBlockProcessed: null,
   transactions: [],
 };
+export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5000; // 5 seconds
