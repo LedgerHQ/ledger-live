@@ -85,11 +85,8 @@ async function listOperations(
   const effectiveLimit = limit ?? 200;
   const effectiveOrder = order ?? "asc";
 
-  // When a cursor is provided, it takes precedence over minHeight.
-  // The cursor already encodes a timestamp position, so minHeight is ignored.
-  // minHeight is only used on the first call (no cursor) to establish the starting point.
   let minTimestamp = defaultFetchParams.minTimestamp;
-  if (minHeight > 0 && !cursor) {
+  if (minHeight > 0) {
     const block = await getBlockNetwork(minHeight);
     minTimestamp = block.time?.getTime() ?? defaultFetchParams.minTimestamp;
   }

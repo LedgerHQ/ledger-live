@@ -37,17 +37,19 @@ export async function listOperations(
   const { limit, order, cursor } = options;
   const parsedCursor = parseCursor(cursor);
 
-  const minTimestamp = parsedCursor ? parsedCursor.timestamp : options.minTimestamp;
+  let fetchMinTimestamp: number;
+  if (order === "asc") {
+    fetchMinTimestamp = parsedCursor ? parsedCursor.timestamp : options.minTimestamp;
+  } else {
+    fetchMinTimestamp = options.minTimestamp;
+  }
 
-  // Fetch native and TRC20 transactions in parallel from TronGrid.
-  // Both endpoints are queried with the same minTimestamp to ensure
-  // we can properly merge and sort them chronologically.
   const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(
     address,
     {},
     {
       limit,
-      minTimestamp,
+      minTimestamp: fetchMinTimestamp,
       order,
     },
   );

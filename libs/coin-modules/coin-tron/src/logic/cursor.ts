@@ -95,9 +95,11 @@ export function dropTxsAfterNextCursor(params: {
     return { txs: pageTxs, nextCursor: undefined };
   }
 
-  const boundaryTx = lastTxs.reduce((selected, current) =>
-    compareTxsByTimestamp(order)(current, selected) < 0 ? current : selected,
-  );
+  const boundaryTx = lastTxs.reduce((selected, current) => {
+    const diff = current.date.getTime() - selected.date.getTime();
+    const shouldSelect = order === "asc" ? diff < 0 : diff > 0;
+    return shouldSelect ? current : selected;
+  });
 
   const boundaryTimestamp = boundaryTx.date.getTime();
 

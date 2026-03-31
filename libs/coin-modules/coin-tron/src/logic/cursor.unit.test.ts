@@ -1,6 +1,12 @@
 import BigNumber from "bignumber.js";
 import { TrongridTxInfo } from "../types";
-import { compareTxsByTimestamp, dropTxsBeforeCursor, parseCursor, serializeCursor } from "./cursor";
+import {
+  compareTxsByTimestamp,
+  dropTxsAfterNextCursor,
+  dropTxsBeforeCursor,
+  parseCursor,
+  serializeCursor,
+} from "./cursor";
 
 describe("cursor utilities", () => {
   describe("serializeCursor", () => {
@@ -100,6 +106,66 @@ describe("cursor utilities", () => {
         cursor: { txHash: "notfound", timestamp: 2500 },
       });
       expect(result.map(t => t.txID)).toEqual(["b", "a"]);
+    });
+  });
+
+  describe("dropTxsAfterNextCursor", () => {
+    const makeTx = (txID: string, timestamp: number): TrongridTxInfo =>
+      ({
+        txID,
+        date: new Date(timestamp),
+        value: new BigNumber(0),
+      }) as TrongridTxInfo;
+
+    it("should use earliest boundary for asc order", () => {
+      const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000), makeTx("n3", 3000)];
+      const trc20Txs = [makeTx("t1", 1500), makeTx("t2", 2500)];
+      const pageTxs = [...nativeTxs, ...trc20Txs].sort(compareTxsByTimestamp("asc"));
+
+      const result = dropTxsAfterNextCursor({
+        order: "asc",
+        cursor: undefined,
+        pageTxs,
+        nativeResult: { txs: nativeTxs, hasNextPage: true },
+        trc20Result: { txs: trc20Txs, hasNextPage: true },
+      });
+
+      expect(result.txs.map(t => t.txID)).toEqual(["n1", "t1", "n2", "t2"]);
+      expect(result.nextCursor).toContain("t2");
+    });
+
+    it("should use latest boundary for desc order", () => {
+      const nativeTxs = [makeTx("n3", 3000), makeTx("n2", 2000), makeTx("n1", 1000)];
+      const trc20Txs = [makeTx("t2", 2500), makeTx("t1", 1500)];
+      const pageTxs = [...nativeTxs, ...trc20Txs].sort(compareTxsByTimestamp("desc"));
+
+      const result = dropTxsAfterNextCursor({
+        order: "desc",
+        cursor: undefined,
+        pageTxs,
+        nativeResult: { txs: nativeTxs, hasNextPage: true },
+        trc20Result: { txs: trc20Txs, hasNextPage: true },
+      });
+
+      expect(result.txs.map(t => t.txID)).toEqual(["n3", "t2", "n2", "t1"]);
+      expect(result.nextCursor).toContain("t1");
+    });
+
+    it("should return all txs when no next page", () => {
+      const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000)];
+      const trc20Txs = [makeTx("t1", 1500)];
+      const pageTxs = [...nativeTxs, ...trc20Txs].sort(compareTxsByTimestamp("asc"));
+
+      const result = dropTxsAfterNextCursor({
+        order: "asc",
+        cursor: undefined,
+        pageTxs,
+        nativeResult: { txs: nativeTxs, hasNextPage: false },
+        trc20Result: { txs: trc20Txs, hasNextPage: false },
+      });
+
+      expect(result.txs.map(t => t.txID)).toEqual(["n1", "t1", "n2"]);
+      expect(result.nextCursor).toBeUndefined();
     });
   });
 });
