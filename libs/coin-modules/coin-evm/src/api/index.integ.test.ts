@@ -1023,12 +1023,19 @@ describe("EVM Api (Zero Gravity)", () => {
       const address = "0xa86a063a764f96cdb64dac0e5e780d5ade6bdbd5";
       const result = await module.listOperations(address, { minHeight: 0, order: "desc" });
 
+      const cutoff = new Date("2015-01-01T00:00:00Z").getTime();
+
       expect(result.items.length).toBeGreaterThan(0);
       result.items.forEach(op => {
         expect(op.tx.date).toBeInstanceOf(Date);
-        expect(op.tx.date.getTime()).not.toBeNaN();
+        const txTime = op.tx.date.getTime();
+        expect(txTime).not.toBeNaN();
+        expect(txTime).toBeGreaterThan(cutoff);
+
         expect(op.tx.block.time).toBeInstanceOf(Date);
-        expect(op.tx.block.time!.getTime()).not.toBeNaN();
+        const blockTime = op.tx.block.time!.getTime();
+        expect(blockTime).not.toBeNaN();
+        expect(blockTime).toBeGreaterThan(cutoff);
       });
     }, 60000);
   });
