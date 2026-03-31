@@ -39,7 +39,7 @@ export const safeBigNumber = (value: string | undefined): BigNumber => {
 };
 
 /**
- * Extracts a unix timestamp from an etherscan-like operation.
+ * Parses a Date from an etherscan-like operation.
  * Some explorers (e.g., chainscan.0g.ai for zero_gravity) return "timestamp" (lowercase)
  * instead of the standard "timeStamp" (camelCase).
  */
