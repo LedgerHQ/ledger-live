@@ -9,7 +9,7 @@ import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
-import { padItems, resolveMarketId } from "LLD/features/Assets/utils/assetTableHelpers";
+import { padItems, dadaIdToMarketId } from "LLD/features/Assets/utils/assetTableHelpers";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -103,7 +103,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
       });
       navigate(
         item.isPlaceholder
-          ? `/market/${encodeURIComponent(resolveMarketId(item.marketId ?? item.currency.id))}`
+          ? `/market/${encodeURIComponent(dadaIdToMarketId(item.marketId ?? item.currency.id))}`
           : `/asset/${item.currency.id}`,
       );
     },

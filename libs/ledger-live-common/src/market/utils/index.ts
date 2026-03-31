@@ -81,6 +81,13 @@ export function getRange(range: PortfolioRange | string) {
   }
 }
 
+/** @FIXME workaround for main tokens & also until we have asset aggregation */
+export function dadaIdToMarketId(id: string): string {
+  if (!id.includes(":")) return id;
+  const lastSegment = id.split(":").pop();
+  return lastSegment?.replaceAll("_", "-") ?? id;
+}
+
 export const getSortParam = (order: Order, range: PortfolioRange | string) => {
   switch (order) {
     default:
