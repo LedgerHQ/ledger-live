@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "trailingComma": "all",
+  "arrowParens": "avoid",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "apps/ledger-live-desktop/static/i18n/**",
+    "apps/ledger-live-mobile/**/*.json",
+    "apps/wallet-cli/dist/**",
+    "apps/wallet-cli/package.json",
+    "apps/wallet-cli/**/*.json",
+    "features/market-banner/**/*.json",
+    "libs/ledger-live-common/package.json",
+    "libs/ledger-live-common/src/crypto/sha256.js",
+    "libs/ledger-live-common/src/data/icons/**",
+    "libs/ledger-live-common/src/deviceSDK/tasks/genuineCheck.ts",
+    "libs/ledger-live-common/src/generated/**",
+    "libs/ledger-live-common/src/load/tokens/**",
+    "libs/ledgerjs/packages/**/*.json",
+    "libs/ledgerjs/packages/**/*.md"
+  ],
+  "overrides": []
+}
