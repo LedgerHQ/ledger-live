@@ -36,11 +36,16 @@ const renderComponent = (
     <AssetShortListView sourceScreenName={ScreenName.Portfolio} {...props} />
   );
 
+  const baseOverride = INITIAL_STATE.overrideInitialState;
+  const composedOverride = overrideInitialState
+    ? (state: State) => overrideInitialState(baseOverride(state))
+    : baseOverride;
+
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TestScreen" component={ScreenComponent} />
     </Stack.Navigator>,
-    overrideInitialState ? { overrideInitialState } : INITIAL_STATE,
+    { overrideInitialState: composedOverride },
   );
 };
 

@@ -173,10 +173,12 @@ export function useNonBlacklistedDistribution(
 
   return useMemo(
     () =>
-      distribution.list.filter(
-        ({ currency }) =>
-          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-      ),
-    [distribution.list, blacklistedTokenIdsSet],
+      distribution.isAvailable
+        ? distribution.list.filter(
+            ({ currency }) =>
+              currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
+          )
+        : [],
+    [distribution.isAvailable, distribution.list, blacklistedTokenIdsSet],
   );
 }
