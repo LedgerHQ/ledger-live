@@ -2,7 +2,7 @@
 jest.mock("@ledgerhq/ledger-wallet-framework/account/accountId");
 jest.mock("@ledgerhq/ledger-wallet-framework/bridge/jsHelpers");
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
-jest.mock("../api");
+jest.mock("../network");
 jest.mock("../config");
 jest.mock("../logic/account/getAccount");
 jest.mock("../logic/account/getDelegateAddress");
@@ -14,13 +14,13 @@ import { AccountShapeInfo, mergeOps } from "@ledgerhq/ledger-wallet-framework/br
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account } from "@ledgerhq/types-live/account";
 import BigNumber from "bignumber.js";
-import { fetchValidators, getEpochInfo } from "../api";
-import type { FetchEpochInfoResponse } from "../api/types";
-import type { RosettaTransaction } from "../api/types";
 import { getAccount } from "../logic/account/getAccount";
 import { getDelegateAddress } from "../logic/account/getDelegateAddress";
 import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { getTransactions } from "../logic/history/getTransactions";
+import { fetchValidators, getEpochInfo } from "../network";
+import type { RosettaTransaction } from "../network/types";
+import type { FetchEpochInfoResponse } from "../network/types";
 import {
   createMockTxn,
   createMockAccountInfo,

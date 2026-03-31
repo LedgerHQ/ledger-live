@@ -1,3 +1,4 @@
+import { MINA_TOKEN_ID } from "../../consts";
 import type {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
@@ -11,8 +12,7 @@ import type {
   RosettaSubmitResponse,
   RosettaTransaction,
   ValidatorInfoFromAPI,
-} from "../../api/types";
-import { MINA_TOKEN_ID } from "../../consts";
+} from "../../network/types";
 
 export function makeNetworkStatusResponse(
   overrides?: Partial<FetchNetworkStatusResponse>,

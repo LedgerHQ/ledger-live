@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { fetchAccountBalance, fetchNetworkStatus } from "../../api";
+import { fetchAccountBalance, fetchNetworkStatus } from "../../network";
 import { MinaAPIAccount } from "../../types/common";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {

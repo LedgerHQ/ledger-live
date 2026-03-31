@@ -1,7 +1,7 @@
-jest.mock("../../api");
+jest.mock("../../network");
 
 import { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
-import { fetchAccountTransactions } from "../../api";
+import { fetchAccountTransactions } from "../../network";
 import { getTransactions } from "./getTransactions";
 
 const mockFetchAccountTransactions = fetchAccountTransactions as jest.MockedFunction<

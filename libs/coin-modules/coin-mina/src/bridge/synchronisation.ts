@@ -8,11 +8,11 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { fetchValidators, getEpochInfo, RosettaTransaction } from "../api";
 import { getAccount } from "../logic/account/getAccount";
 import { getDelegateAddress } from "../logic/account/getDelegateAddress";
 import { getBlockInfo } from "../logic/history/getBlockInfo";
 import { getTransactions } from "../logic/history/getTransactions";
+import { fetchValidators, getEpochInfo, RosettaTransaction } from "../network";
 import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 
 export const mapRosettaTxnToOperation = async (
@@ -174,16 +174,12 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   const lastDelegationOp = operations.find(
     op => op.type === "REDELEGATE" || op.type === "DELEGATE" || op.type === "UNDELEGATE",
   );
-  let delegateAddress: string;
-  if (graphqlDelegateAddress === address) {
-    if (lastDelegationOp?.type === "UNDELEGATE") {
-      delegateAddress = address;
-    } else {
-      delegateAddress = lastDelegationOp?.recipients[0] ?? address;
-    }
-  } else {
-    delegateAddress = graphqlDelegateAddress;
-  }
+  const getDelegateAddressFn = () => {
+    if (graphqlDelegateAddress !== address) return graphqlDelegateAddress;
+    if (lastDelegationOp?.type === "UNDELEGATE") return address;
+    return lastDelegationOp?.recipients[0] ?? address;
+  };
+  const delegateAddress = getDelegateAddressFn();
 
   const shape: Partial<MinaAccount> = {
     id: accountId,

@@ -1,5 +1,5 @@
-import { rosettaSubmitTransaction } from "../../api";
 import { MINA_TOKEN_ID } from "../../consts";
+import { rosettaSubmitTransaction } from "../../network";
 import { MinaSignedTransaction, TxType } from "../../types/common";
 
 export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<string> => {

@@ -1,4 +1,4 @@
-import { fetchAccountTransactions, RosettaTransaction } from "../../api";
+import { fetchAccountTransactions, RosettaTransaction } from "../../network";
 
 export const getTransactions = async (
   address: string,
