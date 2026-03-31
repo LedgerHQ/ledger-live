@@ -70,8 +70,8 @@ runs:
         EMULATORS_PER_RUNNER=3
         BASE_SHARD=$(( TEST_COUNT > 0 ? (TEST_COUNT + EMULATORS_PER_RUNNER - 1) / EMULATORS_PER_RUNNER : 1 ))
 
-        SHARD_COUNT_IOS = 8
-        SHARD_COUNT_ANDROID = 8
+        SHARD_COUNT_IOS=8
+        SHARD_COUNT_ANDROID=8
   
         
         if [ "${{ inputs.max_shards }}" -gt 0 ]; then
