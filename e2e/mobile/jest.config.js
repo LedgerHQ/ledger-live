@@ -51,7 +51,7 @@ const jestAllure2ReporterOptions = {
 
 // Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
 const detoxAllure2AdapterOptions = {
-  deviceLogs: false,
+  deviceLogs: true,
   deviceScreenshots: false,
   deviceVideos: false,
   deviceViewHierarchy: false,
