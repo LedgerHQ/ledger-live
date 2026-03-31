@@ -15,16 +15,19 @@ import { useListItemViewModel, type ListItemViewModelResult } from "./useListIte
 
 interface ListItemProps {
   asset: Asset;
+  hideNetwork?: boolean;
   onPress: (asset: Asset) => void;
 }
 
 interface ListItemViewProps extends ListItemViewModelResult {
   asset: Asset;
+  hideNetwork?: boolean;
   onPress: () => void;
 }
 
 const ListItemView: React.FC<ListItemViewProps> = ({
   asset,
+  hideNetwork,
   onPress,
   formattedBalance,
   formattedCounterValue,
@@ -37,7 +40,7 @@ const ListItemView: React.FC<ListItemViewProps> = ({
     style={{ marginHorizontal: -8 }} // offsets ListItem's internal paddingHorizontal: s8
   >
     <ListItemLeading>
-      <CurrencyIcon currency={asset.currency} size={48} />
+      <CurrencyIcon currency={asset.currency} size={48} hideNetwork={hideNetwork} />
       <ListItemContent>
         <ListItemTitle>{asset.currency.name}</ListItemTitle>
         <ListItemDescription>{formattedBalance}</ListItemDescription>
@@ -58,11 +61,13 @@ const ListItemView: React.FC<ListItemViewProps> = ({
   </LumenListItem>
 );
 
-const ListItem: React.FC<ListItemProps> = ({ asset, onPress }) => {
+const ListItem: React.FC<ListItemProps> = ({ asset, onPress, hideNetwork }) => {
   const vmResult = useListItemViewModel(asset);
   const handlePress = useCallback(() => onPress(asset), [asset, onPress]);
 
-  return <ListItemView asset={asset} onPress={handlePress} {...vmResult} />;
+  return (
+    <ListItemView asset={asset} onPress={handlePress} hideNetwork={hideNetwork} {...vmResult} />
+  );
 };
 
 export default ListItem;

@@ -28,6 +28,6 @@ export const SectionListContent = ({
     return <SectionErrorState message={errorMessage} />;
   }
   return assetsToDisplay.map(item => (
-    <ListItem key={item.currency.id} asset={item} onPress={onItemPress} />
+    <ListItem key={item.currency.id} asset={item} onPress={onItemPress} hideNetwork />
   ));
 };

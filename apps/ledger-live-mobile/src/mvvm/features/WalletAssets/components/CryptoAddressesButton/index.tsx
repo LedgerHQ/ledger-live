@@ -45,7 +45,13 @@ export const CryptoAddressesButton: React.FC = () => {
                     </CardContentDescription>
                     <IconStack size={20} borderRadius={5}>
                       {firstThreeCurrencies.map(currency => (
-                        <CurrencyIcon key={currency.id} currency={currency} size={20} squared />
+                        <CurrencyIcon
+                          key={currency.id}
+                          currency={currency}
+                          size={20}
+                          squared
+                          hideNetwork
+                        />
                       ))}
                     </IconStack>
                   </>
