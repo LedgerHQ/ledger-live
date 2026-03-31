@@ -28,12 +28,7 @@ const DeviceSeededSuccessPanel = ({
   }, [handleNextStep]);
 
   return (
-    <Flex
-      height="264px"
-      justifyContent="center"
-      alignItems="center"
-      marginX="16px"
-    >
+    <Flex height="264px" justifyContent="center" alignItems="center" marginX="16px">
       <BoxedIcon
         backgroundColor="opacityDefault.c10"
         borderColor="transparent"

@@ -178,5 +178,4 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(result.current.isError).toBe(false);
     });
   });
-
 });

@@ -480,7 +480,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           }
           void receive(msg);
         } catch {
-          void receive(data);           // let JSON-RPC handle / error-respond
+          void receive(data); // let JSON-RPC handle / error-respond
         }
       },
       [receive],
