@@ -588,6 +588,80 @@ describe("EVM Family", () => {
           expect(result[0].fee).toEqual(new BigNumber(0));
           expect(result[0].value).toEqual(new BigNumber(0));
         });
+
+        it("should produce empty recipients when both to and contractAddress are empty strings", () => {
+          const etherscanOp: EtherscanOperation = {
+            blockNumber: "14923692",
+            timeStamp: "1654646570",
+            hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "",
+            value: "1000",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            contractAddress: "",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0x",
+            functionName: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const result = etherscanOperationToOperations(accountId, etherscanOp);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
+        });
+
+        it("should produce empty senders when from is an empty string", () => {
+          const etherscanOp: EtherscanOperation = {
+            blockNumber: "14923692",
+            timeStamp: "1654646570",
+            hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "",
+            to: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            value: "1000",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            contractAddress: "",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0x",
+            functionName: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const result = etherscanOperationToOperations(accountId, etherscanOp);
+
+          expect(result).toHaveLength(1);
+          expect(result[0].senders).toEqual([]);
+        });
       });
 
       describe("etherscanERC20EventToOperations", () => {
@@ -839,6 +913,43 @@ describe("EVM Family", () => {
           expect(result[0].fee).toEqual(new BigNumber(0));
           expect(result[0].value).toEqual(new BigNumber("1000000000000000000"));
         });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const etherscanOp: EtherscanERC20Event = {
+            blockNumber: "16240731",
+            timeStamp: "1671717983",
+            hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
+            nonce: "53",
+            blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+            to: "",
+            value: "2000000",
+            tokenName: "USD Coin",
+            tokenSymbol: "USDC",
+            tokenDecimal: "6",
+            transactionIndex: "65",
+            gas: "79381",
+            gasPrice: "24314367325",
+            gasUsed: "65613",
+            cumulativeGasUsed: "4557746",
+            input: "deprecated",
+            confirmations: "150032",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const result = etherscanERC20EventToOperations(accountId, etherscanOp);
+
+          expect(result).toHaveLength(1);
+          result.forEach(op => expect(op.recipients).toEqual([]));
+        });
       });
 
       describe("etherscanER721EventToOperation", () => {
@@ -1059,6 +1170,44 @@ describe("EVM Family", () => {
           expect(etherscanERC721EventToOperations(accountId, etherscanOp)).toEqual(
             expectedOperations,
           );
+        });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const etherscanOp: EtherscanERC721Event = {
+            blockNumber: "4708120",
+            timeStamp: "1512907118",
+            hash: "0x031e6968a8de362e4328d60dcc7f72f0d6fc84284c452f63176632177146de66",
+            nonce: "0",
+            blockHash: "0x4be19c278bfaead5cb0bc9476fa632e2447f6e6259e0303af210302d22779a24",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            contractAddress: "0x06012c8cf97bead5deae237070f9587f8e7a266d",
+            to: "",
+            tokenID: "202106",
+            tokenName: "CryptoKitties",
+            tokenSymbol: "CK",
+            tokenDecimal: "0",
+            transactionIndex: "81",
+            gas: "158820",
+            gasPrice: "40000000000",
+            gasUsed: "60508",
+            cumulativeGasUsed: "4880352",
+            input: "deprecated",
+            confirmations: "7990490",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const result = etherscanERC721EventToOperations(accountId, etherscanOp);
+
+          // from matches account → NFT_OUT is emitted, but recipients must not contain empty string
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
         });
       });
 
@@ -1281,6 +1430,44 @@ describe("EVM Family", () => {
             expectedOperations,
           );
         });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const etherscanOp: EtherscanERC1155Event = {
+            blockNumber: "13472395",
+            timeStamp: "1634973285",
+            hash: "0x643b15f3ffaad5d38e33e5872b4ebaa7a643eda8b50ffd5331f682934ee65d4d",
+            nonce: "41",
+            blockHash: "0xa5da536dfbe8125eb146114e2ee0d0bdef2b20483aacbf30fed6b60f092059e6",
+            transactionIndex: "100",
+            gas: "140000",
+            gasPrice: "52898577246",
+            gasUsed: "105030",
+            cumulativeGasUsed: "11739203",
+            input: "deprecated",
+            contractAddress: "0x76be3b62873462d2142405439777e971754e8e77",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            tokenID: "10371",
+            tokenValue: "1",
+            tokenName: "parallel",
+            tokenSymbol: "LL",
+            confirmations: "1447769",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const result = etherscanERC1155EventToOperations(accountId, etherscanOp);
+
+          // from matches account → NFT_OUT is emitted, but recipients must not contain empty string
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
+        });
       });
 
       describe("etherscanInternalTransactionToOperations", () => {
@@ -1469,6 +1656,39 @@ describe("EVM Family", () => {
           expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual(
             expectedOperations,
           );
+        });
+
+        it("should produce empty recipients when to is an empty string", () => {
+          const etherscanOp: EtherscanInternalTransaction = {
+            blockNumber: "14878012",
+            timeStamp: "1653990239",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            value: "66616263350003",
+            contractAddress: "",
+            input: "",
+            type: "call",
+            gas: "129878",
+            gasUsed: "0",
+            traceId: "0_1",
+            isError: "0",
+            errCode: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const result = etherscanInternalTransactionToOperations(accountId, etherscanOp);
+
+          // from matches account → OUT is emitted, but recipients must not contain empty string
+          expect(result).toHaveLength(1);
+          expect(result[0].recipients).toEqual([]);
         });
       });
       describe("etherscanStakingToOperations", () => {

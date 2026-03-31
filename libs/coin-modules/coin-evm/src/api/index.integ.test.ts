@@ -787,6 +787,51 @@ describe.each([
   });
 });
 
+describe("EVM Api (Moonbeam Network)", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    module = createApi(
+      {
+        node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
+        },
+        showNfts: false,
+      } as EvmConfig,
+      "moonbeam",
+    );
+  });
+
+  describe("listOperations", () => {
+    /**
+     * Non-regression: some Moonbeam transactions (e.g. contract creations) have
+     * an empty `to` field in the Etherscan API response. The adapter used to emit
+     * `recipients: [""]` (array with one empty string) instead of `recipients: []`.
+     * @see https://alpaca.api.ledger.com/v1/moonbeam/account/0x2a9c55b6dc56da178f9f9a566f1161237b73ba66/operations?limit=100
+     */
+    it("returns no operations with empty string recipients or senders", async () => {
+      const { items } = await module.listOperations("0x2a9c55b6dc56da178f9f9a566f1161237b73ba66", {
+        minHeight: 0,
+        order: "desc",
+        limit: 100,
+      });
+
+      expect(items.length).toBeGreaterThan(0);
+      items.forEach(op => {
+        op.recipients.forEach(r => {
+          expect(r).not.toBe("");
+        });
+        op.senders.forEach(s => {
+          expect(s).not.toBe("");
+        });
+      });
+    });
+  });
+});
+
 describe("EVM Api (SEI Network)", () => {
   let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
