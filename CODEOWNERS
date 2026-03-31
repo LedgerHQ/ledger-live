@@ -31,6 +31,8 @@ apps/ledger-live-desktop/src/renderer/logger/            @ledgerhq/platform
 apps/ledger-live-desktop/tools/                          @ledgerhq/platform
 apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 # Platform — domain
+domain/entity/unit                                       @ledgerhq/platform
+domain/entity/crypto-currency                            @ledgerhq/platform
 domain/entity/crypto-asset                               @ledgerhq/platform
 domain/api/crypto-assets                                 @ledgerhq/platform
 # Platform — shared
