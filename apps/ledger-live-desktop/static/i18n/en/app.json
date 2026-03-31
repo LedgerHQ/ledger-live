@@ -8355,6 +8355,7 @@
       }
     },
     "shared": {
+      "sponsoredByProvable": "Sponsored by Provable",
       "balanceSelector": {
         "private": "Private balance",
         "public": "Public balance",
@@ -8389,7 +8390,6 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "coveredByProvable": "Sponsored by Provable",
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
       },
       "mandatoryPrivateSync": {
