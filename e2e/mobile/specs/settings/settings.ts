@@ -143,7 +143,10 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
   describe("Password Lock Screen - Unlock with correct password", () => {
     beforeAll(async () => {
       await initPasswordTest();
+      await app.portfolio.navigateToSettings();
+      await app.settings.navigateToGeneralSettings();
       await app.settingsGeneral.setupPasswordAndLock(CORRECT_PASSWORD);
+      await app.passwordEntry.expectLock();
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
@@ -163,7 +166,10 @@ export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
   describe("Password Lock Screen - Stay locked with incorrect password", () => {
     beforeAll(async () => {
       await initPasswordTest();
+      await app.portfolio.navigateToSettings();
+      await app.settings.navigateToGeneralSettings();
       await app.settingsGeneral.setupPasswordAndLock(CORRECT_PASSWORD);
+      await app.passwordEntry.expectLock();
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));

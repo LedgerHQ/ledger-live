@@ -88,8 +88,6 @@ export default class SettingsGeneralPage {
 
   @Step("Setup password and lock")
   async setupPasswordAndLock(password: string) {
-    await app.portfolio.navigateToSettings();
-    await app.settings.navigateToGeneralSettings();
     await this.expectPasswordToggleValue("OFF");
     await this.togglePassword();
     await this.enterNewPassword(password);
@@ -105,6 +103,5 @@ export default class SettingsGeneralPage {
       await delay(2000);
     }
     await device.launchApp({ newInstance: false }); // bring back from background
-    await app.passwordEntry.expectLock();
   }
 }

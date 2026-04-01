@@ -1,3 +1,4 @@
+import { device } from "detox";
 import { describeIfNotNanoS } from "../../helpers/commonHelpers";
 
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
@@ -30,7 +31,10 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
   it(`Synchronize one instance then delete the backup`, async () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectNoAccount();
-    await app.ledgerSync.goToLedgerSync();
+    await app.portfolio.openViaDeeplink();
+    await app.portfolio.navigateToSettings();
+    await app.settings.navigateToGeneralSettings();
+    await app.settingsGeneral.navigateToLedgerSync();
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
     await app.ledgerSync.tapTurnOnSync();
     await app.ledgerSync.tapUseMyLedgerDevice();
@@ -41,7 +45,11 @@ describeIfNotNanoS(`Ledger Sync Accounts`, () => {
     await app.portfolio.waitForPortfolioWithAccounts();
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(2, app.ledgerSync.ledgerSyncPushDataArgs.data);
-    await app.ledgerSync.goToLedgerSync(true);
+    await app.portfolio.openViaDeeplink();
+    await app.portfolio.navigateToSettings();
+    await app.settings.navigateToGeneralSettings();
+    await device.disableSynchronization(); // TODO: Remove line when LIVE-15405 is fixed
+    await app.settingsGeneral.navigateToLedgerSync();
     await app.ledgerSync.openDeleteSync();
     await app.ledgerSync.confirmDeleteSync();
     await app.ledgerSync.expectBackupDeletion();

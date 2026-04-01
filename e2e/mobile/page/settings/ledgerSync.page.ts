@@ -2,7 +2,6 @@ import { Step } from "jest-allure2-reporter/api";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../bridge/server";
-import { device } from "detox";
 
 export default class LedgerSyncPage {
   ledgerKeyRingProtocolArgs = {
@@ -142,14 +141,5 @@ export default class LedgerSyncPage {
     });
     await this.activateLedgerSyncOnSpeculos();
     return output;
-  }
-
-  @Step("Go to Ledger Sync settings")
-  async goToLedgerSync(disableSync = false) {
-    await app.portfolio.openViaDeeplink();
-    await app.portfolio.navigateToSettings();
-    await app.settings.navigateToGeneralSettings();
-    if (disableSync) await device.disableSynchronization(); // TODO: Remove line when LIVE-15405 is fixed
-    await app.settingsGeneral.navigateToLedgerSync();
   }
 }
