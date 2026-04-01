@@ -94,6 +94,7 @@ export * from "./discover";
 export * from "./domainInputResolution";
 export * from "./editBitcoinTx";
 export * from "./editEvmTx";
+export * from "./evmNativeStaking";
 export * from "./fetchAdditionalCoins";
 export * from "./lldMemoTag";
 export * from "./lldWebviewManifestDomainCheck";

@@ -194,6 +194,11 @@ export const DEFAULT_FEATURES: Features = {
     params: { supportedCurrencyIds: ["ethereum"] },
   },
 
+  evmNativeStaking: {
+    enabled: false,
+    params: { supportedCurrencyIds: [] },
+  },
+
   editBitcoinTx: {
     enabled: false,
     params: { supportedCurrencyIds: ["bitcoin"] },

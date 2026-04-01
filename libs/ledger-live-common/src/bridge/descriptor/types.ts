@@ -242,9 +242,22 @@ export type SendDescriptor = {
 };
 
 /**
+ * Delegation modes supported by a staking-capable coin
+ */
+export type StakeMode = "delegate" | "undelegate" | "redelegate";
+
+/**
+ * Staking flow descriptor: declares that a currency supports native delegation
+ * and specifies which modes are available.
+ */
+export type StakeDescriptor = {
+  supportedModes: readonly StakeMode[];
+};
+
+/**
  * Complete flow descriptors for a coin
  */
 export type CoinDescriptor = {
   send: SendDescriptor;
-  // Future: stake, swap, etc.
+  stake?: StakeDescriptor;
 };

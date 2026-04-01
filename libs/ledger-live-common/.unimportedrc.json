@@ -343,6 +343,7 @@
     "src/bridge/descriptor/registry.ts",
     "src/bridge/descriptor/send/features.ts",
     "src/bridge/descriptor/send/memo.ts",
+    "src/bridge/descriptor/stake/features.ts",
     "src/bridge/descriptor/types.ts",
     "src/bridge/generic-alpaca/families/evm/signer.ts",
     "src/bridge/jsHelpers.ts",
