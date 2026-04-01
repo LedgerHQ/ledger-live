@@ -70,6 +70,7 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/zcash-shielded": "workspace:^",
+    "@ledgerhq/zcash-utils": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
