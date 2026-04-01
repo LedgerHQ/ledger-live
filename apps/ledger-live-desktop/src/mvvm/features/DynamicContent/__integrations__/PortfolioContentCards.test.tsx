@@ -6,6 +6,7 @@ import { BottomCarouselContentCards } from "../components/BottomCarouselContentC
 import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
 import { track } from "~/renderer/analytics/segment";
 import { LocationContentCard } from "~/types/dynamicContent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 
 const brazeExtrasById: Record<string, { canvas_name: string; canvas_step_name: string }> = {
   "0": {
@@ -102,6 +103,8 @@ describe("PortfolioContentCards", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
         },
       },
     });
@@ -213,6 +216,8 @@ describe("BottomCarouselContentCards", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
         },
       },
     });

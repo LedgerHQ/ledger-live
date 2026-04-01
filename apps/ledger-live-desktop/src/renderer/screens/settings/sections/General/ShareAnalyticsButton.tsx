@@ -1,6 +1,9 @@
 import React from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import {
+  shareAnalyticsSelector,
+  sharePersonalizedRecommendationsSelector,
+} from "~/renderer/reducers/settings";
 import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
@@ -10,7 +13,10 @@ import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 
 const ShareAnalyticsButton = () => {
-  const shareAnalytics = useSelector(trackingEnabledSelector);
+  const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const sharePersonalizedRecommendations = useSelector(sharePersonalizedRecommendationsSelector);
+  const isChecked = shareAnalytics && sharePersonalizedRecommendations;
+
   const dispatch = useDispatch();
 
   const toggleShareAnalytics = async (value: boolean) => {
@@ -21,9 +27,9 @@ const ShareAnalyticsButton = () => {
 
   return (
     <>
-      <Track mandatory onUpdate event={shareAnalytics ? "AnalyticsEnabled" : "AnalyticsDisabled"} />
+      <Track mandatory onUpdate event={isChecked ? "AnalyticsEnabled" : "AnalyticsDisabled"} />
       <Switch
-        isChecked={shareAnalytics}
+        isChecked={isChecked}
         onChange={toggleShareAnalytics}
         data-e2e="shareAnalytics_button"
       />

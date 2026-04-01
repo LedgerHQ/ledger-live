@@ -13,10 +13,20 @@ import reducer, {
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   SettingsState,
   filterValidSettings,
+  trackingEnabledSelector,
 } from "./settings";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
+
+const mockStateWithSettings = (settings: Partial<SettingsState>): State => ({
+  ...({} as State),
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
+    ...settings,
+  },
+});
 
 describe("lastSeenDeviceSelector", () => {
   it("should return the last seen device if the deviceModelId is valid", () => {
@@ -306,5 +316,133 @@ describe("SAVE_SETTINGS action", () => {
     expect(newState.counterValue).toBe("AUD");
     expect(newState.theme).toBe("light");
     expect("nftCollectionsStatusByNetwork" in newState).toBe(false);
+  });
+});
+
+describe("trackingEnabledSelector", () => {
+  /** Frozen clock; consent offsets use UTC setters to match `trackingEnabledSelector` (UTC year cutoff). */
+  const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  beforeEach(() => {
+    jest.setSystemTime(FIXED_NOW);
+  });
+
+  it("should not track if lastAnalyticsConsentDate is not set", () => {
+    expect(
+      trackingEnabledSelector(
+        mockStateWithSettings({
+          lastAnalyticsConsentDate: null,
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("should not track if privacyPolicyVersion is not set", () => {
+    expect(
+      trackingEnabledSelector(
+        mockStateWithSettings({
+          privacyPolicyVersion: null,
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  describe("opt-in analytics", () => {
+    it("should track if lastAnalyticsConsentDate is set and privacyPolicyVersion is set and is the current version", () => {
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should not track if lastAnalyticsConsentDate is more than one year ago", () => {
+      const consentDate = new Date(FIXED_NOW);
+      consentDate.setUTCFullYear(consentDate.getUTCFullYear() - 1);
+      consentDate.setUTCMonth(consentDate.getUTCMonth() - 1);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          }),
+        ),
+      ).toBe(false);
+    });
+
+    it("should track if lastAnalyticsConsentDate is exactly one year ago", () => {
+      const consentDate = new Date(FIXED_NOW);
+      consentDate.setUTCFullYear(consentDate.getUTCFullYear() - 1);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should track if lastAnalyticsConsentDate is less than one year ago", () => {
+      const consentDate = new Date(FIXED_NOW);
+      consentDate.setUTCMonth(consentDate.getUTCMonth() - 11);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should not track if lastAnalyticsConsentDate less than a year ago but privacyPolicyVersion is older than the current version", () => {
+      const consentDate = new Date(FIXED_NOW);
+      consentDate.setUTCMonth(consentDate.getUTCMonth() - 11);
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            lastAnalyticsConsentDate: consentDate.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION - 1,
+          }),
+        ),
+      ).toBe(false);
+    });
+  });
+
+  describe("opt-out analytics", () => {
+    it("should not track even if lastAnalyticsConsentDate is set and privacyPolicyVersion is set and is the current version", () => {
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings({
+            lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+            shareAnalytics: false,
+            sharePersonalizedRecommandations: false,
+          }),
+        ),
+      ).toBe(false);
+    });
   });
 });
