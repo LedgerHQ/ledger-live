@@ -61,18 +61,19 @@ async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Pr
       executionId: authorization.execution_id,
       baseFee,
       priorityFee,
+      isFeeSponsored: config.isFeeSponsored,
     }),
   });
-
-  const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
-
-  // sign fee request
-  const feeIntentSignature = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
 
   // create fee authorization, but only if fee is not zero
   let feeAuthorization: string | null = null;
 
   if (!config.isFeeSponsored) {
+    const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
+
+    // sign fee request
+    const feeIntentSignature = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
+
     const result = await sdkClient.createAuthorization({
       currency: account.currency,
       request: feeRequest,
