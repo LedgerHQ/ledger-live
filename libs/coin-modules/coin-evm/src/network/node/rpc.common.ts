@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ethers, JsonRpcProvider } from "ethers";
+import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
@@ -118,7 +118,10 @@ export async function withApi<T>(
       const key = providerCacheKey(currency.id, nodeConfig.uri);
       if (!PROVIDERS_BY_RPC[key]) {
         const chainId = currency.ethereumLikeInfo?.chainId;
-        PROVIDERS_BY_RPC[key] = new JsonRpcProvider(nodeConfig.uri, chainId);
+        const fetchReq = new FetchRequest(nodeConfig.uri);
+        // Disable ethers' built-in HTTP-level retries: withRetries handles all retry logic.
+        fetchReq.setThrottleParams({ maxAttempts: 1 });
+        PROVIDERS_BY_RPC[key] = new JsonRpcProvider(fetchReq, chainId);
       }
       const provider = PROVIDERS_BY_RPC[key];
       return await execute(provider);
