@@ -93,6 +93,7 @@ export function useCoinControlScreenViewModel({
       coinToSendLabel: t("newSendFlow.coinControl.coinToSend"),
       changeToReturnLabel: t("newSendFlow.coinControl.changeToReturn"),
       enterAmountPlaceholder: t("newSendFlow.coinControl.enterAmount"),
+      selectSufficientCoinsPlaceholder: t("newSendFlow.coinControl.selectSufficientCoins"),
       amountToSendLabel: t("newSendFlow.coinControl.amountToSendInCurrency", {
         ticker: accountCurrency?.ticker ?? "CRYPTO",
       }),

@@ -8,6 +8,7 @@ export {
 } from "./hooks/useCoinControlAmountInput";
 export {
   useCoinControlScreenViewModelCore,
+  type CoinControlChangeToReturnViewModel,
   type CoinControlScreenViewModelLabels,
   type UseCoinControlScreenViewModelCoreParams,
   type CoinControlScreenViewModelCoreResult,

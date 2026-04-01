@@ -53,12 +53,15 @@ const mockGetCoinControlConfig = sendFeatures.getCoinControlConfig as jest.Mock;
 
 function makeTestCoinControlConfig(
   getDisplayData: () => CoinControlDisplayData | null,
+  overrides?: Partial<Pick<CoinControlConfig, "buildToggleRowExclusionPatch">>,
 ): CoinControlConfig {
   return {
     customStrategyValue: bitcoinCoinControlConfig.customStrategyValue,
     getDisplayData,
     buildStrategyChangePatch: bitcoinCoinControlConfig.buildStrategyChangePatch,
-    buildToggleRowExclusionPatch: bitcoinCoinControlConfig.buildToggleRowExclusionPatch,
+    buildToggleRowExclusionPatch:
+      overrides?.buildToggleRowExclusionPatch ??
+      bitcoinCoinControlConfig.buildToggleRowExclusionPatch,
   };
 }
 
@@ -103,6 +106,7 @@ const mockLabels = {
   coinToSendLabel: "Coin to send",
   changeToReturnLabel: "Change to return",
   enterAmountPlaceholder: "Enter amount",
+  selectSufficientCoinsPlaceholder: "Select sufficient coins",
   amountToSendLabel: "Amount to send",
   amountInputLabel: "Amount",
   getStrategyOptionLabel: (key: string) => key,
@@ -172,29 +176,42 @@ function renderCoinControlCore(params: {
   status?: TransactionStatus;
   bridgePending?: boolean;
   amountError?: string;
+  buildToggleRowExclusionPatch?: CoinControlConfig["buildToggleRowExclusionPatch"];
+  updateTransaction?: jest.Mock;
 }) {
   mockBridgeMergePatch();
   mockGetCoinControlConfig.mockReturnValue(
-    makeTestCoinControlConfig(params.displayDataFactory ?? (() => null)),
+    makeTestCoinControlConfig(
+      params.displayDataFactory ?? (() => null),
+      params.buildToggleRowExclusionPatch != null
+        ? { buildToggleRowExclusionPatch: params.buildToggleRowExclusionPatch }
+        : undefined,
+    ),
   );
   const account = createAccount();
-  return renderHook(() =>
-    useCoinControlScreenViewModelCore({
-      account,
-      parentAccount: null,
-      transaction: params.transaction,
-      status: params.status ?? createStatus(),
-      bridgePending: params.bridgePending ?? false,
-      uiConfig: { hasCoinControl: true } as never,
-      transactionActions: { updateTransaction: jest.fn() } as never,
-      locale: "en",
-      accountUnit: getAccountCurrency(account).units[0],
-      amountError: params.amountError,
-      networkFees: {},
-      labels: mockLabels,
-      onLearnMoreClick: mockOnLearnMore,
-    }),
-  );
+  const updateTransaction =
+    params.updateTransaction ??
+    jest.fn((fn: (tx: Transaction) => Transaction) => fn(params.transaction));
+  return {
+    updateTransaction,
+    ...renderHook(() =>
+      useCoinControlScreenViewModelCore({
+        account,
+        parentAccount: null,
+        transaction: params.transaction,
+        status: params.status ?? createStatus(),
+        bridgePending: params.bridgePending ?? false,
+        uiConfig: { hasCoinControl: true } as never,
+        transactionActions: { updateTransaction } as never,
+        locale: "en",
+        accountUnit: getAccountCurrency(account).units[0],
+        amountError: params.amountError,
+        networkFees: {},
+        labels: mockLabels,
+        onLearnMoreClick: mockOnLearnMore,
+      }),
+    ),
+  };
 }
 
 describe("useCoinControlScreenViewModelCore", () => {
@@ -238,6 +255,7 @@ describe("useCoinControlScreenViewModelCore", () => {
       reviewShowIcon: true,
       strategyLabel: "Strategy",
       learnMoreLabel: "Learn more",
+      isCustomPickingStrategy: false,
     });
     expect(typeof result.current.onAmountChange).toBe("function");
     expect(typeof result.current.onSelectStrategy).toBe("function");
@@ -275,6 +293,141 @@ describe("useCoinControlScreenViewModelCore", () => {
     expect(result.current.networkFees).toEqual({ fee: "data" });
   });
 
+  describe("isCustomPickingStrategy", () => {
+    it("is false when coin control config is missing", () => {
+      mockGetCoinControlConfig.mockReturnValue(null);
+      mockBridgeMergePatch();
+      const account = createAccount();
+      const transaction = customTransaction(new BigNumber(1000));
+      const { result } = renderHook(() =>
+        useCoinControlScreenViewModelCore({
+          account,
+          parentAccount: null,
+          transaction,
+          status: createStatus(),
+          bridgePending: false,
+          uiConfig: { hasCoinControl: true } as never,
+          transactionActions: { updateTransaction: jest.fn() } as never,
+          locale: "en",
+          accountUnit: getAccountCurrency(account).units[0],
+          amountError: undefined,
+          networkFees: {},
+          labels: mockLabels,
+          onLearnMoreClick: mockOnLearnMore,
+        }),
+      );
+      expect(result.current.isCustomPickingStrategy).toBe(false);
+    });
+
+    it("is false when strategy is not CUSTOM", () => {
+      const { result } = renderCoinControlCore({
+        transaction: createTransaction(),
+      });
+      expect(result.current.isCustomPickingStrategy).toBe(false);
+    });
+
+    it("is true when strategy is CUSTOM and config exists", () => {
+      const { result } = renderCoinControlCore({
+        transaction: customTransaction(new BigNumber(1000)),
+      });
+      expect(result.current.isCustomPickingStrategy).toBe(true);
+    });
+  });
+
+  describe("onToggleUtxoExclusion", () => {
+    const rowKey = "tx1-0";
+    const togglePatch = {
+      utxoStrategy: {
+        strategy: bitcoinPickingStrategy.CUSTOM,
+        excludeUTXOs: [{ hash: "tx1", outputIndex: 0 }],
+      },
+    };
+
+    it("calls buildToggleRowExclusionPatch with transaction, rowKey, and displayData then updateTransaction when custom strategy and config exist", () => {
+      const transaction = customTransaction(new BigNumber(1000));
+      const displayData = displayDataForCustomRows([row("tx1", 0, false)]);
+      const buildToggleRowExclusionPatch = jest.fn().mockReturnValue(togglePatch);
+
+      const { result, updateTransaction } = renderCoinControlCore({
+        displayDataFactory: () => displayData,
+        transaction,
+        buildToggleRowExclusionPatch,
+      });
+
+      expect(typeof result.current.onToggleUtxoExclusion).toBe("function");
+      result.current.onToggleUtxoExclusion!(rowKey);
+
+      expect(buildToggleRowExclusionPatch).toHaveBeenCalledTimes(1);
+      expect(buildToggleRowExclusionPatch).toHaveBeenCalledWith({
+        transaction,
+        rowKey,
+        displayData,
+      });
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not call updateTransaction when buildToggleRowExclusionPatch returns null", () => {
+      const transaction = customTransaction(new BigNumber(1000));
+      const buildToggleRowExclusionPatch = jest.fn().mockReturnValue(null);
+
+      const { result, updateTransaction } = renderCoinControlCore({
+        displayDataFactory: () => displayDataForCustomRows([row("tx1", 0, false)]),
+        transaction,
+        buildToggleRowExclusionPatch,
+      });
+
+      result.current.onToggleUtxoExclusion!(rowKey);
+
+      expect(buildToggleRowExclusionPatch).toHaveBeenCalledTimes(1);
+      expect(updateTransaction).not.toHaveBeenCalled();
+    });
+
+    it("does not call buildToggleRowExclusionPatch or updateTransaction when strategy is not custom", () => {
+      const buildToggleRowExclusionPatch = jest.fn().mockReturnValue(togglePatch);
+
+      const { result, updateTransaction } = renderCoinControlCore({
+        displayDataFactory: () => displayDataForCustomRows([row("tx1", 0, false)]),
+        transaction: createTransaction(),
+        buildToggleRowExclusionPatch,
+      });
+
+      result.current.onToggleUtxoExclusion!(rowKey);
+
+      expect(buildToggleRowExclusionPatch).not.toHaveBeenCalled();
+      expect(updateTransaction).not.toHaveBeenCalled();
+    });
+
+    it("does not call updateTransaction when coin control config is missing", () => {
+      mockBridgeMergePatch();
+      mockGetCoinControlConfig.mockReturnValue(null);
+      const account = createAccount();
+      const transaction = customTransaction(new BigNumber(1000));
+      const updateTransaction = jest.fn();
+
+      const { result } = renderHook(() =>
+        useCoinControlScreenViewModelCore({
+          account,
+          parentAccount: null,
+          transaction,
+          status: createStatus(),
+          bridgePending: false,
+          uiConfig: { hasCoinControl: true } as never,
+          transactionActions: { updateTransaction } as never,
+          locale: "en",
+          accountUnit: getAccountCurrency(account).units[0],
+          amountError: undefined,
+          networkFees: {},
+          labels: mockLabels,
+          onLearnMoreClick: mockOnLearnMore,
+        }),
+      );
+
+      expect(result.current.isCustomPickingStrategy).toBe(false);
+      result.current.onToggleUtxoExclusion!(rowKey);
+      expect(updateTransaction).not.toHaveBeenCalled();
+    });
+  });
+
   describe("CUSTOM strategy (amount error, NotEnoughBalance, change)", () => {
     const txFilled = () => customTransaction(new BigNumber(5000));
 
@@ -303,8 +456,9 @@ describe("useCoinControlScreenViewModelCore", () => {
         amountError: "Insufficient funds",
       });
       expect(result.current.amountError).toBeUndefined();
-      expect(result.current.changeToReturnFormatted).toBe("");
+      expect(result.current.changeToReturn.value).toBe("");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturn.placeholder).toBe("Select sufficient coins");
     });
 
     it("still shows NotEnoughBalance when at least one UTXO is selected", () => {
@@ -316,8 +470,9 @@ describe("useCoinControlScreenViewModelCore", () => {
         amountError: "Insufficient funds",
       });
       expect(result.current.amountError).toBe("Insufficient funds");
-      expect(result.current.changeToReturnFormatted).toBe("");
+      expect(result.current.changeToReturn.value).toBe("");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturn.placeholder).toBe("Select sufficient coins");
     });
 
     it("hides NotEnoughBalance while bridgePending (stale status after UTXO toggle)", () => {
@@ -339,8 +494,9 @@ describe("useCoinControlScreenViewModelCore", () => {
         transaction: txFilled(),
         status: statusWithChangeOutput(new BigNumber(3500)),
       });
-      expect(result.current.changeToReturnFormatted).toBe("3500 BTC");
+      expect(result.current.changeToReturn.value).toBe("3500 BTC");
       expect(result.current.enterAmountPlaceholder).toBe("Enter amount");
+      expect(result.current.changeToReturn.placeholder).toBe("Enter amount");
     });
   });
 });

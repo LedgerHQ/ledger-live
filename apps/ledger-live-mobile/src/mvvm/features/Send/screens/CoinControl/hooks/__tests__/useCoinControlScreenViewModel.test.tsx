@@ -78,7 +78,6 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
     name: "Bitcoin",
   })),
 }));
-
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   const actual = jest.requireActual("@ledgerhq/live-common/bridge/descriptor/send/features");
   const { bitcoinCoinControlConfig } = jest.requireActual(
@@ -166,17 +165,18 @@ describe("useCoinControlScreenViewModel", () => {
       reviewShowIcon: true,
       reviewDisabled: true,
       reviewLoading: false,
+      isCustomPickingStrategy: false,
     });
     expect(typeof result.current.onAmountChange).toBe("function");
     expect(typeof result.current.onSelectStrategy).toBe("function");
     expect(typeof result.current.onLearnMoreClick).toBe("function");
     expect(result.current.strategyOptionsWithLabels).toBeDefined();
     expect(result.current.utxoDisplayData).toBeDefined();
-    expect(result.current.changeToReturnFormatted).toBe("");
+    expect(result.current.changeToReturn.value).toBe("");
     expect(result.current.reviewLabel).toBeDefined();
     expect(result.current.learnMoreLabel).toBeDefined();
     expect(result.current.coinToSendLabel).toBeDefined();
-    expect(result.current.changeToReturnLabel).toBeDefined();
+    expect(result.current.changeToReturn.changeToReturnLabel).toBeDefined();
     expect(result.current.enterAmountPlaceholder).toBeDefined();
     expect(result.current.amountToSendLabel).toBeDefined();
     expect(result.current.amountInputLabel).toBeDefined();
@@ -255,14 +255,14 @@ describe("useCoinControlScreenViewModel", () => {
     expect(result.current.reviewLoading).toBe(true);
   });
 
-  it("should return empty changeToReturnFormatted when no amount", () => {
+  it("should return empty changeToReturn value when no amount", () => {
     const params = buildBaseParams({
       transaction: { amount: new BigNumber(0), useAllAmount: false },
     });
 
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
-    expect(result.current.changeToReturnFormatted).toBe("");
+    expect(result.current.changeToReturn.value).toBe("");
   });
 
   it("should format change to return when status has txOutputs with change", () => {
@@ -278,7 +278,22 @@ describe("useCoinControlScreenViewModel", () => {
 
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
-    expect(result.current.changeToReturnFormatted).toBe("2000 BTC");
+    expect(result.current.changeToReturn.value).toBe("2000 BTC");
+  });
+
+  it("should set isCustomPickingStrategy true when utxo strategy is CUSTOM", () => {
+    const params = buildBaseParams({
+      transaction: {
+        utxoStrategy: {
+          strategy: bitcoinPickingStrategy.CUSTOM,
+          excludeUTXOs: [],
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params));
+
+    expect(result.current.isCustomPickingStrategy).toBe(true);
   });
 
   it("should expose onSelectStrategy that accepts a strategy value without throwing", () => {
