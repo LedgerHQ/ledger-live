@@ -31,4 +31,7 @@ export type AccountsNavigatorParamList = {
     isSyncEnabled?: boolean;
     specificAccounts?: Account[] | TokenAccount[];
   };
+  [ScreenName.CryptoAddresses]: {
+    sourceScreenName: ScreenName;
+  };
 };
