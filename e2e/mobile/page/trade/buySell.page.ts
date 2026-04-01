@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
+import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
@@ -194,5 +194,32 @@ export default class BuySellPage {
     } catch (error) {
       throw new Error(`Provider page verification failed: ${sanitizeError(error)}`);
     }
+  }
+
+  @Step("Handle buy flow")
+  async handleBuyFlow(buySell: BuySell, paymentMethod: string) {
+    await this.expectBuyScreenToBeVisible();
+    await this.chooseAssetIfNotSelected(buySell.crypto);
+    await this.verifyQuickAmountButtonsFunctionality();
+    await this.setAmountToPay(buySell.amount);
+    await this.chooseCountryIfNotSelected(buySell.fiat);
+    await this.tapSeeQuotes();
+    await this.selectPaymentMethod(paymentMethod);
+    const selectedProvider = await this.selectRandomProvider();
+    await this.tapBuySellWithCta(selectedProvider, buySell.operation);
+    await this.verifyProviderPageLoadedWithCorrectUrl(selectedProvider);
+  }
+
+  @Step("Handle sell flow")
+  async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: Provider) {
+    await this.expectSellScreenToBeVisible();
+    await this.chooseAssetIfNotSelected(buySell.crypto);
+    await this.tapSellPercentageButton("50%");
+    await this.chooseCountryIfNotSelected(buySell.fiat);
+    await this.tapSeeQuotes();
+    await this.selectPaymentMethod(paymentMethod);
+    await this.selectProvider(provider.name);
+    await this.tapBuySellWithCta(provider.uiName, buySell.operation);
+    await this.verifyProviderPageLoadedWithCorrectUrl(provider.uiName);
   }
 }
