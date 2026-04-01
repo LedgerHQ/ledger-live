@@ -34,6 +34,7 @@ catalog:
   "@ledgerhq/lumen-design-core": 0.1.9
   "@ledgerhq/lumen-ui-react": 0.1.20
   "@ledgerhq/lumen-ui-rnative": 0.1.20
+  "@ledgerhq/zcash-utils": 0.1.5
   # React Native
   react-native: 0.79.7
   "@react-native/assets-registry": 0.79.7

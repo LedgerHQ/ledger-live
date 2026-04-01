@@ -35,8 +35,9 @@
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
+      "types": "./lib/*.d.ts",
       "require": "./lib/*.js",
-      "import": "./lib-es/*.js"
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -72,6 +73,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.2.0",
+    "@ledgerhq/zcash-utils": "catalog:",
     "bignumber.js": "^9.1.2",
     "rxjs": "catalog:"
   }
