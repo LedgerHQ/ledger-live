@@ -20,8 +20,8 @@ describe("LegacySignerCelo", () => {
   let signer: LegacySignerCelo;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     (Celo as jest.Mock).mockImplementation(() => celoMock);
+    jest.clearAllMocks();
     signer = new LegacySignerCelo({} as any);
   });
 
@@ -110,21 +110,6 @@ describe("LegacySignerCelo", () => {
 
   describe("signTransaction", () => {
     it("should sign the transaction", async () => {
-      // GIVEN
-      const path = "path";
-      const rawTxHex = "0x010203040506";
-      const signature = { r: "01", s: "02", v: 3 };
-      celoMock.signTransaction.mockResolvedValue(signature);
-
-      // WHEN
-      const result = await signer.signTransaction(path, rawTxHex);
-
-      // THEN
-      expect(celoMock.signTransaction).toHaveBeenCalledWith(path, rawTxHex);
-      expect(result).toEqual(signature);
-    });
-
-    it("should sign the transaction with resolution", async () => {
       // GIVEN
       const path = "path";
       const rawTxHex = "0x010203040506";

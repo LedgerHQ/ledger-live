@@ -11,7 +11,7 @@ export interface CeloSigner {
     boolChaincode?: boolean,
     chainId?: string,
   ) => Promise<EvmAddress>;
-  signTransaction: (path: string, rawTxHex: string, resolution?: any) => Promise<EvmSignature>;
+  signTransaction: (path: string, rawTxHex: string) => Promise<EvmSignature>;
   signPersonalMessage: (path: string, messageHex: string) => Promise<EvmSignature>;
   signEIP712Message(
     path: string,
