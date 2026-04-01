@@ -216,7 +216,7 @@ export const test = base.extend<TestFixtures>({
         userdataDestinationPath,
         simulateCamera,
         windowSize,
-        recordVideo: isLastRetry(testInfo),
+        recordVideo: true,
       });
 
       await use(electronApp);
