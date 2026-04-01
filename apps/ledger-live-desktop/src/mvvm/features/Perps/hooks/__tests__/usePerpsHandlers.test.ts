@@ -1,0 +1,55 @@
+import { renderHook } from "@testing-library/react";
+import { usePerpsHandlers } from "../usePerpsHandlers";
+import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import * as perpsSignDialog from "../../screens/PerpsSign/perpsSignDialog";
+
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
+  handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),
+}));
+
+const mockDispatch = jest.fn();
+jest.mock("LLD/hooks/redux", () => ({
+  useDispatch: () => mockDispatch,
+}));
+
+jest.mock("../../screens/PerpsSign/perpsSignDialog", () => ({
+  setPerpsSignData: jest.fn(),
+  openPerpsSign: jest.fn(() => ({ type: "dialogs/openDialog", payload: "PERPS_SIGNING" })),
+}));
+
+const mockedPerpsHandlers = jest.mocked(perpsHandlers);
+
+describe("usePerpsHandlers", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("should call perps handlers with signing.execute ui hook", () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+
+    renderHook(() => usePerpsHandlers(accounts));
+
+    expect(mockedPerpsHandlers).toHaveBeenCalledWith({
+      accounts,
+      uiHooks: { "signing.execute": expect.any(Function) },
+    });
+  });
+
+  it("should set data and dispatch openPerpsSign when signing.execute is called", () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    renderHook(() => usePerpsHandlers(accounts));
+
+    const signingExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["signing.execute"];
+    const params = {
+      appName: "Hyperliquid",
+      appOptions: undefined,
+      signFactory: jest.fn(),
+      onSuccess: jest.fn(),
+      onError: jest.fn(),
+      onCancel: jest.fn(),
+    };
+
+    signingExecute(params);
+
+    expect(perpsSignDialog.setPerpsSignData).toHaveBeenCalledWith(params);
+    expect(mockDispatch).toHaveBeenCalledWith(perpsSignDialog.openPerpsSign());
+  });
+});
