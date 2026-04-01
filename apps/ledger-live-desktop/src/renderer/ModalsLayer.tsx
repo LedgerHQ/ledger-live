@@ -25,12 +25,10 @@ const BackDrop = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
 `;
 
 function renderNameState<Name extends keyof ModalData>(name: Name, data: ModalData[Name]) {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
-  const ModalComponent = (
-    modals as unknown as Record<string, React.ComponentType<Record<string, unknown>> | undefined>
-  )[name];
+  const ModalComponent = modals[name];
   if (ModalComponent) {
-    return <ModalComponent key={name} name={name} {...(data as Record<string, unknown>)} />;
+    // @ts-expect-error unclear why it can't prove this part
+    return <ModalComponent key={name} name={name} {...data} />;
   }
 }
 
