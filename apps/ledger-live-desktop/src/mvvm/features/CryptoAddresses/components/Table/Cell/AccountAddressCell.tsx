@@ -12,7 +12,7 @@ export function AccountAddressCell({ account, lookupParentAccount }: AccountAddr
   const address =
     account.type === "Account"
       ? account.freshAddress
-      : (lookupParentAccount(account.parentId)?.freshAddress ?? "");
+      : lookupParentAccount(account.parentId)?.freshAddress ?? "";
   const formatted = formatAddress(address, { prefixLength: 5, suffixLength: 5 });
   return <TableCellContent title={formatted} />;
 }

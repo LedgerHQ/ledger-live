@@ -58,6 +58,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
             }
             title={row.original.currency.name}
             description={row.original.currency.ticker}
+            className="[&>div:first-child]:shrink-0 [&>div:last-child]:min-w-0"
           />
         ),
       },
