@@ -1,3 +1,4 @@
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 import { State } from "~/reducers/types";
 
 export type ConsentDrawerTestOptions = {
@@ -18,9 +19,9 @@ export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
     hasCompletedOnboarding = true,
     analyticsOptInEnabled = true,
     consentDate = null,
-    privacyPolicyVersion = null,
-    analyticsEnabled = false,
-    personalizedRecommendationsEnabled = false,
+    privacyPolicyVersion = CURRENT_PRIVACY_POLICY_VERSION,
+    analyticsEnabled = true,
+    personalizedRecommendationsEnabled = true,
   } = options;
 
   return (state: State): State => ({

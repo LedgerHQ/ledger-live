@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
 import { overrideInitialStateWithFeatureFlag } from "LLM/features/Portfolio/__integrations__/shared";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
 import type { State } from "~/reducers/types";
@@ -34,8 +35,10 @@ const overridePortfolioWithAnalyticsConsentDrawer = (state: State): State =>
   withConsentDrawerState({
     hasCompletedOnboarding: true,
     analyticsOptInEnabled: true,
-    analyticsEnabled: false,
-    personalizedRecommendationsEnabled: false,
+    analyticsEnabled: true,
+    personalizedRecommendationsEnabled: true,
+    consentDate: null,
+    privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
   })(overrideInitialStateWithFeatureFlag(state));
 
 describe("AnalyticsConsentDrawer on Portfolio", () => {
