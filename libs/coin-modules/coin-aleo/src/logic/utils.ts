@@ -235,6 +235,31 @@ export function getTransactionType(intent: TransactionIntent): TransactionType {
   return transactionType;
 }
 
+function getAmountToSpend({
+  account,
+  transaction,
+  estimatedFees,
+}: {
+  account: AleoAccount;
+  transaction: Transaction;
+  estimatedFees: BigNumber;
+}): BigNumber {
+  if (!transaction.useAllAmount) {
+    return transaction.amount;
+  }
+
+  if (isPrivateTransaction(transaction)) {
+    const commitment = transaction.properties.amountRecordCommitment;
+    const amountRecord = commitment ? getRecordByCommitment({ account, commitment }) : null;
+
+    return new BigNumber(amountRecord?.microcredits ?? "0");
+  }
+
+  const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
+
+  return BigNumber.max(0, transparentBalance.minus(estimatedFees));
+}
+
 export function calculateAmount({
   account,
   transaction,
@@ -244,12 +269,7 @@ export function calculateAmount({
   transaction: Transaction;
   estimatedFees: BigNumber;
 }) {
-  let amount = transaction.amount;
-
-  if (transaction.useAllAmount) {
-    const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
-    amount = BigNumber.max(0, transparentBalance.minus(estimatedFees));
-  }
+  const amount = getAmountToSpend({ account, transaction, estimatedFees });
 
   const totalSpent = amount.plus(estimatedFees);
 
