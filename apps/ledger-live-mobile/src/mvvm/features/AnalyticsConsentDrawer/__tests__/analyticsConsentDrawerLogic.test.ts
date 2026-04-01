@@ -1,4 +1,4 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { needsConsentRenewal, needsPrivacyPolicyAck } from "../utils/analyticsConsentDrawerLogic";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;

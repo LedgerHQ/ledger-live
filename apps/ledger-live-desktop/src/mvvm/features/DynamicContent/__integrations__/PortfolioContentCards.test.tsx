@@ -6,7 +6,7 @@ import { BottomCarouselContentCards } from "../components/BottomCarouselContentC
 import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
 import { track } from "~/renderer/analytics/segment";
 import { LocationContentCard } from "~/types/dynamicContent";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 const brazeExtrasById: Record<string, { canvas_name: string; canvas_step_name: string }> = {
   "0": {

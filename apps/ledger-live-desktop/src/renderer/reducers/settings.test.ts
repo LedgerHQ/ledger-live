@@ -16,7 +16,7 @@ import reducer, {
   filterValidSettings,
   trackingEnabledSelector,
 } from "./settings";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);

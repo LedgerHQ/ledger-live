@@ -1,1 +1,0 @@
-export const CURRENT_PRIVACY_POLICY_VERSION = 1;

@@ -41,7 +41,7 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 /* Initial state */
 

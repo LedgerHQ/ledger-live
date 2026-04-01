@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import { overrideInitialStateWithFeatureFlag } from "LLM/features/Portfolio/__integrations__/shared";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
 import { ScreenName } from "~/const";
