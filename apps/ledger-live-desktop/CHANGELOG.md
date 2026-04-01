@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.0.0-next.3
+
+### Minor Changes
+
+- [#15975](https://github.com/LedgerHQ/ledger-live/pull/15975) [`ed36bf5`](https://github.com/LedgerHQ/ledger-live/commit/ed36bf55bbdc31d6da299c62d1fc9d35b6d0efc3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix starred account sidebar item layout when the main sidebar is collapsed
+
 ## 4.0.0-next.2
 
 ### Minor Changes

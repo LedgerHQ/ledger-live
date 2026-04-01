@@ -1,5 +1,11 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.23.0-next.1
+
+### Minor Changes
+
+- [#15976](https://github.com/LedgerHQ/ledger-live/pull/15976) [`fc0ced9`](https://github.com/LedgerHQ/ledger-live/commit/fc0ced912425fee1bc9743d3843ab43857069e3e) Thanks [@tonykhaov](https://github.com/tonykhaov)! - fix e2e test onboarding
+
 ## 0.23.0-next.0
 
 ### Minor Changes
