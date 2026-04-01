@@ -6,7 +6,6 @@ import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,
   hasCompletedOnboardingSelector,
-  personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import {
   setAnalytics,
@@ -34,22 +33,19 @@ export function useAnalyticsConsentDrawerViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
-  const personalizedEnabled = useSelector(personalizedRecommendationsEnabledSelector);
 
-  const needsPrivacy = useMemo(
+  const needsUpdatePrivacy = useMemo(
     () => needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion),
     [consentInfo.privacyPolicyVersion],
   );
-  const needsConsent = useMemo(
+  const needsRenewal = useMemo(
     () => needsConsentRenewal(consentInfo.consentDate),
     [consentInfo.consentDate],
   );
 
   const shouldOffer = Boolean(
-    feature?.enabled && hasCompletedOnboarding && (needsPrivacy || needsConsent),
+    feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
   );
-
-  const isNewConsent = !analyticsEnabled || !personalizedEnabled;
 
   const [phase, setPhase] = useState<ConsentDrawerPhase>("closed");
 
@@ -60,11 +56,11 @@ export function useAnalyticsConsentDrawerViewModel() {
     }
     setPhase(current => {
       if (current !== "closed") return current;
-      if(!isNewConsent) return "consentFresh";
-      if (needsPrivacy) return "privacy";
-      return "consentReconfirm";
+      if (needsRenewal) return analyticsEnabled ? "consentReconfirm" : "consentFresh";
+      if (needsUpdatePrivacy) return "privacy";
+      return "consentFresh";
     });
-  }, [isFocused, shouldOffer, needsPrivacy, isNewConsent]);
+  }, [isFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, analyticsEnabled]);
 
   const closeDrawer = useCallback(() => {
     setPhase("closed");
@@ -99,33 +95,16 @@ export function useAnalyticsConsentDrawerViewModel() {
 
   const onPrivacyGotIt = useCallback(() => {
     track("button_clicked", { button: "analytics_consent_privacy_got_it", page: PAGE });
-    const stillNeedsConsent = needsConsentRenewal(consentInfo.consentDate);
     dispatch(
       setAnalyticsConsentInfo({
-        ...consentInfo,
+        consentDate: new Date().toISOString(),
         privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
       }),
     );
-    if (stillNeedsConsent) {
-      setPhase(analyticsEnabled && personalizedEnabled ? "consentReconfirm" : "consentFresh");
-    } else {
-      dispatch(
-        setAnalyticsConsentInfo({
-          consentDate: new Date().toISOString(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-        }),
-      );
-      dispatch(setHasSeenAnalyticsOptInPrompt(true));
-      closeDrawer();
-    }
+    dispatch(setHasSeenAnalyticsOptInPrompt(true));
+    closeDrawer();
     updateIdentify();
-  }, [
-    dispatch,
-    consentInfo,
-    analyticsEnabled,
-    personalizedEnabled,
-    closeDrawer,
-  ]);
+  }, [dispatch, closeDrawer]);
 
   const onSetPreferences = useCallback(() => {
     track("button_clicked", { button: "analytics_consent_set_preferences", page: PAGE });

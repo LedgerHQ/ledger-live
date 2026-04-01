@@ -3,8 +3,9 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track, updateIdentify } from "~/analytics";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
 import { useAnalyticsConsentDrawerViewModel } from "../useAnalyticsConsentDrawerViewModel";
-import { ONE_YEAR_MS } from "../analyticsConsentDrawerLogic";
-import { withConsentDrawerState } from "./helpers";
+import { withConsentDrawerOpeningFresh, withConsentDrawerState } from "./helpers";
+
+const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 const mockNavigate = jest.fn();
 const mockUseIsFocused = jest.fn(() => true);
@@ -48,11 +49,11 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
   });
 
-  it("should open consentReconfirm when toggles are off, policy is current, and consent is missing", async () => {
+  it("should open consentReconfirm when renewal is needed, policy is current, and analytics is on", async () => {
     const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
       overrideInitialState: withConsentDrawerState({
-        analyticsEnabled: false,
-        personalizedRecommendationsEnabled: false,
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
         privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
         consentDate: null,
       }),
@@ -66,7 +67,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
   });
 
-  it("should open consentFresh when both toggles are on even if privacy policy version is stale (phase order)", async () => {
+  it("should open privacy when policy is stale, consent is current, and analytics is on", async () => {
     const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
       overrideInitialState: withConsentDrawerState({
         analyticsEnabled: true,
@@ -76,12 +77,12 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       }),
     });
     await waitFor(() => {
-      expect(result.current.phase).toBe("consentFresh");
+      expect(result.current.phase).toBe("privacy");
     });
   });
 
-  it("should open consentReconfirm when toggles are off, policy is current, and consent is older than one year", async () => {
-    const oldIso = new Date(Date.now() - ONE_YEAR_MS - 86_400_000).toISOString();
+  it("should keep drawer closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
+    const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
     const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
       overrideInitialState: withConsentDrawerState({
         analyticsEnabled: false,
@@ -91,13 +92,13 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       }),
     });
     await waitFor(() => {
-      expect(result.current.phase).toBe("consentReconfirm");
+      expect(result.current.phase).toBe("closed");
     });
   });
 
   it("should close phase when focus is lost after being open", async () => {
     const { result, rerender } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-      overrideInitialState: withConsentDrawerState(),
+      overrideInitialState: withConsentDrawerOpeningFresh(),
     });
     await waitFor(() => {
       expect(result.current.phase).toBe("consentFresh");
@@ -109,9 +110,34 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
   });
 
+  it("should dispatch opt-in settings and close drawer when applyOptIn is called from consentReconfirm", async () => {
+    const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
+      overrideInitialState: withConsentDrawerState({
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        consentDate: null,
+      }),
+    });
+    await waitFor(() => {
+      expect(result.current.phase).toBe("consentReconfirm");
+    });
+
+    act(() => {
+      result.current.applyOptIn();
+    });
+
+    const s = store.getState().settings;
+    expect(s.analyticsEnabled).toBe(true);
+    expect(s.personalizedRecommendationsEnabled).toBe(true);
+    expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
+    expect(result.current.phase).toBe("closed");
+    expect(updateIdentify).toHaveBeenCalled();
+  });
+
   it("should dispatch opt-in settings and close drawer when applyOptIn is called", async () => {
     const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-      overrideInitialState: withConsentDrawerState(),
+      overrideInitialState: withConsentDrawerOpeningFresh(),
     });
     await waitFor(() => {
       expect(result.current.phase).toBe("consentFresh");
@@ -135,9 +161,32 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(updateIdentify).toHaveBeenCalled();
   });
 
+  it("should dispatch opt-out settings and close drawer when applyOptOut is called from consentReconfirm", async () => {
+    const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
+      overrideInitialState: withConsentDrawerState({
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        consentDate: null,
+      }),
+    });
+    await waitFor(() => {
+      expect(result.current.phase).toBe("consentReconfirm");
+    });
+
+    act(() => {
+      result.current.applyOptOut();
+    });
+
+    expect(store.getState().settings.analyticsEnabled).toBe(false);
+    expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+    expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+    expect(result.current.phase).toBe("closed");
+  });
+
   it("should dispatch opt-out settings and close drawer when applyOptOut is called", async () => {
     const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-      overrideInitialState: withConsentDrawerState(),
+      overrideInitialState: withConsentDrawerOpeningFresh(),
     });
     await waitFor(() => {
       expect(result.current.phase).toBe("consentFresh");
@@ -161,7 +210,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
   it("should close drawer after privacy got it when consent is still valid", async () => {
     const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
       overrideInitialState: withConsentDrawerState({
-        analyticsEnabled: false,
+        analyticsEnabled: true,
         personalizedRecommendationsEnabled: true,
         privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
         consentDate: new Date().toISOString(),
@@ -184,7 +233,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
 
   it("should navigate to General settings and close when onSetPreferences is called", async () => {
     const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-      overrideInitialState: withConsentDrawerState(),
+      overrideInitialState: withConsentDrawerOpeningFresh(),
     });
     await waitFor(() => {
       expect(result.current.phase).toBe("consentFresh");
@@ -206,7 +255,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
 
   it("should close drawer when handleCloseDrawer is called", async () => {
     const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-      overrideInitialState: withConsentDrawerState(),
+      overrideInitialState: withConsentDrawerOpeningFresh(),
     });
     await waitFor(() => {
       expect(result.current.phase).toBe("consentFresh");

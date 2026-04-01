@@ -31,7 +31,19 @@ function IntegrationNavigator() {
   );
 }
 
+/** Fresh: renewal first, analytics off → consentFresh. */
 const overridePortfolioWithAnalyticsConsentDrawer = (state: State): State =>
+  withConsentDrawerState({
+    hasCompletedOnboarding: true,
+    analyticsOptInEnabled: true,
+    analyticsEnabled: false,
+    personalizedRecommendationsEnabled: false,
+    consentDate: null,
+    privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+  })(overrideInitialStateWithFeatureFlag(state));
+
+/** Reconfirm: renewal first, analytics on → consentReconfirm. */
+const overridePortfolioWithAnalyticsConsentReconfirm = (state: State): State =>
   withConsentDrawerState({
     hasCompletedOnboarding: true,
     analyticsOptInEnabled: true,
@@ -50,5 +62,15 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
     await screen.findByTestId("PortfolioEmptyList");
 
     expect(await screen.findByText("Help us improve Ledger")).toBeVisible();
+  });
+
+  it("should show the reconfirm copy when the user must see the consent reconfirm phase", async () => {
+    renderWithReactQuery(<IntegrationNavigator />, {
+      overrideInitialState: overridePortfolioWithAnalyticsConsentReconfirm,
+    });
+
+    await screen.findByTestId("PortfolioEmptyList");
+
+    expect(await screen.findByText("Continue improving Ledger?")).toBeVisible();
   });
 });
