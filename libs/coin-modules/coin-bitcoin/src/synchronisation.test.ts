@@ -22,12 +22,17 @@ import {
 } from "./synchronisation";
 import { BtcOperation, BitcoinAccount, ZcashAccount } from "./types";
 import BigNumber from "bignumber.js";
-import type { ShieldedTransaction, ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
+import type {
+  ShieldedTransaction,
+  ShieldedSyncResult,
+  DecryptedTransaction,
+} from "@ledgerhq/zcash-shielded/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { SyncConfig } from "@ledgerhq/types-live";
+import type { DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { firstValueFrom, from } from "rxjs";
 import { setCoinConfig } from "./config";
+import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
 describe("removeReplaced", () => {
   const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
@@ -531,6 +536,165 @@ describe("getTxType", () => {
     };
     expect(getTxType(tx)).toBe("UNKNOWN");
   });
+
+  it("should return SHIELDED_TX_SAPLING_IN for Sapling-only incoming tx", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx5",
+      hex: "00",
+      blockHeight: 104,
+      blockHash: "hash5",
+      timestamp: 1700000004,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [{ amount: new BigNumber(500), memo: "", transfer_type: "incoming" }],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_SAPLING_IN");
+  });
+
+  it("should return SHIELDED_TX_SAPLING_OUT for Sapling-only outgoing tx", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx6",
+      hex: "00",
+      blockHeight: 105,
+      blockHash: "hash6",
+      timestamp: 1700000005,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [{ amount: new BigNumber(500), memo: "", transfer_type: "outgoing" }],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_SAPLING_OUT");
+  });
+
+  it("should prefer Orchard over Sapling when both are present", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx7",
+      hex: "00",
+      blockHeight: 106,
+      blockHash: "hash7",
+      timestamp: 1700000006,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(300), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [{ amount: new BigNumber(200), memo: "", transfer_type: "outgoing" }],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_IN");
+  });
+
+  // Helper: builds a minimal ShieldedTransaction with custom decryptedData
+  const makeTx = (data: Partial<DecryptedTransaction>): ShieldedTransaction => ({
+    id: "tx-test",
+    hex: "00",
+    blockHeight: 100,
+    blockHash: "hash-test",
+    timestamp: 1700000000,
+    fee: new BigNumber(100),
+    decryptedData: {
+      orchard_outputs: data.orchard_outputs ?? [],
+      sapling_outputs: data.sapling_outputs ?? [],
+    },
+  });
+
+  // LIVE-27919: type must be derived from net balance, not first note
+  it("should return SHIELDED_TX_ORCHARD_IN based on net balance, not first note", () => {
+    // First note is outgoing (200), second is a larger incoming (1000) → net +800 → IN
+    const tx = makeTx({
+      orchard_outputs: [
+        { amount: new BigNumber(200), memo: "", transfer_type: "outgoing" },
+        { amount: new BigNumber(1000), memo: "", transfer_type: "incoming" },
+      ],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_IN");
+  });
+
+  it("should return SHIELDED_TX_ORCHARD_OUT for outgoing tx with internal change", () => {
+    const tx = makeTx({
+      orchard_outputs: [
+        { amount: new BigNumber(5000), memo: "", transfer_type: "outgoing" },
+        { amount: new BigNumber(1000), memo: "", transfer_type: "internal" },
+      ],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
+
+  it("should return SHIELDED_TX_INTERNAL when all notes are internal", () => {
+    const tx = makeTx({
+      orchard_outputs: [{ amount: new BigNumber(3000), memo: "", transfer_type: "internal" }],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+
+  it("should return SHIELDED_TX_INTERNAL when incoming equals outgoing amounts", () => {
+    const tx = makeTx({
+      orchard_outputs: [
+        { amount: new BigNumber(500), memo: "", transfer_type: "incoming" },
+        { amount: new BigNumber(500), memo: "", transfer_type: "outgoing" },
+      ],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+
+  it("should return SHIELDED_TX_ORCHARD_OUT when orchard outgoing exceeds sapling incoming", () => {
+    const tx = makeTx({
+      orchard_outputs: [{ amount: new BigNumber(600), memo: "", transfer_type: "outgoing" }],
+      sapling_outputs: [{ amount: new BigNumber(200), memo: "", transfer_type: "incoming" }],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
+
+  it("should return SHIELDED_TX_SAPLING_OUT for sapling-only outgoing tx with internal change", () => {
+    const tx = makeTx({
+      orchard_outputs: [],
+      sapling_outputs: [
+        { amount: new BigNumber(3000), memo: "", transfer_type: "outgoing" },
+        { amount: new BigNumber(500), memo: "", transfer_type: "internal" },
+      ],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_SAPLING_OUT");
+  });
+
+  // LIVE-27919: explicit coverage for each transfer direction
+  it("should return SHIELDED_TX_ORCHARD_IN for a transparent→shielded (shielding) tx", () => {
+    // ZEC moves from transparent into the Orchard pool: the shielded side only sees incoming notes
+    const tx = makeTx({
+      orchard_outputs: [{ amount: new BigNumber(10000), memo: "", transfer_type: "incoming" }],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_IN");
+  });
+
+  it("should return SHIELDED_TX_ORCHARD_OUT for a shielded→transparent (deshielding) tx", () => {
+    // ZEC moves from Orchard pool to a transparent address: the shielded side only sees outgoing notes
+    const tx = makeTx({
+      orchard_outputs: [{ amount: new BigNumber(8000), memo: "", transfer_type: "outgoing" }],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
+
+  it("should return SHIELDED_TX_ORCHARD_IN for a shielded→shielded (Orchard→Orchard) incoming tx", () => {
+    // Net positive: more received than sent within the shielded pool
+    const tx = makeTx({
+      orchard_outputs: [
+        { amount: new BigNumber(5000), memo: "", transfer_type: "incoming" },
+        { amount: new BigNumber(500), memo: "", transfer_type: "internal" }, // change
+      ],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_IN");
+  });
+
+  it("should return SHIELDED_TX_ORCHARD_OUT for a shielded→shielded (Orchard→Orchard) outgoing tx", () => {
+    // Net negative: more spent than received within the shielded pool
+    const tx = makeTx({
+      orchard_outputs: [
+        { amount: new BigNumber(5000), memo: "", transfer_type: "outgoing" },
+        { amount: new BigNumber(1000), memo: "", transfer_type: "internal" }, // change back
+      ],
+    });
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
 });
 
 describe("convertShieldedTransactionsToOperations", () => {
@@ -577,7 +741,7 @@ describe("convertShieldedTransactionsToOperations", () => {
         timestamp: 1700000000,
         fee: new BigNumber(100),
         decryptedData: {
-          orchard_outputs: [{ amount: new BigNumber(0), memo: "", transfer_type: "outgoing" }],
+          orchard_outputs: [{ amount: new BigNumber(1000), memo: "", transfer_type: "outgoing" }],
           sapling_outputs: [],
         },
       },
@@ -614,6 +778,68 @@ describe("convertShieldedTransactionsToOperations", () => {
     const result = convertShieldedTransactionsToOperations([], "acc-1");
     expect(result).toEqual([]);
   });
+
+  it("op.value for incoming tx includes only incoming notes", () => {
+    // tx has both incoming and outgoing notes — op.value must count only incoming
+    const tx: ShieldedTransaction = {
+      id: "tx-mixed",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-mixed",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(3000), memo: "", transfer_type: "incoming" },
+          { amount: new BigNumber(1000), memo: "", transfer_type: "outgoing" },
+          { amount: new BigNumber(500), memo: "", transfer_type: "internal" },
+        ],
+        sapling_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_IN");
+    expect(op.value).toEqual(new BigNumber(3000)); // only incoming notes
+  });
+
+  it("op.value for outgoing tx includes only outgoing notes", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-out",
+      hex: "00",
+      blockHeight: 101,
+      blockHash: "hash-out",
+      timestamp: 1700000001,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(2000), memo: "", transfer_type: "outgoing" },
+          { amount: new BigNumber(800), memo: "", transfer_type: "internal" },
+        ],
+        sapling_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
+    expect(op.value).toEqual(new BigNumber(2000)); // only outgoing notes
+  });
+
+  it("op.value for internal tx is 0", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-internal",
+      hex: "00",
+      blockHeight: 102,
+      blockHash: "hash-internal",
+      timestamp: 1700000002,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "internal" }],
+        sapling_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_INTERNAL");
+    expect(op.value).toEqual(new BigNumber(0));
+  });
 });
 
 describe("reduceShieldedSyncResult", () => {
@@ -631,12 +857,11 @@ describe("reduceShieldedSyncResult", () => {
       processedOperations: [] as ShieldedTransaction[],
       accountUpdate: { balance: new BigNumber(890) } as Partial<ZcashAccount>,
     };
-    const result: Partial<ZcashPrivateInfo> = {
-      progress: 0,
-      estimatedTimeRemaining: { hours: 0, minutes: 0 },
+    const result: ShieldedSyncResult = {
       transactions: [],
       lastProcessedBlock: 5000,
-      syncState: "disabled",
+      processedBlocks: 0,
+      remainingBlocks: 0,
     };
     const info = createMockInfo();
 
@@ -644,7 +869,10 @@ describe("reduceShieldedSyncResult", () => {
 
     expect(output).toMatchObject({
       processedOperations: [],
-      accountUpdate: { balance: new BigNumber(890) },
+      accountUpdate: {
+        blockHeight: 5000,
+        balance: new BigNumber(890),
+      },
     });
   });
 
@@ -670,12 +898,11 @@ describe("reduceShieldedSyncResult", () => {
         blockHeight: 99,
       } as Partial<ZcashAccount>,
     };
-    const result: Partial<ZcashPrivateInfo> = {
-      progress: 25,
-      estimatedTimeRemaining: { hours: 0, minutes: 3 },
+    const result: ShieldedSyncResult = {
       transactions: [incomingTx],
       lastProcessedBlock: 100,
-      syncState: "running",
+      processedBlocks: 1,
+      remainingBlocks: 0,
     };
     const info = createMockInfo({ balance: new BigNumber(initialBalance) });
 
@@ -718,12 +945,11 @@ describe("reduceShieldedSyncResult", () => {
         blockHeight: 99,
       } as Partial<ZcashAccount>,
     };
-    const result: Partial<ZcashPrivateInfo> = {
+    const result: ShieldedSyncResult = {
       transactions: [incomingTx],
       lastProcessedBlock: 100,
-      syncState: "running",
-      progress: 25,
-      estimatedTimeRemaining: { hours: 0, minutes: 3 },
+      processedBlocks: 1,
+      remainingBlocks: 0,
     };
     const info = createMockInfo({
       privateInfo: { orchardBalance: new BigNumber(100000) },
@@ -743,6 +969,364 @@ describe("reduceShieldedSyncResult", () => {
       },
     });
     expect(output.accountUpdate.operations).toHaveLength(1);
+  });
+
+  it("should deduct fee for outgoing tx but not for incoming tx", () => {
+    const initialBalance = new BigNumber(100000);
+    const outgoingAmount = new BigNumber(20000);
+    const outgoingFee = new BigNumber(500);
+
+    const outgoingTx: ShieldedTransaction = {
+      id: "tx-out",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-out",
+      timestamp: 1700000000,
+      fee: outgoingFee,
+      decryptedData: {
+        orchard_outputs: [{ amount: outgoingAmount, memo: "", transfer_type: "outgoing" }],
+        sapling_outputs: [],
+      },
+    };
+    const incomingTx: ShieldedTransaction = {
+      id: "tx-in",
+      hex: "01",
+      blockHeight: 100,
+      blockHash: "hash-in",
+      timestamp: 1700000001,
+      fee: new BigNumber(300), // fee NOT deducted for incoming
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: {
+        operations: [] as BtcOperation[],
+        blockHeight: 99,
+      } as Partial<ZcashAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      transactions: [outgoingTx, incomingTx],
+      lastProcessedBlock: 100,
+      processedBlocks: 1,
+      remainingBlocks: 0,
+    };
+    const info = createMockInfo({ balance: initialBalance });
+
+    const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
+
+    // balance = initialBalance - outgoing - outgoingFee + incoming
+    expect(output.accountUpdate.balance).toEqual(
+      initialBalance.minus(outgoingAmount).minus(outgoingFee).plus(5000),
+    );
+  });
+
+  it("should not double-count fees across chunks", () => {
+    // Chunk 1: outgoing 3000 with fee 100, incoming 4000
+    // Chunk 2: incoming 500
+    // Expected final balance = initial(10000) - 3000 - 100 + 4000 + 500 = 11400
+    const initialBalance = new BigNumber(10000);
+
+    const outgoingTx: ShieldedTransaction = {
+      id: "tx-out",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-out",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(3000), memo: "", transfer_type: "outgoing" }],
+        sapling_outputs: [],
+      },
+    };
+    const incomingTx: ShieldedTransaction = {
+      id: "tx-in",
+      hex: "01",
+      blockHeight: 100,
+      blockHash: "hash-in",
+      timestamp: 1700000001,
+      fee: new BigNumber(50),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(4000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const incomingTx2: ShieldedTransaction = {
+      id: "tx-in2",
+      hex: "02",
+      blockHeight: 101,
+      blockHash: "hash-in2",
+      timestamp: 1700000002,
+      fee: new BigNumber(50),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(500), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+
+    const info = createMockInfo({ balance: initialBalance });
+
+    // Chunk 1
+    const chunk1 = reduceShieldedSyncResult(
+      {
+        processedOperations: [],
+        accountUpdate: { operations: [] as BtcOperation[] } as Partial<BitcoinAccount>,
+      },
+      {
+        transactions: [outgoingTx, incomingTx],
+        lastProcessedBlock: 100,
+        processedBlocks: 1,
+        remainingBlocks: 1,
+      },
+      info,
+      "acc-1",
+    );
+    // After chunk 1: 10000 - 3000 - 100 + 4000 = 10900
+    expect(chunk1.accountUpdate.balance).toEqual(new BigNumber(10900));
+
+    // Chunk 2
+    const chunk2 = reduceShieldedSyncResult(
+      chunk1,
+      {
+        transactions: [incomingTx2],
+        lastProcessedBlock: 101,
+        processedBlocks: 1,
+        remainingBlocks: 0,
+      },
+      info,
+      "acc-1",
+    );
+    // After chunk 2: 10900 + 500 = 11400 (fee from chunk 1 not deducted again)
+    expect(chunk2.accountUpdate.balance).toEqual(new BigNumber(11400));
+  });
+
+  it("should populate privateInfo in accountUpdate", () => {
+    const incomingTx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(5000), memo: "hello", transfer_type: "incoming" },
+        ],
+        sapling_outputs: [{ amount: new BigNumber(2000), memo: "", transfer_type: "incoming" }],
+      },
+    };
+
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: { operations: [] as BtcOperation[] } as Partial<BitcoinAccount>,
+    };
+    const info = createMockInfo({ balance: new BigNumber(10000) });
+
+    const output = reduceShieldedSyncResult(
+      accumulated,
+      {
+        transactions: [incomingTx],
+        lastProcessedBlock: 100,
+        processedBlocks: 1,
+        remainingBlocks: 0,
+      },
+      info,
+      "acc-1",
+    );
+
+    expect(output.accountUpdate.privateInfo).toBeDefined();
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(5000));
+    expect(output.accountUpdate.privateInfo?.saplingBalance).toEqual(new BigNumber(2000));
+    expect(output.accountUpdate.privateInfo?.transactions).toHaveLength(1);
+    expect(output.accountUpdate.privateInfo?.syncState).toBe("complete");
+  });
+
+  it("should preserve ufvk and birthday from accumulated privateInfo", () => {
+    const incomingTx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(1000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: {
+        operations: [] as BtcOperation[],
+        privateInfo: {
+          ufvk: "uview1testkey",
+          birthday: "2023-01-01",
+          orchardBalance: new BigNumber(0),
+          saplingBalance: new BigNumber(0),
+          syncState: "running" as const,
+          lastSyncTimestamp: null,
+          lastProcessedBlock: null,
+          transactions: [],
+        },
+      } as Partial<BitcoinAccount>,
+    };
+    const info = createMockInfo({ balance: new BigNumber(10000) });
+
+    const output = reduceShieldedSyncResult(
+      accumulated,
+      {
+        transactions: [incomingTx],
+        lastProcessedBlock: 100,
+        processedBlocks: 1,
+        remainingBlocks: 0,
+      },
+      info,
+      "acc-1",
+    );
+
+    expect(output.accountUpdate.privateInfo?.ufvk).toBe("uview1testkey");
+    expect(output.accountUpdate.privateInfo?.birthday).toBe("2023-01-01");
+    expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(100);
+  });
+
+  it("should NOT deduct fee when net balance is positive despite first note being outgoing (LIVE-27918)", () => {
+    const initialBalance = new BigNumber(100000);
+    const tx: ShieldedTransaction = {
+      id: "tx-net-in",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-net-in",
+      timestamp: 1700000000,
+      fee: new BigNumber(500),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(200), memo: "", transfer_type: "outgoing" },
+          { amount: new BigNumber(1000), memo: "", transfer_type: "incoming" },
+        ],
+        sapling_outputs: [],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: initialBalance }),
+      "acc-1",
+    );
+    // net incoming = +800 (1000 - 200), fee NOT deducted (tx is IN)
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(800));
+    expect(output.accountUpdate.balance).toEqual(initialBalance.plus(800));
+  });
+
+  it("should compute balance delta correctly for a tx with both orchard and sapling notes (LIVE-27917)", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-mixed",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-mixed",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [{ amount: new BigNumber(2000), memo: "", transfer_type: "incoming" }],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: new BigNumber(0) }),
+      "acc-1",
+    );
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(5000));
+    expect(output.accountUpdate.privateInfo?.saplingBalance).toEqual(new BigNumber(2000));
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(7000));
+  });
+
+  // LIVE-27917 + LIVE-27918: explicit coverage for each transfer direction
+
+  it("should correctly compute balance delta and NOT deduct fee for a transparent→shielded (shielding) tx", () => {
+    // ZEC enters the Orchard pool from a transparent source: only incoming notes visible on shielded side.
+    // Fee was paid in the transparent layer — our code must NOT deduct it again here.
+    const initialBalance = new BigNumber(50000);
+    const tx: ShieldedTransaction = {
+      id: "tx-shielding",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-shielding",
+      timestamp: 1700000000,
+      fee: new BigNumber(1000),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(9000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: initialBalance }),
+      "acc-1",
+    );
+    // SHIELDED_TX_ORCHARD_IN → fee NOT deducted; delta = +9000
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(9000));
+    expect(output.accountUpdate.balance).toEqual(initialBalance.plus(9000));
+  });
+
+  it("should correctly compute balance delta and deduct fee for a shielded→transparent (deshielding) tx", () => {
+    // ZEC leaves the Orchard pool to a transparent address: only outgoing notes visible on shielded side.
+    const initialBalance = new BigNumber(50000);
+    const tx: ShieldedTransaction = {
+      id: "tx-deshielding",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-deshielding",
+      timestamp: 1700000000,
+      fee: new BigNumber(500),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(8000), memo: "", transfer_type: "outgoing" }],
+        sapling_outputs: [],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: initialBalance }),
+      "acc-1",
+    );
+    // SHIELDED_TX_ORCHARD_OUT → fee IS deducted; delta = -8000 - 500
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(-8000));
+    expect(output.accountUpdate.balance).toEqual(initialBalance.minus(8000).minus(500));
+  });
+
+  it("should correctly compute balance delta and deduct fee for a shielded→shielded (Orchard→Orchard) outgoing tx", () => {
+    // ZEC sent within Orchard pool: outgoing note + internal change note.
+    const initialBalance = new BigNumber(100000);
+    const tx: ShieldedTransaction = {
+      id: "tx-shielded-out",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-shielded-out",
+      timestamp: 1700000000,
+      fee: new BigNumber(200),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(5000), memo: "", transfer_type: "outgoing" },
+          { amount: new BigNumber(1000), memo: "", transfer_type: "internal" }, // change
+        ],
+        sapling_outputs: [],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: initialBalance }),
+      "acc-1",
+    );
+    // SHIELDED_TX_ORCHARD_OUT (net = -5000); internal note excluded from delta; fee IS deducted
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(-5000));
+    expect(output.accountUpdate.balance).toEqual(initialBalance.minus(5000).minus(200));
   });
 
   it("should filter out already processed operations by blockHash", () => {
@@ -765,12 +1349,11 @@ describe("reduceShieldedSyncResult", () => {
         blockHeight: 100,
       } as Partial<ZcashAccount>,
     };
-    const result: Partial<ZcashPrivateInfo> = {
-      progress: 50,
-      estimatedTimeRemaining: { hours: 0, minutes: 2 },
+    const result: ShieldedSyncResult = {
       transactions: [tx],
       lastProcessedBlock: 100,
-      syncState: "running",
+      processedBlocks: 0,
+      remainingBlocks: 0,
     };
     const info = createMockInfo();
 
@@ -908,20 +1491,18 @@ describe("createShieldedSyncObservable", () => {
       },
     };
 
-    const shieldedSyncRaw = from<Partial<ZcashPrivateInfo>[]>([
+    const shieldedSyncRaw = from<ShieldedSyncResult[]>([
       {
         transactions: [tx1, tx2],
         lastProcessedBlock: 100,
-        syncState: "running",
-        progress: 50,
-        estimatedTimeRemaining: { hours: 0, minutes: 2 },
+        processedBlocks: 0,
+        remainingBlocks: 0,
       },
       {
         transactions: [tx3],
         lastProcessedBlock: 101,
-        syncState: "running",
-        progress: 50,
-        estimatedTimeRemaining: { hours: 0, minutes: 2 },
+        processedBlocks: 0,
+        remainingBlocks: 0,
       },
     ]);
 
@@ -954,23 +1535,118 @@ describe("createShieldedSyncObservable", () => {
 
     // Check update #1
     expect(updates[0]).toMatchObject({
-      // running orchard balance: 0 - outgoing tx1 - tx1 fees + incoming tx2
+      // orchardBalance = net note delta (fees are deducted from balance separately, not orchardBalance)
+      // net = incoming tx2 (4321) - outgoing tx1 (3710) = 611
       blockHeight: 100,
       privateInfo: {
-        orchardBalance: new BigNumber(491),
+        orchardBalance: new BigNumber(611),
       },
     });
     expect(updates[0]?.operations).toHaveLength(2);
 
     // Check update #2
     expect(updates[1]).toMatchObject({
-      // running orchard balance after tx3 incoming.
+      // orchardBalance = 611 + tx3 incoming (585) = 1196
       blockHeight: 101,
       privateInfo: {
-        orchardBalance: new BigNumber(1076),
+        orchardBalance: new BigNumber(1196),
       },
     });
     expect(updates[1]?.operations).toHaveLength(3);
+  });
+
+  it("should populate privateInfo with shielded balances and transactions in each update", async () => {
+    const saplingTx: ShieldedTransaction = {
+      id: "tx-sapling",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-sapling",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [
+          { amount: new BigNumber(3000), memo: "memo1", transfer_type: "incoming" },
+        ],
+      },
+    };
+    const orchardTx: ShieldedTransaction = {
+      id: "tx-orchard",
+      hex: "01",
+      blockHeight: 101,
+      blockHash: "hash-orchard",
+      timestamp: 1700000001,
+      fee: new BigNumber(50),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(2000), memo: "memo2", transfer_type: "incoming" },
+        ],
+        sapling_outputs: [],
+      },
+    };
+
+    const shieldedSyncRaw = from<ShieldedSyncResult[]>([
+      {
+        transactions: [saplingTx],
+        lastProcessedBlock: 100,
+        processedBlocks: 1,
+        remainingBlocks: 1,
+      },
+      {
+        transactions: [orchardTx],
+        lastProcessedBlock: 101,
+        processedBlocks: 1,
+        remainingBlocks: 0,
+      },
+    ]);
+
+    const info: AccountShapeInfo<ZcashAccount> = {
+      currency: getCryptoCurrencyById("zcash"),
+      address: "zs1test",
+      index: 0,
+      derivationPath: "44'/133'/0'/0'",
+      derivationMode: "0" as DerivationMode,
+      initialAccount: {
+        id: "js:2:zcash:xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4:0",
+        xpub: "xpub6D4BDPcP2GT577Vvch3R8wDkScZWzQzMMUm3PWbmWvVYRpwYgqFjm6ewF7ppu9E2QzFjzQRJo9UapY2mRCGj4",
+        operations: [],
+        balance: new BigNumber(10000),
+        privateInfo: {
+          ufvk: "uview1testkey",
+          birthday: "2023-01-01",
+          orchardBalance: new BigNumber(0),
+          saplingBalance: new BigNumber(0),
+          syncState: "ready" as const,
+          lastSyncTimestamp: null,
+          lastProcessedBlock: null,
+          transactions: [],
+        },
+      } as unknown as ZcashAccount,
+    };
+
+    const observable = createShieldedSyncObservable(info, shieldedSyncRaw);
+    const updates: Partial<ZcashAccount>[] = [];
+    await new Promise<void>((resolve, reject) => {
+      observable.subscribe({ next: v => updates.push(v), error: reject, complete: resolve });
+    });
+
+    expect(updates).toHaveLength(2);
+
+    // After chunk 1: Sapling 3000
+    const pi1 = (updates[0] as Partial<ZcashAccount>).privateInfo;
+    expect(pi1).toBeDefined();
+    expect(pi1?.saplingBalance).toEqual(new BigNumber(3000));
+    expect(pi1?.orchardBalance).toEqual(new BigNumber(0));
+    expect(pi1?.transactions).toHaveLength(1);
+    expect(pi1?.ufvk).toBe("uview1testkey");
+    expect(pi1?.birthday).toBe("2023-01-01");
+
+    // After chunk 2: Sapling 3000 + Orchard 2000
+    const pi2 = (updates[1] as Partial<ZcashAccount>).privateInfo;
+    expect(pi2?.saplingBalance).toEqual(new BigNumber(3000));
+    expect(pi2?.orchardBalance).toEqual(new BigNumber(2000));
+    expect(pi2?.transactions).toHaveLength(2);
+    expect(pi2?.lastProcessedBlock).toBe(101);
   });
 });
 
