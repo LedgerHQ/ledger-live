@@ -3054,12 +3054,15 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      eslint-plugin-jest:
-        specifier: ^27.4.2
-        version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0))(typescript@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-algorand:
     dependencies:
@@ -3139,6 +3142,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-aptos:
     dependencies:
@@ -3236,6 +3245,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -3396,6 +3411,12 @@ importers:
       object-hash:
         specifier: ^2.2.0
         version: 2.2.0
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-canton:
     dependencies:
@@ -3469,6 +3490,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       protobufjs-cli:
         specifier: 1.1.2
         version: 1.1.2(protobufjs@7.5.4)
@@ -3557,6 +3584,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-casper:
     dependencies:
@@ -3636,6 +3669,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-celo:
     dependencies:
@@ -3742,6 +3781,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -3824,6 +3869,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -3933,6 +3984,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-evm:
     dependencies:
@@ -4039,9 +4096,6 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-      eslint-plugin-import:
-        specifier: ^2.32.0
-        version: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)
       fast-check:
         specifier: ^3.12.0
         version: 3.17.1
@@ -4054,6 +4108,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -4142,6 +4202,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-hedera:
     dependencies:
@@ -4224,12 +4290,15 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
-      eslint-plugin-jest:
-        specifier: ^27.4.2
-        version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0))(typescript@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-icon:
     dependencies:
@@ -4315,6 +4384,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
@@ -4385,6 +4460,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-kaspa:
     dependencies:
@@ -4488,6 +4569,12 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
@@ -4567,6 +4654,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-module-boilerplate:
     dependencies:
@@ -4607,6 +4700,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4631,6 +4727,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -4722,6 +4824,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-near:
     dependencies:
@@ -4798,6 +4906,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-polkadot:
     dependencies:
@@ -4898,9 +5012,6 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
-      eslint-plugin-jest:
-        specifier: ^27.4.2
-        version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)))(typescript@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
@@ -4910,6 +5021,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
@@ -5019,15 +5136,18 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.2
-      eslint-plugin-jest:
-        specifier: ^27.4.2
-        version: 27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0))(typescript@6.0.2)
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-stacks:
     dependencies:
@@ -5125,6 +5245,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ripple-keypairs:
         specifier: ^2.0.0
         version: 2.0.0
@@ -5195,6 +5321,12 @@ importers:
       nock:
         specifier: 14.0.2
         version: 14.0.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-sui:
     dependencies:
@@ -5277,6 +5409,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-tezos:
     dependencies:
@@ -5335,6 +5473,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5362,6 +5503,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -5450,6 +5597,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-tron:
     dependencies:
@@ -5538,6 +5691,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
@@ -5626,6 +5785,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-modules/coin-xrp:
     dependencies:
@@ -5663,6 +5828,9 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5684,6 +5852,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
       ripple-keypairs:
         specifier: ^2.0.0
         version: 2.0.0
@@ -5727,6 +5901,12 @@ importers:
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
 
   libs/coin-tester:
     dependencies:
@@ -55616,17 +55796,6 @@ snapshots:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
       - supports-color
-
-  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)))(typescript@6.0.2):
-    dependencies:
-      '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@6.0.2)
-      eslint: 8.57.0
-    optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2)
-      jest: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
 
   eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(typescript@6.0.2))(eslint@8.57.0)(jest@30.2.0(@types/node@24.12.0))(typescript@6.0.2):
     dependencies:

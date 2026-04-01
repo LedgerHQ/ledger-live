@@ -718,7 +718,7 @@ describe("Staking Operations", () => {
       }
     }
 
-    test("getOperationType should return UNDELEGATE when it's not the first MoveCall ", () => {
+    test("getOperationType should return UNDELEGATE when it's not the first MoveCall", () => {
       const tx = mockUnstakingTx(address, "1000");
       if (tx.transaction) {
         prependOtherMoveCall(tx.transaction.data.transaction);
@@ -728,7 +728,7 @@ describe("Staking Operations", () => {
       }
     });
 
-    test("getOperationType should return DELEGATE when it's not the first MoveCall ", () => {
+    test("getOperationType should return DELEGATE when it's not the first MoveCall", () => {
       const tx = mockStakingTx(address, "-1000");
       if (tx.transaction) {
         prependOtherMoveCall(tx.transaction.data.transaction);

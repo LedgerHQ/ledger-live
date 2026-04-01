@@ -1,0 +1,107 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "plugins": ["eslint", "import", "oxc", "unicorn", "typescript", "jest"],
+  "rules": {
+    "eslint/eqeqeq": "error",
+    "eslint/no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "eslint/no-empty-pattern": "off",
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": "warn",
+    "eslint/no-unused-vars": "warn",
+    "eslint/no-constant-binary-expression": "warn",
+    "eslint/no-unused-expressions": "warn",
+    "eslint/no-unsafe-optional-chaining": "warn",
+    "no-unassigned-vars": "warn",
+    "eslint/preserve-caught-error": "off",
+    "eslint/no-useless-constructor": "off",
+    "import/no-cycle": "error",
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ],
+    "unicorn/no-useless-fallback-in-spread": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    "jest/no-conditional-expect": "warn",
+    "jest/expect-expect": "warn",
+    "jest/require-to-throw-message": "warn",
+    "jest/valid-title": "warn",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "warn",
+    "jest/no-export": "off",
+    "jest/valid-describe-callback": "warn",
+    "jest/no-standalone-expect": "warn",
+    "jest/valid-expect": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/**/*.test.{ts,tsx}",
+        "src/**/__tests__/**",
+        "**/*.integ.test.{ts,tsx}"
+      ],
+      "env": {
+        "jest": true
+      },
+      "plugins": ["jest"],
+      "rules": {
+        "jest/no-restricted-matchers": [
+          "error",
+          {
+            "toBeFalsy": null,
+            "toBeTruthy": null,
+            "toBeDefined": null
+          }
+        ],
+        "eslint/no-console": "off",
+        "typescript/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["**/bot-specs.ts"],
+      "rules": {
+        "unicorn/no-empty-file": "off"
+      }
+    },
+    {
+      "files": ["zcash-shielded/**/*.ts"],
+      "rules": {
+        "import/no-cycle": "warn"
+      }
+    },
+    {
+      "files": [
+        "coin-stellar/src/globals.d.ts",
+        "**/coin-stellar/src/globals.d.ts",
+        "src/globals.d.ts"
+      ],
+      "rules": {
+        "eslint/no-var": "off",
+        "unicorn/require-module-specifiers": "off",
+        "typescript/no-explicit-any": "off"
+      }
+    }
+  ]
+}

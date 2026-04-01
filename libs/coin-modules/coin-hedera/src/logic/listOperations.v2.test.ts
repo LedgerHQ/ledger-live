@@ -77,7 +77,7 @@ describe("listOperationsV2", () => {
     (utils.extractFeesPayer as jest.Mock).mockImplementation(input =>
       typeof input === "string"
         ? input.split("-")[0]
-        : input.transaction_id?.split("-")[0] ?? "0.0.0",
+        : (input.transaction_id?.split("-")[0] ?? "0.0.0"),
     );
     (utils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
     (networkUtils.enrichERC20Transfers as jest.Mock).mockReturnValue([]);

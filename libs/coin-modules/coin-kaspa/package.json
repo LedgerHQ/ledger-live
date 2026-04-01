@@ -114,19 +114,21 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
+    "@types/node": "catalog:",
     "@types/numeral": "^2.0.2",
     "cross-env": "^7.0.3",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
-    "timemachine": "^0.3.2",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "timemachine": "^0.3.2"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -136,10 +138,12 @@
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test-integ": "jest --config=jest.integ.config.js",
-    "unimported": "unimported"
+    "unimported": "unimported",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check"
   }
 }

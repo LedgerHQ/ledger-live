@@ -68,7 +68,7 @@ export async function listOperations(
 
   const operations = txs.map(tx => {
     const height = tx.blockHeight;
-    const txBlock = typeof height === "number" ? blocksByHeight.get(height) ?? block : block;
+    const txBlock = typeof height === "number" ? (blocksByHeight.get(height) ?? block) : block;
     return fromTrongridTxInfoToOperation(tx, txBlock, address);
   });
   return [operations, ""];

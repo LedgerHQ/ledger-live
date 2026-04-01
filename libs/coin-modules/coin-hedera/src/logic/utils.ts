@@ -218,7 +218,7 @@ export const isTokenAssociationRequired = (
     return false;
   }
 
-  const subAccounts = !!account && "subAccounts" in account ? account.subAccounts ?? [] : [];
+  const subAccounts = !!account && "subAccounts" in account ? (account.subAccounts ?? []) : [];
   const isTokenAssociated = subAccounts.some(item => item.token.id === token?.id);
 
   return !!token && !isTokenAssociated && !isAutoTokenAssociationEnabled(account);
