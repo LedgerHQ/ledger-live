@@ -16,7 +16,8 @@ import { useTranslation } from "~/context/Locale";
 import { localeSelector } from "~/reducers/settings";
 import { useNetworkFees } from "../../../hooks/useNetworkFees";
 import { useTranslatedBridgeError } from "../../Recipient/hooks/useTranslatedBridgeError";
-import { urls } from "src/utils/urls";
+import { urls } from "~/utils/urls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { Linking } from "react-native";
 
 type UseCoinControlScreenViewModelParams = Readonly<{
@@ -64,9 +65,11 @@ export function useCoinControlScreenViewModel({
   const amountError =
     amountErrorTranslated && !isAmountRequiredError ? amountErrorTranslated.title : undefined;
 
+  const coinControlUrl = useLocalizedUrl(urls.coinControl);
+
   const onLearnMoreClick = useCallback(() => {
-    Linking.openURL(urls.coinControl);
-  }, []);
+    Linking.openURL(coinControlUrl);
+  }, [coinControlUrl]);
 
   const labels = useMemo(
     () => ({

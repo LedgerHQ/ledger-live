@@ -3,10 +3,12 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account } from "@ledgerhq/types-live";
-import { renderHook } from "@testing-library/react-native";
+import { act, renderHook } from "@testing-library/react-native";
 import { BigNumber } from "bignumber.js";
+import { Linking } from "react-native";
 import { createMockAccount } from "../../../Recipient/hooks/__tests__/accounts";
 import { useCoinControlScreenViewModel } from "../useCoinControlScreenViewModel";
+import { urls } from "~/utils/urls";
 import { createBitcoinTransaction, createTransactionStatus, isAccount } from "./helpers";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
@@ -60,6 +62,10 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
 }));
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError", () => ({
   useTranslatedBridgeError: jest.fn(() => null),
+}));
+
+jest.mock("LLM/hooks/useLocalizedUrls", () => ({
+  useLocalizedUrl: (url: string) => `localized:${url}`,
 }));
 
 const { useTranslatedBridgeError } = jest.requireMock(
@@ -359,5 +365,20 @@ describe("useCoinControlScreenViewModel", () => {
     const { result } = renderHook(() => useCoinControlScreenViewModel(params));
 
     expect(result.current.amountError).toBeUndefined();
+  });
+
+  it("should open the localized coin control support URL when learn more is pressed", () => {
+    const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+    const params = buildBaseParams();
+
+    const { result } = renderHook(() => useCoinControlScreenViewModel(params));
+
+    act(() => {
+      result.current.onLearnMoreClick();
+    });
+
+    expect(openURLSpy).toHaveBeenCalledTimes(1);
+    expect(openURLSpy).toHaveBeenCalledWith(`localized:${urls.coinControl}`);
+    openURLSpy.mockRestore();
   });
 });
