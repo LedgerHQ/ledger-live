@@ -8175,7 +8175,7 @@
   "cryptoAddresses": {
     "title": "Accounts",
     "tableActions": {
-      "searchAddress": "Search address",
+      "searchAddress": "Search by name, address",
       "addAddress": "Add address"
     },
     "table": {
