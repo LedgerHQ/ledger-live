@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { waitSwapReady } from "../bridge/server";
+import { swapSetup } from "../bridge/server";
 import { isWallet40 } from "../helpers/commonHelpers";
 
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
@@ -93,9 +93,9 @@ describe("DeepLinks Tests", () => {
   );
 
   (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
+    await swapSetup();
     await app.swap.openViaDeeplink();
-    await waitSwapReady();
-    await app.swap.expectSwapPage();
+    await app.swapLiveApp.expectSwapLiveApp();
   });
 
   (isSmokeTestRun ? it.skip : it)("should open Market Detail page for Bitcoin", async () => {

@@ -192,7 +192,8 @@ async function onMessage(event: WebSocketMessageEvent) {
       }
       case "swapSetup":
         setEnv("SWAP_DISABLE_APPS_INSTALL", true);
-        setEnv("SWAP_API_BASE", "https://swap-stg.ledger-test.com/v5");
+        setEnv("SWAP_API_BASE", msg.swapApiBase ?? "https://swap-stg.ledger-test.com/v5");
+        postMessage({ type: "swapSetupDone" });
         break;
       default:
         break;
