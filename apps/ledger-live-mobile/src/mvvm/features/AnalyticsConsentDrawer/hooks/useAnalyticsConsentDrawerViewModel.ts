@@ -16,7 +16,7 @@ import {
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { track, updateIdentify } from "~/analytics";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,

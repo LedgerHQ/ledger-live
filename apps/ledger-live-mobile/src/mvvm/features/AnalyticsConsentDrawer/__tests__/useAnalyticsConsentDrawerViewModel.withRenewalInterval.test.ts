@@ -4,7 +4,7 @@
  * (e.g. if the constant is changed to a yearly value later).
  */
 import { renderHook, waitFor } from "@tests/test-renderer";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { useAnalyticsConsentDrawerViewModel } from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerState } from "./helpers";
 
