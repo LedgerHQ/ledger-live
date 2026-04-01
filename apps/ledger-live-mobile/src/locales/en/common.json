@@ -3321,13 +3321,13 @@
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "developerMode": "Developer mode",
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
-      "analytics": "Analytics",
-      "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Wallet’s performance and enhance both the app and your experience.",
+      "analytics": "App performance",
+      "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience",
       "mevProtection": "MEV Protection",
       "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore": "Privacy notice",
       "personalizedRecommendations": "Personalized experience",
-      "personalizedRecommendationsDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
+      "personalizedRecommendationsDesc": "Enable Ledger to collect app usage to provide personalized contents",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -3437,11 +3437,11 @@
         "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
-      "totalMarketCap":{
+      "totalMarketCap": {
         "title": "Total Market Cap",
         "desc": "Get notified when the total crypto market cap makes a significant move"
       },
-      "topGainersLosers":{
+      "topGainersLosers": {
         "title": "Top Gainers and Losers",
         "desc": "Get a weekly recap of the top gaining and losing tokens on the market"
       },
