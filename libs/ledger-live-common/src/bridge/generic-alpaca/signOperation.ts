@@ -87,7 +87,9 @@ export const genericSignOperation =
         }
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
-          const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
+          const { publicKey } = (await signer.getAddress(derivationPath, {
+            derivationMode: account.derivationMode,
+          })) as Result;
 
           let transactionIntent = transactionToIntent(
             account,
@@ -114,12 +116,16 @@ export const genericSignOperation =
           /* Notify UI that the device is now showing the tx */
           o.next({ type: "device-signature-requested" });
           /* Sign on Ledger device */
-          const txnSig = await signer.signTransaction(
-            derivationPath,
+          const txnSig = await signer.signTransaction(derivationPath, unsigned, {
+            ...transaction.recipientDomain,
+            derivationMode: account.derivationMode,
+          });
+          return {
             unsigned,
-            transaction.recipientDomain,
-          );
-          return { unsigned, txnSig, publicKey, sequence: transactionIntent.sequence };
+            txnSig,
+            publicKey,
+            sequence: transactionIntent.sequence,
+          };
         });
 
         /* If the user cancelled inside signerContext */

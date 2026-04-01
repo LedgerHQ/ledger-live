@@ -288,9 +288,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
       const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
 
-      // Production-calibrated fallback fee when Taquito estimation fails (~388 mutez observed)
-      const DEFAULT_TX_FEE_FALLBACK = 388;
       let baseTxFee: bigint;
+      let txGasLimit: bigint;
 
       try {
         const toolkit = getTezosToolkit();
@@ -302,9 +301,23 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
         });
         // Use Taquito estimation, respecting minFees from config
         baseTxFee = BigInt(Math.max(config.fees.minFees, simpleEstimate.suggestedFeeMutez));
+        txGasLimit = BigInt(simpleEstimate.gasLimit);
       } catch {
-        // Fallback to production-calibrated default if estimation fails
-        baseTxFee = BigInt(Math.max(DEFAULT_TX_FEE_FALLBACK, config.fees.minFees));
+        // When estimation fails because the sender is unrevealed (PublicKeyNotFoundError),
+        // fallback to a conservative gas value suitable for typical new-account XTZ transfers.
+        // This buffer (~2500 gas) is more than enough for a standard transfer that actually uses ~1420 gas.
+        // The fee is computed according to Taquito's calculation so it will satisfy the Tezos prefilter rule:
+        //   total_fees >= ceil(100 + 0.1*total_gas + op_size)
+        // We use a base of 120 instead of 100 to mimic Taquito and minimize rejected low-fee ops.
+        const SAFE_FALLBACK_GAS = 2500; // covers typical new-account transfer (~1420) with buffer
+        const FALLBACK_OP_SIZE_BYTES = 154; // typical forged size for a simple XTZ transfer
+        txGasLimit = BigInt(SAFE_FALLBACK_GAS);
+        baseTxFee = BigInt(
+          Math.max(
+            config.fees.minFees,
+            Math.ceil(120 + 0.1 * SAFE_FALLBACK_GAS + FALLBACK_OP_SIZE_BYTES),
+          ),
+        );
       }
 
       const revealFee = needsReveal
@@ -315,7 +328,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       return {
         value: totalFee,
         parameters: {
-          gasLimit: 10000n,
+          gasLimit: txGasLimit,
           storageLimit,
           amount: 0n,
           txFee: baseTxFee,
