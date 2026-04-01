@@ -1,22 +1,9 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { usePerpsSignViewModel, type PerpsSignData } from "../usePerpsSignViewModel";
 
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}));
-
-jest.mock("~/renderer/hooks/useTheme", () => ({
-  __esModule: true,
-  default: () => ({ theme: "dark" }),
-}));
-
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   __esModule: true,
   default: () => ({ connectApp: jest.fn() }),
-}));
-
-jest.mock("LLD/utils/getProductName", () => ({
-  getProductName: (modelId: string) => `Product ${modelId}`,
 }));
 
 const mockDevice = { modelId: "stax", deviceId: "device-1", wired: true } as never;

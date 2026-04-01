@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Theme } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
-import useTheme from "~/renderer/hooks/useTheme";
-import { getProductName } from "LLD/utils/getProductName";
 
 export type PerpsSignData = {
   appName: string | undefined;
@@ -25,9 +21,7 @@ type ConnectAppAction = ReturnType<typeof useConnectAppAction>;
 
 export type PerpsSignViewModel = {
   phase: "connect" | "sign";
-  theme: Theme["theme"];
   device: Device | null;
-  productName: string;
   action: ConnectAppAction;
   request: {
     appName: string | undefined;
@@ -36,7 +30,6 @@ export type PerpsSignViewModel = {
     skipAppInstallIfNotFound?: boolean;
   };
   closing: boolean;
-  t: ReturnType<typeof useTranslation>["t"];
   handleDeviceResult: (result: AppResult) => void;
   handleDeviceError: (error: Error) => void;
 };
@@ -45,8 +38,6 @@ export function usePerpsSignViewModel(
   data: PerpsSignData,
   onClose: () => void,
 ): PerpsSignViewModel {
-  const { t } = useTranslation();
-  const styledTheme = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
   const [closing, setClosing] = useState(false);
   const completedRef = useRef(false);
@@ -61,8 +52,6 @@ export function usePerpsSignViewModel(
     }),
     [data.appName, data.appOptions],
   );
-
-  const productName = device ? getProductName(device.modelId) : "";
 
   useEffect(() => {
     if (!device) return;
@@ -115,12 +104,9 @@ export function usePerpsSignViewModel(
   return {
     phase: device ? "sign" : "connect",
     closing,
-    theme: styledTheme.theme as Theme["theme"],
     device,
-    productName,
     action,
     request,
-    t,
     handleDeviceResult,
     handleDeviceError,
   };

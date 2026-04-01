@@ -335,7 +335,6 @@ export type BaseNavigatorStackParamList = {
     ) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
-    onClose: () => void;
   };
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;

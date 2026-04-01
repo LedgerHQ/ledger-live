@@ -50,31 +50,6 @@ describe("usePerpsHandlers", () => {
       onSuccess: params.onSuccess,
       onError: params.onError,
       onCancel: params.onCancel,
-      onClose: expect.any(Function),
     });
-
-    const navigateCall = mockNavigate.mock.calls[0][1];
-    expect(navigateCall.onClose).not.toBe(params.onCancel);
-  });
-
-  it("should pass a no-op onClose to avoid double cancel via beforeRemove", () => {
-    const accounts = [{ id: "acc-1" }] as never[];
-    renderHook(() => usePerpsHandlers(accounts));
-
-    const signingExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["signing.execute"];
-    const params = {
-      appName: "Hyperliquid",
-      appOptions: undefined,
-      signFactory: jest.fn(),
-      onSuccess: jest.fn(),
-      onError: jest.fn(),
-      onCancel: jest.fn(),
-    };
-
-    signingExecute(params);
-
-    const navigateCall = mockNavigate.mock.calls[0][1];
-    navigateCall.onClose();
-    expect(params.onCancel).not.toHaveBeenCalled();
   });
 });
