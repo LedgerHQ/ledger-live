@@ -149,6 +149,8 @@
     "hooks": "pnpm --filter live-hooks",
     "psbtv2": "pnpm --filter psbtv2",
     "currency-format": "pnpm --filter live-currency-format",
+    "currency-format:format": "pnpm exec oxfmt -c libs/oxc-live-libs/.oxfmtrc.json libs/live-currency-format/src",
+    "currency-format:format:check": "pnpm exec oxfmt -c libs/oxc-live-libs/.oxfmtrc.json libs/live-currency-format/src --check",
     "lkrp": "pnpm --filter ledger-key-ring-protocol",
     "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     "countervalues": "pnpm --filter live-countervalues",
