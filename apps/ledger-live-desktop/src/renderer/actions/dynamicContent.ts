@@ -15,6 +15,11 @@ export const setPortfolioCards = (payload: PortfolioContentCard[]) => ({
   payload,
 });
 
+export const setBottomPortfolioCards = (payload: PortfolioContentCard[]) => ({
+  type: "DYNAMIC_CONTENT_SET_BOTTOM_PORTFOLIO_CARDS",
+  payload,
+});
+
 export const setActionCards = (payload: ActionContentCard[]) => ({
   type: "DYNAMIC_CONTENT_SET_ACTION_CARDS",
   payload,

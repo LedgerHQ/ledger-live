@@ -23,13 +23,16 @@ describe("broadcast", () => {
       const result = await broadcast(mockTransaction);
 
       expect(result).toBe("test-digest");
-      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith({
-        transactionBlock: "1234567890",
-        signature: "abcdef",
-        options: {
-          showEffects: true,
+      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(
+        {
+          transactionBlock: "1234567890",
+          signature: "abcdef",
+          options: {
+            showEffects: true,
+          },
         },
-      });
+        undefined,
+      );
     });
 
     it("should not call executeTransactionBlock if format is not hex", async () => {
@@ -64,7 +67,7 @@ describe("broadcast", () => {
       const result = await broadcast(mockParams);
 
       expect(result).toBe("test-digest");
-      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(mockParams);
+      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(mockParams, undefined);
     });
   });
 });

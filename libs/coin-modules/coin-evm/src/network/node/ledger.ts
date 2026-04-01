@@ -13,7 +13,7 @@ import { LedgerExplorerOperation } from "../../types";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { getGasOptions } from "../gasTracker/ledger";
 import { withRetries } from "../withRetries";
-import { NodeApi } from "./types";
+import { BlockByHeightResult, NodeApi, TransactionInfo } from "./types";
 
 const LEDGER_TIMEOUT = 10_000; // 10s for network call timeout
 const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls
@@ -41,6 +41,47 @@ function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
   };
 }
 
+function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
+  f: (fetch: LedgerFetch, config: LedgerNodeConfig, ...args: Parameters<F>) => ReturnType<F>,
+  config: LedgerNodeConfig,
+  fetch: LedgerFetch,
+): F {
+  return ((...args: Parameters<F>) => f(fetch, config, ...args)) as F;
+}
+
+async function getTransaction(
+  fetch: LedgerFetch,
+  config: LedgerNodeConfig,
+  _currency: CryptoCurrency,
+  hash: string,
+): Promise<TransactionInfo> {
+  const ledgerTransaction = await fetch<LedgerExplorerOperation>({
+    method: "GET",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/${hash}`,
+  });
+  return {
+    hash: ledgerTransaction.hash,
+    blockHeight: ledgerTransaction.block.height,
+    blockHash: ledgerTransaction.block.hash,
+    nonce: ledgerTransaction.nonce_value,
+    gasPrice: ledgerTransaction.gas_price,
+    gasUsed: ledgerTransaction.gas_used,
+    value: ledgerTransaction.value,
+    status: ledgerTransaction.status,
+    from: ledgerTransaction.from,
+    to: ledgerTransaction.to,
+    erc20Transfers: ledgerTransaction.transfer_events.map(event => ({
+      asset: {
+        type: "erc20" as const,
+        assetReference: safeEncodeEIP55(event.contract),
+      },
+      from: safeEncodeEIP55(event.from),
+      to: safeEncodeEIP55(event.to),
+      value: event.count,
+    })),
+  };
+}
+
 function makeGetTokenBalance(
   config: LedgerNodeConfig,
   fetch: LedgerFetch,
@@ -65,51 +106,17 @@ function makeGetTokenBalance(
   };
 }
 
-function makeGetTransaction(
-  config: LedgerNodeConfig,
+async function getCoinBalance(
   fetch: LedgerFetch,
-): NodeApi["getTransaction"] {
-  return async (_currency, hash) => {
-    const ledgerTransaction = await fetch<LedgerExplorerOperation>({
-      method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/${hash}`,
-    });
-
-    return {
-      hash: ledgerTransaction.hash,
-      blockHeight: ledgerTransaction.block.height,
-      blockHash: ledgerTransaction.block.hash,
-      nonce: ledgerTransaction.nonce_value,
-      gasPrice: ledgerTransaction.gas_price,
-      gasUsed: ledgerTransaction.gas_used,
-      value: ledgerTransaction.value,
-      status: ledgerTransaction.status,
-      from: ledgerTransaction.from,
-      to: ledgerTransaction.to,
-      erc20Transfers: ledgerTransaction.transfer_events.map(event => ({
-        asset: {
-          type: "erc20" as const,
-          assetReference: safeEncodeEIP55(event.contract),
-        },
-        from: safeEncodeEIP55(event.from),
-        to: safeEncodeEIP55(event.to),
-        value: event.count,
-      })),
-    };
-  };
-}
-
-function makeGetCoinBalance(
   config: LedgerNodeConfig,
-  fetch: LedgerFetch,
-): NodeApi["getCoinBalance"] {
-  return async (_currency, address) => {
-    const { balance } = await fetch<{ address: string; balance: string }>({
-      method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/balance`,
-    });
-    return new BigNumber(balance);
-  };
+  _currency: CryptoCurrency,
+  address: string,
+): Promise<BigNumber> {
+  const { balance } = await fetch<{ address: string; balance: string }>({
+    method: "GET",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/balance`,
+  });
+  return new BigNumber(balance);
 }
 
 function makeGetBatchTokenBalances(
@@ -135,20 +142,17 @@ function makeGetBatchTokenBalances(
   };
 }
 
-function makeGetTransactionCount(
-  config: LedgerNodeConfig,
+async function getTransactionCount(
   fetch: LedgerFetch,
-): NodeApi["getTransactionCount"] {
-  return async (_currency, address) => {
-    const { nonce } = await fetch<{
-      address: string;
-      nonce: number;
-    }>({
-      method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/nonce`,
-    });
-    return nonce;
-  };
+  config: LedgerNodeConfig,
+  _currency: CryptoCurrency,
+  address: string,
+): Promise<number> {
+  const { nonce } = await fetch<{ address: string; nonce: number }>({
+    method: "GET",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/address/${address}/nonce`,
+  });
+  return nonce;
 }
 
 function makeGetGasEstimation(
@@ -180,86 +184,70 @@ function makeGetGasEstimation(
   };
 }
 
-function makeGetFeeData(config: LedgerNodeConfig): NodeApi["getFeeData"] {
-  return async (currency, transaction) => {
-    const options = await getGasOptions({
-      currency: {
-        ...currency,
-        ethereumLikeInfo: {
-          ...currency.ethereumLikeInfo!,
-        },
+async function getFeeData(
+  _fetch: LedgerFetch,
+  config: LedgerNodeConfig,
+  currency: CryptoCurrency,
+  transaction: Parameters<NodeApi["getFeeData"]>[1],
+): Promise<Awaited<ReturnType<NodeApi["getFeeData"]>>> {
+  const options = await getGasOptions({
+    currency: {
+      ...currency,
+      ethereumLikeInfo: {
+        ...currency.ethereumLikeInfo!,
       },
-      options: {
-        useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
-        overrideGasTracker: { type: "ledger", explorerId: config.explorerId },
-      },
-    });
-    return options?.[transaction.feesStrategy as keyof typeof options] ?? options.medium;
-  };
+    },
+    options: {
+      useEIP1559: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") ? false : transaction.type === 2,
+      overrideGasTracker: { type: "ledger", explorerId: config.explorerId },
+    },
+  });
+  return options?.[transaction.feesStrategy as keyof typeof options] ?? options.medium;
 }
 
-function makeBroadcastTransaction(
-  config: LedgerNodeConfig,
+async function broadcastTransaction(
   fetch: LedgerFetch,
-): NodeApi["broadcastTransaction"] {
-  return async (_currency, signedTxHex, broadcastConfig) => {
-    const params: Record<string, boolean> = {
-      mevProtected: Boolean(broadcastConfig?.mevProtected),
-      sponsored: Boolean(broadcastConfig?.sponsored),
-    };
-    const headers: Record<string, string> = {};
-    if (broadcastConfig?.source) {
-      headers["X-Ledger-Source-Type"] = broadcastConfig.source.type;
-      headers["X-Ledger-Source-Name"] = broadcastConfig.source.name;
-    }
-    const { result: hash } = await fetch<{ result: string }>({
-      method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/send`,
-      data: { tx: signedTxHex },
-      params,
-      headers,
-    });
-    return hash;
+  config: LedgerNodeConfig,
+  _currency: CryptoCurrency,
+  signedTxHex: string,
+  broadcastConfig?: Parameters<NodeApi["broadcastTransaction"]>[2],
+): Promise<string> {
+  const params: Record<string, boolean> = {
+    mevProtected: Boolean(broadcastConfig?.mevProtected),
+    sponsored: Boolean(broadcastConfig?.sponsored),
   };
+  const headers: Record<string, string> = {};
+  if (broadcastConfig?.source) {
+    headers["X-Ledger-Source-Type"] = broadcastConfig.source.type;
+    headers["X-Ledger-Source-Name"] = broadcastConfig.source.name;
+  }
+  const { result: hash } = await fetch<{ result: string }>({
+    method: "POST",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/send`,
+    data: { tx: signedTxHex },
+    params,
+    headers,
+  });
+  return hash;
 }
 
-function makeGetBlockByHeight(
-  config: LedgerNodeConfig,
+async function getBlockByHeight(
   fetch: LedgerFetch,
-): NodeApi["getBlockByHeight"] {
-  return async (_currency, blockHeight = "latest", _prefetchTxs = false) => {
-    if (blockHeight === "latest") {
-      const { hash, height, time, txs, prevHash } = await fetch<{
-        hash: string;
-        height: number;
-        time: string;
-        txs: string[];
-        prevHash?: string;
-      }>({
-        method: "GET",
-        url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/current`,
-      });
-      return {
-        hash,
-        height,
-        timestamp: new Date(time).getTime(),
-        parentHash: prevHash || "",
-        transactionHashes: txs,
-      };
-    }
-    const [{ hash, height, time, txs, prevHash }] = await fetch<
-      [
-        {
-          hash: string;
-          height: number;
-          time: string;
-          txs: string[];
-          prevHash?: string;
-        },
-      ]
-    >({
+  config: LedgerNodeConfig,
+  _currency: CryptoCurrency,
+  blockHeight: number | "latest" = "latest",
+  _prefetchTxs = false,
+): Promise<BlockByHeightResult> {
+  if (blockHeight === "latest") {
+    const { hash, height, time, txs, prevHash } = await fetch<{
+      hash: string;
+      height: number;
+      time: string;
+      txs: string[];
+      prevHash?: string;
+    }>({
       method: "GET",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/${blockHeight}`,
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/current`,
     });
     return {
       hash,
@@ -268,71 +256,84 @@ function makeGetBlockByHeight(
       parentHash: prevHash || "",
       transactionHashes: txs,
     };
+  }
+  const [{ hash, height, time, txs, prevHash }] = await fetch<
+    [{ hash: string; height: number; time: string; txs: string[]; prevHash?: string }]
+  >({
+    method: "GET",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/block/${blockHeight}`,
+  });
+  return {
+    hash,
+    height,
+    timestamp: new Date(time).getTime(),
+    parentHash: prevHash || "",
+    transactionHashes: txs,
   };
 }
 
-function makeGetOptimismAdditionalFees(
-  config: LedgerNodeConfig,
+async function getOptimismAdditionalFees(
   fetch: LedgerFetch,
-): NodeApi["getOptimismAdditionalFees"] {
-  return async (currency, transaction) => {
-    if (!["optimism", "optimism_sepolia"].includes(currency.id)) {
-      return new BigNumber(0);
-    }
-    if (!transaction) {
-      return new BigNumber(0);
-    }
-    const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
-    const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [transaction]);
-    const [result] = await fetch<
-      Array<{
-        info: { contract: string; data: string; blockNumber: number | null };
-        response: string;
-      }>
-    >({
-      method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
-      data: [
-        {
-          contract: "0x420000000000000000000000000000000000000F",
-          data,
-        },
-      ],
-    });
-    return new BigNumber(result.response);
-  };
+  config: LedgerNodeConfig,
+  currency: CryptoCurrency,
+  transaction: string,
+): Promise<BigNumber> {
+  if (!["optimism", "optimism_sepolia"].includes(currency.id)) {
+    return new BigNumber(0);
+  }
+  if (!transaction) {
+    return new BigNumber(0);
+  }
+  const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
+  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [transaction]);
+  const [result] = await fetch<
+    Array<{
+      info: { contract: string; data: string; blockNumber: number | null };
+      response: string;
+    }>
+  >({
+    method: "POST",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    data: [
+      {
+        contract: "0x420000000000000000000000000000000000000F",
+        data,
+      },
+    ],
+  });
+  return new BigNumber(result.response);
 }
 
-function makeGetScrollAdditionalFees(
-  config: LedgerNodeConfig,
+async function getScrollAdditionalFees(
   fetch: LedgerFetch,
-): NodeApi["getScrollAdditionalFees"] {
-  return async (currency, transaction) => {
-    if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
-      return new BigNumber(0);
-    }
-    if (!transaction) {
-      return new BigNumber(0);
-    }
-    const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
-    const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [transaction]);
-    const [result] = await fetch<
-      Array<{
-        info: { contract: string; data: string; blockNumber: number | null };
-        response: string;
-      }>
-    >({
-      method: "POST",
-      url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
-      data: [
-        {
-          contract: "0x5300000000000000000000000000000000000002",
-          data,
-        },
-      ],
-    });
-    return new BigNumber(result.response);
-  };
+  config: LedgerNodeConfig,
+  currency: CryptoCurrency,
+  transaction: string,
+): Promise<BigNumber> {
+  if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+    return new BigNumber(0);
+  }
+  if (!transaction) {
+    return new BigNumber(0);
+  }
+  const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
+  const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [transaction]);
+  const [result] = await fetch<
+    Array<{
+      info: { contract: string; data: string; blockNumber: number | null };
+      response: string;
+    }>
+  >({
+    method: "POST",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/contract/read`,
+    data: [
+      {
+        contract: "0x5300000000000000000000000000000000000002",
+        data,
+      },
+    ],
+  });
+  return new BigNumber(result.response);
 }
 
 export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
@@ -342,15 +343,15 @@ export function createLedgerNodeApi(config: LedgerNodeConfig): NodeApi {
     Batcher<{ address: string; contract: string }, BigNumber>
   >();
   return {
-    getBlockByHeight: makeGetBlockByHeight(config, fetch),
-    getCoinBalance: makeGetCoinBalance(config, fetch),
+    getBlockByHeight: make(getBlockByHeight, config, fetch),
+    getCoinBalance: make(getCoinBalance, config, fetch),
     getTokenBalance: makeGetTokenBalance(config, fetch, tokenBalancesBatchersMap),
-    getTransactionCount: makeGetTransactionCount(config, fetch),
-    getTransaction: makeGetTransaction(config, fetch),
+    getTransactionCount: make(getTransactionCount, config, fetch),
+    getTransaction: make(getTransaction, config, fetch),
     getGasEstimation: makeGetGasEstimation(config, fetch),
-    getFeeData: makeGetFeeData(config),
-    broadcastTransaction: makeBroadcastTransaction(config, fetch),
-    getOptimismAdditionalFees: makeGetOptimismAdditionalFees(config, fetch),
-    getScrollAdditionalFees: makeGetScrollAdditionalFees(config, fetch),
+    getFeeData: make(getFeeData, config, fetch),
+    broadcastTransaction: make(broadcastTransaction, config, fetch),
+    getOptimismAdditionalFees: make(getOptimismAdditionalFees, config, fetch),
+    getScrollAdditionalFees: make(getScrollAdditionalFees, config, fetch),
   };
 }

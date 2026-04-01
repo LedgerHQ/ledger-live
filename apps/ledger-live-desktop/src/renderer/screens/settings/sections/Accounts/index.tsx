@@ -8,14 +8,16 @@ import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
 import DoNotAskAgainSkipMemo from "./DoNotAskAgainSkipMemo";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function SectionAccounts() {
   const { t } = useTranslation();
+  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("desktop");
 
   return (
     <Body>
       <TrackPage category="Settings" name="Accounts" />
-      <SectionExport />
+      {shouldDisplayOperationsList ? null : <SectionExport />}
       <Row
         title={t("settings.accounts.hideEmptyTokens.title")}
         desc={t("settings.accounts.hideEmptyTokens.desc")}

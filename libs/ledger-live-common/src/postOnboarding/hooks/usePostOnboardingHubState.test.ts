@@ -127,7 +127,7 @@ describe("usePostOnboardingHubState", () => {
     });
   });
 
-  it("should not return actions that have a disabled feature flag ", () => {
+  it("should not return actions that have a disabled feature flag", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
     mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(false));
@@ -144,7 +144,7 @@ describe("usePostOnboardingHubState", () => {
     expect(lastActionCompleted).toBe(null);
   });
 
-  it("should not return actions that have a disabled feature param flag ", () => {
+  it("should not return actions that have a disabled feature param flag", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
     mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true, false));

@@ -1,14 +1,12 @@
 /*
  * Serialization functions from Horizon to Ledger Live types
  */
-
+import type { Operation } from "@ledgerhq/coin-framework/api/types";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { OperationType } from "@ledgerhq/types-live";
 import { Horizon } from "@stellar/stellar-sdk";
 import BigNumber from "bignumber.js";
-import type { BalanceAsset, RawOperation, StellarMemo, StellarOperation } from "../types";
+import type { BalanceAsset, RawOperation, StellarMemo } from "../types";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -39,7 +37,7 @@ export async function rawOperationsToOperations(
   addr: string,
   accountId: string,
   minHeight: number,
-): Promise<StellarOperation[]> {
+): Promise<Operation[]> {
   const supportedOperationTypes = [
     "create_account",
     "payment",
@@ -64,7 +62,7 @@ export async function rawOperationsToOperations(
       .map(operation => formatOperation(operation, accountId, addr, minHeight)),
   );
 
-  return ops.filter(op => op !== undefined) as StellarOperation[];
+  return ops.filter(op => op !== undefined) as Operation[];
 }
 
 async function formatOperation(
@@ -72,7 +70,7 @@ async function formatOperation(
   accountId: string,
   addr: string,
   minHeight: number,
-): Promise<StellarOperation | undefined> {
+): Promise<Operation | undefined> {
   const transaction = await rawOperation.transaction();
 
   if (transaction.ledger_attr < minHeight) return undefined;
@@ -115,46 +113,49 @@ async function formatOperation(
       break;
   }
 
-  const operation: StellarOperation = {
-    id: encodeOperationId(accountId, rawOperation.transaction_hash, type),
-    accountId,
-    fee: new BigNumber(transaction.fee_charged),
-    value: rawOperation?.asset_code ? new BigNumber(transaction.fee_charged) : value,
+  const operation: Operation = {
+    id: `${accountId}-${rawOperation.transaction_hash}-${type}`,
+    value: rawOperation?.asset_code ? BigInt(transaction.fee_charged) : BigInt(value.toString()),
     // TODO: doc
     // Using type NONE to hide asset operations from the main account (show them
     // only on sub-account)
     type: rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type) ? "NONE" : type,
-    hash: rawOperation.transaction_hash,
-    blockHeight: transaction.ledger_attr,
-    date: new Date(rawOperation.created_at),
     senders: [rawOperation.source_account],
     recipients,
-    transactionSequenceNumber: new BigNumber(transaction.source_account_sequence).isNaN()
-      ? undefined
-      : new BigNumber(transaction.source_account_sequence),
-    hasFailed: !rawOperation.transaction_successful,
-    blockHash: blockHash,
-    extra: {
+    tx: {
+      hash: rawOperation.transaction_hash,
+      block: {
+        hash: blockHash,
+        time: new Date(blockTime),
+        height: transaction.ledger_attr,
+      },
+      fees: BigInt(transaction.fee_charged),
+      date: new Date(rawOperation.created_at),
+      failed: !rawOperation.transaction_successful,
+      ...(transaction.fee_account ? { feesPayer: transaction.fee_account } : {}),
+    },
+    asset:
+      rawOperation?.asset_code && rawOperation?.asset_issuer
+        ? {
+            type: "token",
+            assetReference: rawOperation.asset_code,
+            assetOwner: rawOperation.asset_issuer,
+          }
+        : { type: "native" },
+    details: {
+      pagingToken: rawOperation.paging_token,
+      assetCode: rawOperation.asset_code,
+      assetIssuer: rawOperation.asset_issuer,
+      assetAmount: rawOperation.asset_code ? value.toString() : undefined,
       ledgerOpType: type,
       blockTime: new Date(blockTime),
       index: rawOperation.id,
-      feeAccount: transaction.fee_account,
+      memo,
+      sequence: new BigNumber(transaction.source_account_sequence).isNaN()
+        ? undefined
+        : new BigNumber(transaction.source_account_sequence).toString(),
     },
   };
-
-  if (rawOperation.paging_token) {
-    operation.extra.pagingToken = rawOperation.paging_token;
-  }
-  if (rawOperation.asset_code) {
-    operation.extra.assetCode = rawOperation.asset_code;
-    operation.extra.assetAmount = rawOperation.asset_code ? value.toString() : undefined;
-  }
-  if (rawOperation.asset_issuer) {
-    operation.extra.assetIssuer = rawOperation.asset_issuer;
-  }
-  if (memo) {
-    operation.extra.memo = memo;
-  }
 
   return operation;
 }
@@ -178,7 +179,7 @@ function getRecipients(operation: RawOperation): string[] {
 function getValue(
   operation: RawOperation,
   transaction: Horizon.ServerApi.TransactionRecord,
-  type: OperationType,
+  type: string,
 ): BigNumber {
   let value = new BigNumber(0);
 
@@ -206,7 +207,7 @@ function getValue(
   }
 }
 
-function getOperationType(operation: RawOperation, addr: string): OperationType {
+function getOperationType(operation: RawOperation, addr: string): string {
   switch (operation.type) {
     case "create_account":
       return operation.funder === addr ? "OUT" : "IN";

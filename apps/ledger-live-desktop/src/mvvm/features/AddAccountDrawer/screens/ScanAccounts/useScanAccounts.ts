@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Subscription } from "rxjs";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 import * as RX from "rxjs/operators";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -55,7 +54,6 @@ export function useScanAccounts({
 }: UseScanAccountsProps) {
   const { trackAddAccountEvent } = useAddAccountAnalytics();
   const existingAccounts = useSelector(accountsSelector);
-  const device = useSelector(getCurrentDevice);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -188,9 +186,7 @@ export function useScanAccounts({
       dispatch(
         openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
           currency,
-          device,
           selectedAccounts: selectedCantonCreatableAccounts,
-          existingAccounts: existingAccounts,
           editedNames: {},
         }),
       );
@@ -235,7 +231,6 @@ export function useScanAccounts({
     existingAccounts,
     onComplete,
     currency,
-    device,
     hasCantonCreatableAccounts,
     selectedCantonCreatableAccounts,
     hasConcordiumCreatableAccounts,

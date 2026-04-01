@@ -31,7 +31,7 @@ jest.mock("../hooks/useStableGasOptions", () => ({
   useStableGasOptions: jest.fn(tx => tx),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/descriptor", () => ({
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
   sendFeatures: {
     getAmountPlugins: jest.fn(() => []),
   },

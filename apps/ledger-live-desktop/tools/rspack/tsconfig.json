@@ -12,9 +12,9 @@
     "declaration": false,
     "outDir": "./dist",
     "rootDir": "..",
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["../../src/*"]
+      "*": ["./*"],
+      "~/*": ["./../../src/*"]
     }
   },
   "ts-node": {

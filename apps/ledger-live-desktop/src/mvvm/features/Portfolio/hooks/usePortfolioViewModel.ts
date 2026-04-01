@@ -20,6 +20,8 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayGraphRework: boolean;
   readonly shouldDisplayQuickActionCtas: boolean;
   readonly shouldDisplayAssetSection: boolean;
+  readonly shouldDisplayOperationsList: boolean;
+  readonly shouldDisplayBrazePlacement: boolean;
   readonly isWallet40Enabled: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
   readonly accounts: AccountLike[];
@@ -35,6 +37,8 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
+    shouldDisplayOperationsList,
+    shouldDisplayBrazePlacement,
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
@@ -79,6 +83,8 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayGraphRework,
     shouldDisplayQuickActionCtas,
     shouldDisplayAssetSection,
+    shouldDisplayOperationsList,
+    shouldDisplayBrazePlacement,
     isWallet40Enabled,
     filterOperations,
     accounts,

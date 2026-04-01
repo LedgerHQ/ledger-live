@@ -24,6 +24,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@rspack/cli": "catalog:",
     "@rspack/core": "catalog:",
     "@swc/core": "catalog:",

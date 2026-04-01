@@ -180,7 +180,7 @@ describe("DmkSignerEth", () => {
       ["float", "1.5"],
       ["empty string", ""],
       ["NaN", "NaN"],
-    ])("should set chainId default to 1 for invalid chainId input: %s", async (_label, invalidChainId) => {
+    ])("should omit chaindId when input is invalid: %s", async (_label, invalidChainId) => {
       // GIVEN
       const signerEth = (signer as unknown as { signer: { getAddress: jest.Mock } }).signer;
       const getAddressSpy = jest.spyOn(signerEth, "getAddress");
@@ -192,7 +192,7 @@ describe("DmkSignerEth", () => {
       expect(getAddressSpy).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({
-          chainId: 1,
+          chainId: undefined,
         }),
       );
     });

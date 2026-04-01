@@ -90,8 +90,8 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
 /**
  * Connects to Sui Api
  */
-export async function withApi<T>(execute: AsyncApiFunction<T>) {
-  const url = coinConfig.getCoinConfig().node.url;
+export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
+  const url = coinConfig.getCoinConfig(currencyId).node.url;
   const transport = new SuiHTTPTransport({
     url,
     fetch: fetcher,
@@ -137,14 +137,15 @@ export function withBatchedMultiGetObjects(client: SuiClient): SuiClient {
 }
 
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string) =>
+  async (owner: string, currencyId?: string) =>
     withApi(
       async api =>
         await api.getAllBalances({
           owner,
         }),
+      currencyId,
     ),
-  (owner: string) => owner,
+  (owner: string, currencyId?: string) => `${currencyId ?? "sui"}:${owner}`,
   minutes(1),
 );
 
@@ -185,8 +186,11 @@ export type AccountBalance = {
 /**
  * Get account balance (native and tokens)
  */
-export const getAccountBalances = async (addr: string): Promise<AccountBalance[]> => {
-  const balances = await getAllBalancesCached(addr);
+export const getAccountBalances = async (
+  addr: string,
+  currencyId?: string,
+): Promise<AccountBalance[]> => {
+  const balances = await getAllBalancesCached(addr, currencyId);
   return balances.map(({ coinType, totalBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -305,7 +309,10 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
   return computationCost.plus(storageCost).minus(storageRebate);
 };
 
-export const getOperationExtra = (digest: string): Promise<Record<string, string>> =>
+export const getOperationExtra = (
+  digest: string,
+  currencyId?: string,
+): Promise<Record<string, string>> =>
   withApi(async api => {
     const response = await api.getTransactionBlock({
       digest,
@@ -336,7 +343,7 @@ export const getOperationExtra = (digest: string): Promise<Record<string, string
     }
 
     return {};
-  });
+  }, currencyId);
 
 /**
  * Extract date from transaction
@@ -352,10 +359,10 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
 export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string | undefined =>
   transaction.transaction?.data?.gasData?.owner || undefined;
 
-export const getStakesRaw = (owner: string) =>
+export const getStakesRaw = (owner: string, currencyId?: string) =>
   withApi(async api => {
     return api.getStakes({ owner });
-  });
+  }, currencyId);
 
 /**
  * Extract operation coin type from transaction
@@ -666,13 +673,13 @@ export function toSuiAsset(coinType: string): AssetInfo {
   }
 }
 
-export const getLastBlock = () =>
+export const getLastBlock = (currencyId?: string) =>
   withApi(async api => {
     const checkpoint = await api.getLatestCheckpointSequenceNumber();
     const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
 
     return { digest, sequenceNumber, timestampMs };
-  });
+  }, currencyId);
 
 /**
  * Fetch operation list
@@ -682,6 +689,7 @@ export const getOperations = async (
   addr: string,
   cursor?: QueryTransactionBlocksParams["cursor"],
   order?: "asc" | "desc",
+  currencyId?: string,
 ): Promise<Operation[]> =>
   withApi(async api => {
     let rpcOrder: "ascending" | "descending";
@@ -713,7 +721,7 @@ export const getOperations = async (
     return rawTransactions.operations.map(transaction =>
       transactionToOperation(accountId, addr, transaction),
     );
-  });
+  }, currencyId);
 
 export const filterOperations = (
   sendOps: LoadOperationResponse,
@@ -894,6 +902,7 @@ export const getListOperations = async (
   order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
   cursor?: string,
+  currencyId?: string,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
@@ -974,15 +983,15 @@ export const getListOperations = async (
       items: operations,
       next: nextCursor,
     };
-  });
+  }, currencyId);
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata.
  *
  * @param id the checkpoint digest or sequence number (as a string)
  */
-export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
-  withApi(async api => api.getCheckpoint({ id }));
+export const getCheckpoint = async (id: string, currencyId?: string): Promise<Checkpoint> =>
+  withApi(async api => api.getCheckpoint({ id }), currencyId);
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata only.
@@ -990,11 +999,11 @@ export const getCheckpoint = async (id: string): Promise<Checkpoint> =>
  * @param id the checkpoint digest or sequence number (as a string)
  * @see {@link getBlock}
  */
-export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
+export const getBlockInfo = async (id: string, currencyId?: string): Promise<BlockInfo> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
-  });
+  }, currencyId);
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata with all transactions.
@@ -1002,7 +1011,7 @@ export const getBlockInfo = async (id: string): Promise<BlockInfo> =>
  * @param id the checkpoint digest or sequence number (as a string)
  * @see {@link getBlockInfo}
  */
-export const getBlock = async (id: string): Promise<Block> =>
+export const getBlock = async (id: string, currencyId?: string): Promise<Block> =>
   withApi(async api => {
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
@@ -1010,7 +1019,7 @@ export const getBlock = async (id: string): Promise<Block> =>
       info: toBlockInfo(checkpoint),
       transactions: rawTxs.map(toBlockTransaction),
     };
-  });
+  }, currencyId);
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
@@ -1081,8 +1090,13 @@ export const createTransaction = async (
   transaction: CreateExtrinsicArg,
   withObjects: boolean = false,
   resolution?: Resolution,
+  currencyId?: string,
 ): Promise<CoreTransaction> => {
-  const { serialized, bcsObjects } = await createTransactionFromMode(address, transaction);
+  const { serialized, bcsObjects } = await createTransactionFromMode(
+    address,
+    transaction,
+    currencyId,
+  );
 
   return {
     unsigned: serialized,
@@ -1091,19 +1105,27 @@ export const createTransaction = async (
   };
 };
 
-const createTransactionFromMode = (address: string, transaction: CreateExtrinsicArg) => {
+const createTransactionFromMode = (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) => {
   const { mode } = transaction;
   switch (mode) {
     case "delegate":
-      return createTransactionForDelegate(address, transaction);
+      return createTransactionForDelegate(address, transaction, currencyId);
     case "undelegate":
-      return createTransactionForUndelegate(address, transaction);
+      return createTransactionForUndelegate(address, transaction, currencyId);
     default:
-      return createTransactionForOthers(address, transaction);
+      return createTransactionForOthers(address, transaction, currencyId);
   }
 };
 
-const createTransactionForDelegate = async (address: string, transaction: CreateExtrinsicArg) =>
+const createTransactionForDelegate = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) =>
   withApi(async api => {
     const tx = new Transaction();
 
@@ -1127,9 +1149,13 @@ const createTransactionForDelegate = async (address: string, transaction: Create
     const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
-  });
+  }, currencyId);
 
-const createTransactionForUndelegate = async (address: string, transaction: CreateExtrinsicArg) =>
+const createTransactionForUndelegate = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) =>
   withApi(async api => {
     const tx = new Transaction();
 
@@ -1158,9 +1184,13 @@ const createTransactionForUndelegate = async (address: string, transaction: Crea
     const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
-  });
+  }, currencyId);
 
-const createTransactionForOthers = async (address: string, transaction: CreateExtrinsicArg) =>
+const createTransactionForOthers = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  currencyId?: string,
+) =>
   withApi(async api => {
     const tx = new Transaction();
 
@@ -1192,14 +1222,24 @@ const createTransactionForOthers = async (address: string, transaction: CreateEx
     const { bcsObjects } = await getInputObjects(tx, withBatchedMultiGetObjects(api));
 
     return { serialized, bcsObjects };
-  });
+  }, currencyId);
 
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees
  */
-export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
+export const paymentInfo = async (
+  sender: string,
+  fakeTransaction: TransactionType,
+  currencyId?: string,
+) =>
   withApi(async api => {
-    const { unsigned: txb } = await createTransaction(sender, fakeTransaction);
+    const { unsigned: txb } = await createTransaction(
+      sender,
+      fakeTransaction,
+      false,
+      undefined,
+      currencyId,
+    );
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);
 
@@ -1208,12 +1248,15 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
       totalGasUsed: fees,
       fees,
     };
-  });
+  }, currencyId);
 
-export const executeTransactionBlock = async (params: ExecuteTransactionBlockParams) =>
+export const executeTransactionBlock = async (
+  params: ExecuteTransactionBlockParams,
+  currencyId?: string,
+) =>
   withApi(async api => {
     return api.executeTransactionBlock(params);
-  });
+  }, currencyId);
 
 type LoadOperationResponse = {
   operations: SuiTransactionBlockResponse[];
@@ -1319,11 +1362,13 @@ export const queryTransactionsByDigest = async (params: {
   return responses;
 };
 
-export const getStakes = (address: string): Promise<Stake[]> =>
-  withApi(async api =>
-    api
-      .getStakes({ owner: address })
-      .then(delegations => delegations.flatMap(delegation => toStakes(address, delegation))),
+export const getStakes = (address: string, currencyId?: string): Promise<Stake[]> =>
+  withApi(
+    async api =>
+      api
+        .getStakes({ owner: address })
+        .then(delegations => delegations.flatMap(delegation => toStakes(address, delegation))),
+    currencyId,
   );
 
 export const toStakes = (address: string, delegation: DelegatedStake): Stake[] =>
@@ -1367,7 +1412,7 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
   }
 };
 
-export const getValidators = (): Promise<SuiValidator[]> =>
+export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
   withApi(async api => {
     const [{ activeValidators }, { apys }] = await Promise.all([
       api.getLatestSuiSystemState(),
@@ -1382,4 +1427,4 @@ export const getValidators = (): Promise<SuiValidator[]> =>
     );
 
     return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
-  });
+  }, currencyId);

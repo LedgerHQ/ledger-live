@@ -17,6 +17,7 @@ import type {
   ProtectState,
   SettingsState,
 } from "./reducers/types";
+import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@ledgerhq/cryptoassets/cal-client/persistence";
@@ -308,4 +309,20 @@ export function getIdentities(): Promise<PersistedIdentities | null> {
 }
 export async function saveIdentities(persistedData: PersistedIdentities): Promise<void> {
   await storage.save("identities", persistedData);
+}
+
+export function getFeatureFlagsState(): Promise<Pick<
+  FeatureFlagsState,
+  "overrides" | "bannerVisible"
+> | null> {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return storage.get("featureFlags") as Promise<Pick<
+    FeatureFlagsState,
+    "overrides" | "bannerVisible"
+  > | null>;
+}
+export async function saveFeatureFlagsState(
+  obj: Pick<FeatureFlagsState, "overrides" | "bannerVisible">,
+): Promise<void> {
+  await storage.save("featureFlags", obj);
 }

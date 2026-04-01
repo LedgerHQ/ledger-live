@@ -1,5 +1,5 @@
-import { validateAddress } from "./addresses";
 import { c32addressDecode } from "c32check";
+import { validateAddress } from "./addresses";
 
 // Mock c32check module
 jest.mock("c32check", () => ({

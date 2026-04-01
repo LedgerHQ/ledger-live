@@ -60,6 +60,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyKlaytnBaobab: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
+  currencyMantle: DEFAULT_FEATURE,
+  currencyMantleSepolia: DEFAULT_FEATURE,
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
   currencyOptimismSepolia: DEFAULT_FEATURE,
@@ -98,6 +100,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
+  currencySuiTestnet: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
   currencyBabylon: DEFAULT_FEATURE,
   currencySeiNetworkEvm: DEFAULT_FEATURE,
@@ -809,6 +812,7 @@ export const DEFAULT_FEATURES: Features = {
       assetSection: true,
       onboardingWidget: true,
       brazePlacement: true,
+      operationsList: true,
     },
   },
   lwdWallet40: {
@@ -823,6 +827,8 @@ export const DEFAULT_FEATURES: Features = {
       newReceiveDialog: true,
       balanceRefreshRework: true,
       assetSection: true,
+      operationsList: true,
+      brazePlacement: true,
     },
   },
   addressPoisoningOperationsFilter: {

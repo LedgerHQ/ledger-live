@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.66.0",
+  "version": "34.67.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -81,10 +81,25 @@
       "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
     },
-    "./bridge/descriptor": {
-      "@ledgerhq/source": "./src/bridge/descriptor.ts",
-      "require": "./lib/bridge/descriptor.js",
-      "default": "./lib-es/bridge/descriptor.js"
+    "./bridge/descriptor/registry": {
+      "@ledgerhq/source": "./src/bridge/descriptor/registry.ts",
+      "require": "./lib/bridge/descriptor/registry.js",
+      "default": "./lib-es/bridge/descriptor/registry.js"
+    },
+    "./bridge/descriptor/types": {
+      "@ledgerhq/source": "./src/bridge/descriptor/types.ts",
+      "require": "./lib/bridge/descriptor/types.js",
+      "default": "./lib-es/bridge/descriptor/types.js"
+    },
+    "./bridge/descriptor/send/features": {
+      "@ledgerhq/source": "./src/bridge/descriptor/send/features.ts",
+      "require": "./lib/bridge/descriptor/send/features.js",
+      "default": "./lib-es/bridge/descriptor/send/features.js"
+    },
+    "./bridge/descriptor/send/memo": {
+      "@ledgerhq/source": "./src/bridge/descriptor/send/memo.ts",
+      "require": "./lib/bridge/descriptor/send/memo.js",
+      "default": "./lib-es/bridge/descriptor/send/memo.js"
     },
     "./test-helpers/cryptoAssetsStore": {
       "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
@@ -98,6 +113,18 @@
       "require": "./lib/test-helpers/*.js",
       "default": "./lib-es/test-helpers/*.js"
     },
+    "./modularDrawer/__mocks__/*": {
+      "@ledgerhq/source": "./src/modularDrawer/__mocks__/*.ts",
+      "types": "./lib/modularDrawer/__mocks__/*.d.ts",
+      "require": "./lib/modularDrawer/__mocks__/*.js",
+      "default": "./lib-es/modularDrawer/__mocks__/*.js"
+    },
+    "./cmc-client/__mocks__/*": {
+      "@ledgerhq/source": "./src/cmc-client/__mocks__/*.ts",
+      "types": "./lib/cmc-client/__mocks__/*.d.ts",
+      "require": "./lib/cmc-client/__mocks__/*.js",
+      "default": "./lib-es/cmc-client/__mocks__/*.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -107,12 +134,15 @@
     "watch:es": "zx ./scripts/watch-ts-es.mjs",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s'",
-    "lint": "eslint src --cache",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxlint src --fix --quiet",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "jest": "jest",
     "jest:debug": "cross-env TZ=America/New_York node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit -p src/tsconfig.json --customConditions node",
-    "ci-lint": "pnpm lint",
+    "ci-lint": "pnpm lint:ci",
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
@@ -259,7 +289,7 @@
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",
-    "@xstate/react": "^5.0.2",
+    "@xstate/react": "catalog:",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
     "@zondax/ledger-filecoin": "^3.0.6",
@@ -274,6 +304,7 @@
     "bip39": "^3.0.4",
     "bs58": "catalog:",
     "date-fns": "^2.23.0",
+    "eip55": "^2.1.1",
     "ethers": "catalog:",
     "expect": "catalog:",
     "fuse.js": "^6.6.2",
@@ -299,7 +330,7 @@
     "usehooks-ts": "^2.13.0",
     "utility-types": "^3.10.0",
     "winston": "^3.4.0",
-    "xstate": "^5.19.2",
+    "xstate": "catalog:",
     "yargs": "^17.0.0",
     "zod": "catalog:"
   },
@@ -328,10 +359,6 @@
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
     "jest": "catalog:",
@@ -340,6 +367,8 @@
     "mkdirp": "1.0.4",
     "msw": "catalog:",
     "nock": "^13.0.5",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
@@ -352,5 +381,11 @@
     "undici": "catalog:",
     "uuid": "^8.3.2",
     "ws": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
   }
 }

@@ -1,3 +1,4 @@
+import type { Operation } from "@ledgerhq/coin-framework/api/types";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
@@ -25,7 +26,6 @@ import {
   type RawOperation,
   type Signer,
   NetworkCongestionLevel,
-  StellarOperation,
 } from "../types";
 import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 
@@ -209,13 +209,13 @@ export async function fetchAllOperations(
   order: "asc" | "desc",
   cursor: string = "",
   maxOperations?: number,
-): Promise<StellarOperation[]> {
+): Promise<Operation[]> {
   if (!addr) {
     return [];
   }
 
   const limit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
-  let operations: StellarOperation[] = [];
+  let operations: Operation[] = [];
   let fetchedOpsCount = limit;
 
   try {
@@ -299,8 +299,8 @@ export async function fetchOperations({
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
-}): Promise<[StellarOperation[], string]> {
-  const noResult: [StellarOperation[], string] = [[], ""];
+}): Promise<[Operation[], string]> {
+  const noResult: [Operation[], string] = [[], ""];
   if (!addr) {
     return noResult;
   }

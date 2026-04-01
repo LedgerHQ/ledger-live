@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, type LayoutChangeEvent } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import PortfolioGraphCard from "~/screens/Portfolio/PortfolioGraphCard";
 import { PortfolioBalanceSection } from "../PortfolioBalanceSection";
@@ -37,11 +37,9 @@ export const PortfolioHeaderSection = ({
     return (
       <View key="portfolioHeaderElements" style={{ paddingTop: safeAreaTop }}>
         {shouldDisplayBalanceRefreshRework && <PortfolioRefreshStatus />}
-        <View onLayout={onBannerLayout}>
-          <Flex px={6} key="FirmwareUpdateBanner">
-            <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-          </Flex>
-        </View>
+        <Box onLayout={onBannerLayout} lx={{ paddingHorizontal: "s16" }} key="FirmwareUpdateBanner">
+          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+        </Box>
         <ScreenHeroSectionView ctas={ctas} minContentHeight={minContentHeight}>
           <PortfolioBalanceSection showAssets={showAssets} isReadOnlyMode={isReadOnlyMode} />
         </ScreenHeroSectionView>
@@ -51,9 +49,9 @@ export const PortfolioHeaderSection = ({
 
   return (
     <View key="portfolioHeaderElements" style={{ paddingTop: 24 }}>
-      <Flex px={6} key="FirmwareUpdateBanner">
+      <Box lx={{ paddingHorizontal: "s16" }} key="FirmwareUpdateBanner">
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-      </Flex>
+      </Box>
       <PortfolioGraphCard
         key="PortfolioGraphCard"
         showAssets={showAssets}

@@ -57,7 +57,7 @@ describe("LargeMoverLandingPage Integration Tests", () => {
       },
     );
 
-    expect(await screen.findAllByText(/BTC/i));
+    expect(await screen.findAllByText(/BTC/i)).toBeDefined();
   });
 
   it("displays the close button in the header and handles navigation", async () => {

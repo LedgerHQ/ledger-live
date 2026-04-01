@@ -1,5 +1,63 @@
 # @ledgerhq/coin-evm
 
+## 3.2.0
+
+### Minor Changes
+
+- [#15676](https://github.com/LedgerHQ/ledger-live/pull/15676) [`72d1b81`](https://github.com/LedgerHQ/ledger-live/commit/72d1b81187121e44624ebc976e8d3309bd9dd8a1) Thanks [@jprudent](https://github.com/jprudent)! - fix(coin-evm): use created contract address as recipient
+
+- [#15425](https://github.com/LedgerHQ/ledger-live/pull/15425) [`69bb48c`](https://github.com/LedgerHQ/ledger-live/commit/69bb48c0dc5b76ddf0d2c96a18ebb35b82927afc) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: refactoring to use a generic factory for node api
+
+- [#15719](https://github.com/LedgerHQ/ledger-live/pull/15719) [`4527739`](https://github.com/LedgerHQ/ledger-live/commit/45277399251db055e9e1df98687730af7dabf058) Thanks [@jprudent](https://github.com/jprudent)! - fix(coin-evm): fail when internal txs can't be retrieved
+
+- [#14154](https://github.com/LedgerHQ/ledger-live/pull/14154) [`0431655`](https://github.com/LedgerHQ/ledger-live/commit/043165591a3bd650b43a220b23bd952ff82d56a0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10510): fix wrong amounts on ERC-20 transfer operations
+
+- [#15594](https://github.com/LedgerHQ/ledger-live/pull/15594) [`2176f11`](https://github.com/LedgerHQ/ledger-live/commit/2176f11b3a4eaffb8c2f5e1b8a2c074492d02762) Thanks [@jprudent](https://github.com/jprudent)! - fix coin-evm token operation to reuse parent fees
+
+- [#15487](https://github.com/LedgerHQ/ledger-live/pull/15487) [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc) Thanks [@qperrot](https://github.com/qperrot)! - fix: refactor bridge api definition
+
+- [#15677](https://github.com/LedgerHQ/ledger-live/pull/15677) [`9af2737`](https://github.com/LedgerHQ/ledger-live/commit/9af27370f39378b088b7ca0cb17382edb0d84077) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(evm): add fallback `getBlock` implementation for cases where `ethers.js` fails to handle block
+
+### Patch Changes
+
+- Updated dependencies [[`4af828d`](https://github.com/LedgerHQ/ledger-live/commit/4af828d0790bb3568dd095f89dd9f239f7565e84), [`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20), [`deec161`](https://github.com/LedgerHQ/ledger-live/commit/deec16153656d444336f067970dcda5fff016d95), [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc), [`41d172e`](https://github.com/LedgerHQ/ledger-live/commit/41d172e74bc074995b7290c4bb6d129276a484ff), [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc)]:
+  - @ledgerhq/coin-framework@7.1.0
+  - @ledgerhq/cryptoassets@13.44.0
+  - @ledgerhq/ledger-wallet-framework@1.1.0
+  - @ledgerhq/live-env@2.31.0
+  - @ledgerhq/domain-service@1.7.3
+  - @ledgerhq/evm-tools@1.12.2
+  - @ledgerhq/live-network@2.4.3
+
+## 3.2.0-next.0
+
+### Minor Changes
+
+- [#15676](https://github.com/LedgerHQ/ledger-live/pull/15676) [`72d1b81`](https://github.com/LedgerHQ/ledger-live/commit/72d1b81187121e44624ebc976e8d3309bd9dd8a1) Thanks [@jprudent](https://github.com/jprudent)! - fix(coin-evm): use created contract address as recipient
+
+- [#15425](https://github.com/LedgerHQ/ledger-live/pull/15425) [`69bb48c`](https://github.com/LedgerHQ/ledger-live/commit/69bb48c0dc5b76ddf0d2c96a18ebb35b82927afc) Thanks [@jprudent](https://github.com/jprudent)! - coin-evm: refactoring to use a generic factory for node api
+
+- [#15719](https://github.com/LedgerHQ/ledger-live/pull/15719) [`4527739`](https://github.com/LedgerHQ/ledger-live/commit/45277399251db055e9e1df98687730af7dabf058) Thanks [@jprudent](https://github.com/jprudent)! - fix(coin-evm): fail when internal txs can't be retrieved
+
+- [#14154](https://github.com/LedgerHQ/ledger-live/pull/14154) [`0431655`](https://github.com/LedgerHQ/ledger-live/commit/043165591a3bd650b43a220b23bd952ff82d56a0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(BACK-10510): fix wrong amounts on ERC-20 transfer operations
+
+- [#15594](https://github.com/LedgerHQ/ledger-live/pull/15594) [`2176f11`](https://github.com/LedgerHQ/ledger-live/commit/2176f11b3a4eaffb8c2f5e1b8a2c074492d02762) Thanks [@jprudent](https://github.com/jprudent)! - fix coin-evm token operation to reuse parent fees
+
+- [#15487](https://github.com/LedgerHQ/ledger-live/pull/15487) [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc) Thanks [@qperrot](https://github.com/qperrot)! - fix: refactor bridge api definition
+
+- [#15677](https://github.com/LedgerHQ/ledger-live/pull/15677) [`9af2737`](https://github.com/LedgerHQ/ledger-live/commit/9af27370f39378b088b7ca0cb17382edb0d84077) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix(evm): add fallback `getBlock` implementation for cases where `ethers.js` fails to handle block
+
+### Patch Changes
+
+- Updated dependencies [[`4af828d`](https://github.com/LedgerHQ/ledger-live/commit/4af828d0790bb3568dd095f89dd9f239f7565e84), [`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20), [`deec161`](https://github.com/LedgerHQ/ledger-live/commit/deec16153656d444336f067970dcda5fff016d95), [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc), [`41d172e`](https://github.com/LedgerHQ/ledger-live/commit/41d172e74bc074995b7290c4bb6d129276a484ff), [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc)]:
+  - @ledgerhq/coin-framework@7.1.0-next.0
+  - @ledgerhq/cryptoassets@13.44.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.1.0-next.0
+  - @ledgerhq/live-env@2.31.0-next.0
+  - @ledgerhq/domain-service@1.7.3-next.0
+  - @ledgerhq/evm-tools@1.12.2-next.0
+  - @ledgerhq/live-network@2.4.3-next.0
+
 ## 3.1.0
 
 ### Minor Changes

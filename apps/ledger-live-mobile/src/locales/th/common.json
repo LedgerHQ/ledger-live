@@ -953,6 +953,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "ยังไม่มีเงินทุนเข้าบัญชี"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "จำนวนน้อยเกินไป โปรดส่งขั้นต่ำ {{minimumAmount}}"
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "บัญชีโทเคนที่เกี่ยวข้องนี้มีโทเคนอื่น"
     },
@@ -2747,7 +2750,16 @@
       "noAccounts" : "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ"
     },
     "seeAllAssets" : "ดูสินทรัพย์ทั้งหมด",
+    "cryptoAddresses" : {
+      "title" : "บัญชีคริปโต",
+      "count_one" : "{{count}} บัญชี",
+      "count_other" : "{{count}} บัญชี",
+      "noAccountsYet" : "ยังไม่มีบัญชีในตอนนี้"
+    },
     "seeAllAccounts" : "ดูบัญชีทั้งหมด",
+    "assetSection" : {
+      "connectionFailed" : "การเชื่อมต่อล้มเหลว"
+    },
     "marketPriceSection" : {
       "title" : "ราคาตลาด {{currencyTicker}}",
       "currencyPrice" : "ราคา 1 {{currencyTicker}}",
@@ -3563,8 +3575,10 @@
         "description" : "การ์ดที่ใช้เฉพาะที่จะปรากฏในส่วนพอร์ตการลงทุน (และที่อื่น ๆ) โดยไม่ต้องใช้ Braze และจะยังคงอยู่จนกว่าคุณจะยกเลิกหรือลบออกไป",
         "addSampleBanner" : "เพิ่มแบนเนอร์ตัวอย่าง",
         "addSampleBannerDesc" : "เพิ่มฮีโร่แบนเนอร์ตัวอย่างบนพอร์ตการลงทุน",
-        "addSampleActionCarousel" : "ใส่ตัวอย่างข้อความที่เลื่อนได้ (Sample Action Carousel)",
-        "addSampleActionCarouselDesc" : "เพิ่ม Action Card (เช่น ซื้อ สวอป สเตค) ที่เลื่อนได้ตรงพอร์ตการลงทุน",
+        "addSampleActionCarouselIcon" : "เพิ่มแคโรเซล (ไอคอน)",
+        "addSampleActionCarouselIconDesc" : "ContentBanner พร้อมไอคอนจุดเด่น — ซื้อ, สวอป, สเตค ต้องมีการตั้งค่าสถานะสำหรับ Braze Placement",
+        "addSampleActionCarouselImageBackground" : "เพิ่มแคโรเซล (ภาพ)",
+        "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner with image_background — ซื้อ, สวอป, สเตค ต้องมีการตั้งค่าสถานะ Braze Position",
         "dismissAll" : "ยกเลิกการ์ดเฉพาะที่ทั้งหมด",
         "dismissAllDesc" : "ลบการ์ดเนื้อหาที่สร้างเฉพาะที่ทั้งหมด"
       }
@@ -4304,7 +4318,21 @@
         "maxFeeBelowPriorityFee" : "Max Fee ต้องมากกว่าหรือเท่ากับ Max Priority Fee"
       },
       "coinControl" : {
-        "title" : "Coin Control"
+        "title" : "Coin Control",
+        "strategy" : "กลยุทธ์",
+        "learnMore" : "เรียนรู้เพิ่มเติม",
+        "coinToSend" : "เหรียญที่จะส่ง",
+        "changeToReturn" : "เปลี่ยนเพื่อกลับไป",
+        "enterAmount" : "ป้อนจำนวน",
+        "amountToSendInCurrency" : "จำนวนที่ต้องการส่งในรูปแบบ {{ticker}}",
+        "amountInputLabel" : "จำนวนที่จะส่ง",
+        "bitcoin" : {
+          "pickingStrategyLabels" : {
+            "DEEP_OUTPUTS_FIRST" : "Oldest coins first (FIFO)",
+            "OPTIMIZE_SIZE" : "ค่าธรรมเนียมต่ำสุด (ปรับขนาดให้เหมาะสม)",
+            "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)"
+          }
+        }
       }
     },
     "pendingTxWarning" : "คุณมีธุรกรรมที่ค้างอยู่ โปรดระมัดระวังว่าธุรกรรมที่ค้างอยู่อาจถูกยกเลิกได้",
@@ -7781,6 +7809,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "คริปโต",
+      "stablecoins" : "สเตเบิลคอยน์",
       "market" : "ตลาด"
     },
     "referralProgram" : "$20"

@@ -72,4 +72,6 @@ export class AppInfos {
   static readonly ZCASH = new AppInfos("Zcash");
 
   static readonly ALEO = new AppInfos("Aleo");
+
+  static readonly INTERNET_COMPUTER = new AppInfos("Internet Computer");
 }

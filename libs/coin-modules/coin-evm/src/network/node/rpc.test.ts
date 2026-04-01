@@ -198,6 +198,58 @@ describe("EVM Family", () => {
           expect(e).toBeInstanceOf(SpyError);
         }
       });
+
+      it("provider cache should reuse the same JsonRpcProvider for the same currency id and same uri", async () => {
+        const currency = {
+          ...fakeCurrency,
+          id: "provider_cache_by_currency" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const nodeConfig = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
+        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig);
+        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig);
+
+        expect(first).toBe(second);
+        expect(first).toBeInstanceOf(JsonRpcProvider);
+      });
+
+      it("provider cache should use distinct JsonRpcProviders for the same currency id but different uri", async () => {
+        const currency = {
+          ...fakeCurrency,
+          id: "provider_cache_by_currency" as CryptoCurrencyId,
+        } as CryptoCurrency;
+
+        const nodeConfig1 = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
+        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig1);
+
+        const nodeConfig2 = { ...nodeConfig1, uri: "https://rpc-b.example" };
+        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig2);
+
+        expect(first).not.toBe(second);
+        expect(first).toBeInstanceOf(JsonRpcProvider);
+        expect(second).toBeInstanceOf(JsonRpcProvider);
+      });
+
+      it("provider cache should use distinct JsonRpcProviders for different currency ids", async () => {
+        const nodeConfig = {
+          type: "external" as const,
+          uri: "https://shared-rpc.example",
+          retries: 0,
+        };
+        const c1 = {
+          ...fakeCurrency,
+          id: "provider_cache_currency_one" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const c2 = {
+          ...fakeCurrency,
+          id: "provider_cache_currency_two" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const p1 = await withApi(c1, api => Promise.resolve(api), nodeConfig);
+        const p2 = await withApi(c2, api => Promise.resolve(api), nodeConfig);
+
+        expect(p1).not.toBe(p2);
+        expect(p1).toBeInstanceOf(JsonRpcProvider);
+        expect(p2).toBeInstanceOf(JsonRpcProvider);
+      });
     });
 
     describe("getTransaction", () => {
@@ -718,6 +770,55 @@ describe("EVM Family", () => {
         height: 1,
         parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
         transactionHashes: ["0xtx1"],
+      });
+    });
+
+    it("should fallback to raw RPC block when prefetched tx parsing fails", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockImplementationOnce(async () => {
+        const error = new TypeError("missing r");
+        Object.assign(error, {
+          code: "INVALID_ARGUMENT",
+          argument: "signature",
+        });
+        throw error;
+      });
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method !== "eth_getBlockByNumber") {
+          throw new Error(`Method not mocked: ${method}`);
+        }
+        return {
+          hash: "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
+          parentHash: "0x5ea95af9f47a6f2f13f52a229e8c8dc4e2ea4626a9458f4ea7a5cc5dfdf5f0c9",
+          number: "0x41f8328",
+          timestamp: "0x67dd4cbe",
+          transactions: [
+            {
+              hash: "0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e",
+              value: "0x0",
+              from: "0x993aad80e425c646dab305381ff105169feedf67",
+              to: "0x0000000000000000000000000000000000010003",
+              type: "0xff",
+            },
+          ],
+        };
+      });
+
+      expect(
+        await nodeApi.getBlockByHeight(fakeCurrency as CryptoCurrency, 69174056, true),
+      ).toEqual({
+        hash: "0x9e5af7a45cf98e8f32d1233092d1714f21ab15e2d24263c3fd5bef091d4736af",
+        timestamp: 1742556350000,
+        height: 69174056,
+        parentHash: "0x5ea95af9f47a6f2f13f52a229e8c8dc4e2ea4626a9458f4ea7a5cc5dfdf5f0c9",
+        transactionHashes: ["0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e"],
+        transactions: [
+          {
+            hash: "0x902efff179ae2d24cfa2c88ce86f2ec0b79154218e5f534dc4b49438e3a2ab5e",
+            value: "0",
+            from: "0x993aad80e425c646dab305381ff105169feedf67",
+            to: "0x0000000000000000000000000000000000010003",
+          },
+        ],
       });
     });
   });

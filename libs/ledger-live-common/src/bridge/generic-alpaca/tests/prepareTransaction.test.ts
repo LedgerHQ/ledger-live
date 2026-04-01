@@ -1,14 +1,26 @@
 import { genericPrepareTransaction } from "../prepareTransaction";
 import { getAlpacaApi } from "../alpaca";
+import { getBridgeApi } from "../bridge";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 jest.mock("../alpaca", () => ({
   getAlpacaApi: jest.fn(),
 }));
+jest.mock("../bridge", () => ({
+  getBridgeApi: jest.fn(),
+}));
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index");
+  return {
+    ...actual,
+    decodeTokenAccountId: jest.fn(actual.decodeTokenAccountId),
+  };
+});
 
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
@@ -32,7 +44,13 @@ describe("genericPrepareTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    setupMockCryptoAssetsStore({
+      findTokenById: () => Promise.resolve(undefined),
+    });
     (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
+    (getBridgeApi as jest.Mock).mockReturnValue({
+      getAssetFromToken: jest.fn().mockReturnValue(undefined),
+    });
   });
 
   it("updates fees if they differ", async () => {
@@ -154,6 +172,10 @@ describe("genericPrepareTransaction", () => {
   });
 
   it("estimates using the token account spendable balance when sending all amount", async () => {
+    (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
+      accountId: "test-sub-account",
+      token: undefined,
+    });
     const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(50) });
     (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
       amount: BigInt(transaction.amount.toFixed()),
@@ -186,8 +208,12 @@ describe("genericPrepareTransaction", () => {
     });
     (getAlpacaApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),
-      getAssetFromToken: (token, owner) =>
-        token.id === "usdc" ? { assetOwner: owner, assetReference: token.id } : undefined,
+    });
+    (getBridgeApi as jest.Mock).mockReturnValue({
+      getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
+        assetOwner: owner,
+        assetReference: token.id,
+      })),
     });
     const prepareTransaction = genericPrepareTransaction("testnet", "local");
 

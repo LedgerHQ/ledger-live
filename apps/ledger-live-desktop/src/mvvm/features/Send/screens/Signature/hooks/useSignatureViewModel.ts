@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   addPendingOperation,
   getMainAccount,

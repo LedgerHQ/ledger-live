@@ -16,7 +16,14 @@ const appSourcePrefixes = [
 ];
 
 function compile() {
-  const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());
+  const configPath = path.join(projectDirectory, "tsconfig.json");
+  const config = ts.parseJsonConfigFileContent(
+    require("../tsconfig.json"),
+    ts.sys,
+    projectDirectory,
+    undefined,
+    configPath,
+  );
   const program = ts.createProgram(config.fileNames, {
     ...config.options,
     noEmit: true,
@@ -29,6 +36,7 @@ function compile() {
   const allDiagnostics = ts.getPreEmitDiagnostics(program).filter(diag => {
     if (!diag.file) return true;
     const fileName = diag.file.fileName;
+    if (typeof fileName !== "string") return true;
     const isAppSource = appSourcePrefixes.some(prefix => fileName.startsWith(prefix));
     const pass =
       /\.tsx?/.test(fileName) && isAppSource && excluded.every(zone => !fileName.startsWith(zone));

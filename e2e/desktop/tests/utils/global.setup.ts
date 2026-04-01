@@ -34,6 +34,7 @@ export default async function globalSetup(_config: FullConfig) {
     [
       `SPECULOS_DEVICE=${SPECULOS_DEVICE}`,
       `SPECULOS_FIRMWARE_VERSION=${SPECULOS_FIRMWARE_VERSION}`,
+      `WALLET=${process.env.E2E_ENABLE_WALLET40 === "1" ? "4.0" : "Legacy"}`,
       "",
     ].join("\n"),
     { encoding: "utf8", flag: "w" },

@@ -2,11 +2,11 @@ import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import { ScreenName, NavigatorName } from "~/const";
-import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
 import MarketBanner from "LLM/features/MarketBanner";
 import TrackScreen from "~/analytics/TrackScreen";
 import { TRACKING_LABEL_MAP } from "LLM/components/MainTabBar/constants";
+import { PortfolioEmptyAssetSections } from "./PortfolioEmptyAssetSections";
 
 interface PortfolioNoSignerContentProps {
   readonly isLNSUpsellBannerShown: boolean;
@@ -25,10 +25,9 @@ export const PortfolioNoSignerContent = ({
     <TransferDrawer />
     <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
     <MarketBanner />
-    {shouldDisplayAssetSection ? (
-      <PortfolioCryptosSection isEmptyState={isEmptyState} />
-    ) : (
-      <PortfolioCryptosSection isReadOnly />
-    )}
+    <PortfolioEmptyAssetSections
+      shouldDisplayAssetSection={shouldDisplayAssetSection}
+      isEmptyState={isEmptyState}
+    />
   </Box>
 );

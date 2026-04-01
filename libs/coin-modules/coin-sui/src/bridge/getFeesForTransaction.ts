@@ -60,6 +60,7 @@ export default async function getEstimatedFees({
     amount: BigInt(t.amount.toString()),
     type: transactionType,
     asset,
+    currencyId: account.currency.id,
   });
   return new BigNumber(fees.toString());
 }

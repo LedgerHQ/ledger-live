@@ -1,8 +1,8 @@
 import { useMemo, useRef } from "react";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor";
-import type { FeePresetOption as DescriptorFeePresetOption } from "@ledgerhq/live-common/bridge/descriptor";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
+import type { FeePresetOption as DescriptorFeePresetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import isEqual from "lodash/isEqual";
 import { hasDistinctGasOptions } from "../utils/gas";
 import { isEvmTransaction } from "../utils/isEvmTransaction";

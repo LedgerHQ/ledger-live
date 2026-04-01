@@ -9,7 +9,8 @@ import {
   Tooltip,
 } from "@ledgerhq/lumen-ui-react";
 import { ChevronUpDown, Information } from "@ledgerhq/lumen-ui-react/symbols";
-import { sendFeatures, getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor";
+import { getSendDescriptor } from "@ledgerhq/live-common/bridge/descriptor/registry";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import {
   getAccountCurrency,
   getMainAccount,

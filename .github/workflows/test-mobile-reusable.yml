@@ -46,7 +46,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          install-proto: true
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -62,7 +63,14 @@ jobs:
           TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
           TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
           TURBO_TEAM: "foo"
-        run: pnpm turbo lint --filter="live-mobile" -- --format="json" -o="lint-mobile.json"
+        run: pnpm turbo lint --filter="live-mobile" -- --quiet
+      - name: Run lint (i18n)
+        env:
+          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
+          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          TURBO_TEAM: "foo"
+        run: pnpm turbo lint:i18n --filter="live-mobile"
+        continue-on-error: true  # TODO: Remove once release branch is back-merged into develop (see JIRA)
       - name: check for dead code
         run: pnpm mobile knip-check
         shell: bash
@@ -74,12 +82,6 @@ jobs:
         run: pnpm turbo typecheck --filter="live-mobile"
       - name: Run unit tests
         run: pnpm mobile test:jest:coverage
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        name: upload eslint json output
-        if: ${{ !cancelled() }}
-        with:
-          name: lint-mobile
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/lint-mobile.json
       - name: upload coverage
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}

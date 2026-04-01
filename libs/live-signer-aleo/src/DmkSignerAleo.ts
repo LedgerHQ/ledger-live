@@ -1,23 +1,43 @@
-import type { AleoSigner } from "@ledgerhq/coin-aleo/types/signer";
-import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { lastValueFrom } from "rxjs";
+import type {
+  AleoSigner,
+  AleoAppConfig,
+  AleoAddress,
+  AleoViewKey,
+  AleoRootIntentSignature,
+  AleoFeeIntentSignature,
+} from "@ledgerhq/coin-aleo/types/signer";
+import {
+  DeviceActionState,
+  DeviceActionStatus,
+  type DeviceManagementKit,
+} from "@ledgerhq/device-management-kit";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  SignerAleo,
+  SignerAleoBuilder,
+  GetAppConfigDAError,
+  GetAddressDAError,
+  GetViewKeyDAError,
+  SignRootIntentDAError,
+  SignFeeIntentDAError,
+} from "@ledgerhq/device-signer-kit-aleo";
 
-type DAError = Error;
+type DAError =
+  | GetAppConfigDAError
+  | GetAddressDAError
+  | GetViewKeyDAError
+  | SignRootIntentDAError
+  | SignFeeIntentDAError;
 
 export class DmkSignerAleo implements AleoSigner {
-  private readonly dmk: DeviceManagementKit;
-  private readonly sessionId: string;
+  private readonly signer: SignerAleo;
 
   constructor(dmk: DeviceManagementKit, sessionId: string) {
-    this.dmk = dmk;
-    this.sessionId = sessionId;
+    this.signer = new SignerAleoBuilder({ dmk, sessionId }).build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
-    if (!("_tag" in error) || typeof error._tag !== "string") {
-      return new Error("Unknown error");
-    }
-
     if (!("errorCode" in error)) {
       return new Error(error._tag);
     }
@@ -25,85 +45,86 @@ export class DmkSignerAleo implements AleoSigner {
     switch (error.errorCode) {
       case "5515":
         return new LockedDeviceError();
-      case "6985":
+      case "69f0":
         return new UserRefusedOnDevice();
       default:
         return new Error(error._tag);
     }
   }
 
-  private _serializePath(derivationPath: string): Buffer {
-    const pathElements = derivationPath
-      .split("/")
-      .filter(segment => segment !== "")
-      .map(segment => {
-        const isHardened = segment.endsWith("'");
-        const value = Number.parseInt(isHardened ? segment.slice(0, -1) : segment, 10);
-        return isHardened ? (value + 0x80000000) >>> 0 : value;
-      });
-
-    if (pathElements.length === 0) {
-      throw new Error("Derivation path must contain at least one element.");
+  private _mapResult<T, E extends DAError>(actionState: DeviceActionState<T, E, unknown>): T {
+    switch (actionState.status) {
+      case DeviceActionStatus.Completed: {
+        return actionState.output;
+      }
+      case DeviceActionStatus.Error: {
+        throw this._mapError<E>(actionState.error);
+      }
+      case DeviceActionStatus.NotStarted:
+      case DeviceActionStatus.Pending:
+      case DeviceActionStatus.Stopped:
+      default: {
+        throw new Error("Unknown device action status");
+      }
     }
+  }
 
-    const buffer = Buffer.alloc(1 + pathElements.length * 4);
-    buffer.writeUInt8(pathElements.length, 0);
+  async getAppConfig(): Promise<AleoAppConfig> {
+    const { observable } = this.signer.getAppConfig();
 
-    pathElements.forEach((element, index) => {
-      buffer.writeUInt32BE(element, 1 + index * 4);
+    const result = this._mapResult(await lastValueFrom(observable));
+
+    return {
+      version: result.version,
+    };
+  }
+
+  async getAddress(path: string, display?: boolean): Promise<AleoAddress> {
+    const { observable } = this.signer.getAddress(path, {
+      checkOnDevice: display,
+      skipOpenApp: true,
     });
 
-    return buffer;
+    const result = this._mapResult(await lastValueFrom(observable));
+
+    return {
+      address: result.address,
+    };
   }
 
-  private async _sendApdu(apdu: Buffer): Promise<Buffer> {
-    const response = await this.dmk
-      .sendApdu({ sessionId: this.sessionId, apdu })
-      .then(apduResponse => Buffer.from([...apduResponse.data, ...apduResponse.statusCode]))
-      .catch(error => {
-        throw this._mapError(error);
-      });
+  async getViewKey(path: string): Promise<AleoViewKey> {
+    const { observable } = this.signer.getViewKey(path, {
+      skipOpenApp: true,
+    });
 
-    return response.slice(0, -2);
+    const result = this._mapResult(await lastValueFrom(observable));
+
+    return {
+      viewKey: result.viewKey,
+    };
   }
 
-  async getAddress(path: string, display?: boolean): Promise<Buffer> {
-    const CLA = 0xe0;
-    const GET_PUBLIC_KEY = 0x05;
-    const p1 = display ? 0x01 : 0x00;
-    const p2 = 0x00;
-    const pathBuffer = this._serializePath(path);
-    const apdu = Buffer.concat([
-      Buffer.from([CLA, GET_PUBLIC_KEY, p1, p2]),
-      Buffer.from([pathBuffer.length]),
-      pathBuffer,
-    ]);
+  async signRootIntent(path: string, rootIntent: Buffer): Promise<AleoRootIntentSignature> {
+    const { observable } = this.signer.signRootIntent(path, new Uint8Array(rootIntent), {
+      skipOpenApp: true,
+    });
 
-    const response = await this._sendApdu(apdu);
+    const result = this._mapResult(await lastValueFrom(observable));
 
-    // Skip the first byte (length) and return the actual address
-    return response.slice(1);
+    return {
+      signature: result.tlvSignature,
+    };
   }
 
-  async getViewKey(path: string): Promise<Buffer> {
-    const CLA = 0xe0;
-    const GET_VIEW_KEY = 0x07;
-    const p1 = 0x01;
-    const p2 = 0x00;
-    const pathBuffer = this._serializePath(path);
-    const apdu = Buffer.concat([
-      Buffer.from([CLA, GET_VIEW_KEY, p1, p2]),
-      Buffer.from([pathBuffer.length]),
-      pathBuffer,
-    ]);
+  async signFeeIntent(feeIntent: Buffer): Promise<AleoFeeIntentSignature> {
+    const { observable } = this.signer.signFeeIntent(new Uint8Array(feeIntent), {
+      skipOpenApp: true,
+    });
 
-    const response = await this._sendApdu(apdu);
+    const result = this._mapResult(await lastValueFrom(observable));
 
-    // Skip the first byte (length) and return the actual address
-    return response.slice(1);
-  }
-
-  async signTransaction(_path: string, _transaction: Buffer): Promise<Buffer> {
-    throw new Error("Not implemented yet");
+    return {
+      signature: result.tlvSignature,
+    };
   }
 }

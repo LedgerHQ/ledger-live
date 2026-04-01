@@ -2,7 +2,8 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { Account, VersionedMessage } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
 import { transaction } from "./__tests__/fixtures/helpers.fixture";
-import { SolanaMemoIsTooLong } from "./errors";
+import { SolanaMemoIsTooLong, SolanaRecipientAccountNotFunded } from "./errors";
+import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 import * as logicValidateMemo from "./logic/validateMemo";
 import { ChainAPI } from "./network";
 import { prepareTransaction } from "./prepareTransaction";
@@ -45,6 +46,9 @@ jest.mock("./network/chain/web3", () => {
 
 describe("testing prepareTransaction", () => {
   const spiedValidateMemo = logicValidateMemo.validateMemo as jest.Mock;
+  const mockedEstimateFeeAndSpendable = estimateFeeAndSpendable as jest.MockedFunction<
+    typeof estimateFeeAndSpendable
+  >;
 
   it("packs a 'NotEnoughGas' error if the sender can not afford the fees during a token transfer", async () => {
     const preparedTransaction = await prepareTransaction(
@@ -175,6 +179,41 @@ describe("testing prepareTransaction", () => {
     );
 
     expect(preparedTransaction).not.toBe(nonRawTransaction);
+  });
+
+  it("blocks tiny native transfers to an unfunded recipient", async () => {
+    mockedEstimateFeeAndSpendable.mockResolvedValueOnce({
+      fee: 5000,
+      spendable: new BigNumber(2_000_000),
+    });
+
+    const tx = transaction({ kind: "transfer" });
+    tx.recipient = "DwRL6XkPAtM1bfuySJKZGn2t9WeG25RC39isAu2nwak4";
+    tx.amount = new BigNumber(100_000);
+
+    const preparedTransaction = await prepareTransaction(
+      {
+        currency: { name: "Solana", ticker: "SOL", units: [{ magnitude: 9 }] },
+        freshAddress: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+      } as unknown as SolanaAccount,
+      tx,
+      {
+        getBalance: () => Promise.resolve(0),
+        getAccountInfo: () => Promise.resolve(null),
+        getMinimumBalanceForRentExemption: () => Promise.resolve(890_880),
+      } as unknown as ChainAPI,
+    );
+
+    expect(preparedTransaction.model.commandDescriptor?.errors.amount).toBeInstanceOf(
+      SolanaRecipientAccountNotFunded,
+    );
+    expect(
+      (
+        preparedTransaction.model.commandDescriptor?.errors.amount as Error & {
+          minimumAmount?: string;
+        }
+      )?.minimumAmount,
+    ).toBe("0.00089088 SOL");
   });
 
   it.each(["transfer", "token.transfer"])(

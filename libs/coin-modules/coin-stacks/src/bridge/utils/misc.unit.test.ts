@@ -1,6 +1,7 @@
-import { mapPendingTxToOps, mapTxToOps } from "./misc";
-import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import * as api from "../../network/api";
+import { mapPendingTxToOps, mapTxToOps } from "./misc";
 
 // Mock the CryptoAssets module
 jest.mock("@ledgerhq/cryptoassets/state");
@@ -10,8 +11,6 @@ jest.mock("../../network/api", () => ({
   fetchFungibleTokenMetadataCached: jest.fn(),
 }));
 
-// Import the mocked module to access the mock function
-import * as api from "../../network/api";
 const mockFetchFungibleTokenMetadataCached =
   api.fetchFungibleTokenMetadataCached as unknown as jest.Mock;
 

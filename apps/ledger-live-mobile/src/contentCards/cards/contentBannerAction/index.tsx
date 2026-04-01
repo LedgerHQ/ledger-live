@@ -5,6 +5,9 @@ import {
   ContentBannerContent,
   ContentBannerDescription,
   ContentBannerTitle,
+  MediaBanner,
+  MediaBannerDescription,
+  MediaBannerTitle,
   Pressable,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -16,7 +19,10 @@ const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
   const { title, metadata } = props;
   const description = "description" in props ? props.description : undefined;
 
-  const imageUrl = "image" in props ? props.image : undefined;
+  const imageBackground =
+    "image_background" in props && props.image_background?.length
+      ? props.image_background
+      : undefined;
   const iconProp =
     "icon" in props && props.icon !== undefined ? (props.icon as keyof typeof Icons) : "Settings";
   const icon = Icons[iconProp] || Icons.Settings;
@@ -34,18 +40,17 @@ const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
     [metadata.actions],
   );
 
-  if (imageUrl && imageUrl.length > 0) {
+  if (imageBackground && imageBackground.length > 0) {
     return (
-      <Pressable onPress={metadata.actions?.onClick} key={metadata.id}>
-        <ContentBanner onClose={handleDismiss}>
-          <ContentBannerContent>
-            <ContentBannerTitle>{title ?? ""}</ContentBannerTitle>
-            {description ? (
-              <ContentBannerDescription>{description}</ContentBannerDescription>
-            ) : null}
-          </ContentBannerContent>
-        </ContentBanner>
-      </Pressable>
+      <MediaBanner
+        key={metadata.id}
+        imageUrl={imageBackground}
+        onClose={handleDismiss}
+        onPress={metadata.actions?.onClick}
+      >
+        {title ? <MediaBannerTitle>{title}</MediaBannerTitle> : null}
+        {description ? <MediaBannerDescription>{description}</MediaBannerDescription> : null}
+      </MediaBanner>
     );
   }
 

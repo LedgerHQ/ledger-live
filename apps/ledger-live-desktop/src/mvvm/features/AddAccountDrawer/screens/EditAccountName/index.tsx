@@ -1,4 +1,5 @@
 import { accountNameWithDefaultSelector, setAccountName } from "@ledgerhq/live-wallet/store";
+import { MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
 import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
 import { TextInput } from "@ledgerhq/react-ui/pre-ldls/index";
 import { Account } from "@ledgerhq/types-live";
@@ -20,8 +21,6 @@ interface Props {
   account: Account;
   navigateBack?: (track?: boolean) => void;
 }
-
-const MAX_ACCOUNT_NAME_LENGTH = 50;
 
 const EditAccountName = ({ account, navigateBack }: Props) => {
   const source = useSelector(modularDrawerSourceSelector);

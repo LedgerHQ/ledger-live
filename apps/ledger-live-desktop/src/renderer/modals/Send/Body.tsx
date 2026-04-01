@@ -25,6 +25,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
+import type { ModalData } from "~/renderer/modals/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
@@ -50,6 +51,7 @@ export type Data = {
 
 type OwnProps = {
   title?: string;
+  modalName?: keyof ModalData;
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
@@ -133,6 +135,7 @@ const Body = ({
   onChangeStepId,
   onClose,
   title,
+  modalName = "MODAL_SEND",
   stepId,
   params,
   accounts,
@@ -224,8 +227,8 @@ const Body = ({
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
   const handleCloseModal = useCallback(() => {
-    closeModal("MODAL_SEND");
-  }, [closeModal]);
+    closeModal(modalName);
+  }, [modalName, closeModal]);
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount?: Account | null) => {
       if (account !== nextAccount) {
@@ -277,6 +280,7 @@ const Body = ({
   const error = transactionError || bridgeError;
   const stepperProps = {
     title: stepId === "warning" ? t("common.information") : (title ?? t("send.title")),
+    modalName,
     stepId,
     steps,
     errorSteps,

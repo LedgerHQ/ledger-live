@@ -1,4 +1,10 @@
-import { BigNumber } from "bignumber.js";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import {
+  encodeOperationId,
+  encodeSubOperationId,
+} from "@ledgerhq/ledger-wallet-framework/operation";
+import { log } from "@ledgerhq/logs";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
@@ -18,8 +24,7 @@ import {
   FungibleConditionCode,
   createAssetInfo,
 } from "@stacks/transactions";
-
-import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { BigNumber } from "bignumber.js";
 import {
   fetchFullMempoolTxs,
   fetchNonce,
@@ -28,13 +33,7 @@ import {
   StacksNetwork,
   TransactionResponse,
 } from "../../network/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import {
-  encodeOperationId,
-  encodeSubOperationId,
-} from "@ledgerhq/ledger-wallet-framework/operation";
 import { StacksOperation } from "../../types";
-import { log } from "@ledgerhq/logs";
 import { bufferMemoToString, hexMemoToString } from "./memoUtils";
 
 type ContractCallArg = {

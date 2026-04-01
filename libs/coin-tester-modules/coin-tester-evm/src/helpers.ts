@@ -6,7 +6,7 @@ import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/inde
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/signer/Eth";
+import type { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/families/evm/signer";
 import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
@@ -22,6 +22,14 @@ export const ERC20Interface = new ethers.Interface(ERC20_ABI);
 export const ERC721Interface = new ethers.Interface(ERC721_ABI);
 export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);
 export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
+
+/** Asserts that an address appears in a list (case-insensitive, for EIP-55 robustness). Skips when list is missing or empty. */
+export function expectAddressInList(list: string[] | undefined, address: string): void {
+  if (!list || list.length === 0) return;
+  const normalizedAddress = address?.toLowerCase() ?? "";
+  const found = list.some(a => (a ?? "").toLowerCase() === normalizedAddress);
+  expect(found).toBe(true);
+}
 
 export async function getBridges(signer: Signer): Promise<{
   currencyBridge: CurrencyBridge;

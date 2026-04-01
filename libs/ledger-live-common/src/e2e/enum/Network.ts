@@ -36,4 +36,5 @@ export enum Network {
   SUI = "Sui",
   ZCASH = "Zcash",
   ALEO = "Aleo",
+  INTERNET_COMPUTER = "Internet Computer",
 }

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import type { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
 import { listOperations } from "../listOperations";
 import { server, rpcHandler, createTestChainApi } from "./helpers/msw-rpc.mock";
@@ -20,6 +22,7 @@ function makeParsedTx({
   slot = 100,
   blockTime = 1700000000,
   err = null,
+  instructions = [],
 }: {
   accountKeys: { pubkey: string; signer: boolean; writable: boolean }[];
   fee?: number;
@@ -28,6 +31,7 @@ function makeParsedTx({
   slot?: number;
   blockTime?: number;
   err?: null | { InstructionError: [number, string] } | string;
+  instructions?: object[];
 }) {
   return {
     transaction: {
@@ -35,7 +39,7 @@ function makeParsedTx({
       message: {
         accountKeys: accountKeys.map(k => ({ ...k, pubkey: new PublicKey(k.pubkey) })),
         recentBlockhash: TEST_BLOCKHASH,
-        instructions: [],
+        instructions: instructions as (ParsedInstruction | PartiallyDecodedInstruction)[],
       },
     },
     meta: {
@@ -321,6 +325,176 @@ describe("listOperations (MSW integration)", () => {
         assetRecipients: [TEST_ADDRESS],
         internal: true,
       });
+    });
+  });
+
+  describe("All operation types", () => {
+    const VOTE_ACCOUNT = "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4";
+    const STAKE_ACCOUNT = "9ZNTfG4NyQgxy2SWjSiQoUyBPEvXT2xo7fKc5hPYYJ7b";
+    const blockTime = 1700000000;
+
+    function makeSig(name: string) {
+      return {
+        signature: name,
+        slot: 100,
+        blockTime,
+        err: null,
+        memo: null,
+        confirmationStatus: "finalized" as const,
+      };
+    }
+
+    const PROGRAM_IDS: Record<string, string> = {
+      system: "11111111111111111111111111111111",
+      stake: "Stake11111111111111111111111111111111111111",
+    };
+
+    function ix(program: string, type: string, info?: Record<string, unknown>) {
+      return {
+        program,
+        programId: new PublicKey(PROGRAM_IDS[program] ?? PROGRAM_IDS.system),
+        parsed: { type, info: info ?? {} },
+      };
+    }
+
+    const txMap: Record<string, ReturnType<typeof makeParsedTx>> = {
+      "sig-out": makeParsedTx({
+        accountKeys: [
+          { pubkey: TEST_ADDRESS, signer: true, writable: true },
+          { pubkey: TEST_RECIPIENT, signer: false, writable: true },
+        ],
+        preBalances: [1_000_000_000, 0],
+        postBalances: [899_995_000, 100_000_000],
+      }),
+      "sig-in": makeParsedTx({
+        accountKeys: [
+          { pubkey: TEST_RECIPIENT, signer: true, writable: true },
+          { pubkey: TEST_ADDRESS, signer: false, writable: true },
+        ],
+        preBalances: [0, 0],
+        postBalances: [0, 100_000_000],
+      }),
+      "sig-fees": makeParsedTx({
+        accountKeys: [{ pubkey: TEST_ADDRESS, signer: true, writable: true }],
+        fee: 5000,
+        preBalances: [1_000_000_000],
+        postBalances: [999_995_000],
+      }),
+      "sig-none": makeParsedTx({
+        accountKeys: [
+          { pubkey: TEST_RECIPIENT, signer: true, writable: true },
+          { pubkey: TEST_ADDRESS, signer: false, writable: true },
+        ],
+        preBalances: [1_000_000_000, 500_000],
+        postBalances: [999_995_000, 500_000],
+      }),
+      "sig-delegate": makeParsedTx({
+        accountKeys: [{ pubkey: TEST_ADDRESS, signer: true, writable: true }],
+        preBalances: [10_000_000_000],
+        postBalances: [7_000_000_000],
+        instructions: [
+          ix("system", "createAccountWithSeed"),
+          ix("stake", "initialize"),
+          ix("stake", "delegate", { voteAccount: VOTE_ACCOUNT }),
+        ],
+      }),
+      "sig-undelegate": makeParsedTx({
+        accountKeys: [{ pubkey: TEST_ADDRESS, signer: true, writable: true }],
+        preBalances: [5_000_000_000],
+        postBalances: [4_999_995_000],
+        instructions: [ix("stake", "deactivate")],
+      }),
+      "sig-withdraw": makeParsedTx({
+        accountKeys: [{ pubkey: TEST_ADDRESS, signer: true, writable: true }],
+        preBalances: [5_000_000_000],
+        postBalances: [7_999_995_000],
+        instructions: [
+          ix("stake", "withdraw", { stakeAccount: STAKE_ACCOUNT, lamports: 3_000_000_000 }),
+        ],
+      }),
+    };
+
+    let items: Awaited<ReturnType<typeof listOperations>>["items"];
+
+    beforeAll(async () => {
+      server.use(
+        rpcHandler({
+          getSignaturesForAddress: () => Object.keys(txMap).map(s => makeSig(s)),
+          getTransaction: (params: unknown[]) => txMap[String(params[0])] ?? null,
+        }),
+      );
+
+      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      items = result.items;
+    });
+
+    it("should produce all 7 expected native operation types", () => {
+      const nativeOps = items.filter(op => op.asset.type === "native");
+      const types = new Set(nativeOps.map(op => op.type));
+      expect(types).toEqual(
+        new Set(["OUT", "IN", "FEES", "NONE", "DELEGATE", "UNDELEGATE", "WITHDRAW_UNBONDED"]),
+      );
+    });
+
+    it("should have correct OUT operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-out" && op.type === "OUT");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(100_000_000n);
+      expect(op!.senders).toEqual([TEST_ADDRESS]);
+      expect(op!.recipients).toEqual([TEST_RECIPIENT]);
+    });
+
+    it("should have correct IN operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-in" && op.type === "IN");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(100_000_000n);
+      expect(op!.recipients).toContain(TEST_ADDRESS);
+    });
+
+    it("should have correct FEES operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-fees" && op.type === "FEES");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(5000n);
+    });
+
+    it("should have correct NONE operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-none" && op.type === "NONE");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(0n);
+    });
+
+    it("should have correct DELEGATE operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-delegate" && op.type === "DELEGATE");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(0n);
+      expect(op!.details).toEqual(
+        expect.objectContaining({
+          stake: expect.objectContaining({
+            address: VOTE_ACCOUNT,
+            amount: 3_000_000_000n,
+          }),
+        }),
+      );
+    });
+
+    it("should have correct UNDELEGATE operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-undelegate" && op.type === "UNDELEGATE");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(0n);
+    });
+
+    it("should have correct WITHDRAW_UNBONDED operation", () => {
+      const op = items.find(op => op.tx.hash === "sig-withdraw" && op.type === "WITHDRAW_UNBONDED");
+      expect(op).not.toBeUndefined();
+      expect(op!.value).toBe(5000n);
+      expect(op!.details).toEqual(
+        expect.objectContaining({
+          stake: expect.objectContaining({
+            address: STAKE_ACCOUNT,
+            amount: 3_000_000_000n,
+          }),
+        }),
+      );
     });
   });
 

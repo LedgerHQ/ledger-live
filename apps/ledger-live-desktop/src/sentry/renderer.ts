@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/electron/renderer";
-import { datadogIdSelector } from "@ledgerhq/client-ids/store";
+import { datadogIdSelector, isDummyDatadogId } from "@ledgerhq/client-ids/store";
 import { init, setShouldSendCallback } from "./install";
 import { Primitive } from "@sentry/types";
 import type { Store } from "redux";
@@ -15,10 +15,12 @@ export default async (shouldSendCallback: () => boolean, store: Store<State>) =>
   if (!available) return;
   setShouldSendCallback(shouldSendCallback);
   const datadogId = datadogIdSelector(store.getState());
-  Sentry.setUser({
-    id: datadogId.exportDatadogIdForSentry(),
-    ip_address: undefined,
-  });
+  if (!isDummyDatadogId(datadogId)) {
+    Sentry.setUser({
+      id: datadogId.exportDatadogIdForSentry(),
+      ip_address: undefined,
+    });
+  }
 };
 export const captureException = (e: Error) => {
   Sentry.captureException(e);

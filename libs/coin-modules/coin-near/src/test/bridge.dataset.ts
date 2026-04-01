@@ -1,8 +1,6 @@
-import { BigNumber } from "bignumber.js";
 import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
-import { fromTransactionRaw } from "../transaction";
+import { BigNumber } from "bignumber.js";
 import {
   NearNewAccountWarning,
   NearNewNamedAccountError,
@@ -13,6 +11,8 @@ import {
   NearNotEnoughAvailable,
   NearUseAllAmountStakeWarning,
 } from "../errors";
+import { fromTransactionRaw } from "../transaction";
+import type { Transaction } from "../types";
 
 const ACCOUNT_ADDRESS = "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec";
 const ACTIVE_RECIPIENT_ADDRESS = "3cfb4df771c29cf040e2534b71b4df08b6232e7248aefc7decf45d2b40f80ad5";

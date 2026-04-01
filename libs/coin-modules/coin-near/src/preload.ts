@@ -1,29 +1,16 @@
-import { BigNumber } from "bignumber.js";
-import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { NearPreloadedData } from "./types";
-import { getProtocolConfig, getValidators, getGasPrice } from "./api";
-import { FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
+import { BigNumber } from "bignumber.js";
+import { getGasPrice, getProtocolConfig, getValidators } from "./api/node";
 import { NearProtocolConfigNotLoaded } from "./errors";
+import { getCurrentNearPreloadData, setNearPreloadData } from "./preload-data";
+import type { NearPreloadedData } from "./types";
+
+export { getCurrentNearPreloadData };
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000;
 
-let currentPreloadedData: NearPreloadedData = {
-  storageCost: new BigNumber(FALLBACK_STORAGE_AMOUNT_PER_BYTE),
-  gasPrice: new BigNumber(0),
-  createAccountCostSend: new BigNumber(0),
-  createAccountCostExecution: new BigNumber(0),
-  transferCostSend: new BigNumber(0),
-  transferCostExecution: new BigNumber(0),
-  addKeyCostSend: new BigNumber(0),
-  addKeyCostExecution: new BigNumber(0),
-  receiptCreationSend: new BigNumber(0),
-  receiptCreationExecution: new BigNumber(0),
-  validators: [],
-};
-
 function fromHydratePreloadData(data: any): NearPreloadedData {
-  const hydratedData = Object.assign({}, currentPreloadedData);
+  const hydratedData = Object.assign({}, getCurrentNearPreloadData());
 
   if (typeof data === "object" && data) {
     if (data.storageCost) {
@@ -62,24 +49,6 @@ function fromHydratePreloadData(data: any): NearPreloadedData {
   }
 
   return hydratedData;
-}
-
-const updates = new Subject<NearPreloadedData>();
-
-export function getCurrentNearPreloadData(): NearPreloadedData {
-  return currentPreloadedData;
-}
-
-export function setNearPreloadData(data: NearPreloadedData): void {
-  if (data === currentPreloadedData) return;
-
-  currentPreloadedData = data;
-
-  updates.next(data);
-}
-
-export function getNearPreloadDataUpdates(): Observable<NearPreloadedData> {
-  return updates.asObservable();
 }
 
 export const getPreloadStrategy = () => ({

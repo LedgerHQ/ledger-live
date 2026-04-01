@@ -13,6 +13,7 @@ import type { SendFlowNavigationProp } from "../../../types";
 type AmountScreenViewModelBase = Readonly<{
   onReview: () => void;
   onGetFunds: () => void;
+  onSelectCoinControl: () => void;
 }>;
 
 export type AmountScreenViewModel =
@@ -46,8 +47,12 @@ export function useAmountScreen(): AmountScreenViewModel {
     navigation.navigate(ScreenName.SendFlowConfirmation);
   }, [navigation]);
 
+  const onSelectCoinControl = useCallback(() => {
+    navigation.navigate(ScreenName.SendFlowCoinControl);
+  }, [navigation]);
+
   if (!account || !transaction || !status || !uiConfig || !transactionActions) {
-    return { ready: false, onReview, onGetFunds };
+    return { ready: false, onReview, onGetFunds, onSelectCoinControl };
   }
 
   return {
@@ -62,5 +67,6 @@ export function useAmountScreen(): AmountScreenViewModel {
     transactionActions,
     onReview,
     onGetFunds,
+    onSelectCoinControl,
   };
 }

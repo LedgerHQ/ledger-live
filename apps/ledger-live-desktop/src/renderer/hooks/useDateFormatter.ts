@@ -14,6 +14,12 @@ export const dayFormat: Intl.DateTimeFormatOptions = {
   year: "numeric",
 };
 
+export const longDayFormat: Intl.DateTimeFormatOptions = {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+};
+
 export const dayAndHourFormat: Intl.DateTimeFormatOptions = {
   ...dayFormat,
   ...hourFormat,
@@ -119,6 +125,43 @@ export const useCalendarFormatted = (
   intlOpts?: Intl.DateTimeFormatOptions,
 ): string => {
   const dateFormatter = useCalendarFormatter(intlOpts);
+  return useMemo(() => (date ? dateFormatter(date) : ""), [date, dateFormatter]);
+};
+
+type RelativeLabelOptions = {
+  showToday?: boolean;
+  showYesterday?: boolean;
+  showTomorrow?: boolean;
+};
+
+export const useLongCalendarFormatter = (
+  intlOpts?: Intl.DateTimeFormatOptions,
+  relativeLabels: RelativeLabelOptions = {},
+) => {
+  const { showToday = false, showYesterday = false, showTomorrow = false } = relativeLabels;
+  const { t } = useTranslation();
+  const dateFormatter = useDateFormatter(intlOpts ?? longDayFormat);
+
+  const f = useCallback(
+    (date: Date) => {
+      const { yesterday, today, tomorrow } = getDatesAround();
+      if (showYesterday && dateEq(yesterday, date)) return t("calendar.yesterday");
+      if (showToday && dateEq(today, date)) return t("calendar.today");
+      if (showTomorrow && dateEq(tomorrow, date)) return t("calendar.tomorrow");
+      return dateFormatter(date);
+    },
+    [dateFormatter, t, showToday, showYesterday, showTomorrow],
+  );
+
+  return f;
+};
+
+export const useLongCalendarFormatted = (
+  date?: Date,
+  intlOpts?: Intl.DateTimeFormatOptions,
+  relativeLabels?: RelativeLabelOptions,
+): string => {
+  const dateFormatter = useLongCalendarFormatter(intlOpts, relativeLabels);
   return useMemo(() => (date ? dateFormatter(date) : ""), [date, dateFormatter]);
 };
 

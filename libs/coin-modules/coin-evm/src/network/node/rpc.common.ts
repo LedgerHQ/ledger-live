@@ -86,8 +86,13 @@ export const DEFAULT_RETRIES_RPC_METHODS =
  * Without this, ethers will create a new provider and use the `eth_chainId` RPC call
  * at instanciation which could result in rate limits being reached
  * on some specific nodes (E.g. the main Optimism RPC)
+ * Keyed by currency id + RPC URI so the same chain with different uri gets distinct providers.
  */
 const PROVIDERS_BY_RPC: Record<string, JsonRpcProvider> = {};
+
+function providerCacheKey(currencyId: string, uri: string): string {
+  return `${currencyId}:${uri}`;
+}
 
 /**
  * Connects to RPC Node
@@ -105,11 +110,12 @@ export async function withApi<T>(
   const retries = nodeConfig.retries ?? DEFAULT_RETRIES_RPC_METHODS;
   return withRetries(
     async () => {
-      if (!PROVIDERS_BY_RPC[currency.id]) {
+      const key = providerCacheKey(currency.id, nodeConfig.uri);
+      if (!PROVIDERS_BY_RPC[key]) {
         const chainId = currency.ethereumLikeInfo?.chainId;
-        PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(nodeConfig.uri, chainId);
+        PROVIDERS_BY_RPC[key] = new JsonRpcProvider(nodeConfig.uri, chainId);
       }
-      const provider = PROVIDERS_BY_RPC[currency.id];
+      const provider = PROVIDERS_BY_RPC[key];
       return await execute(provider);
     },
     retries,
@@ -117,7 +123,11 @@ export async function withApi<T>(
   );
 }
 
-async function getTransaction(api: JsonRpcProvider, txHash: string): Promise<TransactionInfo> {
+async function getTransaction(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  txHash: string,
+): Promise<TransactionInfo> {
   const [tx, receipt] = await Promise.all([
     api.getTransaction(txHash),
     api.getTransactionReceipt(txHash),
@@ -142,20 +152,18 @@ async function getTransaction(api: JsonRpcProvider, txHash: string): Promise<Tra
   };
 }
 
-function makeGetTransaction(nodeConfig: ExternalNodeConfig): NodeApi["getTransaction"] {
-  return (currency, txHash) => withApi(currency, api => getTransaction(api, txHash), nodeConfig);
-}
-
-async function getCoinBalance(api: JsonRpcProvider, address: string): Promise<BigNumber> {
+async function getCoinBalance(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  address: string,
+): Promise<BigNumber> {
   const balance = await api.getBalance(normalizeAddress(address));
   return new BigNumber(balance.toString());
 }
 
-function makeGetCoinBalance(nodeConfig: ExternalNodeConfig): NodeApi["getCoinBalance"] {
-  return (currency, address) => withApi(currency, api => getCoinBalance(api, address), nodeConfig);
-}
 async function getTokenBalance(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   address: string,
   contractAddress: string,
 ): Promise<BigNumber> {
@@ -164,21 +172,17 @@ async function getTokenBalance(
   return new BigNumber(balance.toString());
 }
 
-function makeGetTokenBalance(nodeConfig: ExternalNodeConfig): NodeApi["getTokenBalance"] {
-  return (currency, address, contractAddress) =>
-    withApi(currency, api => getTokenBalance(api, address, contractAddress), nodeConfig);
-}
-async function getTransactionCount(api: JsonRpcProvider, address: string): Promise<number> {
+async function getTransactionCount(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  address: string,
+): Promise<number> {
   return api.getTransactionCount(normalizeAddress(address), "pending");
-}
-
-function makeGetTransactionCount(nodeConfig: ExternalNodeConfig): NodeApi["getTransactionCount"] {
-  return (currency, address) =>
-    withApi(currency, api => getTransactionCount(api, address), nodeConfig);
 }
 
 async function getGasEstimation(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   account: Pick<Account, "freshAddress">,
   transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
 ): Promise<BigNumber> {
@@ -203,10 +207,14 @@ async function getGasEstimation(
 
 function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEstimation"] {
   return (account, transaction) =>
-    withApi(account.currency, api => getGasEstimation(api, account, transaction), {
-      ...nodeConfig,
-      retries: 0,
-    });
+    withApi(
+      account.currency,
+      api => getGasEstimation(api, account.currency, account, transaction),
+      {
+        ...nodeConfig,
+        retries: 0,
+      },
+    );
 }
 
 async function getFeeData(
@@ -281,12 +289,11 @@ async function getFeeData(
   };
 }
 
-function makeGetFeeData(nodeConfig: ExternalNodeConfig): NodeApi["getFeeData"] {
-  return (currency, transaction) =>
-    withApi(currency, api => getFeeData(api, currency, transaction), nodeConfig);
-}
-
-async function broadcastTransaction(api: JsonRpcProvider, signedTxHex: string): Promise<string> {
+async function broadcastTransaction(
+  api: JsonRpcProvider,
+  _currency: CryptoCurrency,
+  signedTxHex: string,
+): Promise<string> {
   try {
     const { hash } = await api.broadcastTransaction(signedTxHex);
     return hash;
@@ -299,20 +306,27 @@ async function broadcastTransaction(api: JsonRpcProvider, signedTxHex: string): 
   }
 }
 
-function makeBroadcastTransaction(nodeConfig: ExternalNodeConfig): NodeApi["broadcastTransaction"] {
-  return (currency, signedTxHex) =>
-    withApi(currency, api => broadcastTransaction(api, signedTxHex), {
-      ...nodeConfig,
-      retries: 0,
-    });
-}
-
 async function getBlockByHeight(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
-  prefetchTxs: boolean,
+  prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
-  const block = await api.getBlock(blockHeight, prefetchTxs);
+  let block: ethers.Block | null;
+  try {
+    block = await api.getBlock(blockHeight, prefetchTxs);
+  } catch (error) {
+    // Some chains (e.g. zkSync) can return tx objects missing signature fields, ethers then fails while formatting
+    // prefetched transactions => we fallback to a custom getBlock implementation
+    if (prefetchTxs && isSignatureError(error)) {
+      log("warn", "EVM getBlock fallback: using raw eth_getBlockByNumber response", {
+        blockHeight,
+        error: String(error),
+      });
+      return getBlockByHeightFromRawRpc(api, blockHeight, true);
+    }
+    throw error;
+  }
 
   if (!block) {
     throw new Error(`Block ${blockHeight} not found`);
@@ -360,13 +374,108 @@ async function getBlockByHeight(
   };
 }
 
-function makeGetBlockByHeight(nodeConfig: ExternalNodeConfig): NodeApi["getBlockByHeight"] {
-  return (currency, blockHeight = "latest", prefetchTxs = false) =>
-    withApi(currency, api => getBlockByHeight(api, blockHeight, prefetchTxs), nodeConfig);
+/** Specific error thrown by ethers when handling zksync blocks with missing signature fields in prefetched transactions */
+function isSignatureError(error: unknown): boolean {
+  if (!hasErrorCode(error, "INVALID_ARGUMENT")) return false;
+  if (typeof error !== "object" || error === null) return false;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const ethersError = error as { argument?: unknown };
+  return ethersError.argument === "signature";
+}
+
+/**
+ * Parse a quantity (eg: amount or block height) return from an RPC.
+ *
+ * @param value raw RPC value
+ * @param fieldName dereferenced field, for error display only
+ */
+function parseRpcHexQuantity(value: unknown, fieldName: string): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(BigInt(value));
+  throw new Error(`Malformed ${fieldName} in eth_getBlockByNumber response`);
+}
+
+/**
+ * Fallback implementation of {@link getBlockByHeight} using raw RPC call to eth_getBlockByNumber, to handle cases where
+ * ethers fails to parse the block due to malformed prefetched transactions (e.g. missing signature fields in zkSync
+ * blocks).
+ */
+async function getBlockByHeightFromRawRpc(
+  api: JsonRpcProvider,
+  blockHeight: number | "latest",
+  prefetchTxs: boolean,
+): Promise<BlockByHeightResult> {
+  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  const rawBlock = await api.send("eth_getBlockByNumber", [blockTag, prefetchTxs]);
+  if (typeof rawBlock !== "object" || rawBlock === null)
+    throw new Error("Invalid eth_getBlockByNumber response");
+
+  const block = rawBlock as Record<string, unknown>;
+  if (typeof block.hash !== "string")
+    throw new Error("Malformed block hash in eth_getBlockByNumber");
+  if (typeof block.parentHash !== "string")
+    throw new Error("Malformed block parentHash in eth_getBlockByNumber");
+
+  const height = parseRpcHexQuantity(block.number, "block.number");
+  const timestampInSeconds = parseRpcHexQuantity(block.timestamp, "block.timestamp");
+  const rawTransactions = block.transactions;
+  if (rawTransactions !== undefined && !Array.isArray(rawTransactions))
+    throw new Error("Malformed block.transactions in eth_getBlockByNumber response");
+
+  const transactionHashes = rawTransactions?.map((tx, index) => {
+    if (typeof tx === "string") return tx;
+    if (typeof tx === "object" && tx !== null && "hash" in tx && typeof tx.hash === "string")
+      return tx.hash;
+    throw new Error(
+      `Malformed block transaction at index ${index} in eth_getBlockByNumber response`,
+    );
+  });
+
+  const transactions =
+    prefetchTxs && rawTransactions
+      ? rawTransactions.map(tx => {
+          if (typeof tx === "string")
+            throw new Error("Expected prefetched transaction object, got hash string");
+          if (typeof tx !== "object" || tx === null)
+            throw new Error("Malformed prefetched transaction in eth_getBlockByNumber response");
+          if (!("hash" in tx) || typeof tx.hash !== "string")
+            throw new Error(
+              "Malformed prefetched transaction hash in eth_getBlockByNumber response",
+            );
+          if (!("from" in tx) || typeof tx.from !== "string")
+            throw new Error(
+              "Malformed prefetched transaction from in eth_getBlockByNumber response",
+            );
+          if ("to" in tx && tx.to !== null && tx.to !== undefined && typeof tx.to !== "string")
+            throw new Error("Malformed prefetched transaction to in eth_getBlockByNumber response");
+          if ("value" in tx && tx.value !== undefined && typeof tx.value !== "string")
+            throw new Error(
+              "Malformed prefetched transaction value in eth_getBlockByNumber response",
+            );
+
+          return {
+            hash: tx.hash,
+            value: BigInt(tx.value ?? "0x0").toString(),
+            from: tx.from,
+            to: tx.to ?? undefined,
+          };
+        })
+      : undefined;
+
+  return {
+    hash: block.hash,
+    height,
+    timestamp: timestampInSeconds * 1000,
+    parentHash: block.parentHash,
+    ...(transactions !== undefined && { transactions }),
+    ...(transactionHashes !== undefined && { transactionHashes }),
+  };
 }
 
 async function getBlockReceipts(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<BlockReceiptInfo[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
@@ -402,15 +511,9 @@ async function getBlockReceipts(
   });
 }
 
-function makeGetBlockReceipts(
-  nodeConfig: ExternalNodeConfig,
-): Exclude<NodeApi["getBlockReceipts"], undefined> {
-  return (currency, blockHeight = "latest") =>
-    withApi(currency, api => getBlockReceipts(api, blockHeight), nodeConfig);
-}
-
 async function traceBlock(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
@@ -435,11 +538,6 @@ async function traceBlock(
     }
     return trace;
   });
-}
-
-function makeTraceBlock(nodeConfig: ExternalNodeConfig): NonNullable<NodeApi["traceBlock"]> {
-  return (currency, blockHeight = "latest") =>
-    withApi(currency, api => traceBlock(api, blockHeight), nodeConfig);
 }
 
 function isTraceBlockItem(value: unknown): value is TraceBlockItem {
@@ -472,7 +570,7 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
       ? typeof value.to === "string" || value.to === null || value.to === undefined
       : true) &&
     typeof value.hash === "string" &&
-    typeof value.value === "bigint" &&
+    (typeof value.value === "string" || typeof value.value === "bigint") &&
     typeof value.from === "string"
   );
 }
@@ -531,13 +629,6 @@ async function getOptimismAdditionalFees(
   return new BigNumber(additionalL1Fees.toString());
 }
 
-function makeGetOptimismAdditionalFees(
-  nodeConfig: ExternalNodeConfig,
-): NodeApi["getOptimismAdditionalFees"] {
-  return async (currency, transaction) =>
-    withApi(currency, api => getOptimismAdditionalFees(api, currency, transaction), nodeConfig);
-}
-
 async function getScrollAdditionalFees(
   api: JsonRpcProvider,
   currency: CryptoCurrency,
@@ -562,13 +653,6 @@ async function getScrollAdditionalFees(
   return new BigNumber(additionalL1Fees.toString());
 }
 
-function makeGetScrollAdditionalFees(
-  nodeConfig: ExternalNodeConfig,
-): NodeApi["getScrollAdditionalFees"] {
-  return (currency, transaction) =>
-    withApi(currency, api => getScrollAdditionalFees(api, currency, transaction), nodeConfig);
-}
-
 /* Get default maxPriorityFeePerGas by chain */
 const getMaxPriorityFeePerGas = (currency: CryptoCurrency): BigNumber => {
   switch (currency.id) {
@@ -586,26 +670,35 @@ function cacheKeyOptimismL1Fees(
   return "getOptimismL1BaseFee_" + currency.id + "_" + transaction;
 }
 
+function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
+  f: (api: JsonRpcProvider, ...args: Parameters<F>) => ReturnType<F>,
+  nodeConfig: ExternalNodeConfig,
+  configOverride: Partial<ExternalNodeConfig> = {},
+): F {
+  const mergedConfig = { ...nodeConfig, ...configOverride };
+  return ((...args: Parameters<F>) => {
+    const [currency] = args;
+    return withApi(currency, api => f(api, ...args), mergedConfig);
+  }) as F;
+}
+
 export function createNodeApi(config: ExternalNodeConfig): NodeApi {
-  const getOptimismAdditionalFeesUncached = makeGetOptimismAdditionalFees(config);
   return {
-    getBlockByHeight: makeGetBlockByHeight(config),
-    getCoinBalance: makeGetCoinBalance(config),
-    getTokenBalance: makeGetTokenBalance(config),
-    getTransactionCount: makeGetTransactionCount(config),
-    getTransaction: makeGetTransaction(config),
-    getBlockReceipts: makeGetBlockReceipts(config),
-    traceBlock: makeTraceBlock(config),
+    getBlockByHeight: make(getBlockByHeight, config),
+    getCoinBalance: make(getCoinBalance, config),
+    getTokenBalance: make(getTokenBalance, config),
+    getTransactionCount: make(getTransactionCount, config),
+    getTransaction: make(getTransaction, config),
+    getBlockReceipts: make(getBlockReceipts, config),
+    traceBlock: make(traceBlock, config),
     getGasEstimation: makeGetGasEstimation(config),
-    getFeeData: makeGetFeeData(config),
-    broadcastTransaction: makeBroadcastTransaction(config),
+    getFeeData: make(getFeeData, config),
+    broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),
     getOptimismAdditionalFees: makeLRUCache(
-      getOptimismAdditionalFeesUncached,
+      make(getOptimismAdditionalFees, config),
       cacheKeyOptimismL1Fees,
-      {
-        ttl: 15 * 1000, // prevent rate limit by caching for at least 15s
-      },
+      { ttl: 15 * 1000 }, // prevent rate limit by caching for at least 15s
     ),
-    getScrollAdditionalFees: makeGetScrollAdditionalFees(config),
+    getScrollAdditionalFees: make(getScrollAdditionalFees, config),
   };
 }

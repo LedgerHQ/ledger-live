@@ -218,7 +218,7 @@ export function runTooLowAmountForQuoteSwapsTest(
       await app.swapLiveApp.verifySwapAmountErrorMessageIsCorrect(errorMessage);
 
       if (ctaBanner) {
-        await app.swapLiveApp.checkCtaBanner();
+        await app.swapLiveApp.checkCtaBanner(quotesVisible);
       }
     });
   });

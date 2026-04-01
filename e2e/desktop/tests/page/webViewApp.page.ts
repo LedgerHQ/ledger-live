@@ -5,29 +5,55 @@ import { AppPage } from "./abstractClasses";
 export abstract class WebViewAppPage extends AppPage {
   public _webviewPage?: Page;
   public webviewUrlHistory: string[] = [];
+
+  protected abstract readonly webviewIdentifier: string;
   protected defaultWebViewTimeout = 60_000;
 
   @step("Wait for WebView to be available")
-  protected async getWebView(): Promise<Page> {
+  protected async getWebView(timeout = 60_000): Promise<Page> {
     if (this._webviewPage) {
-      return this._webviewPage;
+      if (!this._webviewPage.isClosed()) {
+        return this._webviewPage;
+      }
+      this._webviewPage = undefined;
     }
     if (!this.electronApp) {
       throw new Error("No ElectronApplication instance available");
     }
 
-    const all = this.electronApp.windows();
-    let webview: Page;
-    if (all.length > 1) {
-      webview = all[1];
-    } else {
-      webview = await this.electronApp.waitForEvent("window", {
-        timeout: this.defaultWebViewTimeout,
-      });
+    let webview: Page | undefined;
+
+    // Iterate over webviews making multiple attempts over a period of time.
+    // This ensures we handle cases where the right webview is not immediately available.
+    // In some cases a different webview might already be open or it might be loading into the view.
+    const startTime = Date.now();
+
+    while (!webview && Date.now() - startTime < timeout) {
+      const allWindows = this.electronApp.windows();
+      for (const window of allWindows) {
+        try {
+          const webviewTitle = await window.title();
+          if (webviewTitle.toLowerCase().includes(this.webviewIdentifier.toLowerCase())) {
+            webview = window;
+            break;
+          }
+        } catch {
+          // webview might detach in the process, ignore and iterate again
+        }
+      }
+      await this.page.waitForTimeout(500);
     }
 
+    if (!webview) {
+      throw new Error(
+        `WebView with identifier "${this.webviewIdentifier}" not found after ${timeout}ms`,
+      );
+    }
+
+    const elapsed = Date.now() - startTime;
+    const remainingTimeout = Math.max(timeout - elapsed, 0);
     await webview.waitForLoadState("domcontentloaded", {
-      timeout: this.defaultWebViewTimeout,
+      timeout: remainingTimeout,
     });
     webview.setDefaultTimeout(this.defaultWebViewTimeout);
 

@@ -124,7 +124,7 @@ export default function StepCreate({
 
               <Flex mt={6}>
                 {canResend ? (
-                  <Button type="shade" onPress={handleResend}>
+                  <Button type="shade" onPress={handleResend} accessibilityRole="button">
                     <Trans i18nKey="concordium.onboard.create.prepare.resendButton" />
                   </Button>
                 ) : (
@@ -179,7 +179,12 @@ export default function StepCreate({
 
       {createStatus === CreateStatus.SUCCESS && completedAccount && (
         <Flex px={6} pb={10}>
-          <Button type="main" onPress={() => onCreated(completedAccount)} size="large">
+          <Button
+            type="main"
+            onPress={() => onCreated(completedAccount)}
+            size="large"
+            accessibilityRole="button"
+          >
             <Trans i18nKey="common.continue" />
           </Button>
         </Flex>
@@ -187,7 +192,7 @@ export default function StepCreate({
 
       {(createStatus === CreateStatus.DEVICE_LOCKED || createStatus === CreateStatus.ERROR) && (
         <Flex px={6} pb={10}>
-          <Button type="main" onPress={startOnboarding}>
+          <Button type="main" onPress={startOnboarding} accessibilityRole="button">
             <Trans i18nKey="common.retry" />
           </Button>
         </Flex>

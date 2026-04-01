@@ -14,6 +14,7 @@ export const WALLET_40_PARAMS = [
   { key: "assetSection", label: "Asset Section" },
   { key: "onboardingWidget", label: "Post-onboarding Widget" },
   { key: "brazePlacement", label: "Braze Placement (ContentBanner)" },
+  { key: "operationsList", label: "TX History" },
 ] as const;
 
 type WalletFeatureParamKey = (typeof WALLET_40_PARAMS)[number]["key"];

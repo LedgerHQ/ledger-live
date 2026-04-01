@@ -111,6 +111,35 @@ const featureFlagsSlice = createSlice({
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       state.bannerVisible = (action as PayloadAction<boolean>).payload;
     });
+
+    for (const actionType of ["SETTINGS_IMPORT", "FETCH_SETTINGS"] as const) {
+      builder.addCase(actionType, (state, action) => {
+        const payload =
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          (
+            action as PayloadAction<{
+              overriddenFeatureFlags?: Record<string, unknown>;
+              featureFlagsBannerVisible?: boolean;
+              featureFlagsButtonVisible?: boolean;
+            }>
+          ).payload;
+        if (!payload) return;
+
+        if (payload.overriddenFeatureFlags) {
+          const filtered = Object.fromEntries(
+            Object.entries(payload.overriddenFeatureFlags).filter(([, v]) => v !== undefined),
+          );
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          state.overrides = filtered as FeatureFlagsState["overrides"];
+          state.resolved = resolveAll(state.overrides, state.remote, getResolutionConfig());
+        }
+
+        const bannerValue = payload.featureFlagsBannerVisible ?? payload.featureFlagsButtonVisible;
+        if (bannerValue !== undefined) {
+          state.bannerVisible = bannerValue;
+        }
+      });
+    }
   },
 });
 

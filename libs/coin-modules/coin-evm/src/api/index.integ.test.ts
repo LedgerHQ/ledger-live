@@ -529,6 +529,187 @@ describe.each([
         }
       });
     });
+
+    describe("transactions non-regression", () => {
+      const opsForTx = (items: Operation[], txHash: string) =>
+        items.filter(op => op.tx.hash.toLowerCase() === txHash.toLowerCase());
+
+      const expectAddressEq = (actual: string, expected: string) =>
+        expect(actual.toLowerCase()).toBe(expected.toLowerCase());
+
+      it("simple native transfer between EOAs", async () => {
+        const txHash = "0x9f555da0bb8d9ff99ced6db6e5f966699f8df849f4887c80ed44ffb101f7d252";
+        const blockHeight = 24600494;
+        const sender = "0x12644b85A2F20F39Ade7543FBA1C0C9DFE289580";
+        const recipient = "0xD017e1a34648521E7959F0AfDb5d359c979f5E2f";
+
+        const { items: senderOps } = await module.listOperations(sender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const { items: recipientOps } = await module.listOperations(recipient, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+
+        const senderTxOps = opsForTx(senderOps, txHash);
+        const recipientTxOps = opsForTx(recipientOps, txHash);
+
+        expect(senderTxOps).toHaveLength(1);
+        expect(senderTxOps[0]).toMatchObject({
+          type: "OUT",
+          asset: { type: "native" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        expectAddressEq(senderTxOps[0].senders[0], sender);
+        expectAddressEq(senderTxOps[0].recipients[0], recipient);
+        expectAddressEq(senderTxOps[0].tx.feesPayer!, sender);
+        expect(senderTxOps[0].value).toBeGreaterThan(0n);
+        expect(senderTxOps[0].tx.fees).toBeGreaterThan(0n);
+
+        expect(recipientTxOps).toHaveLength(1);
+        expect(recipientTxOps[0]).toMatchObject({
+          type: "IN",
+          asset: { type: "native" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        expectAddressEq(recipientTxOps[0].senders[0], sender);
+        expectAddressEq(recipientTxOps[0].recipients[0], recipient);
+        expectAddressEq(recipientTxOps[0].tx.feesPayer!, sender);
+        expect(recipientTxOps[0].value).toBe(senderTxOps[0].value);
+      });
+
+      it("simple ERC20 transfer between EOAs", async () => {
+        const txHash = "0xbbe8faac0666fb9741c536a1fcb184dc81884c95a38dcff899328a3c6c7c05b9";
+        const blockHeight = 24676233;
+        const sender = "0xf764Af5afc8dbfa0e698aBB8Eeb3E5a79c0cE4B5";
+        const recipient = "0x1f2F2d487C79822dc59550d87Bd5B32234F6F387";
+        const contract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+
+        const { items: senderOps } = await module.listOperations(sender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const { items: recipientOps } = await module.listOperations(recipient, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+
+        const senderTxOps = opsForTx(senderOps, txHash);
+        const recipientTxOps = opsForTx(recipientOps, txHash);
+
+        expect(senderTxOps).toHaveLength(1);
+        expect(senderTxOps[0]).toMatchObject({
+          type: "OUT",
+          asset: { type: "erc20" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        const senderAsset = senderTxOps[0].asset as {
+          assetReference?: string;
+          assetOwner?: string;
+        };
+        expect(senderAsset.assetReference?.toLowerCase()).toBe(contract.toLowerCase());
+        expectAddressEq(senderTxOps[0].senders[0], sender);
+        expectAddressEq(senderTxOps[0].recipients[0], recipient);
+        expectAddressEq(senderAsset.assetOwner!, sender);
+        expectAddressEq(senderTxOps[0].tx.feesPayer!, sender);
+        expect(senderTxOps[0].value).toBeGreaterThan(0n);
+
+        expect(recipientTxOps).toHaveLength(1);
+        expect(recipientTxOps[0]).toMatchObject({
+          type: "IN",
+          asset: { type: "erc20" },
+        });
+        const recipientAsset = recipientTxOps[0].asset as {
+          assetReference?: string;
+          assetOwner?: string;
+        };
+        expect(recipientAsset.assetReference?.toLowerCase()).toBe(contract.toLowerCase());
+        expectAddressEq(recipientTxOps[0].senders[0], sender);
+        expectAddressEq(recipientTxOps[0].recipients[0], recipient);
+        expectAddressEq(recipientAsset.assetOwner!, recipient);
+        expect(recipientTxOps[0].value).toBe(senderTxOps[0].value);
+      });
+
+      it("Lido deposit (ETH to contract + STETH mint to sender)", async () => {
+        const txHash = "0x5b4fc90367ca30d5c790ae394d9d177db4f91cfb52d627e8fa94379c16ac5724";
+        const blockHeight = 24535189;
+        const sender = "0xf88e9863b2c157cdeaab3e3401be6b2d583bdfbd";
+        const lidoContract = "0xae7ab96520de3a18e5e111b5eaab095312d7fe84";
+        const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+        const { items } = await module.listOperations(sender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOps = opsForTx(items, txHash);
+
+        expect(txOps.length).toBeGreaterThanOrEqual(2);
+        const nativeOp = txOps.find(op => op.asset.type === "native");
+        const tokenOp = txOps.find(
+          op =>
+            op.asset.type === "erc20" &&
+            op.asset.assetReference?.toLowerCase() === lidoContract.toLowerCase(),
+        );
+
+        expect(nativeOp).toMatchObject({
+          type: "OUT",
+          asset: { type: "native" },
+          tx: { feesPayer: expect.any(String) },
+        });
+        expectAddressEq(nativeOp!.senders[0], sender);
+        expectAddressEq(nativeOp!.recipients[0], lidoContract);
+        expectAddressEq(nativeOp!.tx.feesPayer!, sender);
+        expect(nativeOp!.value).toBeGreaterThan(0n);
+
+        expect(tokenOp).toMatchObject({
+          type: "IN",
+          asset: { type: "erc20", assetOwner: expect.any(String) },
+          tx: { feesPayer: expect.any(String) },
+        });
+        const tokenOpAsset = tokenOp!.asset as { assetReference?: string; assetOwner?: string };
+        expect(tokenOpAsset.assetReference?.toLowerCase()).toBe(lidoContract.toLowerCase());
+        expectAddressEq(tokenOpAsset.assetOwner!, sender);
+        expect(tokenOp!.senders[0].toLowerCase()).toBe(zeroAddress.toLowerCase());
+        expectAddressEq(tokenOp!.recipients[0], sender);
+        expectAddressEq(tokenOp!.tx.feesPayer!, sender);
+        expect(tokenOp!.value).toBeGreaterThan(0n);
+      });
+
+      it("Spoofed NFT transfer through smart contract", async () => {
+        const txHash = "0x61adea29cbf2e50f9ab975636af9a624620589c2cca9b8dc82ccccaefeb9c6ad";
+        const blockHeight = 21348730;
+        const caller = "0x6b2ae7cc19eda092476f32cced9311da568a823c";
+        const spoofedSender = "0x7d75Acd9B52e01B149557ed230717ECd088b898a";
+
+        const { items: spoofedSenderOps } = await module.listOperations(spoofedSender, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOpsSpoofedSender = opsForTx(spoofedSenderOps, txHash);
+
+        expect(txOpsSpoofedSender).toHaveLength(1);
+        expect(txOpsSpoofedSender[0]).toMatchObject({
+          type: "NFT_OUT",
+          senders: expect.any(Array),
+          recipients: expect.any(Array),
+          asset: { type: "erc1155" },
+        });
+        expectAddressEq(txOpsSpoofedSender[0].senders[0], spoofedSender);
+        // feesPayer is caller when the explorer returns the parent coin op; undefined when it does not (e.g. Ledger when querying by spoofed sender).
+        const feesPayer = txOpsSpoofedSender[0].tx.feesPayer;
+        if (feesPayer !== undefined) {
+          expectAddressEq(feesPayer, caller);
+        }
+        expect(txOpsSpoofedSender[0].value).toBeGreaterThan(0n);
+      });
+    });
   });
 
   describe.each([

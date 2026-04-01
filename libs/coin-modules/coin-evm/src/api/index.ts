@@ -14,14 +14,12 @@ import type {
   Stake,
   Reward,
   TransactionValidation,
-  AssetInfo,
   CraftedTransaction,
   BufferTxData,
   AlpacaApi,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -34,8 +32,6 @@ import {
   getBalance,
   getNextSequence,
   validateIntent,
-  getTokenFromAsset,
-  getAssetFromToken,
   computeIntentType,
   refreshOperations,
   getBlock,
@@ -109,10 +105,6 @@ export function createApi(
       balances: Balance[],
       customFees?: FeeEstimation,
     ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
-    getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
-      getTokenFromAsset(currency, asset),
-    getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
-      getAssetFromToken(currency, token, owner),
     computeIntentType,
     /**
      * Only expose this method if the chain has no explorer (the only chain that passes a function

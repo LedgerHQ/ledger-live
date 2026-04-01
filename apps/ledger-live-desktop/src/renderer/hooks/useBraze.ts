@@ -20,6 +20,7 @@ import {
   setDesktopCards,
   setNotificationsCards,
   setPortfolioCards,
+  setBottomPortfolioCards,
 } from "../actions/dynamicContent";
 import {
   clearDismissedContentCards,
@@ -52,32 +53,48 @@ export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   return (a.order || 0) - (b.order || 0);
 };
 
+const parseOrder = (value: string | undefined): number | undefined => {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isNaN(parsed) ? undefined : parsed;
+};
+
 export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => ({
   created: card.updated ?? null,
   description: card.extras?.description,
   id: String(card.id),
   image: card.extras?.image,
+  image_background: card.extras?.image_background,
+  icon: card.extras?.icon,
   link: card.extras?.link,
   location: LocationContentCard.Action,
   mainCta: card.extras?.mainCta,
-  order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
+  order: parseOrder(card.extras?.order),
   secondaryCta: card.extras?.secondaryCta,
   title: card.extras?.title,
 });
 
-export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard => ({
+const mapBrazeCardToPortfolioContentCard = (
+  card: ClassicCard,
+  location: LocationContentCard.Portfolio | LocationContentCard.BottomPortfolio,
+): PortfolioContentCard => ({
   created: card.updated ?? null,
   cta: card.extras?.cta,
   description: card.extras?.description,
   id: String(card.id),
   image: card.extras?.image,
-  location: LocationContentCard.Portfolio,
-  order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
+  location,
+  order: parseOrder(card.extras?.order),
   path: card.extras?.path,
   tag: card.extras?.tag,
   title: card.extras?.title,
   url: card.extras?.url,
 });
+
+export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard =>
+  mapBrazeCardToPortfolioContentCard(card, LocationContentCard.Portfolio);
+
+export const mapAsBottomPortfolioContentCard = (card: ClassicCard): PortfolioContentCard =>
+  mapBrazeCardToPortfolioContentCard(card, LocationContentCard.BottomPortfolio);
 
 export const mapAsNotificationContentCard = (card: ClassicCard): NotificationContentCard => ({
   created: card.updated ?? null,
@@ -85,7 +102,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   description: card.extras?.description,
   id: String(card.id),
   location: LocationContentCard.NotificationCenter,
-  order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
+  order: parseOrder(card.extras?.order),
   path: card.extras?.path,
   title: card.extras?.title,
   url: card.extras?.url,
@@ -151,6 +168,14 @@ export function useBraze() {
         .map(card => mapAsActionContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      const bottomPortfolioCards = filterByPage(
+        filteredDesktopCards,
+        LocationContentCard.BottomPortfolio,
+      )
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        .map(card => mapAsBottomPortfolioContentCard(card as ClassicCard))
+        .sort(compareCards);
+
       const notificationsCards = filterByPage(
         filteredDesktopCards,
         LocationContentCard.NotificationCenter,
@@ -161,6 +186,7 @@ export function useBraze() {
 
       dispatch(setDesktopCards(filteredDesktopCards));
       dispatch(setPortfolioCards(portfolioCards));
+      dispatch(setBottomPortfolioCards(bottomPortfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));
     });

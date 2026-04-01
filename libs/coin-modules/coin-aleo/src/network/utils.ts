@@ -186,7 +186,7 @@ export async function accessProvableApi({
   }
 
   if (!uuid) {
-    const { public_key, key_id } = await apiClient.getPublicKey(currency, jwt.token);
+    const { public_key, key_id } = await apiClient.getScannerPublicKey(currency, jwt.token);
 
     const { encrypted: encryptedData } = await sdkClient.encryptRegistrationPayload({
       currency,
@@ -263,16 +263,29 @@ export async function enrichPrivateRecord({
       return null;
     }
 
+    // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
+    // Other input (missing `value` field) would indicate unexpected API data.
+    // In that case we skip processing rather than crash.
+    const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
+    const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
+    const recipientArgument = recipientInput && "value" in recipientInput ? recipientInput : null;
+    const amountArgument = amountInput && "value" in amountInput ? amountInput : null;
+
+    if (!recipientArgument || !amountArgument) {
+      log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
+      return null;
+    }
+
     if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-      if (recordTransition.inputs[RECIPIENT_ARG_INDEX].value === address) return null;
+      if (recipientArgument.value === address) return null;
       sender = address;
-      recipient = recordTransition.inputs[RECIPIENT_ARG_INDEX].value;
-      value = new BigNumber(parseMicrocredits(recordTransition.inputs[AMOUNT_ARG_INDEX].value));
+      recipient = recipientArgument.value;
+      value = new BigNumber(parseMicrocredits(amountArgument.value));
     } else {
       const [recipientData, amountData] = await Promise.all([
         sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[RECIPIENT_ARG_INDEX].value,
+          ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: rawRecord.program_name,
@@ -281,7 +294,7 @@ export async function enrichPrivateRecord({
         }),
         sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[AMOUNT_ARG_INDEX].value,
+          ciphertext: amountArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: rawRecord.program_name,
@@ -426,15 +439,20 @@ export const patchPublicOperations = async ({
     // - semi-transparent transfer from our own account to another account
     else {
       const txDetails = await apiClient.getTransactionById(currency, operation.hash);
-      const recordTransition = txDetails.execution.transitions[0];
+      const recordTransition = txDetails.execution.transitions[0] ?? null;
+      const recipientInput = recordTransition?.inputs[0] ?? {};
+      const recipientArgument = "value" in recipientInput ? recipientInput : null;
 
       // if this is public to private, our account is sender, so it's possible to decrypt the recipient address
       // arguments of transfer_public_to_private function are (address_ciphertext, amount)
-      if (operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE) {
+      if (
+        recipientArgument &&
+        operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
+      ) {
         const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
         const recipientData = await sdkClient.decryptCiphertext({
           currency,
-          ciphertext: recordTransition.inputs[0].value,
+          ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
           programId: PROGRAM_ID.CREDITS,

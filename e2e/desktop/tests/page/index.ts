@@ -34,6 +34,7 @@ import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer
 import { ModularDialog } from "./dialog/modular.dialog";
 import { MarketBannerPage } from "./marketBanner.page";
 import { FearAndGreedDialog } from "./dialog/fearGreed.dialog";
+import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { MainNavigationPage } from "./mainNavigation.page";
 
@@ -66,11 +67,12 @@ export class Application extends PageHolder {
   public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
   public send = new SendModal(this.page);
+  public newSendFlow = new NewSendModal(this.page);
   public sendDrawer = new SendDrawer(this.page);
   public settings = new SettingsPage(this.page);
   public settingsModal = new SettingsModal(this.page);
   public speculos = new SpeculosPage(this.page);
-  public swap = new SwapPage(this.page);
+  public swap = new SwapPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);

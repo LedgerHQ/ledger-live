@@ -773,6 +773,66 @@ describe("createApi", () => {
       expect(block.info.time).toBeInstanceOf(Date);
       expect(block.transactions).toBeInstanceOf(Array);
     });
+
+    it("returns single transaction for multiple erc20 transfers", async () => {
+      const data = await api.getBlock(177314999);
+
+      const erc20Asset = {
+        type: "erc20",
+        assetReference: "0xb7687538c7f4cad022d5e97cc778d0b46457c5db",
+      };
+      const erc20TxHash = "givnas3WAL3fiGeap+oSRIYOqUbqE0Ig2XIMTWgTDQzTMc8g7aOC1vxc8hQy7wZX";
+      const filteredTransactions = data.transactions.filter(tx => tx.hash === erc20TxHash);
+
+      expect(filteredTransactions).toEqual([
+        expect.objectContaining({
+          operations: [
+            {
+              type: "transfer",
+              address: "0.0.802",
+              asset: {
+                type: "native",
+              },
+              amount: 26596592n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.10067136",
+              asset: {
+                type: "native",
+              },
+              amount: 0n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.6145236",
+              asset: erc20Asset,
+              amount: 2863838n,
+            },
+            {
+              type: "transfer",
+              address: "0x0000000000000000000000000000000000000000",
+              asset: erc20Asset,
+              amount: -2863838n,
+            },
+            {
+              type: "transfer",
+              address: "0.0.10067136",
+              asset: erc20Asset,
+              amount: 148440n,
+            },
+            {
+              type: "transfer",
+              address: "0x0000000000000000000000000000000000000000",
+              asset: erc20Asset,
+              amount: -148440n,
+            },
+          ],
+          fees: 26596592n,
+          feesPayer: "0.0.10067136",
+        }),
+      ]);
+    });
   });
 
   describe("lastBlock", () => {

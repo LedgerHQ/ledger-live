@@ -23,7 +23,7 @@ const targets = [
   "walletApiAdapter.ts",
 ];
 
-const familiesExtracted = ["xrp"];
+const familiesExtracted = ["xrp", "stellar"];
 
 // Coins using coin-framework
 const familiesWPackage = [
@@ -184,6 +184,10 @@ async function getDeviceTransactionConfig(families) {
   let imports = ``;
   let exprts = `export type ExtraDeviceTransactionField =`;
   for (const family of families) {
+    if (familiesExtracted.includes(family)) {
+      continue;
+    }
+
     const p = path.join("families", family, "deviceTransactionConfig.ts");
     if (fs.existsSync(p)) {
       const file = await fs.promises.readFile(p, "utf8");

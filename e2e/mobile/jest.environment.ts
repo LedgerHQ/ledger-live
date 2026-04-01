@@ -111,6 +111,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       waitForCurrentWebviewUrlToContain: WebElementHelpers.waitForCurrentWebviewUrlToContain,
       waitForWebElementToBeEnabled: WebElementHelpers.waitForWebElementToBeEnabled,
       waitForWebElementToMatchRegex: WebElementHelpers.waitForWebElementToMatchRegex,
+      waitWebElement: WebElementHelpers.waitWebElement,
       waitWebElementByTestId: WebElementHelpers.waitWebElementByTestId,
     };
 

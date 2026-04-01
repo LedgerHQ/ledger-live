@@ -59,7 +59,7 @@ export interface StakingAnalysis {
 }
 
 export interface EnrichedERC20Transfer {
-  transfer: ERC20TokenTransfer;
+  transfers: ERC20TokenTransfer[];
   contractCallResult: HederaMirrorContractCallResult;
   mirrorTransaction: HederaMirrorTransaction;
 }

@@ -1,3 +1,4 @@
+import { TokenAccount } from "@ledgerhq/types-live";
 import {
   UnsignedTokenTransferOptions,
   makeUnsignedSTXTokenTransfer,
@@ -16,7 +17,6 @@ import {
   StacksTransaction,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { StacksNetwork } from "../../network/api";
 import { StacksOperation, Transaction } from "../../types";
 import { memoToBufferCV } from "./memoUtils";

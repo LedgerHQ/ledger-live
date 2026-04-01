@@ -29,6 +29,20 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     self.moduleName = "ledgerlivemobile"
     self.dependencyProvider = RCTAppDependencyProvider()
 
+    // Increase max concurrent HTTP connections per host (iOS default is 6) to reduce boot-time
+    // request queuing. See: https://developer.apple.com/documentation/foundation/urlsessionconfiguration/httpmaximumconnectionsperhost
+    RCTSetCustomNSURLSessionConfigurationProvider {
+      let config = URLSessionConfiguration.default
+      config.httpMaximumConnectionsPerHost = 16
+      if let useWifiOnly = Bundle.main.infoDictionary?["ReactNetworkForceWifiOnly"] as? Bool, useWifiOnly {
+        config.allowsCellularAccess = false
+      }
+      config.httpShouldSetCookies = true
+      config.httpCookieAcceptPolicy = .always
+      config.httpCookieStorage = HTTPCookieStorage.shared
+      return config
+    }
+
     FirebaseConfigurator.configure()
 
     var pushAutoEnabled = true

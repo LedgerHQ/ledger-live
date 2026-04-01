@@ -2,23 +2,21 @@ import React from "react";
 
 import { act, render, screen } from "tests/testSetup";
 import PortfolioContentCards from "../components/PortfolioContentCards";
-
-// Mocked functions
-import { logCardDismissal, logContentCardClick } from "@braze/web-sdk";
+import { BottomCarouselContentCards } from "../components/BottomCarouselContentCards";
+import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
 import { track } from "~/renderer/analytics/segment";
+import { LocationContentCard } from "~/types/dynamicContent";
 
-jest.mock("@braze/web-sdk", () => ({
-  getCachedContentCards: jest.fn(() => ({
-    cards: Cards.map(({ id, ...extras }) => ({ id, extras })),
-  })),
-  logCardDismissal: jest.fn(),
-  logContentCardClick: jest.fn(),
-}));
-
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
-  track: jest.fn(),
-}));
+const brazeExtrasById: Record<string, { canvas_name: string; canvas_step_name: string }> = {
+  "0": {
+    canvas_name: "Portfolio Canvas",
+    canvas_step_name: "Portfolio Step",
+  },
+  "1": {
+    canvas_name: "Portfolio Canvas 2",
+    canvas_step_name: "Portfolio Step 2",
+  },
+};
 
 const Cards = [
   {
@@ -28,23 +26,83 @@ const Cards = [
     cta: "Click me",
     tag: "New",
     path: "ledger-live://deep-link",
-    location: "Portfolio",
+    location: LocationContentCard.Portfolio,
   },
   {
     id: "1",
     title: "Bar",
     description: "Consectetur adipiscing elit.",
     path: "ledger-live://deep-link",
-    location: "Portfolio",
+    location: LocationContentCard.Portfolio,
   },
 ];
+
+const BottomCards = [
+  {
+    id: "2",
+    title: "Foo",
+    description: "Lorem ipsum dolor sit amet.",
+    cta: "Click me",
+    tag: "New",
+    path: "ledger-live://deep-link",
+    location: LocationContentCard.BottomPortfolio,
+  },
+  {
+    id: "3",
+    title: "Bar",
+    description: "Consectetur adipiscing elit.",
+    path: "ledger-live://deep-link",
+    location: LocationContentCard.BottomPortfolio,
+  },
+];
+
+jest.mock("@braze/web-sdk", () => {
+  class ClassicCard {
+    id: string;
+    extras: Record<string, unknown>;
+    url?: string;
+
+    constructor(id: string, extras: Record<string, unknown>) {
+      this.id = id;
+      this.extras = extras;
+    }
+  }
+
+  return {
+    ClassicCard,
+    getCachedContentCards: jest.fn(),
+    logCardDismissal: jest.fn(),
+    logContentCardClick: jest.fn(),
+  };
+});
+
+jest.mock("~/renderer/analytics/segment", () => ({
+  ...jest.requireActual("~/renderer/analytics/segment"),
+  track: jest.fn(),
+}));
+
+function asClassicBrazeCard(card: (typeof Cards)[number] | (typeof BottomCards)[number]) {
+  const { id, ...rest } = card;
+  const extras = { ...brazeExtrasById[id], ...rest };
+  return Object.assign(Object.create(ClassicCard.prototype), { id, extras });
+}
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+const desktopCardsForTopCarousel = Cards.map(asClassicBrazeCard);
+const desktopCardsWithBottomPlacements = [...Cards, ...BottomCards].map(asClassicBrazeCard);
 
 describe("PortfolioContentCards", () => {
   test("render slides", async () => {
     render(<PortfolioContentCards />, {
       initialState: {
-        dynamicContent: { portfolioCards: Cards },
-        settings: { shareAnalytics: true, sharePersonalizedRecommandations: true },
+        dynamicContent: { desktopCards: desktopCardsForTopCarousel, portfolioCards: Cards },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+        },
       },
     });
 
@@ -82,26 +140,36 @@ describe("PortfolioContentCards", () => {
     expect(track).toHaveBeenCalledWith("contentcards_slide", {
       button: "next",
       page: "Portfolio",
-      type: "portfolio_carousel",
+      type: "carousel_portfolio",
     });
     act(() => screen.getByTestId("carousel-arrow-prev").click());
     expect(track).toHaveBeenCalledWith("contentcards_slide", {
       button: "prev",
       page: "Portfolio",
-      type: "portfolio_carousel",
+      type: "carousel_portfolio",
     });
 
     // Test dismiss button
     expect(logCardDismissal).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalledWith("contentcard_dismissed", expect.any(Object));
     act(() => screen.getAllByTestId("portfolio-card-close-button")[1].click());
-    expect(logCardDismissal).toHaveBeenCalledWith(asBrazeCard(Cards[1]));
-    expect(track).toHaveBeenCalledWith("contentcard_dismissed", {
-      card: "1",
-      page: "Portfolio",
-      type: "portfolio_carousel",
-      location: "Portfolio",
-    });
+    expect(logCardDismissal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: Cards[1].id,
+        extras: expect.objectContaining(brazeExtrasById[Cards[1].id]),
+      }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "contentcard_dismissed",
+      expect.objectContaining({
+        canvas_name: "Portfolio Canvas 2",
+        canvas_step_name: "Portfolio Step 2",
+        card: "1",
+        page: "Portfolio",
+        type: "portfolio_carousel",
+        location: LocationContentCard.Portfolio,
+      }),
+    );
     expect(title1).not.toBeInTheDocument();
     expect(description1).not.toBeInTheDocument();
 
@@ -110,21 +178,99 @@ describe("PortfolioContentCards", () => {
     expect(track).not.toHaveBeenCalledWith("contentcard_clicked", expect.any(Object));
     act(() => cta0.click());
     expect(logContentCardClick).toHaveBeenCalledTimes(1);
-    expect(logContentCardClick).toHaveBeenCalledWith({
-      ...asBrazeCard(Cards[0]),
-      url: Cards[0].id,
-    });
-    expect(track).toHaveBeenCalledWith("contentcard_clicked", {
-      contentcard: "Foo",
-      link: "ledger-live://deep-link",
-      campaign: "0",
-      page: "Portfolio",
-      type: "portfolio_carousel",
-      location: "Portfolio",
-    });
+    expect(logContentCardClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: Cards[0].id,
+        extras: expect.objectContaining(brazeExtrasById[Cards[0].id]),
+        url: Cards[0].id,
+      }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "contentcard_clicked",
+      expect.objectContaining({
+        canvas_name: "Portfolio Canvas",
+        canvas_step_name: "Portfolio Step",
+        contentcard: "Foo",
+        link: "ledger-live://deep-link",
+        campaign: "0",
+        page: "Portfolio",
+        type: "portfolio_carousel",
+        location: LocationContentCard.Portfolio,
+      }),
+    );
   });
 });
 
-function asBrazeCard({ id, ...extras }: (typeof Cards)[number]) {
-  return { id, extras };
-}
+describe("BottomCarouselContentCards", () => {
+  test("render slides", async () => {
+    render(<BottomCarouselContentCards />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: desktopCardsWithBottomPlacements,
+          portfolioCards: [],
+          bottomPortfolioCards: BottomCards,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+        },
+      },
+    });
+
+    const title0 = await screen.findByText("Foo");
+    const description0 = screen.getByText("Lorem ipsum dolor sit amet.");
+    const cta0 = screen.getByText("Click me");
+    const tag0 = screen.getByText("New");
+    const title1 = screen.getByText("Bar");
+    const description1 = screen.getByText("Consectetur adipiscing elit.");
+
+    expect(title0).toBeVisible();
+    expect(description0).toBeVisible();
+    expect(cta0).toBeVisible();
+    expect(tag0).toBeVisible();
+    expect(title1).toBeVisible();
+    expect(description1).toBeVisible();
+
+    expect(logCardDismissal).not.toHaveBeenCalled();
+    act(() => screen.getAllByTestId("portfolio-card-close-button")[1].click());
+    expect(logCardDismissal).toHaveBeenCalledWith(
+      expect.objectContaining({ id: BottomCards[1].id }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "contentcard_dismissed",
+      expect.objectContaining({
+        card: "3",
+        page: "Portfolio",
+        type: "portfolio_carousel",
+        location: LocationContentCard.BottomPortfolio,
+      }),
+    );
+    expect(title1).not.toBeInTheDocument();
+    expect(description1).not.toBeInTheDocument();
+
+    expect(logContentCardClick).not.toHaveBeenCalled();
+    act(() => cta0.click());
+    expect(logContentCardClick).toHaveBeenCalledTimes(1);
+    expect(logContentCardClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: BottomCards[0].id,
+        extras: expect.objectContaining({
+          title: BottomCards[0].title,
+          location: LocationContentCard.BottomPortfolio,
+        }),
+        url: BottomCards[0].id,
+      }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "contentcard_clicked",
+      expect.objectContaining({
+        contentcard: "Foo",
+        link: "ledger-live://deep-link",
+        campaign: "2",
+        page: "Portfolio",
+        type: "portfolio_carousel",
+        location: LocationContentCard.BottomPortfolio,
+      }),
+    );
+  });
+});

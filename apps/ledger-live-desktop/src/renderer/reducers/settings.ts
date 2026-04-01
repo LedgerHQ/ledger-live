@@ -79,7 +79,7 @@ export type SettingsState = {
   developerMode: boolean;
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
-  sentryLogs: boolean;
+  sentryLogs: boolean; // also used for Datadog RUM opt-in
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
@@ -798,10 +798,9 @@ export const latestFirmwareSelector = (state: State) => state.settings.latestFir
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
-export const overriddenFeatureFlagsSelector = (state: State) =>
-  state.settings.overriddenFeatureFlags;
+export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
-  state.settings.featureFlagsButtonVisible;
+  state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;

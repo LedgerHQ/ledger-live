@@ -9,6 +9,10 @@ import {
   ValueContainer,
   MixedProps as ValueContainerProps,
 } from "@ledgerhq/react-ui/components/form/SelectInput/ValueContainer";
+import {
+  Option as BaseOption,
+  Props as BaseOptionProps,
+} from "@ledgerhq/react-ui/components/form/SelectInput/Option";
 
 export type Props<O> = SelectInputProps<O> & {
   searchable?: boolean;
@@ -40,19 +44,33 @@ function DropdownValueContainer<O>(
     <ValueContainer
       {...props}
       render={() => (
-        <FlexBox alignItems="center" flexDirection="row">
-          <Text fontWeight="semiBold" variant={"paragraph"} color="neutral.c80" mr={2}>
+        <FlexBox alignItems="center" flexDirection="row" flexShrink={0}>
+          <Text
+            fontWeight="semiBold"
+            variant={"paragraph"}
+            color="neutral.c80"
+            mr={2}
+            whiteSpace="nowrap"
+          >
             {label}
           </Text>
-          <Text fontWeight="semiBold" variant={"paragraph"} mr={2}>
+          <Text fontWeight="semiBold" variant={"paragraph"} mr={2} whiteSpace="nowrap">
             <FlexBox>{props.children}</FlexBox>
           </Text>
-          <FlexBox alignItems="center">
+          <FlexBox alignItems="center" flexShrink={0}>
             <ChevronIcon size={12} />
           </FlexBox>
         </FlexBox>
       )}
     />
+  );
+}
+
+function DropdownOption<O>(props: BaseOptionProps<O>) {
+  return (
+    <div style={{ flexShrink: 0 }}>
+      <BaseOption {...props} />
+    </div>
   );
 }
 
@@ -109,6 +127,7 @@ export default function Dropdown<O>(props: Props<O>): React.JSX.Element {
           Control: DropdownControl,
           ValueContainer: DropdownValueContainer,
           IndicatorsContainer: DropdownIndicatorsContainer,
+          Option: DropdownOption,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any
       }

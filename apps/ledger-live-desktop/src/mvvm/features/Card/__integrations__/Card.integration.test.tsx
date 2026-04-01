@@ -23,24 +23,24 @@ describe("Card feature integration", () => {
 
     expect(screen.getByText("Card")).toBeInTheDocument();
     expect(screen.getByText("Spend your crypto")).toBeInTheDocument();
-    expect(screen.getByText("Pay online or in store with a crypto card")).toBeInTheDocument();
+    expect(screen.getByText("Pay online or in stores with a crypto card.")).toBeInTheDocument();
   });
 
   it("should display hero section when Card page is rendered", () => {
     render(<CardPage />);
 
-    expect(screen.getByText("Unlock liquidity")).toBeVisible();
+    expect(screen.getByText("Spend crypto in real life")).toBeVisible();
     expect(
-      screen.getByText(/Explore our crypto cards and find the one that suits you best/),
+      screen.getByText(/Explore our crypto cards and find the one that suits you best./),
     ).toBeVisible();
     expect(screen.getByRole("img", { name: /card image/i })).toBeVisible();
   });
 
-  it("should render Explore Cards and I already have a card buttons", () => {
+  it("should render Explore Cards and I have a card buttons", () => {
     render(<CardPage />);
 
     expect(screen.getByRole("button", { name: "Explore Cards" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "I already have a card" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "I have a card" })).toBeInTheDocument();
   });
 
   it("should navigate to card-program providers list when clicking Explore Cards", async () => {
@@ -54,10 +54,10 @@ describe("Card feature integration", () => {
     });
   });
 
-  it("should navigate to cl-card when clicking I already have a card", async () => {
+  it("should navigate to cl-card when clicking I have a card", async () => {
     const { user } = render(<CardPage />);
 
-    await user.click(screen.getByRole("button", { name: "I already have a card" }));
+    await user.click(screen.getByRole("button", { name: "I have a card" }));
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith("/card/cl-card", {

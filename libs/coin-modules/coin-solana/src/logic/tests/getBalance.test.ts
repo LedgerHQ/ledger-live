@@ -22,6 +22,7 @@ describe("getBalance (MSW integration)", () => {
         getBalance: () => ({ context: { slot: 100 }, value: 2_000_000_000 }),
         getMinimumBalanceForRentExemption: () => 890880,
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
+        getProgramAccounts: () => [],
       }),
     );
 
@@ -42,6 +43,7 @@ describe("getBalance (MSW integration)", () => {
         getBalance: () => ({ context: { slot: 100 }, value: 100_000 }),
         getMinimumBalanceForRentExemption: () => 890880,
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
+        getProgramAccounts: () => [],
       }),
     );
 
@@ -64,6 +66,7 @@ describe("getBalance (MSW integration)", () => {
         },
         getMinimumBalanceForRentExemption: () => 890880,
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
+        getProgramAccounts: () => [],
       }),
     );
 
@@ -112,6 +115,7 @@ describe("getBalance (MSW integration)", () => {
             }
             return emptyTokenAccounts();
           },
+          getProgramAccounts: () => [],
         }),
       );
 
@@ -127,6 +131,119 @@ describe("getBalance (MSW integration)", () => {
         value: 5_000_000n,
         asset: { type: "spl-token", assetReference: USDC_MINT, assetOwner: TEST_ADDRESS },
       });
+    });
+  });
+
+  describe("Stake account balances", () => {
+    const STAKE_PUBKEY = "AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ";
+    const VOTER_PUBKEY = "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4";
+
+    function stakeAccountRpcEntry(lamports: number) {
+      return {
+        pubkey: STAKE_PUBKEY,
+        account: {
+          lamports,
+          data: {
+            parsed: {
+              type: "delegated",
+              info: {
+                meta: {
+                  rentExemptReserve: "2282880",
+                  authorized: { staker: TEST_ADDRESS, withdrawer: TEST_ADDRESS },
+                  lockup: {
+                    unixTimestamp: 0,
+                    epoch: 0,
+                    custodian: "11111111111111111111111111111111",
+                  },
+                },
+                stake: {
+                  delegation: {
+                    voter: VOTER_PUBKEY,
+                    stake: String(lamports - 2282880),
+                    activationEpoch: "300",
+                    deactivationEpoch: "18446744073709551615",
+                    warmupCooldownRate: 0.25,
+                  },
+                  creditsObserved: 100000,
+                },
+              },
+            },
+            program: "stake",
+            space: 200,
+          },
+          owner: "Stake11111111111111111111111111111111111111",
+          executable: false,
+          rentEpoch: 0,
+        },
+      };
+    }
+
+    function stakeHistoryAccountInfo() {
+      return {
+        context: { slot: 100 },
+        value: {
+          lamports: 1000000,
+          data: {
+            parsed: {
+              type: "stakeHistory",
+              info: [
+                {
+                  epoch: 400,
+                  stakeHistory: { effective: 100000000000, activating: 0, deactivating: 0 },
+                },
+              ],
+            },
+            program: "stake",
+            space: 1000,
+          },
+          owner: "SysvarStakeHistory1111111111111111111111111",
+          executable: false,
+          rentEpoch: 0,
+        },
+      };
+    }
+
+    function stakeHandlers(stakeLamports: number) {
+      return {
+        getBalance: () => ({ context: { slot: 100 }, value: 1_000_000_000 }),
+        getMinimumBalanceForRentExemption: () => 890880,
+        getTokenAccountsByOwner: () => emptyTokenAccounts(),
+        getProgramAccounts: () => [stakeAccountRpcEntry(stakeLamports)],
+        getAccountInfo: () => stakeHistoryAccountInfo(),
+        getEpochInfo: () => ({
+          epoch: 400,
+          slotIndex: 100,
+          slotsInEpoch: 432000,
+          absoluteSlot: 172800100,
+          blockHeight: 160000000,
+          transactionCount: 0,
+        }),
+        getLatestBlockhash: () => ({
+          context: { slot: 100 },
+          value: {
+            blockhash: "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3",
+            lastValidBlockHeight: 200000000,
+          },
+        }),
+        getFeeForMessage: () => ({ context: { slot: 100 }, value: 5000 }),
+        getRecentPrioritizationFees: () => [],
+        simulateTransaction: () => ({
+          context: { slot: 100 },
+          value: { err: null, logs: [], unitsConsumed: 200000 },
+        }),
+      };
+    }
+
+    it("should include staked balance in totalBalance and locked", async () => {
+      const stakeLamports = 2_000_000_000;
+      server.use(rpcHandler(stakeHandlers(stakeLamports)));
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      const native = result[0];
+      expect(native.value).toBe(BigInt(1_000_000_000 + stakeLamports));
+      expect(native.asset).toEqual({ type: "native" });
+      expect(native.locked).toBeGreaterThan(BigInt(890880 + stakeLamports));
     });
   });
 
@@ -172,6 +289,7 @@ describe("getBalance (MSW integration)", () => {
             }
             return emptyTokenAccounts();
           },
+          getProgramAccounts: () => [],
         }),
       );
 

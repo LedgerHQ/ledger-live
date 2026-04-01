@@ -8,7 +8,7 @@ node_modules
 /temp
 .idea
 .eslintcache
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 rce
 .env
 coverage

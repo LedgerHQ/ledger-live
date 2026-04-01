@@ -1,13 +1,11 @@
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import {
-  DEFAULT_SELECTED_POOL_ID,
   LEDGER_POOL_IDS,
   StakePool,
   fetchPoolDetails,
 } from "@ledgerhq/live-common/families/cardano/staking";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
@@ -38,29 +36,6 @@ export function concatUserAndLedgerPoolIds(
   return userLastUsedPool ? [userLastUsedPool, ...ledgerPoolIds] : [...ledgerPoolIds];
 }
 
-export function putUserPoolAtFirstPositionInPools(
-  pools: StakePool[],
-  firstPoolId: string,
-): StakePool[] {
-  const index = pools.findIndex(pool => pool.poolId === firstPoolId);
-  if (index === -1) {
-    return pools;
-  }
-
-  const pool = { ...pools[index] };
-  return [pool, ...pools.filter((_, i) => i !== index)];
-}
-
-export async function fetchAndSortPools(
-  currency: CryptoCurrency,
-  poolIds: string[],
-  userLastUsedPoolId: string,
-) {
-  const response = await fetchPoolDetails(currency, poolIds);
-  const sortedPools = putUserPoolAtFirstPositionInPools(response.pools, userLastUsedPoolId);
-  return sortedPools;
-}
-
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
   const unit = useAccountUnit(account);
   const [showAll, setShowAll] = useState(false);
@@ -74,13 +49,11 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
 
   useEffect(() => {
     setUserAndLedgerPoolsLoading(true);
-    fetchAndSortPools(account.currency, userAndLedgerPoolIds, DEFAULT_SELECTED_POOL_ID).then(
-      (sortedPools: StakePool[]) => {
-        setUserAndLedgerPools(sortedPools);
-        onChangeValidator(sortedPools[0]);
-        setUserAndLedgerPoolsLoading(false);
-      },
-    );
+    fetchPoolDetails(account.currency, userAndLedgerPoolIds).then(poolDetails => {
+      setUserAndLedgerPools(poolDetails.pools);
+      onChangeValidator(poolDetails.pools[0]);
+      setUserAndLedgerPoolsLoading(false);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

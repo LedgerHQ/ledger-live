@@ -25,6 +25,7 @@ import {
   getNewChangeUtxos,
 } from "../assert";
 import { buildSigner } from "../signer";
+import { setupServer } from "msw/node";
 
 type BitcoinCoinConfig = {
   info: BitcoinConfigInfo;
@@ -224,14 +225,11 @@ const makeInternalScenarioTransactions = async () => {
   const scenarioReplaceBtcTransaction: BitcoinScenarioTransaction = {
     name: "Send Replace BTC transaction",
     expect: async (previousAccount, currentAccount) => {
-      const txId = await sendTransaction((currentAccount as BitcoinAccount).freshAddress, 0.003);
+      const txId = await sendTransaction(currentAccount.freshAddress, 0.003);
       // Waiting a bit before replacing...
       await waitForTxInMempool(txId, 10000); // waits up to 10s
 
-      const replacementTxid = await replaceTransaction(
-        txId,
-        (currentAccount as BitcoinAccount).freshAddress,
-      );
+      const replacementTxid = await replaceTransaction(txId, currentAccount.freshAddress);
       const mempool = await getRawMempool();
       expect(mempool.includes(txId)).toBe(false);
       expect(mempool.includes(replacementTxid)).toBe(true);
@@ -248,10 +246,7 @@ const makeInternalScenarioTransactions = async () => {
       // Waiting a bit before replacing...
       await waitForTxInMempool(txId, 10000); // waits up to 10s
 
-      const replacementTxid = await replaceTransaction(
-        txId,
-        (currentAccount as BitcoinAccount).freshAddress,
-      );
+      const replacementTxid = await replaceTransaction(txId, currentAccount.freshAddress);
       const mempool = await getRawMempool();
       expect(mempool.includes(txId)).toBe(false);
       expect(mempool.includes(replacementTxid)).toBe(true);
@@ -263,6 +258,8 @@ const makeInternalScenarioTransactions = async () => {
 
   return [scenarioReplaceBtcTransaction, scenarioCancelBtcTransaction];
 };
+
+const mockServer = setupServer();
 
 export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   name: "Ledger Live Basic Bitcoin Transactions",
@@ -330,10 +327,18 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   getTransactions: () => makeScenarioTransactions(),
   getInternalTransactions: () => makeInternalScenarioTransactions(),
   beforeAll: async account => {
-    firstUtxoHash = (account as BitcoinAccount).bitcoinResources.utxos[0].hash;
-    firstUtxoOutputIndex = (account as BitcoinAccount).bitcoinResources.utxos[0].outputIndex;
-    secondUtxoHash = (account as BitcoinAccount).bitcoinResources.utxos[1].hash;
-    secondUtxoOutputIndex = (account as BitcoinAccount).bitcoinResources.utxos[1].outputIndex;
+    mockServer.listen({
+      onUnhandledRequest: request => {
+        const hostname = new URL(request.url).hostname;
+        if (["127.0.0.1", "localhost"].includes(hostname)) return;
+        throw new Error("Unhandled request");
+      },
+    });
+
+    firstUtxoHash = account.bitcoinResources.utxos[0].hash;
+    firstUtxoOutputIndex = account.bitcoinResources.utxos[0].outputIndex;
+    secondUtxoHash = account.bitcoinResources.utxos[1].hash;
+    secondUtxoOutputIndex = account.bitcoinResources.utxos[1].outputIndex;
   },
   afterEach: async () => {
     // Mine 2 blocks after each transaction to confirm it
@@ -342,6 +347,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   },
   afterAll: async account => {
     await waitForExplorerSync();
+    mockServer.close();
     expect(account.operations.length).toBeGreaterThanOrEqual(14);
   },
   beforeEach: async () => {

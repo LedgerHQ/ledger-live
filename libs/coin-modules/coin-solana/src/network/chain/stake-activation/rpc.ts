@@ -31,10 +31,10 @@ export interface StakeActivationData {
   inactive: number;
 }
 
-interface StakeAccount {
+export interface StakeAccount {
   account: ParsedOnChainStakeAccountWithInfo;
   activation: StakeActivationData;
-  reward: null;
+  reward: { amount: number } | null;
 }
 
 function toStakeAccount(

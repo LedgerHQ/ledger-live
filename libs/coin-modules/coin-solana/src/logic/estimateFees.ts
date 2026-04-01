@@ -1,4 +1,5 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import { isStakingTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { log } from "@ledgerhq/logs";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
@@ -342,13 +343,13 @@ async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {
 }
 
 function mapIntentToTxKind(intent: TransactionIntent): TransactionModel["kind"] {
-  if (intent.intentType === "transaction") {
-    if (intent.asset.type !== "native") {
-      return "token.transfer";
-    }
-    return "transfer";
+  if (isStakingTransactionIntent(intent) || intent.type === "stake.withdraw") {
+    return intent.type as TransactionModel["kind"];
   }
-  throw new Error(`Unsupported intent type: ${intent.intentType}`);
+  if (intent.asset.type !== "native") {
+    return "token.transfer";
+  }
+  return "transfer";
 }
 
 /**

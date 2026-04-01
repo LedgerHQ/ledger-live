@@ -29,7 +29,7 @@ jest.mock("../logic/utils", () => ({
 const mockRegisterNewAccount = jest.mocked(apiClient.registerNewAccount);
 const mockGetAccountJWT = jest.mocked(apiClient.getAccountJWT);
 const mockGetRecordScannerStatus = jest.mocked(apiClient.getRecordScannerStatus);
-const mockGetPublicKey = jest.mocked(apiClient.getPublicKey);
+const mockGetScannerPublicKey = jest.mocked(apiClient.getScannerPublicKey);
 const mockEncryptRegistrationPayload = jest.mocked(sdkClient.encryptRegistrationPayload);
 const mockGenerateUniqueUsername = jest.mocked(logicUtils.generateUniqueUsername);
 const mockRegisterForScanningAccountRecords = jest.mocked(
@@ -355,7 +355,7 @@ describe("network/utils", () => {
     beforeEach(() => {
       jest.clearAllMocks();
       mockGenerateUniqueUsername.mockReturnValue(mockUsername);
-      mockGetPublicKey.mockResolvedValue({ public_key: mockPublicKey, key_id: mockKeyId });
+      mockGetScannerPublicKey.mockResolvedValue({ public_key: mockPublicKey, key_id: mockKeyId });
       mockEncryptRegistrationPayload.mockResolvedValue({ encrypted: mockEncryptedData });
     });
 
@@ -633,8 +633,8 @@ describe("network/utils", () => {
           provableApi: existingProvableApi,
         });
 
-        expect(mockGetPublicKey).toHaveBeenCalledTimes(1);
-        expect(mockGetPublicKey).toHaveBeenCalledWith(mockCurrency, mockJWT.token);
+        expect(mockGetScannerPublicKey).toHaveBeenCalledTimes(1);
+        expect(mockGetScannerPublicKey).toHaveBeenCalledWith(mockCurrency, mockJWT.token);
         expect(mockEncryptRegistrationPayload).toHaveBeenCalledTimes(1);
         expect(mockEncryptRegistrationPayload).toHaveBeenCalledWith({
           currency: mockCurrency,
@@ -828,6 +828,48 @@ describe("network/utils", () => {
                 outputs: [],
                 program: "credits.aleo",
                 function: "transfer_private_to_public",
+              },
+            ],
+          },
+        }),
+      );
+
+      const result = await enrichPrivateRecord({
+        currency: mockCurrency,
+        rawRecord,
+        address: mockEnrichAddress,
+        viewKey: mockViewKey,
+      });
+
+      expect(result).toBeNull();
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+      expect(mockDecryptRecord).not.toHaveBeenCalled();
+    });
+
+    it("should return null when sender is this address and transition inputs at recipient/amount indices have no value field (record type)", async () => {
+      const rawRecord = getMockedRecord({
+        function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        sender: mockEnrichAddress,
+        transition_index: 0,
+      });
+      mockGetTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails(rawRecord.transaction_id, {
+          execution: {
+            transitions: [
+              {
+                id: "au1",
+                scm: "s",
+                tcm: "t",
+                tpk: "tpk1",
+                inputs: [
+                  { id: "in0", type: "record", tag: "record_tag_0" }, // index 0
+                  { id: "in1", type: "record", tag: "record_tag_1" }, // RECIPIENT_ARG_INDEX = 1, no value field
+                  { id: "in2", type: "private", value: "ciphertext_amount" }, // AMOUNT_ARG_INDEX = 2
+                ],
+                outputs: [],
+                program: "credits.aleo",
+                function: "transfer_private",
               },
             ],
           },
@@ -1477,13 +1519,56 @@ describe("network/utils", () => {
       expect(mockDecryptCiphertext).not.toHaveBeenCalled();
     });
 
+    it("should pass PUBLIC_TO_PRIVATE operation through unchanged when recipient input has no value field (record type)", async () => {
+      const txHash = "at1record_type_input";
+      const publicOp = getMockedOperation({
+        hash: txHash,
+        type: "OUT",
+        extra: { functionId: "transfer_public_to_private", transactionType: "public" },
+      });
+      const mockDetails = getMockedTransactionDetails(txHash, {
+        block_height: 100,
+        execution: {
+          transitions: [
+            {
+              id: "au1",
+              scm: "s",
+              tcm: "t",
+              tpk: "tpk1",
+              inputs: [{ id: "in0", type: "record", tag: "some_record_tag" }],
+              outputs: [],
+              program: "credits.aleo",
+              function: "transfer_public_to_private",
+            },
+          ],
+        },
+      });
+
+      mockGetTransactionById.mockResolvedValueOnce(mockDetails);
+
+      const result = await patchPublicOperations({
+        currency: mockCurrency,
+        publicOperations: [publicOp],
+        privateRecords: [],
+        address: patchAddress,
+        ledgerAccountId,
+        viewKey: patchViewKey,
+      });
+
+      expect(result).toEqual([publicOp]);
+      expect(mockDecryptCiphertext).not.toHaveBeenCalled();
+    });
+
     it("should pass PRIVATE_TO_PUBLIC through as-is when no matching private record", async () => {
       const txHash = "at1priv_to_pub_no_match";
       const publicOp = getMockedOperation({
         id: "priv_to_pub_no_match",
         hash: txHash,
         type: "IN",
-        extra: { functionId: "transfer_private_to_public", transactionType: "public" },
+        extra: {
+          functionId: "transfer_private_to_public",
+          transactionType: "public",
+        },
       });
       const mockDetails = getMockedTransactionDetails(txHash, {
         execution: {

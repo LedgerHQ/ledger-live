@@ -1,5 +1,6 @@
 import {
   CoinSelect,
+  Custom,
   DeepFirst,
   Merge,
   type Account as WalletAccount,
@@ -25,6 +26,7 @@ const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: U
     [bitcoinPickingStrategy.MERGE_OUTPUTS]: Merge,
     [bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST]: DeepFirst,
     [bitcoinPickingStrategy.OPTIMIZE_SIZE]: CoinSelect,
+    [bitcoinPickingStrategy.CUSTOM]: Custom,
   }[utxoStrategy.strategy];
   if (!handler) throw new Error("Unsupported Bitcoin UTXO picking strategy");
 

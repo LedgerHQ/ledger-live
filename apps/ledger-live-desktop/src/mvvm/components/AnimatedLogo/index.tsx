@@ -45,6 +45,7 @@ export function AnimatedLogo({ collapsed }: AnimatedLogoProps) {
       height={35}
       width={100}
       eventListeners={eventListeners}
+      style={{ flexShrink: 0 }}
     />
   );
 }

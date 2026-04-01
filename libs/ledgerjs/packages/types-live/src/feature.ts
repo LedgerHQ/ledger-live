@@ -88,6 +88,8 @@ export type CurrencyFeatures = {
   currencyEnergyWeb: DefaultFeature;
   currencyAstar: DefaultFeature;
   currencyMetis: DefaultFeature;
+  currencyMantle: DefaultFeature;
+  currencyMantleSepolia: DefaultFeature;
   currencyBoba: DefaultFeature;
   currencyMoonriver: DefaultFeature;
   currencyVelasEvm: DefaultFeature;
@@ -137,6 +139,7 @@ export type CurrencyFeatures = {
   currencySonic: DefaultFeature;
   currencySonicBlaze: DefaultFeature;
   currencySui: DefaultFeature;
+  currencySuiTestnet: DefaultFeature;
   currencyMina: DefaultFeature;
   currencyBabylon: DefaultFeature;
   currencySeiNetworkEvm: DefaultFeature;
@@ -828,6 +831,7 @@ type Feature_Wallet40_Params = {
   lazyOnboarding: boolean;
   balanceRefreshRework: boolean;
   assetSection: boolean;
+  operationsList: boolean;
 
   // Specifics
   brazePlacement?: boolean;

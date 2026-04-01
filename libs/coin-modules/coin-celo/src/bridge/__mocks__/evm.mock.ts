@@ -1,7 +1,7 @@
 import type { SwapOperation, TokenAccount, Account } from "@ledgerhq/types-live";
 
 export const mockTokenEvmLogic = jest.fn();
-jest.mock("@ledgerhq/coin-evm/logic/index", () => {
+jest.mock("../getTokenFromAsset", () => {
   return {
     getTokenFromAsset: () => mockTokenEvmLogic(),
   };

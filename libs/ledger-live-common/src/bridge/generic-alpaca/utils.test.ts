@@ -236,7 +236,7 @@ describe("Alpaca utils", () => {
           parentRecipient: "contract-address",
         },
       ],
-    ])("builds an optimistic %s operation with %s mode ", (_s, mode, params, expected) => {
+    ])("builds an optimistic %s operation with %s mode", (_s, mode, params, expected) => {
       const operation = buildOptimisticOperation(
         {
           id: "parent-account-id",

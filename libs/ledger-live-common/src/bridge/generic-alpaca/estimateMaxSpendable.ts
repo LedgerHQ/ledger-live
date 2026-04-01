@@ -5,6 +5,7 @@ import { createTransaction } from "./createTransaction";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
+import { getBridgeApi } from "./bridge";
 
 export function genericEstimateMaxSpendable(
   network,
@@ -16,6 +17,7 @@ export function genericEstimateMaxSpendable(
     }
     const mainAccount = getMainAccount(account, parentAccount);
     const alpacaApi = getAlpacaApi(mainAccount.currency.id, kind);
+    const bridgeApi = getBridgeApi(mainAccount.currency, network);
     const draftTransaction = {
       ...createTransaction(account),
       ...transaction,
@@ -31,10 +33,11 @@ export function genericEstimateMaxSpendable(
 
       fees = new BigNumber(value.toString());
     }
+
     // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
     const { amount } = await alpacaApi.validateIntent(
       transactionToIntent(account, { ...draftTransaction }, alpacaApi.computeIntentType),
-      extractBalances(account, alpacaApi.getAssetFromToken),
+      extractBalances(account, bridgeApi.getAssetFromToken),
       bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),
     );
     if (["stellar", "tezos", "evm"].includes(network)) {

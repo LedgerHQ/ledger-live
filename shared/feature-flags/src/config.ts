@@ -17,7 +17,7 @@ let resolutionConfig: ResolutionConfig = {};
  * Platform, version, language, and env flags for resolution.
  */
 export function setResolutionConfig(config: ResolutionConfig): void {
-  resolutionConfig = config;
+  resolutionConfig = Object.freeze(config);
 }
 
 /**

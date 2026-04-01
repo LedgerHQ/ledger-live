@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { StellarMemoKind } from "../types/bridge";
+import { StellarMemoKind } from "../types/model";
 
 export const MEMO_TEXT_MAXIMUM_SIZE = 28;
 export const MEMO_HASH_FIXED_SIZE = 64;

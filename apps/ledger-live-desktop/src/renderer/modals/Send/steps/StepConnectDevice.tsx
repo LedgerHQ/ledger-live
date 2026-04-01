@@ -14,6 +14,7 @@ export default function StepConnectDevice({
   onConfirmationHandler,
   onFailHandler,
   currencyName,
+  modalName,
 }: StepProps) {
   return (
     <>
@@ -23,6 +24,7 @@ export default function StepConnectDevice({
         parentAccount={parentAccount}
         transaction={transaction}
         status={status}
+        modalName={modalName}
         transitionTo={transitionTo}
         onOperationBroadcasted={onOperationBroadcasted}
         onTransactionError={onTransactionError}

@@ -1,7 +1,16 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 
 const testConfig = {
-  tmsLinks: ["B2CQA-4345", "B2CQA-4339", "B2CQA-4346", "B2CQA-4343", "B2CQA-4341", "B2CQA-4340"],
+  tmsLinks: [
+    "B2CQA-4345",
+    "B2CQA-4339",
+    "B2CQA-4346",
+    "B2CQA-4343",
+    "B2CQA-4341",
+    "B2CQA-4340",
+    "B2CQA-4351",
+    "B2CQA-4350",
+  ],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
@@ -61,7 +70,7 @@ describe("Wallet 4.0 - Portfolio", () => {
 
   it("navigates to the buy screen", async () => {
     await app.portfolio.pressQuickActionBuyButton();
-    await app.buySell.expectBuySellScreenToBeVisible("Buy");
+    await app.buySell.expectBuyScreenToBeVisible();
   });
 
   it("navigates to the swap screen", async () => {

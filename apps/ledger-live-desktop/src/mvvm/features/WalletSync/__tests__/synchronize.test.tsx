@@ -16,9 +16,14 @@ jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeHostInstance: jest.fn(),
 }));
 
-jest.useFakeTimers({ advanceTimers: true });
-
 describe("Synchronize flow", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it("should open drawer and should do Synchronize flow with QRCode", async () => {
     let resolveQRCodeFlowPromise: unknown = null;
     let requestDisplayDigits: unknown = null;
@@ -41,6 +46,7 @@ describe("Synchronize flow", () => {
           },
         },
       },
+      userEventOptions: { advanceTimers: jest.advanceTimersByTime },
     });
 
     await user.click(screen.getByRole("button", { name: "Manage" }));

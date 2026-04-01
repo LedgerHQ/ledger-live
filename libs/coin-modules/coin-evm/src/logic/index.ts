@@ -7,7 +7,6 @@ export * from "./listOperations";
 export * from "./craftTransaction";
 export * from "./getNextSequence";
 export * from "./validateIntent";
-export * from "./getTokenFromAsset";
 export * from "./getStakes";
 export * from "./computeIntentType";
 export * from "./refreshOperations";

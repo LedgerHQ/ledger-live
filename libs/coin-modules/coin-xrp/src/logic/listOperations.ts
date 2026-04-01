@@ -248,6 +248,7 @@ const convertFeeToCoreOperation = (operation: XrplOperation): Operation => {
     tx: {
       hash,
       fees: BigInt(Fee),
+      feesPayer: Account,
       date: new Date(toEpochDate),
       block: {
         time: new Date(close_time_iso),

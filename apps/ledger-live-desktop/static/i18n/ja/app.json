@@ -826,7 +826,7 @@
     "payDescription" : "暗号資産カードを使用して、オンラインや実店舗でショッピング",
     "exploreCards" : "カードを探す",
     "iAlreadyHaveACard" : "すでにカードをお持ちの方",
-    "unlockLiquidity" : "資産を自由に使う",
+    "unlockLiquidity" : "実生活で暗号資産を送付",
     "exploreCryptoCardsDescription" : "お客様にぴったりの暗号資産カードを見つけましょう"
   },
   "lend" : {
@@ -2178,7 +2178,7 @@
     "subtitle" : "Ledger Walletの機能を最大限にご活用いただくには、Ledgerデバイスを接続してください。",
     "0" : {
       "title" : "完全な所有権",
-      "desc" : "秘密鍵がデバイスの外に出ることはありません。"
+      "desc" : "秘密鍵は、自分自身で管理することが可能です。"
     },
     "1" : {
       "title" : "安全な取引",
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "銀行送金",
-          "description" : "現金送金でステーブルコインを受け取る"
+          "title" : "銀行送金経由",
+          "description" : "簡単に現金送金でステーブルコインを受け取る"
         },
         "fromCrypto" : {
-          "title" : "暗号資産を受け取る"
+          "title" : "暗号資産アドレス経由"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "通知コンテンツカード",
             "action" : "アクションコンテンツカード",
-            "portfolio" : "ポートフォリオコンテンツカード",
+            "portfolio" : "ポートフォリオ",
+            "bottomPortfolio" : "ポートフォリオの下部",
             "title" : "タイトル",
             "description" : "説明",
             "order" : "注文",
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "数量が少なすぎます。少なくとも{{minimumAmount}}を送金してください。"
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "この関連トークンアカウントは別のトークンを保持しています"
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "資金が不足しています。"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "ペアリングの有効期限が切れました",
+      "description" : "Concordium ID アプリへの接続がタイムアウトしました。もう一度お試しください。"
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "セッションの有効期限が切れました",
+      "description" : "Concordium ID アプリのセッションは終了しました。再度ペアリングしてください。"
     },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "資金が不足しています。最低必要残高は0.02TONです。"
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "数量についての有効なプライベート記録を選択します。"
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "手数料についての有効なプライベート記録を選択してください。"
     },
     "BackupAppDataError" : {
       "title" : "アプリデータのバックアップ中にエラーが発生しました"
@@ -8065,14 +8083,17 @@
   "portfolio" : {
     "title" : "ホーム",
     "today" : "今日",
+    "carousel" : {
+      "title" : "お客様へ"
+    },
     "addAccountCta" : "暗号資産アカウントを追加",
-    "noBalanceTitle" : "暗号資産を保護",
+    "noBalanceTitle" : "まずはウォレットへの入金から始めましょう",
     "perpsEntry" : {
       "title" : "無期限先物",
       "description" : "レバレッジ取引",
       "cta" : "アプリ一覧"
     },
-    "noDeviceTitle" : "最も安全なウォレット"
+    "noDeviceTitle" : "安全な暗号資産ウォレット"
   },
   "marketBanner" : {
     "title" : "市場を見る",
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "極度の恐怖",
       "fear" : "恐怖",
+      "cautious" : "慎重",
       "neutral" : "中立",
-      "greed" : "貪欲",
-      "extremeGreed" : "極度の貪欲"
+      "optimistic" : "楽観",
+      "greedy" : "貪欲"
     },
     "dialog" : {
       "title" : "市場ムード指数",
-      "content" : "市場ムード指数は、市場の心理状態を示しています。0から100の範囲で推移し、数値が低いほど「極度の恐怖」を、高いほど「極度の貪欲」を示します。",
+      "content" : "トレンドとアクティビティに基づいて、全体的な市場心理を0から100まで表示します。これを使って、市場がどのように動作しているかを理解してください。低い価値は恐怖を示し、高い価値は欲望を示します。",
       "cta" : "了解"
     }
   },
@@ -8120,8 +8141,37 @@
       "balance" : "残高",
       "value" : "価値",
       "trend" : "1日のトレンド",
-      "trendTooltip" : "24時間の残高変更"
+      "trendTooltip" : "過去24時間の残高の変動。"
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "暗号資産アカウント",
+    "tableActions" : {
+      "searchAddress" : "アドレスを検索",
+      "addAddress" : "アドレスを追加"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "名前",
+        "address" : "アドレス",
+        "value" : "価値"
+      },
+      "editName" : "名前を編集",
+      "emptyState" : "暗号資産アドレスがありません",
+      "emptySearchState" : "検索条件に一致するアカウントがありません。"
+    },
+    "editName" : {
+      "title" : "アドレス名を編集",
+      "input" : "アドレス名",
+      "suggestions" : {
+        "trading" : "{{asset}}トレード",
+        "savings" : "{{asset}}貯金"
+      },
+      "cta" : "確認"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "暗号資産"
   },
   "nftEntryPoint" : {
     "title" : "NFT（非代替性トークン）",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "履歴",
+      "tooltip" : "履歴"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。\n 影響を受けたアカウント：{{accounts}}クリックして再試行",
-      "emptyErrorToolTip" : "一時的なネットワークの問題が発生しました。資産への影響はありません。\n クリックして再試行",
-      "upToDate" : "最新の状態",
-      "lastSync" : "最終同期：{{timeAgo}}クリックして更新"
+      "errorToolTip" : "資産は安全です。これは一時的な同期の問題です。\n影響を受けるアカウント： {{accounts}}クリックして再試行",
+      "emptyErrorToolTip" : "資産は安全です。これは一時的な同期の問題です。\nクリックして再試行",
+      "upToDate" : "ポートフォリオは最新です",
+      "lastSync" : "最終同期：{{timeAgo}}クリックして更新",
+      "refreshing" : "更新中..."
     },
     "notificationIndicator" : {
       "tooltip" : "通知"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "プライベート残高",
         "public" : "公開残高",
-        "lastUpdate" : "最終更新日",
+        "lastUpdate" : "最終更新日：{{label}}",
+        "recently" : "最近",
         "switchBalance" : "残高元を切り替える"
+      },
+      "recordPicker" : {
+        "label" : "利用できる記録",
+        "noRecords" : "該当する記録がありません",
+        "noRecordsAlert" : "利用可能な記録がありません。開始するには、自己送金を行うか、個人の資金を受け取ってください。",
+        "alert" : "最大数量は、選択した記録の最大価値によって異なります。Ledgerユーザーの手数料は、Provableが負担します。",
+        "recordsLimit" : "最大{{max}}のレコードを表示"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "パブリック",
         "private" : "プライベート"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "送付元"
+      },
+      "summary" : {
+        "coveredByProvable" : "Provable提供",
+        "proofGenerationWarning" : "Aleoのトランザクションにはプルーフの生成が必要です。少し時間がかかる場合があります。"
       }
     }
   },
@@ -8312,6 +8384,43 @@
     "cta" : {
       "continue" : "続行",
       "explore" : "新しいポートフォリオを見る"
+    }
+  },
+  "history" : {
+    "title" : "トランザクション",
+    "pending" : "保留中のトランザクション",
+    "pending_other" : "保留中のトランザクション",
+    "columns" : {
+      "type" : "種類",
+      "address" : "アドレス",
+      "amount" : "数量",
+      "value" : "価値"
+    },
+    "address" : {
+      "from" : "送付元",
+      "to" : "送付先"
+    },
+    "emptyState" : {
+      "title" : "まだトランザクションがありません",
+      "description" : "後ほど、トランザクションをご確認ください。"
+    },
+    "actionsBar" : {
+      "csv" : "CSV"
+    },
+    "exportDialog" : {
+      "title" : "取引履歴",
+      "description" : "エクスポートに含めるアカウントを選択する",
+      "disclaimer" : "推定値のみ。カウンターバリューは、情報提供の目的でKaikoによって提供されます。このデータを税務、法務、または会計の目的に使用しないでください。",
+      "accountsToInclude" : "含まれるアカウント",
+      "selectAll" : "すべてを選択 ({{count}})",
+      "deselectAll" : "全ての選択解除 ({{count}})",
+      "export" : "エクスポート履歴",
+      "successTitle" : "取引履歴が正常に保存されました。",
+      "successDescription" : "取引履歴のCSVファイルは、選択したフォルダに正常に保存されました。",
+      "done" : "完了",
+      "errorTitle" : "問題が発生しました。",
+      "errorDescription" : "トランザクション履歴のエクスポート中にエラーが発生しました。もう一度お試しください。",
+      "tryAgain" : "再試行"
     }
   }
 }

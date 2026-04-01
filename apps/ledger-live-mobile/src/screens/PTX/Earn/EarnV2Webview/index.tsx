@@ -3,14 +3,14 @@ import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/provider
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { ComponentProps, Fragment, useRef, useCallback } from "react";
-import { Animated, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
-import { EarnBackground } from "../EarnBackground";
+import { LiveAppBackground } from "LLM/components/LiveAppBackground";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -19,6 +19,11 @@ type Props = {
   hideMainNavigator?: boolean;
   appManifestNotFoundError: Error;
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, overflow: "visible" },
+  contentContainer: { flex: 1, zIndex: 1 },
+});
 
 export const EarnV2Webview = ({
   manifest,
@@ -55,9 +60,9 @@ export const EarnV2Webview = ({
   };
 
   return (
-    <View testID="earn-screen" style={{ flex: 1, overflow: "visible" }}>
-      {isPtxUiV2 && !hideMainNavigator && <EarnBackground scrollY={scrollY} />}
-      <View style={{ flex: 1, zIndex: 1 }} pointerEvents="box-none">
+    <View testID="earn-screen" style={styles.container}>
+      {isPtxUiV2 && !hideMainNavigator && <LiveAppBackground type="earn" scrollY={scrollY} />}
+      <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest ? (
           <Fragment>
             <TrackScreen category="EarnDashboard" name="Earn" />

@@ -1,5 +1,4 @@
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { fetchAccount } from "../network";
 import { getBalance } from "./getBalance";
 
@@ -9,7 +8,7 @@ jest.mock("../network", () => ({
 
 beforeAll(() => {
   // Setup mock store for unit tests
-  const mockStore: CryptoAssetsStore = {
+  const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
     findTokenById: async () => undefined,
     findTokenByAddressInCurrency: async () => undefined,
     getTokensSyncHash: async () => "",

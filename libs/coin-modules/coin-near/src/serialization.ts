@@ -1,6 +1,6 @@
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { NearAccount, NearAccountRaw, NearResources, NearResourcesRaw } from "./types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toNearResourcesRaw(r: NearResources): NearResourcesRaw {
   const { stakedBalance, pendingBalance, availableBalance, storageUsageBalance, stakingPositions } =

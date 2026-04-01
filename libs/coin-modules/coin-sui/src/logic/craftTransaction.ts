@@ -11,10 +11,12 @@ export async function craftTransaction(
     recipient,
     sender,
     type,
+    currencyId,
     ...extra
   }: TransactionIntent & {
     useAllAmount?: boolean;
     stakedSuiId?: string;
+    currencyId?: string;
   },
   withObjects: boolean = false,
   resolution?: Resolution,
@@ -34,5 +36,6 @@ export async function craftTransaction(
     },
     withObjects,
     resolution,
+    currencyId,
   );
 }

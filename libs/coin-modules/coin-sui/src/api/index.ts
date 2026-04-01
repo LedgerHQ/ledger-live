@@ -27,7 +27,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    broadcast,
+    broadcast: (tx: string) => broadcast(tx),
     combine,
     craftTransaction: craft,
     craftRawTransaction: (

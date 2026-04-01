@@ -4,10 +4,11 @@ import { QuickActionsCtas, TransferDrawer } from "LLM/features/QuickActions";
 import MarketBanner from "LLM/features/MarketBanner";
 import { ScreenName } from "~/const";
 import { PortfolioBannersSection } from "../PortfolioBannersSection";
-import { PortfolioCryptosSection } from "../PortfolioCryptosSection";
+import { CryptoAddressesButton } from "LLM/features/WalletAssets/components/CryptoAddressesButton";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
-import { useTranslation } from "~/context/Locale";
 import TrackScreen from "~/analytics/TrackScreen";
+import { useTranslation } from "~/context/Locale";
+import { PortfolioEmptyAssetSections } from "./PortfolioEmptyAssetSections";
 
 type PortfolioNoAccountsContentProps = {
   readonly isLNSUpsellBannerShown: boolean;
@@ -33,21 +34,29 @@ const PortfolioNoAccountsContent = ({
       <TransferDrawer />
       <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
       <MarketBanner />
-      {shouldDisplayAssetSection && <PortfolioCryptosSection isEmptyState />}
-      <Button
-        appearance="gray"
-        size="lg"
-        lx={{
-          width: "full",
-          marginTop: "s24",
-          marginBottom: "s48",
-        }}
-        onPress={openAddModal}
-        testID="add-account-cta"
-      >
-        {t("account.emptyState.addCryptoAccount")}
-      </Button>
-      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} doesNotHaveAccount />
+      <PortfolioEmptyAssetSections shouldDisplayAssetSection={shouldDisplayAssetSection} />
+      {shouldDisplayAssetSection ? (
+        <Box lx={{ marginTop: "s24", marginBottom: "s48" }}>
+          <CryptoAddressesButton />
+        </Box>
+      ) : (
+        <>
+          <Button
+            appearance="gray"
+            size="lg"
+            lx={{ width: "full", marginTop: "s24", marginBottom: "s48" }}
+            onPress={openAddModal}
+            testID="add-account-cta"
+          >
+            {t("account.emptyState.addCryptoAccount")}
+          </Button>
+          <AddAccountDrawer
+            isOpened={isAddModalOpened}
+            onClose={closeAddModal}
+            doesNotHaveAccount
+          />
+        </>
+      )}
     </Box>
   );
 };

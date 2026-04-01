@@ -567,6 +567,7 @@ export enum ScreenName {
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
+  OperationsList = "OperationsList",
 }
 
 export enum NavigatorName {
@@ -701,4 +702,5 @@ export enum NavigatorName {
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
   Analytics = "Analytics",
+  OperationsHistory = "OperationsHistory",
 }
