@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { swapSetup, waitSwapReady } from "../../bridge/server";
+import { swapSetup } from "../../bridge/server";
 import { ApplicationOptions } from "page";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 
@@ -57,8 +57,7 @@ export async function beforeAllFunctionSwap(options: ApplicationOptions) {
     cliCommandsOnApp: options.cliCommandsOnApp,
   });
   await app.portfolio.waitForPortfolioPageToLoad();
-  const readyPromise = waitSwapReady();
-  await app.swap.openViaDeeplink();
   await swapSetup();
-  await readyPromise;
+  await app.swap.openViaDeeplink();
+  await app.swapLiveApp.expectSwapLiveApp();
 }
