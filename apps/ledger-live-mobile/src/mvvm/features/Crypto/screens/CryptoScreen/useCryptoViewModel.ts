@@ -4,7 +4,6 @@ import { useSelector } from "~/context/hooks";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
@@ -36,7 +35,6 @@ const TRACKING_PAGE_BY_VARIANT: Record<CryptoVariant, string> = {
 const useCryptoViewModel = ({ sourceScreenName, variant }: UseCryptoViewModelParams) => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const hasNoAccount = useSelector(hasNoAccountsSelector);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -82,7 +80,6 @@ const useCryptoViewModel = ({ sourceScreenName, variant }: UseCryptoViewModelPar
   return {
     assetsToDisplay,
     onItemPress,
-    hasNoAccount,
     isLoading: isLoadingStablecoinTickers,
     sourceScreenName,
     onNavigateBack: navigation.goBack,

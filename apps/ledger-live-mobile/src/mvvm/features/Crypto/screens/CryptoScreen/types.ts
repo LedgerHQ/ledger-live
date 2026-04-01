@@ -13,7 +13,6 @@ export type CryptoScreenNavigator = {
 export interface CryptoScreenViewData {
   assetsToDisplay: Asset[];
   onItemPress: (asset: Asset) => void;
-  hasNoAccount: boolean;
   isLoading: boolean;
   sourceScreenName: ScreenName | undefined;
   onNavigateBack: () => void;

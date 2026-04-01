@@ -2,12 +2,12 @@ import React from "react";
 import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 
-type ErrorStateProps = {
+type AssetErrorStateProps = {
   message: string;
   testID?: string;
 };
 
-export const ErrorState = ({ message, testID = "crypto-error-state" }: ErrorStateProps) => (
+export const AssetErrorState = ({ message, testID }: AssetErrorStateProps) => (
   <Box
     lx={{ alignItems: "center", justifyContent: "center", paddingVertical: "s16" }}
     testID={testID}

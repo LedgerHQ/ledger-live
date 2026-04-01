@@ -15,7 +15,6 @@ type Props = BaseComposite<StackNavigatorProps<CryptoScreenNavigator, ScreenName
 const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   assetsToDisplay,
   onItemPress,
-  hasNoAccount,
   isLoading,
   sourceScreenName,
   onNavigateBack,
@@ -36,11 +35,9 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
         </Text>
       </Box>
       <CryptoContent
-        hasNoAccount={hasNoAccount}
         isLoading={isLoading}
         assetsToDisplay={assetsToDisplay}
         onItemPress={onItemPress}
-        sourceScreenName={sourceScreenName ?? "Crypto"}
       />
     </Box>
   );

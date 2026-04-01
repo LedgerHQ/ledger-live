@@ -8,14 +8,14 @@ import { usePortfolioForAccounts } from "~/hooks/portfolio";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 
-export interface ListItemViewModelResult {
+export interface AssetListItemViewModelResult {
   formattedBalance: string;
   formattedCounterValue: string | null;
   deltaText: string;
   deltaColor: "success" | "error" | "muted";
 }
 
-export const useListItemViewModel = (asset: Asset): ListItemViewModelResult => {
+export const useAssetListItemViewModel = (asset: Asset): AssetListItemViewModelResult => {
   const { currency } = asset;
   const balance = BigNumber(asset.amount);
   const { locale } = useLocale();
@@ -60,7 +60,7 @@ export const useListItemViewModel = (asset: Asset): ListItemViewModelResult => {
   }, [asset.isPlaceholder, countervalueRaw, counterValueCurrency, locale, discreet]);
 
   let deltaText = "–";
-  let deltaColor: ListItemViewModelResult["deltaColor"] = "muted";
+  let deltaColor: AssetListItemViewModelResult["deltaColor"] = "muted";
 
   if (!asset.isPlaceholder) {
     const percentage = portfolio.countervalueChange.percentage;

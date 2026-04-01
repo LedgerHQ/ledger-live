@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { render } from "@tests/test-renderer";
 import CryptoScreen from "../index";
 import { ScreenName } from "~/const";
@@ -12,11 +11,6 @@ const withAccounts = (state: State): State => ({
     active: [{ id: "mock-account-1", type: "Account" } as never],
   },
 });
-
-jest.mock("LLM/components/EmptyList/AccountsEmptyList", () => ({
-  __esModule: true,
-  default: () => <View testID="empty-accounts-component" />,
-}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
@@ -117,14 +111,6 @@ describe("CryptoScreen", () => {
     );
 
     expect(getByText("Stablecoin")).toBeTruthy();
-  });
-
-  it("should render empty state when no accounts", () => {
-    const { getByTestId } = render(
-      <CryptoScreen route={makeRoute()} navigation={jest.fn() as never} />,
-    );
-
-    expect(getByTestId("empty-accounts-component")).toBeTruthy();
   });
 
   describe("loading skeletons", () => {
