@@ -8207,7 +8207,8 @@
         "trading": "{{asset}} trading",
         "savings": "{{asset}} savings"
       },
-      "cta": "Confirm"
+      "cta": "Confirm",
+      "syncingTooltip": "Sync in progress, please wait"
     }
   },
   "cryptoAssets": {
