@@ -1,6 +1,4 @@
-import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { fail } from "assert";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
@@ -11,10 +9,6 @@ describe("Shape (external node)", () => {
   });
 
   describe("getBlock", () => {
-
-    let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
-
-    beforeAll(() => {
       const shapeConfig: EvmConfig = {
         node: {
           type: "external",
@@ -26,8 +20,7 @@ describe("Shape (external node)", () => {
         },
         showNfts: true,
       };
-      module = createApi(shapeConfig, "shape");
-    });
+    const module = createApi(shapeConfig, "shape");
 
     it("should return WETH mint from Deposit log in block 26327282 (tx 0x08761e…) see BACK-10995", async () => {
       const weth = "0x4200000000000000000000000000000000000006";

@@ -75,8 +75,8 @@ function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20
       type: "erc20",
       assetReference: safeEncodeEIP55(log.address),
     },
-    from: from,
-    to: to,
+    from,
+    to,
     value: BigInt(log.data).toString(),
   };
 }
