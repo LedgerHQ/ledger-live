@@ -7,7 +7,6 @@ import { getAccountIdFromWalletAccountId } from "../converters";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
-import { AppResult } from "../../hw/actions/app";
 import { Device } from "../../hw/actions/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
@@ -19,10 +18,12 @@ type AppOption = {
   skipAppInstallIfNotFound: boolean;
 };
 export type PerpsUiHooks = {
-  "device.select": (params: {
+  "signing.execute": (params: {
     appName: string | undefined;
     appOptions?: AppOption;
-    onSuccess: (result: Pick<AppResult, "device">) => void;
+    signFactory: (device: Device) => Promise<PerpsSignResult>;
+    onSuccess: (result: PerpsSignResult) => void;
+    onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
 };
@@ -46,7 +47,7 @@ const PERPS_APP_NAME = "Hyperliquid";
 
 export const handlers = ({
   accounts,
-  uiHooks: { "device.select": uiDeviceSelect },
+  uiHooks: { "signing.execute": uiSigningExecute },
 }: {
   accounts: AccountLike[];
   uiHooks: PerpsUiHooks;
@@ -74,44 +75,47 @@ export const handlers = ({
         );
       }
 
-      // Ask user to select a device via the UI
-      const device = await new Promise<Device>((resolve, reject) => {
-        uiDeviceSelect({
+      return new Promise<PerpsSignResult>((resolve, reject) => {
+        uiSigningExecute({
           appName: PERPS_APP_NAME,
           appOptions: params.options,
-          onSuccess: ({ device }) => resolve(device),
-          onCancel: () => reject(new Error("User cancelled device selection")),
+          signFactory: (device: Device) =>
+            firstValueFrom(
+              withDevice(
+                device.deviceId,
+                device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
+              )(transport =>
+                from(
+                  (async () => {
+                    if (!isDmkTransport(transport)) {
+                      throw new Error("Not DMK transport");
+                    }
+                    const { dmk, sessionId } = transport;
+
+                    const certificate = await calService.getCertificate(
+                      device.modelId,
+                      "perps_data",
+                    );
+                    const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
+                    const signatures = await hyperliquidSigner.signActions(
+                      derivationPath,
+                      convertCertificateToDeviceData(certificate),
+                      new Uint8Array(
+                        Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex"),
+                      ),
+                      params.actions.map(convertAction),
+                    );
+
+                    return { signatures };
+                  })(),
+                ),
+              ),
+            ),
+          onSuccess: resolve,
+          onError: reject,
+          onCancel: () => reject(new Error("User cancelled signing")),
         });
       });
-
-      // CALL Cal Service
-      const certificate = await calService.getCertificate(device.modelId, "perps_data");
-
-      return firstValueFrom(
-        withDevice(
-          device.deviceId,
-          device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
-        )(transport =>
-          from(
-            (async () => {
-              if (!isDmkTransport(transport)) {
-                throw new Error("Not DMK transport");
-              }
-              const { dmk, sessionId } = transport;
-
-              const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
-              const signatures = await hyperliquidSigner.signActions(
-                derivationPath,
-                convertCertificateToDeviceData(certificate),
-                new Uint8Array(Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex")),
-                params.actions.map(convertAction),
-              );
-
-              return { signatures };
-            })(),
-          ),
-        ),
-      );
     }),
   };
 };
