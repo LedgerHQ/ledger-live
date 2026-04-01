@@ -1080,9 +1080,9 @@ describe("sync.ts", () => {
       expect(emissions).toHaveLength(1);
       expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.percentage).toBe(75);
       expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.synced).toBe(false);
-      // Only aleoResources is emitted — no stale balance/ops fields
+      // operations are preserved so makeSync (shouldMergeOps: false) does not wipe them
+      expect(emissions[0].operations).toEqual(accountWithProvableApi.operations);
       expect(emissions[0].balance).toBeUndefined();
-      expect(emissions[0].operations).toBeUndefined();
     });
 
     it("combined sync (SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED) does NOT emit progress when scanner is not ready", async () => {

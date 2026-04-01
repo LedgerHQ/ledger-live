@@ -184,6 +184,8 @@ export async function performPrivateSync(
   if (!isRecordScannerReady(provableApi)) {
     if (emitProgressUpdates && initialAccount.aleoResources) {
       return {
+        operations: initialAccount.operations,
+        operationsCount: initialAccount.operationsCount,
         aleoResources: {
           ...initialAccount.aleoResources,
           provableApi,

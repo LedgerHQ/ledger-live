@@ -39,7 +39,7 @@ describe("AccountBalanceSummaryFooter", () => {
       provableApi: null,
       privateBalance: null,
       unspentPrivateRecords: [],
-      lastPrivateSyncDate: new Date(),
+      lastPrivateSyncDate: null,
     },
   };
 
@@ -115,7 +115,7 @@ describe("AccountBalanceSummaryFooter", () => {
           transparentBalance: mockTransparentBalance,
           privateBalance: null,
           unspentPrivateRecords: [],
-          lastPrivateSyncDate: null,
+          lastPrivateSyncDate: new Date(),
           provableApi: { scannerStatus: { synced: true, percentage: 100 } },
         },
       };
@@ -181,7 +181,7 @@ describe("AccountBalanceSummaryFooter", () => {
         transparentBalance: BigNumber(60),
         privateBalance: null,
         unspentPrivateRecords: [],
-        lastPrivateSyncDate: null,
+        lastPrivateSyncDate: new Date(),
         provableApi: { scannerStatus: { synced: true, percentage: 100 } },
       },
     };

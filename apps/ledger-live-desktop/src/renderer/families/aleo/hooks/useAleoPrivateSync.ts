@@ -80,6 +80,7 @@ export const useAleoPrivateSync = ({
     subscriptionRef.current?.unsubscribe();
     subscriptionRef.current = null;
     setError(null);
+    setProgress(0);
     isSyncingRef.current = true;
     setIsSyncing(true);
     runSync();

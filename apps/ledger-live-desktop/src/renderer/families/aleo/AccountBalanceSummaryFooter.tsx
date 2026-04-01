@@ -127,16 +127,13 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hookProgressRef = useRef(hookProgress);
   hookProgressRef.current = hookProgress;
+
   useEffect(() => {
     if (isSyncing) {
-      if (finishDelayRef.current) clearTimeout(finishDelayRef.current);
       setDisplaySyncing(true);
     } else if (hookProgressRef.current >= 100) {
-      // Completed naturally at 100% — hold the running UI briefly so the user sees it
       finishDelayRef.current = setTimeout(() => setDisplaySyncing(false), 200);
     } else {
-      // Manually stopped — transition immediately
-      if (finishDelayRef.current) clearTimeout(finishDelayRef.current);
       setDisplaySyncing(false);
     }
     return () => {
@@ -165,9 +162,8 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     ? formatCurrencyUnit(unit, privateBalance, formatConfig)
     : PRIVATE_BALANCE_PLACEHOLDER;
 
-  const synced = account.aleoResources.provableApi?.scannerStatus?.synced ?? false;
   const lastSync = account.aleoResources.lastPrivateSyncDate ?? null;
-  const syncState: AleoSyncState = displaySyncing ? "running" : synced ? "complete" : "ready";
+  const syncState: AleoSyncState = displaySyncing ? "running" : lastSync ? "complete" : "ready";
 
   return (
     <Wrapper>
