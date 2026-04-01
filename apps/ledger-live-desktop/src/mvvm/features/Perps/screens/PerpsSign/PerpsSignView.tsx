@@ -9,6 +9,7 @@ import type { PerpsSignViewModel } from "./usePerpsSignViewModel";
 
 export function PerpsSignView({
   phase,
+  closing,
   theme,
   device,
   productName,
@@ -16,6 +17,7 @@ export function PerpsSignView({
   request,
   t,
   handleDeviceResult,
+  handleDeviceError,
 }: PerpsSignViewModel) {
   if (phase === "sign" && device) {
     return (
@@ -43,8 +45,15 @@ export function PerpsSignView({
   return (
     <>
       <DialogHeader />
-      <DialogBody className="flex items-center justify-center px-32">
-        <DeviceAction action={action} request={request} onResult={handleDeviceResult} />
+      <DialogBody
+        className={`flex items-center justify-center px-32 ${closing ? "invisible" : ""}`}
+      >
+        <DeviceAction
+          action={action}
+          request={request}
+          onResult={handleDeviceResult}
+          onError={handleDeviceError}
+        />
       </DialogBody>
     </>
   );

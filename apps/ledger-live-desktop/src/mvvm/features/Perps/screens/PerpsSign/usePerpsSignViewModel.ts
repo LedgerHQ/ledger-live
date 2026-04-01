@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Theme } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -35,8 +35,10 @@ export type PerpsSignViewModel = {
     allowPartialDependencies?: boolean;
     skipAppInstallIfNotFound?: boolean;
   };
+  closing: boolean;
   t: ReturnType<typeof useTranslation>["t"];
   handleDeviceResult: (result: AppResult) => void;
+  handleDeviceError: (error: Error) => void;
 };
 
 export function usePerpsSignViewModel(
@@ -46,6 +48,7 @@ export function usePerpsSignViewModel(
   const { t } = useTranslation();
   const styledTheme = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
+  const [closing, setClosing] = useState(false);
   const completedRef = useRef(false);
 
   const action = useConnectAppAction();
@@ -95,12 +98,23 @@ export function usePerpsSignViewModel(
     };
   }, [data]);
 
-  const handleDeviceResult = (result: AppResult) => {
+  const handleDeviceResult = useCallback((result: AppResult) => {
     setDevice(result.device);
-  };
+  }, []);
+
+  const handleDeviceError = useCallback(
+    (error: Error) => {
+      setClosing(true);
+      completedRef.current = true;
+      data.onError(error);
+      onClose();
+    },
+    [data, onClose],
+  );
 
   return {
     phase: device ? "sign" : "connect",
+    closing,
     theme: styledTheme.theme as Theme["theme"],
     device,
     productName,
@@ -108,5 +122,6 @@ export function usePerpsSignViewModel(
     request,
     t,
     handleDeviceResult,
+    handleDeviceError,
   };
 }
