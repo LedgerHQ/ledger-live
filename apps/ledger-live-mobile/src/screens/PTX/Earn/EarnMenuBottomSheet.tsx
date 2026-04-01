@@ -50,6 +50,41 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
     dispatch(makeSetEarnMenuBottomSheetAction(undefined));
   };
 
+  const handleMenuItemPress = async (
+    link: string,
+    live_app: string | undefined,
+    tracked: Record<string, unknown>,
+  ) => {
+    await track(AnalyticEvents.ButtonClicked, { live_app, ...tracked });
+    closeBottomSheet();
+    if (isValidEarnManifestId(live_app)) {
+      const pathSegments = link.split("?");
+      const earnSearchParams = new URLSearchParams(pathSegments.pop());
+      const intent = earnSearchParams.get("intent") ?? undefined;
+      const accountId = earnSearchParams.get("accountId");
+      const earnParams = Object.fromEntries(earnSearchParams.entries());
+
+      if (!isValidIntent(intent)) {
+        console.warn(`Invalid earn flow intent: ${intent}. Expected "deposit" or "withdraw".`);
+      }
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Earn,
+        params: {
+          screen: ScreenName.Earn,
+          ...route.params,
+          platform: "earn",
+          params: {
+            ...earnParams,
+            intent: isValidIntent(intent) ? intent : undefined,
+            accountId: accountId,
+          },
+        },
+      });
+    } else {
+      await Linking.openURL(link);
+    }
+  };
+
   const options = menuBottomSheet ?? [];
 
   const isRequestingToBeOpened = options.length > 0;
@@ -65,41 +100,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
         {options.map(({ icon, label, metadata }) => {
           const { link, live_app, ...tracked } = metadata;
           return link ? (
-            <ListItem
-              key={label}
-              onPress={async () => {
-                await track(AnalyticEvents.ButtonClicked, { live_app, ...tracked });
-                closeBottomSheet();
-                if (isValidEarnManifestId(live_app)) {
-                  const pathSegments = link.split("?");
-                  const earnSearchParams = new URLSearchParams(pathSegments.pop());
-                  const intent = earnSearchParams.get("intent") ?? undefined;
-                  const accountId = earnSearchParams.get("accountId");
-                  const earnParams = Object.fromEntries(earnSearchParams.entries());
-
-                  if (!isValidIntent(intent)) {
-                    console.warn(
-                      `Invalid earn flow intent: ${intent}. Expected "deposit" or "withdraw".`,
-                    );
-                  }
-                  navigation.navigate(NavigatorName.Base, {
-                    screen: NavigatorName.Earn,
-                    params: {
-                      screen: ScreenName.Earn,
-                      ...route.params,
-                      platform: "earn",
-                      params: {
-                        ...earnParams,
-                        intent: isValidIntent(intent) ? intent : undefined,
-                        accountId: accountId,
-                      },
-                    },
-                  });
-                } else {
-                  await Linking.openURL(link);
-                }
-              }}
-            >
+            <ListItem key={label} onPress={() => handleMenuItemPress(link, live_app, tracked)}>
               <ListItemLeading>
                 <ListItemSpot appearance="icon" icon={resolveMenuItemIcon(icon)} />
                 <ListItemContent>
