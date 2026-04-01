@@ -103,12 +103,15 @@ export async function runStartETHStakingFromEarnDashboardTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Start ETH staking flow from Earn Dashboard", () => {
+  describe("Start ETH staking flow from Earn Dashboard v1", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: stakeProgramOverride,
+        featureFlags: {
+          ptxEarnUi: { enabled: false, params: { value: "v1" } },
+          ...stakeProgramOverride,
+        },
         cliCommands: [
           async (userdataPath?: string) => {
             await CLI.liveData({
