@@ -92,10 +92,17 @@ export abstract class WebViewAppPage extends AppPage {
     await expect(webview.getByTestId(testId)).not.toBeVisible();
   }
 
-  @step("Verify text is displayed in WebView element")
+  @step("Verify text '$1' is displayed in WebView element")
   protected async verifyElementText(testId: string, expected: string) {
     const webview = await this.getWebView();
     await expect(webview.getByTestId(testId)).toContainText(expected);
+  }
+
+  @step("Verify text '$1' is not displayed in WebView element")
+  protected async verifyElementTextNotContains(testId: string, notExpected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(testId)).toBeVisible();
+    await expect(webview.getByTestId(testId)).not.toContainText(notExpected, { ignoreCase: true });
   }
 
   @step("Verify element is selected in WebView")

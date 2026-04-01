@@ -108,6 +108,7 @@ export class BuyAndSellPage extends WebViewAppPage {
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
     if (await this.isCorrectAssetAlreadySelected(account)) return;
+    await this.verifyElementTextNotContains(this.cryptoCurrencySelector, "loading");
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
   }
