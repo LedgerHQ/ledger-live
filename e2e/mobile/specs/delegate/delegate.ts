@@ -137,7 +137,6 @@ export async function runVoteCelo(
 
       await app.celoManageAssets.checkManagePage();
       await app.celoManageAssets.clickVote();
-      await app.celoManageAssets.clickVoteStart();
 
       await app.stake.openCeloVoteAmount();
       await app.stake.setCeloVoteAmount(delegation.amount);
