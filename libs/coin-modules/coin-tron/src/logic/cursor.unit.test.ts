@@ -151,6 +151,54 @@ describe("cursor utilities", () => {
       expect(result.nextCursor).toContain("t1");
     });
 
+    it("should slice by boundary txID position when boundary is mid-block (asc)", () => {
+      const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000), makeTx("n3", 2000)];
+      const trc20Txs = [makeTx("t1", 2000), makeTx("t2", 2000), makeTx("t3", 2000)];
+      const pageTxs = [
+        makeTx("n1", 1000),
+        makeTx("n2", 2000),
+        makeTx("t1", 2000),
+        makeTx("n3", 2000),
+        makeTx("t2", 2000),
+        makeTx("t3", 2000),
+      ];
+
+      const result = dropTxsAfterNextCursor({
+        order: "asc",
+        cursor: undefined,
+        pageTxs,
+        nativeResult: { txs: nativeTxs, hasNextPage: true },
+        trc20Result: { txs: trc20Txs, hasNextPage: true },
+      });
+
+      expect(result.nextCursor).toContain("n3");
+      expect(result.txs.map(t => t.txID)).toEqual(["n1", "n2", "t1", "n3"]);
+    });
+
+    it("should slice by boundary txID position when boundary is mid-block (desc)", () => {
+      const nativeTxs = [makeTx("n3", 2000), makeTx("n2", 2000), makeTx("n1", 1000)];
+      const trc20Txs = [makeTx("t3", 2000), makeTx("t2", 2000), makeTx("t1", 2000)];
+      const pageTxs = [
+        makeTx("t3", 2000),
+        makeTx("t2", 2000),
+        makeTx("n3", 2000),
+        makeTx("t1", 2000),
+        makeTx("n2", 2000),
+        makeTx("n1", 1000),
+      ];
+
+      const result = dropTxsAfterNextCursor({
+        order: "desc",
+        cursor: undefined,
+        pageTxs,
+        nativeResult: { txs: nativeTxs, hasNextPage: true },
+        trc20Result: { txs: trc20Txs, hasNextPage: true },
+      });
+
+      expect(result.nextCursor).toContain("t1");
+      expect(result.txs.map(t => t.txID)).toEqual(["t3", "t2", "n3", "t1"]);
+    });
+
     it("should return all txs when no next page", () => {
       const nativeTxs = [makeTx("n1", 1000), makeTx("n2", 2000)];
       const trc20Txs = [makeTx("t1", 1500)];

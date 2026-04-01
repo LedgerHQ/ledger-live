@@ -101,29 +101,19 @@ export function dropTxsAfterNextCursor(params: {
     return shouldSelect ? current : selected;
   });
 
-  const boundaryTimestamp = boundaryTx.date.getTime();
-
-  const txsBeforeOrAtBoundary = pageTxs.filter(tx => {
-    const txTimestamp = tx.date.getTime();
-    if (order === "asc") {
-      return txTimestamp <= boundaryTimestamp;
-    } else {
-      return txTimestamp >= boundaryTimestamp;
-    }
-  });
-
-  if (txsBeforeOrAtBoundary.length === 0) {
+  const boundaryIndex = pageTxs.findIndex(tx => tx.txID === boundaryTx.txID);
+  if (boundaryIndex === -1) {
     return { txs: [], nextCursor: undefined };
   }
 
-  const lastReturnedTx = txsBeforeOrAtBoundary[txsBeforeOrAtBoundary.length - 1];
+  const txsUpToBoundary = pageTxs.slice(0, boundaryIndex + 1);
 
   const nextCursorCandidate = serializeCursor({
-    txHash: lastReturnedTx.txID,
-    timestamp: lastReturnedTx.date.getTime(),
+    txHash: boundaryTx.txID,
+    timestamp: boundaryTx.date.getTime(),
   });
 
   const nextCursor = nextCursorCandidate === cursor ? undefined : nextCursorCandidate;
 
-  return { txs: txsBeforeOrAtBoundary, nextCursor };
+  return { txs: txsUpToBoundary, nextCursor };
 }
