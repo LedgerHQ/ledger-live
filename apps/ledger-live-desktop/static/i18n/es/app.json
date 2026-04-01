@@ -825,8 +825,8 @@
     "spendYourCrypto" : "Gasta tus cripto",
     "payDescription" : "Paga en tiendas online o físicas con una tarjeta cripto",
     "exploreCards" : "Explorar tarjetas",
-    "iAlreadyHaveACard" : "Ya tengo una tarjeta",
-    "unlockLiquidity" : "Desbloquear liquidez",
+    "iAlreadyHaveACard" : "Tengo una tarjeta",
+    "unlockLiquidity" : "Gasta cripto en la vida real",
     "exploreCryptoCardsDescription" : "Explora nuestras tarjetas cripto y elige la que mejor se ajuste a tus necesidades."
   },
   "lend" : {
@@ -2178,7 +2178,7 @@
     "subtitle" : "Conecta un dispositivo Ledger para aprovechar todo el potencial de tu Ledger Wallet.",
     "0" : {
       "title" : "Titularidad real",
-      "desc" : "Tus claves privadas nunca salen del dispositivo."
+      "desc" : "Tienes el control de tus claves privadas."
     },
     "1" : {
       "title" : "Opera de forma segura",
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Transferencia bancaria",
-          "description" : "Envía dinero fiduciario y recibe monedas estables"
+          "title" : "Mediante transferencia bancaria",
+          "description" : "Recibe monedas estables simplemente enviando dinero"
         },
         "fromCrypto" : {
-          "title" : "Recibir cripto"
+          "title" : "Desde una dirección cripto"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "Tarjeta de contenido de notificación",
             "action" : "Tarjeta de contenido de acción",
-            "portfolio" : "Tarjeta de contenido de portfolio",
+            "portfolio" : "Portfolio",
+            "bottomPortfolio" : "Portfolio inferior",
             "title" : "Título",
             "description" : "Descripción",
             "order" : "Orden",
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Cantidad demasiado baja. Envía al menos {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Esta cuenta de token asociada contiene otro token."
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "Fondos insuficientes"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "Emparejamiento caducado",
+      "description" : "La conexión con la app Concordium ID ha caducado. Inténtalo de nuevo."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "Sesión expirada",
+      "description" : "La sesión de la aplicación Concordium ID ya no está activa. Empareja de nuevo."
     },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "Fondos insuficientes. El saldo mínimo requerido es de 0,02 TON."
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "Selecciona un registro privado válido para la cantidad."
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "Selecciona un registro privado válido para la tarifa."
     },
     "BackupAppDataError" : {
       "title" : "Error al hacer la copia de respaldo de datos de la aplicación"
@@ -8065,17 +8083,20 @@
   "portfolio" : {
     "title" : "Inicio",
     "today" : "Hoy",
+    "carousel" : {
+      "title" : "Para ti"
+    },
     "addAccountCta" : "Agregar cuenta cripto",
-    "noBalanceTitle" : "Protege tus cripto",
+    "noBalanceTitle" : "Para empezar, agrega fondos a tu wallet",
     "perpsEntry" : {
       "title" : "Perpetuos",
       "description" : "Opera con apalancamiento",
       "cta" : "Discover"
     },
-    "noDeviceTitle" : "La wallet más segura"
+    "noDeviceTitle" : "Tu wallet cripto segura"
   },
   "marketBanner" : {
-    "title" : "Explorar mercado",
+    "title" : "Explora el mercado",
     "genericError" : "La conexión ha fallado",
     "cta" : "Ver todo",
     "scrollLeft" : "Desplaza a la izquierda",
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "Más miedo",
       "fear" : "Miedo",
+      "cautious" : "Cauteloso",
       "neutral" : "Neutro",
-      "greed" : "Avaricia",
-      "extremeGreed" : "Más avaricia"
+      "optimistic" : "Optimista",
+      "greedy" : "Codicioso"
     },
     "dialog" : {
       "title" : "Índice de sentimiento",
-      "content" : "El índice de sentimiento indica el estado emocional del mercado. Oscila entre el 0 y el 100. Un valor más bajo indica miedo extremo, mientras que uno más alto representa avaricia extrema.",
+      "content" : "Muestra la percepción general del mercado de 0 a 100, según las tendencias y la actividad. Úsalo para comprender cómo se comporta el mercado: Los valores más bajos indican miedo, los valores más altos indican codicia.",
       "cta" : "Entendido"
     }
   },
@@ -8120,8 +8141,37 @@
       "balance" : "Saldo",
       "value" : "Valor",
       "trend" : "Tendencia 1D",
-      "trendTooltip" : "Cambio de saldo en 24 horas"
+      "trendTooltip" : "Cambios en tu saldo en las últimas 24 horas."
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "Cuentas cripto",
+    "tableActions" : {
+      "searchAddress" : "Buscar dirección",
+      "addAddress" : "Agregar dirección"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "Nombre",
+        "address" : "Dirección",
+        "value" : "Valor"
+      },
+      "editName" : "Editar nombre",
+      "emptyState" : "Aún no hay dirección cripto",
+      "emptySearchState" : "No hay ninguna cuenta que coincida con tu búsqueda"
+    },
+    "editName" : {
+      "title" : "Editar nombre de la dirección",
+      "input" : "Nombre de la dirección",
+      "suggestions" : {
+        "trading" : "{{asset}} operaciones",
+        "savings" : "{{asset}} ahorros"
+      },
+      "cta" : "Confirmar"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "Activos cripto"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Tokens no fungibles)",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "Historial",
+      "tooltip" : "Historial"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo.\n Lista de cuentas afectadas: {{accounts}}. Pulsa para reintentar",
-      "emptyErrorToolTip" : "Se ha producido un error de red temporal. Tus activos están a buen recaudo.\n Pulsa para reintentar",
-      "upToDate" : "Estás al día",
-      "lastSync" : "Última sincronización: {{timeAgo}} Pulsa para actualizar"
+      "errorToolTip" : "Tus activos están a buen recaudo. Se trata de un problema de sincronización temporal.\n Cuentas afectadas: {{accounts}}. Pulsa para reintentar",
+      "emptyErrorToolTip" : "Tus activos están a buen recaudo. Se trata de un problema de sincronización temporal.\n Pulsa para reintentar",
+      "upToDate" : "Portfolio actualizado",
+      "lastSync" : "Última sincronización: {{timeAgo}} Pulsa para actualizar",
+      "refreshing" : "Actualizando..."
     },
     "notificationIndicator" : {
       "tooltip" : "Notificaciones"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "Saldo privado",
         "public" : "Saldo público",
-        "lastUpdate" : "Última actualización",
+        "lastUpdate" : "Última actualización: {{label}}",
+        "recently" : "Recientemente",
         "switchBalance" : "Cambiar la fuente del saldo"
+      },
+      "recordPicker" : {
+        "label" : "Registros disponibles",
+        "noRecords" : "No hay registros disponibles",
+        "noRecordsAlert" : "No tienes ningún registro disponible. Envíate una transferencia o recibe fondos privados para empezar.",
+        "alert" : "La cantidad máxima que se puede gastar depende del valor máximo de tu registro seleccionado. Las tarifas para los usuarios de Ledger las subvenciona Provable.",
+        "recordsLimit" : "Se muestran un máximo de {{max}} registros"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "Pública",
         "private" : "Privada"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "Enviar desde"
+      },
+      "summary" : {
+        "coveredByProvable" : "Patrocinado por Provable",
+        "proofGenerationWarning" : "La transacción de Aleo requiere la generación de una prueba. Esto puede tardar un tiempo."
       }
     }
   },
@@ -8312,6 +8384,43 @@
     "cta" : {
       "continue" : "Continuar",
       "explore" : "Explorar mi nuevo portfolio"
+    }
+  },
+  "history" : {
+    "title" : "Transacciones",
+    "pending" : "Transacción pendiente",
+    "pending_other" : "Transacciones pendientes",
+    "columns" : {
+      "type" : "Tipo",
+      "address" : "Dirección",
+      "amount" : "Importe",
+      "value" : "Valor"
+    },
+    "address" : {
+      "from" : "De",
+      "to" : "A"
+    },
+    "emptyState" : {
+      "title" : "Aún no hay transacciones",
+      "description" : "Intenta más tarde para ver tus transacciones."
+    },
+    "actionsBar" : {
+      "csv" : "CSV"
+    },
+    "exportDialog" : {
+      "title" : "Historial de transacciones",
+      "description" : "Elige las cuentas que quieres incluir en la exportación",
+      "disclaimer" : "Solo valores estimados. Los contravalores son ofrecidos por Kaiko a título informativo. No utilices estos datos con fines fiscales, legales o contables.",
+      "accountsToInclude" : "Cuentas a incluir",
+      "selectAll" : "Seleccionar todas ({{count}})",
+      "deselectAll" : "Desmarcar todas ({{count}})",
+      "export" : "Exportar historial",
+      "successTitle" : "Historial de transacciones guardado con éxito",
+      "successDescription" : "El archivo CSV de tu historial de operaciones se guardó en la carpeta seleccionada",
+      "done" : "Listo",
+      "errorTitle" : "Algo ha salido mal",
+      "errorDescription" : "Se produjo un error al exportar tu historial de transacciones. Inténtalo de nuevo.",
+      "tryAgain" : "Intentar de nuevo"
     }
   }
 }
