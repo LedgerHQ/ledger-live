@@ -7,7 +7,7 @@ import type {
   FeeEstimation,
   ListOperationsOptions,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";

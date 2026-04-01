@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import {
   AmountRequired,

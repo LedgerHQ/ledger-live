@@ -68,7 +68,7 @@ const { useTranslatedBridgeError } = jest.requireMock(
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
 
 // --- Bitcoin & formatting ---
-jest.mock("@ledgerhq/coin-framework/currencies/formatCurrencyUnit", () => ({
+jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
 }));
 jest.mock("LLM/hooks/useAccountUnit", () => ({

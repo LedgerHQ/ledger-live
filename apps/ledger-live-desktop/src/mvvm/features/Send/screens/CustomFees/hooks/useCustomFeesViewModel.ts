@@ -9,7 +9,7 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FeeAssetOption } from "@ledgerhq/live-common/bridge/descriptor/types";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   getAccountCurrency,
   getMainAccount,

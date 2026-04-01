@@ -75,5 +75,4 @@ Commonly used package aliases (run from repo root):
 | `pnpm desktop` | `ledger-live-desktop` |
 | `pnpm mobile`  | `live-mobile`         |
 | `pnpm common`  | `live-common`         |
-| `pnpm coin`    | `coin-framework`      |
 | `pnpm domain`  | `domain-service`      |

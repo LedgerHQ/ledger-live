@@ -18,7 +18,7 @@ import {
   toTransactionStatusRawCommon,
 } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import {
   fromBitcoinInputRaw,

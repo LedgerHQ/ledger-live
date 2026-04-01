@@ -6,7 +6,7 @@ import type {
   Operation,
   Page,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../config";
 import type { SolanaCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";

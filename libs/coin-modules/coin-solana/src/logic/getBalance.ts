@@ -1,4 +1,4 @@
-import type { Balance } from "@ledgerhq/coin-framework/api/index";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { ParsedOnChainTokenAccount } from "../network/chain/web3";

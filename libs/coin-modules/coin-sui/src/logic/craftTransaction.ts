@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";

@@ -3,7 +3,7 @@ import type {
   ListOperationsOptions,
   Operation,
   Page,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import type {
   ConfirmedSignatureInfo,

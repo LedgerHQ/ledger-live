@@ -10,8 +10,8 @@ import {
   TransactionIntent,
   CraftedTransaction,
   AlpacaApi,
-} from "@ledgerhq/coin-framework/api/index";
-import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
+} from "@ledgerhq/coin-module-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {

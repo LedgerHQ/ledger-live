@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/coin-kaspa",
   "version": "1.11.0",
-  "description": "Ledger framework for Kaspa integration",
+  "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
     "LedgerWallet",
@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-framework",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-kaspa",
   "publishConfig": {
     "access": "public"
   },
@@ -92,7 +92,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.1.1",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

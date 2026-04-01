@@ -2,8 +2,8 @@
 import type {
   StakingTransactionIntent,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
-import type { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
+} from "@ledgerhq/coin-module-framework/api/types";
+import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import {
   BlockhashWithExpiryBlockHeight,
   PublicKey,

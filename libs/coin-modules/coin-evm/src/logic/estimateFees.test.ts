@@ -4,7 +4,7 @@ import type {
   MemoNotSupported,
   SendTransactionIntent,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";

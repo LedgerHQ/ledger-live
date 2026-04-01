@@ -1,7 +1,7 @@
 // Encapsulate for LLD et LLM
 export * from "@ledgerhq/coin-stellar/types/index";
 
-import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import type {
   TransactionCommon,
   TransactionCommonRaw,

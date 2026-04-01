@@ -2,7 +2,7 @@ import type { AptosSettings } from "@aptos-labs/ts-sdk";
 import buildCoinConfig, {
   type CoinConfig,
   type CurrencyConfig,
-} from "@ledgerhq/coin-framework/config";
+} from "@ledgerhq/coin-module-framework/config";
 
 export type AptosConfig = {
   aptosSettings: AptosSettings;

@@ -1,4 +1,4 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/index";
+import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { defaultFetchParams, fetchTronAccountTxs, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";

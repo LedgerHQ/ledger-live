@@ -1,5 +1,5 @@
 import { isValidAddress } from "@celo/utils/lib/address";
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
 
 export async function validateAddress(
   address: string,

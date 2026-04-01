@@ -1,7 +1,7 @@
 import buildCoinConfig, {
   type CoinConfig,
   type CurrencyConfig,
-} from "@ledgerhq/coin-framework/config";
+} from "@ledgerhq/coin-module-framework/config";
 
 export type XrpConfig = {
   node: string;

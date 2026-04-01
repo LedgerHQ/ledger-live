@@ -12,7 +12,7 @@ import {
   CraftedTransaction,
   TransactionValidation,
   Balance,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,

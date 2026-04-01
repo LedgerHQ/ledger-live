@@ -14,7 +14,7 @@ import {
   ListOperationsOptions,
   CraftedTransaction,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
 import coinConfig, { type CantonConfig } from "../config";

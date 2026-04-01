@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";

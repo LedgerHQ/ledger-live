@@ -57,7 +57,7 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",

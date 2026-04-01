@@ -1,4 +1,7 @@
-import buildCoinConfig, { CoinConfig, type CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import buildCoinConfig, {
+  CoinConfig,
+  type CurrencyConfig,
+} from "@ledgerhq/coin-module-framework/config";
 
 export type CantonConfig = {
   nodeUrl?: string;

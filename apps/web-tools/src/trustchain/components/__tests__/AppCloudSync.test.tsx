@@ -15,7 +15,7 @@ const mockGenAccount = jest.fn(() => ({
   derivationMode: "",
   freshAddress: "0x",
 }));
-jest.mock("@ledgerhq/coin-framework/mocks/account", () => ({
+jest.mock("@ledgerhq/coin-module-framework/mocks/account", () => ({
   genAccount: (...args: unknown[]) => Reflect.apply(mockGenAccount, null, args),
 }));
 

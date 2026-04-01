@@ -3,7 +3,7 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+} from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import {

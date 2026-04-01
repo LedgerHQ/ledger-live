@@ -8,7 +8,7 @@ import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import { openURL } from "~/renderer/linking";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 type Props = {
   currency: CryptoCurrency;

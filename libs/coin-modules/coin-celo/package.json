@@ -120,7 +120,7 @@
     "@celo/wallet-base": "^8.0.0",
     "@celo/wallet-ledger": "^8.0.0",
     "@ledgerhq/coin-evm": "workspace:^",
-    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",

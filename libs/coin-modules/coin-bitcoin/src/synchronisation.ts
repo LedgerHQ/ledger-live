@@ -571,7 +571,7 @@ export function buildSyncObservables(
   const shieldedEnabled = isZcash && typeof ufvk === "string" && ufvk.length > 0;
 
   if (syncType & SYNC_TYPE_SHIELDED && shieldedEnabled) {
-    const shieldedSyncRaw = getCoinConfig(currency).family?.sync?.(info, syncConfig);
+    const shieldedSyncRaw = getCoinConfig(currency.id).family?.sync?.(info, syncConfig);
 
     if (shieldedSyncRaw) {
       syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));

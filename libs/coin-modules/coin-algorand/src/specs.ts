@@ -1,4 +1,4 @@
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account";

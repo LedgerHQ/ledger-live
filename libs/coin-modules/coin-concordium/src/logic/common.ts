@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const concordiumUnit = getCryptoCurrencyById("concordium").units[0];

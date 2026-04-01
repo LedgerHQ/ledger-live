@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { DeepPartialReturn } from "@ledgerhq/coin-framework/test/utils";
+import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/utils";
 import type { ChainAPI } from "../../network";
 import type { StakeAccount } from "../../network/chain/stake-activation/rpc";
 import { getBalance } from "../getBalance";

@@ -10,7 +10,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
 

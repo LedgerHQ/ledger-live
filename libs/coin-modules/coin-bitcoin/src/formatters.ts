@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { BitcoinAccount, BitcoinInput, BitcoinOutput } from "./types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 
 const sortUTXO = (a: BitcoinOutput, b: BitcoinOutput) => b.value.minus(a.value).toNumber();
 

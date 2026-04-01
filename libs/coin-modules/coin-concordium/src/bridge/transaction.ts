@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import type { Transaction, TransactionRaw } from "../types";
 
 export const formatTransaction = (

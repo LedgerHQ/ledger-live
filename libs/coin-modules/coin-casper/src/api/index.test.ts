@@ -1,4 +1,4 @@
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";

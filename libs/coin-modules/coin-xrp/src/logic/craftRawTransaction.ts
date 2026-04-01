@@ -1,4 +1,4 @@
-import { CraftedTransaction } from "@ledgerhq/coin-framework/api/index";
+import { CraftedTransaction } from "@ledgerhq/coin-module-framework/api/index";
 import { decode, encode } from "ripple-binary-codec";
 import { JsonObject } from "ripple-binary-codec/dist/types/serialized-type";
 import { getLedgerIndex } from "../network";

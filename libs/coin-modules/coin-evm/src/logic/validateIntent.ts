@@ -6,8 +6,8 @@ import type {
   MemoNotSupported,
   TransactionIntent,
   TransactionValidation,
-} from "@ledgerhq/coin-framework/api/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+} from "@ledgerhq/coin-module-framework/api/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
   ETHAddressNonEIP,

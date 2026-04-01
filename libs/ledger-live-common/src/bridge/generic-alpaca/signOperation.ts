@@ -12,7 +12,7 @@ import {
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";

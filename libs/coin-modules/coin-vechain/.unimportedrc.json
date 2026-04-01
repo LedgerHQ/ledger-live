@@ -69,7 +69,7 @@
     "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/coin-framework",
+    "@ledgerhq/coin-module-framework",
     "@ledgerhq/cryptoassets",
     "@ledgerhq/devices",
     "@ledgerhq/ledger-wallet-framework",

@@ -6,7 +6,7 @@ import { useModularDialogAnalytics } from "LLD/features/ModularDialog/analytics/
 import { MODULAR_DIALOG_PAGE_NAME } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { useSelector } from "LLD/hooks/redux";
 import {
   localeSelector,

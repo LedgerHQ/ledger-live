@@ -1,4 +1,4 @@
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { KnownJetton } from "./types";
 
 export type TonCoinConfig = () => CurrencyConfig & {

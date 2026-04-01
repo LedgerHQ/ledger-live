@@ -1,4 +1,4 @@
-import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-framework/api/types";
+import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
 import { isValidSuiAddress } from "@mysten/sui/utils";
 
 export async function validateAddress(

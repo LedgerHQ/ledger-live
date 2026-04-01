@@ -1,4 +1,4 @@
-import { StringMemo, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import { StringMemo, MemoNotSupported } from "@ledgerhq/coin-module-framework/api/types";
 
 /*
   TRC10 tokens use a standard implementation on the protocol level.

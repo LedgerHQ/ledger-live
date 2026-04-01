@@ -2,7 +2,7 @@ import {
   BufferTxData,
   MemoNotSupported,
   TransactionIntent,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
   ETHAddressNonEIP,

@@ -175,6 +175,8 @@ catalog:
   allure-js-commons: 3.2.1
   oxlint: 1.51.0
   oxfmt: 0.36.0
+  # Modules published by Alpaca
+  "@ledgerhq/coin-module-framework": 2.0.0
 
 overrides:
   node-abi: ^4.9.0

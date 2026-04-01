@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { AnyTuple } from "@polkadot/types/types";
 import type { PolkadotConfig } from "../config";

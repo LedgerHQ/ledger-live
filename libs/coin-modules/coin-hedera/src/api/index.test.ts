@@ -1,4 +1,4 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";

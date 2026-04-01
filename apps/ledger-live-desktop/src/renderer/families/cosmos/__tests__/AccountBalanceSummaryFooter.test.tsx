@@ -3,7 +3,7 @@ import { render, screen } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import * as config from "@ledgerhq/live-common/config/index";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";

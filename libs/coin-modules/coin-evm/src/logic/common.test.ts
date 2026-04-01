@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
-import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-framework/api/types";
+import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
+import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
 import { getCallData } from "./common";
 import * as getErc20DataModule from "./getErc20Data";
 

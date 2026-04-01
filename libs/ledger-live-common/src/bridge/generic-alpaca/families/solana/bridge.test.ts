@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { AssetInfo } from "@ledgerhq/coin-framework/api/types";
+import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./bridge";

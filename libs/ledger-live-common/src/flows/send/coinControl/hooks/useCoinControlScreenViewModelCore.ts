@@ -1,7 +1,7 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { SendFlowTransactionActions, SendFlowUiConfig } from "../../types";
 import type { Transaction, TransactionStatus } from "../../../../generated/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";

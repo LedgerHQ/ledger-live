@@ -6,7 +6,7 @@ import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
 import { createApi as createTezosApi } from "@ledgerhq/coin-tezos/api/index";
 import { getCurrencyConfiguration } from "../../../config";
 import { getNetworkAlpacaApi } from "./network/network-alpaca";
-import type { AlpacaApi } from "@ledgerhq/coin-framework/api/types";
+import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 import { StellarCoinConfig } from "@ledgerhq/coin-stellar/config";

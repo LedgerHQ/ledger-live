@@ -1,5 +1,5 @@
 import * as sdk from "@hashgraph/sdk";
-import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import type { HederaMemo, HederaTxData } from "../types";

@@ -4,7 +4,7 @@ import {
   MemoNotSupported,
   Operation,
   ListOperationsOptions,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";

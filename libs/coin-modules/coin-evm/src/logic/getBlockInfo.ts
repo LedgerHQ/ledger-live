@@ -1,4 +1,4 @@
-import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNodeApi } from "../network/node";
 

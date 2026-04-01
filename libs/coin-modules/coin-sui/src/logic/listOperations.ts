@@ -1,4 +1,4 @@
-import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-framework/api/types";
+import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-framework/api/types";
 import { getListOperations, withApi } from "../network/sdk";
 
 export const listOperations = async (

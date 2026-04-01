@@ -1,4 +1,4 @@
-import type { BroadcastConfig } from "@ledgerhq/coin-framework/api/types";
+import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
 import { IExplorer, NetworkInfoResponse } from "./types";

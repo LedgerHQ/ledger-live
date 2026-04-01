@@ -1,4 +1,4 @@
-import type { Page, Reward } from "@ledgerhq/coin-framework/api/types";
+import type { Page, Reward } from "@ledgerhq/coin-module-framework/api/types";
 import { apiClient } from "../network/api";
 
 /**

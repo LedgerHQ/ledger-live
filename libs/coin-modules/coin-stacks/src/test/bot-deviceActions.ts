@@ -1,4 +1,4 @@
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/ledger-wallet-framework/bot/specs";
 import type { DeviceAction } from "@ledgerhq/ledger-wallet-framework/bot/types";

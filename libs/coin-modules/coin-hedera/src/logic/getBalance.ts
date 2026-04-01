@@ -1,4 +1,4 @@
-import type { Balance } from "@ledgerhq/coin-framework/api/types";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { promiseAllBatched } from "@ledgerhq/live-promise";

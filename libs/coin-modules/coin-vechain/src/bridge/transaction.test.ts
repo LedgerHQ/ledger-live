@@ -7,7 +7,7 @@ import {
   toTransactionStatusRaw,
 } from "./transaction";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
@@ -19,7 +19,7 @@ import { Account } from "@ledgerhq/types-live";
 
 // Mock dependencies
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
-jest.mock("@ledgerhq/coin-framework/currencies/index");
+jest.mock("@ledgerhq/coin-module-framework/currencies/index");
 jest.mock("@ledgerhq/ledger-wallet-framework/serialization");
 
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
@@ -364,7 +364,7 @@ describe("transaction utilities", () => {
 
       expect(defaultExport).toEqual({
         formatTransaction,
-        formatTransactionStatus: expect.any(Function), // This is imported from coin-framework
+        formatTransactionStatus: expect.any(Function), // This is imported from ledger-wallet-framework
         fromTransactionRaw,
         toTransactionRaw,
         fromTransactionStatusRaw,

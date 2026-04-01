@@ -4,7 +4,7 @@ import type {
   FeeEstimation,
   Balance,
   AssetInfo,
-} from "@ledgerhq/coin-framework/api/types";
+} from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
   FeeTooHigh,

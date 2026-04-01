@@ -1,4 +1,8 @@
-import { AlpacaApi, BufferTxData, MemoNotSupported } from "@ledgerhq/coin-framework/api/types";
+import {
+  AlpacaApi,
+  BufferTxData,
+  MemoNotSupported,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { EvmConfig } from "../config";

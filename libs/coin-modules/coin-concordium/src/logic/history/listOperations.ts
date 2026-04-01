@@ -1,4 +1,4 @@
-import type { ListOperationsOptions } from "@ledgerhq/coin-framework/api/index";
+import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/index";
 import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import { log } from "@ledgerhq/logs";
 import { getTransactions } from "../../network/proxyClient";
