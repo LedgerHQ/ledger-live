@@ -468,6 +468,14 @@ export class SwapPage extends WebViewAppPage {
     this._webviewPage = undefined;
     await swapFunction();
 
+    await this.page
+      .waitForURL(url => url.hash === "#/swap" || url.hash.startsWith("#/swap/"), {
+        timeout: 10_000,
+      })
+      .catch(() => {
+        // swapFunction didn't navigate to the swap route (e.g., Portfolio widget flow)
+      });
+
     const overallTimeout = 90_000;
     const startTime = Date.now();
 
