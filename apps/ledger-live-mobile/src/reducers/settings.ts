@@ -218,9 +218,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const isWallet40GraphReworkEnabled =
       wallet40FF?.params?.graphRework === true && isWallet40Enabled;
     const analyticsConsentInfo =
-      filteredPayload.analyticsConsentInfo !== undefined
-        ? { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo }
-        : state.analyticsConsentInfo;
+      filteredPayload.analyticsConsentInfo === undefined
+        ? state.analyticsConsentInfo
+        : { ...state.analyticsConsentInfo, ...filteredPayload.analyticsConsentInfo };
 
     return {
       ...state,
