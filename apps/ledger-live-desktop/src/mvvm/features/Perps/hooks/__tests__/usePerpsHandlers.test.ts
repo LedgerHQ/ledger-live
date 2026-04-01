@@ -1,22 +1,18 @@
 import { renderHook } from "@testing-library/react";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import { openPerpsSign } from "../../screens/PerpsSign/perpsSignDialog";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),
 }));
 
-const mockDispatch = jest.fn();
-jest.mock("LLD/hooks/redux", () => ({
-  useDispatch: () => mockDispatch,
-}));
-
+const mockOpenPerpsSign = jest.fn();
 jest.mock("../../screens/PerpsSign/perpsSignDialog", () => ({
-  openPerpsSign: jest.fn((data: unknown) => ({
-    type: "dialogs/openDialog",
-    payload: { id: "PERPS_SIGNING", data },
-  })),
+  usePerpsSignState: () => ({
+    data: null,
+    openPerpsSign: mockOpenPerpsSign,
+    closePerpsSign: jest.fn(),
+  }),
 }));
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
@@ -35,7 +31,7 @@ describe("usePerpsHandlers", () => {
     });
   });
 
-  it("should dispatch openPerpsSign with data when signing.execute is called", () => {
+  it("should call openPerpsSign with data when signing.execute is called", () => {
     const accounts = [{ id: "acc-1" }] as never[];
     renderHook(() => usePerpsHandlers(accounts));
 
@@ -51,6 +47,6 @@ describe("usePerpsHandlers", () => {
 
     signingExecute(params);
 
-    expect(mockDispatch).toHaveBeenCalledWith(openPerpsSign(params));
+    expect(mockOpenPerpsSign).toHaveBeenCalledWith(params);
   });
 });

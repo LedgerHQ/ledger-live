@@ -1,6 +1,7 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, act } from "tests/testSetup";
 import PerpsSignModal from "../PerpsSignModal";
+import { PerpsSignProvider, usePerpsSignState } from "../perpsSignDialog";
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   __esModule: true,
@@ -43,27 +44,39 @@ const perpsSignData = {
   onCancel: jest.fn(),
 };
 
+function Trigger() {
+  const { openPerpsSign } = usePerpsSignState();
+  return (
+    <button data-testid="trigger" onClick={() => openPerpsSign(perpsSignData)}>
+      Open
+    </button>
+  );
+}
+
+function renderWithProvider() {
+  return render(
+    <PerpsSignProvider>
+      <Trigger />
+      <PerpsSignModal />
+    </PerpsSignProvider>,
+  );
+}
+
 describe("PerpsSign integration", () => {
-  it("should render DeviceAction in connect phase when dialog is open", () => {
-    render(<PerpsSignModal />, {
-      initialState: { dialogs: { PERPS_SIGNING: perpsSignData } },
+  it("should render DeviceAction after openPerpsSign is called", () => {
+    renderWithProvider();
+
+    expect(screen.queryByTestId("device-action")).not.toBeInTheDocument();
+
+    act(() => {
+      screen.getByTestId("trigger").click();
     });
 
     expect(screen.getByTestId("device-action")).toBeVisible();
   });
 
-  it("should not render content when dialog is closed", () => {
-    render(<PerpsSignModal />, {
-      initialState: { dialogs: { PERPS_SIGNING: false } },
-    });
-
-    expect(screen.queryByTestId("device-action")).not.toBeInTheDocument();
-  });
-
-  it("should not render body when no data is provided", () => {
-    render(<PerpsSignModal />, {
-      initialState: { dialogs: { PERPS_SIGNING: true } },
-    });
+  it("should not render content when no data is set", () => {
+    renderWithProvider();
 
     expect(screen.queryByTestId("device-action")).not.toBeInTheDocument();
   });

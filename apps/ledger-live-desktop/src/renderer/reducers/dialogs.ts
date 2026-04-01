@@ -22,17 +22,10 @@ import type { State } from "~/renderer/reducers";
  * export const closeMyNewDialog = () => closeDialog(DIALOG_ID);
  * export const selectIsMyNewDialogOpen = (state: State) => selectIsDialogOpen(state, DIALOG_ID);
  */
-export const DIALOG_IDS = ["RELEASE_NOTES", "BUY_DEVICE", "PERPS_SIGNING"] as const;
+export const DIALOG_IDS = ["RELEASE_NOTES", "BUY_DEVICE"] as const;
 export type DialogId = (typeof DIALOG_IDS)[number];
 
-/**
- * Each entry is either:
- * - `undefined` / `false` → dialog closed
- * - `true` → dialog open (no data)
- * - a truthy object → dialog open with associated data
- */
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-export type DialogsState = Partial<Record<DialogId, boolean | unknown>>;
+export type DialogsState = Partial<Record<DialogId, boolean>>;
 
 const initialState: DialogsState = {};
 
@@ -40,16 +33,11 @@ const dialogsSlice = createSlice({
   name: "dialogs",
   initialState,
   reducers: {
-    /** Open a dialog by its registered ID, optionally attaching data. */
-    openDialog: {
-      reducer(state, action: PayloadAction<{ id: DialogId; data?: unknown }>) {
-        state[action.payload.id] = action.payload.data ?? true;
-      },
-      prepare(id: DialogId, data?: unknown) {
-        return { payload: { id, data } };
-      },
+    /** Open a dialog by its registered ID. */
+    openDialog: (state, action: PayloadAction<DialogId>) => {
+      state[action.payload] = true;
     },
-    /** Close a dialog by its registered ID (clears any associated data). */
+    /** Close a dialog by its registered ID. */
     closeDialog: (state, action: PayloadAction<DialogId>) => {
       state[action.payload] = false;
     },
@@ -61,12 +49,5 @@ export const { openDialog, closeDialog } = dialogsSlice.actions;
 /** Select whether a specific dialog is currently open. */
 export const selectIsDialogOpen = (state: Pick<State, "dialogs">, id: DialogId) =>
   !!state.dialogs[id];
-
-/** Select the data payload attached when the dialog was opened, if any. */
-export const selectDialogData = <T>(state: Pick<State, "dialogs">, id: DialogId): T | undefined => {
-  const entry = state.dialogs[id];
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-unsafe-type-assertion
-  return entry != null && typeof entry === "object" ? (entry as T) : undefined;
-};
 
 export default dialogsSlice.reducer;

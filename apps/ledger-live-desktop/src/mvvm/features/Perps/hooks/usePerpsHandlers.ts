@@ -6,11 +6,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
-import { openPerpsSign } from "../screens/PerpsSign/perpsSignDialog";
+import { usePerpsSignState } from "../screens/PerpsSign/perpsSignDialog";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
-  const dispatch = useDispatch();
+  const { openPerpsSign } = usePerpsSignState();
 
   const uiSigningExecute = useCallback(
     ({
@@ -32,9 +31,9 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
       onError: (error: Error) => void;
       onCancel: () => void;
     }) => {
-      dispatch(openPerpsSign({ appName, appOptions, signFactory, onSuccess, onError, onCancel }));
+      openPerpsSign({ appName, appOptions, signFactory, onSuccess, onError, onCancel });
     },
-    [dispatch],
+    [openPerpsSign],
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {

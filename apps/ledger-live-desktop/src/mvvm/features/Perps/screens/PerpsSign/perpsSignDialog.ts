@@ -1,18 +1,32 @@
-import {
-  openDialog,
-  closeDialog,
-  selectIsDialogOpen,
-  selectDialogData,
-  type DialogId,
-} from "~/renderer/reducers/dialogs";
-import type { State } from "~/renderer/reducers";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import type { PerpsSignData } from "./usePerpsSignViewModel";
 
-const DIALOG_ID: DialogId = "PERPS_SIGNING";
+type PerpsSignContextValue = {
+  data: PerpsSignData | null;
+  openPerpsSign: (data: PerpsSignData) => void;
+  closePerpsSign: () => void;
+};
 
-export const openPerpsSign = (data: PerpsSignData) => openDialog(DIALOG_ID, data);
-export const closePerpsSign = () => closeDialog(DIALOG_ID);
-export const selectIsPerpsSignOpen = (state: Pick<State, "dialogs">) =>
-  selectIsDialogOpen(state, DIALOG_ID);
-export const selectPerpsSignData = (state: Pick<State, "dialogs">) =>
-  selectDialogData<PerpsSignData>(state, DIALOG_ID);
+const PerpsSignContext = createContext<PerpsSignContextValue>({
+  data: null,
+  openPerpsSign: () => {},
+  closePerpsSign: () => {},
+});
+
+export function PerpsSignProvider({ children }: { children: React.ReactNode }) {
+  const [data, setData] = useState<PerpsSignData | null>(null);
+
+  const openPerpsSign = useCallback((d: PerpsSignData) => setData(d), []);
+  const closePerpsSign = useCallback(() => setData(null), []);
+
+  const value = React.useMemo(
+    () => ({ data, openPerpsSign, closePerpsSign }),
+    [data, openPerpsSign, closePerpsSign],
+  );
+
+  return React.createElement(PerpsSignContext.Provider, { value }, children);
+}
+
+export function usePerpsSignState() {
+  return useContext(PerpsSignContext);
+}

@@ -66,6 +66,7 @@ import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setu
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
+import { PerpsSignProvider } from "LLD/features/Perps/screens/PerpsSign/perpsSignDialog";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -486,9 +487,10 @@ export default function Default() {
                     />
                   ) : null}
 
-                  <GlobalDialogs />
+                  <PerpsSignProvider>
+                    <GlobalDialogs />
 
-                  <Routes>
+                    <Routes>
                     <Route
                       path="/onboarding/*"
                       element={
@@ -537,7 +539,8 @@ export default function Default() {
                         />
                       </>
                     )}
-                  </Routes>
+                    </Routes>
+                  </PerpsSignProvider>
                 </ContextMenuWrapper>
               </WalletSyncProvider>
             </BridgeSyncProvider>
