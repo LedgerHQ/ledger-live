@@ -6,7 +6,7 @@ import {
   ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
   ANALYTICS_CONSENT_DRAWER_FLOW,
   useAnalyticsConsentDrawerViewModel,
-} from "../useAnalyticsConsentDrawerViewModel";
+} from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerOpeningFresh, withConsentDrawerState } from "./helpers";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;

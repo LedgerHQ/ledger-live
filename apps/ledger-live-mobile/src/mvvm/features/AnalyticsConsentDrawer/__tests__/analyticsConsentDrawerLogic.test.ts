@@ -1,5 +1,5 @@
 import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
-import { needsConsentRenewal, needsPrivacyPolicyAck } from "../analyticsConsentDrawerLogic";
+import { needsConsentRenewal, needsPrivacyPolicyAck } from "../utils/analyticsConsentDrawerLogic";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 

@@ -6,8 +6,10 @@ import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
-import type { ConsentDrawerPhase } from "./analyticsConsentDrawerLogic";
-import { DescriptionWithPreferencesLink, PrivacyUpdateSheet, TwoCtaConsentSheet } from "./components";
+import type { ConsentDrawerPhase } from "../utils/analyticsConsentDrawerLogic";
+import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
+import { PrivacyUpdateSheet } from "../components/PrivacyUpdateSheet";
+import { TwoCtaConsentSheet } from "../components/TwoCtaConsentSheet";
 
 export type AnalyticsConsentDrawerViewProps = Readonly<{
   phase: ConsentDrawerPhase;

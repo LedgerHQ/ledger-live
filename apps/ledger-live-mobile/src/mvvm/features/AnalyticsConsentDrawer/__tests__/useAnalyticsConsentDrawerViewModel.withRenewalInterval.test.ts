@@ -5,7 +5,7 @@
  */
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
-import { useAnalyticsConsentDrawerViewModel } from "../useAnalyticsConsentDrawerViewModel";
+import { useAnalyticsConsentDrawerViewModel } from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerState } from "./helpers";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
@@ -16,10 +16,10 @@ jest.mock("@react-navigation/native", () => ({
   useIsFocused: () => true,
 }));
 
-jest.mock("../analyticsConsentDrawerLogic", () => {
+jest.mock("../utils/analyticsConsentDrawerLogic", () => {
   const renewalMs = 365 * 24 * 60 * 60 * 1000;
-  const actual = jest.requireActual<typeof import("../analyticsConsentDrawerLogic")>(
-    "../analyticsConsentDrawerLogic",
+  const actual = jest.requireActual<typeof import("../utils/analyticsConsentDrawerLogic")>(
+    "../utils/analyticsConsentDrawerLogic",
   );
   return {
     ...actual,

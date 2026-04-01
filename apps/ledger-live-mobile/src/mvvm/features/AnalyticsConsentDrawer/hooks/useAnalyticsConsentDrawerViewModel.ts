@@ -20,7 +20,7 @@ import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
   type ConsentDrawerPhase,
-} from "./analyticsConsentDrawerLogic";
+} from "../utils/analyticsConsentDrawerLogic";
 
 export const ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE = "Analytics consent drawer";
 
