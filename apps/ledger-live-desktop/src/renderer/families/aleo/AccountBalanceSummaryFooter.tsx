@@ -1,5 +1,5 @@
-import React from "react";
-import { Trans } from "react-i18next";
+import React, { useEffect, useRef, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -12,7 +12,100 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import ButtonV3 from "~/renderer/components/ButtonV3";
+import Spinner from "~/renderer/components/Spinner";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
+import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+
+type AleoSyncState = "ready" | "running" | "complete";
+
+const SyncActionButton = styled(ButtonV3).attrs(() => ({
+  variant: "main",
+}))`
+  min-width: 130px;
+`;
+
+const ActionButton = ({
+  syncState,
+  onStart,
+  onStop,
+  onSyncAgain,
+}: {
+  syncState: AleoSyncState;
+  onStart: () => void;
+  onStop: () => void;
+  onSyncAgain: () => void;
+}) => {
+  const { t } = useTranslation();
+
+  switch (syncState) {
+    case "ready":
+      return (
+        <SyncActionButton onClick={onStart} buttonTestId="start-private-sync-button">
+          <Text>{t("aleo.account.syncButton.startSync")}</Text>
+        </SyncActionButton>
+      );
+    case "running":
+      return (
+        <SyncActionButton onClick={onStop} buttonTestId="stop-private-sync-button">
+          <Text>{t("aleo.account.syncButton.stopSync")}</Text>
+        </SyncActionButton>
+      );
+    case "complete":
+      return (
+        <SyncActionButton onClick={onSyncAgain} buttonTestId="sync-again-button">
+          <Text>{t("aleo.account.syncButton.syncAgain")}</Text>
+        </SyncActionButton>
+      );
+  }
+};
+
+const SyncProgress = ({
+  syncState,
+  progress,
+  lastSync,
+}: {
+  syncState: AleoSyncState;
+  progress: number;
+  lastSync: Date | null;
+}) => {
+  if (syncState === "running") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "row",
+          fontSize: "12px",
+          paddingLeft: "20px",
+        }}
+      >
+        <Spinner size={14} />
+        <Text style={{ fontSize: "12px", paddingLeft: "10px" }}>{progress}%</Text>
+      </div>
+    );
+  }
+
+  if (syncState === "complete") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          fontSize: "12px",
+          paddingTop: "10px",
+        }}
+      >
+        <Trans
+          i18nKey="aleo.account.syncButton.lastSync"
+          values={{ date: lastSync?.toLocaleString().replace(",", "") }}
+        />
+      </div>
+    );
+  }
+
+  return null;
+};
 
 interface Props {
   account: AleoAccount | TokenAccount;
@@ -22,6 +115,31 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
+
+  const {
+    isSyncing,
+    progress: hookProgress,
+    start: handleStart,
+    stop: handleStop,
+  } = useAleoPrivateSync({ account });
+
+  const [displaySyncing, setDisplaySyncing] = useState(isSyncing);
+  const finishDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hookProgressRef = useRef(hookProgress);
+  hookProgressRef.current = hookProgress;
+
+  useEffect(() => {
+    if (isSyncing) {
+      setDisplaySyncing(true);
+    } else if (hookProgressRef.current >= 100) {
+      finishDelayRef.current = setTimeout(() => setDisplaySyncing(false), 200);
+    } else {
+      setDisplaySyncing(false);
+    }
+    return () => {
+      if (finishDelayRef.current) clearTimeout(finishDelayRef.current);
+    };
+  }, [isSyncing]);
 
   if (account.type !== "Account" || !account.aleoResources) {
     return null;
@@ -43,6 +161,9 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const formattedPrivateBalance = privateBalance
     ? formatCurrencyUnit(unit, privateBalance, formatConfig)
     : PRIVATE_BALANCE_PLACEHOLDER;
+
+  const lastSync = account.aleoResources.lastPrivateSyncDate ?? null;
+  const syncState: AleoSyncState = displaySyncing ? "running" : lastSync ? "complete" : "ready";
 
   return (
     <Wrapper>
@@ -84,6 +205,22 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
         <AmountValue>
           <Discreet>{formattedPrivateBalance}</Discreet>
         </AmountValue>
+      </BalanceDetail>
+      <BalanceDetail>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: syncState === "running" ? "row" : "column",
+          }}
+        >
+          <ActionButton
+            syncState={syncState}
+            onStart={handleStart}
+            onStop={handleStop}
+            onSyncAgain={handleStart}
+          />
+          <SyncProgress syncState={syncState} progress={hookProgress} lastSync={lastSync} />
+        </div>
       </BalanceDetail>
     </Wrapper>
   );
