@@ -24,6 +24,7 @@ function makeParams(
     onContextInitialized: noop,
     onInitializationError: noop,
     onRetry: noop,
+    onUserCancel: noop,
     ...overrides,
   };
 }
@@ -142,6 +143,21 @@ describe("deriveHookState", () => {
       phase: "intentError",
       error,
       onRetry,
+    });
+  });
+
+  it("maps invalidOperation to intentError phase", () => {
+    const onUserCancel = jest.fn();
+    const error = new Error("invalid operation");
+    const params = makeParams({ onUserCancel });
+    const state: ExecutorState = { type: "invalidOperation", error };
+
+    const result = deriveHookState(state, params);
+
+    expect(result).toEqual({
+      phase: "invalidOperation",
+      error,
+      onClose: onUserCancel,
     });
   });
 

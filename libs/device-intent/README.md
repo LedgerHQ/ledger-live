@@ -47,28 +47,31 @@ device-centric flow.
 
 ### Core types (`src/core.ts`)
 
-| Export | Description |
-| --- | --- |
-| `DeviceConnectionParams` | Declarative params for device selection |
-| `DeviceConnectionResult` | Result of a device connection (DMK session + compat ID) |
-| `RequiresDerivation` | Derivation requirements for a device context |
-| `RequiredDeviceContext` | Declarative description of the device state needed before a step runs |
-| `DeviceExtractedContext` | Normalised info produced once the required context is established |
-| `Job<JobState, Input>` | Execution logic for one step, returns `Observable<JobState>` |
-| `IntentDefinition<JobState, Input>` | Reusable, cross-platform definition of one step |
-| `IntentPlatformDefinition<JobState, Input, ExtraProps>` | Platform-specific definition adding a UI component |
-| `Intent<JobState, Input, ExtraProps>` | Runtime instance passed to the executor |
-| `createIntent(definition, input)` | Helper to instantiate an `Intent` from a platform definition |
+| Export                                                  | Description                                                           |
+| ------------------------------------------------------- | --------------------------------------------------------------------- |
+| `DeviceConnectionParams`                                | Declarative params for device selection                               |
+| `DeviceConnectionResult`                                | Result of a device connection (DMK session + compat ID)               |
+| `RequiresDerivation`                                    | Derivation requirements for a device context                          |
+| `RequiredDeviceContext`                                 | Declarative description of the device state needed before a step runs |
+| `DeviceExtractedContext`                                | Normalised info produced once the required context is established     |
+| `Job<JobState, Input>`                                  | Execution logic for one step, returns `Observable<JobState>`          |
+| `IntentDefinition<JobState, Input>`                     | Reusable, cross-platform definition of one step                       |
+| `IntentPlatformDefinition<JobState, Input, ExtraProps>` | Platform-specific definition adding a UI component                    |
+| `IntentListeners<JobState>`                             | Optional lifecycle callbacks attachable to an intent instance         |
+| `Intent<JobState, Input, ExtraProps>`                   | Runtime instance passed to the executor                               |
+| `createIntent(definition, input, listeners?)`           | Helper to instantiate an `Intent` from a platform definition          |
 
 ### Executor types (`src/executor.ts`)
 
-| Export | Description |
-| --- | --- |
-| `DeviceConnectionComponent` | React component type for the device connection UI |
-| `DeviceContextInitializerComponent` | React component type for the device context initialisation UI |
-| `ExecutorPlatformConfiguration` | Groups both platform-injected components |
-| `ExecutorState` | Discriminated union of executor lifecycle states |
-| `DeviceIntentExecutorProps<JobState, Input, ExtraProps>` | Props for the `DeviceIntentExecutor` component |
+| Export                                                   | Description                                                                                        |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `DeviceConnectionComponent`                              | React component type for the device connection UI                                                  |
+| `DeviceContextInitializerComponent`                      | React component type for the device context initialisation UI                                      |
+| `ErrorComponent`                                         | React component type for error screens (connection, initialisation, intent)                        |
+| `InvalidOperationComponent`                              | React component type for the terminal invalid-operation screen                                     |
+| `ExecutorPlatformConfiguration`                          | Groups all platform-injected UI components (connection, initialisation, errors, invalid-operation) |
+| `ExecutorState`                                          | Discriminated union of executor lifecycle states                                                   |
+| `DeviceIntentExecutorProps<JobState, Input, ExtraProps>` | Props for the `DeviceIntentExecutor` component                                                     |
 
 ## Usage Guide
 
@@ -85,7 +88,9 @@ import { createIntent } from "@ledgerhq/device-intent";
 
 function MyFlowScreen({ enabled, onDone }: Props) {
   const [intent, setIntent] = useState(() =>
-    createIntent(myIntentPlatformDefinition, { /* input */ }),
+    createIntent(myIntentPlatformDefinition, {
+      /* input */
+    }),
   );
 
   return (
@@ -100,10 +105,18 @@ function MyFlowScreen({ enabled, onDone }: Props) {
       }}
       intent={intent}
       intentComponentExtraProps={{ title: "Sign transaction" }}
-      onExecutorStateChanged={(state) => { /* track lifecycle */ }}
-      onIntentJobStateChanged={(jobState) => { /* react to progress */ }}
-      onIntentJobComplete={() => { /* advance flow */ }}
-      onIntentJobError={(error) => { /* handle error */ }}
+      onExecutorStateChanged={state => {
+        /* track lifecycle */
+      }}
+      onIntentJobStateChanged={jobState => {
+        /* react to progress */
+      }}
+      onIntentJobComplete={() => {
+        /* advance flow */
+      }}
+      onIntentJobError={error => {
+        /* handle error */
+      }}
       cancellableUI={true}
       cancelIntentRequestId={undefined}
     />
@@ -157,17 +170,14 @@ type MyJobState =
   | { step: "signed"; signedTxHex: string }
   | { step: "error"; error: Error };
 
-const myJob: Job<MyJobState, { rawTxHex: string }> = ({
-  deviceConnectionResult,
-  input,
-}) =>
+const myJob: Job<MyJobState, { rawTxHex: string }> = ({ deviceConnectionResult, input }) =>
   concat(
     // Synchronous initial emission -- the UI immediately knows what to render
     of<MyJobState>({ step: "waiting-for-confirmation" }),
     // Async device work follows
     signOnDevice(deviceConnectionResult.sessionId, input.rawTxHex).pipe(
       map((hex): MyJobState => ({ step: "signed", signedTxHex: hex })),
-      catchError((err) =>
+      catchError(err =>
         of<MyJobState>({
           step: "error",
           error: err instanceof Error ? err : new Error(String(err)),
@@ -231,6 +241,23 @@ const intent = createIntent(MobileSignTransactionPlatformDef, {
 });
 ```
 
+You can also attach optional lifecycle listeners directly on the intent (see
+[Observability: callbacks](#observability-callbacks) for details):
+
+```typescript
+const intent = createIntent(
+  MobileSignTransactionPlatformDef,
+  {
+    rawTxHex: "0xabc...",
+  },
+  {
+    onJobComplete: () => {
+      /* intent-specific reaction */
+    },
+  },
+);
+```
+
 **You must call `createIntent()` to produce a new object when you want the
 executor to start a new intent.** The executor detects intent changes by
 **reference equality**. Reusing the same object reference means the executor
@@ -268,11 +295,19 @@ function useMyFlowOrchestration({ enabled, quote, platformDefs, deps }) {
     },
   }));
 
-  const onIntentJobStateChanged = useCallback((jobState) => {
+  // Store results from the running job -- do NOT transition from here.
+  const lastJobStateRef = useRef<unknown>(null);
+  const onIntentJobStateChanged = useCallback(jobState => {
+    lastJobStateRef.current = jobState;
+  }, []);
+
+  // Advance the flow only once the job has completed.
+  const onIntentJobComplete = useCallback(() => {
     if (state.type !== "running") return;
+    const jobState = lastJobStateRef.current;
     switch (state.phase.step) {
       case "signing": {
-        if (jobState.step === "signed") {
+        if (jobState?.step === "signed") {
           setState({
             type: "running",
             phase: {
@@ -286,7 +321,7 @@ function useMyFlowOrchestration({ enabled, quote, platformDefs, deps }) {
         break;
       }
       case "broadcasting": {
-        if (jobState.step === "confirmed") {
+        if (jobState?.step === "confirmed") {
           setState({ type: "done", txHash: jobState.txHash });
         }
         break;
@@ -311,6 +346,55 @@ function MyFlowScreen({ enabled, quote, onClose }) {
   return <LwmDeviceIntentExecutor {...executorProps} />;
 }
 ```
+
+### Job completion contract
+
+The executor's state machine enforces a strict rule: **no job may be running
+when the caller changes `intent` or `requiredDeviceContext`**. The job
+observable must have completed (or errored) first. If either prop changes
+while a job is still active, the state machine enters the terminal
+`invalidOperation` state -- an unrecoverable dead end that signals a bug in
+the caller.
+
+In practice this means:
+
+- **`onIntentJobComplete` is the definitive signal** that a job has finished
+  and it is safe to transition to the next phase. Always drive phase
+  transitions from this callback.
+- **Use `onIntentJobStateChanged` to capture intermediate results** (e.g. a
+  signed transaction hex), but do **not** set a new intent or context from it
+  -- the job is still running at that point.
+- **Interactive jobs must complete before the orchestrator advances.** If a
+  job waits for user action (e.g. a "Continue" button), give it a completion
+  signal -- a `Subject<never>` passed as input. The button handler calls
+  `subject.complete()`, which completes the job observable, which triggers
+  `onIntentJobComplete`, which drives the orchestrator forward. Do **not** use
+  `NEVER` as a job tail; it prevents the observable from ever completing,
+  forcing the orchestrator to bypass the completion contract.
+
+A correct interactive job pattern:
+
+```typescript
+import { type Subject, type Observable, concat, of } from "rxjs";
+
+type ConfirmJobState = { type: "waiting" };
+type ConfirmInput = { done$: Subject<never> };
+
+const confirmJob: Job<ConfirmJobState, ConfirmInput> = ({ input }) =>
+  concat(of<ConfirmJobState>({ type: "waiting" }), input.done$);
+```
+
+The orchestrator creates the Subject and wires the button:
+
+```typescript
+const done$ = new Subject<never>();
+const intent = createIntent(confirmDef, { done$ });
+// In extraProps or jobState callback:
+const onContinue = () => done$.complete();
+```
+
+When the user presses Continue, `done$.complete()` completes the observable,
+the executor fires `onIntentJobComplete`, and the orchestrator advances.
 
 ### Changing `requiredDeviceContext` and `intent` together
 
@@ -354,18 +438,57 @@ setRequiredContext({ appName: "Bitcoin", dependencies: [], ... });
 
 ### Observability: callbacks
 
+There are two levels of callbacks for job lifecycle events:
+
+#### Executor-level callbacks (on `DeviceIntentExecutorProps`)
+
 The executor reports progress and lifecycle changes through callback props:
 
-| Callback | Fires when |
-| --- | --- |
-| `onExecutorStateChanged(state)` | The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
-| `onIntentJobStateChanged(jobState)` | The running job's observable emits a new `JobState` value. |
-| `onIntentJobComplete()` | The job observable completes (no more emissions). The executor transitions to `idle`. |
-| `onIntentJobError(error)` | The job observable errors. The executor transitions to `executingIntentError`. |
+| Callback                            | Fires when                                                                                                                                                |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onExecutorStateChanged(state)`     | The executor transitions between lifecycle phases (`connectingDevice`, `initializingDeviceContext`, `executingIntent`, `idle`, and their error variants). |
+| `onIntentJobStateChanged(jobState)` | The running job's observable emits a new `JobState` value.                                                                                                |
+| `onIntentJobComplete()`             | The job observable completes (no more emissions). The executor transitions to `idle`.                                                                     |
+| `onIntentJobError(error)`           | The job observable errors. The executor transitions to `executingIntentError`.                                                                            |
 
 All callbacks use refs internally, so the executor always calls the **latest**
 version of each callback without needing to be recreated when the callback
 identity changes.
+
+#### Intent-level callbacks (on `Intent`)
+
+Each intent instance can optionally carry its own lifecycle callbacks:
+
+| Callback                      | Fires when                                       |
+| ----------------------------- | ------------------------------------------------ |
+| `onJobStateChanged(jobState)` | The job observable emits a new `JobState` value. |
+| `onJobComplete()`             | The job observable completes.                    |
+| `onJobError(error)`           | The job observable errors.                       |
+
+These are set via the optional `listeners` argument to `createIntent()`:
+
+```typescript
+const intent = createIntent(
+  myDef,
+  { derivationPath: "44'/60'/0'/0/0" },
+  {
+    onJobStateChanged: state => {
+      /* intent-specific reaction */
+    },
+    onJobComplete: () => {
+      /* advance to next phase */
+    },
+  },
+);
+```
+
+**Firing order:** intent-level callbacks fire **before** executor-level
+callbacks. This lets an intent-specific handler (e.g. storing a derived
+address) run before a cross-cutting executor callback reads it.
+
+Intent-level callbacks are useful for orchestrating multi-intent flows where
+each phase needs its own reaction logic, while executor-level callbacks handle
+cross-cutting concerns (updating global state, logging, debug UI).
 
 ### Cancelling an intent
 
@@ -429,9 +552,11 @@ type MyJobState =
   | { step: "done"; txHash: string };
 
 const myJob: Job<MyJobState, { signedTxHex: string }> = ({ input }) =>
-  new Observable<MyJobState>(async (subscriber) => {
+  new Observable<MyJobState>(async subscriber => {
     let resolveConfirm: () => void;
-    const confirmed = new Promise<void>((r) => { resolveConfirm = r; });
+    const confirmed = new Promise<void>(r => {
+      resolveConfirm = r;
+    });
 
     subscriber.next({
       step: "waiting-for-confirmation",
@@ -474,6 +599,34 @@ Or handle `undefined` in the component:
 ```tsx
 if (!jobState) return <GenericLoadingIndicator />;
 ```
+
+#### Transitioning while a job is still running
+
+If the orchestrator changes `intent` or `requiredDeviceContext` while a job
+observable is still active (hasn't completed or errored), the state machine
+enters the terminal `invalidOperation` state. This is unrecoverable and
+requires restarting the executor (`enabled` toggled off and on).
+
+When this happens, the executor renders the platform-injected
+`InvalidOperationComponent`, which should explain the bug state and offer a
+close or restart path.
+
+Common causes:
+
+- Advancing the flow from `onIntentJobStateChanged` instead of
+  `onIntentJobComplete`. The job may still be emitting when the state callback
+  fires.
+- Using `NEVER` as a job tail for interactive intents. The observable never
+  completes, so the orchestrator is forced to bypass the completion contract.
+  Use a `Subject<never>` completion signal instead (see
+  [Job completion contract](#job-completion-contract)).
+- Calling a navigation callback (e.g. `goTo()`) from a UI button without
+  first completing the job.
+
+**Fix:** always ensure the job observable completes before transitioning. For
+interactive jobs, complete a `Subject<never>` from the button handler. For
+async jobs, let the observable complete naturally and react in
+`onIntentJobComplete`.
 
 #### Changing `requiredDeviceContext` and `intent` in separate renders
 
@@ -520,7 +673,7 @@ const job: Job<MyState, MyInput> = ({ input }) =>
     of<MyState>({ step: "loading" }),
     doWork(input).pipe(
       map((result): MyState => ({ step: "done", result })),
-      catchError((err) =>
+      catchError(err =>
         of<MyState>({
           step: "error",
           error: err instanceof Error ? err : new Error(String(err)),
