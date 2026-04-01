@@ -26,8 +26,6 @@ const privateInfoMock: ZcashPrivateInfo = {
   lastProcessedBlock: 1,
   lastSyncTimestamp: 123,
   transactions: [],
-  progress: 0,
-  estimatedTimeRemaining: { hours: 0, minutes: 0 },
 };
 
 const privateInfoRawMock: ZcashPrivateInfoRaw = {
@@ -39,8 +37,6 @@ const privateInfoRawMock: ZcashPrivateInfoRaw = {
   lastProcessedBlock: 1,
   lastSyncTimestamp: 123,
   transactions: [],
-  progress: 0,
-  estimatedTimeRemaining: { hours: 0, minutes: 0 },
 };
 
 const shieldedTransactionMock: ShieldedTransaction = {

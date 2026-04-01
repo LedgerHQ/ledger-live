@@ -37,8 +37,6 @@ export type ZcashPrivateInfo = {
   saplingBalance: BigNumber;
   orchardBalance: BigNumber;
   syncState: ZcashSyncState;
-  progress: number;
-  estimatedTimeRemaining: SyncEstimatedTime;
   ufvk: string | null;
   birthday: string | null;
   lastSyncTimestamp: number | null;
@@ -50,8 +48,6 @@ export type ZcashPrivateInfoRaw = {
   orchardBalance: string;
   saplingBalance: string;
   syncState: string;
-  progress: number;
-  estimatedTimeRemaining: SyncEstimatedTime;
   ufvk: string | null;
   birthday: string | null;
   lastSyncTimestamp: number | null;
@@ -70,6 +66,13 @@ export type ShieldedTransactionRaw = {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
   };
+};
+
+export type ShieldedSyncResult = {
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessedBlock?: number;
+  transactions: ShieldedTransaction[];
 };
 
 export type SyncEstimatedTime = {
