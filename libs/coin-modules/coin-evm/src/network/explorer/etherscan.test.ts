@@ -1432,6 +1432,25 @@ describe("EVM Family", () => {
       );
     });
 
+    it("should return empty operations when API returns null result (e.g. Monad Testnet explorer)", async () => {
+      // Some explorers (e.g. Monad Testnet) return `{"status":"0","message":"No transactions found","result":null}`
+      // instead of `{"result":[]}` for empty internal transaction lists.
+      jest.spyOn(axios, "request").mockResolvedValueOnce({
+        data: { status: "0", message: "No transactions found", result: null },
+      });
+
+      const response = await ETHERSCAN_API.getInternalOperations({
+        currency,
+        address: account.freshAddress,
+        accountId: account.id,
+        fromBlock: 0,
+        sort: "asc",
+      });
+
+      expect(response.operations).toEqual([]);
+      expect(response.isDone).toBe(true);
+    });
+
     describe("isPageFull and isDone", () => {
       const fetchWithLimit = createFetchWithLimit(ETHERSCAN_API.getInternalOperations);
 

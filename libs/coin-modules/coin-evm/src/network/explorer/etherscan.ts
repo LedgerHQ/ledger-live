@@ -486,11 +486,12 @@ export const getInternalOperations = async (
     return EMPTY_RESULT;
   }
 
-  const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
+  // Some explorers (e.g. Monad Testnet) return null instead of [] for empty results.
+  const ops = await fetchWithRetries<EtherscanInternalTransaction[] | null>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=txlistinternal&address=${params.address}`,
     params: paginationParams(params),
-  }).then(ops => ops.map(fixTxHash));
+  }).then(ops => (ops ?? []).map(fixTxHash));
 
   // Why this thing ?
   // Multiple internal transactions can be executed from
