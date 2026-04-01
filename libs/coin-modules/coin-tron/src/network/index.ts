@@ -572,7 +572,8 @@ export async function fetchTronAccountTxsPage(
   cacheTransactionInfoById: Record<string, TronTransactionInfo>,
   params: FetchTxsPageParams,
 ): Promise<FetchTxsPageResult> {
-  const maxTimestampParam = params.maxTimestamp ? `&max_timestamp=${params.maxTimestamp}` : "";
+  const maxTimestampParam =
+    params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
   const queryParams = `limit=${params.limit}&min_timestamp=${params.minTimestamp}${maxTimestampParam}&order_by=block_timestamp,${params.order}`;
 
   const [nativeResult, trc20Result] = await Promise.all([
@@ -704,12 +705,8 @@ export async function fetchTronAccountTxs(
     (await getTrc20TxsWithRetry(null, 3)).map(formatTrongridTrc20TxResponse),
   );
   const trc20TxIds = new Set(trc20Txs.map(t => t.txID));
-  const isSuccessfulTriggerSmartContract = (tx: TrongridTxInfo) =>
-    tx.type === "TriggerSmartContract" && !tx.hasFailed;
   const nativeDeduped = compact(nativeTxs)
-    // remove any trc20 transaction from native
     .filter(tx => !trc20TxIds.has(tx.txID))
-    // remove any successful TriggerSmartContract from native; successful ones must come from TRC20
     .filter(tx => !isSuccessfulTriggerSmartContract(tx));
 
   const txInfos: TrongridTxInfo[] = nativeDeduped
