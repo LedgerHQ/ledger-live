@@ -1,7 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { renderHook } from "@testing-library/react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, renderHook, screen, waitFor } from "@testing-library/react";
 import { DomainEmpty, InvalidDomain, NoResolution } from "../../errors";
 import { resolveAddress, resolveDomain } from "../../resolvers";
 import { DomainServiceProvider, useDomain } from "../../hooks";
