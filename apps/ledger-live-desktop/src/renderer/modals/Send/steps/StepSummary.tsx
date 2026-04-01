@@ -81,8 +81,9 @@ const StepSummary = (props: StepProps) => {
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
   const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
-  const SpecificSummaryAmountRow = specific?.StepSummaryAmountRow;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
+  const SpecificSummaryFromAddress = specific?.StepSummaryFromAddress;
+  const SpecificSummaryRecipientValue = specific?.StepSummaryRecipientValue;
   const SpecificSummaryAdditionalRows = specific?.StepSummaryAdditionalRows;
   const SpecificSummaryPostAlert = specific?.StepSummaryPostAlert;
 
@@ -138,16 +139,24 @@ const StepSummary = (props: StepProps) => {
                 >
                   <CryptoCurrencyIcon size={22} currency={currency} />
                 </div>
-                <Text
-                  ff="Inter"
-                  color="neutral.c100"
-                  fontSize={4}
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  {accountName}
-                </Text>
+                {SpecificSummaryFromAddress ? (
+                  <SpecificSummaryFromAddress
+                    account={account}
+                    parentAccount={parentAccount}
+                    transaction={transaction}
+                  />
+                ) : (
+                  <Text
+                    ff="Inter"
+                    color="neutral.c100"
+                    fontSize={4}
+                    style={{
+                      flex: 1,
+                    }}
+                  >
+                    {accountName}
+                  </Text>
+                )}
                 <AccountTagDerivationMode account={account} />
               </Box>
             </Box>
@@ -171,16 +180,24 @@ const StepSummary = (props: StepProps) => {
                   {transaction.recipientDomain.domain}
                 </Text>
               )}
-              <Ellipsis>
-                <Text
-                  ff="Inter"
-                  color={transaction.recipientDomain ? "neutral.c80" : "neutral.c100"}
-                  fontSize={4}
-                  data-testid="recipient-address"
-                >
-                  {transaction.recipient}
-                </Text>
-              </Ellipsis>
+              {SpecificSummaryRecipientValue ? (
+                <SpecificSummaryRecipientValue
+                  account={account}
+                  parentAccount={parentAccount}
+                  transaction={transaction}
+                />
+              ) : (
+                <Ellipsis>
+                  <Text
+                    ff="Inter"
+                    color={transaction.recipientDomain ? "neutral.c80" : "neutral.c100"}
+                    fontSize={4}
+                    data-testid="recipient-address"
+                  >
+                    {transaction.recipient}
+                  </Text>
+                </Ellipsis>
+              )}
             </Box>
           </Box>
           {lldMemoTag?.enabled
@@ -234,43 +251,34 @@ const StepSummary = (props: StepProps) => {
               )}
         </Box>
         <Separator />
-        {SpecificSummaryAmountRow ? (
-          <SpecificSummaryAmountRow
-            amount={amount}
-            unit={unit}
-            currency={currency}
-            transaction={transaction}
-          />
-        ) : (
-          <Box horizontal justifyContent="space-between" mb={2}>
-            <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
-              <Trans i18nKey="send.steps.details.amount" />
-            </Text>
-            <Box>
-              <FormattedVal
-                color={"neutral.c80"}
-                disableRounding
-                unit={unit}
-                val={amount}
-                fontSize={4}
-                inline
-                showCode
+        <Box horizontal justifyContent="space-between" mb={2}>
+          <Text ff="Inter|Medium" color="neutral.c60" fontSize={4}>
+            <Trans i18nKey="send.steps.details.amount" />
+          </Text>
+          <Box>
+            <FormattedVal
+              color={"neutral.c80"}
+              disableRounding
+              unit={unit}
+              val={amount}
+              fontSize={4}
+              inline
+              showCode
+              alwaysShowValue
+              data-testid="transaction-amount"
+            />
+            <Box textAlign="right">
+              <CounterValue
+                color="neutral.c70"
+                fontSize={3}
+                currency={currency}
+                value={amount}
+                alwaysShowSign={false}
                 alwaysShowValue
-                data-testid="transaction-amount"
               />
-              <Box textAlign="right">
-                <CounterValue
-                  color="neutral.c70"
-                  fontSize={3}
-                  currency={currency}
-                  value={amount}
-                  alwaysShowSign={false}
-                  alwaysShowValue
-                />
-              </Box>
             </Box>
           </Box>
-        )}
+        </Box>
 
         {SpecificSummaryNetworkFeesRow ? (
           <SpecificSummaryNetworkFeesRow

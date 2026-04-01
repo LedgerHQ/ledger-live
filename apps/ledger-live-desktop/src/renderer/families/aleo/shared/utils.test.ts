@@ -4,7 +4,7 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
 import { makeAleoTransaction } from "../__mocks__/transaction.mock";
-import { getAleoCurrencyConfig, getAleoTransactionTypeLabelKey } from "./utils";
+import { getAleoAddressBadgeI18nKey, getAleoCurrencyConfig } from "./utils";
 
 jest.mock("@ledgerhq/live-common/config/index");
 
@@ -51,15 +51,26 @@ describe("getAleoCurrencyConfig", () => {
   });
 });
 
-describe("getAleoTransactionTypeLabelKey", () => {
+describe("getAleoAddressBadgeI18nKey", () => {
   it.each([
     [TRANSACTION_TYPE.TRANSFER_PRIVATE, "aleo.operations.type.private"],
     [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, "aleo.operations.type.private"],
     [TRANSACTION_TYPE.TRANSFER_PUBLIC, "aleo.operations.type.public"],
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, "aleo.operations.type.public"],
-  ])("returns the correct label key for a %s transaction", (mode, expectedKey) => {
+  ])("returns the correct key for %s in from direction", (mode, expectedKey) => {
     const tx = makeAleoTransaction({ mode });
 
-    expect(getAleoTransactionTypeLabelKey(tx)).toBe(expectedKey);
+    expect(getAleoAddressBadgeI18nKey(tx, "from")).toBe(expectedKey);
+  });
+
+  it.each([
+    [TRANSACTION_TYPE.TRANSFER_PRIVATE, "aleo.operations.type.private"],
+    [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, "aleo.operations.type.private"],
+    [TRANSACTION_TYPE.TRANSFER_PUBLIC, "aleo.operations.type.public"],
+    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, "aleo.operations.type.public"],
+  ])("returns the correct key for %s in to direction", (mode, expectedKey) => {
+    const tx = makeAleoTransaction({ mode });
+
+    expect(getAleoAddressBadgeI18nKey(tx, "to")).toBe(expectedKey);
   });
 });
