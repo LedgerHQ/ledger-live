@@ -126,7 +126,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
         onCancel();
       }
     };
-  }, []);
+  }, [onCancel]);
 
   return {
     t,
