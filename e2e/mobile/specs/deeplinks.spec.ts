@@ -93,8 +93,9 @@ describe("DeepLinks Tests", () => {
   );
 
   (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
+    const readyPromise = waitSwapReady();
     await app.swap.openViaDeeplink();
-    await waitSwapReady();
+    await readyPromise;
     await app.swap.expectSwapPage();
   });
 

@@ -57,8 +57,8 @@ export async function beforeAllFunctionSwap(options: ApplicationOptions) {
     cliCommandsOnApp: options.cliCommandsOnApp,
   });
   await app.portfolio.waitForPortfolioPageToLoad();
+  await swapSetup();
   const readyPromise = waitSwapReady();
   await app.swap.openViaDeeplink();
-  await swapSetup();
   await readyPromise;
 }

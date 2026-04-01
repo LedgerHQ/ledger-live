@@ -142,7 +142,7 @@ async function navigate(name: string) {
 }
 
 export async function swapSetup() {
-  postMessage({ type: "swapSetup", id: uniqueId() });
+  return fetchData({ type: "swapSetup", id: uniqueId() });
 }
 
 export async function waitSwapReady() {
@@ -229,6 +229,14 @@ function onMessage(messageStr: string) {
       if (pending) {
         global.pendingCallbacks.delete("getEnvs");
         pending.callback(msg.payload);
+      }
+      break;
+    }
+    case "swapSetupDone": {
+      const pending = global.pendingCallbacks?.get("swapSetup");
+      if (pending) {
+        global.pendingCallbacks.delete("swapSetup");
+        pending.callback("swapSetup done");
       }
       break;
     }

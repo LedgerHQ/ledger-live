@@ -1,6 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 
 import { Flex } from "@ledgerhq/native-ui";
+import Config from "react-native-config";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import GenericErrorView from "~/components/GenericErrorView";
 import { WebviewState } from "~/components/Web3AppWebview/types";
@@ -14,6 +15,7 @@ import { useSwapAndroidHardwareBackPress } from "./navigationHandlers/useSwapAnd
 import { useSwapHeaderNavigation } from "./navigationHandlers/useSwapHeaderNavigation";
 import TrackScreen from "~/analytics/TrackScreen";
 import { useSwapLiveAppState } from "./hooks/useSwapLiveAppState";
+import { sendSwapLiveAppReady } from "../../../../e2e/bridge/client";
 
 export function SwapLiveApp({
   route,
@@ -36,9 +38,16 @@ export function SwapLiveApp({
     navigation,
   });
 
+  const wasLoadingRef = useRef(false);
+
   const handleWebviewState = useCallback(
     (webviewState: WebviewState) => {
       onWebRouteChange({ url: webviewState.url, canGoBack: webviewState.canGoBack });
+
+      if (Config.DETOX && wasLoadingRef.current && !webviewState.loading) {
+        sendSwapLiveAppReady();
+      }
+      wasLoadingRef.current = webviewState.loading;
 
       setWebviewState(webviewState);
     },
