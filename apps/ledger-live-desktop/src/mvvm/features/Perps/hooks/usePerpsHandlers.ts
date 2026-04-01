@@ -7,10 +7,7 @@ import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types"
 import { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import {
-  setPerpsSignData,
-  openPerpsSign,
-} from "../screens/PerpsSign/perpsSignDialog";
+import { openPerpsSign } from "../screens/PerpsSign/perpsSignDialog";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const dispatch = useDispatch();
@@ -35,8 +32,7 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
       onError: (error: Error) => void;
       onCancel: () => void;
     }) => {
-      setPerpsSignData({ appName, appOptions, signFactory, onSuccess, onError, onCancel });
-      dispatch(openPerpsSign());
+      dispatch(openPerpsSign({ appName, appOptions, signFactory, onSuccess, onError, onCancel }));
     },
     [dispatch],
   );

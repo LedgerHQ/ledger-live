@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import PerpsSignModal from "../PerpsSignModal";
-import { setPerpsSignData, clearPerpsSignData } from "../perpsSignDialog";
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({
   __esModule: true,
@@ -36,22 +35,18 @@ jest.mock("@ledgerhq/lumen-ui-react", () => ({
   ),
 }));
 
+const perpsSignData = {
+  appName: "Hyperliquid",
+  signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
+  onSuccess: jest.fn(),
+  onError: jest.fn(),
+  onCancel: jest.fn(),
+};
+
 describe("PerpsSign integration", () => {
-  afterEach(() => {
-    clearPerpsSignData();
-  });
-
   it("should render DeviceAction in connect phase when dialog is open", () => {
-    setPerpsSignData({
-      appName: "Hyperliquid",
-      signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
-      onSuccess: jest.fn(),
-      onError: jest.fn(),
-      onCancel: jest.fn(),
-    });
-
     render(<PerpsSignModal />, {
-      initialState: { dialogs: { PERPS_SIGNING: true } },
+      initialState: { dialogs: { PERPS_SIGNING: perpsSignData } },
     });
 
     expect(screen.getByTestId("device-action")).toBeVisible();
