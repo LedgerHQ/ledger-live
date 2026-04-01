@@ -31,6 +31,7 @@ function createBalanceOperation(
   diff: bigint,
   fee: bigint,
   feesPayer: string,
+  destination: string | undefined,
 ): BlockOperation | null {
   if (diff === BigInt(0)) return null;
 
@@ -41,15 +42,23 @@ function createBalanceOperation(
     adjustedDiff = diff + fee;
   }
 
+  const peer = account === feesPayer ? destination : feesPayer;
+
   return {
     type: BLOCK_OPERATION_TRANSFER,
     address: account,
+    ...(peer ? { peer } : {}),
     asset: ASSETINFO_NATIVE,
     amount: adjustedDiff,
   };
 }
 
-function mapModifiedNode(data: ModifiedNodeData, fee: bigint, feesPayer: string): BlockOperation[] {
+function mapModifiedNode(
+  data: ModifiedNodeData,
+  fee: bigint,
+  feesPayer: string,
+  destination: string | undefined,
+): BlockOperation[] {
   if (data.LedgerEntryType === METADATA_NODE_ENTRYTYPE_ACCOUNTROOT) {
     const before = data.PreviousFields?.Balance;
     const after = data.FinalFields?.Balance;
@@ -57,7 +66,7 @@ function mapModifiedNode(data: ModifiedNodeData, fee: bigint, feesPayer: string)
 
     if (typeof before === "string" && typeof after === "string" && typeof account === "string") {
       const diff = BigInt(after) - BigInt(before);
-      const op = createBalanceOperation(account, diff, fee, feesPayer);
+      const op = createBalanceOperation(account, diff, fee, feesPayer, destination);
       return op ? [op] : [];
     }
 
@@ -67,14 +76,19 @@ function mapModifiedNode(data: ModifiedNodeData, fee: bigint, feesPayer: string)
   return [{ type: BLOCK_OPERATION_OTHER, ...data }];
 }
 
-function mapCreatedNode(data: CreatedNodeData, fee: bigint, feesPayer: string): BlockOperation[] {
+function mapCreatedNode(
+  data: CreatedNodeData,
+  fee: bigint,
+  feesPayer: string,
+  destination: string | undefined,
+): BlockOperation[] {
   if (data.LedgerEntryType === METADATA_NODE_ENTRYTYPE_ACCOUNTROOT) {
     const balance = data.NewFields?.Balance;
     const account = data.NewFields?.Account;
 
     if (typeof balance === "string" && typeof account === "string") {
       const diff = BigInt(balance);
-      const op = createBalanceOperation(account, diff, fee, feesPayer);
+      const op = createBalanceOperation(account, diff, fee, feesPayer, destination);
       return op ? [op] : [];
     }
     return [];
@@ -120,15 +134,16 @@ function mapBlockTransactions(txs: XrplOperation[]): BlockTransaction[] {
   return txs.map(blk => {
     const fee = BigInt(blk.tx_json.Fee);
     const feesPayer = blk.tx_json.Account;
+    const destination = blk.tx_json.Destination;
     const isSuccess = blk.meta.TransactionResult === TX_RESULT_TESSUCCESS;
 
     const operations: BlockOperation[] = isSuccess
       ? (blk.meta.AffectedNodes ?? []).flatMap((node: AffectedNode) => {
           if ("ModifiedNode" in node) {
-            return mapModifiedNode(node.ModifiedNode, fee, feesPayer);
+            return mapModifiedNode(node.ModifiedNode, fee, feesPayer, destination);
           }
           if ("CreatedNode" in node) {
-            return mapCreatedNode(node.CreatedNode, fee, feesPayer);
+            return mapCreatedNode(node.CreatedNode, fee, feesPayer, destination);
           }
           if ("DeletedNode" in node) {
             return mapDeletedNode(node.DeletedNode);
