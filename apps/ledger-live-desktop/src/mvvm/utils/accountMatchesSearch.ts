@@ -17,7 +17,9 @@ export function accountMatchesSearch(
     subMatch =
       subMatch &&
       !!account.subAccounts &&
-      listSubAccounts(account).some(token => accountMatchesSearch(walletState, search, token));
+      listSubAccounts(account).some(token =>
+        accountMatchesSearch(walletState, search, token, false, account.freshAddress),
+      );
   } else {
     const c = getAccountCurrency(account);
     match = `${c.ticker}|${c.name}|${accountName}|${parentAddress ?? ""}`;
