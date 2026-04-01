@@ -11,6 +11,7 @@ export type DerivationMode =
   | "tezosbip44h"
   | "galleonL"
   | "tezboxL"
+  | "tezosSecp256k1"
   | "taproot"
   | "native_segwit"
   | "segwit"

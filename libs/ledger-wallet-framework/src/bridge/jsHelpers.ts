@@ -360,14 +360,15 @@ const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
       const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
         account: index,
       });
-      let res = derivationsCache[freshAddressPath];
+      const cacheKey = `${freshAddressPath}:${derivationMode}`;
+      let res = derivationsCache[cacheKey];
       if (!res) {
         res = await getAddressWrapper(getAddressFn)(deviceId, {
           currency,
           path: freshAddressPath,
           derivationMode,
         });
-        derivationsCache[freshAddressPath] = res;
+        derivationsCache[cacheKey] = res;
       }
       return res as Result;
     },
@@ -510,7 +511,8 @@ export const makeScanAccounts =
             if (finished) break;
             const path = getSeedIdentifierDerivation(currency, derivationMode);
             log("scanAccounts", `scanning ${currency.id} on derivationMode=${derivationMode}`);
-            let result: Result = derivationsCache[path];
+            const seedCacheKey = `${path}:${derivationMode}`;
+            let result: Result = derivationsCache[seedCacheKey];
 
             if (!result) {
               try {
@@ -520,7 +522,7 @@ export const makeScanAccounts =
                   derivationMode,
                 });
 
-                derivationsCache[path] = result;
+                derivationsCache[seedCacheKey] = result;
               } catch (e) {
                 if (e instanceof UnsupportedDerivation) {
                   log("scanAccounts", "ignore derivationMode=" + derivationMode);

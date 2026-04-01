@@ -73,6 +73,10 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
   },
+  tezosSecp256k1: {
+    tag: "tz2",
+    overridesDerivation: "44'/1729'/<account>'",
+  },
   galleonL: {
     tag: "legacy",
     startsAt: 1,
@@ -228,7 +232,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
+  tezos: ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   westend: ["polkadotbip44"],

@@ -82,7 +82,7 @@ describe("getDerivationModesForCurrency", () => {
     ["bitcoin", ["native_segwit", "taproot", "segwit", ""]], // supportsSegwit + supportsNativeSegwit + taproot + segwit
     ["bitcoin_cash", ["unsplit", ""]], // forkedFrom
     ["bitcoin_gold", ["unsplit", "segwit_unsplit", "segwit", ""]], // forkedFrom + supportsSegwit
-    ["tezos", ["galleonL", "tezboxL", "tezosbip44h", "tezbox"]], // disableBIP44
+    ["tezos", ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"]], // disableBIP44
     ["solana", ["solanaMain", "solanaBip44Change", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
     ["celo", ["celo", "celoMM", "celoEvm"]], // backward compatible change in getDerivationModesForCurrency
   ];
