@@ -775,6 +775,7 @@ export const DeeplinksProvider = ({
             const affiliate = searchParams.get("affiliate");
             const fromCurrency = searchParams.get("fromCurrency");
             const toCurrency = searchParams.get("toCurrency");
+            const toAccountId = searchParams.get("toAccountId");
             if (fromPath) swapParams.set("fromPath", fromPath);
             if (fromToken) swapParams.set("fromTokenId", fromToken);
             if (toToken) swapParams.set("toTokenId", toToken);
@@ -782,6 +783,7 @@ export const DeeplinksProvider = ({
             if (toCurrency) swapParams.set("toCurrencyId", toCurrency);
             if (amountFrom) swapParams.set("amountFrom", amountFrom);
             if (affiliate) swapParams.set("affiliate", affiliate);
+            if (toAccountId) swapParams.set("toAccountId", toAccountId);
             const swapSearch = swapParams.toString();
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);

@@ -29,6 +29,7 @@ const SWAP_PARAM_KEYS: string[] = [
   "fromCurrencyId",
   "toCurrencyId",
   "amountFrom",
+  "toAccountId",
 ];
 
 const isRecord = (data: unknown): data is Record<string, unknown> =>

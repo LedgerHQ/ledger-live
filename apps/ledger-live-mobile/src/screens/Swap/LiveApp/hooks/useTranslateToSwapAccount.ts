@@ -61,6 +61,10 @@ export const useTranslateToSwapAccount = (
       return newParams;
     }
 
+    if (params.toAccountId) {
+      newParams.toAccountId = params.toAccountId;
+    }
+
     if (defaultCurrency) {
       if (isTokenCurrency(defaultCurrency)) {
         newParams.toTokenId = defaultCurrency.id;
