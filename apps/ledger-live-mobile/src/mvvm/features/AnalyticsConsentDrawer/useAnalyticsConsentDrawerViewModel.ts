@@ -49,7 +49,7 @@ export function useAnalyticsConsentDrawerViewModel() {
     feature?.enabled && hasCompletedOnboarding && (needsPrivacy || needsConsent),
   );
 
-  const isReconfirm = analyticsEnabled && personalizedEnabled;
+  const isNewConsent = !analyticsEnabled || !personalizedEnabled;
 
   const [phase, setPhase] = useState<ConsentDrawerPhase>("closed");
 
@@ -60,11 +60,11 @@ export function useAnalyticsConsentDrawerViewModel() {
     }
     setPhase(current => {
       if (current !== "closed") return current;
-      if(!isReconfirm) return "consentFresh";
+      if(!isNewConsent) return "consentFresh";
       if (needsPrivacy) return "privacy";
       return "consentReconfirm";
     });
-  }, [isFocused, shouldOffer, needsPrivacy, isReconfirm]);
+  }, [isFocused, shouldOffer, needsPrivacy, isNewConsent]);
 
   const closeDrawer = useCallback(() => {
     setPhase("closed");
