@@ -62,7 +62,8 @@
         "class-variance-authority",
         "embla-carousel-autoplay",
         "embla-carousel-react",
-        "events"
+        "events",
+        "@ledgerhq/zcash-utils"
       ]
     },
     "./apps/ledger-live-mobile": {

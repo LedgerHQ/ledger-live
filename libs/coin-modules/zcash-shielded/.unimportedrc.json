@@ -18,6 +18,8 @@
   "ignoreUnimported": [
     "src/ZCash.ts",
     "src/constants.ts",
-    "src/types.ts"
+    "src/types.ts",
+    "src/ZCashNative.native.ts",
+    "src/ZCash.native.ts"
   ]
 }
