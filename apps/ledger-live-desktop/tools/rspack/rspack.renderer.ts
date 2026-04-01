@@ -2,7 +2,13 @@ import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, lldRoot } from "./utils";
+import {
+  buildRendererEnv,
+  buildDotEnvDefine,
+  DOTENV_FILE,
+  lldRoot,
+  resolveNativeExternals,
+} from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron renderer process
@@ -275,6 +281,7 @@ export function createRendererConfig(
     optimization: {
       minimize: !isDev,
     },
+    externals: resolveNativeExternals(),
     stats: isDev ? "errors-warnings" : "normal",
     experiments: {
       css: true,

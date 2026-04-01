@@ -63,6 +63,9 @@ catalogs:
     '@ledgerhq/speculos-device-controller':
       specifier: 0.2.3
       version: 0.2.3
+    '@ledgerhq/zcash-utils':
+      specifier: 0.1.5
+      version: 0.1.5
     '@playwright/test':
       specifier: 1.53.0
       version: 1.53.0
@@ -997,6 +1000,9 @@ importers:
       '@ledgerhq/zcash-shielded':
         specifier: workspace:^
         version: link:../../libs/coin-modules/zcash-shielded
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 0.1.5
       '@lottiefiles/dotlottie-react':
         specifier: 0.17.13
         version: 0.17.13(react@19.0.0)
@@ -6134,6 +6140,9 @@ importers:
       '@ledgerhq/zcash-decrypt':
         specifier: 0.2.0
         version: 0.2.0
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 0.1.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -16981,6 +16990,9 @@ packages:
 
   '@ledgerhq/zcash-decrypt@0.2.0':
     resolution: {integrity: sha512-9UpIbA7KTLv/WJTua9mPF5Gvasjn4LbyBir2zIKATJkbPbUMv3ngfZrW8PP8f0RwvpgHUIKXEUqqKpJJGUIyFA==}
+
+  '@ledgerhq/zcash-utils@0.1.5':
+    resolution: {integrity: sha512-Aim30vuAIsiciRuXfQSI5qhS5ufhPnlH2gE9mma6Q1fSBJQFWkQWJuyp4S0M0vscFNjzAdNnsYYD+tP03xx4Rg==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -45484,6 +45496,8 @@ snapshots:
       - utf-8-validate
 
   '@ledgerhq/zcash-decrypt@0.2.0': {}
+
+  '@ledgerhq/zcash-utils@0.1.5': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
