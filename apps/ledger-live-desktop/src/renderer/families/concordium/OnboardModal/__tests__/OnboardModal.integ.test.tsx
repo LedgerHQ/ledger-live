@@ -24,33 +24,16 @@ import {
 setSupportedCurrencies(["concordium"]);
 
 // HTTP (submitCredential) and WebSocket (WC relay) are mocked via tests/handlers/concordium.ts.
-// SignClient is mocked here because WC protocol uses encrypted session proposals/
-// approvals that cannot be forged.
-const mockConnect = jest.fn();
-const mockSessionGetAll = jest.fn();
-const mockRequest = jest.fn();
-const mockPairingGetAll = jest.fn();
-const mockPairingDelete = jest.fn();
-
-jest.mock(
-  "@walletconnect/sign-client",
-  () => ({
-    __esModule: true,
-    default: {
-      init: () =>
-        Promise.resolve({
-          connect: (...args: unknown[]) => mockConnect(...args),
-          session: { getAll: () => mockSessionGetAll() },
-          request: (...args: unknown[]) => mockRequest(...args),
-          pairing: {
-            getAll: () => mockPairingGetAll(),
-            delete: (...args: unknown[]) => mockPairingDelete(...args),
-          },
-        }),
-    },
-  }),
-  { virtual: true },
-);
+// SignClient is auto-mocked via __mocks__/@walletconnect/sign-client.js because WC protocol
+// uses encrypted session proposals/approvals that cannot be forged.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const {
+  __mockConnect: mockConnect,
+  __mockSessionGetAll: mockSessionGetAll,
+  __mockRequest: mockRequest,
+  __mockPairingGetAll: mockPairingGetAll,
+  __mockPairingDelete: mockPairingDelete,
+} = require("@walletconnect/sign-client");
 
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
