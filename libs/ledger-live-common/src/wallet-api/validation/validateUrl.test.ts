@@ -1,8 +1,5 @@
-import { validateUrl } from "./learnUrlValidation";
-
-jest.mock("~/renderer/logger", () => ({
-  warn: jest.fn(),
-}));
+import "../../__tests__/test-helpers/setup";
+import { validateUrl } from "./validateUrl";
 
 describe("validateUrl", () => {
   describe("allowed Ledger domains", () => {

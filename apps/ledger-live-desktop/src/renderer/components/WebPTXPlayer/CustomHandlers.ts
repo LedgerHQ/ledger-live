@@ -20,6 +20,7 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { openModal } from "~/renderer/actions/modals";
 import {
   getParentAccount,
+  isAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -105,11 +106,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
 
         const parentAccount = accounts.find(
           acc => acc.type === "Account" && acc.id === parentAccountId,
-        ) as Account | undefined;
+        );
 
         const { token } = await decodeTokenAccountId(accountId);
 
-        if (parentAccount && token) {
+        if (parentAccount && token && isAccount(parentAccount)) {
           return makeEmptyTokenAccount(parentAccount, token);
         }
       }

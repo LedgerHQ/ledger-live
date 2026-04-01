@@ -7,24 +7,16 @@
 
 import { DdRum, ErrorSource } from "@datadog/mobile-react-native";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
 import { isDatadogEnabled } from "../../datadog";
 import type { OptionMetadata } from "../../reducers/types";
+
+export { validateUrl };
 
 // Maximum allowed lengths for string parameters
 const MAX_MESSAGE_LENGTH = 700;
 const MAX_TITLE_LENGTH = 100;
 const MAX_LABEL_LENGTH = 50;
-
-// Allowed domains for external links
-const ALLOWED_DOMAINS = [
-  // Ledger official domains (includes all subdomains like www.ledger.com, support.ledger.com, help.ledger.com)
-  "ledger.com",
-];
-
-// Allowed protocols for external links
-// Note: OptionMetadata.link only receives ledgerlive:// URLs from earn app
-//       learnMoreLink only receives https://www.ledger.com URLs from earn app
-const ALLOWED_PROTOCOLS = ["https:", "ledgerwallet:", "ledgerlive:"];
 
 // Valid action types for earn deeplinks
 export enum EarnDeeplinkAction {

@@ -9,7 +9,7 @@ import {
   WalletAPICustomHandlers,
   AccountIdFormatsResponse,
 } from "@ledgerhq/live-common/wallet-api/types";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { track } from "~/analytics";
@@ -23,6 +23,7 @@ import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 import {
   getParentAccount,
+  isAccount,
   isTokenAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
@@ -40,6 +41,7 @@ import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLi
 import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
+import { validateUrl } from "@ledgerhq/live-common/wallet-api/validation/validateUrl";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -98,13 +100,11 @@ export function useCustomExchangeHandlers({
       if (accountId.includes("+")) {
         const { accountId: parentAccountId } = decodeTokenAccountIdSync(accountId);
 
-        const parentAccount = accounts.find(
-          acc => acc.type === "Account" && acc.id === parentAccountId,
-        ) as Account | undefined;
+        const parentAccount = accounts.find(acc => isAccount(acc) && acc.id === parentAccountId);
 
         const { token } = await decodeTokenAccountId(accountId);
 
-        if (parentAccount && token) {
+        if (parentAccount && token && isAccount(parentAccount)) {
           return makeEmptyTokenAccount(parentAccount, token);
         }
       }
@@ -521,7 +521,53 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
       throw new Error("Missing params for custom.bottomSheet.info");
     }
 
-    dispatch(makeSetEarnInfoBottomSheetAction(params));
+    const { title, message, linkText, linkHref } = params;
+
+    if (typeof title !== "string" || typeof message !== "string") {
+      throw new TypeError(
+        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    const trimmedTitle = title.trim();
+    const trimmedMessage = message.trim();
+    if (!trimmedTitle || !trimmedMessage) {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: expected non-empty string 'title' and 'message'.",
+      );
+    }
+
+    if (linkText != null && typeof linkText !== "string") {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: 'linkText' must be a string when provided.",
+      );
+    }
+    if (linkHref != null && typeof linkHref !== "string") {
+      throw new Error(
+        "Invalid params for custom.bottomSheet.info: 'linkHref' must be a string when provided.",
+      );
+    }
+
+    const trimmedLinkText = linkText ? linkText.trim() || undefined : undefined;
+
+    let validatedLinkHref: string | undefined;
+    if (linkHref != null) {
+      validatedLinkHref = validateUrl(linkHref);
+      if (validatedLinkHref === "") {
+        throw new Error(
+          "Invalid params for custom.bottomSheet.info: 'linkHref' is not an allowed URL.",
+        );
+      }
+    }
+
+    dispatch(
+      makeSetEarnInfoBottomSheetAction({
+        title: trimmedTitle,
+        message: trimmedMessage,
+        linkText: trimmedLinkText,
+        linkHref: validatedLinkHref,
+      }),
+    );
   };
 }
 
