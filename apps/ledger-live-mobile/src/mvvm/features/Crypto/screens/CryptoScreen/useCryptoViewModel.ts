@@ -4,7 +4,6 @@ import { useSelector } from "~/context/hooks";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
@@ -15,7 +14,7 @@ import {
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { toAsset } from "LLM/utils/assetUtils";
-import { CryptoVariant } from "./types";
+import { CryptoScreenViewData, CryptoVariant } from "./types";
 import { selectAssetList } from "./utils";
 
 type NavigationProp = BaseNavigationComposite<
@@ -27,21 +26,24 @@ interface UseCryptoViewModelParams {
   variant?: CryptoVariant;
 }
 
-const TRACKING_PAGE_BY_VARIANT: Record<CryptoVariant, string> = {
-  stablecoin: "Stablecoin",
-  crypto: "Crypto",
-  all: "AllAssets",
+const TRACKING_TYPE_BY_VARIANT: Record<CryptoVariant, "crypto" | "stable" | undefined> = {
+  stablecoin: "stable",
+  crypto: "crypto",
+  all: undefined,
 };
 
-const useCryptoViewModel = ({ sourceScreenName, variant }: UseCryptoViewModelParams) => {
+const useCryptoViewModel = ({
+  sourceScreenName,
+  variant,
+}: UseCryptoViewModelParams): CryptoScreenViewData => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const hasNoAccount = useSelector(hasNoAccountsSelector);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const { categorizedAssets, isLoadingStablecoinTickers } = useCategorizedAssetsFromPortfolio();
+  const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
+    useCategorizedAssetsFromPortfolio();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
@@ -63,7 +65,7 @@ const useCryptoViewModel = ({ sourceScreenName, variant }: UseCryptoViewModelPar
     (asset: Asset) => {
       track("asset_clicked", {
         asset: asset.currency.name,
-        page: TRACKING_PAGE_BY_VARIANT[resolvedVariant],
+        page: TRACKING_TYPE_BY_VARIANT[resolvedVariant],
       });
 
       navigation.navigate(NavigatorName.Accounts, {
@@ -77,18 +79,18 @@ const useCryptoViewModel = ({ sourceScreenName, variant }: UseCryptoViewModelPar
   );
 
   const title = resolvedVariant === "stablecoin" ? t("crypto.stablecoinTitle") : t("crypto.title");
-  const screenTrackingName = TRACKING_PAGE_BY_VARIANT[resolvedVariant];
+  const trackingType = TRACKING_TYPE_BY_VARIANT[resolvedVariant];
 
   return {
     assetsToDisplay,
     onItemPress,
-    hasNoAccount,
     isLoading: isLoadingStablecoinTickers,
+    error: isStablecoinTickersError ? new Error(t("crypto.errorState")) : null,
     sourceScreenName,
     onNavigateBack: navigation.goBack,
     variant: resolvedVariant,
     title,
-    screenTrackingName,
+    trackingType,
   };
 };
 

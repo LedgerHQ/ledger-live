@@ -5,7 +5,7 @@ export type CryptoVariant = "crypto" | "stablecoin" | "all";
 
 export type CryptoScreenNavigator = {
   [ScreenName.Crypto]: {
-    sourceScreenName?: ScreenName;
+    sourceScreenName: ScreenName;
     variant?: CryptoVariant;
   };
 };
@@ -13,11 +13,11 @@ export type CryptoScreenNavigator = {
 export interface CryptoScreenViewData {
   assetsToDisplay: Asset[];
   onItemPress: (asset: Asset) => void;
-  hasNoAccount: boolean;
   isLoading: boolean;
+  error: Error | null;
   sourceScreenName: ScreenName | undefined;
   onNavigateBack: () => void;
   variant: CryptoVariant;
   title: string;
-  screenTrackingName: string;
+  trackingType: "crypto" | "stable" | undefined;
 }

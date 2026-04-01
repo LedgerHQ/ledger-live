@@ -2,38 +2,37 @@ import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Asset } from "~/types/asset";
-import AccountsEmptyList from "LLM/components/EmptyList/AccountsEmptyList";
-import { SKELETON_LIST_COUNT } from "LLM/constants";
-import { ListItemSkeleton } from "../ListItemSkeleton";
+import { useTranslation } from "~/context/Locale";
+import { AssetEmptyState, AssetErrorState, AssetLoadingState } from "LLM/components/AssetListItem";
 import { CryptoAssetList } from "../CryptoAssetList";
 
 interface CryptoContentProps {
-  hasNoAccount: boolean;
   isLoading: boolean;
+  error: Error | null;
   assetsToDisplay: Asset[];
   onItemPress: (asset: Asset) => void;
-  sourceScreenName: string;
 }
 
 export const CryptoContent: React.FC<CryptoContentProps> = ({
-  hasNoAccount,
   isLoading,
+  error,
   assetsToDisplay,
   onItemPress,
-  sourceScreenName,
 }) => {
-  if (hasNoAccount) {
-    return <AccountsEmptyList sourceScreenName={sourceScreenName} />;
+  const { t } = useTranslation();
+
+  if (error) {
+    return <AssetErrorState message={t("crypto.errorState")} testID="crypto-error-state" />;
   }
 
-  if (isLoading || assetsToDisplay.length === 0) {
+  if (isLoading) {
     return (
-      <Box lx={skeletonContainerStyle}>
-        {Array.from({ length: SKELETON_LIST_COUNT }, (_, i) => (
-          <ListItemSkeleton key={i} />
-        ))}
-      </Box>
+      <AssetLoadingState skeletonTestID="crypto-list-item-skeleton" lx={skeletonContainerStyle} />
     );
+  }
+
+  if (assetsToDisplay.length === 0) {
+    return <AssetEmptyState message={t("crypto.emptyState")} testID="crypto-empty-state" />;
   }
 
   return (

@@ -1,7 +1,5 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
@@ -9,8 +7,7 @@ import {
   MAX_ASSETS_TO_DISPLAY,
   MAX_STABLECOINS_TO_DISPLAY,
 } from "LLM/features/WalletAssets/constants";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { NavigatorName, ScreenName } from "~/const";
+import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 
 interface WalletAssetsViewModelResult {
   hasMore: boolean;
@@ -20,10 +17,7 @@ interface WalletAssetsViewModelResult {
 }
 
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
-  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const onPressShowAll = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts, { screen: ScreenName.Assets });
-  }, [navigation]);
+  const { onPressShowAll } = usePortfolioSectionActions(false, "all");
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
   const { shouldDisplayOperationsList, shouldDisplayAssetSection } =
     useWalletFeaturesConfig("mobile");

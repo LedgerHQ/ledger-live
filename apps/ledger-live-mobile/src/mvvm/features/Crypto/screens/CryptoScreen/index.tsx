@@ -15,18 +15,18 @@ type Props = BaseComposite<StackNavigatorProps<CryptoScreenNavigator, ScreenName
 const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
   assetsToDisplay,
   onItemPress,
-  hasNoAccount,
   isLoading,
+  error,
   sourceScreenName,
   onNavigateBack,
   title,
-  screenTrackingName,
+  trackingType,
 }) => {
   const { top } = useSafeAreaInsets();
 
   return (
     <Box style={{ paddingTop: top, flex: 1 }}>
-      <TrackScreen name={screenTrackingName} source={sourceScreenName} />
+      <TrackScreen name="Assets" source={sourceScreenName} type={trackingType} />
       <NavBar appearance="compact">
         <NavBarBackButton onPress={onNavigateBack} />
       </NavBar>
@@ -36,11 +36,10 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
         </Text>
       </Box>
       <CryptoContent
-        hasNoAccount={hasNoAccount}
         isLoading={isLoading}
+        error={error}
         assetsToDisplay={assetsToDisplay}
         onItemPress={onItemPress}
-        sourceScreenName={sourceScreenName ?? "Crypto"}
       />
     </Box>
   );
@@ -49,8 +48,8 @@ const CryptoScreenView: React.FC<CryptoScreenViewData> = ({
 const CryptoScreen = ({ route }: Props) => {
   const { params } = route;
   const viewModel = useCryptoViewModel({
-    sourceScreenName: params?.sourceScreenName,
-    variant: params?.variant,
+    sourceScreenName: params.sourceScreenName,
+    variant: params.variant,
   });
 
   return <CryptoScreenView {...viewModel} />;

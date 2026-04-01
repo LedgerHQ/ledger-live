@@ -138,7 +138,7 @@ describe("usePortfolioCryptosSectionViewModel", () => {
   });
 
   describe("onPressShowAll", () => {
-    it("should navigate to AssetsList when assetSection is enabled", () => {
+    it("should navigate to Crypto screen when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioCryptosSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -155,12 +155,11 @@ describe("usePortfolioCryptosSectionViewModel", () => {
         result.current.onPressShowAll();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Crypto,
         params: {
           sourceScreenName: ScreenName.Portfolio,
-          showHeader: true,
-          isSyncEnabled: true,
+          variant: "crypto",
         },
       });
     });

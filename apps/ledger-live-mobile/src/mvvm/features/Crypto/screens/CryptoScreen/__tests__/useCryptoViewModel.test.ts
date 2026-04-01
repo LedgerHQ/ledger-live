@@ -53,6 +53,7 @@ const emptyCategorizedAssets = () => ({
   categorizedAssets: { cryptos: [], stablecoins: [] },
   stablecoinTickers: new Set<string>(),
   isLoadingStablecoinTickers: false,
+  isStablecoinTickersError: false,
 });
 
 describe("useCryptoViewModel", () => {
@@ -192,7 +193,7 @@ describe("useCryptoViewModel", () => {
       });
     });
 
-    it("should track asset_clicked with page 'AllAssets' when no variant", () => {
+    it("should track asset_clicked with page undefined when no variant", () => {
       const btcItem = makeCategorizedItem("Bitcoin", "bitcoin");
 
       mockCategorizedAssets.mockReturnValue({
@@ -210,8 +211,31 @@ describe("useCryptoViewModel", () => {
 
       expect(jest.mocked(track)).toHaveBeenCalledWith("asset_clicked", {
         asset: "Bitcoin",
-        page: "AllAssets",
+        page: undefined,
       });
+    });
+  });
+
+  describe("error", () => {
+    it("should return error when stablecoin tickers fetch fails", () => {
+      mockCategorizedAssets.mockReturnValue({
+        ...emptyCategorizedAssets(),
+        isStablecoinTickersError: true,
+      });
+
+      const { result } = renderHook(() =>
+        useCryptoViewModel({ sourceScreenName: ScreenName.Portfolio }),
+      );
+
+      expect(result.current.error).toBeInstanceOf(Error);
+    });
+
+    it("should return null error when stablecoin tickers fetch succeeds", () => {
+      const { result } = renderHook(() =>
+        useCryptoViewModel({ sourceScreenName: ScreenName.Portfolio }),
+      );
+
+      expect(result.current.error).toBeNull();
     });
   });
 });

@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
-import { track } from "~/analytics";
+import { useAnalytics } from "~/analytics";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 
 interface PortfolioSectionActions {
@@ -19,11 +19,12 @@ export function usePortfolioSectionActions(
 ): PortfolioSectionActions {
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const { track } = useAnalytics();
 
   const onPressShowAll = useCallback(() => {
     track("button_clicked", {
-      button: "account_cta",
-      type: "view",
+      button: "asset_list",
+      type: variant === "stablecoin" ? "stable" : "crypto",
       page: "Wallet",
     });
     if (!isReadOnly && shouldDisplayAssetSection) {
@@ -39,7 +40,7 @@ export function usePortfolioSectionActions(
         screen: ScreenName.Assets,
       });
     }
-  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant]);
+  }, [navigation, shouldDisplayAssetSection, isReadOnly, variant, track]);
 
   const onItemPress = useCallback(
     (asset: Asset) => {
@@ -61,7 +62,7 @@ export function usePortfolioSectionActions(
         });
       }
     },
-    [navigation],
+    [navigation, track],
   );
 
   return { onPressShowAll, onItemPress };

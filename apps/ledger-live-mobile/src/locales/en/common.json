@@ -3210,7 +3210,9 @@
   },
   "crypto": {
     "title": "Crypto",
-    "stablecoinTitle": "Stablecoins"
+    "stablecoinTitle": "Stablecoin",
+    "errorState": "An error occurred while loading your assets",
+    "emptyState": "No assets to display"
   },
   "accounts": {
     "title": "Accounts",
