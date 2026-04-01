@@ -15,7 +15,11 @@ import { useDistribution as useDistributionCommon } from "@ledgerhq/live-counter
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
-import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  counterValueCurrencySelector,
+  orderAccountsSelector,
+} from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";

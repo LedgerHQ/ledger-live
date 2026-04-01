@@ -6,6 +6,21 @@ import { AssetShortListView } from "../components/AssetsShortListView";
 import { ScreenName } from "~/const";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { Props } from "../hooks/useAssetsListViewModel";
+import {
+  createFixtureAccount,
+  createFixtureTokenAccount,
+} from "@ledgerhq/live-common/mock/fixtures/cryptoCurrencies";
+import type { Account } from "@ledgerhq/types-live";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+
+const createMockEthAccountWithUSDC = (): Account => {
+  const ethAccount = createFixtureAccount("01");
+  const usdcSubAccount = createFixtureTokenAccount("01", usdcToken);
+  return {
+    ...ethAccount,
+    subAccounts: [{ ...usdcSubAccount, parentId: ethAccount.id }],
+  };
+};
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
@@ -25,16 +40,24 @@ const INITIAL_STATE = {
 
 const Stack = createNativeStackNavigator();
 
-const renderComponent = (props: Omit<Props, "sourceScreenName"> = {}) => {
+const renderComponent = (
+  props: Omit<Props, "sourceScreenName"> = {},
+  overrideInitialState?: (state: State) => State,
+) => {
   const ScreenComponent = () => (
     <AssetShortListView sourceScreenName={ScreenName.Portfolio} {...props} />
   );
+
+  const baseOverride = INITIAL_STATE.overrideInitialState;
+  const composedOverride = overrideInitialState
+    ? (state: State) => overrideInitialState(baseOverride(state))
+    : baseOverride;
 
   return render(
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="TestScreen" component={ScreenComponent} />
     </Stack.Navigator>,
-    INITIAL_STATE,
+    { overrideInitialState: composedOverride },
   );
 };
 
@@ -80,26 +103,49 @@ describe("AssetShortListView", () => {
   });
 
   it("should render an empty list when there are no accounts", () => {
-    const ScreenComponent = () => <AssetShortListView sourceScreenName={ScreenName.Portfolio} />;
-
-    render(
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="TestScreen" component={ScreenComponent} />
-      </Stack.Navigator>,
-      {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          accounts: {
-            ...state.accounts,
-            active: [],
-          },
-        }),
-      },
-    );
+    renderComponent({}, (state: State) => ({
+      ...state,
+      accounts: { ...state.accounts, active: [] },
+    }));
 
     const assetsList = screen.getByTestId("AssetsList");
     expect(assetsList).toBeVisible();
     expect(screen.queryAllByTestId(/^assetItem-.+-name$/).length).toBe(0);
+  });
+
+  describe("blacklisted tokens", () => {
+     const mockStateWithBlacklistedToken = (state: State): State => {
+         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+          return {
+            ...state,
+            accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+            settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [usdcToken.id] },
+          };
+        }
+        const mockStateWithNonBlacklistedToken = (state: State): State => {
+         const mockEthAccountWithUSDC = createMockEthAccountWithUSDC();
+          return {
+            ...state,
+            accounts: { ...state.accounts, active: [mockEthAccountWithUSDC] },
+            settings: { ...state.settings, counterValue: "USD", blacklistedTokenIds: [] },
+          };
+        }
+    
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+
+    it("should display a token that is not blacklisted", () => {
+      renderComponent({}, mockStateWithNonBlacklistedToken);
+      expect(screen.getByText(usdcToken.name)).toBeVisible();
+    });
+
+    it("should not display a blacklisted token", () => {
+      renderComponent({}, mockStateWithBlacklistedToken);
+      expect(screen.queryByText(usdcToken.name)).toBeNull();
+    });
   });
 
   it("should handle asset press", async () => {
