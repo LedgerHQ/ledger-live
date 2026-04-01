@@ -30,7 +30,7 @@ function renderNameState<Name extends keyof ModalData>(name: Name, data: ModalDa
     modals as unknown as Record<string, React.ComponentType<Record<string, unknown>> | undefined>
   )[name];
   if (ModalComponent) {
-    return <ModalComponent key={name} {...(data as Record<string, unknown>)} />;
+    return <ModalComponent key={name} name={name} {...(data as Record<string, unknown>)} />;
   }
 }
 
