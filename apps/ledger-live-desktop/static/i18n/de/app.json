@@ -822,12 +822,12 @@
     "backToCard" : "alle Karten",
     "title" : "Card",
     "imageAlt" : "Kartenbild",
-    "spendYourCrypto" : "Gib deine Kryptos aus",
+    "spendYourCrypto" : "Kryptos ausgeben",
     "payDescription" : "Zahle online oder im Laden mit einer Kryptokarte",
     "exploreCards" : "Karten entdecken",
-    "iAlreadyHaveACard" : "Ich habe bereits eine Karte",
-    "unlockLiquidity" : "Liquidität freisetzen",
-    "exploreCryptoCardsDescription" : "Entdecke unsere Kryptokarten und suche dir diejenige aus, die am besten zu dir passt"
+    "iAlreadyHaveACard" : "Ich habe eine Karte",
+    "unlockLiquidity" : "Gib Krypto im echten Leben aus",
+    "exploreCryptoCardsDescription" : "Entdecke unsere Kryptokarten und finde die, die am besten zu dir passt."
   },
   "lend" : {
     "title" : "Kryptowährungen verleihen",
@@ -2178,7 +2178,7 @@
     "subtitle" : "Wenn du das volle Potenzial von Ledger Wallet ausschöpfen möchtest, solltest du ein Ledger-Gerät anschließen.",
     "0" : {
       "title" : "Echtes Eigentum",
-      "desc" : "Deine privaten Schlüssel verlassen das Gerät zu keiner Zeit."
+      "desc" : "Du hast die Kontrolle über deine privaten Schlüssel."
     },
     "1" : {
       "title" : "Sicher traden",
@@ -2273,11 +2273,11 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Banküberweisung",
-          "description" : "Erhalte Stablecoins per Bareinzahlung"
+          "title" : "Über Banktransfer",
+          "description" : "Erhalte Stablecoin, indem du einfach Bargeld sendest"
         },
         "fromCrypto" : {
-          "title" : "Krypto empfangen"
+          "title" : "Über Krypto-Adresse"
         }
       }
     }
@@ -4614,7 +4614,8 @@
           "fields" : {
             "notification" : "Benachrichtigungsinhaltskarte",
             "action" : "Aktionsinhaltskarte",
-            "portfolio" : "Portfolioinhaltskarte",
+            "portfolio" : "Portfolio",
+            "bottomPortfolio" : "Unteres Portfolio",
             "title" : "Titel",
             "description" : "Beschreibung",
             "order" : "Bestellung",
@@ -6939,6 +6940,9 @@
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
     },
+    "SolanaRecipientAccountNotFunded" : {
+      "title" : "Betrag zu niedrig. Sende mindestens {{minimumAmount}}."
+    },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "Dieses zugeordnete Tokenkonto enthält ein weiteres Token"
     },
@@ -7016,6 +7020,14 @@
     },
     "ConcordiumInsufficientFunds" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus"
+    },
+    "ConcordiumPairingExpiredError" : {
+      "title" : "Kopplung abgelaufen",
+      "description" : "Die Verbindung mit der Concordium ID-App ist abgelaufen. Bitte versuche es noch einmal."
+    },
+    "ConcordiumSessionExpiredError" : {
+      "title" : "Sitzung abgelaufen",
+      "description" : "Die Concordium ID App-Sitzung ist nicht mehr aktiv. Bitte kopple erneut."
     },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
@@ -7201,6 +7213,12 @@
     },
     "TonMinimumRequired" : {
       "title" : "Unzureichendes Guthaben. Das erforderliche Mindestguthaben beträgt 0,02 TON."
+    },
+    "AleoAmountRecordRequired" : {
+      "title" : "Wähle einen gültigen privaten Eintrag für den Betrag aus."
+    },
+    "AleoFeeRecordRequired" : {
+      "title" : "Wähle einen gültigen privaten Eintrag für die Gebühr."
     },
     "BackupAppDataError" : {
       "title" : "Fehler beim Erstellen der Sicherheitskopie der App-Daten"
@@ -8065,14 +8083,17 @@
   "portfolio" : {
     "title" : "Startseite",
     "today" : "Heute",
+    "carousel" : {
+      "title" : "Für dich"
+    },
     "addAccountCta" : "Kryptokonto hinzufügen",
-    "noBalanceTitle" : "Deine Kryptos schützen",
+    "noBalanceTitle" : "Beginne, indem du deine Wallet auflädst",
     "perpsEntry" : {
       "title" : "Perpetuals",
       "description" : "Traden mit Hebelwirkung",
       "cta" : "Neues entdecken"
     },
-    "noDeviceTitle" : "Die sicherste Wallet"
+    "noDeviceTitle" : "Deine sichere Krypto-Wallet"
   },
   "marketBanner" : {
     "title" : "Markt erkunden",
@@ -8086,15 +8107,15 @@
   },
   "fearAndGreed" : {
     "levels" : {
-      "extremeFear" : "Angst+",
       "fear" : "Angst",
+      "cautious" : "Vorsichtig",
       "neutral" : "Neutral",
-      "greed" : "Gier",
-      "extremeGreed" : "Gier+"
+      "optimistic" : "Optimistisch",
+      "greedy" : "Gierig"
     },
     "dialog" : {
       "title" : "Stimmungsindex",
-      "content" : "Der Stimmungsindex gibt den Emotionalitätsgrad des Marktes an. Die Bandbreite reicht von 0 bis 100, wobei ein sehr niedriger Wert auf ausgeprägte Angst und ein sehr hoher Wert auf extreme Gier hindeutet.",
+      "content" : "Zeigt die allgemeine Marktstimmung von 0 bis 100 an, basierend auf Trends und Aktivität. Damit kannst du nachvollziehen, wie sich der Markt verhält: Niedrigere Werte deuten auf Angst hin, höhere Werte auf Gier.",
       "cta" : "Verstanden"
     }
   },
@@ -8107,7 +8128,7 @@
     "buyALedger" : "Ledger-Gerät kaufen"
   },
   "assets" : {
-    "cryptos" : "Kryptos",
+    "cryptos" : "Krypto",
     "stablecoins" : "Stablecoins",
     "cryptoAccounts" : "Krypto-Konten",
     "accountsCount_one" : "{{count}} Konto",
@@ -8120,8 +8141,37 @@
       "balance" : "Saldo",
       "value" : "Wert",
       "trend" : "1T Trend",
-      "trendTooltip" : "Änderung des Kontostands in den letzten 24 Stunden"
+      "trendTooltip" : "Änderungen an deinem Kontostand in den letzten 24 Stunden."
     }
+  },
+  "cryptoAddresses" : {
+    "title" : "Krypto-Konten",
+    "tableActions" : {
+      "searchAddress" : "Adresse suchen",
+      "addAddress" : "Adresse hinzufügen"
+    },
+    "table" : {
+      "columns" : {
+        "name" : "Name",
+        "address" : "Adresse",
+        "value" : "Wert"
+      },
+      "editName" : "Name bearbeiten",
+      "emptyState" : "Noch keine Krypto-Adresse",
+      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen"
+    },
+    "editName" : {
+      "title" : "Adressnamen bearbeiten",
+      "input" : "Adressname",
+      "suggestions" : {
+        "trading" : "{{asset}} Handel",
+        "savings" : "{{asset}} Sparguthaben"
+      },
+      "cta" : "Bestätigen"
+    }
+  },
+  "cryptoAssets" : {
+    "title" : "Kryptowährungen"
   },
   "nftEntryPoint" : {
     "title" : "NFT (Non Fungible Token)",
@@ -8131,11 +8181,16 @@
     }
   },
   "topBar" : {
+    "history" : {
+      "cta" : "Verlauf",
+      "tooltip" : "Verlauf"
+    },
     "activityIndicator" : {
-      "errorToolTip" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher.\n Liste der betroffenen Konten: {{accounts}}. Zum Wiederholen tippen",
-      "emptyErrorToolTip" : "Ein vorübergehendes Netzwerkproblem ist aufgetreten. Deine Assets sind sicher.\n Zum Wiederholen tippen",
-      "upToDate" : "Du bist auf dem aktuellen Stand",
-      "lastSync" : "Letzte Synchronisierung: {{timeAgo}} Zum Neuladen tippen"
+      "errorToolTip" : "Deine Assets sind sicher. Dies ist ein vorübergehendes Synchronisierungsproblem.\n Betroffene Konten: {{accounts}}. Zum Wiederholen tippen",
+      "emptyErrorToolTip" : "Deine Assets sind sicher. Dies ist ein vorübergehendes Synchronisierungsproblem.\n Zum Wiederholen tippen",
+      "upToDate" : "Portfolio aktuell",
+      "lastSync" : "Letzte Synchronisierung: {{timeAgo}} Zum Neuladen tippen",
+      "refreshing" : "Wird neu geladen..."
     },
     "notificationIndicator" : {
       "tooltip" : "Benachrichtigungen"
@@ -8269,8 +8324,16 @@
       "balanceSelector" : {
         "private" : "Privater Saldo",
         "public" : "Öffentlicher Saldo",
-        "lastUpdate" : "Letztes Update",
+        "lastUpdate" : "Letzte Aktualisierung: {{label}}",
+        "recently" : "Kürzlich",
         "switchBalance" : "Kontostandquelle wechseln"
+      },
+      "recordPicker" : {
+        "label" : "Verfügbare Aufzeichnungen",
+        "noRecords" : "Keine Aufzeichnungen verfügbar",
+        "noRecordsAlert" : "Du hast keine Aufzeichnungen verfügbar. Führe eine Selbstüberweisung durch oder empfange private Assets, um loszulegen.",
+        "alert" : "Der maximal ausgabefähige Betrag hängt vom Höchstwert deines ausgewählten Datensatzes ab. Die Gebühren werden von Provable für Ledger-Benutzer gesponsert.",
+        "recordsLimit" : "Maximal werden {{max}} Einträge angezeigt"
       }
     },
     "account" : {
@@ -8285,6 +8348,15 @@
       "type" : {
         "public" : "Öffentlich",
         "private" : "Privat"
+      }
+    },
+    "send" : {
+      "stepRecipient" : {
+        "selectLabel" : "Senden von"
+      },
+      "summary" : {
+        "coveredByProvable" : "Gesponsert von Provable",
+        "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern."
       }
     }
   },
@@ -8312,6 +8384,43 @@
     "cta" : {
       "continue" : "Weiter",
       "explore" : "Mein neues Portfolio entdecken"
+    }
+  },
+  "history" : {
+    "title" : "Transaktionen",
+    "pending" : "Schwebende Transaktion",
+    "pending_other" : "Schwebende Transaktionen",
+    "columns" : {
+      "type" : "Eingeben",
+      "address" : "Adresse",
+      "amount" : "Betrag",
+      "value" : "Wert"
+    },
+    "address" : {
+      "from" : "Von",
+      "to" : "An"
+    },
+    "emptyState" : {
+      "title" : "Noch keine Transaktionen",
+      "description" : "Komme später zurück, um deine Transaktionen zu sehen."
+    },
+    "actionsBar" : {
+      "csv" : "CSV"
+    },
+    "exportDialog" : {
+      "title" : "Transaktionsverlauf",
+      "description" : "Wähle die Konten aus, die exportiert werden sollen.",
+      "disclaimer" : "Nur geschätzte Werte. Gegenwerte werden von Kaiko nur zu Informationszwecken bereitgestellt. Verwende diese Daten nicht für steuerliche, rechtliche oder buchhalterische Zwecke.",
+      "accountsToInclude" : "Einzuschließende Konten",
+      "selectAll" : "Alle auswählen ({{count}})",
+      "deselectAll" : "Alle abwählen ({{count}})",
+      "export" : "Exportverlauf",
+      "successTitle" : "Transaktionsverlauf erfolgreich gespeichert",
+      "successDescription" : "Die CSV-Datei mit deinem Verlauf wurde im ausgewählten Ordner gespeichert",
+      "done" : "Fertig",
+      "errorTitle" : "Etwas ist schief gelaufen",
+      "errorDescription" : "Beim Exportieren deines Transaktionsverlaufs ist ein Fehler aufgetreten. Bitte versuche es noch einmal.",
+      "tryAgain" : "Wiederholen"
     }
   }
 }
