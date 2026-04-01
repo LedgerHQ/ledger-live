@@ -1,4 +1,4 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/renderer/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
