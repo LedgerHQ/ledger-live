@@ -12,6 +12,7 @@ import {
   DynamicContentSetLandingStickyCtaCardsPayload,
   DynamicContentAddLocalCardsPayload,
   DynamicContentRemoveLocalCardPayload,
+  DynamicContentAddLocalWalletCarouselPayload,
 } from "../actions/types";
 import { createSelector } from "~/context/selectors";
 
@@ -25,6 +26,7 @@ export const INITIAL_STATE: DynamicContentState = {
   isLoading: true,
   localCategoriesCards: [],
   localMobileCards: [],
+  localWalletCards: [],
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -69,10 +71,19 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     localCategoriesCards: [],
     localMobileCards: [],
+    localWalletCards: [],
+  }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS]: (state, action) => ({
+    ...state,
+    localWalletCards: [
+      ...state.localWalletCards,
+      ...(action as Action<DynamicContentAddLocalWalletCarouselPayload>).payload,
+    ],
   }),
   [DynamicContentActionTypes.DYNAMIC_CONTENT_REMOVE_LOCAL_CARD]: (state, action) => {
     const cardId = (action as Action<DynamicContentRemoveLocalCardPayload>).payload;
     const localMobileCards = state.localMobileCards.filter(c => c.id !== cardId);
+    const localWalletCards = state.localWalletCards.filter(c => c.id !== cardId);
     const categoryIdsWithCards = new Set(
       localMobileCards.map(c => (c.extras as { categoryId?: string })?.categoryId).filter(Boolean),
     );
@@ -82,6 +93,7 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     return {
       ...state,
       localMobileCards,
+      localWalletCards,
       localCategoriesCards,
     };
   },
@@ -90,7 +102,13 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
 // Selectors
 export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
 
-export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
+export const walletCardsSelector = createSelector(
+  (s: State) => s.dynamicContent.walletCards,
+  (s: State) => s.dynamicContent.localWalletCards,
+  (walletCards, localWalletCards) => walletCards.concat(localWalletCards),
+);
+
+export const localWalletCardsSelector = (s: State) => s.dynamicContent.localWalletCards;
 
 export const notificationsCardsSelector = (s: State) => s.dynamicContent.notificationCards;
 

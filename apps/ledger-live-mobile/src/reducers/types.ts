@@ -154,6 +154,8 @@ export type DynamicContentState = {
   localCategoriesCards: CategoryContentCard[];
   /** Local/debug mobile cards (merged in selectors, not from Braze) */
   localMobileCards: BrazeContentCard[];
+  /** Local/debug wallet carousel cards (bottom Portfolio carousel, merged in selector) */
+  localWalletCards: WalletContentCard[];
 };
 
 // === IN VIEW STATE ===

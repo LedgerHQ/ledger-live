@@ -1,6 +1,8 @@
 import React, { memo, useCallback } from "react";
 import { Linking } from "react-native";
 import { Flex, FullBackgroundCard } from "@ledgerhq/native-ui";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { MediaCard, MediaCardTitle, Tag } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "styled-components/native";
 import { WalletContentCard } from "~/dynamicContent/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
@@ -15,6 +17,7 @@ type CarouselCardProps = {
 
 const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
   const { theme } = useTheme();
+  const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
   const onPress = useCallback(async () => {
@@ -42,6 +45,21 @@ const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
     });
     dismissCard(cardProps.id);
   }, [cardProps, trackContentCardEvent, dismissCard]);
+
+  if (shouldDisplayBrazePlacement) {
+    return (
+      <Flex key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0} width={width}>
+        <MediaCard
+          imageUrl={cardProps.image ?? ""}
+          onPress={cardProps.link ? onPress : undefined}
+          onClose={onHide}
+        >
+          {cardProps.tag ? <Tag label={cardProps.tag} size="md" /> : null}
+          {cardProps.title ? <MediaCardTitle>{cardProps.title}</MediaCardTitle> : null}
+        </MediaCard>
+      </Flex>
+    );
+  }
 
   return (
     <Flex key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0} width={width}>
