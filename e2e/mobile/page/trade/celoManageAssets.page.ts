@@ -39,7 +39,7 @@ export default class CeloManageAssetsPage {
     await detoxExpect(getElementById(this.celoUnlockButton)).toBeVisible();
     await detoxExpect(getElementById(this.celoWithdrawButton)).not.toBeVisible();
     await detoxExpect(getElementById(this.celoVoteButton)).toBeVisible();
-    await detoxExpect(getElementById(this.celoActivateVoteButton)).not.toBeVisible();
-    await detoxExpect(getElementById(this.celoRevokeButton)).not.toBeVisible();
+    await detoxExpect(getElementById(this.celoActivateVoteButton)).toBeVisible();
+    await detoxExpect(getElementById(this.celoRevokeButton)).toBeVisible();
   }
 }
