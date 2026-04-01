@@ -115,4 +115,15 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
   };
 }
 
+/** Native addons (.node) that cannot be bundled — must be direct deps of ledger-live-desktop. */
+export function resolveNativeExternals(): Record<string, string> {
+  const nativeModules = ["@ledgerhq/zcash-utils"];
+
+  const externals: Record<string, string> = {};
+  for (const name of nativeModules) {
+    externals[name] = `commonjs ${name}`;
+  }
+  return externals;
+}
+
 export { pkg, GIT_REVISION, PRERELEASE, CHANNEL, SENTRY_URL };

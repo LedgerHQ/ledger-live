@@ -72,6 +72,13 @@ export type ShieldedTransactionRaw = {
   };
 };
 
+export type ShieldedSyncResult = {
+  processedBlocks: number;
+  remainingBlocks: number;
+  lastProcessedBlock?: number;
+  transactions: ShieldedTransaction[];
+};
+
 export type SyncEstimatedTime = {
   hours: number;
   minutes: number;
