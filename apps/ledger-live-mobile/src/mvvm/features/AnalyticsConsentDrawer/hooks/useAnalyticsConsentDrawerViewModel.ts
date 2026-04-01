@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -33,7 +34,7 @@ const drawerClosedPayload = {
 
 export function useAnalyticsConsentDrawerViewModel() {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<BaseNavigation>();
   const isFocused = useIsFocused();
   const feature = useFeature("analyticsOptIn");
 
