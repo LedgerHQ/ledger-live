@@ -12,22 +12,28 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 const ParentCryptoCurrencyIconWrapper = styled.div`
-  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 const ItemWrapper = styled.div.attrs<{
   active: boolean;
+  collapsed?: boolean;
 }>(p => ({
   style: {
     backgroundColor: p.active ? p.theme.colors.opacityDefault.c10 : p.theme.colors.background.card,
   },
 }))<{
   active: boolean;
+  collapsed?: boolean;
 }>`
   flex: 1;
   align-items: center;
   display: flex;
-  padding: 6px 15px;
-  width: 200px;
+  padding: 6px 12px;
+  width: ${p => (p.collapsed ? "auto" : "200px")};
+  justify-content: ${p => (p.collapsed ? "center" : "flex-start")};
   border-radius: 4px;
   border: 1px solid transparent;
   cursor: pointer;
@@ -57,7 +63,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
   }, [account, navigate]);
   const unit = useAccountUnit(account);
   return (
-    <ItemWrapper active={active} onClick={onAccountClick}>
+    <ItemWrapper active={active} collapsed={collapsed} onClick={onAccountClick}>
       <Box horizontal ff="Inter|SemiBold" flex={1} flow={3} alignItems="center">
         <ParentCryptoCurrencyIconWrapper>
           <ParentCryptoCurrencyIcon currency={getAccountCurrency(account)} />
