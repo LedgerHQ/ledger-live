@@ -19,9 +19,7 @@ const ZCASH_MAX_BATCH_SIZE = 100;
 const ZCASH_NATIVE_CHUNK_SIZE = 5_000;
 
 /** Toggle: true = native Rust engine (tonic gRPC), false = JSON-RPC fallback. */
-const isReactNativeRuntime =
-  typeof navigator !== "undefined" && navigator.userAgent?.includes("ReactNative");
-let useNative = !isReactNativeRuntime;
+let useNative = true;
 
 let ZCASH_JSON_RPC_SERVER_CUSTOM: string | null = null;
 let ZCASH_GRPC_URL_CUSTOM: string | null = null;
