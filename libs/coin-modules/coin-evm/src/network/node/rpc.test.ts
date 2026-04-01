@@ -463,6 +463,60 @@ describe("EVM Family", () => {
 
         expect(result).toEqual([]);
       });
+
+      it("should parse WETH Deposit as mint (Shape tx 0x08761e… — no Transfer log, only Deposit)", () => {
+        const logs = [
+          {
+            address: "0x4200000000000000000000000000000000000006",
+            topics: [
+              "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c",
+              "0x000000000000000000000000bebcf96eeed98d495f45407ce7017179738e3552",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000b5e620f48000",
+          },
+        ];
+
+        const result = parseERC20TransfersFromLogs(logs);
+
+        expect(result).toEqual([
+          {
+            asset: {
+              type: "erc20",
+              assetReference: "0x4200000000000000000000000000000000000006",
+            },
+            from: "0x0000000000000000000000000000000000000000",
+            to: "0xbeBcf96eEEd98D495F45407CE7017179738E3552",
+            value: "200000000000000",
+          },
+        ]);
+      });
+
+      it("should parse WETH Withdrawal as burn to zero address", () => {
+        const logs = [
+          {
+            address: "0x4200000000000000000000000000000000000006",
+            topics: [
+              "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65",
+              "0x000000000000000000000000bebcf96eeed98d495f45407ce7017179738e3552",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000b5e620f48000",
+          },
+        ];
+
+        const result = parseERC20TransfersFromLogs(logs);
+
+        expect(result).toEqual([
+          {
+            asset: {
+              type: "erc20",
+              assetReference: "0x4200000000000000000000000000000000000006",
+            },
+            from: "0xbeBcf96eEEd98D495F45407CE7017179738E3552",
+            to: "0x0000000000000000000000000000000000000000",
+            value: "200000000000000",
+          },
+        ]);
+      });
     });
 
     describe("getCoinBalance", () => {
