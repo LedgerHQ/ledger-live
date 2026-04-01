@@ -17,6 +17,7 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
+  AnalyticsConsentInfo,
   VaultSigner,
   SupportedCountervaluesData,
   CurrencySettings,
@@ -69,6 +70,11 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
 export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandations: boolean) =>
   saveSettings({
     sharePersonalizedRecommandations,
+  });
+
+export const setAnalyticsConsentInfo = (analyticsConsentInfo: AnalyticsConsentInfo) =>
+  saveSettings({
+    analyticsConsentInfo,
   });
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({

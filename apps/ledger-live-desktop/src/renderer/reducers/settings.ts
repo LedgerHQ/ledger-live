@@ -51,6 +51,11 @@ export type VaultSigner = {
   token: string;
 };
 
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
+};
+
 export type SettingsState = {
   loaded: boolean;
   // is the settings loaded from db (if not we don't save them)
@@ -79,6 +84,7 @@ export type SettingsState = {
   developerMode: boolean;
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
+  analyticsConsentInfo: AnalyticsConsentInfo;
   sentryLogs: boolean; // also used for Datadog RUM opt-in
   lastUsedVersion: string;
   dismissedBanners: string[];
@@ -173,6 +179,10 @@ export const INITIAL_STATE: SettingsState = {
   loaded: false,
   shareAnalytics: true,
   sharePersonalizedRecommandations: true,
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  },
   hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
@@ -776,6 +786,11 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
+export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo =>
+  state.settings.analyticsConsentInfo ?? {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  };
 export const trackingEnabledSelector = createSelector(
   settingsStoreSelector,
   s => s.shareAnalytics || s.sharePersonalizedRecommandations,
