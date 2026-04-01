@@ -9,7 +9,7 @@ import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 type Props = {
   entryPoint: EntryPoint;
