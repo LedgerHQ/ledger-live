@@ -124,6 +124,7 @@
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
     "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",
+    "coin:tester:zcash": "pnpm --filter coin-tester-zcash",
     "coin:zcash-shielded": "pnpm --filter zcash-shielded test",
     "device-intent": "pnpm --filter device-intent",
     "evm-tools": "pnpm --filter evm-tools",

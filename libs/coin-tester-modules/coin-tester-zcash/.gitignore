@@ -1,0 +1,9 @@
+dist
+
+# Exclude generated fixtures by default; whitelist committed snapshot files below.
+fixtures/**/*
+!fixtures/.gitkeep
+!fixtures/golden-values.yaml
+!fixtures/alice-testnet/
+!fixtures/alice-testnet/*.snapshot
+!fixtures/alice-testnet/manifest.json

@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.base",
+  "compilerOptions": {
+    "lib": ["es2020", "dom"],
+    "outDir": "lib",
+    "rootDir": "src",
+    "types": ["node", "jest"],
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*", "src/**/*.json"]
+}

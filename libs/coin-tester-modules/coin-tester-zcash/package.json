@@ -1,0 +1,66 @@
+{
+  "name": "@ledgerhq/coin-tester-zcash",
+  "version": "0.1.0",
+  "description": "Ledger Zcash Sync Test Harness — snapshot-based replay for the Zcash coin-module sync pipeline",
+  "private": true,
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "zcash",
+    "Zcash",
+    "Testing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-modules/coin-tester-zcash",
+  "license": "Apache-2.0",
+  "bin": {
+    "zcash-sync-tester": "./dist/index.js"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es dist",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build:cli": "tsc --project tsconfig.build.json --outDir dist",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit --customConditions node",
+    "test": "jest --config jest.config.ts",
+    "coverage": "jest --config jest.config.ts --coverage",
+    "test:integ": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.integ.config.ts --runInBand",
+    "start": "DOTENV_CONFIG_PATH=.env pnpm test"
+  },
+  "dependencies": {
+    "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/zcash-shielded": "workspace:^",
+    "bignumber.js": "^9.1.2",
+    "yargs": "^17.7.2",
+"ora": "^8.0.0",
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0",
+    "rxjs": "catalog:",
+    "table": "^6.8.0",
+    "yaml": "^2.4.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/yargs": "^17.0.35",
+    "dotenv": "^16.4.5",
+    "jest": "catalog:",
+    "jest-sonar": "0.2.16",
+    "typescript": "catalog:"
+  }
+}
