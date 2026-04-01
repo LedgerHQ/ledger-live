@@ -6,8 +6,6 @@ import { State } from "~/reducers/types";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 
-jest.mock("~/analytics", () => ({ track: jest.fn() }));
-
 const mockNavigate = jest.fn();
 const mockRouteParams = { existingParam: "value" };
 
@@ -27,22 +25,6 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     ...actual,
     BottomSheetView: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
     BottomSheetHeader: () => <RN.View testID="bottom-sheet-header" />,
-    ListItem: ({
-      children,
-      onPress,
-    }: {
-      children: React.ReactNode;
-      onPress: () => void;
-      key: string;
-    }) => (
-      <RN.Pressable testID="list-item" onPress={onPress}>
-        {children}
-      </RN.Pressable>
-    ),
-    ListItemContent: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
-    ListItemLeading: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
-    ListItemSpot: () => <RN.View testID="list-item-spot" />,
-    ListItemTitle: ({ children }: { children: React.ReactNode }) => <RN.Text>{children}</RN.Text>,
   };
 });
 
