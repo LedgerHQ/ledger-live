@@ -95,12 +95,16 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
       onClose={closeBottomSheet}
       enableDynamicSizing
     >
-      <BottomSheetView>
+      <BottomSheetView style={{ paddingBottom: 24 }}>
         <BottomSheetHeader />
         {options.map(({ icon, label, metadata }) => {
           const { link, live_app, ...tracked } = metadata;
           return link ? (
-            <ListItem key={label} onPress={() => handleMenuItemPress(link, live_app, tracked)}>
+            <ListItem
+              key={label}
+              onPress={() => handleMenuItemPress(link, live_app, tracked)}
+              style={{ marginHorizontal: -8 }}
+            >
               <ListItemLeading>
                 <ListItemSpot appearance="icon" icon={resolveMenuItemIcon(icon)} />
                 <ListItemContent>
