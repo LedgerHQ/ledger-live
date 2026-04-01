@@ -49,8 +49,20 @@ export class OnboardingPage extends AppPage {
 
   async hoverDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
     const locator = this.page.getByTestId(`v3-container-device-${device}`);
-    await locator.waitFor({ state: "attached" });
-    await locator.hover();
+    await locator.waitFor({ state: "visible" });
+    await locator.scrollIntoViewIfNeeded();
+    const box = await locator.boundingBox();
+    if (!box) {
+      throw new Error(`No bounding box for device column v3-container-device-${device}`);
+    }
+    // Electron/Linux: locator.hover() can miss CSS :hover; explicit mouse path is more reliable.
+    await this.page.mouse.move(0, 0);
+    await this.page.mouse.move(
+      Math.round(box.x + box.width / 2),
+      Math.round(box.y + box.height / 2),
+      { steps: 5 },
+    );
+    await this.selectDeviceButton(device).waitFor({ state: "visible" });
   }
 
   async waitForDeviceToBeVisible(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
