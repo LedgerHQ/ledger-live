@@ -41,7 +41,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
         onSuccess,
         onError,
         onCancel,
-        onClose: onCancel,
+        onClose: () => {},
       });
     },
     [navigation],
