@@ -6,7 +6,8 @@ import { waitFor } from "@testing-library/react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import type { AppStore } from "~/reducers";
-import { setReadOnlyMode } from "~/actions/settings";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { setAnalytics, setAnalyticsConsentInfo, setReadOnlyMode } from "~/actions/settings";
 import * as segment from "../segment";
 
 jest.unmock("../segment");
@@ -39,6 +40,13 @@ describe("segment readOnlyMode", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     store = makeStore();
+    store.dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      }),
+    );
+    store.dispatch(setAnalytics(true));
   });
 
   it("track() includes readOnlyMode from state at runtime (default true)", async () => {
