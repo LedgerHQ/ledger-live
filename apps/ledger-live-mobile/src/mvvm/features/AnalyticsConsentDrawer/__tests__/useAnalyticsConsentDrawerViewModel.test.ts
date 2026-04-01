@@ -2,10 +2,19 @@ import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { track, updateIdentify } from "~/analytics";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
-import { useAnalyticsConsentDrawerViewModel } from "../useAnalyticsConsentDrawerViewModel";
+import {
+  ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+  ANALYTICS_CONSENT_DRAWER_FLOW,
+  useAnalyticsConsentDrawerViewModel,
+} from "../useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerOpeningFresh, withConsentDrawerState } from "./helpers";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+const drawerEventPayload = {
+  page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+  flow: ANALYTICS_CONSENT_DRAWER_FLOW,
+};
 
 const mockNavigate = jest.fn();
 const mockUseIsFocused = jest.fn(() => true);
@@ -62,9 +71,6 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("consentReconfirm");
     });
     expect(result.current.isDrawerOpen).toBe(true);
-    expect(track).toHaveBeenCalledWith("modal_opened", {
-      modal: "Analytics consent drawer",
-    });
   });
 
   it("should open privacy when policy is stale, consent is current, and analytics is on", async () => {
@@ -108,6 +114,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     await waitFor(() => {
       expect(result.current.phase).toBe("closed");
     });
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should dispatch opt-in settings and close drawer when applyOptIn is called from consentReconfirm", async () => {
@@ -123,8 +130,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("consentReconfirm");
     });
 
-    act(() => {
-      result.current.applyOptIn();
+    await act(async () => {
+      await result.current.applyOptIn();
     });
 
     const s = store.getState().settings;
@@ -133,6 +140,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
     expect(result.current.phase).toBe("closed");
     expect(updateIdentify).toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should dispatch opt-in settings and close drawer when applyOptIn is called", async () => {
@@ -143,8 +151,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("consentFresh");
     });
 
-    act(() => {
-      result.current.applyOptIn();
+    await act(async () => {
+      await result.current.applyOptIn();
     });
 
     const s = store.getState().settings;
@@ -156,9 +164,10 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(result.current.phase).toBe("closed");
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_opt_in",
-      page: "Analytics consent drawer",
+      page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
     });
     expect(updateIdentify).toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should dispatch opt-out settings and close drawer when applyOptOut is called from consentReconfirm", async () => {
@@ -174,14 +183,15 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("consentReconfirm");
     });
 
-    act(() => {
-      result.current.applyOptOut();
+    await act(async () => {
+      await result.current.applyOptOut();
     });
 
     expect(store.getState().settings.analyticsEnabled).toBe(false);
     expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
     expect(result.current.phase).toBe("closed");
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should dispatch opt-out settings and close drawer when applyOptOut is called", async () => {
@@ -192,8 +202,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("consentFresh");
     });
 
-    act(() => {
-      result.current.applyOptOut();
+    await act(async () => {
+      await result.current.applyOptOut();
     });
 
     const s = store.getState().settings;
@@ -203,8 +213,9 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(result.current.phase).toBe("closed");
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_opt_out",
-      page: "Analytics consent drawer",
+      page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
     });
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should close drawer after privacy got it when consent is still valid", async () => {
@@ -220,8 +231,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(result.current.phase).toBe("privacy");
     });
 
-    act(() => {
-      result.current.onPrivacyGotIt();
+    await act(async () => {
+      await result.current.onPrivacyGotIt();
     });
 
     expect(result.current.phase).toBe("closed");
@@ -229,6 +240,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
       CURRENT_PRIVACY_POLICY_VERSION,
     );
+    expect(updateIdentify).toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should navigate to General settings and close when onSetPreferences is called", async () => {
@@ -249,8 +262,9 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "analytics_consent_set_preferences",
-      page: "Analytics consent drawer",
+      page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
     });
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 
   it("should close drawer when handleCloseDrawer is called", async () => {
@@ -266,5 +280,6 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
 
     expect(result.current.phase).toBe("closed");
+    expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
   });
 });

@@ -18,7 +18,7 @@ import {
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "~/reducers/accounts";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
+import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";

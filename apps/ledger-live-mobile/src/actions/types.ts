@@ -318,9 +318,7 @@ export enum SettingsActionTypes {
   SET_ANALYTICS_CONSENT_INFO = "SET_ANALYTICS_CONSENT_INFO",
 }
 
-export type SettingsImportPayload = Partial<SettingsState> & {
-  importConsentBackfillAt?: string;
-};
+export type SettingsImportPayload = Partial<SettingsState>;
 export type SettingsUpdateCurrencyPayload = {
   ticker: string;
   patch: Partial<CurrencySettings>;

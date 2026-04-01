@@ -11,9 +11,7 @@ import reducer, {
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
 import { importSettings, setAnalyticsConsentInfo, setTheme } from "../actions/settings";
-import { SettingsActionTypes, type SettingsImportPayload } from "../actions/types";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
-
+import { SettingsActionTypes } from "../actions/types";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
 
@@ -336,25 +334,5 @@ describe("SETTINGS_IMPORT action", () => {
     expect(newState.locale).toBe("de-DE");
     expect(newState.hideEmptyTokenAccounts).toBe(false);
     expect("oldField" in newState).toBe(false);
-  });
-
-  it("should backfill analyticsConsentInfo on import when missing, hasSeenAnalyticsOptInPrompt is true, and importConsentBackfillAt is set", () => {
-    const initialState = SETTINGS_INITIAL_STATE;
-    const fixedIso = "2024-06-15T12:00:00.000Z";
-    const importedSettings: SettingsImportPayload = {
-      counterValue: "EUR",
-      hasSeenAnalyticsOptInPrompt: true,
-      importConsentBackfillAt: fixedIso,
-    };
-
-    const action = importSettings(importedSettings);
-    const newState = reducer(initialState, action);
-
-    expect(newState.counterValue).toBe("EUR");
-    expect(newState.hasSeenAnalyticsOptInPrompt).toBe(true);
-    expect(newState.analyticsConsentInfo).toEqual({
-      consentDate: fixedIso,
-      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-    });
   });
 });

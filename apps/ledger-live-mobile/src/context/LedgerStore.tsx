@@ -121,12 +121,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       store.dispatch(importBle(bleData));
 
-      store.dispatch(
-        importSettings({
-          ...settingsData,
-          importConsentBackfillAt: new Date().toISOString(),
-        }),
-      );
+      store.dispatch(importSettings(settingsData));
 
       // Hydrate persisted crypto assets tokens BEFORE importing accounts
       // This ensures tokens are available when decoding accounts (which now uses findTokenById)
@@ -306,11 +301,6 @@ async function updateSupportedCountervalues(store: Store, settingsData: Partial<
     settingsData.counterValue !== settingsState.counterValue
   ) {
     settingsData.counterValue = settingsState.counterValue;
-    store.dispatch(
-      importSettings({
-        ...settingsData,
-        importConsentBackfillAt: new Date().toISOString(),
-      }),
-    );
+    store.dispatch(importSettings(settingsData));
   }
 }

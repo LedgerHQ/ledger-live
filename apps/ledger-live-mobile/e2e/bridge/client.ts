@@ -102,12 +102,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "importSettings": {
-        store.dispatch(
-          importSettings({
-            ...msg.payload,
-            importConsentBackfillAt: new Date().toISOString(),
-          }),
-        );
+        store.dispatch(importSettings(msg.payload));
         break;
       }
       case "importBle": {
