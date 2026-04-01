@@ -1517,15 +1517,24 @@ importers:
       '@ledgerhq/coin-stacks':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
+      '@ledgerhq/context-module':
+        specifier: 1.15.0
+        version: 1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 1.4.0(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)(styled-components@6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react@19.0.0))
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-intent':
+        specifier: workspace:^
+        version: link:../../libs/device-intent
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.2.0(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-ethereum':
+        specifier: 'catalog:'
+        version: 1.12.0(@ledgerhq/context-module@1.15.0(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'
         version: 1.0.3(@ledgerhq/device-management-kit@1.2.0(rxjs@7.8.2))(react-native@0.79.7(patch_hash=461d44d8d4f5eecdc7a3b2b8cc6a48cfbe0c4a73d6d130be09381aba6618e877)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(rxjs@7.8.2)
@@ -6322,6 +6331,9 @@ importers:
 
   libs/device-intent:
     dependencies:
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
