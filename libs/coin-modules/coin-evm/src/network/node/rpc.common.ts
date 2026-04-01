@@ -42,6 +42,44 @@ import {
 export const ERC20_TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
+/** keccak256("Deposit(address,uint256)") — WETH-style wrap often emits only Deposit, not ERC20 Transfer. */
+export const WETH_DEPOSIT_TOPIC =
+  "0xe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c";
+
+/** keccak256("Withdrawal(address,uint256)") — WETH-style unwrap often emits only Withdrawal, not ERC20 Transfer. */
+export const WETH_WITHDRAWAL_TOPIC =
+  "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65";
+
+const ZERO_ADDRESS_HEX = safeEncodeEIP55("0x0000000000000000000000000000000000000000");
+
+function topicToAddress(topic: string | undefined): string {
+  if (!topic || topic.length < 66) return ZERO_ADDRESS_HEX;
+  return safeEncodeEIP55("0x" + topic.slice(26));
+}
+
+function isTransfer(log: LogWithAddress): boolean {
+  return log.topics[0] === ERC20_TRANSFER_TOPIC && log.topics.length === 3 && log.data.length > 2;
+}
+
+function isWethDeposit(log: LogWithAddress): boolean {
+  return log.topics[0] === WETH_DEPOSIT_TOPIC && log.topics.length === 2 && log.data.length > 2;
+}
+
+function isWethWithdrawal(log: LogWithAddress): boolean {
+  return log.topics[0] === WETH_WITHDRAWAL_TOPIC && log.topics.length === 2 && log.data.length > 2;
+}
+
+function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20Transfer {
+  return {
+    asset: {
+      type: "erc20",
+      assetReference: safeEncodeEIP55(log.address),
+    },
+    from: from,
+    to: to,
+    value: BigInt(log.data).toString(),
+  };
+}
 /**
  * Parse ERC20 Transfer events from transaction receipt logs.
  *
@@ -52,8 +90,19 @@ export const ERC20_TRANSFER_TOPIC =
  * - data: value (uint256, 32 bytes)
  * - log.address: token contract address
  *
- * Distinction from other standards:
- * - ERC20:   3 topics (sig, from, to) + value in data
+ * WETH-style `Deposit(address,uint256)` (wrap / mint when `Transfer` is not emitted):
+ * - topic[0]: event signature hash (0xe1fffcc4…)
+ * - topic[1]: dst address (indexed, padded to 32 bytes)
+ * - data: wad (uint256, 32 bytes)
+ * - log.address: token contract address
+ *
+ * WETH-style `Withdrawal(address,uint256)` (unwrap / burn when `Transfer` is not emitted):
+ * - topic[0]: event signature hash (0x7fcf532c…)
+ * - topic[1]: src address (indexed, padded to 32 bytes)
+ * - data: wad (uint256, 32 bytes)
+ * - log.address: token contract address
+ * 
+ *  Other standards (not supported yet):
  * - ERC721:  4 topics (sig, from, to, tokenId) - filtered out by topics.length === 3
  * - ERC1155: different event signature - filtered out by topic[0] check
  *
@@ -62,19 +111,18 @@ export const ERC20_TRANSFER_TOPIC =
  */
 export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>): ERC20Transfer[] {
   return logs
-    .filter(
-      log =>
-        log.topics[0] === ERC20_TRANSFER_TOPIC && log.topics.length === 3 && log.data.length > 2, // must have data beyond "0x"
-    )
-    .map(log => ({
-      asset: {
-        type: "erc20" as const,
-        assetReference: safeEncodeEIP55(log.address),
-      },
-      from: safeEncodeEIP55("0x" + log.topics[1].slice(26)),
-      to: safeEncodeEIP55("0x" + log.topics[2].slice(26)),
-      value: BigInt(log.data).toString(),
-    }));
+    .flatMap(log => {
+      if (isTransfer(log)) {
+        return [makeErc20Transfer(log, topicToAddress(log.topics[1]), topicToAddress(log.topics[2]))];
+      }
+      if (isWethDeposit(log)) {
+        return [makeErc20Transfer(log, ZERO_ADDRESS_HEX, topicToAddress(log.topics[1]))];
+      }
+      if (isWethWithdrawal(log)) {
+        return [makeErc20Transfer(log, topicToAddress(log.topics[1]), ZERO_ADDRESS_HEX)];
+      }
+      return [];
+    });
 }
 
 export const RPC_TIMEOUT =
