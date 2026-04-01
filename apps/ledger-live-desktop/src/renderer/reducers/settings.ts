@@ -52,6 +52,11 @@ export type VaultSigner = {
   token: string;
 };
 
+export type AnalyticsConsentInfo = {
+  consentDate: string | null;
+  privacyPolicyVersion: number | null;
+};
+
 export type SettingsState = {
   loaded: boolean;
   // is the settings loaded from db (if not we don't save them)
@@ -80,6 +85,7 @@ export type SettingsState = {
   developerMode: boolean;
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
+  analyticsConsentInfo: AnalyticsConsentInfo;
   sentryLogs: boolean; // also used for Datadog RUM opt-in
   lastUsedVersion: string;
   dismissedBanners: string[];
@@ -174,6 +180,10 @@ export const INITIAL_STATE: SettingsState = {
   loaded: false,
   shareAnalytics: true,
   sharePersonalizedRecommandations: true,
+  analyticsConsentInfo: {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  },
   hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
@@ -306,10 +316,6 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
-  SET_ANALYTICS_CONSENT_INFO: {
-    consentDate: Date;
-    privacyPolicyVersion: number;
-  };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -337,15 +343,40 @@ const handlers: SettingsHandlers = {
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     const filteredPayload = filterValidSettings(payload);
+
+    let mergedPayload: Partial<SettingsState> = filteredPayload;
+    if (filteredPayload.analyticsConsentInfo !== undefined) {
+      mergedPayload = {
+        ...filteredPayload,
+        analyticsConsentInfo: {
+          ...state.analyticsConsentInfo,
+          ...filteredPayload.analyticsConsentInfo,
+        },
+      };
+    }
+
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    const changed = (Object.keys(filteredPayload) as (keyof typeof filteredPayload)[]).some(
-      key => filteredPayload[key] !== state[key],
-    );
+    const changed = (Object.keys(mergedPayload) as (keyof typeof mergedPayload)[]).some(key => {
+      if (key === "analyticsConsentInfo" && mergedPayload.analyticsConsentInfo !== undefined) {
+        const m = mergedPayload.analyticsConsentInfo;
+        return (
+          m.consentDate !== state.analyticsConsentInfo.consentDate ||
+          m.privacyPolicyVersion !== state.analyticsConsentInfo.privacyPolicyVersion
+        );
+      }
+      return mergedPayload[key] !== state[key];
+    });
     if (!changed) return state;
-    return {
+
+    const next: SettingsState = {
       ...state,
-      ...filteredPayload,
+      ...mergedPayload,
     };
+    if (mergedPayload.analyticsConsentInfo !== undefined) {
+      next.lastAnalyticsConsentDate = mergedPayload.analyticsConsentInfo.consentDate;
+      next.privacyPolicyVersion = mergedPayload.analyticsConsentInfo.privacyPolicyVersion;
+    }
+    return next;
   },
 
   FETCH_SETTINGS: (state, { payload: settings }) => {
@@ -536,14 +567,6 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
-  }),
-  SET_ANALYTICS_CONSENT_INFO: (
-    state: SettingsState,
-    { payload: { consentDate, privacyPolicyVersion } },
-  ) => ({
-    ...state,
-    lastAnalyticsConsentDate: consentDate.toISOString(),
-    privacyPolicyVersion: privacyPolicyVersion,
   }),
 };
 
@@ -778,6 +801,12 @@ export const shareAnalyticsSelector = (state: State) => state.settings.shareAnal
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
 
+export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo =>
+  state.settings.analyticsConsentInfo ?? {
+    consentDate: null,
+    privacyPolicyVersion: null,
+  };
+
 // Plain selector (not createSelector): wall-clock "now" is not in Redux, so the one-year cutoff must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
@@ -809,7 +838,6 @@ export const trackingEnabledSelector = (state: State) => {
 
   return s.shareAnalytics || s.sharePersonalizedRecommandations;
 };
-
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>
@@ -871,11 +899,3 @@ export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasS
 // Last seen device is the device set when a user performs a device action (e.g. pairing, firmware update, etc.).
 export const hasOnboardedDeviceSelector = (state: State) =>
   !!lastOnboardedDeviceSelector(state) || lastSeenDeviceSelector(state) !== null;
-
-export const analyticsConsentInfoSelector = (state: State) => ({
-  consentDate:
-    state.settings.lastAnalyticsConsentDate !== null
-      ? new Date(state.settings.lastAnalyticsConsentDate)
-      : null,
-  privacyPolicyVersion: state.settings.privacyPolicyVersion,
-});

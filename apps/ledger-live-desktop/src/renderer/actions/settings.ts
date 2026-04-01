@@ -17,6 +17,7 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
+  AnalyticsConsentInfo,
   VaultSigner,
   SupportedCountervaluesData,
   CurrencySettings,
@@ -29,7 +30,6 @@ import {
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
 } from "./constants";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "LLD/features/AnalyticsOptInPrompt/const/policyVersion";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -69,6 +69,11 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
 export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandations: boolean) =>
   saveSettings({
     sharePersonalizedRecommandations,
+  });
+
+export const setAnalyticsConsentInfo = (analyticsConsentInfo: AnalyticsConsentInfo) =>
+  saveSettings({
+    analyticsConsentInfo,
   });
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
@@ -397,12 +402,4 @@ export const updateAnonymousUserNotifications = (payload: {
 export const setHasSeenWalletV4Tour = (hasSeenWalletV4Tour: boolean) => ({
   type: "SET_HAS_SEEN_WALLET_V4_TOUR",
   payload: hasSeenWalletV4Tour,
-});
-
-export const setAnalyticsConsentInfo = () => ({
-  type: "SET_ANALYTICS_CONSENT_INFO",
-  payload: {
-    consentDate: new Date(),
-    privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-  },
 });
