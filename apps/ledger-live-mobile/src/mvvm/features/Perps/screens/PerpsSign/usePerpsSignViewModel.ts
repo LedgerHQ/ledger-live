@@ -67,11 +67,9 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
   }, []);
 
   const handleDrawerClose = useCallback(() => {
-    if (!completedRef.current) {
-      onCancel();
-    }
+    setConnectedDevice(null);
     setSelectedDevice(undefined);
-  }, [onCancel]);
+  }, []);
 
   const handleDrawerHidden = useCallback(() => {
     if (completedRef.current) {
@@ -121,6 +119,14 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
       cancelled = true;
     };
   }, [connectedDevice, signFactory, onSuccess, onError]);
+
+  useEffect(() => {
+    return () => {
+      if (!completedRef.current) {
+        onCancel();
+      }
+    };
+  }, []);
 
   return {
     t,

@@ -62,9 +62,12 @@ export function PerpsSignView({
                 <Tag size="md" appearance="gray" label={connectedDevice.deviceName} />
               ) : null}
               <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
-                {t("ValidateOnDevice.title.send", {
-                  productName: getProductName(connectedDevice.modelId),
+                {t("send.newSendFlow.sign.title", {
+                  wording: getProductName(connectedDevice.modelId),
                 })}
+              </Text>
+              <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+                {t("send.newSendFlow.sign.description")}
               </Text>
             </Box>
           ) : (
