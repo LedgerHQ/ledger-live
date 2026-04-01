@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.12.0
+
+### Minor Changes
+
+- [#15587](https://github.com/LedgerHQ/ledger-live/pull/15587) [`9da8821`](https://github.com/LedgerHQ/ledger-live/commit/9da88219991eec85c41dc953186b56aff5687714) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-tester-polkadot): remove HTTP calls
+
+### Patch Changes
+
+- Updated dependencies [[`4af828d`](https://github.com/LedgerHQ/ledger-live/commit/4af828d0790bb3568dd095f89dd9f239f7565e84), [`1bf4e7e`](https://github.com/LedgerHQ/ledger-live/commit/1bf4e7efa2fbb310f9c3db8f5d72e68294f0f3fe), [`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20), [`deec161`](https://github.com/LedgerHQ/ledger-live/commit/deec16153656d444336f067970dcda5fff016d95), [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc), [`0431655`](https://github.com/LedgerHQ/ledger-live/commit/043165591a3bd650b43a220b23bd952ff82d56a0), [`41d172e`](https://github.com/LedgerHQ/ledger-live/commit/41d172e74bc074995b7290c4bb6d129276a484ff), [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc), [`d1b1f81`](https://github.com/LedgerHQ/ledger-live/commit/d1b1f816452e2195af8ad9032689ea500cad87ba)]:
+  - @ledgerhq/coin-framework@7.1.0
+  - @ledgerhq/types-live@6.103.0
+  - @ledgerhq/cryptoassets@13.44.0
+  - @ledgerhq/ledger-wallet-framework@1.1.0
+  - @ledgerhq/coin-tester@0.19.0
+  - @ledgerhq/coin-polkadot@6.21.1
+
 ## 1.12.0-next.0
 
 ### Minor Changes

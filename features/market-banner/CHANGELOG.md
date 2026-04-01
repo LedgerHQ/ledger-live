@@ -1,5 +1,13 @@
 # @features/market-banner
 
+## 0.6.0
+
+### Minor Changes
+
+- [#15697](https://github.com/LedgerHQ/ledger-live/pull/15697) [`6e52456`](https://github.com/LedgerHQ/ledger-live/commit/6e5245684071479b3ab3b72d47e8013268148ae2) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Bump `@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-rnative`, and `@ledgerhq/lumen-design-core` (catalog) so installs satisfy `lumen-ui-rnative` peer on `lumen-design-core@0.1.6`.
+
+- [#15756](https://github.com/LedgerHQ/ledger-live/pull/15756) [`7064e60`](https://github.com/LedgerHQ/ledger-live/commit/7064e606efa0c465b40f005d17f70520638112ca) Thanks [@sarneijim](https://github.com/sarneijim)! - Bump `@ledgerhq/lumen-ui-react` to 0.1.14 and `@ledgerhq/lumen-ui-rnative` to 0.1.13 (LedgerHQ/lumen releases of 2026-03-25, incl. MediaBanner).
+
 ## 0.6.0-next.0
 
 ### Minor Changes

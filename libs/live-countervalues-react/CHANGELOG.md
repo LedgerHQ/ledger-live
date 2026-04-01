@@ -1,5 +1,19 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.12.0
+
+### Minor Changes
+
+- [#15230](https://github.com/LedgerHQ/ledger-live/pull/15230) [`f810f2d`](https://github.com/LedgerHQ/ledger-live/commit/f810f2d57f0ecf6249880de4956d2375bb4900d4) Thanks [@LL782](https://github.com/LL782)! - Remove `CountervaluesMarketcapProvider` context and all related bridge/Redux plumbing. Market-cap IDs are now supplied via `useGetCounterValueIdsSortedByMarketCapQuery`, the RTK Query endpoint.
+
+### Patch Changes
+
+- Updated dependencies [[`1bf4e7e`](https://github.com/LedgerHQ/ledger-live/commit/1bf4e7efa2fbb310f9c3db8f5d72e68294f0f3fe), [`d0559d8`](https://github.com/LedgerHQ/ledger-live/commit/d0559d84e119c844d92dc82c7648d0d9dc6c6e20), [`f67c5c5`](https://github.com/LedgerHQ/ledger-live/commit/f67c5c555c163739edbfd60b490a14ba8116146f), [`deec161`](https://github.com/LedgerHQ/ledger-live/commit/deec16153656d444336f067970dcda5fff016d95), [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc), [`c5c58e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c58e4efab303a5b6bccc463f91241f4e0f72bc)]:
+  - @ledgerhq/types-live@6.103.0
+  - @ledgerhq/cryptoassets@13.44.0
+  - @ledgerhq/ledger-wallet-framework@1.1.0
+  - @ledgerhq/live-countervalues@0.17.0
+
 ## 0.12.0-next.0
 
 ### Minor Changes

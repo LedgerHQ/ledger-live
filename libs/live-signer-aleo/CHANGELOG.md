@@ -1,5 +1,19 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.14.0
+
+### Minor Changes
+
+- [#15617](https://github.com/LedgerHQ/ledger-live/pull/15617) [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: update aleo derivation path
+
+- [#15640](https://github.com/LedgerHQ/ledger-live/pull/15640) [`08aba09`](https://github.com/LedgerHQ/ledger-live/commit/08aba094d4ce594fdde2167f9120b7d9c45b21ba) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: integrate with development version of aleo signer kit
+  feat: aleo sign operation
+
+### Patch Changes
+
+- Updated dependencies [[`d3f2070`](https://github.com/LedgerHQ/ledger-live/commit/d3f20708585c3a9c2a6b3a9d7861e26bb9a94f2d), [`66c4add`](https://github.com/LedgerHQ/ledger-live/commit/66c4add957a7e3a3d042d5babe9663dfde52b1cf), [`3a896bf`](https://github.com/LedgerHQ/ledger-live/commit/3a896bf20639a8090e266a7d05c604b8fe796b15), [`e0de96e`](https://github.com/LedgerHQ/ledger-live/commit/e0de96e6311de7e34715784da5941e60ed5c51cc), [`6ed2cc3`](https://github.com/LedgerHQ/ledger-live/commit/6ed2cc3e388df915015f6e4083917015ef800804), [`08aba09`](https://github.com/LedgerHQ/ledger-live/commit/08aba094d4ce594fdde2167f9120b7d9c45b21ba), [`91517d9`](https://github.com/LedgerHQ/ledger-live/commit/91517d95480cc44ffa9195adbf572b9817360efa), [`2bd3190`](https://github.com/LedgerHQ/ledger-live/commit/2bd3190658bd9baeb616251273eba48d1f677be9), [`633b6ee`](https://github.com/LedgerHQ/ledger-live/commit/633b6eef8a38e1d8bd9219a69c75c9ca35ccf066), [`43b1de5`](https://github.com/LedgerHQ/ledger-live/commit/43b1de5d23a5760cbe1801a18d3691b393184920), [`332b7b9`](https://github.com/LedgerHQ/ledger-live/commit/332b7b9c0f44b5dff3dd06e5da029d6add8825d8)]:
+  - @ledgerhq/coin-aleo@1.8.0
+
 ## 0.14.0-next.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-intent",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "description": "Ledger Device Intent types and helpers for the Device Intent Executor",
   "private": true,
   "license": "Apache-2.0",
