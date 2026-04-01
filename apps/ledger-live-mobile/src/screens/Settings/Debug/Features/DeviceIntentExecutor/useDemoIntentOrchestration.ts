@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   createIntent,
   type DeviceIntentExecutorProps,
@@ -206,23 +206,17 @@ export function useDemoIntentOrchestration({
     setJobError(error);
   }, []);
 
-  const prevEnabledRef = useRef(false);
-  if (enabled !== prevEnabledRef.current) {
-    prevEnabledRef.current = enabled;
+  useEffect(() => {
     if (enabled) {
       setDemoPhase(buildPhase("timer", intentDefs, tickCount, BOLOS_CONTEXT));
-      setLatestJobState(null);
-      setJobCompleted(false);
-      setJobError(null);
-      setExecutorState(null);
     } else {
       setDemoPhase({ phase: "idle" });
-      setLatestJobState(null);
-      setJobCompleted(false);
-      setJobError(null);
-      setExecutorState(null);
     }
-  }
+    setLatestJobState(null);
+    setJobCompleted(false);
+    setJobError(null);
+    setExecutorState(null);
+  }, [enabled, intentDefs, tickCount]);
 
   const isActive = demoPhase.phase !== "idle" && demoPhase.phase !== "completed";
 

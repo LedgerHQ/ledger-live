@@ -146,7 +146,7 @@ describe("deriveHookState", () => {
     });
   });
 
-  it("maps invalidOperation to intentError phase", () => {
+  it("maps invalidOperation to invalidOperation phase", () => {
     const onUserCancel = jest.fn();
     const error = new Error("invalid operation");
     const params = makeParams({ onUserCancel });

@@ -369,7 +369,7 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
   // -- Component callback events --
 
   deviceConnected(result: DeviceConnectionResult): void {
-    log(LOG_TYPE, "event: deviceConnected", result);
+    log(LOG_TYPE, "event: deviceConnected");
     this.actor.send({ type: "DEVICE_CONNECTED", result });
   }
 

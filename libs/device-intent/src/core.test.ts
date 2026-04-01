@@ -76,11 +76,15 @@ describe("createIntent", () => {
     const onJobComplete = jest.fn();
     const onJobError = jest.fn();
 
-    const intent = createIntent(myIntentDefinitionWithInput, { value: 1 }, {
-      onJobStateChanged,
-      onJobComplete,
-      onJobError,
-    });
+    const intent = createIntent(
+      myIntentDefinitionWithInput,
+      { value: 1 },
+      {
+        onJobStateChanged,
+        onJobComplete,
+        onJobError,
+      },
+    );
 
     expect(intent.onJobStateChanged).toBe(onJobStateChanged);
     expect(intent.onJobComplete).toBe(onJobComplete);
@@ -107,9 +111,13 @@ describe("createIntent", () => {
 
   it("supports partial listeners", () => {
     const onJobError = jest.fn();
-    const intent = createIntent(myIntentDefinitionWithInput, { value: 1 }, {
-      onJobError,
-    });
+    const intent = createIntent(
+      myIntentDefinitionWithInput,
+      { value: 1 },
+      {
+        onJobError,
+      },
+    );
 
     expect(intent.onJobStateChanged).toBeUndefined();
     expect(intent.onJobComplete).toBeUndefined();

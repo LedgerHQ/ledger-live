@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
-import { Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
+import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceIntentExecutorLWM } from "~/components/device-intent-executor";
 import type { DemoIntentDefinitions } from "./intents/types";
 import { timerDemoIntentDef } from "./intents/timerDemoIntent";
@@ -17,8 +17,6 @@ const INTENT_DEFS: DemoIntentDefinitions = {
 };
 
 export default function DebugDeviceIntentExecutor() {
-  const [requireLatestFirmware, setRequireLatestFirmware] = useState(false);
-  const [allowPartialDependencies, setAllowPartialDependencies] = useState(true);
   const [tickCount, setTickCount] = useState(5);
 
   const intentDefs = useMemo(() => INTENT_DEFS, []);
@@ -98,16 +96,6 @@ export default function DebugDeviceIntentExecutor() {
             </Button>
           </Flex>
         </Flex>
-        <Switch
-          label="Require latest firmware"
-          checked={requireLatestFirmware}
-          onChange={setRequireLatestFirmware}
-        />
-        <Switch
-          label="Allow partial dependencies"
-          checked={allowPartialDependencies}
-          onChange={setAllowPartialDependencies}
-        />
       </Flex>
 
       {/* --- CTA --- */}
