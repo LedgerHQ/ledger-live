@@ -3,6 +3,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import {
+  FetchRequest,
   JsonRpcProvider,
   Transaction,
   TransactionReceipt,
@@ -249,6 +250,24 @@ describe("EVM Family", () => {
         expect(p1).not.toBe(p2);
         expect(p1).toBeInstanceOf(JsonRpcProvider);
         expect(p2).toBeInstanceOf(JsonRpcProvider);
+      });
+
+      it("should disable ethers built-in HTTP retries by setting maxAttempts: 1 on FetchRequest", async () => {
+        const currency = {
+          ...fakeCurrency,
+          id: "provider_fetch_throttle_test" as CryptoCurrencyId,
+        } as CryptoCurrency;
+        const nodeConfig = {
+          type: "external" as const,
+          uri: "https://rpc-throttle-test.example",
+          retries: 0,
+        };
+
+        const setThrottleParamsSpy = jest.spyOn(FetchRequest.prototype, "setThrottleParams");
+
+        await withApi(currency, api => Promise.resolve(api), nodeConfig);
+
+        expect(setThrottleParamsSpy).toHaveBeenCalledWith({ maxAttempts: 1 });
       });
     });
 
