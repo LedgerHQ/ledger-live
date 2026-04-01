@@ -1,4 +1,4 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/renderer/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 export const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 

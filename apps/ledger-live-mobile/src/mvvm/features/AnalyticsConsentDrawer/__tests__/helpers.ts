@@ -1,4 +1,4 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { State } from "~/reducers/types";
 
 export type ConsentDrawerTestOptions = {

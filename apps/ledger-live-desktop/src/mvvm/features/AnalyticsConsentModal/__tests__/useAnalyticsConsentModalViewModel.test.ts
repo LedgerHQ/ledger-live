@@ -1,6 +1,6 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "~/renderer/analytics/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useAnalyticsConsentModalViewModel } from "../useAnalyticsConsentModalViewModel";
 
