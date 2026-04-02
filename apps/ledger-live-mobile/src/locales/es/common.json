@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "Ver todos los activos",
     "cryptoAddresses" : {
-      "title" : "Cuentas cripto",
+      "title" : "Cuentas",
       "count_one" : "{{count}} cuenta",
       "count_other" : "{{count}} cuentas",
-      "noAccountsYet" : "Aún no hay cuentas"
+      "noAccountsYet" : "Aún no hay cuentas",
+      "add" : "Agregar"
     },
     "seeAllAccounts" : "Ver todas las cuentas",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "Comprar",
       "connect" : "Conectar",
       "buyLedger" : "Compra un Ledger",
+      "receive" : "Recibir",
+      "send" : "Enviar",
       "transferDrawer" : {
         "title" : "Transferir",
         "receiveCrypto" : "Recibir desde dirección cripto",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "Actualizando...",
       "upToDate" : "Portfolio actualizado",
-      "syncError" : "No se han podido cargar algunos datos de la cuenta"
+      "syncError" : "No se han podido cargar algunos datos de la cuenta",
+      "offline" : "Estás sin conexión. Comprueba tu conexión"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "Activos"
   },
+  "cryptoAddresses" : {
+    "title" : "Cuentas",
+    "addAccount" : "Agregar cuenta",
+    "emptyState" : "Aún no hay cuentas",
+    "errorState" : "Se ha producido un error al cargar tus cuentas."
+  },
   "accounts" : {
     "title" : "Cuentas",
     "cryptoAccountsTitle" : "Cuentas de {{currencyTicker}}",
@@ -3433,6 +3443,14 @@
         "title" : "Avisos sobre transacciones (Beta)",
         "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
+      "totalMarketCap" : {
+        "title" : "Capitalización total de mercado",
+        "desc" : "Recibe una notificación cuando la capitalización total del mercado cripto realice un movimiento significativo"
+      },
+      "topGainersLosers" : {
+        "title" : "Principales ganadores y perdedores",
+        "desc" : "Obtén un resumen semanal de las principales ganancias y pérdidas de tokens del mercado"
+      },
       "price" : {
         "title" : "Alertas de precios",
         "desc" : "Define alertas de precio para tus monedas favoritas y no te perderás ni un movimiento del mercado"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "ContentBanner con íconos de Spot: Comprar, Permutar, Poner en participación. Requiere el indicador de colocación de Braze.",
         "addSampleActionCarouselImageBackground" : "Agregar carrusel de acción (imagen)",
         "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner con image_background — Comprar, Permutar, Poner en participación. Requiere el indicador de colocación de Braze.",
+        "addSampleWalletCarousel" : "Agregar carrusel inferior de wallet (boceto)",
+        "addSampleWalletCarouselDesc" : "Una tarjeta de prueba en el carrusel inferior del Portfolio (etiqueta, título, imagen, enlace). Sin Braze.",
         "dismissAll" : "Descartar todas las tarjetas locales",
         "dismissAllDesc" : "Quita todas las tarjetas de contenido generadas localmente."
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "Mediante transferencia bancaria",
-          "description" : "Recibe monedas estables mediante una cuenta Cash-to-Stablecoin. Es necesario registrarse."
+          "description" : "Recibe monedas estables simplemente enviando dinero",
+          "description_legacy" : "Recibe monedas estables mediante una cuenta Cash-to-Stablecoin. Es necesario registrarse."
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "Monedas a enviar",
         "changeToReturn" : "Cambio para devolver",
         "enterAmount" : "Ingresar importe",
+        "selectSufficientCoins" : "Selecciona monedas suficientes",
         "amountToSendInCurrency" : "Monto a enviar en ({{ticker}})",
         "amountInputLabel" : "Importe a enviar",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Las monedas más antiguas primero (FIFO)",
             "OPTIMIZE_SIZE" : "Minimizar las tarifas (optimizar el tamaño)",
-            "MERGE_OUTPUTS" : "Minimizar las tarifas futuras (fusionar monedas)"
+            "MERGE_OUTPUTS" : "Minimizar las tarifas futuras (fusionar monedas)",
+            "CUSTOM" : "Selección de monedas personalizada"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "Tasa caducada",
       "description" : "La tasa de cambio ha caducado. Actualiza e inténtalo de nuevo."
     },
+    "details" : {
+      "code" : "Código de error",
+      "correlationId" : "ID de referencia"
+    },
     "default" : {
       "title" : "Algo ha salido mal",
       "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "No se han podido cargar algunos datos de la cuenta",
       "description" : "Tus activos están a buen recaudo. Éste es un problema temporal de sincronización.\nCuentas afectadas: {{accounts}}",
+      "tryToRefresh" : "Intenta actualizar",
       "close" : "Cerrar"
     }
   },
