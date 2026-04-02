@@ -233,6 +233,7 @@
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@nx/s3-cache": "5.0.2",
     "@react-native-community/cli": "15.1.0",
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
@@ -355,5 +356,6 @@
       "web3-shh"
     ]
   },
-  "packageManager": "pnpm@10.24.0"
+  "packageManager": "pnpm@10.24.0",
+  "dependencies": {}
 }
