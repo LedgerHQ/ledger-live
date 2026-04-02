@@ -14,11 +14,12 @@ export function hasErrorCode(error: unknown, code: string): boolean {
  *
  * - -32601 / method_not_found: method not implemented
  * - -32605: method not available on current plan (e.g. QuickNode "debug and trace methods are not supported")
+ * - -32053: API key / plan cannot access the method (e.g. trace_block)
  *
  * @param error EVM node response
  */
 export function isUnsupportedRpcMethodError(error: unknown): boolean {
-  const unsupportedCodes = new Set(["-32601", "method_not_found", "-32605"]);
+  const unsupportedCodes = new Set(["-32601", "method_not_found", "-32605", "-32053"]);
   return collectRpcErrorFields(error).codes.some(code => unsupportedCodes.has(code));
 }
 
