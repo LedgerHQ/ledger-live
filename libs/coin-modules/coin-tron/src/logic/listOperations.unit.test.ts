@@ -1,13 +1,11 @@
-import type { Operation } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import { defaultFetchParams, fetchTronAccountTxs, getBlock } from "../network";
+import { fetchTronAccountTxsPage, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { TrongridTxInfo } from "../types";
-import { defaultOptions, listOperations } from "./listOperations";
+import { listOperations, ListOperationsOptions } from "./listOperations";
 
-// Mock the fetchTronAccountTxs and fromTrongridTxInfoToOperation functions
 jest.mock("../network", () => ({
-  fetchTronAccountTxs: jest.fn(),
+  fetchTronAccountTxsPage: jest.fn(),
   getBlock: jest.fn(),
 }));
 
@@ -18,195 +16,449 @@ jest.mock("../network/trongrid/trongrid-adapters", () => ({
 describe("listOperations", () => {
   const mockAddress = "tronExampleAddress";
 
-  const mockBlockTime = new Date("2023-01-01T00:00:00Z");
-  const mockBlockTimestamp = mockBlockTime.getTime();
+  const defaultOptions: ListOperationsOptions = {
+    limit: 200,
+    minTimestamp: 0,
+    order: "asc",
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     (getBlock as jest.Mock).mockResolvedValue({
-      time: mockBlockTime,
+      height: 0,
+      hash: "hash0",
+      time: new Date("2023-01-01T00:00:00Z"),
     });
   });
 
-  const expectedFetchParams = {
-    ...defaultFetchParams,
-    minTimestamp: mockBlockTimestamp,
-    hintGlobalLimit: 1000,
-    order: "desc",
-  };
-
-  it("should fetch transactions and return operations", async () => {
+  it("should fetch transactions and return operations with pagination", async () => {
     const mockTxs: Partial<TrongridTxInfo>[] = [
-      { txID: "tx1", value: new BigNumber(0) },
-      { txID: "tx2", value: new BigNumber(42) },
+      {
+        txID: "tx1",
+        value: new BigNumber(0),
+        date: new Date("2023-01-01T00:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(42),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 200,
+      },
     ];
 
-    const expectedOperations: Partial<Operation>[] = [
-      { tx: { hash: "tx1" } as Partial<Operation>["tx"], value: BigInt(0) },
-      { tx: { hash: "tx2" } as Partial<Operation>["tx"], value: BigInt(42) },
-    ];
-
-    (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, _block) => {
-      return {
-        tx: { hash: tx.txID },
-        value: BigInt(tx.value.toString()),
-      };
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
     });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
 
-    const [operations, token] = await listOperations(mockAddress, defaultOptions);
+    const result = await listOperations(mockAddress, defaultOptions);
 
-    expect(fetchTronAccountTxs).toHaveBeenCalledWith(
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
       mockAddress,
-      expect.any(Function),
       {},
-      expectedFetchParams,
+      { limit: 200, minTimestamp: 0, order: "asc" },
     );
-    expect(fromTrongridTxInfoToOperation).toHaveBeenCalledTimes(mockTxs.length);
-    expect(operations).toEqual(expectedOperations);
-    expect(token).toBe("");
+    expect(result.items).toHaveLength(2);
+    expect(result.next).toBeUndefined();
   });
 
   it("should handle empty transactions", async () => {
-    const mockTxs: Partial<TrongridTxInfo>[] = [];
-    const expectedOperations: Partial<Operation>[] = [];
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
 
-    (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(() => null);
+    const result = await listOperations(mockAddress, defaultOptions);
 
-    const [operations, token] = await listOperations(mockAddress, defaultOptions);
-
-    expect(fetchTronAccountTxs).toHaveBeenCalledWith(
-      mockAddress,
-      expect.any(Function),
-      {},
-      expectedFetchParams,
-    );
-    expect(operations).toEqual(expectedOperations);
-    expect(token).toBe("");
+    expect(result.items).toHaveLength(0);
+    expect(result.next).toBeUndefined();
   });
 
-  it("should handle errors from fetchTronAccountTxs", async () => {
+  it("should return cursor when hasNextPage is true", async () => {
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx1",
+        value: new BigNumber(0),
+        date: new Date("2023-01-01T00:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(42),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 200,
+      },
+      {
+        txID: "tx3",
+        value: new BigNumber(50),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 300,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: true },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const result = await listOperations(mockAddress, defaultOptions);
+
+    expect(result.items).toHaveLength(3);
+    expect(result.next).toContain("tx3");
+  });
+
+  it("should merge and dedupe native and trc20 transactions", async () => {
+    const nativeTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx1",
+        value: new BigNumber(0),
+        date: new Date("2023-01-01T00:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx3",
+        value: new BigNumber(30),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 300,
+      },
+    ];
+    const trc20Txs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 200,
+      },
+      {
+        txID: "tx1",
+        value: new BigNumber(0),
+        date: new Date("2023-01-01T00:00:00Z"),
+        blockHeight: 100,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: nativeTxs, hasNextPage: false },
+      trc20Txs: { txs: trc20Txs, hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const result = await listOperations(mockAddress, defaultOptions);
+
+    expect(result.items).toHaveLength(3);
+    const hashes = result.items.map(op => op.tx.hash);
+    expect(hashes).toEqual(["tx1", "tx2", "tx3"]);
+  });
+
+  it("should sort transactions by timestamp in ascending order", async () => {
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx3",
+        value: new BigNumber(30),
+        date: new Date("2023-01-01T03:00:00Z"),
+        blockHeight: 300,
+      },
+      {
+        txID: "tx1",
+        value: new BigNumber(10),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID, date: tx.date },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const result = await listOperations(mockAddress, { ...defaultOptions, order: "asc" });
+
+    const hashes = result.items.map(op => op.tx.hash);
+    expect(hashes).toEqual(["tx1", "tx2", "tx3"]);
+  });
+
+  it("should sort transactions by timestamp in descending order", async () => {
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx1",
+        value: new BigNumber(10),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx3",
+        value: new BigNumber(30),
+        date: new Date("2023-01-01T03:00:00Z"),
+        blockHeight: 300,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID, date: tx.date },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const result = await listOperations(mockAddress, { ...defaultOptions, order: "desc" });
+
+    const hashes = result.items.map(op => op.tx.hash);
+    expect(hashes).toEqual(["tx3", "tx2", "tx1"]);
+  });
+
+  it("should filter out transactions before cursor", async () => {
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx1",
+        value: new BigNumber(10),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+      {
+        txID: "tx3",
+        value: new BigNumber(30),
+        date: new Date("2023-01-01T03:00:00Z"),
+        blockHeight: 300,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const cursorTimestamp = new Date("2023-01-01T01:00:00Z").getTime();
+    const cursor = `${cursorTimestamp}:tx1`;
+
+    const result = await listOperations(mockAddress, { ...defaultOptions, cursor });
+
+    const hashes = result.items.map(op => op.tx.hash);
+    expect(hashes).toEqual(["tx2", "tx3"]);
+  });
+
+  it("should filter by cursor position when multiple txs share same timestamp", async () => {
+    const sameTimestamp = new Date("2023-01-01T01:00:00Z");
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      { txID: "txA", value: new BigNumber(10), date: sameTimestamp, blockHeight: 100 },
+      { txID: "txB", value: new BigNumber(20), date: sameTimestamp, blockHeight: 100 },
+      { txID: "txC", value: new BigNumber(30), date: sameTimestamp, blockHeight: 100 },
+      {
+        txID: "txD",
+        value: new BigNumber(40),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const cursor = `${sameTimestamp.getTime()}:txB`;
+    const result = await listOperations(mockAddress, { ...defaultOptions, cursor });
+
+    const hashes = result.items.map(op => op.tx.hash);
+    expect(hashes).toEqual(["txC", "txD"]);
+  });
+
+  it("should handle errors from fetchTronAccountTxsPage", async () => {
     const exampleError = new Error("Network error!");
-    (fetchTronAccountTxs as jest.Mock).mockRejectedValue(exampleError);
+    (fetchTronAccountTxsPage as jest.Mock).mockRejectedValue(exampleError);
 
-    await expect(listOperations(mockAddress, defaultOptions)).rejects.toThrow(
-      new Error(exampleError.message),
+    await expect(listOperations(mockAddress, defaultOptions)).rejects.toThrow("Network error!");
+  });
+
+  it("should throw on invalid cursor format", async () => {
+    await expect(
+      listOperations(mockAddress, { ...defaultOptions, cursor: "invalid" }),
+    ).rejects.toThrow("Invalid cursor format");
+  });
+
+  it("should use boundary operation for next cursor when endpoints have different last ops", async () => {
+    const nativeTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "native1",
+        value: new BigNumber(10),
+        date: new Date("2023-01-01T01:00:00Z"),
+        blockHeight: 100,
+      },
+      {
+        txID: "native2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T03:00:00Z"),
+        blockHeight: 300,
+      },
+    ];
+    const trc20Txs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "trc20-1",
+        value: new BigNumber(15),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: nativeTxs, hasNextPage: true },
+      trc20Txs: { txs: trc20Txs, hasNextPage: true },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const result = await listOperations(mockAddress, defaultOptions);
+
+    expect(result.next).toContain("trc20-1");
+    const hashes = result.items.map(op => op.tx.hash);
+    expect(hashes).toEqual(["native1", "trc20-1"]);
+  });
+
+  it("should pass maxTimestamp from cursor for desc order pagination", async () => {
+    const mockTxs: Partial<TrongridTxInfo>[] = [
+      {
+        txID: "tx3",
+        value: new BigNumber(30),
+        date: new Date("2023-01-01T03:00:00Z"),
+        blockHeight: 300,
+      },
+      {
+        txID: "tx2",
+        value: new BigNumber(20),
+        date: new Date("2023-01-01T02:00:00Z"),
+        blockHeight: 200,
+      },
+    ];
+
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: mockTxs, hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
+    });
+    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation(tx => ({
+      tx: { hash: tx.txID },
+      value: BigInt(tx.value.toString()),
+    }));
+
+    const cursorTimestamp = new Date("2023-01-01T04:00:00Z").getTime();
+    const cursor = `${cursorTimestamp}:tx4`;
+    const minTimestamp = 1000;
+
+    await listOperations(mockAddress, {
+      ...defaultOptions,
+      order: "desc",
+      cursor,
+      minTimestamp,
+    });
+
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
+      mockAddress,
+      {},
+      {
+        limit: 200,
+        minTimestamp,
+        maxTimestamp: cursorTimestamp,
+        order: "desc",
+      },
     );
   });
 
-  it("should fetch blocks for unique heights and cache them", async () => {
-    const mockBlock0 = { height: 0, hash: "hash0", time: mockBlockTime };
-    const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
-    const mockBlock200 = { height: 200, hash: "hash200", time: new Date("2023-01-01T02:00:00Z") };
-    const mockBlock300 = { height: 300, hash: "hash300", time: new Date("2023-01-01T03:00:00Z") };
-
-    const mockTxs: Partial<TrongridTxInfo>[] = [
-      { txID: "tx1", value: new BigNumber(0), blockHeight: 100 },
-      { txID: "tx2", value: new BigNumber(10), blockHeight: 200 },
-      { txID: "tx3", value: new BigNumber(20), blockHeight: 100 },
-      { txID: "tx4", value: new BigNumber(30), blockHeight: 300 },
-      { txID: "tx5", value: new BigNumber(40), blockHeight: 200 },
-    ];
-
-    (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock)
-      .mockResolvedValueOnce(mockBlock0)
-      .mockResolvedValueOnce(mockBlock100)
-      .mockResolvedValueOnce(mockBlock200)
-      .mockResolvedValueOnce(mockBlock300);
-
-    const operationBlocks: Array<{ height: number; hash: string }> = [];
-    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
-      operationBlocks.push({ height: block.height, hash: block.hash });
-      return {
-        tx: { hash: tx.txID },
-        value: BigInt(tx.value.toString()),
-      };
+  it("should not pass maxTimestamp for desc order without cursor", async () => {
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
     });
 
-    await listOperations(mockAddress, { ...defaultOptions, minHeight: 0 });
+    const minTimestamp = 1000;
 
-    expect(getBlock).toHaveBeenCalledTimes(4);
-    expect(getBlock).toHaveBeenCalledWith(0);
-    expect(getBlock).toHaveBeenCalledWith(100);
-    expect(getBlock).toHaveBeenCalledWith(200);
-    expect(getBlock).toHaveBeenCalledWith(300);
+    await listOperations(mockAddress, {
+      ...defaultOptions,
+      order: "desc",
+      minTimestamp,
+    });
 
-    expect(fromTrongridTxInfoToOperation).toHaveBeenCalledTimes(5);
-    expect(operationBlocks).toEqual([
-      { height: 100, hash: "hash100" },
-      { height: 200, hash: "hash200" },
-      { height: 100, hash: "hash100" },
-      { height: 300, hash: "hash300" },
-      { height: 200, hash: "hash200" },
-    ]);
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
+      mockAddress,
+      {},
+      {
+        limit: 200,
+        minTimestamp,
+        maxTimestamp: undefined,
+        order: "desc",
+      },
+    );
   });
 
-  it("should use cached block for minHeight without fetching again", async () => {
-    const mockBlock50 = { height: 50, hash: "hash50", time: new Date("2023-01-01T00:50:00Z") };
-    const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
-
-    const mockTxs: Partial<TrongridTxInfo>[] = [
-      { txID: "tx1", value: new BigNumber(0), blockHeight: 50 },
-      { txID: "tx2", value: new BigNumber(10), blockHeight: 100 },
-      { txID: "tx3", value: new BigNumber(20), blockHeight: 50 },
-    ];
-
-    (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock).mockResolvedValueOnce(mockBlock50).mockResolvedValueOnce(mockBlock100);
-
-    const operationBlocks: Array<{ height: number; hash: string }> = [];
-    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
-      operationBlocks.push({ height: block.height, hash: block.hash });
-      return {
-        tx: { hash: tx.txID },
-        value: BigInt(tx.value.toString()),
-      };
+  it("should pass cursor timestamp as minTimestamp for asc order pagination", async () => {
+    (fetchTronAccountTxsPage as jest.Mock).mockResolvedValue({
+      nativeTxs: { txs: [], hasNextPage: false },
+      trc20Txs: { txs: [], hasNextPage: false },
     });
 
-    await listOperations(mockAddress, { ...defaultOptions, minHeight: 50 });
+    const cursorTimestamp = new Date("2023-01-01T02:00:00Z").getTime();
+    const cursor = `${cursorTimestamp}:tx2`;
+    const minTimestamp = 1000;
 
-    expect(getBlock).toHaveBeenCalledTimes(2);
-    expect(getBlock).toHaveBeenCalledWith(50);
-    expect(getBlock).toHaveBeenCalledWith(100);
-
-    expect(operationBlocks).toEqual([
-      { height: 50, hash: "hash50" },
-      { height: 100, hash: "hash100" },
-      { height: 50, hash: "hash50" },
-    ]);
-  });
-
-  it("should fallback to minHeight block when blockHeight is undefined", async () => {
-    const mockTxs: Partial<TrongridTxInfo>[] = [
-      { txID: "tx1", value: new BigNumber(0), blockHeight: undefined },
-      { txID: "tx2", value: new BigNumber(10), blockHeight: 100 },
-      { txID: "tx3", value: new BigNumber(20), blockHeight: undefined },
-    ];
-
-    const mockBlock0 = { height: 0, hash: "hash0", time: mockBlockTime };
-    const mockBlock100 = { height: 100, hash: "hash100", time: new Date("2023-01-01T01:00:00Z") };
-
-    (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);
-    (getBlock as jest.Mock).mockResolvedValueOnce(mockBlock0).mockResolvedValueOnce(mockBlock100);
-
-    const operationBlocks: Array<{ height: number; hash: string }> = [];
-    (fromTrongridTxInfoToOperation as jest.Mock).mockImplementation((tx, block) => {
-      operationBlocks.push({ height: block.height, hash: block.hash });
-      return {
-        tx: { hash: tx.txID },
-        value: BigInt(tx.value.toString()),
-      };
+    await listOperations(mockAddress, {
+      ...defaultOptions,
+      order: "asc",
+      cursor,
+      minTimestamp,
     });
 
-    await listOperations(mockAddress, { ...defaultOptions, minHeight: 0 });
-
-    expect(getBlock).toHaveBeenCalledTimes(2);
-    expect(getBlock).toHaveBeenCalledWith(0);
-    expect(getBlock).toHaveBeenCalledWith(100);
-
-    expect(operationBlocks[0].height).toBe(0);
-    expect(operationBlocks[1].height).toBe(100);
-    expect(operationBlocks[2].height).toBe(0);
+    expect(fetchTronAccountTxsPage).toHaveBeenCalledWith(
+      mockAddress,
+      {},
+      {
+        limit: 200,
+        minTimestamp: cursorTimestamp,
+        maxTimestamp: undefined,
+        order: "asc",
+      },
+    );
   });
 });

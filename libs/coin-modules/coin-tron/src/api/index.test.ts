@@ -22,8 +22,13 @@ jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
   getBalance: jest.fn(),
-  listOperations: jest.fn().mockResolvedValue([[], undefined]),
+  listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
   lastBlock: jest.fn(),
+}));
+
+jest.mock("../network", () => ({
+  defaultFetchParams: { minTimestamp: 0 },
+  getBlock: jest.fn().mockResolvedValue({ time: new Date(0) }),
 }));
 
 describe("createApi", () => {
@@ -78,9 +83,10 @@ describe("createApi", () => {
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {
-      minHeight: minHeight,
+      limit: 200,
+      minTimestamp: 0,
       order: "asc",
-      softLimit: 200,
+      cursor: undefined,
     });
   });
 });
