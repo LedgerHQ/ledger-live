@@ -7,6 +7,8 @@ import { useAnalyticsConsentModalViewModel } from "../useAnalyticsConsentModalVi
 const mockNavigate = jest.fn();
 const mockUseMatch = jest.fn();
 
+const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
@@ -48,7 +50,7 @@ describe("useAnalyticsConsentModalViewModel", () => {
     expect(result.current.isModalOpen).toBe(false);
   });
 
-  it("opens consentFresh when both share toggles are on and privacy policy is current but consent is missing", async () => {
+  it("opens consentReconfirm when renewal is needed, policy is current, and share analytics is on", async () => {
     const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
       initialState: {
         featureFlags: featureFlagsWithAnalyticsOptIn,
@@ -69,8 +71,34 @@ describe("useAnalyticsConsentModalViewModel", () => {
       await Promise.resolve();
     });
 
-    expect(result.current.phase).toBe("consentFresh");
+    expect(result.current.phase).toBe("consentReconfirm");
     expect(result.current.isModalOpen).toBe(true);
+  });
+
+  it("keeps modal closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
+    const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
+    const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+      initialState: {
+        featureFlags: featureFlagsWithAnalyticsOptIn,
+        settings: {
+          ...INITIAL_STATE,
+          hasCompletedOnboarding: true,
+          shareAnalytics: false,
+          sharePersonalizedRecommandations: false,
+          analyticsConsentInfo: {
+            consentDate: oldIso,
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          },
+        },
+      },
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(result.current.phase).toBe("closed");
+    expect(result.current.isModalOpen).toBe(false);
   });
 
   it("dispatches opt-in and closes modal", async () => {
@@ -80,8 +108,8 @@ describe("useAnalyticsConsentModalViewModel", () => {
         settings: {
           ...INITIAL_STATE,
           hasCompletedOnboarding: true,
-          shareAnalytics: false,
-          sharePersonalizedRecommandations: false,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
           analyticsConsentInfo: {
             consentDate: null,
             privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
