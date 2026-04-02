@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Попробуйте ещё раз.",
       "description" : "Сервер не может обработать ваш запрос. Попробуйте позже или обратитесь в Поддержку Ledger.",
-      "code" : "Код: {{errorCode}}"
+      "code" : "Код",
+      "correlationId" : "ID обращения"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Монета для отправки",
       "changeToReturn" : "Сдача на возврат",
       "enterAmount" : "Ввод суммы",
+      "selectSufficientCoins" : "Укажите достаточное количество монет",
       "amountToSendInCurrency" : "Сумма к отправке в {{ticker}}",
       "amountInputLabel" : "Сумма к отправке"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Старые монеты – первыми (FIFO)",
       "OPTIMIZE_SIZE" : "Минимизация комиссии (оптимально)",
-      "MERGE_OUTPUTS" : "Минимизация будущих комиссий (консолидация монет)"
+      "MERGE_OUTPUTS" : "Минимизация будущих комиссий (консолидация монет)",
+      "CUSTOM" : "Ручной выбор монет"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "Подробнее..."
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Обновите устройство Ledger Nano S™",
+      "description" : "Получите эксклюзивную скидку 20% на новые устройства подписи Ledger."
+    },
+    "opted_out" : {
+      "title" : "Обновите устройство Ledger Nano S™",
+      "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам этого устройства использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Выберите счета для добавления",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Криптосчета",
+    "title" : "Счета",
     "tableActions" : {
-      "searchAddress" : "Найти адрес",
+      "searchAddress" : "Введите название или адрес...",
       "addAddress" : "Добавить адрес"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Спонсируется Provable",
       "balanceSelector" : {
         "private" : "Конфиденциальный баланс",
         "public" : "Публичный баланс",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "Прозрачный баланс",
       "transparentBalanceTooltip" : "Баланс, видимый для всех",
       "privateBalance" : "Конфиденциальный баланс",
-      "privateBalanceTooltip" : "Баланс, скрытый от всех"
+      "privateBalanceTooltip" : "Баланс, скрытый от всех",
+      "syncButton" : {
+        "startSync" : "Начать синхронизацию",
+        "stopSync" : "Остановить синхронизацию",
+        "syncAgain" : "Синхронизировать повторно",
+        "lastSync" : "Последняя синхронизация: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "Отправить с"
       },
       "summary" : {
-        "coveredByProvable" : "Спонсируется Provable",
         "proofGenerationWarning" : "Транзакция Aleo требует создания доказательства. Это может занять некоторое время."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Синхронизируем ваш приватный баланс ({{percentage}}%)",
+        "desc" : "Пожалуйста, подождите",
+        "error" : "Сбой приватной синхронизации. Повторите попытку позже."
       }
     }
   },
