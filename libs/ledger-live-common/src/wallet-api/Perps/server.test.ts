@@ -77,7 +77,7 @@ describe("Perps handlers", () => {
   };
 
   let mockSignActions: jest.Mock;
-  let mockUiDeviceSelect: jest.Mock;
+  let mockUiSigningExecute: jest.Mock;
   let serverHandlers: MockedHandlers;
 
   beforeEach(() => {
@@ -106,14 +106,19 @@ describe("Perps handlers", () => {
       .mocked(withDevice)
       .mockReturnValue(job => from(job({ dmk: {}, sessionId: "session-1" } as never)));
 
-    // UI hook
-    mockUiDeviceSelect = jest
-      .fn()
-      .mockImplementation(({ onSuccess }) => onSuccess({ device: mockDevice }));
+    // UI hook — simulates the modal calling signFactory(device) then onSuccess/onError
+    mockUiSigningExecute = jest.fn().mockImplementation(async ({ signFactory, onSuccess, onError }) => {
+      try {
+        const result = await signFactory(mockDevice);
+        onSuccess(result);
+      } catch (err) {
+        onError(err);
+      }
+    });
 
     serverHandlers = handlers({
       accounts: [mockAccount],
-      uiHooks: { "device.select": mockUiDeviceSelect },
+      uiHooks: { "signing.execute": mockUiSigningExecute },
     }) as unknown as MockedHandlers;
   });
 
@@ -186,13 +191,13 @@ describe("Perps handlers", () => {
       );
     });
 
-    it("should reject when the user cancels the device selection", async () => {
+    it("should reject when the user cancels signing", async () => {
       // GIVEN
-      mockUiDeviceSelect.mockImplementation(({ onCancel }) => onCancel());
+      mockUiSigningExecute.mockImplementation(({ onCancel }) => onCancel());
 
       // WHEN & THEN
       await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toThrow(
-        "User cancelled device selection",
+        "User cancelled signing",
       );
     });
 
