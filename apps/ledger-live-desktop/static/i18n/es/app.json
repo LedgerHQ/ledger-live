@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Inténtalo de nuevo.",
       "description" : "El servidor no ha podido gestionar tu solicitud. Inténtalo de nuevo o contacta al Soporte de Ledger.",
-      "code" : "Código: {{errorCode}}"
+      "code" : "Código",
+      "correlationId" : "ID de referencia"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Monedas a enviar",
       "changeToReturn" : "Cambio para devolver",
       "enterAmount" : "Ingresar importe",
+      "selectSufficientCoins" : "Selecciona monedas suficientes",
       "amountToSendInCurrency" : "Monto a enviar en ({{ticker}})",
       "amountInputLabel" : "Importe a enviar"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Las monedas más antiguas primero (FIFO)",
       "OPTIMIZE_SIZE" : "Minimizar las tarifas (optimizar el tamaño)",
-      "MERGE_OUTPUTS" : "Minimizar las tarifas futuras (fusionar monedas)"
+      "MERGE_OUTPUTS" : "Minimizar las tarifas futuras (fusionar monedas)",
+      "CUSTOM" : "Selección de monedas personalizada"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "Más información"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Renueva tu Ledger Nano S™",
+      "description" : "Consigue un descuento exclusivo del 20% en los signers Ledger más modernos."
+    },
+    "opted_out" : {
+      "title" : "Renueva tu Ledger Nano S™",
+      "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a los cambios en la blockchain y a las mejoras de seguridad."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Selecciona las cuentas que quieres agregar",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Cuentas cripto",
+    "title" : "Cuentas",
     "tableActions" : {
-      "searchAddress" : "Buscar dirección",
+      "searchAddress" : "Buscar por nombre o dirección",
       "addAddress" : "Agregar dirección"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Patrocinado por Provable",
       "balanceSelector" : {
         "private" : "Saldo privado",
         "public" : "Saldo público",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "Saldo transparente",
       "transparentBalanceTooltip" : "Saldo visible para el público",
       "privateBalance" : "Saldo privado",
-      "privateBalanceTooltip" : "Saldo que está oculto al público"
+      "privateBalanceTooltip" : "Saldo que está oculto al público",
+      "syncButton" : {
+        "startSync" : "Iniciar sincronización",
+        "stopSync" : "Detener sincronización",
+        "syncAgain" : "Sincronizar de nuevo",
+        "lastSync" : "Última sincronización: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "Enviar desde"
       },
       "summary" : {
-        "coveredByProvable" : "Patrocinado por Provable",
         "proofGenerationWarning" : "La transacción de Aleo requiere la generación de una prueba. Esto puede tardar un tiempo."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Sincronizando tu saldo privado ({{percentage}}%)",
+        "desc" : "Espera",
+        "error" : "La sincronización privada ha fallado. Inténtalo de nuevo más tarde."
       }
     }
   },
