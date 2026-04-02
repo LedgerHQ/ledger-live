@@ -220,6 +220,7 @@ export type Features = CurrencyFeatures & {
   ptxPerpsLiveAppMobile: Feature_PtxPerpsLiveApp;
   ptxSwapLiveAppOnPortfolio: DefaultFeature;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
+  ptxBorrowLiveApp: Feature_PtxBorrowLiveApp;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxEarnDrawerConfiguration: Feature_PtxEarnDrawerConfiguration;
   ptxEarnUi: Feature_PtxEarnUi;
@@ -649,6 +650,10 @@ export type Feature_PtxSwapLiveApp = Feature<{
 }>;
 
 export type Feature_PtxPerpsLiveApp = Feature<{
+  manifest_id: string;
+}>;
+
+export type Feature_PtxBorrowLiveApp = Feature<{
   manifest_id: string;
 }>;
 
