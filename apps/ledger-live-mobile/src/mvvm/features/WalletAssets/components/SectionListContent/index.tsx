@@ -1,6 +1,6 @@
 import React from "react";
 import { Asset } from "~/types/asset";
-import ListItem from "../ListItem";
+import AssetListItem from "LLM/components/AssetListItem";
 import { ListItemSkeleton } from "../ListItemSkeleton";
 import { SectionErrorState } from "../SectionErrorState";
 
@@ -12,6 +12,8 @@ export type SectionListContentProps = {
   skeletonCount: number;
   errorMessage: string;
 };
+
+const NEGATIVE_MARGIN_OFFSET = { marginHorizontal: "-s8" } as const;
 
 export const SectionListContent = ({
   isLoading,
@@ -28,6 +30,11 @@ export const SectionListContent = ({
     return <SectionErrorState message={errorMessage} />;
   }
   return assetsToDisplay.map(item => (
-    <ListItem key={item.currency.id} asset={item} onPress={onItemPress} />
+    <AssetListItem
+      key={item.currency.id}
+      asset={item}
+      onPress={onItemPress}
+      lx={NEGATIVE_MARGIN_OFFSET}
+    />
   ));
 };
