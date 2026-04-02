@@ -1,9 +1,25 @@
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
+import { CURRENT_PRIVACY_POLICY_VERSION } from "./privacyConsent";
 
 /** Ms after `consentDate` to re-prompt; `null`/`Infinity` = never by time. E.g. yearly: `CONSENT_RENEWAL_INTERVAL_MS = 365 * 24 * 60 * 60 * 1000`. */
 export const CONSENT_RENEWAL_INTERVAL_MS: number | null = null;
 
-export type ConsentDrawerPhase = "closed" | "privacy" | "consentFresh" | "consentReconfirm";
+export type AnalyticsConsentModalPhase =
+  | "closed"
+  | "privacy"
+  | "consentFresh"
+  | "consentReconfirm";
+
+export function resolveAnalyticsConsentModalPhase(
+  currentPhase: AnalyticsConsentModalPhase,
+  needsRenewal: boolean,
+  needsUpdatePrivacy: boolean,
+  analyticsSharingEnabled: boolean,
+): AnalyticsConsentModalPhase {
+  if (currentPhase !== "closed") return currentPhase;
+  if (needsRenewal) return analyticsSharingEnabled ? "consentReconfirm" : "consentFresh";
+  if (needsUpdatePrivacy) return "privacy";
+  return "consentFresh";
+}
 
 export function needsPrivacyPolicyAck(
   storedVersion: number | null,

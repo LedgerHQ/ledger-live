@@ -11,7 +11,7 @@ import {
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import type { AnalyticsConsentModalPhase } from "./analyticsConsentModalLogic";
+import type { AnalyticsConsentModalPhase } from "@ledgerhq/live-common/analyticsConsentUtils";
 
 export type AnalyticsConsentModalViewProps = Readonly<{
   phase: AnalyticsConsentModalPhase;

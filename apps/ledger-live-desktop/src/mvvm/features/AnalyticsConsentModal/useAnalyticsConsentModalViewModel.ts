@@ -19,8 +19,9 @@ import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyCon
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
+  resolveAnalyticsConsentModalPhase,
   type AnalyticsConsentModalPhase,
-} from "./analyticsConsentModalLogic";
+} from "@ledgerhq/live-common/analyticsConsentUtils";
 
 const PAGE = "Analytics consent modal";
 
@@ -37,20 +38,18 @@ export function useAnalyticsConsentModalViewModel() {
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const sharePersonalized = useSelector(sharePersonalizedRecommendationsSelector);
 
-  const needsPrivacy = useMemo(
+  const needsUpdatePrivacy = useMemo(
     () => needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion),
     [consentInfo.privacyPolicyVersion],
   );
-  const needsConsent = useMemo(
+  const needsRenewal = useMemo(
     () => needsConsentRenewal(consentInfo.consentDate),
     [consentInfo.consentDate],
   );
 
   const shouldOffer = Boolean(
-    feature?.enabled && hasCompletedOnboarding && (needsPrivacy || needsConsent),
+    feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
   );
-
-  const isNewConsent = !shareAnalytics || !sharePersonalized;
 
   const [phase, setPhase] = useState<AnalyticsConsentModalPhase>("closed");
 
@@ -59,13 +58,15 @@ export function useAnalyticsConsentModalViewModel() {
       setPhase("closed");
       return;
     }
-    setPhase(current => {
-      if (current !== "closed") return current;
-      if (!isNewConsent) return "consentFresh";
-      if (needsPrivacy) return "privacy";
-      return "consentReconfirm";
-    });
-  }, [isPortfolioRouteFocused, shouldOffer, needsPrivacy, isNewConsent]);
+    setPhase(current =>
+      resolveAnalyticsConsentModalPhase(
+        current,
+        needsRenewal,
+        needsUpdatePrivacy,
+        shareAnalytics,
+      ),
+    );
+  }, [isPortfolioRouteFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, shareAnalytics]);
 
   const closeModal = useCallback(() => {
     setPhase("closed");
@@ -100,27 +101,16 @@ export function useAnalyticsConsentModalViewModel() {
 
   const onPrivacyGotIt = useCallback(() => {
     track("button_clicked", { button: "analytics_consent_privacy_got_it", page: PAGE });
-    const stillNeedsConsent = needsConsentRenewal(consentInfo.consentDate);
     dispatch(
       setAnalyticsConsentInfo({
-        ...consentInfo,
+        consentDate: new Date().toISOString(),
         privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
       }),
     );
-    if (stillNeedsConsent) {
-      setPhase(shareAnalytics && sharePersonalized ? "consentReconfirm" : "consentFresh");
-    } else {
-      dispatch(
-        setAnalyticsConsentInfo({
-          consentDate: new Date().toISOString(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-        }),
-      );
-      dispatch(setHasSeenAnalyticsOptInPrompt(true));
-      closeModal();
-    }
+    dispatch(setHasSeenAnalyticsOptInPrompt(true));
+    closeModal();
     void updateIdentify({ force: true });
-  }, [dispatch, consentInfo, shareAnalytics, sharePersonalized, closeModal]);
+  }, [dispatch, closeModal]);
 
   const onSetPreferences = useCallback(() => {
     track("button_clicked", { button: "analytics_consent_set_preferences", page: PAGE });
