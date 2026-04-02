@@ -1,19 +1,21 @@
-import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { AccountLike } from "@ledgerhq/types-live";
+import {
+  handlers as perpsHandlers,
+  type PerpsSignResult,
+} from "@ledgerhq/live-common/wallet-api/Perps/server";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
-import { openModal } from "~/renderer/actions/modals";
-import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
-  const dispatch = useDispatch();
-
-  const uiDeviceSelect = useCallback(
+  const uiSigningExecute = useCallback(
     ({
       appName,
       appOptions,
+      signFactory,
       onSuccess,
+      onError,
       onCancel,
     }: {
       appName: string | undefined;
@@ -22,29 +24,22 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
         allowPartialDependencies: boolean;
         skipAppInstallIfNotFound: boolean;
       };
-      onSuccess: (result: AppResult) => void;
+      signFactory: (device: Device) => Promise<PerpsSignResult>;
+      onSuccess: (result: PerpsSignResult) => void;
+      onError: (error: Error) => void;
       onCancel: () => void;
     }) => {
-      dispatch(
-        openModal("MODAL_CONNECT_DEVICE", {
-          appName,
-          requireLatestFirmware: appOptions?.requireLatestFirmware,
-          allowPartialDependencies: appOptions?.allowPartialDependencies,
-          skipAppInstallIfNotFound: appOptions?.skipAppInstallIfNotFound,
-          onResult: onSuccess,
-          onCancel,
-        }),
-      );
+      openPerpsSign({ appName, appOptions, signFactory, onSuccess, onError, onCancel });
     },
-    [dispatch],
+    [],
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({
       accounts,
       uiHooks: {
-        "device.select": uiDeviceSelect,
+        "signing.execute": uiSigningExecute,
       },
     });
-  }, [accounts, uiDeviceSelect]);
+  }, [accounts, uiSigningExecute]);
 }
