@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "ขออภัย โปรดลองอีกครั้ง",
       "description" : "เซิร์ฟเวอร์จัดการกับคำขอของคุณไม่ได้ โปรดลองอีกครั้งในภายหลังหรือติดต่อ Ledger Support",
-      "code" : "รหัส: {{errorCode}}"
+      "code" : "Code",
+      "correlationId" : "Reference ID"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "เหรียญที่จะส่ง",
       "changeToReturn" : "เปลี่ยนเพื่อกลับไป",
       "enterAmount" : "ป้อนจำนวน",
+      "selectSufficientCoins" : "Select sufficient coins",
       "amountToSendInCurrency" : "จำนวนที่ต้องการส่งในรูปแบบ {{ticker}}",
       "amountInputLabel" : "จำนวนที่จะส่ง"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Oldest coins first (FIFO)",
       "OPTIMIZE_SIZE" : "ค่าธรรมเนียมต่ำสุด (ปรับขนาดให้เหมาะสม)",
-      "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)"
+      "MERGE_OUTPUTS" : "ค่าธรรมเนียมในอนาคตต่ำสุด (Merge เหรียญ)",
+      "CUSTOM" : "การเลือกเหรียญเฉพาะที่กำหนดเอง"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "เรียนรู้เพิ่มเติม"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "อัปเกรด Ledger Nano S™ ของคุณ",
+      "description" : "รับส่วนลด 20% สำหรับอุปกรณ์ลงนาม Ledger รุ่นใหม่ล่าสุด"
+    },
+    "opted_out" : {
+      "title" : "อัปเกรด Ledger Nano S™ ของคุณ",
+      "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ"
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "เลือกบัญชีที่คุณต้องการเพิ่ม",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "บัญชีคริปโต",
+    "title" : "บัญชี",
     "tableActions" : {
-      "searchAddress" : "ค้นหาที่อยู่",
+      "searchAddress" : "Search by name, address",
       "addAddress" : "เพิ่มที่อยู่"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "สนับสนุนโดย Provable",
       "balanceSelector" : {
         "private" : "Private Balance",
         "public" : "ยอดคงเหลือสาธารณะ",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "Transparent Balance",
       "transparentBalanceTooltip" : "ยอดคงเหลือในบัญชีที่เปิดเผยต่อสาธารณะ",
       "privateBalance" : "Private Balance",
-      "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ"
+      "privateBalanceTooltip" : "ยอดคงเหลือในบัญชีที่ไม่เปิดเผยต่อสาธารณะ",
+      "syncButton" : {
+        "startSync" : "เริ่มซิงค์",
+        "stopSync" : "หยุดการซิงค์",
+        "syncAgain" : "Sync again",
+        "lastSync" : "Last synced: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "ส่งจาก"
       },
       "summary" : {
-        "coveredByProvable" : "สนับสนุนโดย Provable",
         "proofGenerationWarning" : "ธุรกรรม Aleo จำเป็นต้องมีการสร้างหลักฐาน ซึ่งอาจใช้เวลาสักครู่"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Syncing your private balance ({{percentage}}%)",
+        "desc" : "โปรดรอสักครู่",
+        "error" : "Private sync failed. Please try again later."
       }
     }
   },
