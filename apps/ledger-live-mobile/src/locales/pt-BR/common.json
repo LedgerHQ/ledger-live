@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "Ver todos os ativos",
     "cryptoAddresses" : {
-      "title" : "Contas cripto",
+      "title" : "Contas",
       "count_one" : "{{count}} conta",
       "count_other" : "{{count}} contas",
-      "noAccountsYet" : "Ainda nenhuma conta"
+      "noAccountsYet" : "Ainda nenhuma conta",
+      "add" : "Adicionar"
     },
     "seeAllAccounts" : "Ver todas as contas",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "Comprar",
       "connect" : "Conectar",
       "buyLedger" : "Comprar uma Ledger",
+      "receive" : "Receber",
+      "send" : "Enviar",
       "transferDrawer" : {
         "title" : "Transferir",
         "receiveCrypto" : "Receber via endereço cripto",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "Atualizando…",
       "upToDate" : "Portfolio atualizado",
-      "syncError" : "Não foi possível carregar alguns dados da conta"
+      "syncError" : "Não foi possível carregar alguns dados da conta",
+      "offline" : "Você está offline. Por favor, verifique sua conexão"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "Ativos"
   },
+  "cryptoAddresses" : {
+    "title" : "Contas",
+    "addAccount" : "Adicionar conta",
+    "emptyState" : "Ainda nenhuma conta",
+    "errorState" : "Ocorreu um erro ao carregar suas contas"
+  },
   "accounts" : {
     "title" : "Contas",
     "cryptoAccountsTitle" : "contas {{currencyTicker}}",
@@ -3433,6 +3443,14 @@
         "title" : "Alertas de Transações (Beta)",
         "desc" : "Receba notificações sobre suas transações na Ethereum, Polygon, BNB Chain, Avalanche e Ethereum Classic"
       },
+      "totalMarketCap" : {
+        "title" : "Capitalização de mercado total",
+        "desc" : "Receba notificações quando a capitalização de mercado das criptomoedas tiver uma variação significativa"
+      },
+      "topGainersLosers" : {
+        "title" : "Maiores Altas e Baixas",
+        "desc" : "Receba um resumo semanal dos principais ganhos e perdas de tokens no mercado"
+      },
       "price" : {
         "title" : "Alertas de preço",
         "desc" : "Configure alertas de preços para suas moedas favoritas para que você não perca nenhuma movimentação de mercado"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "ContentBanner com ícones Spot — Comprar, Trocar, Aplicar. Requer o indicador de posicionamento Braze.",
         "addSampleActionCarouselImageBackground" : "Adicionar carrossel de ação (imagem)",
         "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner Com Fundo de Imagem — comprar, trocar e staking. Requer o indicador de posicionamento Braze.",
+        "addSampleWalletCarousel" : "Adicionar carrossel inferior da carteira (mock)",
+        "addSampleWalletCarouselDesc" : "Um cartão de simulação no carrossel inferior do portfólio (tag, título, imagem, link). Sem Braze.",
         "dismissAll" : "Descartar todos os cartões locais",
         "dismissAllDesc" : "Remover todos os cartões de conteúdo gerados localmente."
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "Via transferência bancária",
-          "description" : "Receba stablecoin através da conta Cash-to-Stablecoin. Cadastro necessário."
+          "description" : "Receba stablecoin simplesmente enviando dinheiro.",
+          "description_legacy" : "Receba stablecoin através da conta Cash-to-Stablecoin. Cadastro necessário."
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "Moeda a enviar",
         "changeToReturn" : "Alterar para retorno",
         "enterAmount" : "Insira a quantidade",
+        "selectSufficientCoins" : "Selecione moedas suficientes",
         "amountToSendInCurrency" : "Quantia a enviar em ({{ticker}})",
         "amountInputLabel" : "Quantia a enviar",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Moedas mais antigas primeiro (FIFO)",
             "OPTIMIZE_SIZE" : "Minimizar taxas (otimizar o tamanho)",
-            "MERGE_OUTPUTS" : "Minimizar taxas futuras (mesclar moedas)"
+            "MERGE_OUTPUTS" : "Minimizar taxas futuras (mesclar moedas)",
+            "CUSTOM" : "Seleção de moeda personalizada"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "Cotação Expirada",
       "description" : "A cotação expirou. Atualize e tente novamente."
     },
+    "details" : {
+      "code" : "Código do erro",
+      "correlationId" : "ID de referência"
+    },
     "default" : {
       "title" : "Algo deu errado",
       "description" : "Tente novamente ou contate o Suporte Ledger em caso de dúvidas"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "Não foi possível carregar alguns dados da conta",
       "description" : "Seus ativos estão seguros. Este é um problema temporário de sincronização.\nContas afetadas: {{accounts}}",
+      "tryToRefresh" : "Tente atualizar",
       "close" : "Fechar"
     }
   },
