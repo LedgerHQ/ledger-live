@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Entschuldigung, versuche es noch einmal.",
       "description" : "Der Server konnte deine Anfrage nicht bearbeiten. Bitte versuche es später noch einmal oder wende dich an den Ledger-Kundenservice.",
-      "code" : "Code: {{errorCode}}"
+      "code" : "Code",
+      "correlationId" : "Referenz-ID"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Zu sendender Coin",
       "changeToReturn" : "Wechseln zu Rückgabe",
       "enterAmount" : "Betrag eingeben",
+      "selectSufficientCoins" : "Wähle genügend Coins aus",
       "amountToSendInCurrency" : "Zu sendender Betrag in {{ticker}}",
       "amountInputLabel" : "Zu sendender Betrag"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
       "OPTIMIZE_SIZE" : "Gebühren minimieren (Größe optimieren)",
-      "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)"
+      "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)",
+      "CUSTOM" : "Eigene Coinauswahl"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "Weitere Informationen"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Erhalte exklusiv 20 % Rabatt auf die aktuellen Ledger-Signer."
+    },
+    "opted_out" : {
+      "title" : "Upgrade deines Ledger Nano S™ vornehmen",
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Wähle die Konten aus, die du hinzufügen möchtest",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Krypto-Konten",
+    "title" : "Konten",
     "tableActions" : {
-      "searchAddress" : "Adresse suchen",
+      "searchAddress" : "Nach Name oder Adresse suchen",
       "addAddress" : "Adresse hinzufügen"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Gesponsert von Provable",
       "balanceSelector" : {
         "private" : "Privater Saldo",
         "public" : "Öffentlicher Saldo",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "Transparenter Saldo",
       "transparentBalanceTooltip" : "Guthaben, das öffentlich einsehbar ist",
       "privateBalance" : "Privater Saldo",
-      "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist"
+      "privateBalanceTooltip" : "Guthaben, das nicht öffentlich einsehbar ist",
+      "syncButton" : {
+        "startSync" : "Synchronisierung starten",
+        "stopSync" : "Synchronisierung anhalten",
+        "syncAgain" : "Erneut synchronisieren",
+        "lastSync" : "Letzte Synchronisierung: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "Senden von"
       },
       "summary" : {
-        "coveredByProvable" : "Gesponsert von Provable",
         "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Synchronisierung deines privaten Guthabens ({{percentage}}%)",
+        "desc" : "Bitte warten",
+        "error" : "Private Synchronisierung fehlgeschlagen. Versuche es bitte später noch einmal."
       }
     }
   },
