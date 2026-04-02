@@ -1,12 +1,18 @@
-import type { APIDelegationType, APIRevealType, APITransactionType } from "../network/types";
+import type {
+  APIDelegationType,
+  APIRevealType,
+  APITokenTransfer,
+  APITransactionType,
+} from "../network/types";
 import { listOperations } from "./listOperations";
 
 const mockNetworkGetTransactions = jest.fn();
+const mockGetAccountTokenTransfers = jest.fn();
+
 jest.mock("../network", () => ({
   tzkt: {
-    getAccountOperations: async () => {
-      return mockNetworkGetTransactions();
-    },
+    getAccountOperations: async () => mockNetworkGetTransactions(),
+    getAccountTokenTransfers: async () => mockGetAccountTokenTransfers(),
   },
 }));
 
@@ -18,6 +24,11 @@ const options: { sort: "Ascending" | "Descending"; minHeight: number } = {
 describe("listOperations", () => {
   afterEach(() => {
     mockNetworkGetTransactions.mockClear();
+    mockGetAccountTokenTransfers.mockClear();
+  });
+
+  beforeEach(() => {
+    mockGetAccountTokenTransfers.mockResolvedValue([]);
   });
 
   it("should return no operations", async () => {
@@ -117,8 +128,8 @@ describe("listOperations", () => {
             failed: false,
             fees: BigInt(
               (operation.allocationFee ?? 0) +
-                (operation.bakerFee ?? 0) +
-                (operation.storageFee ?? 0),
+              (operation.bakerFee ?? 0) +
+              (operation.storageFee ?? 0),
             ),
             feesPayer: someSenderAddress,
           },
@@ -143,7 +154,7 @@ describe("listOperations", () => {
       const [results, token] = await listOperations("any address", options);
       // Then
       expect(results.length).toEqual(1);
-      expect(token).toEqual(JSON.stringify(operation.id));
+      expect(token).toEqual(JSON.stringify({ n: operation.id }));
     },
   );
 
@@ -181,7 +192,7 @@ describe("listOperations", () => {
     // Then
     expect(results.length).toEqual(1);
     expect(results[0].recipients).toEqual([]);
-    expect(token).toEqual(JSON.stringify(operation.id));
+    expect(token).toEqual(JSON.stringify({ n: operation.id }));
   });
 
   it.each([
@@ -207,7 +218,7 @@ describe("listOperations", () => {
     // Then
     expect(results.length).toEqual(1);
     expect(results[0].senders).toEqual([]);
-    expect(token).toEqual(JSON.stringify(operation.id));
+    expect(token).toEqual(JSON.stringify({ n: operation.id }));
   });
 
   it("should order the results in descending order even if the sort option is set to ascending", async () => {
@@ -279,5 +290,59 @@ describe("listOperations", () => {
         recipients: [],
       });
     });
+  });
+
+  it("FA2 token transfers (tokenId 0), attributes fees from parent tx", async () => {
+    const fa2: APITokenTransfer & { hash: string } = {
+      id: 9001,
+      level: 100,
+      timestamp: "2023-06-01T12:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: "KT1TokenContract" },
+        tokenId: "0",
+        standard: "fa2",
+        metadata: { name: "Tok", symbol: "TOK", decimals: "6" },
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1000000",
+      transactionId: transfer.id,
+      hash: someHash,
+    };
+    const appliedTransfer = { ...transfer, status: "applied" as const };
+    mockNetworkGetTransactions.mockResolvedValue([appliedTransfer]);
+    mockGetAccountTokenTransfers.mockResolvedValue([fa2]);
+    const [results, next] = await listOperations(someDestinationAddress, options);
+    const tokenOp = results.find(o => o.asset.type === "fa2");
+
+    expect(JSON.parse(next)).toEqual({ n: appliedTransfer.id, t: fa2.id });
+
+    expect(tokenOp).toMatchObject({
+      type: "IN",
+      value: 1_000_000n,
+      asset: {
+        type: "fa2",
+        assetReference: "KT1TokenContract",
+        assetOwner: someDestinationAddress,
+        unit: { magnitude: 6, name: "Tok", code: "TOK" },
+      },
+      tx: {
+        hash: someHash,
+        fees: 6n,
+        feesPayer: someSenderAddress,
+        failed: false,
+        block: { hash: "BMJ1ZQ6", height: 100, time: new Date(fa2.timestamp) },
+      },
+      details: {
+        ledgerOpType: "IN",
+        assetAmount: "1000000",
+        assetSenders: [someSenderAddress],
+        assetRecipients: [someDestinationAddress],
+        parentSenders: [someSenderAddress],
+        parentRecipients: [someDestinationAddress],
+      },
+    });
+    expect(results.length).toBe(2);
   });
 });

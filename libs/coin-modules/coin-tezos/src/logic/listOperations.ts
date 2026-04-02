@@ -4,12 +4,32 @@ import { tzkt } from "../network";
 import {
   type APIDelegationType,
   type APIRevealType,
+  type APITokenTransfer,
   type APITransactionType,
   AccountsGetOperationsOptions,
   isAPIDelegationType,
   isAPIRevealType,
   isAPITransactionType,
 } from "../network/types";
+
+/** Cursor: native + token transfer last ids. Legacy: JSON number = native only. */
+function parseCursor(token?: string): { nativeLastId?: number; tokenLastId?: number } {
+  if (!token) return {};
+  try {
+    const parsed: unknown = JSON.parse(token);
+    if (typeof parsed === "number") return { nativeLastId: parsed };
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      const output = parsed as { n?: unknown; t?: unknown };
+      return {
+        nativeLastId: typeof output.n === "number" ? output.n : undefined,
+        tokenLastId: typeof output.t === "number" ? output.t : undefined,
+      };
+    }
+  } catch {
+    // ignore invalid cursor
+  }
+  return {};
+}
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
@@ -32,23 +52,44 @@ export async function listOperations(
     minHeight,
   }: { limit?: number; token?: string; sort: "Ascending" | "Descending"; minHeight: number },
 ): Promise<[Operation[], string]> {
-  let options: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
-  if (token) {
-    options = { ...options, lastId: JSON.parse(token) };
+  const { nativeLastId, tokenLastId } = parseCursor(token);
+
+  let nativeOptions: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
+  if (nativeLastId !== undefined) {
+    nativeOptions = { ...nativeOptions, lastId: nativeLastId };
   }
-  const operations = await tzkt.getAccountOperations(address, options);
+
+  const tokenOptions = {
+    limit,
+    sort,
+    "level.ge": minHeight,
+    ...(tokenLastId !== undefined ? { lastId: tokenLastId } : {}),
+  };
+
+  const [nativeOps, tokenTransfers] = await Promise.all([
+    tzkt.getAccountOperations(address, nativeOptions),
+    tzkt.getAccountTokenTransfers(address, tokenOptions),
+  ]);
 
   // Apply limit after fetching since tzkt API might not respect the limit parameter
-  const limitedOperations = limit ? operations.slice(0, limit) : operations;
+  const limitedNativeOps = limit ? nativeOps.slice(0, limit) : nativeOps;
+  const limitedTokenTransfers = limit ? tokenTransfers.slice(0, limit) : tokenTransfers;
 
-  const lastOperation = limitedOperations.at(-1);
-  // it's important to get the last id from the **unfiltered** operation list
-  // otherwise we might miss operations
-  const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
-  const filteredOperations = limitedOperations
+  const parentMap = new Map<number, APITransactionType>();
+  for (const op of nativeOps) {
+    if (isAPITransactionType(op) && op.id !== null) {
+      parentMap.set(op.id, op);
+    }
+  }
+
+  const lastNativeOp = limitedNativeOps.at(-1);
+  const lastTokenOp = limitedTokenTransfers.at(-1);
+  const nextToken =
+    lastNativeOp || lastTokenOp ? JSON.stringify({ n: lastNativeOp?.id, t: lastTokenOp?.id }) : "";
+
+  const filteredNativeOps = limitedNativeOps
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
     .filter(op => {
-      // Filter out failed incoming tx
       const hasFailed = op.status !== "applied";
       if (hasFailed && isAPITransactionType(op)) {
         const isIn = op.target?.address === address;
@@ -60,7 +101,16 @@ export async function listOperations(
     })
     .map(op => convertOperation(address, op))
     .flat();
-  const sortedOperations = filteredOperations.sort(
+
+  const tokenConverted = limitedTokenTransfers.map(token =>
+    convertTokenOperation(
+      address,
+      token,
+      token.transactionId !== null ? parentMap.get(token.transactionId || 0) : undefined,
+    ),
+  );
+
+  const sortedOperations = [...filteredNativeOps, ...tokenConverted].sort(
     (a, b) => b.tx.date.getTime() - a.tx.date.getTime(),
   );
   return [sortedOperations, nextToken];
@@ -172,6 +222,68 @@ function convertOperation(
       gasLimit: operation.gasLimit,
       storageLimit: operation.storageLimit,
       ledgerOpType: getLedgerOpType(operation, normalizedType),
+    },
+  };
+}
+
+function convertTokenOperation(
+  address: string,
+  transfer: APITokenTransfer & { hash: string },
+  parent?: APITransactionType,
+): Operation {
+  const isOut = transfer.from?.address === address;
+  const isIn = transfer.to?.address === address;
+  let type: Operation["type"] = "FEES";
+  if (isOut && !isIn) {
+    type = "OUT";
+  } else if (isIn && !isOut) {
+    type = "IN";
+  }
+
+  const fee = parent
+    ? BigInt(parent.storageFee ?? 0) +
+    BigInt(parent.bakerFee ?? 0) +
+    BigInt(parent.allocationFee ?? 0)
+    : 0n;
+  const feesPayer = parent?.initiator?.address ?? parent?.sender?.address;
+
+  const assetReference = transfer.token.contract.address;
+
+  return {
+    id: `${transfer.hash}-token-${transfer.id}`,
+    type,
+    senders: transfer.from?.address ? [transfer.from.address] : [],
+    recipients: transfer.to?.address ? [transfer.to.address] : [],
+    value: BigInt(transfer.amount),
+    asset: {
+      type: transfer.token.standard,
+      assetReference,
+      assetOwner: address,
+      unit: {
+        magnitude: Number.parseInt(transfer.token.metadata?.decimals ?? "0", 10),
+        name: transfer.token.metadata?.name ?? "",
+        code: transfer.token.metadata?.symbol ?? "",
+      },
+    },
+    tx: {
+      hash: transfer.hash,
+      fees: fee,
+      ...(feesPayer ? { feesPayer } : {}),
+      block: {
+        hash: parent?.block ?? "",
+        height: transfer.level,
+        time: new Date(transfer.timestamp),
+      },
+      date: new Date(transfer.timestamp),
+      failed: parent ? Boolean(parent.status && parent.status !== "applied") : false,
+    },
+    details: {
+      ledgerOpType: type,
+      assetAmount: transfer.amount,
+      assetSenders: transfer.from?.address ? [transfer.from.address] : [],
+      assetRecipients: transfer.to?.address ? [transfer.to.address] : [],
+      parentSenders: parent?.sender?.address ? [parent.sender.address] : [],
+      parentRecipients: parent?.target?.address ? [parent.target.address] : [],
     },
   };
 }

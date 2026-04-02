@@ -10,6 +10,7 @@ import {
   APITokenTransfer,
   APITransactionType,
   AccountsGetOperationsOptions,
+  TokenTransfersGetOptions,
   APITokenBalance,
 } from "./types";
 
@@ -90,6 +91,33 @@ const api = {
   },
 
   /**
+     * Fetches a list of `transaction` operations after the given level.
+     * https://api.tzkt.io/#operation/Operations_GetTransactions
+     */
+  async getOperationsTransactions(
+    level: number,
+    cursor?: number,
+    args: Record<string, unknown> = {},
+  ): Promise<APITransactionType[]> {
+    // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
+    // Without an explicit sort the API default may be descending, which would cause the
+    // cursor to go backwards and produce duplicates or an infinite loop.
+    Object.keys(args).forEach(key => args[key] === undefined && delete args[key]);
+    const params: Record<string, unknown> = {
+      "level.gte": level,
+      limit: BLOCK_PAGE_SIZE,
+      "sort.asc": "id",
+      ...args,
+    };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APITransactionType[]>({
+      url: `${getExplorerUrl()}/v1/operations/transactions`,
+      params,
+    });
+    return data;
+  },
+
+  /**
    * Fetches a single page of FA token transfers at the given block level.
    * Internal — used by `fetchBlockTokenTransfers` which handles pagination.
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
@@ -98,6 +126,32 @@ const api = {
     // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
     // offset.cr cursor advancing forward regardless of the API's default ordering.
     const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APITokenTransfer[]>({
+      url: `${getExplorerUrl()}/v1/tokens/transfers`,
+      params,
+    });
+    return data;
+  },
+
+  /**
+   * Fetches the latest FA token transfers since the given level.
+   * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
+   */
+  async getTokenTransfers(
+    level: number,
+    cursor?: number,
+    args: Record<string, unknown> = {},
+  ): Promise<APITokenTransfer[]> {
+    // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
+    // offset.cr cursor advancing forward regardless of the API's default ordering.
+    Object.keys(args).forEach(key => args[key] === undefined && delete args[key]);
+    const params: Record<string, unknown> = {
+      "level.gte": level,
+      limit: BLOCK_PAGE_SIZE,
+      "sort.asc": "id",
+      ...args,
+    };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
@@ -122,8 +176,49 @@ const api = {
   },
 
   /**
-   * Fetches FA2 token balances (tokenId = 0 only) for a given account.
+   * Fetches FA2 token transfers (tokenId = 0 only) for a given account.
    * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
+   */
+  async getAccountTokenTransfers(
+    address: string,
+    query: TokenTransfersGetOptions,
+  ): Promise<(APITokenTransfer & { hash: string })[]> {
+    const params: Record<string, unknown> = {
+      "anyof.from.to": address,
+      "token.tokenId": "0",
+      "token.standard": "fa2",
+    };
+
+    const data = await api.getTokenTransfers(
+      query["level.ge"] as number,
+      query["lastId"],
+      params,
+    );
+
+    const transactionIds = data
+      .map(t => t.transactionId)
+      .filter((id): id is number => typeof id === "number");
+
+    if (transactionIds.length === 0) {
+      return data.map(token => ({
+        ...token,
+        hash: "",
+      }))
+    };
+
+    const transactions = await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
+      "id.in": transactionIds.join(","),
+    });
+
+    return data.map(token => ({
+      ...token,
+      hash: transactions.find(t => t.id === token.transactionId)?.hash ?? "",
+    }));
+  },
+
+  /**
+   * Fetches FA token balances for a given account.
    * https://api.tzkt.io/#operation/Tokens_GetTokenBalances
    */
   async getTokensBalances(address: string): Promise<APITokenBalance[]> {
