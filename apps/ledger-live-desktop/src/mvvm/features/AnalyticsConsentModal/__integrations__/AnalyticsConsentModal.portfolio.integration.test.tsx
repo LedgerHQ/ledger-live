@@ -94,13 +94,11 @@ describe("AnalyticsConsentModal on portfolio route", () => {
       },
     });
 
-    await screen.findByRole("heading", { name: "Help us improve Ledger" });
+    const freshTitle = await screen.findByRole("heading", { name: "Help us improve Ledger" });
     await user.click(screen.getByRole("button", { name: /accept all/i }));
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: "Help us improve Ledger" }),
-      ).not.toBeInTheDocument();
+      expect(freshTitle).not.toBeInTheDocument();
     });
     expect(store.getState().settings.shareAnalytics).toBe(true);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
@@ -118,13 +116,11 @@ describe("AnalyticsConsentModal on portfolio route", () => {
       },
     });
 
-    await screen.findByRole("heading", { name: "Help us improve Ledger" });
+    const freshTitle = await screen.findByRole("heading", { name: "Help us improve Ledger" });
     await user.click(screen.getByRole("button", { name: /refuse all/i }));
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: "Help us improve Ledger" }),
-      ).not.toBeInTheDocument();
+      expect(freshTitle).not.toBeInTheDocument();
     });
     expect(store.getState().settings.shareAnalytics).toBe(false);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
@@ -142,13 +138,13 @@ describe("AnalyticsConsentModal on portfolio route", () => {
       },
     });
 
-    await screen.findByRole("heading", { name: "Continue improving Ledger?" });
+    const reconfirmTitle = await screen.findByRole("heading", {
+      name: "Continue improving Ledger?",
+    });
     await user.click(screen.getByRole("button", { name: /yes, continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: "Continue improving Ledger?" }),
-      ).not.toBeInTheDocument();
+      expect(reconfirmTitle).not.toBeInTheDocument();
     });
     expect(store.getState().settings.shareAnalytics).toBe(true);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
@@ -166,13 +162,13 @@ describe("AnalyticsConsentModal on portfolio route", () => {
       },
     });
 
-    await screen.findByRole("heading", { name: "Continue improving Ledger?" });
+    const reconfirmTitle = await screen.findByRole("heading", {
+      name: "Continue improving Ledger?",
+    });
     await user.click(screen.getByRole("button", { name: /no, stop/i }));
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: "Continue improving Ledger?" }),
-      ).not.toBeInTheDocument();
+      expect(reconfirmTitle).not.toBeInTheDocument();
     });
     expect(store.getState().settings.shareAnalytics).toBe(false);
     expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
@@ -194,15 +190,13 @@ describe("AnalyticsConsentModal on portfolio route", () => {
       },
     });
 
-    expect(
-      await screen.findByRole("heading", { name: "We're updating our privacy policy" }),
-    ).toBeInTheDocument();
+    const privacyTitle = await screen.findByRole("heading", {
+      name: "We're updating our privacy policy",
+    });
     await user.click(screen.getByRole("button", { name: /got it/i }));
 
     await waitFor(() => {
-      expect(
-        screen.queryByRole("heading", { name: "We're updating our privacy policy" }),
-      ).not.toBeInTheDocument();
+      expect(privacyTitle).not.toBeInTheDocument();
     });
     expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
       CURRENT_PRIVACY_POLICY_VERSION,

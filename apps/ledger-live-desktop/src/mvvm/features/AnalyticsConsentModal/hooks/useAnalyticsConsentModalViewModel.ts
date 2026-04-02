@@ -83,7 +83,7 @@ export function useAnalyticsConsentModalViewModel() {
     handleCloseModal,
   ]);
 
-  const persistConsentCompletion = useCallback(async () => {
+  const persistAnalyticsConsentAck = useCallback(async () => {
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
@@ -91,8 +91,16 @@ export function useAnalyticsConsentModalViewModel() {
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    await updateIdentify({ force: true });
+    try {
+      await updateIdentify({ force: true });
+    } catch (error) {
+      console.error("Failed to update analytics identify after consent change", error);
+    }
   }, [dispatch]);
+
+  const persistConsentCompletion = useCallback(async () => {
+    await persistAnalyticsConsentAck();
+  }, [persistAnalyticsConsentAck]);
 
   const applyOptIn = useCallback(async () => {
     track("button_clicked", { button: "analytics_consent_opt_in", page: ANALYTICS_CONSENT_MODAL_PAGE });
@@ -112,16 +120,9 @@ export function useAnalyticsConsentModalViewModel() {
 
   const onPrivacyGotIt = useCallback(async () => {
     track("button_clicked", { button: "analytics_consent_privacy_got_it", page: ANALYTICS_CONSENT_MODAL_PAGE });
-    dispatch(
-      setAnalyticsConsentInfo({
-        consentDate: new Date().toISOString(),
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
-      }),
-    );
-    dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    await updateIdentify({ force: true });
+    await persistAnalyticsConsentAck();
     handleCloseModal();
-  }, [dispatch, handleCloseModal]);
+  }, [handleCloseModal, persistAnalyticsConsentAck]);
 
   const onSetPreferences = useCallback(() => {
     track("button_clicked", { button: "analytics_consent_set_preferences", page: ANALYTICS_CONSENT_MODAL_PAGE });

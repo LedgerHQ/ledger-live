@@ -1,5 +1,6 @@
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
+import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
 import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
@@ -13,11 +14,6 @@ const mockNavigate = jest.fn();
 const mockUseMatch = jest.fn();
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
-
-jest.mock("~/renderer/analytics/segment", () => ({
-  ...jest.requireActual("~/renderer/analytics/segment"),
-  track: jest.fn(),
-}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -93,29 +89,34 @@ describe("useAnalyticsConsentModalViewModel", () => {
   });
 
   it("keeps modal closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
+    const renewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal").mockReturnValue(false);
     const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
-    const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: {
-          ...INITIAL_STATE,
-          hasCompletedOnboarding: true,
-          shareAnalytics: false,
-          sharePersonalizedRecommandations: false,
-          analyticsConsentInfo: {
-            consentDate: oldIso,
-            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+    try {
+      const { result } = renderHook(() => useAnalyticsConsentModalViewModel(), {
+        initialState: {
+          featureFlags: featureFlagsWithAnalyticsOptIn,
+          settings: {
+            ...INITIAL_STATE,
+            hasCompletedOnboarding: true,
+            shareAnalytics: false,
+            sharePersonalizedRecommandations: false,
+            analyticsConsentInfo: {
+              consentDate: oldIso,
+              privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+            },
           },
         },
-      },
-    });
+      });
 
-    await act(async () => {
-      await Promise.resolve();
-    });
+      await act(async () => {
+        await Promise.resolve();
+      });
 
-    expect(result.current.phase).toBe("closed");
-    expect(result.current.isModalOpen).toBe(false);
+      expect(result.current.phase).toBe("closed");
+      expect(result.current.isModalOpen).toBe(false);
+    } finally {
+      renewalSpy.mockRestore();
+    }
   });
 
   it("dispatches opt-in and closes modal", async () => {
