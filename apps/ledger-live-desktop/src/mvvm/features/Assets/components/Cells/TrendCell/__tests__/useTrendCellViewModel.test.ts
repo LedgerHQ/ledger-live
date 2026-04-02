@@ -79,4 +79,15 @@ describe("useTrendCellViewModel", () => {
     expect(result.current.formattedTrend).toBe("0.00%");
     expect(result.current.colorClass).toBe("text-success");
   });
+
+  it("should return '***' when discreet mode is enabled", () => {
+    mockedUseCurrencyPortfolio.mockReturnValue(mockCurrencyPortfolioReturn(0.023));
+
+    const { result } = renderHook(() => useTrendCellViewModel(mockCurrency), {
+      initialState: { settings: { discreetMode: true } },
+    });
+
+    expect(result.current.formattedTrend).toBe("***");
+    expect(result.current.colorClass).toBe("text-success");
+  });
 });
