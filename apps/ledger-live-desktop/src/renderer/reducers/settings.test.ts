@@ -5,6 +5,7 @@
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { State } from ".";
 import { purgeExpiredAnonymousUserNotifications } from "../actions/settings";
 import reducer, {
@@ -22,6 +23,15 @@ const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
 
 const mockStateWithSettings = (settings: Partial<SettingsState>): State => ({
   ...({} as State),
+  featureFlags: {
+    ...FEATURE_FLAGS_INITIAL_STATE,
+    resolved: {
+      ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+      analyticsOptIn: {
+        enabled: true,
+      },
+    },
+  },
   settings: {
     ...SETTINGS_INITIAL_STATE,
     ...settings,
@@ -444,5 +454,61 @@ describe("trackingEnabledSelector", () => {
         ),
       ).toBe(false);
     });
+  });
+
+  describe("when analyticsOptIn feature flag is disabled (legacy)", () => {
+    const legacyMockState = (settings: Partial<SettingsState>): State => ({
+      ...({} as State),
+      featureFlags: {
+        ...FEATURE_FLAGS_INITIAL_STATE,
+        resolved: {
+          ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+          analyticsOptIn: { enabled: false },
+        },
+      },
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+        ...settings,
+      },
+    });
+
+    it("should track from share toggles without consent metadata", () => {
+      expect(
+        trackingEnabledSelector(
+          legacyMockState({
+            lastAnalyticsConsentDate: null,
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: false,
+          }),
+        ),
+      ).toBe(true);
+    });
+
+    it("should not track when both share toggles are off", () => {
+      expect(
+        trackingEnabledSelector(
+          legacyMockState({
+            lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+            privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+            shareAnalytics: false,
+            sharePersonalizedRecommandations: false,
+          }),
+        ),
+      ).toBe(false);
+    });
+  });
+
+  it("should fall back to share toggles when featureFlags state is missing", () => {
+    expect(
+      trackingEnabledSelector({
+        ...({} as State),
+        settings: {
+          ...SETTINGS_INITIAL_STATE,
+          lastAnalyticsConsentDate: null,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: false,
+        },
+      }),
+    ).toBe(true);
   });
 });
