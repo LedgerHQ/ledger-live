@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "Alle Vermögenswerte anzeigen",
     "cryptoAddresses" : {
-      "title" : "Krypto-Konten",
+      "title" : "Konten",
       "count_one" : "{{count}} Konto",
       "count_other" : "{{count}} Konten",
-      "noAccountsYet" : "Noch keine Konten"
+      "noAccountsYet" : "Noch keine Konten",
+      "add" : "Hinzufügen"
     },
     "seeAllAccounts" : "Alle Konten anzeigen",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "Kaufen",
       "connect" : "Verbinden",
       "buyLedger" : "Ledger-Gerät kaufen",
+      "receive" : "Empfangen",
+      "send" : "Senden",
       "transferDrawer" : {
         "title" : "Übertragen",
         "receiveCrypto" : "Über Krypto-Adresse empfangen",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "Wird neu geladen...",
       "upToDate" : "Portfolio aktuell",
-      "syncError" : "Einige Kontodaten konnten nicht geladen werden"
+      "syncError" : "Einige Kontodaten konnten nicht geladen werden",
+      "offline" : "Du bist offline. Bitte überprüfe deine Verbindung"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "Vermögenswerte"
   },
+  "cryptoAddresses" : {
+    "title" : "Konten",
+    "addAccount" : "Konto hinzufügen",
+    "emptyState" : "Noch keine Konten",
+    "errorState" : "Beim Laden deiner Konten ist ein Fehler aufgetreten."
+  },
   "accounts" : {
     "title" : "Konten",
     "cryptoAccountsTitle" : "{{currencyTicker}}-Konten",
@@ -3433,6 +3443,14 @@
         "title" : "Transaktionsbenachrichtigungen (Beta)",
         "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, BNB Chain, Avalanche und Ethereum Classic"
       },
+      "totalMarketCap" : {
+        "title" : "Gesamtmarktkapitalisierung",
+        "desc" : "Lass dich benachrichtigen, wenn sich die gesamte Krypto-Marktkapitalisierung signifikant verändert."
+      },
+      "topGainersLosers" : {
+        "title" : "Top Gewinner und Verlierer",
+        "desc" : "Erhalte eine wöchentliche Übersicht über die wichtigsten Gewinne und Verluste von Token auf dem Markt"
+      },
       "price" : {
         "title" : "Preisalarme",
         "desc" : "Lege Preisbenachrichtigungen für deine Lieblings-Coins fest, um keine Marktbewegung zu verpassen"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "ContentBanner mit Spot-Symbolen: Kaufen, Swappen, Staken. Erfordert die Braze-Platzierung.",
         "addSampleActionCarouselImageBackground" : "Aktionskarussell hinzufügen (Bild)",
         "addSampleActionCarouselImageBackgroundDesc" : "MediaBanner mit Bildhintergrund — Kaufen, Swappen, Staken. Erfordert die Braze-Platzierungsflagge.",
+        "addSampleWalletCarousel" : "Unteres Wallet-Karussell hinzufügen (Mock)",
+        "addSampleWalletCarouselDesc" : "Eine Pseudokarte im unteren Karussell des Portfolios (Tag, Titel, Bild, Link). Kein Braze.",
         "dismissAll" : "Alle lokalen Karten verwerfen",
         "dismissAllDesc" : "Hiermit entfernst du alle lokal generierten Inhaltskarten."
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "Über Banktransfer",
-          "description" : "Empfange Stablecoin über ein Cash-to-Stablecoin-Konto. Registrierung notwendig."
+          "description" : "Erhalte Stablecoins, indem du einfach Bargeld sendest",
+          "description_legacy" : "Empfange Stablecoin über ein Cash-to-Stablecoin-Konto. Registrierung notwendig."
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "Zu sendender Coin",
         "changeToReturn" : "Wechseln zu Rückgabe",
         "enterAmount" : "Betrag eingeben",
+        "selectSufficientCoins" : "Wähle genügend Coins aus",
         "amountToSendInCurrency" : "Zu sendender Betrag in {{ticker}}",
         "amountInputLabel" : "Zu sendender Betrag",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
             "OPTIMIZE_SIZE" : "Gebühren minimieren (Größe optimieren)",
-            "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)"
+            "MERGE_OUTPUTS" : "Zukünftige Gebühren minimieren (Coins zusammenführen)",
+            "CUSTOM" : "Eigene Coinauswahl"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "Kurs abgelaufen",
       "description" : "Wechselkurs abgelaufen. Bitte lade die Seite neu und versuche es dann noch einmal."
     },
+    "details" : {
+      "code" : "Fehlercode",
+      "correlationId" : "Referenz-ID"
+    },
     "default" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "Einige Kontodaten konnten nicht geladen werden",
       "description" : "Deine Assets sind sicher. Dies ist ein vorübergehendes Synchronisierungsproblem.\nBetroffene Konten: {{accounts}}",
+      "tryToRefresh" : "Versuche, neu zu laden",
       "close" : "Schließen"
     }
   },
