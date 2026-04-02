@@ -4,15 +4,19 @@ import { Dimensions, Image } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
 import { useIsFocused } from "@react-navigation/core";
+import europaSuccessImage from "./assets/europa-success.webp";
 
-type Props = {
+type EuropaOnboardingSuccessViewProps = {
   onAnimationFinish?: () => void;
   loop: boolean;
 };
 
-const redirectDelay = 2500;
+const redirectDelay = 2_500;
 
-const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish, loop }) => {
+export default function EuropaOnboardingSuccessView({
+  onAnimationFinish,
+  loop,
+}: EuropaOnboardingSuccessViewProps) {
   const { height: screenHeight, width: screenWidth } = Dimensions.get("screen");
   const isFocused = useIsFocused();
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -56,14 +60,8 @@ const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish, loop }) => {
         />
       )}
       <Flex flex={1} alignItems="center" justifyContent="center">
-        <Image
-          source={require("./assets/europa-success.webp")}
-          style={{ zIndex: 1, width: 275 }}
-          resizeMode="contain"
-        />
+        <Image source={europaSuccessImage} style={{ zIndex: 1, width: 275 }} resizeMode="contain" />
       </Flex>
     </Flex>
   );
-};
-
-export default EuropaCompletionView;
+}
