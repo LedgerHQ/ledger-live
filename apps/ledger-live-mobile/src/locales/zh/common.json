@@ -2751,10 +2751,11 @@
     },
     "seeAllAssets" : "查看所有资产",
     "cryptoAddresses" : {
-      "title" : "加密货币账户",
+      "title" : "账户",
       "count_one" : "{{count}} 个账户",
       "count_other" : "{{count}} 个账户",
-      "noAccountsYet" : "尚无账户"
+      "noAccountsYet" : "尚无账户",
+      "add" : "添加"
     },
     "seeAllAccounts" : "查看所有账户",
     "assetSection" : {
@@ -2785,6 +2786,8 @@
       "buy" : "买入",
       "connect" : "连接",
       "buyLedger" : "购买 Ledger 设备",
+      "receive" : "接收",
+      "send" : "发送",
       "transferDrawer" : {
         "title" : "转移",
         "receiveCrypto" : "通过加密货币地址接收",
@@ -2807,7 +2810,8 @@
     "refreshStatus" : {
       "refreshing" : "刷新中...",
       "upToDate" : "资产组合已更新",
-      "syncError" : "无法加载某些账户数据"
+      "syncError" : "无法加载某些账户数据",
+      "offline" : "您已离线。请检查您的连接"
     }
   },
   "addAccountsModal" : {
@@ -3197,6 +3201,12 @@
   "assets" : {
     "title" : "多种资产"
   },
+  "cryptoAddresses" : {
+    "title" : "账户",
+    "addAccount" : "添加账户",
+    "emptyState" : "尚无账户",
+    "errorState" : "加载您的账户时出错"
+  },
   "accounts" : {
     "title" : "账户",
     "cryptoAccountsTitle" : "{{currencyTicker}} 账户",
@@ -3433,6 +3443,14 @@
         "title" : "交易提醒（测试版）",
         "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
       },
+      "totalMarketCap" : {
+        "title" : "总市值",
+        "desc" : "当加密货币总市值发生显著变化时，您将收到通知"
+      },
+      "topGainersLosers" : {
+        "title" : "涨幅和跌幅",
+        "desc" : "每周回顾市场上涨幅和跌幅最大的代币"
+      },
       "price" : {
         "title" : "价格提醒",
         "desc" : "为您收藏的币种设置价格提醒，以免错过市场波动"
@@ -3579,6 +3597,8 @@
         "addSampleActionCarouselIconDesc" : "带有 Spot 图标的 ContentBanner——买入、互换、质押。需要 Braze 放置标志。",
         "addSampleActionCarouselImageBackground" : "添加操作轮播（图片）",
         "addSampleActionCarouselImageBackgroundDesc" : "带有 image_background 的 MediaBanner——买入、互换、质押。需要 Braze 放置标志。",
+        "addSampleWalletCarousel" : "添加底部钱包轮播（模拟）",
+        "addSampleWalletCarouselDesc" : "资产组合底部轮播中有一张模拟卡（标签、标题、图片、链接）。无 Braze。",
         "dismissAll" : "关闭所有本地卡",
         "dismissAllDesc" : "移除所有本地生成的内容卡。"
       }
@@ -3651,7 +3671,8 @@
         },
         "fiat" : {
           "title" : "通过银行转账",
-          "description" : "通过现金转稳定币账户接收稳定币需要注册"
+          "description" : "只需发送现金即可接收稳定币。",
+          "description_legacy" : "通过现金转稳定币账户接收稳定币需要注册"
         }
       },
       "memoTag" : {
@@ -4324,13 +4345,15 @@
         "coinToSend" : "发送币种",
         "changeToReturn" : "要返还的零钱",
         "enterAmount" : "输入数额",
+        "selectSufficientCoins" : "选择足够的加密货币",
         "amountToSendInCurrency" : "发送数额为 ({{ticker}})",
         "amountInputLabel" : "发送数额",
         "bitcoin" : {
           "pickingStrategyLabels" : {
             "DEEP_OUTPUTS_FIRST" : "旧币优先（先入先出）",
             "OPTIMIZE_SIZE" : "令费用最小化（优化大小）",
-            "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）"
+            "MERGE_OUTPUTS" : "令未来费用最小化（合并硬币）",
+            "CUSTOM" : "自定义币种选择"
           }
         }
       }
@@ -8503,6 +8526,10 @@
       "title" : "费率已过期",
       "description" : "汇率已过期。请刷新并重试。"
     },
+    "details" : {
+      "code" : "错误代码",
+      "correlationId" : "参考 ID "
+    },
     "default" : {
       "title" : "出错了",
       "description" : "请重试，如有疑问，请联系 Ledger 客服。"
@@ -8734,6 +8761,7 @@
     "bottomSheet" : {
       "title" : "无法加载某些账户数据",
       "description" : "您的资产安全无虞。出现临时同步问题。\n受影响的账户： {{accounts}}",
+      "tryToRefresh" : "尝试刷新",
       "close" : "关闭"
     }
   },
