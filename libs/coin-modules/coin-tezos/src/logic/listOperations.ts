@@ -19,11 +19,11 @@ function parseCursor(token?: string): { nativeLastId?: number; tokenLastId?: num
     const parsed: unknown = JSON.parse(token);
     if (typeof parsed === "number") return { nativeLastId: parsed };
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      const output = parsed as { n?: unknown; t?: unknown };
-      return {
-        nativeLastId: typeof output.n === "number" ? output.n : undefined,
-        tokenLastId: typeof output.t === "number" ? output.t : undefined,
-      };
+      const output = parsed as { nativeLastId?: unknown; tokenLastId?: unknown };
+      const nativeLastId =
+        typeof output.nativeLastId === "number" ? output.nativeLastId : undefined;
+      const tokenLastId = typeof output.tokenLastId === "number" ? output.tokenLastId : undefined;
+      return { nativeLastId, tokenLastId };
     }
   } catch {
     // ignore invalid cursor
@@ -54,16 +54,18 @@ export async function listOperations(
 ): Promise<[Operation[], string]> {
   const { nativeLastId, tokenLastId } = parseCursor(token);
 
-  let nativeOptions: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
-  if (nativeLastId !== undefined) {
-    nativeOptions = { ...nativeOptions, lastId: nativeLastId };
-  }
+  const nativeOptions: AccountsGetOperationsOptions = {
+    limit,
+    sort,
+    "level.ge": minHeight,
+    ...(nativeLastId ? { lastId: nativeLastId } : {}),
+  };
 
   const tokenOptions = {
     limit,
     sort,
     "level.ge": minHeight,
-    ...(tokenLastId !== undefined ? { lastId: tokenLastId } : {}),
+    ...(tokenLastId ? { lastId: tokenLastId } : {}),
   };
 
   const [nativeOps, tokenTransfers] = await Promise.all([
@@ -85,7 +87,12 @@ export async function listOperations(
   const lastNativeOp = limitedNativeOps.at(-1);
   const lastTokenOp = limitedTokenTransfers.at(-1);
   const nextToken =
-    lastNativeOp || lastTokenOp ? JSON.stringify({ n: lastNativeOp?.id, t: lastTokenOp?.id }) : "";
+    lastNativeOp || lastTokenOp
+      ? JSON.stringify({
+          nativeLastId: lastNativeOp?.id,
+          tokenLastId: lastTokenOp?.id,
+        })
+      : "";
 
   const filteredNativeOps = limitedNativeOps
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
@@ -102,11 +109,11 @@ export async function listOperations(
     .map(op => convertOperation(address, op))
     .flat();
 
-  const tokenConverted = limitedTokenTransfers.map(token =>
+  const tokenConverted = limitedTokenTransfers.map(transfer =>
     convertTokenOperation(
       address,
-      token,
-      token.transactionId !== null ? parentMap.get(token.transactionId || 0) : undefined,
+      transfer,
+      transfer.transactionId ? parentMap.get(transfer.transactionId)! : undefined,
     ),
   );
 
@@ -242,8 +249,8 @@ function convertTokenOperation(
 
   const fee = parent
     ? BigInt(parent.storageFee ?? 0) +
-    BigInt(parent.bakerFee ?? 0) +
-    BigInt(parent.allocationFee ?? 0)
+      BigInt(parent.bakerFee ?? 0) +
+      BigInt(parent.allocationFee ?? 0)
     : 0n;
   const feesPayer = parent?.initiator?.address ?? parent?.sender?.address;
 

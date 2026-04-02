@@ -14,7 +14,6 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { RecommendUndelegation } from "@ledgerhq/errors";
-import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import { getRevealFee } from "@taquito/taquito";
 import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/utils";
@@ -45,7 +44,7 @@ import {
 } from "../utils";
 import type { TezosFeeEstimation } from "./types";
 
-export function createApi(config: TezosConfig): AlpacaApi & BridgeApi {
+export function createApi(config: TezosConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

@@ -289,10 +289,9 @@ describe("tzkt network API", () => {
 
   describe("api.getAccountTokenTransfers", () => {
     it("returns empty hash when no numeric transaction ids are present", async () => {
-      const spyToken = jest.spyOn(api, "getTokenTransfers").mockResolvedValue([
-        makeTokenWithTxId(1, undefined),
-        makeTokenWithTxId(2, undefined),
-      ]);
+      const spyToken = jest
+        .spyOn(api, "getTokenTransfers")
+        .mockResolvedValue([makeTokenWithTxId(1, undefined), makeTokenWithTxId(2, undefined)]);
       const spyTx = jest.spyOn(api, "getOperationsTransactions");
 
       const result = await api.getAccountTokenTransfers("tz1x", {
@@ -316,13 +315,12 @@ describe("tzkt network API", () => {
     });
 
     it("joins operation hashes and uses empty string when no match", async () => {
-      jest.spyOn(api, "getTokenTransfers").mockResolvedValue([
-        makeTokenWithTxId(1, 100),
-        makeTokenWithTxId(2, 200),
-      ]);
-      jest.spyOn(api, "getOperationsTransactions").mockResolvedValue([
-        { id: 100, hash: "h100" } as APITransactionType,
-      ]);
+      jest
+        .spyOn(api, "getTokenTransfers")
+        .mockResolvedValue([makeTokenWithTxId(1, 100), makeTokenWithTxId(2, 200)]);
+      jest
+        .spyOn(api, "getOperationsTransactions")
+        .mockResolvedValue([{ id: 100, hash: "h100" } as APITransactionType]);
 
       const result = await api.getAccountTokenTransfers("tz1y", {
         "level.ge": 0,

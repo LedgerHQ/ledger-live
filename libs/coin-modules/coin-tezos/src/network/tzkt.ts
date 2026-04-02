@@ -19,6 +19,13 @@ const BLOCK_PAGE_SIZE = 1000;
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
+const clearUndefined = (obj: Record<string, unknown>) => {
+  const newObj = { ...obj };
+  Object.entries(newObj).forEach(([key, value]) => value === undefined && delete newObj[key]);
+
+  return newObj;
+};
+
 const api = {
   async getBlockCount(): Promise<number> {
     const { data } = await network<number>({
@@ -91,23 +98,22 @@ const api = {
   },
 
   /**
-     * Fetches a list of `transaction` operations after the given level.
-     * https://api.tzkt.io/#operation/Operations_GetTransactions
-     */
+   * Fetches a list of `transaction` operations after the given level.
+   * https://api.tzkt.io/#operation/Operations_GetTransactions
+   */
   async getOperationsTransactions(
     level: number,
     cursor?: number,
-    args: Record<string, unknown> = {},
+    apiQueryParams: Record<string, unknown> = {},
   ): Promise<APITransactionType[]> {
     // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
     // Without an explicit sort the API default may be descending, which would cause the
     // cursor to go backwards and produce duplicates or an infinite loop.
-    Object.keys(args).forEach(key => args[key] === undefined && delete args[key]);
     const params: Record<string, unknown> = {
       "level.gte": level,
       limit: BLOCK_PAGE_SIZE,
       "sort.asc": "id",
-      ...args,
+      ...clearUndefined(apiQueryParams),
     };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITransactionType[]>({
@@ -141,16 +147,15 @@ const api = {
   async getTokenTransfers(
     level: number,
     cursor?: number,
-    args: Record<string, unknown> = {},
+    apiQueryParams: Record<string, unknown> = {},
   ): Promise<APITokenTransfer[]> {
     // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
-    // offset.cr cursor advancing forward regardless of the API's default ordering.
-    Object.keys(args).forEach(key => args[key] === undefined && delete args[key]);
+    // offset.cr cursor advancing forward regardless of the API's default ordering.;
     const params: Record<string, unknown> = {
       "level.gte": level,
       limit: BLOCK_PAGE_SIZE,
       "sort.asc": "id",
-      ...args,
+      ...clearUndefined(apiQueryParams),
     };
     if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
@@ -190,11 +195,7 @@ const api = {
       "token.standard": "fa2",
     };
 
-    const data = await api.getTokenTransfers(
-      query["level.ge"] as number,
-      query["lastId"],
-      params,
-    );
+    const data = await api.getTokenTransfers(query["level.ge"] as number, query["lastId"], params);
 
     const transactionIds = data
       .map(t => t.transactionId)
@@ -204,8 +205,8 @@ const api = {
       return data.map(token => ({
         ...token,
         hash: "",
-      }))
-    };
+      }));
+    }
 
     const transactions = await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
       "id.in": transactionIds.join(","),
