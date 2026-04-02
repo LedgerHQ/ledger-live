@@ -1,6 +1,8 @@
+import { LedgerAPI4xx } from "@ledgerhq/errors";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
 import { createMockCantonCurrency, setupMockCoinConfig } from "../test/fixtures";
-import type { OnboardingPrepareResponse } from "../types/gateway";
+import type { OnboardingPrepareResponse, Party } from "../types/gateway";
 import {
   getBalance,
   getLedgerEnd,
@@ -16,6 +18,37 @@ import {
 } from "./gateway";
 
 const mockCurrency = createMockCantonCurrency();
+
+/** Party lookup can lag behind a successful onboarding submit on the gateway (CI / replication). */
+function isPartyNotYetVisibleError(error: unknown): boolean {
+  if (!(error instanceof LedgerAPI4xx)) return false;
+  if (error.status === 404) return true;
+  const msg = error.message.toLowerCase();
+  return msg.includes("party") && (msg.includes("does not exist") || msg.includes("not found"));
+}
+
+async function getPartyByIdWhenVisible(
+  currency: CryptoCurrency,
+  partyId: string,
+  opts?: { timeoutMs?: number; pollMs?: number },
+): Promise<Party> {
+  const timeoutMs = opts?.timeoutMs ?? 58_000;
+  const pollMs = opts?.pollMs ?? 2_000;
+  const deadline = Date.now() + timeoutMs;
+  let lastError: unknown;
+  while (Date.now() < deadline) {
+    try {
+      return await getPartyById(currency, partyId);
+    } catch (e) {
+      lastError = e;
+      if (!isPartyNotYetVisibleError(e)) throw e;
+      await new Promise<void>(resolve => {
+        setTimeout(resolve, pollMs);
+      });
+    }
+  }
+  throw lastError ?? new Error("getPartyById timed out waiting for party to be visible");
+}
 
 describe("gateway (devnet)", () => {
   let onboardedAccount: {
@@ -169,11 +202,11 @@ describe("gateway (devnet)", () => {
   describe("getPartyById", () => {
     it("should return party info", async () => {
       const { partyId } = getOnboardedAccount();
-      const party = await getPartyById(mockCurrency, partyId);
+      const party = await getPartyByIdWhenVisible(mockCurrency, partyId);
 
       expect(party).not.toBeUndefined();
       expect(party.party_id).toBe(partyId);
-    }, 60000);
+    }, 90000);
   });
 
   describe("getPartyByPubKey", () => {
