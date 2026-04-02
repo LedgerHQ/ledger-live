@@ -111,18 +111,22 @@ const ActionButton = ({
           <Text>{t("zcash.shielded.state.stopSync")}</Text>
         </ActionButtonElement>
       );
+    case "complete":
+      return (
+        <ActionButtonElement buttonTestId="up-to-date-button" disabled>
+          <Text>{t("zcash.shielded.state.upToDate")}</Text>
+        </ActionButtonElement>
+      );
   }
 };
 
 const SyncProgress = ({
   syncState,
   progress,
-  estimatedTimeRemaining,
   lastSync,
 }: {
   syncState: ZcashSyncState;
   progress: number;
-  estimatedTimeRemaining: { hours: number; minutes: number };
   lastSync: Date | null;
 }) => {
   if (syncState !== "disabled") {
@@ -134,7 +138,7 @@ const SyncProgress = ({
           flexDirection: "row",
           fontSize: "12px",
           paddingLeft: syncState === "running" || syncState === "stopped" ? "20px" : "0",
-          paddingTop: syncState === "outdated" ? "10px" : "0",
+          paddingTop: syncState === "complete" || syncState === "outdated" ? "10px" : "0",
         }}
       >
         {syncState === "running" ? (
@@ -143,19 +147,10 @@ const SyncProgress = ({
             <Text style={{ fontSize: "12px", paddingLeft: "10px" }}>{progress}%</Text>
           </>
         ) : null}
-        {syncState === "stopped" ? (
-          <Text style={{ fontSize: "12px" }}>
-            <Trans
-              i18nKey="zcash.shielded.state.lastProcessedBlock"
-              values={{ block: 1, missing: 10 }}
-            />
-          </Text>
-        ) : null}
         {syncState === "complete" || syncState === "outdated" ? (
           <Trans
             i18nKey="zcash.shielded.state.lastSync"
             values={{ date: lastSync?.toLocaleString().replace(",", "") }}
-            style={{}}
           />
         ) : null}
       </div>
@@ -389,12 +384,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           }}
         >
           <ActionButton t={t} syncState={syncState} updateSyncState={updateSyncState} />
-          <SyncProgress
-            syncState={syncState}
-            progress={progress}
-            estimatedTimeRemaining={estimatedTimeRemaining}
-            lastSync={lastSync}
-          />
+          <SyncProgress syncState={syncState} progress={progress} lastSync={lastSync} />
         </div>
         <EstimatedTimeRemaining
           syncState={syncState}
