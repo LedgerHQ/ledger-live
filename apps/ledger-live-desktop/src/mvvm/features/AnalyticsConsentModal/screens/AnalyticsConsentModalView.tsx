@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
@@ -72,7 +72,7 @@ export function AnalyticsConsentModalView({
   }
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={() => {}}>
+    <Dialog open={isModalOpen}>
       <DialogContent
         data-testid="analytics-consent-modal"
         className="max-w-[480px] bg-canvas-sheet"
@@ -82,6 +82,7 @@ export function AnalyticsConsentModalView({
         aria-describedby={undefined}
         onPointerDownOutside={e => e.preventDefault()}
         onEscapeKeyDown={e => e.preventDefault()}
+        onOpenAutoFocus={e => e.preventDefault()}
       >
         <TrackPage
           key={phase}
@@ -113,7 +114,7 @@ export function AnalyticsConsentModalView({
             </div>
           </div>
         </DialogBody>
-        <DialogFooter className="flex flex-col gap-16 pt-32 flex-column">
+        <DialogFooter className="flex flex-col gap-16 pt-32">
           {phase === "privacy" ? (
             <Button appearance="base" isFull size="lg" onClick={onPrivacyGotIt}>
               {t("analyticsConsentModal.privacy.ctaGotIt")}
