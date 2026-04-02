@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -6,7 +6,6 @@ import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
   shareAnalyticsSelector,
-  sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import {
   setAnalyticsConsentInfo,
@@ -23,7 +22,14 @@ import {
   type AnalyticsConsentModalPhase,
 } from "@ledgerhq/live-common/analyticsConsentUtils";
 
-const PAGE = "Analytics consent modal";
+export const ANALYTICS_CONSENT_MODAL_PAGE = "Analytics consent modal";
+
+export const ANALYTICS_CONSENT_FLOW = "analytics_consent";
+
+const modalClosedPayload = {
+  page: ANALYTICS_CONSENT_MODAL_PAGE,
+  flow: ANALYTICS_CONSENT_FLOW,
+};
 
 export function useAnalyticsConsentModalViewModel() {
   const dispatch = useDispatch();
@@ -36,16 +42,9 @@ export function useAnalyticsConsentModalViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
-  const sharePersonalized = useSelector(sharePersonalizedRecommendationsSelector);
 
-  const needsUpdatePrivacy = useMemo(
-    () => needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion),
-    [consentInfo.privacyPolicyVersion],
-  );
-  const needsRenewal = useMemo(
-    () => needsConsentRenewal(consentInfo.consentDate),
-    [consentInfo.consentDate],
-  );
+  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
+  const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
 
   const shouldOffer = Boolean(
     feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
@@ -53,9 +52,18 @@ export function useAnalyticsConsentModalViewModel() {
 
   const [phase, setPhase] = useState<AnalyticsConsentModalPhase>("closed");
 
+  const handleCloseModal = useCallback(() => {
+    setPhase(current => {
+      if (current !== "closed") {
+        track("drawer_closed", modalClosedPayload);
+      }
+      return "closed";
+    });
+  }, []);
+
   useEffect(() => {
     if (!isPortfolioRouteFocused || !shouldOffer) {
-      setPhase("closed");
+      handleCloseModal();
       return;
     }
     setPhase(current =>
@@ -66,13 +74,16 @@ export function useAnalyticsConsentModalViewModel() {
         shareAnalytics,
       ),
     );
-  }, [isPortfolioRouteFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, shareAnalytics]);
+  }, [
+    isPortfolioRouteFocused,
+    shouldOffer,
+    needsRenewal,
+    needsUpdatePrivacy,
+    shareAnalytics,
+    handleCloseModal,
+  ]);
 
-  const closeModal = useCallback(() => {
-    setPhase("closed");
-  }, []);
-
-  const persistConsentCompletion = useCallback(() => {
+  const persistConsentCompletion = useCallback(async () => {
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
@@ -80,27 +91,27 @@ export function useAnalyticsConsentModalViewModel() {
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    void updateIdentify({ force: true });
+    await updateIdentify({ force: true });
   }, [dispatch]);
 
-  const applyOptIn = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_opt_in", page: PAGE });
+  const applyOptIn = useCallback(async () => {
+    track("button_clicked", { button: "analytics_consent_opt_in", page: ANALYTICS_CONSENT_MODAL_PAGE });
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
-    persistConsentCompletion();
-    closeModal();
-  }, [dispatch, persistConsentCompletion, closeModal]);
+    await persistConsentCompletion();
+    handleCloseModal();
+  }, [dispatch, persistConsentCompletion, handleCloseModal]);
 
-  const applyOptOut = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_opt_out", page: PAGE });
+  const applyOptOut = useCallback(async () => {
+    track("button_clicked", { button: "analytics_consent_opt_out", page: ANALYTICS_CONSENT_MODAL_PAGE });
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
-    persistConsentCompletion();
-    closeModal();
-  }, [dispatch, persistConsentCompletion, closeModal]);
+    await persistConsentCompletion();
+    handleCloseModal();
+  }, [dispatch, persistConsentCompletion, handleCloseModal]);
 
-  const onPrivacyGotIt = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_privacy_got_it", page: PAGE });
+  const onPrivacyGotIt = useCallback(async () => {
+    track("button_clicked", { button: "analytics_consent_privacy_got_it", page: ANALYTICS_CONSENT_MODAL_PAGE });
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),
@@ -108,26 +119,15 @@ export function useAnalyticsConsentModalViewModel() {
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    closeModal();
-    void updateIdentify({ force: true });
-  }, [dispatch, closeModal]);
+    await updateIdentify({ force: true });
+    handleCloseModal();
+  }, [dispatch, handleCloseModal]);
 
   const onSetPreferences = useCallback(() => {
-    track("button_clicked", { button: "analytics_consent_set_preferences", page: PAGE });
-    closeModal();
+    track("button_clicked", { button: "analytics_consent_set_preferences", page: ANALYTICS_CONSENT_MODAL_PAGE });
+    handleCloseModal();
     navigate("/settings/display");
-  }, [navigate, closeModal]);
-
-  const hasTrackedOpenRef = useRef(false);
-  useEffect(() => {
-    if (phase !== "closed" && isPortfolioRouteFocused && !hasTrackedOpenRef.current) {
-      hasTrackedOpenRef.current = true;
-      track("modal_opened", { modal: PAGE });
-    }
-    if (phase === "closed") {
-      hasTrackedOpenRef.current = false;
-    }
-  }, [phase, isPortfolioRouteFocused]);
+  }, [navigate, handleCloseModal]);
 
   const isModalOpen = phase !== "closed";
 
