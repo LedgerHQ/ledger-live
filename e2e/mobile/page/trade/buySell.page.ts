@@ -189,8 +189,9 @@ export default class BuySellPage {
   @Step("Verify provider page loaded with correct URL")
   async verifyProviderPageLoadedWithCorrectUrl(provider: string) {
     try {
-      const currentUrl = await waitForCurrentWebviewUrlToContain(provider.toLowerCase());
-      jestExpect(currentUrl.toLowerCase()).toContain(provider.toLowerCase());
+      const normalizedProvider = provider.toLowerCase().replace(/\s/g, "");
+      const currentUrl = await waitForCurrentWebviewUrlToContain(normalizedProvider);
+      jestExpect(currentUrl.toLowerCase()).toContain(normalizedProvider);
     } catch (error) {
       throw new Error(`Provider page verification failed: ${sanitizeError(error)}`);
     }
