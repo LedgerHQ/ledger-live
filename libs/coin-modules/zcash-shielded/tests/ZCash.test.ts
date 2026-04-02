@@ -1,4 +1,5 @@
-import { ZCash, ShieldedSyncResult } from "../src/ZCash";
+import { ZCash } from "../src/ZCash";
+import type { ShieldedSyncResult } from "../src/types";
 import {
   testAccount1,
   blockWithMyTx,
@@ -14,7 +15,7 @@ import {
 } from "./testAccounts";
 import { server } from "./mocks/node";
 import { resetLastBlockCount, setLastBlockCount } from "./mocks/handlers";
-import { ZCASH_JSON_RPC_SERVER_TESTNET } from "../src/constants";
+import { ZCASH_JSON_RPC_SERVER_TESTNET, ZCASH_LOG_TYPE } from "../src/constants";
 import {
   createFindBlockHeightHandlers,
   largeChainScenario,
@@ -43,6 +44,36 @@ describe("estimatedSyncTime", () => {
     jest.setSystemTime(new Date("2016-10-28T00:20:00.000Z"));
     const estimatedSyncTimeResult = estimatedSyncTime();
     expect(estimatedSyncTimeResult).toEqual({ hours: 3, minutes: 20 });
+  });
+
+  test("returns zero when no time elapsed", async () => {
+    jest.setSystemTime(new Date("2016-10-28T00:00:00.000Z"));
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    const estimatedSyncTime = await zcash.estimatedSyncTime(5);
+    const estimatedSyncTimeResult = estimatedSyncTime();
+    expect(estimatedSyncTimeResult).toEqual({ hours: 0, minutes: 0 });
+  });
+
+  test("floors partial minutes", async () => {
+    jest.setSystemTime(new Date("2016-10-28T00:00:00.000Z"));
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    const estimatedSyncTime = await zcash.estimatedSyncTime(10);
+    // 59 seconds elapsed * 10 blocks = 590 seconds (9 minutes and 50 seconds), floored to 9 minutes.
+    jest.setSystemTime(new Date("2016-10-28T00:00:59.000Z"));
+    const estimatedSyncTimeResult = estimatedSyncTime();
+    expect(estimatedSyncTimeResult).toEqual({ hours: 0, minutes: 9 });
+  });
+
+  test("recomputes estimation on each call", async () => {
+    jest.setSystemTime(new Date("2016-10-28T00:00:00.000Z"));
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    const estimatedSyncTime = await zcash.estimatedSyncTime(60);
+
+    jest.setSystemTime(new Date("2016-10-28T00:01:00.000Z"));
+    expect(estimatedSyncTime()).toEqual({ hours: 1, minutes: 0 });
+
+    jest.setSystemTime(new Date("2016-10-28T00:02:00.000Z"));
+    expect(estimatedSyncTime()).toEqual({ hours: 2, minutes: 0 });
   });
 });
 
@@ -97,9 +128,125 @@ describe("findBlockHeight", () => {
     const height = await zcash.findBlockHeight(2000);
     expect(height).toEqual(10);
   });
+
+  test("returns 0 when chain tip height is 0", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    jest.spyOn(zcash.jsonRpcClient, "getBlockCount").mockResolvedValue(0);
+
+    const height = await zcash.findBlockHeight(1234);
+    expect(height).toEqual(0);
+  });
+
+  test("returns undefined when getBlockCount returns undefined", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    jest
+      .spyOn(zcash.jsonRpcClient, "getBlockCount")
+      .mockResolvedValue(undefined as unknown as number);
+
+    const height = await zcash.findBlockHeight(1234);
+    expect(height).toBeUndefined();
+  });
+
+  test("returns undefined when a block cannot be fetched during binary search", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    jest.spyOn(zcash.jsonRpcClient, "getBlockCount").mockResolvedValue(10);
+    jest.spyOn(zcash.jsonRpcClient, "getBlock").mockResolvedValue(undefined);
+
+    const height = await zcash.findBlockHeight(1234);
+    expect(height).toBeUndefined();
+  });
 });
 
 describe("decryptTransaction", () => {
+  test("returns a shielded transaction when decrypt_tx succeeds", async () => {
+    jest.resetModules();
+    const rawTransaction = {
+      hex: "tx-hex",
+      height: 42,
+      orchard: {
+        actions: [],
+        valueBalance: 0,
+        valueBalanceZat: 0,
+      },
+      time: 123,
+      txid: "tx-id",
+      blockhash: "block-hash",
+    };
+    const decryptedPayload = {
+      orchard_outputs: [],
+      sapling_outputs: [],
+    };
+    const expectedShieldedTx = {
+      id: rawTransaction.txid,
+      hex: rawTransaction.hex,
+      blockHeight: rawTransaction.height,
+      blockHash: rawTransaction.blockhash,
+      timestamp: rawTransaction.time,
+      fee: new BigNumber(rawTransaction.orchard.valueBalanceZat),
+      decryptedData: decryptedPayload,
+    };
+    const decryptTxMock = jest.fn().mockReturnValue(decryptedPayload);
+    const toShieldedTransactionMock = jest.fn().mockReturnValue(expectedShieldedTx);
+    jest.doMock("@ledgerhq/zcash-decrypt", () => ({ decrypt_tx: decryptTxMock }));
+    jest.doMock("../src/shieldedTransaction", () => ({
+      toShieldedTransaction: toShieldedTransactionMock,
+    }));
+
+    try {
+      const { ZCash: MockedZCash } = await import("../src/ZCash");
+      const zcash = new MockedZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+      const result = await zcash.decryptTransaction(rawTransaction, "ufvk");
+
+      expect(decryptTxMock).toHaveBeenCalledWith(rawTransaction.hex, "ufvk");
+      expect(toShieldedTransactionMock).toHaveBeenCalledWith(rawTransaction, decryptedPayload);
+      expect(result).toEqual(expectedShieldedTx);
+    } finally {
+      jest.dontMock("@ledgerhq/zcash-decrypt");
+      jest.dontMock("../src/shieldedTransaction");
+      jest.resetModules();
+    }
+  });
+
+  test("logs an error and returns undefined when decrypt_tx throws", async () => {
+    jest.resetModules();
+    const rawTransaction = {
+      hex: "tx-hex",
+      height: 42,
+      orchard: {
+        actions: [],
+        valueBalance: 0,
+        valueBalanceZat: 0,
+      },
+      time: 123,
+      txid: "tx-id",
+      blockhash: "block-hash",
+    };
+    const error = new Error("decrypt failed");
+    const decryptTxMock = jest.fn(() => {
+      throw error;
+    });
+    const logMock = jest.fn();
+    jest.doMock("@ledgerhq/zcash-decrypt", () => ({ decrypt_tx: decryptTxMock }));
+    jest.doMock("@ledgerhq/logs", () => ({ log: logMock }));
+
+    try {
+      const { ZCash: MockedZCash } = await import("../src/ZCash");
+      const zcash = new MockedZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+      const result = await zcash.decryptTransaction(rawTransaction, "ufvk");
+
+      expect(logMock).toHaveBeenCalledWith(
+        ZCASH_LOG_TYPE,
+        "error: failed to decrypt transaction",
+        error,
+      );
+      expect(result).toBeUndefined();
+    } finally {
+      jest.dontMock("@ledgerhq/zcash-decrypt");
+      jest.dontMock("@ledgerhq/logs");
+      jest.resetModules();
+    }
+  });
+
   test("fails to decrypt memo: UFVK decode failed", async () => {
     const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
     const decryptedTx = await zcash.decryptTransaction({ hex: "transaction" }, "viewingkey");
@@ -168,7 +315,7 @@ describe("decryptTransaction", () => {
         orchard: {
           actions: [],
           valueBalance: 0,
-          valueBalanceZat: 0
+          valueBalanceZat: 0,
         },
         time: 0,
         txid: "",
@@ -245,6 +392,127 @@ describe("findShieldedTxsInBlock", () => {
     });
     expect(transactions).toEqual([]);
   });
+
+  test("skips empty tx ids when scanning a block", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    const getRawTransactionSpy = jest
+      .spyOn(zcash.jsonRpcClient, "getRawTransaction")
+      .mockResolvedValue({
+        txid: "tx-valid",
+        hex: "hex-valid",
+        height: blockWithMyTx.height,
+        blockhash: blockWithMyTx.hash,
+        time: blockWithMyTx.time,
+        orchard: {
+          actions: [{}] as unknown as [],
+          valueBalance: 0,
+          valueBalanceZat: 0,
+        },
+      });
+
+    const decryptTransactionSpy = jest
+      .spyOn(zcash, "decryptTransaction")
+      .mockResolvedValue({
+        id: "tx-valid",
+        hex: "hex-valid",
+        blockHeight: blockWithMyTx.height,
+        blockHash: blockWithMyTx.hash,
+        timestamp: blockWithMyTx.time,
+        fee: new BigNumber(0),
+      });
+
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: { ...blockWithMyTx, tx: ["", "tx-valid", ""] },
+      viewingKey: testAccount1.viewingKey,
+    });
+
+    expect(getRawTransactionSpy).toHaveBeenCalledTimes(1);
+    expect(getRawTransactionSpy).toHaveBeenCalledWith("tx-valid");
+    expect(decryptTransactionSpy).toHaveBeenCalledTimes(1);
+    expect(transactions).toHaveLength(1);
+  });
+
+  test("skips transactions without orchard actions", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    const getRawTransactionSpy = jest
+      .spyOn(zcash.jsonRpcClient, "getRawTransaction")
+      .mockImplementation(async txId => {
+        if (txId === "orchard-tx") {
+          return {
+            txid: "orchard-tx",
+            hex: "hex-orchard",
+            height: blockWithMyTx.height,
+            blockhash: blockWithMyTx.hash,
+            time: blockWithMyTx.time,
+            orchard: {
+              actions: [{}] as unknown as [],
+              valueBalance: 0,
+              valueBalanceZat: 0,
+            },
+          };
+        }
+
+        return {
+          txid: "plain-tx",
+          hex: "hex-plain",
+          height: blockWithMyTx.height,
+          blockhash: blockWithMyTx.hash,
+          time: blockWithMyTx.time,
+          orchard: {
+            actions: [],
+            valueBalance: 0,
+            valueBalanceZat: 0,
+          },
+        };
+      });
+
+    const decryptTransactionSpy = jest.spyOn(zcash, "decryptTransaction").mockResolvedValue({
+      id: "orchard-tx",
+      hex: "hex-orchard",
+      blockHeight: blockWithMyTx.height,
+      blockHash: blockWithMyTx.hash,
+      timestamp: blockWithMyTx.time,
+      fee: new BigNumber(0),
+    });
+
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: { ...blockWithMyTx, tx: ["plain-tx", "orchard-tx"] },
+      viewingKey: testAccount1.viewingKey,
+    });
+
+    expect(getRawTransactionSpy).toHaveBeenCalledTimes(2);
+    expect(decryptTransactionSpy).toHaveBeenCalledTimes(1);
+    expect(decryptTransactionSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ txid: "orchard-tx" }),
+      testAccount1.viewingKey,
+    );
+    expect(transactions).toHaveLength(1);
+  });
+
+  test("does not include transactions that fail decryption", async () => {
+    const zcash = new ZCash({ nodeUrl: ZCASH_JSON_RPC_SERVER_TESTNET });
+    jest.spyOn(zcash.jsonRpcClient, "getRawTransaction").mockResolvedValue({
+      txid: "tx-failed-decrypt",
+      hex: "hex-failed-decrypt",
+      height: blockWithMyTx.height,
+      blockhash: blockWithMyTx.hash,
+      time: blockWithMyTx.time,
+      orchard: {
+        actions: [{}] as unknown as [],
+        valueBalance: 0,
+        valueBalanceZat: 0,
+      },
+    });
+    const decryptTransactionSpy = jest.spyOn(zcash, "decryptTransaction").mockResolvedValue(undefined);
+
+    const transactions = await zcash.findShieldedTxsInBlock({
+      block: { ...blockWithMyTx, tx: ["tx-failed-decrypt"] },
+      viewingKey: testAccount1.viewingKey,
+    });
+
+    expect(decryptTransactionSpy).toHaveBeenCalledTimes(1);
+    expect(transactions).toEqual([]);
+  });
 });
 
 describe("syncShielded", () => {
@@ -317,7 +585,7 @@ describe("syncShielded", () => {
         expect.objectContaining({
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
-          lastProcessedBlock: expect.any(Number),
+          lastBlockProcessed: expect.any(Number),
           transactions: [],
         }),
       ),
@@ -336,9 +604,12 @@ describe("syncShielded", () => {
     await syncShieldedObs.forEach(step => steps.push(step));
 
     expect(steps[steps.length - 1]).toEqual({
-      lastProcessedBlock: LAST_BLOCK_COUNT,
+      lastBlockProcessed: LAST_BLOCK_COUNT,
       processedBlocks: 6,
       remainingBlocks: 0,
+      syncState: "running",
+      progress: 0,
+      estimatedTimeRemaining: { hours: 0, minutes: 0 },
       transactions: [
         {
           id: txShieldedOrchard.txid,
@@ -384,16 +655,19 @@ describe("syncShielded", () => {
         expect.objectContaining({
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
-          lastProcessedBlock: expect.any(Number),
+          lastBlockProcessed: expect.any(Number),
           transactions: expect.any(Array),
         }),
       ),
     );
 
     expect(steps[steps.length - 1]).toEqual({
-      lastProcessedBlock: LAST_BLOCK_COUNT,
+      lastBlockProcessed: LAST_BLOCK_COUNT,
       processedBlocks: 6,
       remainingBlocks: 0,
+      syncState: "running",
+      progress: 0,
+      estimatedTimeRemaining: { hours: 0, minutes: 0 },
       transactions: [
         {
           id: txShieldedOrchard.txid,
@@ -430,7 +704,7 @@ describe("syncShielded", () => {
         expect.objectContaining({
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
-          lastProcessedBlock: expect.any(Number),
+          lastBlockProcessed: expect.any(Number),
           transactions: expect.any(Array),
         }),
       ),
@@ -439,7 +713,10 @@ describe("syncShielded", () => {
     expect(steps[steps.length - 1]).toEqual({
       processedBlocks: 7,
       remainingBlocks: 0,
-      lastProcessedBlock: LAST_BLOCK_COUNT + 1,
+      lastBlockProcessed: LAST_BLOCK_COUNT + 1,
+      syncState: "running",
+      progress: 0,
+      estimatedTimeRemaining: { hours: 0, minutes: 0 },
       transactions: [
         {
           id: txShieldedOrchard.txid,

@@ -20,7 +20,7 @@ import {
   createShieldedSyncObservable,
   buildSyncObservables,
 } from "./synchronisation";
-import { BtcOperation, BitcoinAccount } from "./types";
+import { BtcOperation, BitcoinAccount, ZcashAccount } from "./types";
 import BigNumber from "bignumber.js";
 import type { ShieldedTransaction, ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -617,7 +617,7 @@ describe("convertShieldedTransactionsToOperations", () => {
 });
 
 describe("reduceShieldedSyncResult", () => {
-  const createMockInfo = (overrides?: Partial<BitcoinAccount>): any => ({
+  const createMockInfo = (overrides?: Partial<ZcashAccount>): any => ({
     currency: getCryptoCurrencyById("zcash"),
     address: "zs1test",
     index: 0,
@@ -629,13 +629,16 @@ describe("reduceShieldedSyncResult", () => {
   it("should return accumulated with blockHeight when no new transactions", () => {
     const accumulated = {
       processedOperations: [] as ShieldedTransaction[],
-      accountUpdate: { operations: [], balance: new BigNumber(890) } as Partial<BitcoinAccount>,
+      accountUpdate: { balance: new BigNumber(890) } as Partial<ZcashAccount>,
     };
     const result: ShieldedSyncResult = {
+      progress: 0,
+      estimatedTimeRemaining: { hours: 0, minutes: 0 },
       transactions: [],
-      lastProcessedBlock: 5000,
+      lastBlockProcessed: 5000,
       processedBlocks: 0,
       remainingBlocks: 0,
+      syncState: "disabled",
     };
     const info = createMockInfo();
 
@@ -645,7 +648,6 @@ describe("reduceShieldedSyncResult", () => {
       processedOperations: [],
       accountUpdate: {
         blockHeight: 5000,
-        operations: [],
         balance: new BigNumber(890),
       },
     });
@@ -670,15 +672,17 @@ describe("reduceShieldedSyncResult", () => {
     const accumulated = {
       processedOperations: [] as ShieldedTransaction[],
       accountUpdate: {
-        operations: [] as BtcOperation[],
         blockHeight: 99,
-      } as Partial<BitcoinAccount>,
+      } as Partial<ZcashAccount>,
     };
     const result: ShieldedSyncResult = {
+      progress: 25,
+      estimatedTimeRemaining: { hours: 0, minutes: 3 },
       transactions: [incomingTx],
-      lastProcessedBlock: 100,
+      lastBlockProcessed: 100,
       processedBlocks: 1,
       remainingBlocks: 0,
+      syncState: "running",
     };
     const info = createMockInfo({ balance: new BigNumber(initialBalance) });
 
@@ -687,10 +691,12 @@ describe("reduceShieldedSyncResult", () => {
     expect(output).toMatchObject({
       processedOperations: [incomingTx],
       accountUpdate: {
-        // Calculated as: info.initialAccount.balance + orchard_outputs.amount.
-        // accumulated.accountUpdate.balance ignored because accumulated.accountBalance.balance is missing.
-        balance: new BigNumber(initialBalance).plus(txAmount),
+        // private orchard balance is accumulated from shielded operations.
+        // top-level account balance is not recomputed in reduceShieldedSyncResult.
         blockHeight: 100,
+        privateInfo: {
+          orchardBalance: txAmount,
+        },
       },
     });
     expect(output.accountUpdate.operations).toHaveLength(1);
@@ -715,28 +721,34 @@ describe("reduceShieldedSyncResult", () => {
     const accumulated = {
       processedOperations: [] as ShieldedTransaction[],
       accountUpdate: {
-        operations: [] as BtcOperation[],
         balance: new BigNumber(accumulatedBalance),
         blockHeight: 99,
-      } as Partial<BitcoinAccount>,
+      } as Partial<ZcashAccount>,
     };
     const result: ShieldedSyncResult = {
       transactions: [incomingTx],
-      lastProcessedBlock: 100,
+      lastBlockProcessed: 100,
       processedBlocks: 1,
       remainingBlocks: 0,
+      syncState: "running",
+      progress: 25,
+      estimatedTimeRemaining: { hours: 0, minutes: 3 },
     };
-    const info = createMockInfo({ balance: new BigNumber(100000) });
+    const info = createMockInfo({
+      privateInfo: { orchardBalance: new BigNumber(100000) },
+    } as Partial<ZcashAccount>);
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
     expect(output).toMatchObject({
       processedOperations: [incomingTx],
       accountUpdate: {
-        // Calculated as: accumulated.accountUpdate.balance + orchard_outputs.amount.
-        // info.initialAccount.balance ignored because accumulated.accountBalance.balance takes priority.
-        balance: new BigNumber(accumulatedBalance).plus(txAmount),
+        // accumulated.accountUpdate.balance and info.initialAccount.privateInfo.orchardBalance
+        // are not used to initialize the running orchard balance.
         blockHeight: 100,
+        privateInfo: {
+          orchardBalance: txAmount,
+        },
       },
     });
     expect(output.accountUpdate.operations).toHaveLength(1);
@@ -758,16 +770,18 @@ describe("reduceShieldedSyncResult", () => {
     const accumulated = {
       processedOperations: [tx],
       accountUpdate: {
-        operations: [] as BtcOperation[],
         balance: new BigNumber(700),
         blockHeight: 100,
-      } as Partial<BitcoinAccount>,
+      } as Partial<ZcashAccount>,
     };
     const result: ShieldedSyncResult = {
+      progress: 50,
+      estimatedTimeRemaining: { hours: 0, minutes: 2 },
       transactions: [tx],
-      lastProcessedBlock: 100,
+      lastBlockProcessed: 100,
       processedBlocks: 0,
       remainingBlocks: 0,
+      syncState: "running",
     };
     const info = createMockInfo();
 
@@ -776,7 +790,6 @@ describe("reduceShieldedSyncResult", () => {
     expect(output).toMatchObject({
       processedOperations: [tx],
       accountUpdate: {
-        operations: [],
         blockHeight: 100,
         balance: new BigNumber(700),
       },
@@ -909,15 +922,21 @@ describe("createShieldedSyncObservable", () => {
     const shieldedSyncRaw = from<ShieldedSyncResult[]>([
       {
         transactions: [tx1, tx2],
-        lastProcessedBlock: 100,
+        lastBlockProcessed: 100,
         processedBlocks: 0,
         remainingBlocks: 0,
+        syncState: "running",
+        progress: 50,
+        estimatedTimeRemaining: { hours: 0, minutes: 2 },
       },
       {
         transactions: [tx3],
-        lastProcessedBlock: 101,
+        lastBlockProcessed: 101,
         processedBlocks: 0,
         remainingBlocks: 0,
+        syncState: "running",
+        progress: 50,
+        estimatedTimeRemaining: { hours: 0, minutes: 2 },
       },
     ]);
 
@@ -950,17 +969,21 @@ describe("createShieldedSyncObservable", () => {
 
     // Check update #1
     expect(updates[0]).toMatchObject({
-      // Calculated as: info.initialAccount.balance - outgoing tx1 - tx1 fees + incoming tx2
-      balance: new BigNumber(33824),
+      // running orchard balance: 0 - outgoing tx1 - tx1 fees + incoming tx2
       blockHeight: 100,
+      privateInfo: {
+        orchardBalance: new BigNumber(491),
+      },
     });
     expect(updates[0]?.operations).toHaveLength(2);
 
     // Check update #2
     expect(updates[1]).toMatchObject({
-      // Calculated as: accumulated.accountUpdate.balance + incoming tx3
-      balance: new BigNumber(34409),
+      // running orchard balance after tx3 incoming.
       blockHeight: 101,
+      privateInfo: {
+        orchardBalance: new BigNumber(1076),
+      },
     });
     expect(updates[1]?.operations).toHaveLength(3);
   });
@@ -1017,7 +1040,15 @@ describe("buildSyncObservables", () => {
       },
     };
     const signerContext = jest.fn();
-    const { syncs, syncType } = buildSyncObservables(zcashInfo, defaultSyncConfig, signerContext);
+    const transparentAndShieldedSyncConfig: SyncConfig = {
+      paginationConfig: {},
+      syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+    };
+    const { syncs, syncType } = buildSyncObservables(
+      zcashInfo,
+      transparentAndShieldedSyncConfig,
+      signerContext,
+    );
 
     expect(syncType).toBe(SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED);
     expect(syncs).toHaveLength(2);

@@ -68,6 +68,8 @@ describe("findFamilyConfigById", () => {
                 lastSyncTimestamp: null,
                 lastBlockProcessed: null,
                 transactions: [],
+                progress: 0,
+                estimatedTimeRemaining: { hours: 0, minutes: 0 },
               },
             },
           },
@@ -138,6 +140,8 @@ describe("findFamilyConfigById", () => {
                 lastSyncTimestamp: null,
                 lastBlockProcessed: null,
                 transactions: [],
+                progress: 0,
+                estimatedTimeRemaining: { hours: 0, minutes: 0 },
               },
             },
           },
@@ -150,7 +154,7 @@ describe("findFamilyConfigById", () => {
         );
 
         await expect(firstValueFrom(obs)).resolves.toMatchObject({
-          lastProcessedBlock: 99,
+          lastBlockProcessed: 99,
           processedBlocks: 100,
           remainingBlocks: 321,
           transactions: [],
@@ -184,6 +188,8 @@ describe("findFamilyConfigById", () => {
                 lastSyncTimestamp: null,
                 lastBlockProcessed: null,
                 transactions: [],
+                progress: 0,
+                estimatedTimeRemaining: { hours: 0, minutes: 0 },
               },
             },
           },
@@ -196,7 +202,7 @@ describe("findFamilyConfigById", () => {
         );
 
         await expect(firstValueFrom(obs)).resolves.toMatchObject({
-          lastProcessedBlock: 142,
+          lastBlockProcessed: 142,
           processedBlocks: 100,
           remainingBlocks: 278,
           transactions: [],

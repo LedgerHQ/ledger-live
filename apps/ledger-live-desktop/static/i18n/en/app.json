@@ -8268,7 +8268,8 @@
         "startSync": "Start sync",
         "stopSync": "Stop sync",
         "lastProcessedBlock": "Last processed block: {{block}}. Missing {{missing}} blocks.",
-        "lastSync": "Last sync: {{date}}"
+        "lastSync": "Last sync: {{date}}",
+        "estimatedTimeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
       },
       "datepicker": {
         "label": "Birthday height",

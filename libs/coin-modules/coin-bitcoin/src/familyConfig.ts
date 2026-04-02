@@ -1,6 +1,7 @@
 import { defer, from, mergeMap, Observable } from "rxjs";
 import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import type { ShieldedSyncResult, ZCash } from "@ledgerhq/zcash-shielded/ZCash";
+import type { ZCash } from "@ledgerhq/zcash-shielded/ZCash";
+import type { ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
 import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import type { ZcashAccount } from "./types";
