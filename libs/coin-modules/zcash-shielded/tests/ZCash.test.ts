@@ -1,5 +1,5 @@
 import { ZCash } from "../src/ZCash";
-import type { ShieldedSyncResult } from "../src/types";
+import type { ZcashPrivateInfo } from "../src/types";
 import {
   testAccount1,
   blockWithMyTx,
@@ -410,16 +410,14 @@ describe("findShieldedTxsInBlock", () => {
         },
       });
 
-    const decryptTransactionSpy = jest
-      .spyOn(zcash, "decryptTransaction")
-      .mockResolvedValue({
-        id: "tx-valid",
-        hex: "hex-valid",
-        blockHeight: blockWithMyTx.height,
-        blockHash: blockWithMyTx.hash,
-        timestamp: blockWithMyTx.time,
-        fee: new BigNumber(0),
-      });
+    const decryptTransactionSpy = jest.spyOn(zcash, "decryptTransaction").mockResolvedValue({
+      id: "tx-valid",
+      hex: "hex-valid",
+      blockHeight: blockWithMyTx.height,
+      blockHash: blockWithMyTx.hash,
+      timestamp: blockWithMyTx.time,
+      fee: new BigNumber(0),
+    });
 
     const transactions = await zcash.findShieldedTxsInBlock({
       block: { ...blockWithMyTx, tx: ["", "tx-valid", ""] },
@@ -503,7 +501,9 @@ describe("findShieldedTxsInBlock", () => {
         valueBalanceZat: 0,
       },
     });
-    const decryptTransactionSpy = jest.spyOn(zcash, "decryptTransaction").mockResolvedValue(undefined);
+    const decryptTransactionSpy = jest
+      .spyOn(zcash, "decryptTransaction")
+      .mockResolvedValue(undefined);
 
     const transactions = await zcash.findShieldedTxsInBlock({
       block: { ...blockWithMyTx, tx: ["tx-failed-decrypt"] },
@@ -531,7 +531,7 @@ describe("syncShielded", () => {
         ...args,
       });
 
-      const steps: ShieldedSyncResult[] = [];
+      const steps: Partial<ZcashPrivateInfo>[] = [];
 
       try {
         await syncedShieldedObs.forEach(step => steps.push(step));
@@ -553,7 +553,7 @@ describe("syncShielded", () => {
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 1,
     });
-    const steps: ShieldedSyncResult[] = [];
+    const steps: Partial<ZcashPrivateInfo>[] = [];
 
     try {
       await syncedShieldedObs.forEach(step => steps.push(step));
@@ -572,7 +572,7 @@ describe("syncShielded", () => {
       viewingKey: "abc456",
       maxBatchSize: 1,
     });
-    const steps: ShieldedSyncResult[] = [];
+    const steps: Partial<ZcashPrivateInfo>[] = [];
 
     await syncedShieldedObs.forEach(value => {
       steps.push(value);
@@ -585,7 +585,7 @@ describe("syncShielded", () => {
         expect.objectContaining({
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
-          lastBlockProcessed: expect.any(Number),
+          lastProcessedBlock: expect.any(Number),
           transactions: [],
         }),
       ),
@@ -599,12 +599,12 @@ describe("syncShielded", () => {
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 1,
     });
-    const steps: ShieldedSyncResult[] = [];
+    const steps: Partial<ZcashPrivateInfo>[] = [];
 
     await syncShieldedObs.forEach(step => steps.push(step));
 
     expect(steps[steps.length - 1]).toEqual({
-      lastBlockProcessed: LAST_BLOCK_COUNT,
+      lastProcessedBlock: LAST_BLOCK_COUNT,
       processedBlocks: 6,
       remainingBlocks: 0,
       syncState: "running",
@@ -633,7 +633,7 @@ describe("syncShielded", () => {
       maxBatchSize,
     });
     let processedBlocks = 0;
-    const steps: ShieldedSyncResult[] = [];
+    const steps: Partial<ZcashPrivateInfo>[] = [];
 
     await syncedShieldedObs.forEach(syncedShielded => {
       steps.push(syncedShielded);
@@ -655,14 +655,14 @@ describe("syncShielded", () => {
         expect.objectContaining({
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
-          lastBlockProcessed: expect.any(Number),
+          lastProcessedBlock: expect.any(Number),
           transactions: expect.any(Array),
         }),
       ),
     );
 
     expect(steps[steps.length - 1]).toEqual({
-      lastBlockProcessed: LAST_BLOCK_COUNT,
+      lastProcessedBlock: LAST_BLOCK_COUNT,
       processedBlocks: 6,
       remainingBlocks: 0,
       syncState: "running",
@@ -690,7 +690,7 @@ describe("syncShielded", () => {
       maxBatchSize: 3,
     });
 
-    const steps: ShieldedSyncResult[] = [];
+    const steps: Partial<ZcashPrivateInfo>[] = [];
 
     await syncShieldedObs.forEach(value => {
       steps.push(value);
@@ -704,16 +704,14 @@ describe("syncShielded", () => {
         expect.objectContaining({
           processedBlocks: expect.any(Number),
           remainingBlocks: expect.any(Number),
-          lastBlockProcessed: expect.any(Number),
+          lastProcessedBlock: expect.any(Number),
           transactions: expect.any(Array),
         }),
       ),
     );
 
     expect(steps[steps.length - 1]).toEqual({
-      processedBlocks: 7,
-      remainingBlocks: 0,
-      lastBlockProcessed: LAST_BLOCK_COUNT + 1,
+      lastProcessedBlock: LAST_BLOCK_COUNT + 1,
       syncState: "running",
       progress: 0,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },

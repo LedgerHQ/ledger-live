@@ -30,7 +30,7 @@ import {
   ShieldedTransaction,
   ZCASH_SHIELDED_TX_IN_TYPES,
   ZCASH_SHIELDED_TX_OUT_TYPES,
-  ShieldedSyncResult,
+  ZcashPrivateInfo,
 } from "@ledgerhq/zcash-shielded/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
@@ -400,7 +400,7 @@ export async function performTransparentSync(
 
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
-  result: ShieldedSyncResult,
+  result: Partial<ZcashPrivateInfo>,
   info: AccountShapeInfo<ZcashAccount>,
   accountId: string,
 ): ShieldedScanAccumulated {
@@ -409,20 +409,16 @@ export function reduceShieldedSyncResult(
     info.initialAccount?.privateInfo ||
     DEFAULT_ZCASH_PRIVATE_INFO;
   const processedIds = new Set(accumulated.processedOperations.map(tx => tx.id));
-  const newTransactions = result.transactions.filter(tx => !processedIds.has(tx.id));
+  const newTransactions = result.transactions?.filter(tx => !processedIds.has(tx.id)) ?? [];
 
   if (newTransactions.length === 0) {
     return {
       ...accumulated,
       accountUpdate: {
         ...accumulated.accountUpdate,
-        blockHeight: result.lastBlockProcessed || accumulated.accountUpdate.blockHeight || 0,
         privateInfo: {
           ...existingPrivateInfo,
-          progress: result.progress,
-          syncState: result.syncState,
-          estimatedTimeRemaining: result.estimatedTimeRemaining,
-          lastBlockProcessed: result.lastBlockProcessed,
+          ...result,
           lastSyncTimestamp: Date.now(),
         },
       },
@@ -450,26 +446,23 @@ export function reduceShieldedSyncResult(
     {
       accountId,
       totalOperations: operations.length,
-      lastBlockProcessed: result.lastBlockProcessed,
+      lastProcessedBlock: result.lastProcessedBlock,
       privateBalance: privateBalance.toString(),
       previousOperations: currentOperations.length,
     },
   );
 
   return {
-    processedOperations: [...result.transactions],
+    processedOperations: [...(result.transactions ?? [])],
     accountUpdate: {
       ...accumulated.accountUpdate,
       operations,
       operationsCount: operations.length,
-      blockHeight: result.lastBlockProcessed || info.initialAccount?.blockHeight || 0,
+      blockHeight: result.lastProcessedBlock || info.initialAccount?.blockHeight || 0,
       privateInfo: {
         ...existingPrivateInfo,
+        ...result,
         orchardBalance: privateBalance,
-        progress: result.progress,
-        syncState: result.syncState,
-        estimatedTimeRemaining: result.estimatedTimeRemaining,
-        lastBlockProcessed: result.lastBlockProcessed,
         lastSyncTimestamp: Date.now(),
       },
     },
@@ -507,7 +500,7 @@ export function createTransparentSyncObservable(
 
 export function createShieldedSyncObservable(
   info: AccountShapeInfo<ZcashAccount>,
-  shieldedSyncRaw: Observable<ShieldedSyncResult>,
+  shieldedSyncRaw: Observable<Partial<ZcashPrivateInfo>>,
 ): Observable<Partial<ZcashAccount>> {
   const accountId =
     info.initialAccount?.id ??
@@ -595,6 +588,7 @@ export function buildSyncObservables(
     isZcash &&
     !!zcashInitialAccount &&
     (zcashInitialAccount.privateInfo?.syncState === "ready" ||
+      zcashInitialAccount.privateInfo?.syncState === "stopped" ||
       zcashInitialAccount.privateInfo?.syncState === "outdated");
   const shieldedEnabled = ufvkIsPresent && syncStateIsEnabled;
 
@@ -609,18 +603,19 @@ export function buildSyncObservables(
     // const shieldedSyncRaw = getCoinConfig(currency).family.sync?.(info, syncConfig);
 
     // TODO: Mock sync progress (remove in the future)
-    const shieldedSyncRaw = new Observable<ShieldedSyncResult>(subscriber => {
+    const shieldedSyncRaw = new Observable<Partial<ZcashPrivateInfo>>(subscriber => {
       (async () => {
+        subscriber.next({
+          ...zcashInitialAccount.privateInfo,
+          syncState: "running",
+          progress: 0,
+        });
         await withDelay(() =>
           subscriber.next({
             ...zcashInitialAccount.privateInfo,
             syncState: "running",
             progress: 25,
             estimatedTimeRemaining: { hours: 0, minutes: 3 },
-            processedBlocks: 0,
-            remainingBlocks: 0,
-            lastBlockProcessed: 0,
-            transactions: [],
           }),
         );
         await withDelay(() =>
@@ -629,10 +624,6 @@ export function buildSyncObservables(
             syncState: "running",
             progress: 50,
             estimatedTimeRemaining: { hours: 0, minutes: 2 },
-            processedBlocks: 0,
-            remainingBlocks: 0,
-            lastBlockProcessed: 0,
-            transactions: [],
           }),
         );
         await withDelay(() =>
@@ -641,10 +632,6 @@ export function buildSyncObservables(
             syncState: "running",
             progress: 75,
             estimatedTimeRemaining: { hours: 0, minutes: 1 },
-            processedBlocks: 0,
-            remainingBlocks: 0,
-            lastBlockProcessed: 0,
-            transactions: [],
           }),
         );
         await withDelay(() =>
@@ -653,10 +640,6 @@ export function buildSyncObservables(
             syncState: "complete",
             progress: 100,
             estimatedTimeRemaining: { hours: 0, minutes: 0 },
-            processedBlocks: 0,
-            remainingBlocks: 0,
-            lastBlockProcessed: 0,
-            transactions: [],
           }),
         );
         subscriber.complete();
