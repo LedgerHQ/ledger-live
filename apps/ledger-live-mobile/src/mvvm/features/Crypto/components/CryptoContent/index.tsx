@@ -3,7 +3,7 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Asset } from "~/types/asset";
 import { useTranslation } from "~/context/Locale";
-import { AssetEmptyState, AssetErrorState, AssetLoadingState } from "LLM/components/AssetListItem";
+import { AssetLoadingState, AssetStatusState } from "LLM/components/AssetListItem";
 import { CryptoAssetList } from "../CryptoAssetList";
 
 interface CryptoContentProps {
@@ -22,7 +22,13 @@ export const CryptoContent: React.FC<CryptoContentProps> = ({
   const { t } = useTranslation();
 
   if (error) {
-    return <AssetErrorState message={t("crypto.errorState")} testID="crypto-error-state" />;
+    return (
+      <AssetStatusState
+        variant="error"
+        message={t("crypto.errorState")}
+        testID="crypto-error-state"
+      />
+    );
   }
 
   if (isLoading) {
@@ -32,7 +38,13 @@ export const CryptoContent: React.FC<CryptoContentProps> = ({
   }
 
   if (assetsToDisplay.length === 0) {
-    return <AssetEmptyState message={t("crypto.emptyState")} testID="crypto-empty-state" />;
+    return (
+      <AssetStatusState
+        variant="empty"
+        message={t("crypto.emptyState")}
+        testID="crypto-empty-state"
+      />
+    );
   }
 
   return (

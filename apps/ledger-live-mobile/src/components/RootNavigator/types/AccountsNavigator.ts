@@ -1,6 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
+import { CryptoVariant } from "LLM/features/Crypto/screens/CryptoScreen/types";
 
 export type AccountsNavigatorParamList = {
   [ScreenName.Accounts]:
@@ -36,6 +37,6 @@ export type AccountsNavigatorParamList = {
   };
   [ScreenName.Crypto]: {
     sourceScreenName: ScreenName;
-    variant?: "crypto" | "stablecoin" | "all";
+    variant?: CryptoVariant;
   };
 };
