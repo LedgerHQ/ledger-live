@@ -320,6 +320,7 @@ export type Features = CurrencyFeatures & {
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
+  lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
 };
 
 /**
@@ -752,6 +753,11 @@ export type Feature_NewSendFlow = Feature<{
 
 export type Feature_AddressPoisoningOperationsFilter = Feature<{
   families: string[];
+}>;
+
+export type Feature_LldHideSmallValueTokenOperations = Feature<{
+  /** USD threshold below which incoming token operations are hidden. Defaults to $0.5. */
+  thresholdUsd: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

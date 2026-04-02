@@ -556,6 +556,8 @@
     "src/modularDrawer/utils/type.ts",
     "src/rxjs/operators/throwIf.ts",
     "src/utils/addressUtils.ts",
+    "src/hideSmallValueTokenOperations/smallValueOperationsThreshold.ts",
+    "src/hideSmallValueTokenOperations/hooks/useHideSmallValueTokenOperationsEnabled.ts",
     "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
