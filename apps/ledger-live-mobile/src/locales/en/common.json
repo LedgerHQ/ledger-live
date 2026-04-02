@@ -1321,6 +1321,13 @@
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
   },
+  "borrow": {
+    "title": "Borrow",
+    "appNotFound": "Borrow app not found",
+    "infoModal": {
+      "close": "Close"
+    }
+  },
   "earn": {
     "deposit": {
       "protocolInfoModal": {
