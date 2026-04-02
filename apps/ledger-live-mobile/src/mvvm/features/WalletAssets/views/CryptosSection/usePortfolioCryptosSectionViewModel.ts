@@ -9,10 +9,11 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
 import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
-
-export const MAX_ASSETS_TO_DISPLAY = 6;
-export const EMPTY_STATE_MAX_ASSETS = 4;
-export const READ_ONLY_MAX_ASSETS = 5;
+import {
+  MAX_ASSETS_TO_DISPLAY,
+  EMPTY_STATE_MAX_ASSETS,
+  READ_ONLY_MAX_ASSETS,
+} from "LLM/features/WalletAssets/constants";
 
 export interface PortfolioCryptosSectionViewModelResult {
   assetsCount: number;
@@ -33,7 +34,7 @@ const usePortfolioCryptosSectionViewModel = ({
 }: UsePortfolioCryptosSectionViewModelOptions = {}): PortfolioCryptosSectionViewModelResult => {
   const isEmptyState = variant === "emptyState";
   const isReadOnly = variant === "readOnly";
-  const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly);
+  const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly, "crypto");
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
 
   const isLimitedView = isEmptyState || (isReadOnly && shouldDisplayAssetSection);

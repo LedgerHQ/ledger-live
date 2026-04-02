@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -14,6 +14,9 @@ import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/ac
 import { Chip } from "./Chip";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
+
+/** How long after opening to ignore outside-click closes (ghost-click guard). */
+const GHOST_CLICK_GUARD_MS = 300;
 
 type EditCryptoAddressNameDialogProps = {
   children: React.ReactNode;
@@ -31,44 +34,27 @@ export const EditCryptoAddressNameDialog = ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(initialValue);
-  const clickGuardRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    return () => {
-      clickGuardRef.current?.abort();
-    };
-  }, []);
+  const openedAtRef = useRef(0);
 
   const normalizedValue = normalizeName(value);
   const isConfirmDisabled = normalizedValue.length === 0 || normalizedValue === initialValue.trim();
 
   const handleOpenChange = (newOpen: boolean) => {
-    clickGuardRef.current?.abort();
-    clickGuardRef.current = null;
     if (newOpen) {
+      openedAtRef.current = Date.now();
       setValue(initialValue);
       track("button_clicked", { button: "edit_account_name", page: CRYPTO_TRACKING_PAGE_NAME });
     }
     setOpen(newOpen);
   };
 
-  /** Prevents Radix "ghost click": swallow the resulting click before closing. */
+  /** Prevents ghost click: the same click that opens the dialog would immediately close it. */
   const handlePointerDownOutside: NonNullable<
     React.ComponentProps<typeof DialogContent>["onPointerDownOutside"]
   > = e => {
-    e.preventDefault();
-    clickGuardRef.current?.abort();
-    const ac = new AbortController();
-    clickGuardRef.current = ac;
-    globalThis.addEventListener(
-      "click",
-      ev => {
-        ev.stopPropagation();
-        ev.preventDefault();
-        handleOpenChange(false);
-      },
-      { capture: true, once: true, signal: ac.signal },
-    );
+    if (Date.now() - openedAtRef.current < GHOST_CLICK_GUARD_MS) {
+      e.preventDefault();
+    }
   };
 
   const handleConfirm = () => {

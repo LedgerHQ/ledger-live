@@ -460,10 +460,10 @@ export class SwapPage extends WebViewAppPage {
     expect(errorSpan).toMatch(message);
   }
 
-  @step("Verify swap CTA banner displayed")
-  async checkCtaBanner(electronApp: ElectronApplication) {
+  @step("Check insufficient funds warning banner is visible")
+  async checkInsufficientFundsBannerVisible(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
+    await expect(webview.getByTestId(this.insufficientFundsWarning)).toBeVisible();
   }
 
   @step("verify quotes are displayed")

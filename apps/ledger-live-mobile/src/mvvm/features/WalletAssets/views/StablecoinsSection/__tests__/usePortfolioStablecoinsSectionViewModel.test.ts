@@ -110,7 +110,7 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
       expect(readOnlyResult.current.hasMore).toBe(false);
     });
 
-    it("should navigate to AssetsList on onPressShowAll when assetSection is enabled", () => {
+    it("should navigate to Crypto screen on onPressShowAll when assetSection is enabled", () => {
       const { result } = renderHook(() => usePortfolioStablecoinsSectionViewModel(), {
         overrideInitialState: (state: State) => ({
           ...state,
@@ -125,9 +125,9 @@ describe("usePortfolioStablecoinsSectionViewModel", () => {
 
       act(() => result.current.onPressShowAll());
 
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Assets, {
-        screen: ScreenName.AssetsList,
-        params: { sourceScreenName: ScreenName.Portfolio, showHeader: true, isSyncEnabled: true },
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Crypto,
+        params: { sourceScreenName: ScreenName.Portfolio, variant: "stablecoin" },
       });
     });
 

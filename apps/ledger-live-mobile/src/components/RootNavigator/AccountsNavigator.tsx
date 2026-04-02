@@ -21,6 +21,7 @@ import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
+import { CryptoScreen } from "LLM/features/Crypto";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { track } from "~/analytics";
@@ -109,6 +110,11 @@ export default function AccountsNavigator() {
       <Stack.Screen
         name={ScreenName.CryptoAddresses}
         component={CryptoAddressesScreen}
+        options={{ headerShown: false, ...stackNavConfigV4 }}
+      />
+      <Stack.Screen
+        name={ScreenName.Crypto}
+        component={CryptoScreen}
         options={{ headerShown: false, ...stackNavConfigV4 }}
       />
       <Stack.Screen

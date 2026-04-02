@@ -50,9 +50,8 @@ function CryptoAddressesView({
 
   const ListEmpty = useMemo(() => {
     if (isLoading) return <CryptoAddressesLoadingState />;
-    if (error) return <CryptoAddressesErrorState />;
     return <CryptoAddressesEmptyState label={emptyStateLabel} />;
-  }, [isLoading, error, emptyStateLabel]);
+  }, [isLoading, emptyStateLabel]);
 
   return (
     <Box style={{ paddingTop: top, flex: 1 }}>
@@ -66,15 +65,19 @@ function CryptoAddressesView({
         </Text>
       </Box>
       <Box lx={containerStyle}>
-        <SyncList
-          testID="CryptoAddressesList"
-          renderItem={renderItem}
-          data={accounts}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT + bottom }}
-          ListEmptyComponent={ListEmpty}
-        />
+        {error ? (
+          <CryptoAddressesErrorState />
+        ) : (
+          <SyncList
+            testID="CryptoAddressesList"
+            renderItem={renderItem}
+            data={accounts}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT + bottom }}
+            ListEmptyComponent={ListEmpty}
+          />
+        )}
         <CryptoAddressesFooter label={addAccountLabel} onPress={onAddAccountPress} />
       </Box>
       <AddAccountDrawer

@@ -3208,6 +3208,12 @@
     "emptyState": "No accounts yet",
     "errorState": "An error occurred while loading your accounts"
   },
+  "crypto": {
+    "title": "Crypto",
+    "stablecoinTitle": "Stablecoin",
+    "errorState": "An error occurred while loading your assets",
+    "emptyState": "No assets to display"
+  },
   "accounts": {
     "title": "Accounts",
     "cryptoAccountsTitle": "{{currencyTicker}} accounts",
@@ -3444,11 +3450,11 @@
         "title": "Transaction Alerts (Beta)",
         "desc": "Be notified on your transactions for Ethereum, Polygon, BNB Chain, Avalanche and Ethereum Classic"
       },
-      "totalMarketCap":{
+      "totalMarketCap": {
         "title": "Total Market Cap",
         "desc": "Get notified when the total crypto market cap makes a significant move"
       },
-      "topGainersLosers":{
+      "topGainersLosers": {
         "title": "Top Gainers and Losers",
         "desc": "Get a weekly recap of the top gaining and losing tokens on the market"
       },
@@ -7839,7 +7845,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "stablecoins": "Stablecoin",
+      "stablecoins": "Stablecoins",
       "market": "Market"
     },
     "referralProgram": "$20"
