@@ -120,7 +120,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddressPath": "44/3030",
     "hederaResources": {
       "delegation": {
-        "delegated": "99442073",
+        "delegated": "46056731",
         "nodeId": 26,
       },
       "isAutoTokenAssociationEnabled": false,
@@ -128,12 +128,21 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     },
     "id": "js:2:hedera:0.0.7578015:hederaBip44",
     "index": 3,
-    "operationsCount": 3,
+    "operationsCount": 4,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
     "subAccounts": [],
     "swapHistory": [],
     "used": true,
+  },
+  {
+    "id": "js:2:hedera:0.0.7578015:hederaBip44+hedera%2Fhts%2Fusd~!underscore!~coin~!underscore!~0.0.456858",
+    "operationsCount": 0,
+    "parentId": "js:2:hedera:0.0.7578015:hederaBip44",
+    "pendingOperations": [],
+    "swapHistory": [],
+    "tokenId": "hedera/hts/usd_coin_0.0.456858",
+    "type": "TokenAccountRaw",
   },
   {
     "currencyId": "hedera",
@@ -3418,6 +3427,30 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 10,
       "extra": {
+        "associatedTokenId": "0.0.456858",
+        "consensusTimestamp": "1774014743.391473000",
+        "feesPayer": "0.0.7578015",
+        "pagingToken": "1774014743.391473000",
+        "transactionId": "0.0.7578015-1774014732-003766760",
+      },
+      "fee": "53385342",
+      "hasFailed": false,
+      "hash": "6gIW1_hhLjRmjpF36_xE5vjJKXSbVBlxw_u-lgPtOfPNCLnAwAK5EJi_etExsV_r",
+      "id": "js:2:hedera:0.0.7578015:hederaBip44-6gIW1_hhLjRmjpF36_xE5vjJKXSbVBlxw_u-lgPtOfPNCLnAwAK5EJi_etExsV_r-ASSOCIATE_TOKEN",
+      "recipients": [
+        "0.0.36",
+      ],
+      "senders": [
+        "0.0.7578015",
+      ],
+      "type": "ASSOCIATE_TOKEN",
+      "value": "53385342",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.7578015:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
         "consensusTimestamp": "1766052249.959659000",
         "feesPayer": "0.0.7578015",
         "memo": "Unstake",
@@ -3492,6 +3525,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "value": "197390",
     },
   ],
+  [],
   [
     {
       "accountId": "js:2:hedera:0.0.8313485:hederaBip44",
