@@ -96,7 +96,7 @@ export function DrawerFooter({ provider, sponsored }: { provider: string; sponso
   }
 
   return (
-    <Box mt={1} mb={5} mx={3}>
+    <Box mt={1} mb={5} mx={3} data-testid="swap-drawer-footer-terms">
       <Terms>
         <Trans
           i18nKey={acceptTerms}
@@ -108,7 +108,11 @@ export function DrawerFooter({ provider, sponsored }: { provider: string; sponso
               key={`external-link-${idx}`}
               fontSize={13}
               color="neutral.c70"
-              onClick={() => openURL(usefulUrl!)}
+              onClick={() => {
+                if (usefulUrl) {
+                  openURL(usefulUrl);
+                }
+              }}
               style={{ textDecoration: "underline" }}
             />
           ))}

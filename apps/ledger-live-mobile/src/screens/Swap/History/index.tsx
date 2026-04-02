@@ -42,6 +42,8 @@ import SafeAreaView from "~/components/SafeAreaView";
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
   SectionList,
 ) as unknown as typeof SectionList;
+const feedbackFormUrl =
+  "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile";
 
 // Helper function to ensure parent account is set for token accounts
 const ensureParentAccount = (
@@ -216,12 +218,12 @@ const History = () => {
       />
       <View style={styles.feedbackContainer}>
         <Pressable
-          onPress={() =>
-            Linking.openURL(
-              "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile",
-            )
-          }
+          onPress={() => Linking.openURL(feedbackFormUrl)}
           style={styles.feedbackRow}
+          testID="swap-history-feedback-link"
+          accessibilityRole="link"
+          accessibilityLabel={t("transfer.swap.history.feedback")}
+          accessibilityValue={{ text: feedbackFormUrl }}
         >
           <Text style={[styles.feedbackLink, { color: colors.grey }]}>
             <Trans i18nKey="transfer.swap.history.feedback" />
