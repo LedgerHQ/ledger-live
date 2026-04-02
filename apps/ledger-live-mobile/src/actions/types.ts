@@ -187,6 +187,7 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
   DYNAMIC_CONTENT_IS_LOADING = "DYNAMIC_CONTENT_IS_LOADING",
   DYNAMIC_CONTENT_ADD_LOCAL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_CARDS",
+  DYNAMIC_CONTENT_APPEND_LOCAL_CARDS = "DYNAMIC_CONTENT_APPEND_LOCAL_CARDS",
   DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS = "DYNAMIC_CONTENT_CLEAR_LOCAL_CARDS",
   DYNAMIC_CONTENT_REMOVE_LOCAL_CARD = "DYNAMIC_CONTENT_REMOVE_LOCAL_CARD",
   DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS = "DYNAMIC_CONTENT_ADD_LOCAL_WALLET_CAROUSEL_CARDS",
@@ -209,6 +210,9 @@ export type DynamicContentAddLocalCardsPayload = {
   cards: BrazeContentCard[];
 };
 
+/** Appends Braze-like cards to `localMobileCards` (same `extras.categoryId` as an existing local category). */
+export type DynamicContentAppendLocalCardsPayload = BrazeContentCard[];
+
 export type DynamicContentRemoveLocalCardPayload = string;
 
 export type DynamicContentAddLocalWalletCarouselPayload = WalletContentCard[];
@@ -221,6 +225,7 @@ export type DynamicContentPayload =
   | DynamicContentSetLandingStickyCtaCardsPayload
   | DynamicContentSetMobileCardsPayload
   | DynamicContentAddLocalCardsPayload
+  | DynamicContentAppendLocalCardsPayload
   | DynamicContentRemoveLocalCardPayload
   | DynamicContentAddLocalWalletCarouselPayload;
 

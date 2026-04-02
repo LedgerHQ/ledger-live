@@ -44,4 +44,5 @@ export type PortfolioContentCard = ContentCard & {
   image?: string;
   cta?: string;
   tag?: string;
+  picto?: string;
 };

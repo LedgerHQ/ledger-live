@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { MAX_ASSETS_TO_DISPLAY } from "LLM/features/WalletAssets/views/CryptosSection/usePortfolioCryptosSectionViewModel";
@@ -17,8 +18,12 @@ interface WalletAssetsViewModelResult {
 export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
   const { onPressShowAll } = usePortfolioSectionActions(false);
   const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
-  const { shouldDisplayOperationsList, shouldDisplayAssetSection } =
-    useWalletFeaturesConfig("mobile");
+  const { walletCardsDisplayed } = useDynamicContent();
+  const {
+    shouldDisplayOperationsList,
+    shouldDisplayAssetSection,
+    shouldDisplayGraphRework,
+  } = useWalletFeaturesConfig("mobile");
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -33,12 +38,15 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     return cryptosCount > MAX_ASSETS_TO_DISPLAY || stablecoinsCount > MAX_STABLECOINS_TO_DISPLAY;
   }, [categorizedAssets, blacklistedTokenIdsSet]);
 
-  // When the operations list section is hidden, WalletAssetsView is the last section and
-  // the tab bar (rendered without safe area) would overlap the bottom content.
+  // Tx History in header: extra space under the last block — Accounts when carousel is absent and
+  // nothing is rendered below (no allocations row when graph rework is off).
   return {
     hasMore,
     onPressShowAll,
-    shouldAddBottomPadding: shouldDisplayOperationsList,
+    shouldAddBottomPadding:
+      shouldDisplayOperationsList &&
+      walletCardsDisplayed.length === 0 &&
+      shouldDisplayGraphRework,
     shouldDisplayAssetSection,
   };
 }
