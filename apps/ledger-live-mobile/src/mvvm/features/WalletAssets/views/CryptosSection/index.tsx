@@ -10,9 +10,8 @@ import {
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useTranslation } from "~/context/Locale";
 import { SectionListContent } from "../../components/SectionListContent";
-import usePortfolioCryptosSectionViewModel, {
-  EMPTY_STATE_MAX_ASSETS,
-} from "./usePortfolioCryptosSectionViewModel";
+import usePortfolioCryptosSectionViewModel from "./usePortfolioCryptosSectionViewModel";
+import { EMPTY_STATE_MAX_ASSETS } from "LLM/features/WalletAssets/constants";
 import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 interface PortfolioCryptosSectionProps {

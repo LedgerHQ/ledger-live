@@ -7,9 +7,10 @@ import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAsset
 import { usePortfolioSectionActions } from "LLM/features/WalletAssets/shared/usePortfolioSectionActions";
 import { toAsset, padAssetsWithDefaults } from "LLM/features/WalletAssets/shared/assetUtils";
 import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
-
-export const MAX_STABLECOINS_TO_DISPLAY = 6;
-export const EMPTY_STATE_MAX_STABLECOINS = 2;
+import {
+  MAX_STABLECOINS_TO_DISPLAY,
+  EMPTY_STATE_MAX_STABLECOINS,
+} from "LLM/features/WalletAssets/constants";
 
 export interface PortfolioStablecoinsSectionViewModelResult {
   assetsCount: number;
@@ -30,7 +31,7 @@ const usePortfolioStablecoinsSectionViewModel = ({
 }: UsePortfolioStablecoinsSectionViewModelOptions = {}): PortfolioStablecoinsSectionViewModelResult => {
   const isLimitedView = variant === "emptyState" || variant === "readOnly";
   const isReadOnly = variant === "readOnly";
-  const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly);
+  const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly, "stablecoin");
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
