@@ -419,7 +419,8 @@
     "webviewErrorDrawer" : {
       "title" : "Üzgünüz, tekrar deneyin.",
       "description" : "Sunucu, talebinizi işleme koyamadı. Lütfen daha sonra tekrar deneyin veya Ledger Destek ile iletişime geçin.",
-      "code" : "Kod: {{errorCode}}"
+      "code" : "Kod",
+      "correlationId" : "Referans Kimliği"
     }
   },
   "swap" : {
@@ -2513,6 +2514,7 @@
       "coinToSend" : "Gönderilecek coin",
       "changeToReturn" : "Dönecek para üstü",
       "enterAmount" : "Tutar girin",
+      "selectSufficientCoins" : "Yeterli miktarda coin seçin",
       "amountToSendInCurrency" : "({{ticker}}) olarak gönderilecek tutar",
       "amountInputLabel" : "Gönderilecek tutar"
     }
@@ -2960,7 +2962,8 @@
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Önce en eski coin'ler (FIFO)",
       "OPTIMIZE_SIZE" : "Ücretleri en aza indirin (boyutu optimize edin)",
-      "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)"
+      "MERGE_OUTPUTS" : "Gelecekteki ücretleri en aza indirin (coin'leri birleştirin)",
+      "CUSTOM" : "Özel coin seçimi"
     }
   },
   "celo" : {
@@ -7987,6 +7990,16 @@
       "cta" : "Daha fazla bilgi"
     }
   },
+  "lnsUpsellMediaBanner" : {
+    "opted_in" : {
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "En yeni Ledger imzalayıcılarda %20 özel indirimden faydalanın."
+    },
+    "opted_out" : {
+      "title" : "Ledger Nano S™ cihazınızın modelini yükseltin",
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar."
+    }
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Eklemek istediğiniz hesapları seçin",
@@ -8145,9 +8158,9 @@
     }
   },
   "cryptoAddresses" : {
-    "title" : "Kripto hesapları",
+    "title" : "Hesaplar",
     "tableActions" : {
-      "searchAddress" : "Adres ara",
+      "searchAddress" : "İsim veya adrese göre ara",
       "addAddress" : "Adres ekle"
     },
     "table" : {
@@ -8321,6 +8334,7 @@
       }
     },
     "shared" : {
+      "sponsoredByProvable" : "Provable sponsorluğunda",
       "balanceSelector" : {
         "private" : "Gizli bakiye",
         "public" : "Genel bakiye",
@@ -8342,7 +8356,13 @@
       "transparentBalance" : "Şeffaf bakiye",
       "transparentBalanceTooltip" : "Herkes tarafından görülen bakiye",
       "privateBalance" : "Gizli bakiye",
-      "privateBalanceTooltip" : "Herkese açık olmayan bakiye"
+      "privateBalanceTooltip" : "Herkese açık olmayan bakiye",
+      "syncButton" : {
+        "startSync" : "Senkronizasyonu başlat",
+        "stopSync" : "Senkronizasyonu durdur",
+        "syncAgain" : "Tekrar senkronize et",
+        "lastSync" : "Son senkronizasyon: {{date}}"
+      }
     },
     "operations" : {
       "type" : {
@@ -8355,8 +8375,12 @@
         "selectLabel" : "Gönderen:"
       },
       "summary" : {
-        "coveredByProvable" : "Provable sponsorluğunda",
         "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir."
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Özel bakiyeniz senkronize ediliyor (%{{percentage}}).",
+        "desc" : "Lütfen bekleyin",
+        "error" : "Özel bakiye senkronizasyonu başarısız oldu. Lütfen daha sonra tekrar deneyin."
       }
     }
   },
