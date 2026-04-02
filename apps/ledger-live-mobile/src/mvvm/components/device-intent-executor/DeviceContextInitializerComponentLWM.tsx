@@ -1,5 +1,6 @@
 /**
- * NOTE: this is a work in progress.
+ * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
+ * the point for now it to allow manual testing of the DeviceIntentExecutor component.
  *
  * DMK-native implementation of the DeviceContextInitializerComponent for LWM.
  *
@@ -7,10 +8,13 @@
  * dmk.executeDeviceAction, bypassing legacy live-common device actions.
  *
  * TODO (final version):
+ * - Use Lumen UI components instead of Native UI components
  * - Address derivation support
  * - Address validation ("is wrong device?")
  * - Device deprecation checks
  * - Richer UI beyond plain-text state dump
+ * - MVVM architecture
+ * - Tests
  */
 import React, { useEffect, useRef, useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";

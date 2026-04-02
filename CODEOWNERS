@@ -233,7 +233,7 @@ libs/ledger-live-common/src/customImage/                            @ledgerhq/li
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
-apps/ledger-live-mobile/src/components/device-intent-executor/     @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/components/device-intent-executor/     @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices

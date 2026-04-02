@@ -1,16 +1,20 @@
 /**
- * NOTE: this is a work in progress.
+ * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
+ * the point for now it to allow manual testing of the DeviceIntentExecutor component.
  *
  * Initial implementation of the DeviceConnectionComponent for LWM.
  *
  * Performs real BLE device discovery via DMK and connects on user tap.
  *
  * TODO (final version):
+ * - Use Lumen UI components instead of Native UI components
  * - HID transport support
  * - Full pairing UX (bonding, permissions prompts)
  * - Device model filtering from deviceConnectionParams.acceptedDeviceModelIds
  * - Loading/connecting states with animations
  * - Error display with retry
+ * - MVVM architecture
+ * - Tests
  */
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";

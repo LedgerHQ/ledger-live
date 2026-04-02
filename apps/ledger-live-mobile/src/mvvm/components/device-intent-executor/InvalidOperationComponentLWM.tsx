@@ -12,6 +12,17 @@ function formatError(error: unknown): string {
   }
 }
 
+/**
+ * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
+ * the point for now it to allow manual testing of the DeviceIntentExecutor component.
+ *
+ * Initial implementation of the InvalidOperationComponent for LWM.
+ *
+ * TODO (final version):
+ * - Use Lumen UI components instead of Native UI components
+ * - MVVM architecture
+ * - Tests
+ */
 const InvalidOperationComponentLWM: InvalidOperationComponent = ({ error, onClose }) => (
   <Flex alignItems="center" justifyContent="center" p={6}>
     <Icons.Warning color="error.c60" size="L" />

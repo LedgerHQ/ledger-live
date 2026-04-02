@@ -22,6 +22,17 @@ const platformConfig: ExecutorPlatformConfiguration = {
   InvalidOperationComponent: InvalidOperationComponentLWM,
 };
 
+/**
+ * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
+ * the point for now it to allow manual testing of the DeviceIntentExecutor component.
+ *
+ * Initial implementation of the DeviceIntentExecutor for LWM.
+ *
+ * TODO (final version):
+ * - Use Lumen UI components instead of hardcoded Native UI components
+ * - MVVM architecture
+ * - Tests
+ */
 export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {

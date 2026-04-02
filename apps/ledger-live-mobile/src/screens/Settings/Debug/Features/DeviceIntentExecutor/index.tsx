@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
-import { DeviceIntentExecutorLWM } from "~/components/device-intent-executor";
+import { DeviceIntentExecutorLWM } from "LLM/components/device-intent-executor";
 import { DEMO_INTENT_DEFS } from "./intents/registry";
 import type { DemoIntentDefinitions } from "./intents/orchestrationTypes";
 import { useDemoIntentOrchestration } from "./useDemoIntentOrchestration";

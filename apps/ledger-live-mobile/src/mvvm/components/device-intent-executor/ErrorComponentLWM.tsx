@@ -1,12 +1,16 @@
 /**
- * NOTE: this is a work in progress.
+ * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
+ * the point for now it to allow manual testing of the DeviceIntentExecutor component.
  *
  * Initial shared error component for the DeviceIntentExecutor on LWM.
  *
  * TODO (final version):
+ * - Use Lumen UI components instead of Native UI components
  * - Error-type-specific rendering and messaging
  * - Contextual recovery actions beyond simple retry
  * - Integration with error analytics
+ * - MVVM architecture
+ * - Tests
  */
 import React from "react";
 import { Text, Flex, Button, Icons } from "@ledgerhq/native-ui";
